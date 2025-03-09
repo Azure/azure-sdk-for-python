@@ -17,6 +17,7 @@ from typing import (
     Mapping,
     Union,
     Optional,
+    cast,
 )
 from typing_extensions import TypeVar, Unpack, TypedDict
 
@@ -25,7 +26,7 @@ from .._identifiers import ResourceIdentifiers
 from .._extension import ManagedIdentity, convert_managed_identities, RoleAssignment
 from ..._parameters import GLOBAL_PARAMS
 from ..._setting import StoredPrioritizedSetting
-from ..._bicep.expressions import Guid, ResourceSymbol, Parameter, ResourceGroup, Output
+from ..._bicep.expressions import Guid, ResourceSymbol, Parameter, ResourceGroup as RGSymbol, Output
 from ..._resource import (
     Resource,
     FieldsType,
@@ -44,47 +45,47 @@ if TYPE_CHECKING:
 class MachineLearningWorkspaceKwargs(TypedDict, total=False):
     friendly_name: Union[str, Parameter]
     """Friendly name of the workspace."""
-    sku: Literal["Basic", "Free", "Premium", "Standard"]
+    sku: Union[Literal["Basic", "Free", "Premium", "Standard"], Parameter]
     """Specifies the SKU, also referred as 'edition' of the Azure Machine Learning workspace."""
-    application_insights: str
+    application_insights: Union[str, Parameter]
     """The resource ID of the associated Application Insights. Required if 'kind' is 'Default' or 'FeatureStore'."""
-    keyvault: str
+    keyvault: Union[str, Parameter]
     """The resource ID of the associated Key Vault. Required if 'kind' is 'Default', 'FeatureStore' or 'Hub'."""
-    storage: str
+    storage: Union[str, Parameter]
     """The resource ID of the associated Storage Account. Required if 'kind' is 'Default', 'FeatureStore' or 'Hub'."""
-    feature_store_settings: "FeatureStoreSetting"
+    feature_store_settings: Union["FeatureStoreSetting", Parameter]  # type: ignore[name-defined]  # TODO
     """Settings for feature store type workspaces. Required if 'kind' is set to 'FeatureStore'."""
-    hub: str
+    hub: Union[str, Parameter]
     """The resource ID of the hub to associate with the workspace. Required if 'kind' is set to 'Project'."""
-    primary_user_assigned_identity: str
+    primary_user_assigned_identity: Union[str, Parameter]
     """The user assigned identity resource ID that represents the workspace identity. Required if
     'userAssignedIdentities' is not empty and may not be used if 'systemAssignedIdentity' is enabled.
     """
-    container_registry: str
+    container_registry: Union[str, Parameter]
     """The resource ID of the associated Container Registry."""
-    description: str
+    description: Union[str, Parameter]
     """The description of this workspace."""
     # diagnostic_settings: List['DiagnosticSetting']
     # """The diagnostic settings of the service."""
-    discovery_url: str
+    discovery_url: Union[str, Parameter]
     """URL for the discovery service to identify regional endpoints for machine learning experimentation services."""
-    hbi_workspace: bool
+    hbi_workspace: Union[bool, Parameter]
     """The flag to signal HBI data in the workspace and reduce diagnostic data collected by the service."""
-    image_build_compute: str
+    image_build_compute: Union[str, Parameter]
     """The compute name for image build."""
-    location: str
+    location: Union[str, Parameter]
     """Location for all resources."""
     # lock: 'Lock'
     # """The lock settings of the service."""
     managed_identities: "ManagedIdentity"
     """The managed identity definition for this resource. At least one identity type is required."""
-    managed_network: "ManagedNetworkSetting"
+    managed_network: Union["ManagedNetworkSetting", Parameter]  # type: ignore[name-defined]  # TODO
     """Managed Network settings for a machine learning workspace."""
     # private_endpoints: List['PrivateEndpoint']
     # """Configuration details for private endpoints. For security reasons, it is recommended to use private endpoints
     # whenever possible.
     # """
-    public_network_access: Literal["Disabled", "Enabled"]
+    public_network_access: Union[Literal["Disabled", "Enabled"], Parameter]
     """Whether or not public network access is allowed for this resource. For security reasons it should be
     disabled.
     """
@@ -130,22 +131,22 @@ class MachineLearningWorkspaceKwargs(TypedDict, total=False):
         ],
     ]
     """Array of Role assignments to create for user principal ID"""
-    serverless_compute_settings: "ServerlessComputeSetting"
+    serverless_compute_settings: Union["ServerlessComputeSetting", Parameter]  # type: ignore[name-defined]  # TODO
     """Settings for serverless compute created in the workspace."""
-    service_managed_resources_settings: Dict[str, object]
+    service_managed_resources_settings: Union[Dict[str, Any], Parameter]  # TODO: Proper typed dict
     """The service managed resource settings."""
-    shared_private_link_resources: List[object]
+    shared_private_link_resources: Union[List[Any], Parameter]  # TODO: Proper typed dict
     """The list of shared private link resources in this workspace. Note: This property is not idempotent."""
-    system_datastores_auth_mode: Literal["accessKey", "identity"]
+    system_datastores_auth_mode: Union[Literal["accessKey", "identity"], Parameter]
     """The authentication mode used by the workspace when connecting to the default storage account."""
     tags: Union[Dict[str, Union[str, Parameter]], Parameter]
     """Tags of the resource."""
-    workspacehub_config: "WorkspaceHubConfig"
+    workspacehub_config: Union["WorkspaceHubConfig", Parameter]  # type: ignore[name-defined]  # TODO
     """Configuration for workspace hub settings."""
 
 
 MachineLearningWorkspaceResourceType = TypeVar(
-    "MachineLearningWorkspaceResourceType", default="MachineLearningWorkspaceResource"
+    "MachineLearningWorkspaceResourceType", bound=Mapping[str, Any], default="MachineLearningWorkspaceResource"
 )
 _DEFAULT_ML_WORKSPACE: "MachineLearningWorkspaceResource" = {
     "name": GLOBAL_PARAMS["defaultName"],
@@ -160,10 +161,10 @@ _DEFAULT_ML_WORKSPACE_EXTENSIONS: ExtensionResources = {"managed_identity_roles"
 
 
 class MLWorkspace(Resource[MachineLearningWorkspaceResourceType]):
-    DEFAULTS: "MachineLearningWorkspaceResource" = _DEFAULT_ML_WORKSPACE
+    DEFAULTS: "MachineLearningWorkspaceResource" = _DEFAULT_ML_WORKSPACE  # type: ignore[assignment]
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_ML_WORKSPACE_EXTENSIONS
     properties: MachineLearningWorkspaceResourceType
-    parent: None
+    parent: None  # type: ignore[reportIncompatibleVariableOverride]
 
     def __init__(
         self,
@@ -171,13 +172,16 @@ class MLWorkspace(Resource[MachineLearningWorkspaceResourceType]):
         /,
         name: Optional[str] = None,
         *,
-        kind: Union[Parameter, Literal["Default", "FeatureStore", "Hub", "Project"]],
+        kind: Literal["Default", "FeatureStore", "Hub", "Project"],
         **kwargs: Unpack[MachineLearningWorkspaceKwargs],
     ) -> None:
-        existing = kwargs.pop("existing", False)
-        extensions: ExtensionResources = defaultdict(list)
+        # TODO: Support explicit 'storage', 'keyvault' and connections.
+        # 'existing' is passed by the reference classmethod.
+        existing = kwargs.pop("existing", False)  # type: ignore[typeddict-item]
+        extensions: ExtensionResources = defaultdict(list)  # type: ignore  # Doesn't like the default dict.
         properties = properties or {}
         properties["kind"] = kind
+        self._kind = kind
         if "roles" in kwargs:
             extensions["managed_identity_roles"] = kwargs.pop("roles")
         if "user_roles" in kwargs:
@@ -199,31 +203,33 @@ class MLWorkspace(Resource[MachineLearningWorkspaceResourceType]):
             if "public_network_access" in kwargs:
                 properties["properties"]["publicNetworkAccess"] = kwargs.pop("public_network_access")
             if "sku" in kwargs:
+                sku = kwargs.pop("sku")
+                properties["sku"] = {"name": sku, "tier": "sku"}
                 properties["sku"] = properties.get("sku", {})
-                properties["sku"]["name"] = kwargs.pop("sku")
-                properties["sku"]["tier"] = properties["sku"]["name"]
             if "tags" in kwargs:
                 properties["tags"] = kwargs.pop("tags")
+        # The kwargs service_prefix and identifier can be passed by child classes.
         super().__init__(
-            properties,
+            cast(Dict[str, Any], properties),
             extensions=extensions,
-            service_prefix=kwargs.pop("service_prefix", [f"ml_{kind}"]),
+            service_prefix=kwargs.pop("service_prefix", [f"ml_{kind}"]),  # type: ignore[typeddict-item]
             existing=existing,
-            identifier=kwargs.pop("identifier", ResourceIdentifiers.ml_workspace),
+            identifier=kwargs.pop("identifier", ResourceIdentifiers.ml_workspace),  # type: ignore[typeddict-item]
             **kwargs,
         )
 
     @classmethod
-    def reference(
+    def reference(  # type: ignore[override]  # Parameter subset and renames
         cls,
         *,
         name: Union[str, Parameter],
-        resource_group: Optional[Union[str, Parameter, ResourceGroup]] = None,
+        resource_group: Optional[Union[str, Parameter, ResourceGroup[ResourceReference]]] = None,
     ) -> "MLWorkspace[ResourceReference]":
-        return super().reference(
+        existing = super().reference(
             name=name,
             resource_group=resource_group,
         )
+        return cast(MLWorkspace[ResourceReference], existing)
 
     @property
     def resource(self) -> Literal["Microsoft.MachineLearningServices/workspaces"]:
@@ -237,13 +243,14 @@ class MLWorkspace(Resource[MachineLearningWorkspaceResourceType]):
 
     def _build_symbol(self) -> ResourceSymbol:
         symbol = super()._build_symbol()
-        symbol._value = f"{self.properties['kind'].lower()}_" + symbol._value  # pylint: disable=protected-access
+        symbol._value = f"{self._kind.lower()}_" + symbol.value  # pylint: disable=protected-access
         return symbol
 
-    def _merge_properties(
+    def _merge_properties(  # type: ignore[override]  # Parameter superset
         self,
-        current_properties: "MachineLearningWorkspaceResource",
-        new_properties: "MachineLearningWorkspaceResource",
+        # We override the type-hints here to be resource-specific to make writing and validating the merge easier.
+        current_properties: "MachineLearningWorkspaceResource",  # type: ignore[arg-type]
+        new_properties: "MachineLearningWorkspaceResource",  # type: ignore[arg-type]
         *,
         parameters: Dict[str, Parameter],
         symbol: ResourceSymbol,
@@ -252,23 +259,21 @@ class MLWorkspace(Resource[MachineLearningWorkspaceResourceType]):
         **kwargs,
     ) -> Dict[str, Any]:
         output_config = super()._merge_properties(
-            current_properties,
-            new_properties,
+            cast(Dict[str, Any], current_properties),
+            cast(Dict[str, Any], new_properties),
             symbol=symbol,
             fields=fields,
             resource_group=resource_group,
             parameters=parameters,
             **kwargs,
         )
-        if "properties" in current_properties and current_properties["kind"] in ["Project", "Hub"]:
+        if "properties" in current_properties and self._kind in ["Project", "Hub"]:
             # TODO: Fix this recursive call problem....
             # We only want to run this on the first call, not subsequent ones.
             if not current_properties["properties"].get("workspaceHubConfig"):
                 current_properties["properties"]["workspaceHubConfig"] = {}
             if not current_properties["properties"]["workspaceHubConfig"].get("defaultWorkspaceResourceGroup"):
-                current_properties["properties"]["workspaceHubConfig"][
-                    "defaultWorkspaceResourceGroup"
-                ] = ResourceGroup().id
+                current_properties["properties"]["workspaceHubConfig"]["defaultWorkspaceResourceGroup"] = RGSymbol().id
 
             for searchservices in self._find_all_resource_match(fields, resource=ResourceIdentifiers.search):
                 search_connection = AIConnection(
@@ -276,19 +281,19 @@ class MLWorkspace(Resource[MachineLearningWorkspaceResourceType]):
                         # We have to do this to prevent infinit recursion on calling self.parent.__bicep__()
                         "parent": symbol
                     },
-                    parent=self,
+                    parent=cast(Union[AIHub, AIProject], self),  # We already filtered for 'kind' above.
                     category="CognitiveSearch",
                     target=searchservices.outputs["endpoint"],
                     name=Guid(
                         searchservices.properties.get("name", parameters["defaultName"]),
                         "connection",
-                        self.properties["kind"],
+                        self._kind,
                         "AISearch",
                     ),
                     metadata={
                         "ApiType": "Azure",
                         "ResourceId": searchservices.symbol.id,
-                        "location": self.properties.get("location", parameters["location"]),
+                        "location": current_properties.get("location", parameters["location"]),
                     },
                 )
                 search_connection.__bicep__(fields, parameters=parameters)
@@ -298,19 +303,19 @@ class MLWorkspace(Resource[MachineLearningWorkspaceResourceType]):
                 # TODO: This will actually fail if there's more than one.... should more than one even be supported?
                 ai_connection = AIConnection(
                     {"parent": symbol},
-                    parent=self,
+                    parent=cast(Union[AIHub, AIProject], self),  # We already filtered for 'kind' above.
                     category="AIServices",
                     target=aiservices.outputs["endpoint"],
                     name=Guid(
                         aiservices.properties.get("name", parameters["defaultName"]),
                         "connection",
-                        self.properties["kind"],
+                        self._kind,
                         "AIServices",
                     ),
                     metadata={
                         "ApiType": "Azure",
                         "ResourceId": aiservices.symbol.id,
-                        "location": self.properties.get("location", parameters["location"]),
+                        "location": current_properties.get("location", parameters["location"]),
                     },
                 )
                 ai_connection.__bicep__(fields, parameters=parameters)
@@ -342,7 +347,6 @@ _DEFAULT_AI_HUB_EXTENSIONS: ExtensionResources = {"managed_identity_roles": [], 
 class AIHub(MLWorkspace[MachineLearningWorkspaceResourceType]):
     DEFAULTS: "MachineLearningWorkspaceResource" = _DEFAULT_AI_HUB
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_AI_HUB_EXTENSIONS
-    resource: Literal["Microsoft.MachineLearningServices/workspaces"] = "Microsoft.MachineLearningServices/workspaces"
     properties: MachineLearningWorkspaceResourceType
 
     def __init__(
@@ -356,12 +360,25 @@ class AIHub(MLWorkspace[MachineLearningWorkspaceResourceType]):
             properties,
             name=name,
             kind="Hub",
-            service_prefix=["aifoundry_hub"],
-            identifier=ResourceIdentifiers.ai_hub,
+            service_prefix=["aifoundry_hub"],  # type: ignore[call-arg]
+            identifier=ResourceIdentifiers.ai_hub,  # type: ignore[call-arg]
             **kwargs,
         )
 
-    def _merge_properties(
+    @classmethod
+    def reference(  # type: ignore[override]  # Parameter subset and renames
+        cls,
+        *,
+        name: Union[str, Parameter],
+        resource_group: Optional[Union[str, Parameter, ResourceGroup[ResourceReference]]] = None,
+    ) -> "AIHub[ResourceReference]":
+        existing = super().reference(
+            name=name,
+            resource_group=resource_group,
+        )
+        return cast(AIHub[ResourceReference], existing)
+
+    def _merge_properties(  # type: ignore[override]  # Parameter superset
         self,
         current_properties: "MachineLearningWorkspaceResource",
         new_properties: "MachineLearningWorkspaceResource",
@@ -430,7 +447,6 @@ ClientType = TypeVar("ClientType", default="AIProjectClient")
 class AIProject(MLWorkspace[MachineLearningWorkspaceResourceType]):
     DEFAULTS: "MachineLearningWorkspaceResource" = _DEFAULT_AI_PROJECT
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_AI_PROJECT_EXTENSIONS
-    resource: Literal["Microsoft.MachineLearningServices/workspaces"] = "Microsoft.MachineLearningServices/workspaces"
     properties: MachineLearningWorkspaceResourceType
 
     def __init__(
@@ -444,24 +460,36 @@ class AIProject(MLWorkspace[MachineLearningWorkspaceResourceType]):
             properties,
             name=name,
             kind="Project",
-            service_prefix=["aifoundry_project"],
-            identifier=ResourceIdentifiers.ai_project,
+            service_prefix=["aifoundry_project"],  # type: ignore[call-arg]
+            identifier=ResourceIdentifiers.ai_project,  # type: ignore[call-arg]
             **kwargs,
         )
         self._settings["endpoint"] = StoredPrioritizedSetting(
             name="endpoint", env_vars=_build_envs(self._prefixes, ["ENDPOINT"]), suffix=self._suffix
         )
 
-    def _outputs(
-        self, *, symbol: ResourceSymbol, resource_group: Union[str, ResourceSymbol], **kwargs
-    ) -> Dict[str, Output]:
-        outputs = super()._outputs(symbol=symbol, resource_group=resource_group, **kwargs)
+    @classmethod
+    def reference(  # type: ignore[override]  # Parameter subset and renames
+        cls,
+        *,
+        name: Union[str, Parameter],
+        resource_group: Optional[Union[str, Parameter, ResourceGroup[ResourceReference]]] = None,
+    ) -> "AIProject[ResourceReference]":
+        existing = super().reference(
+            name=name,
+            resource_group=resource_group,
+        )
+        return cast(AIProject[ResourceReference], existing)
+
+    def _outputs(self, *, symbol: ResourceSymbol, suffix: Optional[str] = None, **kwargs) -> Dict[str, Output]:
+        outputs = super()._outputs(symbol=symbol, suffix=suffix, **kwargs)
+
         outputs["endpoint"] = Output(
-            f"AZURE_AIFOUNDRY_PROJECT_ENDPOINT{self._suffix}", "properties.discoveryUrl", symbol
+            f"AZURE_AIFOUNDRY_PROJECT_ENDPOINT{suffix or self._suffix}", "properties.discoveryUrl", symbol
         )
         return outputs
 
-    def _merge_properties(
+    def _merge_properties(  # type: ignore[override]  # Parameter superset
         self,
         current_properties: "MachineLearningWorkspaceResource",
         new_properties: "MachineLearningWorkspaceResource",
@@ -507,12 +535,12 @@ class AIProject(MLWorkspace[MachineLearningWorkspaceResourceType]):
                     "Please specify 'use_async' keyword argument."
                 ) from None
         if use_async:
-            from azure.identity.aio import DefaultAzureCredential
+            from azure.identity.aio import DefaultAzureCredential as AsyncDefaultAzureCredential
 
-            return DefaultAzureCredential()
-        from azure.identity import DefaultAzureCredential
+            return AsyncDefaultAzureCredential()
+        from azure.identity import DefaultAzureCredential as SyncDefaultAzureCredential
 
-        return DefaultAzureCredential()
+        return SyncDefaultAzureCredential()
 
     def get_client(
         self,
@@ -529,13 +557,17 @@ class AIProject(MLWorkspace[MachineLearningWorkspaceResourceType]):
             config_store = _load_dev_environment()
         if cls is None:
             if use_async:
-                from azure.ai.projects.aio import AIProjectClient  # pylint: disable=no-name-in-module,import-error
+                from azure.ai.projects.aio import (  # pylint: disable=no-name-in-module,import-error
+                    AIProjectClient as AsyncAIProjectClient,
+                )
 
-                cls = AIProjectClient
+                cls = AsyncAIProjectClient
             else:
-                from azure.ai.projects import AIProjectClient  # pylint: disable=no-name-in-module,import-error
+                from azure.ai.projects import (  # pylint: disable=no-name-in-module,import-error
+                    AIProjectClient as SyncAIProjectClient,
+                )
 
-                cls = AIProjectClient
+                cls = SyncAIProjectClient
                 use_async = False
         if transport:
             client_options["transport"] = transport

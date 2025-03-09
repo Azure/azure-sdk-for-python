@@ -22,11 +22,10 @@ from typing import (
     Dict,
     List,
     Any,
-    TypeVar,
     Sequence,
     TYPE_CHECKING,
 )
-from typing_extensions import Self, NamedTuple, TypedDict
+from typing_extensions import Self, NamedTuple, TypedDict, TypeVar
 
 from dotenv import dotenv_values
 
@@ -97,14 +96,14 @@ class ExtensionResources(TypedDict, total=False):
     # secret store?
 
 
-ResourcePropertiesType = TypeVar("ResourcePropertiesType")
+ResourcePropertiesType = TypeVar("ResourcePropertiesType", bound=Mapping[str, Any])
 
 
-class FieldType(NamedTuple, Generic[ResourcePropertiesType]):
+class FieldType(NamedTuple):
     resource: str
     identifier: ResourceIdentifiers
     version: str
-    properties: ResourcePropertiesType
+    properties: Dict[str, Any]
     symbol: ResourceSymbol
     outputs: Dict[str, Output]
     resource_group: Optional[ResourceSymbol]
@@ -130,7 +129,7 @@ class Resource(Generic[ResourcePropertiesType]):  # pylint: disable=too-many-ins
         self.properties: ResourcePropertiesType = properties or {}
         self.extensions: ExtensionResources = kwargs.pop("extensions", {})
         self.identifier = kwargs.pop("identifier")
-        self.parent: Optional[Resource] = kwargs.pop("parent", None)
+        self.parent: Optional[Resource] = kwargs.pop("parent", self.properties.get("parent"))
         self._subresource: Optional[str] = kwargs.pop("subresource", "")
         self._existing: bool = kwargs.pop("existing", False)
         if self.parent and not self._subresource:
@@ -397,6 +396,7 @@ class Resource(Generic[ResourcePropertiesType]):  # pylint: disable=too-many-ins
     ) -> Dict[str, Any]:
         # TODO: Better design here? We need to gather Parameters both
         # with and without resolving ComponentFields.
+        # TODO We also need to resolve reource references to a ResourceSymbol.id.
         from ._component import ComponentField
 
         new_props = {}

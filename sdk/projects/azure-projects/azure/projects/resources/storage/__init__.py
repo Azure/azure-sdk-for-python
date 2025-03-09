@@ -6,7 +6,7 @@
 # pylint: disable=arguments-differ
 
 from collections import defaultdict
-from typing import TYPE_CHECKING, Any, Dict, List, Literal, Union, Optional, cast
+from typing import TYPE_CHECKING, Any, Dict, List, Literal, Mapping, Union, Optional, cast
 from typing_extensions import TypeVar, Unpack, TypedDict
 
 from .._identifiers import ResourceIdentifiers
@@ -215,7 +215,9 @@ class StorageAccountKwargs(TypedDict, total=False):
     """Tags of the resource."""
 
 
-StorageAccountResourceType = TypeVar("StorageAccountResourceType", default="StorageAccountResource")
+StorageAccountResourceType = TypeVar(
+    "StorageAccountResourceType", bound=Mapping[str, Any], default="StorageAccountResource"
+)
 _DEFAULT_STORAGE_ACCOUNT: "StorageAccountResource" = {
     "name": GLOBAL_PARAMS["defaultName"],
     "location": GLOBAL_PARAMS["location"],

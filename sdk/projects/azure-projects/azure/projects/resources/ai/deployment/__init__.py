@@ -60,7 +60,7 @@ class DeploymentKwargs(TypedDict, total=False):
 
 _DEFAULT_DEPLOYMENT: "DeploymentResource" = {"name": GLOBAL_PARAMS["defaultName"]}
 _DEFAULT_AI_DEPLOYMENT_EXTENSIONS: ExtensionResources = {"managed_identity_roles": [], "user_roles": []}
-AIDeploymentResourceType = TypeVar("AIDeploymentResourceType", default="DeploymentResource")
+AIDeploymentResourceType = TypeVar("AIDeploymentResourceType", bound=Mapping[str, Any], default="DeploymentResource")
 
 
 class AIDeployment(_ClientResource[AIDeploymentResourceType]):

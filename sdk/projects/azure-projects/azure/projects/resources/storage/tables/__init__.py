@@ -45,7 +45,7 @@ _DEFAULT_TABLE_SERVICE_EXTENSIONS: ExtensionResources = {
     "managed_identity_roles": ["Storage Table Data Contributor"],
     "user_roles": ["Storage Table Data Contributor"],
 }
-TableServiceResourceType = TypeVar("TableServiceResourceType", default="TableServiceResource")
+TableServiceResourceType = TypeVar("TableServiceResourceType", bound=Mapping[str, Any], default="TableServiceResource")
 ClientType = TypeVar("ClientType", default="TableServiceClient")
 
 

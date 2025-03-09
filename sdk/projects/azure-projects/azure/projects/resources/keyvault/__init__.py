@@ -119,7 +119,7 @@ class KeyVaultKwargs(TypedDict, total=False):
     """Resource tags."""
 
 
-KeyVaultResourceType = TypeVar("KeyVaultResourceType", default="KeyVaultResource")
+KeyVaultResourceType = TypeVar("KeyVaultResourceType", bound=Mapping[str, Any], default="KeyVaultResource")
 ClientType = TypeVar("ClientType")
 _DEFAULT_KEY_VAULT: "KeyVaultResource" = {
     "name": GLOBAL_PARAMS["defaultName"],
@@ -211,7 +211,7 @@ class KeyVault(_ClientResource[KeyVaultResourceType]):
     def _build_endpoint(self, *, config_store: Mapping[str, Any]) -> str:
         return f"https://{self._settings['name'](config_store=config_store)}.vault.azure.net/"
 
-    def _outputs(self, *, symbol: ResourceSymbol, **kwargs) -> Dict[str, Output]:
-        outputs = super()._outputs(symbol=symbol, **kwargs)
-        outputs["endpoint"] = Output(f"AZURE_KEYVAULT_ENDPOINT{self._suffix}", "properties.vaultUri", symbol)
+    def _outputs(self, *, symbol: ResourceSymbol, suffix: Optional[str] = None, **kwargs) -> Dict[str, Output]:
+        outputs = super()._outputs(symbol=symbol, suffix=suffix, **kwargs)
+        outputs["endpoint"] = Output(f"AZURE_KEYVAULT_ENDPOINT{suffix or self._suffix}", "properties.vaultUri", symbol)
         return outputs

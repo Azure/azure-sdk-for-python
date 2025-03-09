@@ -164,7 +164,7 @@ output AZURE_AIFOUNDRY_HUB_NAME string = hub_workspace.name
 output AZURE_AIFOUNDRY_HUB_RESOURCE_GROUP string = resourceGroup().name
 
 
-resource connection_xedrqlelyhtxcrfwrxif 'Microsoft.MachineLearningServices/workspaces/connections@2025-01-01-preview' = {
+resource connection_buifsaivbkhdryzkibjl 'Microsoft.MachineLearningServices/workspaces/connections@2025-01-01-preview' = {
   parent: hub_workspace
   properties: {
     authType: 'AAD'
@@ -183,7 +183,7 @@ resource connection_xedrqlelyhtxcrfwrxif 'Microsoft.MachineLearningServices/work
 
 
 
-resource connection_hfpudimwwntoylmqeene 'Microsoft.MachineLearningServices/workspaces/connections@2025-01-01-preview' = {
+resource connection_hmdjuiutdbnirxnlxqbn 'Microsoft.MachineLearningServices/workspaces/connections@2025-01-01-preview' = {
   parent: hub_workspace
   properties: {
     authType: 'AAD'
@@ -236,7 +236,7 @@ output AZURE_AIFOUNDRY_PROJECT_RESOURCE_GROUP string = resourceGroup().name
 output AZURE_AIFOUNDRY_PROJECT_ENDPOINT string = project_workspace.properties.discoveryUrl
 
 
-resource connection_fevfjhqjccofnnzyaakt 'Microsoft.MachineLearningServices/workspaces/connections@2025-01-01-preview' = {
+resource connection_qazdrbswuvwkfewfrwcp 'Microsoft.MachineLearningServices/workspaces/connections@2025-01-01-preview' = {
   parent: project_workspace
   properties: {
     authType: 'AAD'
@@ -255,7 +255,7 @@ resource connection_fevfjhqjccofnnzyaakt 'Microsoft.MachineLearningServices/work
 
 
 
-resource connection_sijgpdkolsbeganjpujf 'Microsoft.MachineLearningServices/workspaces/connections@2025-01-01-preview' = {
+resource connection_vxwdzretqhgneqwxyhbo 'Microsoft.MachineLearningServices/workspaces/connections@2025-01-01-preview' = {
   parent: project_workspace
   properties: {
     authType: 'AAD'

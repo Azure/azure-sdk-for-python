@@ -113,7 +113,7 @@ class ContainerKwargs(TypedDict, total=False):
 
 _DEFAULT_CONTAINER: "ContainerResource" = {"name": GLOBAL_PARAMS["defaultName"]}
 _DEFAULT_CONTAINER_EXTENSIONS: ExtensionResources = {}
-ContainerResourceType = TypeVar("ContainerResourceType", default="ContainerResource")
+ContainerResourceType = TypeVar("ContainerResourceType", bound=Mapping[str, Any], default="ContainerResource")
 ClientType = TypeVar("ClientType", default="ContainerClient")
 
 
@@ -217,13 +217,13 @@ class BlobContainer(_ClientResource[ContainerResourceType]):
         self,
         *,
         symbol: ResourceSymbol,
-        resource_group: Union[str, ResourceSymbol],
+        suffix: Optional[str] = None,
         parents: Tuple[ResourceSymbol, ...],
         **kwargs,
     ) -> Dict[str, Output]:
-        outputs = super()._outputs(symbol=symbol, resource_group=resource_group, **kwargs)
+        outputs = super()._outputs(symbol=symbol, suffix=suffix, **kwargs)
         outputs["endpoint"] = Output(
-            f"AZURE_BLOB_CONTAINER_ENDPOINT{self._suffix}",
+            f"AZURE_BLOB_CONTAINER_ENDPOINT{suffix or self._suffix}",
             Output("", "properties.primaryEndpoints.blob", parents[-1]).format() + outputs["name"].format(),
         )
         return outputs

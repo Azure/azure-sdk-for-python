@@ -155,7 +155,7 @@ class CognitiveServicesKwargs(TypedDict, total=False):
 
 
 CognitiveServicesAccountResourceType = TypeVar(
-    "CognitiveServicesAccountResourceType", default="CognitiveServicesAccountResource"
+    "CognitiveServicesAccountResourceType", bound=Mapping[str, Any], default="CognitiveServicesAccountResource"
 )
 _DEFAULT_COGNITIVE_SERVICES: "CognitiveServicesAccountResource" = {
     "name": GLOBAL_PARAMS["defaultName"],
@@ -322,10 +322,10 @@ class CognitiveServicesAccount(_ClientResource[CognitiveServicesAccountResourceT
             else:
                 yield field
 
-    def _outputs(self, *, symbol: ResourceSymbol, **kwargs) -> Dict[str, Output]:
-        outputs = super()._outputs(symbol=symbol, **kwargs)
+    def _outputs(self, *, symbol: ResourceSymbol, suffix: Optional[str] = None, **kwargs) -> Dict[str, Output]:
+        outputs = super()._outputs(symbol=symbol, suffix=suffix, **kwargs)
         outputs["endpoint"] = Output(
-            f"AZURE_{self._prefixes[0].upper()}_ENDPOINT{self._suffix}", "properties.endpoint", symbol
+            f"AZURE_{self._prefixes[0].upper()}_ENDPOINT{suffix or self._suffix}", "properties.endpoint", symbol
         )
         return outputs
 

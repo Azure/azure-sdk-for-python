@@ -6,7 +6,7 @@
 # pylint: disable=arguments-differ
 
 from collections import defaultdict
-from typing import TYPE_CHECKING, Any, Literal, Union, Optional, Dict, cast
+from typing import TYPE_CHECKING, Any, Literal, Mapping, Union, Optional, Dict, cast
 from typing_extensions import TypeVar, Unpack, TypedDict
 
 from .._identifiers import ResourceIdentifiers
@@ -28,7 +28,9 @@ class UserAssignedIdentityKwargs(TypedDict, total=False):
     """Tags of the Resource Group."""
 
 
-UserAssignedIdentityResourceType = TypeVar("UserAssignedIdentityResourceType", default="UserAssignedIdentityResource")
+UserAssignedIdentityResourceType = TypeVar(
+    "UserAssignedIdentityResourceType", bound=Mapping[str, Any], default="UserAssignedIdentityResource"
+)
 _DEFAULT_USER_ASSIGNED_IDENTITY: "UserAssignedIdentityResource" = {
     "location": GLOBAL_PARAMS["location"],
     "tags": GLOBAL_PARAMS["azdTags"],
@@ -92,7 +94,7 @@ class UserAssignedIdentity(Resource[UserAssignedIdentityResourceType]):
         symbol = super()._build_symbol()
         return ResourceSymbol(symbol._value, principal_id=True)  # pylint: disable=protected-access
 
-    def _outputs(self, symbol, **kwargs) -> Dict[str, Output]:  # pylint: disable=unused-argument
+    def _outputs(self, **kwargs) -> Dict[str, Output]:
         # TODO: This results in duplicate outputs if there's multiple identities.
         # Not sure if it's really needed as most people wont be using managedidentitycredential locally.
         # return {'client_id': Output("AZURE_CLIENT_ID", "properties.clientId", symbol)}

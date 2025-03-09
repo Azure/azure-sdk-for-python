@@ -133,7 +133,9 @@ class SearchServiceKwargs(TypedDict, total=False):
     """Tags to help categorize the resource in the Azure portal."""
 
 
-SearchServiceResourceType = TypeVar("SearchServiceResourceType", default="SearchServiceResource")
+SearchServiceResourceType = TypeVar(
+    "SearchServiceResourceType", bound=Mapping[str, Any], default="SearchServiceResource"
+)
 ClientType = TypeVar("ClientType", default="SearchIndexClient")
 _DEFAULT_SEARCH_SERVICE: "SearchServiceResource" = {
     "name": GLOBAL_PARAMS["defaultName"],
@@ -229,10 +231,13 @@ class SearchService(_ClientResource[SearchServiceResourceType]):
     def _build_endpoint(self, *, config_store: Mapping[str, Any]) -> str:
         return f"https://{self._settings['name'](config_store=config_store)}.search.windows.net/"
 
-    def _outputs(self, *, symbol: ResourceSymbol, **kwargs) -> Dict[str, Output]:  # type: ignore[override]
-        outputs = super()._outputs(symbol=symbol, **kwargs)
+    def _outputs(  # type: ignore[override]
+        self, *, symbol: ResourceSymbol, suffix: Optional[str] = None, **kwargs
+    ) -> Dict[str, Output]:
+        outputs = super()._outputs(symbol=symbol, suffix=suffix, **kwargs)
         outputs["endpoint"] = Output(
-            f"AZURE_SEARCH_ENDPOINT{self._suffix}", Output("", "name", symbol).format("https://{}.search.windows.net/")
+            f"AZURE_SEARCH_ENDPOINT{suffix or self._suffix}",
+            Output("", "name", symbol).format("https://{}.search.windows.net/"),
         )
         return outputs
 

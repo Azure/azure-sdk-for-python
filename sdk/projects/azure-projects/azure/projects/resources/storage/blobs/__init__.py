@@ -78,7 +78,7 @@ _DEFAULT_BLOB_SERVICE_EXTENSIONS: ExtensionResources = {
     "managed_identity_roles": ["Storage Blob Data Contributor"],
     "user_roles": ["Storage Blob Data Contributor"],
 }
-BlobServiceResourceType = TypeVar("BlobServiceResourceType", default="BlobServiceResource")
+BlobServiceResourceType = TypeVar("BlobServiceResourceType", bound=Mapping[str, Any], default="BlobServiceResource")
 ClientType = TypeVar("ClientType", default="BlobServiceClient")
 
 

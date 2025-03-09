@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Dict, Literal, Union, Optional
+from typing import TYPE_CHECKING, Any, Dict, Literal, Mapping, Union, Optional
 from typing_extensions import TypeVar
 
 from ..._identifiers import ResourceIdentifiers
@@ -18,7 +18,9 @@ if TYPE_CHECKING:
 
 
 _DEFAULT_ROLE_ASSIGNMENT: "RoleAssignmentResource" = {}
-RoleAssignmentResourceType = TypeVar("RoleAssignmentResourceType", default="RoleAssignmentResource")
+RoleAssignmentResourceType = TypeVar(
+    "RoleAssignmentResourceType", bound=Mapping[str, Any], default="RoleAssignmentResource"
+)
 
 
 class RoleAssignment(Resource[RoleAssignmentResourceType]):

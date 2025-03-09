@@ -35,7 +35,9 @@ class ResourceGroupKwargs(TypedDict, total=False):
     """Tags of the Resource Group."""
 
 
-ResourceGroupResourceType = TypeVar("ResourceGroupResourceType", default="ResourceGroupResource")
+ResourceGroupResourceType = TypeVar(
+    "ResourceGroupResourceType", bound=Mapping[str, Any], default="ResourceGroupResource"
+)
 
 
 class ResourceGroup(Resource[ResourceGroupResourceType]):
