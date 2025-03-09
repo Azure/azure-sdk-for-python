@@ -17,30 +17,31 @@ USAGE:
     python file_samples_directory_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
 import asyncio
 import os
 import sys
 
-SOURCE_FILE = './SampleSource.txt'
-DEST_FILE = './SampleDestination.txt'
+current_dir = os.path.dirname(os.path.abspath(__file__))
+DEST_FILE = os.path.join(current_dir, "SampleDestination.txt")
+SOURCE_FILE = os.path.join(current_dir, "SampleSource.txt")
 
 
 class DirectorySamplesAsync(object):
 
-    connection_string = os.getenv('AZURE_STORAGE_CONNECTION_STRING')
+    connection_string = os.getenv('STORAGE_CONNECTION_STRING')
 
     async def create_directory_and_file_async(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: create_directory_and_file_async")
             sys.exit(1)
 
         # Instantiate the ShareClient from a connection string
         from azure.storage.fileshare.aio import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, "directorysamples1")
+        share = ShareClient.from_connection_string(self.connection_string, "directorysamples1async")
 
         # Create the share
         async with share:
@@ -75,13 +76,13 @@ class DirectorySamplesAsync(object):
 
     async def create_subdirectory_and_file_async(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: create_subdirectory_and_file_async")
             sys.exit(1)
 
         # Instantiate the ShareClient from a connection string
         from azure.storage.fileshare.aio import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, "directorysamples2")
+        share = ShareClient.from_connection_string(self.connection_string, "directorysamples2async")
 
         # Create the share
         async with share:
@@ -127,13 +128,13 @@ class DirectorySamplesAsync(object):
 
     async def get_subdirectory_client_async(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: get_subdirectory_client_async")
             sys.exit(1)
 
         # Instantiate the ShareClient from a connection string
         from azure.storage.fileshare.aio import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, "directorysamples3")
+        share = ShareClient.from_connection_string(self.connection_string, "directorysamples3async")
 
         # Create the share
         async with share:
