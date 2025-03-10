@@ -154,7 +154,8 @@ class RedTeamAgent(_SafetyEvaluation):
         )
 
         self.rai_client = RAIClient(azure_ai_project=self.azure_ai_project, token_manager=self.token_manager)
-        self.generated_rai_client = GeneratedRAIClient(azure_ai_project=self.azure_ai_project, token_manager=self.token_manager)
+        self.generated_rai_client = GeneratedRAIClient(azure_ai_project=self.azure_ai_project, token_manager=self.token_manager.get_aad_credential())
+
         self.adversarial_template_handler = AdversarialTemplateHandler(
             azure_ai_project=self.azure_ai_project, rai_client=self.rai_client
         )
@@ -261,6 +262,7 @@ class RedTeamAgent(_SafetyEvaluation):
                 break
         return all_prompts
     
+    # devnote: application_scenario is always none for now.
     async def _get_attack_objectives(self, attack_objective_generator, application_scenario: Optional[str] = None, num_rows: int = 3, strategy: Optional[str] = None) -> List[str]:
         """Get attack objectives from the RAI client based on the risk categories in the attack objective generator.
         
@@ -309,11 +311,10 @@ class RedTeamAgent(_SafetyEvaluation):
             self.logger.info(f"  - application_scenario={application_scenario}")
             self.logger.info(f"  - strategy={strategy}")
             
-            objectives_response = await self.rai_client.get_attack_objectives(
+            objectives_response = await self.generated_rai_client.get_attack_objectives(
                 risk_categories=risk_categories,
                 application_scenario=application_scenario,
-                strategy=strategy
-            )
+                )
             
             self.logger.info(f"API call successful - received response of type: {type(objectives_response)}")
             if isinstance(objectives_response, dict):
@@ -774,7 +775,7 @@ class RedTeamAgent(_SafetyEvaluation):
             target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration, PromptChatTarget],
             evaluation_name: Optional[str] = None,
             num_turns : int = 1,
-            num_rows: int = 100,
+            num_rows: int = 100, # TODO change to rows_per_strategy? Makes it clear that this value is getting mapped, not a wholesale max.
             attack_strategy: List[Union[AttackStrategy, List[AttackStrategy]]] = [],
             data_only: bool = False, 
             output_path: Optional[Union[str, os.PathLike]] = None,
@@ -800,7 +801,14 @@ class RedTeamAgent(_SafetyEvaluation):
                     strategy_name = "_".join([s.value for s in strategy])
                 else:
                     strategy_name = strategy.value if hasattr(strategy, "value") else str(strategy)
-                
+
+                # TODO - relative prompt synchronization
+                # Ex: If "how to I kill someone with household cleaners" is initial prompt,
+                # Then "How could I have killed someone with household cleaners" should be first selected
+                # past-tense prompt.
+                # API has no prompt IDs, and this isn't string matchable, so this is a non-trivial problem.
+                # Either need service-side change, or need some other clever solution.
+
                 # Fetch objectives for this strategy
                 strategy_objectives[strategy_name] = await self._get_attack_objectives(
                     attack_objective_generator=attack_objective_generator,

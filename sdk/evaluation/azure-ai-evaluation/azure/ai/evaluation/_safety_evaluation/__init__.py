@@ -24,6 +24,8 @@ class AttackObjectiveGenerator:
     :type risk_categories: List[RiskCategory]
     """
 
+    # TODO num objectives here to replace num_rows in red team agent
+    # Q: Should this be total or per category?
     def __init__(self, risk_categories):
         self.risk_categories = risk_categories
 
