@@ -5,7 +5,7 @@
 ### Features Added
 
 - Support `syntheticSource` from `user_agent.synthetic.type` semantic convention
-  ([#39886](https://github.com/Azure/azure-sdk-for-python/pull/39886))
+  ([#40004](https://github.com/Azure/azure-sdk-for-python/pull/40004))
 
 ### Breaking Changes
 
