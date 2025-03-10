@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 from ._http_response_impl_async import AsyncHttpResponseImpl
 from ._requests_basic import _RestRequestsTransportResponseBase
 from ..pipeline.transport._requests_asyncio import AsyncioStreamDownloadGenerator
