@@ -43,7 +43,7 @@ def my_custom_logger(logger_name, level=logging.DEBUG):
 def ensure_directories():
     """Create necessary directories for file organization."""
     base_dir = Path(__file__).parent
-    dirs = ['test_files', 'fixed_files', 'backup_files', 'fixed_files_without_comments', 'test_files_without_comment']
+    dirs = ['test_files', 'fixed_files', 'backup_files', 'fixed_files_without_comments', 'test_files_without_comment', 'output_logs']
     for dir_name in dirs:
         (base_dir / dir_name).mkdir(exist_ok=True)
     return base_dir
@@ -122,9 +122,12 @@ def fix_file(file_path: str, logger) -> dict:
         # Remove any markdown code blocks if they exist
         fixed_content = fixed_content.replace('```python', '').replace('```', '').strip()
 
+        logger.debug(f"FIXED CONTENT: {fixed_content}")
+
         # Write fixed content to fixed_files directory
         with open(fixed_path, 'w', encoding='utf-8') as f:
             f.write(fixed_content)
+            f.write("\n")  # Ensure a newline at the end of the file
 
         return {
             'status': 'success',
@@ -174,6 +177,7 @@ def run_pylint(file_path: str, logger) -> dict:
                 f'--rcfile={pylintrc_path}',
                 '--output-format=json'
             ],
+            reporter=reporter,
             exit=False
         )
 
@@ -224,9 +228,8 @@ def get_azure_llm_issue_creation(prompt: str) -> str:
 if __name__ == "__main__":
     ensure_directories()
     test_cases = get_test_cases_from_github()
-    
+    next = uuid.uuid4()
     for test_case in test_cases:
-        next = uuid.uuid4()
         logger = my_custom_logger(f"Logger_{test_case['name']}_{next}.log")
         logger.debug(test_case['name'])
         file_path = Path(__file__).parent / 'test_files' / test_case['name']
@@ -251,6 +254,10 @@ if __name__ == "__main__":
         else:
             logger.debug(f"Error fixing file {file_path}: {result['error']}")
     
-    for key, value in pylint_scores.items():
-        print(f"{key}: {value}")
-        print("-----"*80)
+    base_dir = Path(__file__).parent
+    with open(f"{base_dir}/output_logs/final_{next}", 'w', encoding='utf-8') as f:
+        for key, value in pylint_scores.items():
+            f.write(f"{key}: {value}")
+            f.write("\n")
+            f.write("-----"*80)
+            f.write("\n")
