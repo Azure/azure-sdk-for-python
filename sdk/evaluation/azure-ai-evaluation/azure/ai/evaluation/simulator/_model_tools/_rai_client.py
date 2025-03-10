@@ -227,6 +227,7 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
             "riskTypes": ",".join(risk_categories),
             "lang": "en"  # Default to English
         }
+
         # Add strategy parameter if provided
         if strategy:
             params["strategy"] = strategy
