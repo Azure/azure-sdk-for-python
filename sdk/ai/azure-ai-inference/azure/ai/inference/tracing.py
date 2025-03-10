@@ -208,7 +208,7 @@ class _AIInferenceInstrumentorPreview:
                     f"gen_ai.{message.get('role')}.message",
                     {
                         "gen_ai.system": _INFERENCE_GEN_AI_SYSTEM_NAME,
-                        "gen_ai.event.content": json.dumps(message),
+                        "gen_ai.event.content": json.dumps(message, ensure_ascii=False),
                     },
                     timestamp,
                 )
@@ -300,7 +300,7 @@ class _AIInferenceInstrumentorPreview:
                     full_response["message"]["tool_calls"] = [tool.as_dict() for tool in choice.message.tool_calls]
                 attributes = {
                     "gen_ai.system": _INFERENCE_GEN_AI_SYSTEM_NAME,
-                    "gen_ai.event.content": json.dumps(full_response),
+                    "gen_ai.event.content": json.dumps(full_response, ensure_ascii=False),
                 }
             else:
                 response: Dict[str, Any] = {
@@ -318,7 +318,7 @@ class _AIInferenceInstrumentorPreview:
 
                 attributes = {
                     "gen_ai.system": _INFERENCE_GEN_AI_SYSTEM_NAME,
-                    "gen_ai.event.content": json.dumps(response),
+                    "gen_ai.event.content": json.dumps(response, ensure_ascii=False),
                 }
             last_event_timestamp_ns = self._record_event(span, "gen_ai.choice", attributes, last_event_timestamp_ns)
 
@@ -478,7 +478,7 @@ class _AIInferenceInstrumentorPreview:
                                     )
                     attributes = {
                         "gen_ai.system": _INFERENCE_GEN_AI_SYSTEM_NAME,
-                        "gen_ai.event.content": json.dumps(accumulate),
+                        "gen_ai.event.content": json.dumps(accumulate, ensure_ascii=False),
                     }
                     self._instrumentor._record_event(span, "gen_ai.choice", attributes, previous_event_timestamp)
                     span.finish()
@@ -532,7 +532,7 @@ class _AIInferenceInstrumentorPreview:
                                 self._accumulate["message"]["tool_calls"] = list(tools_no_recording)
                 attributes = {
                     "gen_ai.system": _INFERENCE_GEN_AI_SYSTEM_NAME,
-                    "gen_ai.event.content": json.dumps(self._accumulate),
+                    "gen_ai.event.content": json.dumps(self._accumulate, ensure_ascii=False),
                 }
                 self._last_event_timestamp_ns = self._instrumentor._record_event(  # pylint: disable=protected-access, line-too-long # pyright: ignore [reportFunctionMemberAccess]
                     span, "gen_ai.choice", attributes, self._last_event_timestamp_ns
