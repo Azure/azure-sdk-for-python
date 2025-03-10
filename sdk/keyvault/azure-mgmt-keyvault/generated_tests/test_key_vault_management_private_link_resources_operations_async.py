@@ -21,11 +21,11 @@ class TestKeyVaultManagementPrivateLinkResourcesOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_vault(self, resource_group):
+    async def test_private_link_resources_list_by_vault(self, resource_group):
         response = await self.client.private_link_resources.list_by_vault(
             resource_group_name=resource_group.name,
             vault_name="str",
-            api_version="2023-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
