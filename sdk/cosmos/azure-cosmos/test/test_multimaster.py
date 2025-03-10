@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-
+import traceback
 import unittest
 import uuid
 
@@ -22,8 +22,6 @@ class TestMultiMaster(unittest.TestCase):
     last_headers = []
     configs = test_config.TestConfig
 
-    # TODO: @tvaron3 debug later
-    @pytest.mark.skip
     def test_tentative_writes_header_present(self):
         self.last_headers = []
         self.EnableMultipleWritableLocations = True
@@ -119,6 +117,9 @@ class TestMultiMaster(unittest.TestCase):
             return {constants._Constants.EnableMultipleWritableLocations: self.EnableMultipleWritableLocations}, {}
         else:
             if len(args) > 0:
+                print("Args: ", args)
+                print("kwargs: ", kwargs)
+                traceback.print_stack()
                 self.last_headers.append(HttpHeaders.AllowTentativeWrites in args[4].headers
                                          and args[4].headers[HttpHeaders.AllowTentativeWrites] == 'true')
             return self.OriginalExecuteFunction(function, *args, **kwargs)

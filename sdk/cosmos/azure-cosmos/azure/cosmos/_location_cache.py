@@ -25,7 +25,7 @@ DatabaseAccount with multiple writable and readable locations.
 import collections
 import logging
 import time
-from typing import Set, Any
+from typing import Set
 from urllib.parse import urlparse
 
 from . import documents
@@ -125,7 +125,7 @@ def _get_health_check_endpoints(
     # only check 2 read regions and 2 write regions
     region_count = 2
     # should use the endpoints in the order returned from gateway and only the ones specified in preferred locations
-    endpoints: set[Any] = set()
+    endpoints: Set[str] = set()
     i = 0
     preferred_endpoints = {context.get_primary() for context in regional_routing_contexts}.union(
         {context.get_alternate() for context in regional_routing_contexts}
