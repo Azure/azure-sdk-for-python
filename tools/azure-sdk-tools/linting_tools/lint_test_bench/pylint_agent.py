@@ -159,10 +159,11 @@ def run_pylint(file_path: str) -> dict:
         )
 
         print(f"PYLINT SCORE: {results.linter.stats.global_note}")
+        pylint_name = file_path.split("/")[-1].split(".py")[0]
         try:
-            pylint_scores[file_path.split("/")[-1]].append(results.linter.stats.global_note)
+            pylint_scores[pylint_name].append(results.linter.stats.global_note)
         except:
-            pylint_scores[file_path.split("/")[-1]] = [results.linter.stats.global_note]
+            pylint_scores[pylint_name] = [results.linter.stats.global_note]
 
         # Parse JSON output
         # result = json.loads(output.getvalue())
