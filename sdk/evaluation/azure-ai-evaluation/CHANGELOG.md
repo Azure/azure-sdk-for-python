@@ -7,6 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fixed error in `GroundednessProEvaluator` when handling non-numeric values like "n/a" returned from the service.
 
 ### Other Changes
 
