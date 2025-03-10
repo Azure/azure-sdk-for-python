@@ -1,13 +1,12 @@
 from azure.identity import DefaultAzureCredential
 from openai import AzureOpenAI
 import os
-import re
-import base64
+import logging
+import sys
+import uuid
 from azure.identity import get_bearer_token_provider
 from pathlib import Path
 from datetime import datetime
-import shutil
-import json
 
 token_provider = get_bearer_token_provider(
     DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"
@@ -20,6 +19,26 @@ client = AzureOpenAI(
 )
 
 pylint_scores = {}
+
+
+def my_custom_logger(logger_name, level=logging.DEBUG):
+    """
+    Method to return a custom logger with the given name and level
+    """
+    logger = logging.getLogger(logger_name)
+    logger.setLevel(level)
+    format_string = ("%(asctime)s — %(name)s — %(levelname)s — %(funcName)s:"
+                    "%(lineno)d — %(message)s")
+    log_format = logging.Formatter(format_string)
+    # Creating and adding the console handler
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setFormatter(log_format)
+    logger.addHandler(console_handler)
+    # Creating and adding the file handler
+    file_handler = logging.FileHandler(logger_name, mode='a')
+    file_handler.setFormatter(log_format)
+    logger.addHandler(file_handler)
+    return logger
 
 def ensure_directories():
     """Create necessary directories for file organization."""
@@ -59,7 +78,7 @@ def get_test_cases_from_github():
         print(f"Error reading test cases from local directory: {e}")
         return []
 
-def fix_file(file_path: str) -> dict:
+def fix_file(file_path: str, logger) -> dict:
     """
     Fix pylint issues in the given file and save the changes.
     Args:
@@ -86,7 +105,7 @@ def fix_file(file_path: str) -> dict:
         # added "run pylint"
         fix_file_prompt = "You are a helpful assistant that fixes pylint warnings and custom pylint warnings from these rules: https://github.com/Azure/azure-sdk-tools/blob/main/tools/pylint-extensions/azure-pylint-guidelines-checker/pylint_guidelines_checker.py. \
                  Given a python file that has a pylint issue, you will identify the issue and output ONLY the fixed code. Any explainations need to be outputted as python comments."
-        print(f"PROMPT FOR FIXING FILE: {fix_file_prompt}")
+        logger.debug(f"PROMPT FOR FIXING FILE: {fix_file_prompt}")
         
 
         # Get fixed content from Azure OpenAI
@@ -124,7 +143,7 @@ def fix_file(file_path: str) -> dict:
             'file': file_path
         }
 
-def run_pylint(file_path: str) -> dict:
+def run_pylint(file_path: str, logger) -> dict:
     """
     Run pylint on the given file using the project's pylintrc configuration.
     Args:
@@ -158,7 +177,7 @@ def run_pylint(file_path: str) -> dict:
             exit=False
         )
 
-        print(f"PYLINT SCORE: {results.linter.stats.global_note}")
+        logger.debug(f"PYLINT SCORE: {results.linter.stats.global_note}")
         pylint_name = file_path.split("/")[-1].split(".py")[0]
         try:
             pylint_scores[pylint_name].append(results.linter.stats.global_note)
@@ -207,28 +226,30 @@ if __name__ == "__main__":
     test_cases = get_test_cases_from_github()
     
     for test_case in test_cases:
+        next = uuid.uuid4()
+        logger = my_custom_logger(f"Logger_{test_case['name']}_{next}.log")
+        logger.debug(test_case['name'])
         file_path = Path(__file__).parent / 'test_files' / test_case['name']
         # file_path = Path(__file__).parent / 'test_files_without_comment' / test_case['name']
         
         # Fix the file and get results
-        result = fix_file(str(file_path))
+        result = fix_file(str(file_path), logger)
       
         if result['status'] == 'success':
-            print("-----"*80)
-            print(f"Fixed file: {result['fixed_file']}")
-            # print(f"Backup created at: {result['backup_file']}")
-            print("-----"*80)
+            logger.debug("-----"*80)
+            logger.debug(f"Fixed file: {result['fixed_file']}")
+            logger.debug("-----"*80)
             
             # Run pylint on both original and fixed files
-            print("Running pylint on original file...")
-            original_pylint = run_pylint(str(file_path))
-            print("-----"*80)
-            print("Running pylint on fixed file...")
-            fixed_pylint = run_pylint(str(result['fixed_file']))
-            print("-----"*80)
-            print("\n\n\n")     
+            logger.debug("Running pylint on original file...")
+            original_pylint = run_pylint(str(file_path), logger)
+            logger.debug("-----"*80)
+            logger.debug("Running pylint on fixed file...")
+            fixed_pylint = run_pylint(str(result['fixed_file']), logger)
+            logger.debug("-----"*80)
+            logger.debug("\n\n\n")     
         else:
-            print(f"Error fixing file {file_path}: {result['error']}")
+            logger.debug(f"Error fixing file {file_path}: {result['error']}")
     
     for key, value in pylint_scores.items():
         print(f"{key}: {value}")
