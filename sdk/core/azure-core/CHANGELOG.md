@@ -1,6 +1,6 @@
 # Release History
 
-## 1.33.0 (Unreleased)
+## 1.33.0 (2025-03-10)
 
 ### Features Added
 
@@ -26,8 +26,6 @@
 - Renamed span attributes in `DistributedTracingPolicy`:
     - "x-ms-client-request-id" is now "az.client_request_id"
     - "x-ms-request-id" is now "az.service_request_id"
-
-### Bugs Fixed
 
 ### Other Changes
 
