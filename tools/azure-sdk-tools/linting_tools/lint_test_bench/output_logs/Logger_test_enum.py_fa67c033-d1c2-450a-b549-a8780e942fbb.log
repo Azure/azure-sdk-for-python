@@ -1,0 +1,33 @@
+2025-03-10 16:29:30,162 — Logger_test_enum.py_fa67c033-d1c2-450a-b549-a8780e942fbb.log — DEBUG — <module>:209 — test_enum.py
+2025-03-10 16:29:30,163 — Logger_test_enum.py_fa67c033-d1c2-450a-b549-a8780e942fbb.log — DEBUG — fix_file:105 — PROMPT FOR FIXING FILE: You are a helpful assistant that fixes pylint warnings. If you are not sure about a specific pylint error, you can check the pylint specific guidelines from the readme: https://github.com/Azure/azure-sdk-tools/blob/5e36502f0161bf3e2bc824ac216d4c0d244f498a/tools/pylint-extensions/azure-pylint-guidelines-checker/README.md,or the pylint documentation: https://pylint.readthedocs.io/en/stable/user_guide/checkers/features.html.Given a python file that has pylint issues, identify the issues and output ONLY the fixed code. For help, there is a comment that specifies which rules are being violated in each file.
+2025-03-10 16:29:30,163 — Logger_test_enum.py_fa67c033-d1c2-450a-b549-a8780e942fbb.log — DEBUG — fix_file:106 — MODEL: gpt-4o
+2025-03-10 16:29:32,546 — Logger_test_enum.py_fa67c033-d1c2-450a-b549-a8780e942fbb.log — DEBUG — fix_file:123 — FIXED CONTENT: # --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
+
+# This code violates enum-must-be-uppercase and enum-must-inherit-case-insensitive-enum-meta
+
+class MyBadEnum2(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    ONE = "one"
+
+class MyGoodEnum2(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    ONE = "one"
+
+class MyBadEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    ONE = "one"
+2025-03-10 16:29:32,547 — Logger_test_enum.py_fa67c033-d1c2-450a-b549-a8780e942fbb.log — DEBUG — <module>:217 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-10 16:29:32,547 — Logger_test_enum.py_fa67c033-d1c2-450a-b549-a8780e942fbb.log — DEBUG — <module>:218 — Fixed file: /home/llawrence/repos/azure-sdk-for-python/tools/azure-sdk-tools/linting_tools/lint_test_bench/fixed_files/test_enum.py_fixed.20250310_162930.py
+2025-03-10 16:29:32,547 — Logger_test_enum.py_fa67c033-d1c2-450a-b549-a8780e942fbb.log — DEBUG — <module>:219 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-10 16:29:32,547 — Logger_test_enum.py_fa67c033-d1c2-450a-b549-a8780e942fbb.log — DEBUG — <module>:222 — Running pylint on original file...
+2025-03-10 16:29:32,664 — Logger_test_enum.py_fa67c033-d1c2-450a-b549-a8780e942fbb.log — DEBUG — run_pylint:181 — PYLINT SCORE: 6.25
+2025-03-10 16:29:32,664 — Logger_test_enum.py_fa67c033-d1c2-450a-b549-a8780e942fbb.log — DEBUG — <module>:224 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-10 16:29:32,664 — Logger_test_enum.py_fa67c033-d1c2-450a-b549-a8780e942fbb.log — DEBUG — <module>:225 — Running pylint on fixed file...
+2025-03-10 16:29:32,705 — Logger_test_enum.py_fa67c033-d1c2-450a-b549-a8780e942fbb.log — DEBUG — run_pylint:181 — PYLINT SCORE: 10.0
+2025-03-10 16:29:32,706 — Logger_test_enum.py_fa67c033-d1c2-450a-b549-a8780e942fbb.log — DEBUG — <module>:227 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-10 16:29:32,706 — Logger_test_enum.py_fa67c033-d1c2-450a-b549-a8780e942fbb.log — DEBUG — <module>:228 — 
+
+
+

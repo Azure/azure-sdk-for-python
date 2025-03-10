@@ -1,0 +1,48 @@
+2025-03-10 16:29:15,807 — Logger_test_lro_poller.py_fa67c033-d1c2-450a-b549-a8780e942fbb.log — DEBUG — <module>:209 — test_lro_poller.py
+2025-03-10 16:29:15,807 — Logger_test_lro_poller.py_fa67c033-d1c2-450a-b549-a8780e942fbb.log — DEBUG — fix_file:105 — PROMPT FOR FIXING FILE: You are a helpful assistant that fixes pylint warnings. If you are not sure about a specific pylint error, you can check the pylint specific guidelines from the readme: https://github.com/Azure/azure-sdk-tools/blob/5e36502f0161bf3e2bc824ac216d4c0d244f498a/tools/pylint-extensions/azure-pylint-guidelines-checker/README.md,or the pylint documentation: https://pylint.readthedocs.io/en/stable/user_guide/checkers/features.html.Given a python file that has pylint issues, identify the issues and output ONLY the fixed code. For help, there is a comment that specifies which rules are being violated in each file.
+2025-03-10 16:29:15,807 — Logger_test_lro_poller.py_fa67c033-d1c2-450a-b549-a8780e942fbb.log — DEBUG — fix_file:106 — MODEL: gpt-4o
+2025-03-10 16:29:19,103 — Logger_test_lro_poller.py_fa67c033-d1c2-450a-b549-a8780e942fbb.log — DEBUG — fix_file:123 — FIXED CONTENT: # --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+from typing import Dict, List, Any
+from azure.core.polling import LROPoller
+from azure.core.tracing.decorator import distributed_trace
+
+# This code violates client-lro-methods-use-polling and client-method-missing-tracing-decoration
+
+class Some1Client():
+    @distributed_trace
+    def begin_thing(self, **kwargs) -> LROPoller:
+        return LROPoller(self, kwargs.get("some_key"), kwargs.get("some_other_key"), kwargs.get("some_third_key"))
+
+    @distributed_trace
+    def begin_thing2(self, **kwargs) -> LROPoller:
+        return LROPoller(self, kwargs.get("some_key"), kwargs.get("some_other_key"), kwargs.get("some_third_key"))
+
+    def poller(self, **kwargs) -> LROPoller:  # Adding poller method to both classes to adhere to client-lro-methods-use-polling
+        return LROPoller(self, kwargs.get("some_key"), kwargs.get("some_other_key"), kwargs.get("some_third_key"))
+
+
+class Some2Client():
+    def begin_thing(self) -> List[str]:
+        return []
+
+    def begin_thing2(self) -> Dict[str, Any]:
+        return {}
+
+    def poller(self, **kwargs) -> LROPoller:
+        return LROPoller(self, kwargs.get("some_key"), kwargs.get("some_other_key"), kwargs.get("some_third_key"))
+2025-03-10 16:29:19,104 — Logger_test_lro_poller.py_fa67c033-d1c2-450a-b549-a8780e942fbb.log — DEBUG — <module>:217 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-10 16:29:19,104 — Logger_test_lro_poller.py_fa67c033-d1c2-450a-b549-a8780e942fbb.log — DEBUG — <module>:218 — Fixed file: /home/llawrence/repos/azure-sdk-for-python/tools/azure-sdk-tools/linting_tools/lint_test_bench/fixed_files/test_lro_poller.py_fixed.20250310_162915.py
+2025-03-10 16:29:19,104 — Logger_test_lro_poller.py_fa67c033-d1c2-450a-b549-a8780e942fbb.log — DEBUG — <module>:219 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-10 16:29:19,104 — Logger_test_lro_poller.py_fa67c033-d1c2-450a-b549-a8780e942fbb.log — DEBUG — <module>:222 — Running pylint on original file...
+2025-03-10 16:29:19,374 — Logger_test_lro_poller.py_fa67c033-d1c2-450a-b549-a8780e942fbb.log — DEBUG — run_pylint:181 — PYLINT SCORE: 8.0
+2025-03-10 16:29:19,375 — Logger_test_lro_poller.py_fa67c033-d1c2-450a-b549-a8780e942fbb.log — DEBUG — <module>:224 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-10 16:29:19,375 — Logger_test_lro_poller.py_fa67c033-d1c2-450a-b549-a8780e942fbb.log — DEBUG — <module>:225 — Running pylint on fixed file...
+2025-03-10 16:29:19,424 — Logger_test_lro_poller.py_fa67c033-d1c2-450a-b549-a8780e942fbb.log — DEBUG — run_pylint:181 — PYLINT SCORE: 8.235294117647058
+2025-03-10 16:29:19,424 — Logger_test_lro_poller.py_fa67c033-d1c2-450a-b549-a8780e942fbb.log — DEBUG — <module>:227 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-10 16:29:19,424 — Logger_test_lro_poller.py_fa67c033-d1c2-450a-b549-a8780e942fbb.log — DEBUG — <module>:228 — 
+
+
+
