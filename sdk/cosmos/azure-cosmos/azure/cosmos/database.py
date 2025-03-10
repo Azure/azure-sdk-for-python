@@ -353,7 +353,6 @@ class DatabaseProxy(object):
             container_proxy = self.get_container_client(id)
             container_proxy.read(
                 populate_query_metrics=populate_query_metrics,
-                session_token=session_token,
                 initial_headers=initial_headers,
                 **kwargs
             )

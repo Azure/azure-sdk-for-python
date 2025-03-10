@@ -166,8 +166,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be retrieved.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be retrieved.
             This includes if the container does not exist.
         :returns: Dict representing the retrieved container.
         :rtype: dict[str, Any]
@@ -219,8 +219,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :param str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
-        :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]        :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
@@ -282,7 +282,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[Dict[str, str], Dict[str, Any]]
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
@@ -354,7 +354,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             or 'continuation' token.
         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[Dict[str, str], Dict[str, Any]]
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
@@ -369,7 +369,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
-            response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]] = None,
+            response_hook: Optional[Callable[[Dict[str, str], Dict[str, Any]], None]] = None,
             **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
 
@@ -393,7 +393,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             or 'continuation' token.
         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[Dict[str, str], Dict[str, Any]]
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
@@ -406,7 +406,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             continuation: str,
             max_item_count: Optional[int] = None,
             priority: Optional[Literal["High", "Low"]] = None,
-            response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]] = None,
+            response_hook: Optional[Callable[[Dict[str, str], Dict[str, Any]], None]] = None,
             **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
@@ -419,7 +419,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :paramtype priority: Literal["High", "Low"]
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[Dict[str, str], Dict[str, Any]]
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
@@ -433,7 +433,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
-            response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]] = None,
+            response_hook: Optional[Callable[[Dict[str, str], Dict[str, Any]], None]] = None,
             **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed in the entire container,
@@ -456,7 +456,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             or 'continuation' token.
         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[Dict[str, str], Dict[str, Any]]
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
@@ -491,7 +491,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             or 'continuation' token.
         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[Dict[str, str], Dict[str, Any]]
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :param Any args: args
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[Dict[str, Any]]
@@ -576,7 +576,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[Dict[str, str], Dict[str, Any]]
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :keyword int continuation_token_limit: The size limit in kb of the response continuation token in the query
             response. Valid values are positive integers.
             A value of 0 is the same as not passing a value (default no limit).
@@ -696,7 +696,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
@@ -766,7 +767,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :param str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
@@ -842,7 +844,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
@@ -916,7 +919,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
@@ -980,7 +984,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :returns: A CosmosList representing the items after the batch operations went through.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The batch failed to execute.
         :raises ~azure.cosmos.exceptions.CosmosBatchOperationError: A transactional batch operation failed in the batch.
@@ -1035,7 +1040,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The item wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The item does not exist in the container.
         :rtype: None
@@ -1073,7 +1079,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """Get the ThroughputProperties object for this container.
         If no ThroughputProperties already exist for the container, an exception is raised.
 
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :returns: Throughput for the container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exists for the container or
             the throughput properties could not be retrieved.
@@ -1096,7 +1103,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         If no ThroughputProperties already exist for the container, an exception is raised.
 
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, Any], List[Dict[str, Any]]], None]
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :returns: Throughput for the container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exists for the container or
             the throughput properties could not be retrieved.
@@ -1129,6 +1136,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         :param throughput: The throughput to be set.
         :type throughput: Union[int, ~azure.cosmos.ThroughputProperties]
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :returns: ThroughputProperties for the container, updated with new throughput.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the container
             or the throughput properties could not be updated.
@@ -1155,14 +1164,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self,
         max_item_count: Optional[int] = None,
         *,
-        response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]] = None,
+        response_hook: Optional[Callable[[Dict[str, str], Dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """List all the conflicts in the container.
 
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :returns: An Iterable of conflicts (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
@@ -1188,7 +1197,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         partition_key: Optional[PartitionKeyType] = None,
         max_item_count: Optional[int] = None,
         *,
-        response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]] = None,
+        response_hook: Optional[Callable[[Dict[str, str], Dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """Return all conflicts matching a given `query`.

@@ -23,6 +23,7 @@
 """
 
 from typing import Any, Dict, List, Optional, Union, cast, Mapping, Iterable, Callable
+import warnings
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials import TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
@@ -245,10 +246,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         id: str,
         *,
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
-        session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> DatabaseProxy:
         """
@@ -257,12 +255,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :param str id: ID (name) of the database to create.
         :keyword offer_throughput: The provisioned throughput for this offer.
         :paramtype offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
-        :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
-            has changed, and act according to the condition specified by the `match_condition` parameter.
-        :keyword match_condition: The match condition to use upon the etag.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosResourceExistsError: Database with the given ID already exists.
@@ -279,14 +272,23 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 :caption: Create a database in the Cosmos DB account:
                 :name: create_database
         """
+        session_token = kwargs.pop('session_token', None)
         if session_token is not None:
-            kwargs["session_token"] = session_token
+            warnings.warn(
+                "The 'session_token' flag does not apply to this method and will be removed in the future.",
+                UserWarning)
+        etag = kwargs.pop('etag', None)
+        if etag is not None:
+            warnings.warn(
+                "The 'etag' flag does not apply to this method and will be removed in the future.",
+                UserWarning)
+        match_condition = kwargs.pop('match_condition', None)
+        if match_condition is not None:
+            warnings.warn(
+                "The 'match_condition' flag does not apply to this method and will be removed in the future.",
+                UserWarning)
         if initial_headers is not None:
             kwargs["initial_headers"] = initial_headers
-        if etag is not None:
-            kwargs["etag"] = etag
-        if match_condition is not None:
-            kwargs["match_condition"] = match_condition
         request_options = _build_options(kwargs)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
 
@@ -299,10 +301,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         id: str,
         *,
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
-        session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> DatabaseProxy:
         """
@@ -317,26 +316,28 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :param str id: ID (name) of the database to read or create.
         :keyword offer_throughput: The provisioned throughput for this offer.
         :paramtype offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
-        :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
-            has changed, and act according to the condition specified by the `match_condition` parameter.
-        :keyword match_condition: The match condition to use upon the etag.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The database read or creation failed.
         :returns: A DatabaseProxy instance representing the database.
         :rtype: ~azure.cosmos.DatabaseProxy
         """
+        session_token = kwargs.pop('session_token', None)
         if session_token is not None:
-            kwargs["session_token"] = session_token
-        if initial_headers is not None:
-            kwargs["initial_headers"] = initial_headers
+            warnings.warn(
+                "The 'session_token' flag does not apply to this method and will be removed in the future.",
+                UserWarning)
+        etag = kwargs.pop('etag', None)
         if etag is not None:
-            kwargs["etag"] = etag
+            warnings.warn(
+                "The 'etag' flag does not apply to this method and will be removed in the future.",
+                UserWarning)
+        match_condition = kwargs.pop('match_condition', None)
         if match_condition is not None:
-            kwargs["match_condition"] = match_condition
+            warnings.warn(
+                "The 'match_condition' flag does not apply to this method and will be removed in the future.",
+                UserWarning)
         try:
             database_proxy = self.get_database_client(id)
             await database_proxy.read(**kwargs)
@@ -370,7 +371,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         self,
         *,
         max_item_count: Optional[int] = None,
-        session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         **kwargs: Any
@@ -385,8 +385,11 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :returns: An AsyncItemPaged of database properties (dicts).
         :rtype: AsyncItemPaged[Dict[str, str]]
         """
+        session_token = kwargs.pop('session_token', None)
         if session_token is not None:
-            kwargs["session_token"] = session_token
+            warnings.warn(
+                "The 'session_token' flag does not apply to this method and will be removed in the future.",
+                UserWarning)
         if initial_headers is not None:
             kwargs["initial_headers"] = initial_headers
         feed_options = _build_options(kwargs)
@@ -405,7 +408,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         *,
         parameters: Optional[List[Dict[str, Any]]] = None,
         max_item_count: Optional[int] = None,
-        session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         **kwargs: Any
@@ -424,8 +426,11 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :returns: An AsyncItemPaged of database properties (dicts).
         :rtype: AsyncItemPaged[Dict[str, str]]
         """
+        session_token = kwargs.pop('session_token', None)
         if session_token is not None:
-            kwargs["session_token"] = session_token
+            warnings.warn(
+                "The 'session_token' flag does not apply to this method and will be removed in the future.",
+                UserWarning)
         if initial_headers is not None:
             kwargs["initial_headers"] = initial_headers
         feed_options = _build_options(kwargs)
@@ -445,10 +450,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         self,
         database: Union[str, DatabaseProxy, Dict[str, Any]],
         *,
-        session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         **kwargs: Any
     ) -> None:
@@ -457,27 +459,31 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :param database: The ID (name), dict representing the properties, or :class:`DatabaseProxy`
             instance of the database to delete.
         :type database: Union[str, ~azure.cosmos.DatabaseProxy, Dict[str, Any]]
-        :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
-            has changed, and act according to the condition specified by the `match_condition` parameter.
-        :keyword match_condition: The match condition to use upon the etag.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the database couldn't be deleted.
         :rtype: None
         """
+        session_token = kwargs.pop('session_token', None)
         if session_token is not None:
-            kwargs["session_token"] = session_token
+            warnings.warn(
+                "The 'session_token' flag does not apply to this method and will be removed in the future.",
+                UserWarning)
+        etag = kwargs.pop('etag', None)
+        if etag is not None:
+            warnings.warn(
+                "The 'etag' flag does not apply to this method and will be removed in the future.",
+                UserWarning)
+        match_condition = kwargs.pop('match_condition', None)
+        if match_condition is not None:
+            warnings.warn(
+                "The 'match_condition' flag does not apply to this method and will be removed in the future.",
+                UserWarning)
+
         if initial_headers is not None:
             kwargs["initial_headers"] = initial_headers
-        if etag is not None:
-            kwargs["etag"] = etag
-        if match_condition is not None:
-            kwargs["match_condition"] = match_condition
         request_options = _build_options(kwargs)
-
         database_link = _get_database_link(database)
         await self.client_connection.DeleteDatabase(database_link, options=request_options, **kwargs)
         if response_hook:
