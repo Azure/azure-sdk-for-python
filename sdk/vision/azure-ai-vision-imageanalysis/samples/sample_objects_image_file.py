@@ -41,20 +41,14 @@ def sample_objects_image_file():
         exit()
 
     # Create an Image Analysis client
-    client = ImageAnalysisClient(
-        endpoint=endpoint,
-        credential=AzureKeyCredential(key)
-    )
+    client = ImageAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # Load image to analyze into a 'bytes' object
     with open("sample.jpg", "rb") as f:
         image_data = f.read()
 
     # Detect objects in an image stream. This will be a synchronously (blocking) call.
-    result = client.analyze(
-        image_data=image_data,
-        visual_features=[VisualFeatures.OBJECTS]
-    )
+    result = client.analyze(image_data=image_data, visual_features=[VisualFeatures.OBJECTS])
 
     # Print Objects analysis results to the console
     print("Image analysis results:")

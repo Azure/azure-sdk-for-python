@@ -27,6 +27,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: v1.2-preview.1/PersonGroupOperations_TrainLargePersonGroup.json
+# x-ms-original-file: v1.2/PersonGroupOperations_TrainLargePersonGroup.json
 if __name__ == "__main__":
     main()

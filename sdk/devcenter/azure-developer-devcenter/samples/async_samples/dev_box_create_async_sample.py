@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 #
@@ -45,6 +46,7 @@ import asyncio
 from azure.developer.devcenter.aio import DevCenterClient
 from azure.identity import DefaultAzureCredential
 
+
 async def dev_box_create_connect_delete_async():
     # [START dev_box_create_connect_delete_async]
     # Set the values of the dev center endpoint, client ID, and client secret of the AAD application as environment variables:
@@ -66,12 +68,12 @@ async def dev_box_create_connect_delete_async():
             print("\nList of projects: ")
             for project in projects:
                 print(f"{project.name}")
-    
+
             # Select first project in the list
             target_project_name = projects[0].name
         else:
             raise ValueError("Missing Project - please create one before running the example")
-    
+
         # List available Pools
         pools = []
         async for pool in client.list_pools(target_project_name):
@@ -80,35 +82,37 @@ async def dev_box_create_connect_delete_async():
             print("\nList of pools: ")
             for pool in pools:
                 print(f"{pool.name}")
-    
+
             # Select first pool in the list
             target_pool_name = pools[0].name
         else:
             raise ValueError("Missing Pool - please create one before running the example")
-    
+
         # Stand up a new Dev Box
         print(f"\nStarting to create dev box in project {target_project_name} and pool {target_pool_name}")
-    
+
         dev_box_poller = await client.begin_create_dev_box(
             target_project_name, "me", "Test_DevBox", {"poolName": target_pool_name}
         )
         dev_box = await dev_box_poller.result()
         print(f"Provisioned dev box with status {dev_box.provisioning_state}.")
-    
+
         # Connect to the provisioned Dev Box
         remote_connection = await client.get_remote_connection(target_project_name, "me", dev_box.name)
         print(f"Connect to the dev box using web URL {remote_connection.web_url}")
-    
+
         # Tear down the Dev Box when finished
         print(f"Starting to delete dev box.")
-    
+
         delete_poller = await client.begin_delete_dev_box(target_project_name, "me", "Test_DevBox")
         delete_result = await delete_poller.result()
         print(f"Completed deletion for the dev box with status {delete_result.status}")
     # [END dev_box_create_connect_delete_async]
 
+
 async def main():
     await dev_box_create_connect_delete_async()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(main())

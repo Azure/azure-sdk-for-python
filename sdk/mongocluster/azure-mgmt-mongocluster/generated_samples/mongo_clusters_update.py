@@ -49,6 +49,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-07-01/MongoClusters_Update.json
+# x-ms-original-file: 2024-10-01-preview/MongoClusters_Update.json
 if __name__ == "__main__":
     main()

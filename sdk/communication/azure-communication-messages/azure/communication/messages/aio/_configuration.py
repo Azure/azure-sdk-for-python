@@ -27,7 +27,7 @@ class NotificationMessagesClientConfiguration:  # pylint: disable=too-many-insta
      https://my-resource.communication.azure.com. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a token
-     credential type or a AzureKeyCredential type. Required.
+     credential type or a key credential type. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential or
      ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: The API version to use for this operation. Default value is
@@ -85,7 +85,7 @@ class MessageTemplateClientConfiguration:  # pylint: disable=too-many-instance-a
      https://my-resource.communication.azure.com. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a token
-     credential type or a AzureKeyCredential type. Required.
+     credential type or a key credential type. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential or
      ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: The API version to use for this operation. Default value is

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 #
@@ -39,6 +40,7 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) DEVCENTER_ENDPOINT - the endpoint for your devcenter
 """
+
 
 def environment_create_and_delete():
     # [START environment_create_and_delete]

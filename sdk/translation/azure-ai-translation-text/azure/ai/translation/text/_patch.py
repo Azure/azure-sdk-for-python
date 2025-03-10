@@ -78,6 +78,7 @@ def get_translation_endpoint(endpoint, api_version):
 
     return translator_endpoint
 
+
 def is_cognitive_services_scope(audience: str) -> bool:
     if "microsofttranslator" in audience:
         return True
@@ -114,9 +115,7 @@ def set_authentication_policy(credential, kwargs):
                 if not is_cognitive_services_scope(scope):
                     scope = scope.rstrip("/").rstrip(DEFAULT_SCOPE) + DEFAULT_SCOPE
 
-                kwargs["authentication_policy"] = BearerTokenCredentialPolicy(
-                    credential, scope
-                )
+                kwargs["authentication_policy"] = BearerTokenCredentialPolicy(credential, scope)
 
 
 class TextTranslationClient(ServiceClientGenerated):
