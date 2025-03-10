@@ -192,66 +192,65 @@ def test_resourcegroup_defaults():
 
 
 def test_resourcegroup_export(export_dir):
-    class TestInfra(AzureInfrastructure): ...
+    class test(AzureInfrastructure): ...
 
-    export(TestInfra(identity=None), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(identity=None), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_resourcegroup_export_with_properties(export_dir):
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         resource_group: ResourceGroup = field(
             default=ResourceGroup(name="foo", location="eastus", tags={"key": "value"})
         )
 
-    export(TestInfra(identity=None), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(identity=None), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_resourcegroup_export_with_parameter(export_dir):
     param = Parameter("resourceGroupName", default="foo")
 
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         resource_group: ResourceGroup = field(default=ResourceGroup(name=param))
 
-    export(TestInfra(identity=None), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(identity=None), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_resourcegroup_export_with_config(export_dir):
     param = Parameter("resourceGroupName", default="foo")
 
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         resource_group: ResourceGroup = field(default=ResourceGroup(name=param))
 
     export(
-        TestInfra(identity=None),
+        test(identity=None),
         output_dir=export_dir[0],
         infra_dir=export_dir[2],
-        name="test",
         config_store={"resourceGroupName": "bar"},
     )
 
 
 def test_resourcegroup_export_existing(export_dir):
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         resource_group: ResourceGroup = field(default=ResourceGroup.reference(name="foo"))
 
-    export(TestInfra(identity=None), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(identity=None), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_resourcegroup_export_existing_with_parameter(export_dir):
     rg_name = Parameter("RgName")
     rg_sub = Parameter("RgSub")
 
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         resource_group: ResourceGroup = field(default=ResourceGroup.reference(name=rg_name, subscription=rg_sub))
 
-    export(TestInfra(identity=None), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(identity=None), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_resourcegroup_export_existing_with_subscription(export_dir):
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         resource_group: ResourceGroup = field(default=ResourceGroup.reference(name="foo", subscription=TEST_SUB))
 
-    export(TestInfra(identity=None), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(identity=None), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_resourcegroup_infra():

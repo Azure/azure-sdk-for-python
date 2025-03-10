@@ -12,7 +12,9 @@ import keyword
 import types
 from typing import (
     Coroutine,
+    Generic,
     Mapping,
+    MutableMapping,
     Protocol,
     TypeVar,
     Any,
@@ -21,8 +23,9 @@ from typing import (
     Optional,
     List,
     Type,
+    overload,
 )
-from typing_extensions import Self, dataclass_transform
+from typing_extensions import Self, TypeVar, dataclass_transform
 
 from ._bicep.expressions import Parameter, MISSING, Default
 from ._resource import Resource, _load_dev_environment
@@ -112,7 +115,7 @@ class ComponentField(Parameter):
             raise AttributeError(f"No default value provided for '{self._owner.__name__}.{self._name}'.")
         return getattr(obj, self._attrname)
 
-    def __set__(self, obj: "AzureInfrastructure", value: Any) -> None:
+    def __set__(self, obj, value):
         setattr(obj, self._attrname, value)
 
     def get(self, obj: Optional["AzureInfrastructure"] = None, /) -> Any:
@@ -124,7 +127,7 @@ def field(
     default: Union[Any, Literal[Default.MISSING]] = MISSING,
     factory: Union[DefaultFactory, Literal[Default.MISSING]] = MISSING,
     repr: bool = True,
-    # init: bool = True,
+    init: bool = True,  # TODO: Support init
     alias: Optional[str] = None,
     **kwargs,
 ) -> ComponentField:
@@ -222,6 +225,11 @@ class AzureInfrastructure(metaclass=AzureInfraComponent):
             # been instantiated).
             # raise AttributeError(f"Referenced attribute {repr(attr)} cannot be resolved.")
         return attr
+    
+    def down(self, *, purge: bool = False) -> None:
+        from ._provision import deprovision
+
+        deprovision(self, purge=purge)
 
 
 def make_infra(cls_name, fields, *, bases=(), namespace=None, module=None) -> Type[AzureInfrastructure]:
@@ -289,20 +297,12 @@ def make_infra(cls_name, fields, *, bases=(), namespace=None, module=None) -> Ty
 class AzureAppComponent(type):
     def __call__(cls, **kwargs):
         instance_kwargs = {}
-        instance_kwargs["env_name"] = kwargs.pop("env_name", None)
-        if instance_kwargs["env_name"]:
-            instance_kwargs["config_store"] = kwargs.pop("config_store", None)
-            if instance_kwargs["config_store"] is not None:
-                raise ValueError("Cannot specify both 'env_name' and 'config_store'.")
-            instance_kwargs["config_store"] = _load_dev_environment(instance_kwargs["env_name"])
-        else:
-            instance_kwargs["config_store"] = kwargs.pop("config_store", {})
         missing_kwargs = []
         mro = cls.mro()
         client_annotations = {}
         # We want to skip objects in the heirachy from AzureApp and above, which should
         # only be 'object', but just in case that changes, we'll strip everything.
-        for cls_type in mro[: mro.index(AzureApp)]:
+        for cls_type in mro[: mro.index(AzureApp) + 1]:
             for attr, annotation in get_annotations(cls_type).items():
                 if annotation.__name__ in RESOURCE_FROM_CLIENT_ANNOTATION:
                     # TODO: Currently this doesn't support other type hints like Union/Optional
@@ -315,13 +315,13 @@ class AzureAppComponent(type):
                         instance_kwargs[attr] = kwargs.pop(attr)
                     except KeyError:
                         if (
-                            attr in cls.__dict__
-                            and isinstance(cls.__dict__[attr], ComponentField)
-                            and cls.__dict__[attr].alias in kwargs
+                            attr in cls_type.__dict__
+                            and isinstance(cls_type.__dict__[attr], ComponentField)
+                            and cls_type.__dict__[attr].alias in kwargs
                         ):
-                            instance_kwargs[attr] = kwargs.pop(cls.__dict__[attr].alias)
+                            instance_kwargs[attr] = kwargs.pop(cls_type.__dict__[attr].alias)
                         else:
-                            instance_kwargs[attr] = getattr(cls, attr)
+                            instance_kwargs[attr] = getattr(cls_type, attr)
                     if attr in missing_kwargs:
                         missing_kwargs.pop(missing_kwargs.index(attr))
                 except AttributeError:
@@ -369,31 +369,59 @@ def run_coroutine_sync(coroutine: Coroutine[Any, Any, T], timeout: float = 30) -
         return asyncio.run_coroutine_threadsafe(coroutine, loop).result()
 
 
-class AzureApp(metaclass=AzureAppComponent):
+InfrastructureType = TypeVar("InfrastructureType", bound=AzureInfrastructure, default=AzureInfrastructure)
+
+class AzureApp(Generic[InfrastructureType], metaclass=AzureAppComponent):
     # TODO: As these will have classattribute defaults, need to test behaviour
     # Might need to build a specifier object or use field
-    _config_store: Mapping[str, Any] = field(alias="config_store", default_factory=dict)
-    _env_name: Optional[str] = field(alias="env_name", default=None)  # TODO: Remove
+    __infra__: Optional[InfrastructureType] = field(default=None, init=False, repr=False)
+    _config_store: Mapping[str, Any] = field(alias="config_store", factory=dict, repr=False)
 
     def __init__(self, **kwargs):
-        self._config_store = kwargs.pop("config_store")
-        self._env_name = kwargs.pop("env_name")
+        self._config_store = kwargs.pop('_config_store')
         self._client_annotations = kwargs.pop("_client_annotations")
         for key, value in kwargs.items():
             setattr(self, key, value)
 
+    @property
+    def infra(self) -> InfrastructureType:
+        if self.__infra__ is None:
+            raise ValueError("AzureApp has no associated Infrastructure object.")
+        return self.__infra__
+
+    @overload
     @classmethod
     def load(
         cls,
-        infra: Optional[AzureInfrastructure] = None,
-        attr_map: Optional[Mapping[str, str]] = None,
-        /,
-        config_store: Optional[Mapping[str, Any]] = None,
+        *,
+        config_store: Optional[MutableMapping[str, Any]] = None,
         env_name: Optional[str] = None,
     ) -> Self:
+        ...
+    @overload
+    @classmethod
+    def load(
+        cls,
+        infra: InfrastructureType,
+        attr_map: Optional[Mapping[str, str]] = None,
+        *,
+        config_store: Optional[MutableMapping[str, Any]] = None,
+        env_name: Optional[str] = None,
+    ) -> Self:
+        ...
+    @classmethod
+    def load(
+        cls,
+        infra = None,
+        attr_map = None,
+        *,
+        config_store = None,
+        env_name = None,
+    ):
         if attr_map and not infra:
             raise ValueError("Cannot specify attr_map without providing infrastructure object.")
         attr_map = attr_map or {}
+        config_store = config_store or {}
         if not infra:
             env_name = env_name or cls.__name__
             fields = []
@@ -402,7 +430,7 @@ class AzureApp(metaclass=AzureAppComponent):
                     resource_cls = RESOURCE_FROM_CLIENT_ANNOTATION[annotation.__name__].resource()
                     attr_map[attr] = attr
                     fields.append((attr, resource_cls, field(default=resource_cls())))
-            infra = make_infra(f"_{cls.__name__}Infra", fields)
+            infra = make_infra(f"_{cls.__name__}Infra", fields)()
         if attr_map:
             kwargs = {c_attr: getattr(infra, i_attr) for c_attr, i_attr in attr_map.items()}
         else:
@@ -418,26 +446,44 @@ class AzureApp(metaclass=AzureAppComponent):
                 ):
                     kwargs[attr] = infra_resources[RESOURCE_FROM_CLIENT_ANNOTATION[annotation.__name__]]
 
-        if config_store is None and not env_name:
-            env_name = infra.__class__.__name__
-        return cls(config_store=config_store, env_name=env_name, **kwargs)
+        # TODO: duplicate config loading
+        config_store.update(_load_dev_environment(infra.__class__.__name__))
+        return cls(config_store=config_store, __infra__=infra, **kwargs)
 
+    @overload
     @classmethod
     def provision(
         cls,
-        infra: Optional[AzureInfrastructure] = None,
-        attr_map: Optional[Mapping[str, str]] = None,
-        /,
+        *,
         config_store: Optional[Mapping[str, Any]] = None,
-        env_name: Optional[str] = None,
         **kwargs,
     ) -> Self:
+        ...
+    @overload
+    @classmethod
+    def provision(
+        cls,
+        infra: InfrastructureType,
+        *,
+        attr_map: Optional[Mapping[str, str]] = None,
+        config_store: Optional[Mapping[str, Any]] = None,
+        **kwargs,
+    ) -> Self:
+        ...
+    @classmethod
+    def provision(
+        cls,
+        infra = None,
+        *,
+        attr_map = None,
+        config_store = None,
+        **kwargs,
+    ):
         if attr_map and not infra:
             raise ValueError("Cannot specify attr_map without providing infrastructure object.")
         from ._provision import provision
 
         if not infra:
-            env_name = env_name or cls.__name__
             attr_map = {}
             fields = []
             for attr, annotation in get_annotations(cls).items():
@@ -445,12 +491,24 @@ class AzureApp(metaclass=AzureAppComponent):
                     resource_cls = RESOURCE_FROM_CLIENT_ANNOTATION[annotation.__name__].resource()
                     attr_map[attr] = attr
                     fields.append((attr, resource_cls, field(default=resource_cls())))
-            infra = make_infra(env_name, fields)()
-        provision(infra, config_store=config_store, name=env_name, **kwargs)
-        return cls.load(infra, attr_map, config_store=config_store, env_name=env_name)
+            infra = make_infra(f"_{cls.__name__}Infra", fields)()
+        provision(infra, config_store=config_store, **kwargs)
+        return cls.load(infra, attr_map=attr_map, config_store=config_store)
+
+    def __repr__(self) -> str:
+        attrs = []
+        for attr in get_annotations(self.__class__):
+            try:
+                in_repr = self.__class__.__dict__[attr].repr
+                if in_repr:
+                    attrs.append(f"{attr}={repr(getattr(self, attr))}")
+            except (KeyError, AttributeError):
+                attrs.append(f"{attr}={repr(getattr(self, attr))}")
+        repr_str = ", ".join(attrs)
+        return f"{self.__class__.__name__}({repr_str})"
 
     def __setattr__(self, name, value):
-        if name.startswith("_field__") or name in ["_config_store", "_env_name", "_client_annotations"]:
+        if name.startswith("_field__") or name in ["_config_store", "_client_annotations"]:
             return super().__setattr__(name, value)
         if isinstance(value, Resource):
             kwargs = {}

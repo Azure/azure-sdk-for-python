@@ -14,9 +14,11 @@ from typing import (
     List,
     Literal,
     Mapping,
+    Type,
     Union,
     Optional,
     cast,
+    overload,
 )
 from typing_extensions import TypeVar, Unpack, TypedDict
 
@@ -30,6 +32,9 @@ from ..._resource import _ClientResource, ResourceReference, ExtensionResources
 if TYPE_CHECKING:
     from .types import SearchServiceResource, SearchNetworkRuleSet
     from azure.search.documents.indexes import SearchIndexClient
+    from azure.search.documents.indexes.aio import SearchIndexClient as AsyncSearchIndexClient
+    from azure.search.documents import SearchClient
+    from azure.search.documents.aio import SearchClient as AsyncSearchClient
 
 
 class SearchServiceKwargs(TypedDict, total=False):
@@ -241,9 +246,69 @@ class SearchService(_ClientResource[SearchServiceResourceType]):
         )
         return outputs
 
+    @overload
     def get_client(
         self,
-        cls: Optional[Callable[..., ClientType]] = None,
+        /,
+        *,
+        transport: Any = None,
+        credential: Any = None,
+        api_version: Optional[str] = None,
+        audience: Optional[str] = None,
+        config_store: Optional[Mapping[str, Any]] = None,
+        use_async: Optional[Literal[False]] = None,
+        **client_options,
+    ) -> "SearchIndexClient":
+        ...
+    @overload
+    def get_client(
+        self,
+        /,
+        *,
+        transport: Any = None,
+        credential: Any = None,
+        api_version: Optional[str] = None,
+        audience: Optional[str] = None,
+        config_store: Optional[Mapping[str, Any]] = None,
+        use_async: Literal[True],
+        **client_options,
+    ) -> "AsyncSearchIndexClient":
+        ...
+    # TODO: I don't know why these don't work with either mypy or pyright.
+    # @overload
+    # def get_client(
+    #     self,
+    #     /,
+    #     *,
+    #     index_name: str,
+    #     transport: Any = None,
+    #     credential: Any = None,
+    #     api_version: Optional[str] = None,
+    #     audience: Optional[str] = None,
+    #     config_store: Optional[Mapping[str, Any]] = None,
+    #     use_async: Optional[Literal[False]] = None,
+    #     **client_options,
+    # ) -> "SearchClient":
+    #     ...
+    # @overload
+    # def get_client(
+    #     self,
+    #     /,
+    #     *,
+    #     index_name: str,
+    #     transport: Any = None,
+    #     credential: Any = None,
+    #     api_version: Optional[str] = None,
+    #     audience: Optional[str] = None,
+    #     config_store: Optional[Mapping[str, Any]] = None,
+    #     use_async: Literal[True],
+    #     **client_options,
+    # ) -> "AsyncSearchClient":
+    #     ...
+    @overload
+    def get_client(
+        self,
+        cls: Type[ClientType],
         /,
         *,
         transport: Any = None,
@@ -254,28 +319,42 @@ class SearchService(_ClientResource[SearchServiceResourceType]):
         use_async: Optional[bool] = None,
         **client_options,
     ) -> ClientType:
+        ...
+    def get_client(
+        self,
+        cls = None,
+        /,
+        *,
+        transport = None,
+        credential = None,
+        api_version = None,
+        audience = None,
+        config_store = None,
+        use_async = None,
+        **client_options,
+    ):
         if cls is None:
             if use_async:
                 if client_options.get("index_name"):
                     from azure.search.documents.aio import SearchClient as AsyncSearchClient
 
-                    cls = AsyncSearchClient  # type: ignore[assignment]  # TODO: Not sure why it doesn't like this
+                    cls = AsyncSearchClient
                 else:
                     from azure.search.documents.indexes.aio import SearchIndexClient as AsyncSearchIndexClient
 
-                    cls = AsyncSearchIndexClient  # type: ignore[assignment]  # TODO: Not sure why it doesn't like this
+                    cls = AsyncSearchIndexClient
             else:
                 if client_options.get("index_name"):
                     from azure.search.documents import SearchClient as SyncSearchClient
 
-                    cls = SyncSearchClient  # type: ignore[assignment]  # TODO: Not sure why it doesn't like this
+                    cls = SyncSearchClient
                 else:
                     from azure.search.documents.indexes import SearchIndexClient as SyncSearchIndexClient
 
-                    cls = SyncSearchIndexClient  # type: ignore[assignment]  # TODO: Not sure why it doesn't like this
+                    cls = SyncSearchIndexClient
                 use_async = False
         return super().get_client(
-            cast(Callable[..., ClientType], cls),
+            cls,
             transport=transport,
             credential=credential,
             api_version=api_version,

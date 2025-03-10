@@ -15,10 +15,12 @@ from typing import (
     Literal,
     Mapping,
     Tuple,
+    Type,
     Union,
     Optional,
     Any,
     cast,
+    overload,
 )
 from typing_extensions import TypeVar, Unpack, TypedDict
 
@@ -35,6 +37,7 @@ if TYPE_CHECKING:
     from ....resourcegroup import ResourceGroup
     from .types import ContainerResource
     from azure.storage.blob import ContainerClient
+    from azure.storage.blob.aio import ContainerClient as AsyncContainerClient
 
 
 class ContainerKwargs(TypedDict, total=False):
@@ -228,9 +231,38 @@ class BlobContainer(_ClientResource[ContainerResourceType]):
         )
         return outputs
 
+    @overload
     def get_client(
         self,
-        cls: Optional[Callable[..., ClientType]] = None,
+        /,
+        *,
+        transport: Any = None,
+        credential: Any = None,
+        api_version: Optional[str] = None,
+        audience: Optional[str] = None,
+        config_store: Optional[Mapping[str, Any]] = None,
+        use_async: Optional[Literal[False]] = None,
+        **client_options,
+    ) -> "ContainerClient":
+        ...
+    @overload
+    def get_client(
+        self,
+        /,
+        *,
+        transport: Any = None,
+        credential: Any = None,
+        api_version: Optional[str] = None,
+        audience: Optional[str] = None,
+        config_store: Optional[Mapping[str, Any]] = None,
+        use_async: Literal[True],
+        **client_options,
+    ) -> "AsyncContainerClient":
+        ...
+    @overload
+    def get_client(
+        self,
+        cls: Type[ClientType],
         /,
         *,
         transport: Any = None,
@@ -241,23 +273,37 @@ class BlobContainer(_ClientResource[ContainerResourceType]):
         use_async: Optional[bool] = None,
         **client_options,
     ) -> ClientType:
+        ...
+    def get_client(
+        self,
+        cls = None,
+        /,
+        *,
+        transport = None,
+        credential = None,
+        api_version = None,
+        audience = None,
+        config_store = None,
+        use_async = None,
+        **client_options,
+    ):
         if cls is None:
             if use_async:
                 from azure.storage.blob.aio import ContainerClient as AsyncContainerClient
 
-                cls = AsyncContainerClient.from_container_url  # type: ignore[assignment]
+                cls = cast(Type, AsyncContainerClient.from_container_url)
             else:
                 from azure.storage.blob import ContainerClient as SyncContainerClient
 
-                cls = SyncContainerClient.from_container_url  # type: ignore[assignment]
+                cls = cast(Type, SyncContainerClient.from_container_url)
                 use_async = False
         elif cls.__name__ == "ContainerClient" and hasattr(cls, "from_container_url"):
             if use_async is None:
                 use_async = inspect.iscoroutinefunction(getattr(cls, "close"))
             # We know the attribute is present.
-            cls = cls.from_container_url  # type: ignore[reportFunctionMemberAccess]
+            cls = cast(Type, cls.from_container_url)  # type: ignore[reportFunctionMemberAccess, attr-defined]
         return super().get_client(
-            cast(Callable[..., ClientType], cls),
+            cls,
             transport=transport,
             credential=credential,
             api_version=api_version,

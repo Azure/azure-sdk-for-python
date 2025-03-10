@@ -272,32 +272,32 @@ def test_aiservices_chat_defaults():
 
 
 def test_aiservices_chat_export(export_dir):
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r: AIChat = AIChat()
 
-    export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_aiservices_chat_export_existing(export_dir):
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r: AIChat = field(default=AIChat.reference(name="aitest", account="aitest"))
 
-    export(TestInfra(identity=None), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(identity=None), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_aiservices_chat_export_with_properties(export_dir):
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r: AIChat = field(default=AIChat(sku="test", capacity=15, format="foo", version="2"))
 
-    export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_aiservices_chat_export_multiple_deployments(export_dir):
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r: AIChat = field(default=AIChat(model="one"))
         b: AIChat = field(default=AIChat(model="two"))
 
-    export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_aiservices_chat_client():

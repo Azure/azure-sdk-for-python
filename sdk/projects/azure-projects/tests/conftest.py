@@ -2,6 +2,8 @@ import pytest
 import os
 import difflib
 
+from azure.projects._bicep.utils import generate_suffix
+
 
 def _get_infra_dir() -> str:
     test_dir = os.path.dirname(os.path.realpath(__file__))
@@ -32,7 +34,7 @@ def _compare_outputs(output_dir, ref_dir, test_dir):
 def _compare_exports(request):
     output_dir = _get_infra_dir()
     ref_dir = request.node.name
-    test_dir = f"infra_{request.node.name}"
+    test_dir = f"infra_{request.node.name}_{generate_suffix()}"
     yield output_dir, ref_dir, test_dir
     _compare_outputs(output_dir, ref_dir, test_dir)
 

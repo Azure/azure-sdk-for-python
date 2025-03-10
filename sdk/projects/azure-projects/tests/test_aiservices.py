@@ -231,76 +231,75 @@ def test_aiservices_defaults():
 
 
 def test_aiservices_export(export_dir):
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r: AIServices = AIServices()
 
-    export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_aiservices_export_existing(export_dir):
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r: AIServices = field(default=AIServices.reference(name="aitest"))
 
     export(
-        TestInfra(resource_group=ResourceGroup.reference(name="aitest"), identity=None),
+        test(resource_group=ResourceGroup.reference(name="aitest"), identity=None),
         output_dir=export_dir[0],
-        infra_dir=export_dir[2],
-        name="test",
+        infra_dir=export_dir[2]
     )
 
 
 def test_aiservices_export_with_properties(export_dir):
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r: AIServices = field(default=AIServices(sku="C2", location="westus", public_network_access="Disabled"))
 
-    export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_aiservices_export_with_role_assignments(export_dir):
     user_role = Parameter("UserRole")
 
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r: AIServices = field(
             default=AIServices(
                 roles=["Cognitive Services OpenAI Contributor"], user_roles=["Cognitive Services OpenAI User"]
             )
         )
 
-    export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_aiservices_export_with_no_user_access(export_dir):
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r: AIServices = field(
             default=AIServices(
                 roles=["Cognitive Services OpenAI Contributor"], user_roles=["Cognitive Services OpenAI User"]
             )
         )
 
-    export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test", user_access=False)
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2], user_access=False)
 
 
 def test_aiservices_export_multiple_cogservices(export_dir):
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         c: CognitiveServicesAccount = field(default=CognitiveServicesAccount(kind="MetricsAdvisor"))
         r: AIServices = AIServices()
 
-    export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_aiservices_export_multiple_ai(export_dir):
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r1: AIServices = field(default=AIServices(disable_local_auth=False))
         r2: AIServices = field(default=AIServices(disable_local_auth=Parameter("LocalAuth", default=True)))
 
     with pytest.raises(ValueError):
-        export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+        export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])
 
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r1: AIServices = field(default=AIServices(disable_local_auth=False))
         r2: AIServices = AIServices
 
-    export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 # TODO:

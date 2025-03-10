@@ -89,4 +89,4 @@ def test_roles_export_with_parameters(export_dir):
     r = StorageAccount(name="foo", roles=roles, user_roles=[user_role])
     assert r.properties == {"name": "foo", "properties": {}}
     assert r.extensions == {"managed_identity_roles": roles, "user_roles": [user_role]}
-    export(r, output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(r, output_dir=export_dir[0], infra_dir=export_dir[2])

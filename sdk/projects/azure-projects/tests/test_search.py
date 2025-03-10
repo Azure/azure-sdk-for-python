@@ -208,26 +208,25 @@ def test_search_defaults():
 
 
 def test_search_export(export_dir):
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r: SearchService = SearchService()
 
-    export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_search_export_existing(export_dir):
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r: SearchService = field(default=SearchService.reference(name="test"))
 
     export(
-        TestInfra(resource_group=ResourceGroup.reference(name="test"), identity=None),
+        test(resource_group=ResourceGroup.reference(name="test"), identity=None),
         output_dir=export_dir[0],
-        infra_dir=export_dir[2],
-        name="test",
+        infra_dir=export_dir[2]
     )
 
 
 def test_search_export_with_properties(export_dir):
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r: SearchService = field(
             default=SearchService(
                 {"properties": {}},
@@ -240,48 +239,48 @@ def test_search_export_with_properties(export_dir):
             )
         )
 
-    export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_search_export_with_role_assignments(export_dir):
     user_role = Parameter("UserRole")
 
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r: SearchService = SearchService(roles=["Contributor"], user_roles=["Contributor"])
 
-    export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_search_export_with_no_user_access(export_dir):
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r: SearchService = field(default=SearchService(roles=["Contributor"], user_roles=["Contributor"]))
 
-    export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test", user_access=False)
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2], user_access=False)
 
 
 def test_search_export_multiple_services(export_dir):
     # TODO: If these are ordered the other way around they are merged....
     # Is that correct?
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r1: SearchService = SearchService()
         r2: SearchService = SearchService(name="foo", public_network_access="Enabled")
 
-    export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_search_export_duplicate_services(export_dir):
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r1: SearchService = SearchService(public_network_access="Enabled")
         r2: SearchService = SearchService(public_network_access=Parameter("LocalAuth"))
 
     with pytest.raises(ValueError):
-        export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+        export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])
 
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r1: SearchService = SearchService(public_network_access="Enabled")
         r2: SearchService = SearchService()
 
-    export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 # TODO:

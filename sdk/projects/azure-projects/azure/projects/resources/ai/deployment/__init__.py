@@ -13,6 +13,7 @@ from typing import (
     Literal,
     Mapping,
     Tuple,
+    Type,
     Union,
     Optional,
     Any,
@@ -262,7 +263,7 @@ class AIChat(AIDeployment[AIDeploymentResourceType]):
 
     def get_client(  # pylint: disable=too-many-statements
         self,
-        cls: Callable[..., ChatClientType] = None,
+        cls: Optional[Type[ChatClientType]] = None,
         /,
         *,
         transport: Any = None,
@@ -273,6 +274,8 @@ class AIChat(AIDeployment[AIDeploymentResourceType]):
         use_async: Optional[bool] = None,
         **client_options,
     ) -> ChatClientType:
+        if cls is self.__class__:
+            return self
         if config_store is None:
             config_store = _load_dev_environment()
 
@@ -295,11 +298,11 @@ class AIChat(AIDeployment[AIDeploymentResourceType]):
             if use_async:
                 from azure.ai.inference.aio import ChatCompletionsClient as AsyncChatCompletionsClient
 
-                cls = AsyncChatCompletionsClient  # type: ignore[assignment]  # TODO: Not sure why it doesn't like this
+                cls = AsyncChatCompletionsClient
             else:
                 from azure.ai.inference import ChatCompletionsClient as SyncChatCompletionsClient
 
-                cls = SyncChatCompletionsClient  # type: ignore[assignment]  # TODO: Not sure why it doesn't like this
+                cls = SyncChatCompletionsClient
                 use_async = False
 
         # These are the synchronous OpenAI clients.
@@ -442,7 +445,7 @@ class AIEmbeddings(AIDeployment[AIDeploymentResourceType]):
 
     def get_client(
         self,
-        cls: Callable[..., EmbeddingsClientType] = None,
+        cls: Optional[Type[EmbeddingsClientType]] = None,
         /,
         *,
         transport: Any = None,
@@ -453,6 +456,8 @@ class AIEmbeddings(AIDeployment[AIDeploymentResourceType]):
         use_async: Optional[bool] = None,
         **client_options,
     ) -> EmbeddingsClientType:
+        if cls is self.__class__:
+            return self
         if config_store is None:
             config_store = _load_dev_environment()
 
@@ -475,11 +480,11 @@ class AIEmbeddings(AIDeployment[AIDeploymentResourceType]):
             if use_async:
                 from azure.ai.inference.aio import EmbeddingsClient as AsyncEmbeddingsClient
 
-                cls = AsyncEmbeddingsClient  # type: ignore[assignment]  # TODO: Not sure why it doesn't like this
+                cls = AsyncEmbeddingsClient
             else:
                 from azure.ai.inference import EmbeddingsClient as SyncEmbeddingsClient
 
-                cls = SyncEmbeddingsClient  # type: ignore[assignment]  # TODO: Not sure why it doesn't like this
+                cls = SyncEmbeddingsClient
                 use_async = False
 
         # These are the synchronous OpenAI clients.

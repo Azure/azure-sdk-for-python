@@ -183,57 +183,56 @@ def test_identity_defaults():
 
 
 def test_identity_export(export_dir):
-    class Infra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r: UserAssignedIdentity = UserAssignedIdentity()
 
-    export(Infra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_identity_export_with_properties(export_dir):
-    class Infra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         identity: UserAssignedIdentity = field(
             default=UserAssignedIdentity(name="foo", location="westus", tags={"key": "value"})
         )
 
-    export(Infra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_identity_export_with_parameter(export_dir):
     param = Parameter("testLocation")
 
-    class Infra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         identity: UserAssignedIdentity = field(default=UserAssignedIdentity(location=param))
 
     export(
-        Infra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test", config_store={"testLocation": "eastus"}
+        test(), output_dir=export_dir[0], infra_dir=export_dir[2], config_store={"testLocation": "eastus"}
     )
 
 
 def test_identity_export_existing(export_dir):
-    class Infra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         identity: UserAssignedIdentity = field(default=UserAssignedIdentity.reference(name="exists"))
 
-    export(Infra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_identity_export_existing_with_resourcegroup(export_dir):
-    class Infra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r: UserAssignedIdentity = field(
             default=UserAssignedIdentity.reference(name="exists", resource_group="rgexists")
         )
 
-    export(Infra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_identity_export_existing_with_resourcegroup_and_subscription(export_dir):
-    class Infra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         identity: UserAssignedIdentity = field(default=UserAssignedIdentity.reference(name="exists"))
 
     export(
-        Infra(resource_group=ResourceGroup.reference(name="rgexists", subscription=TEST_SUB)),
+        test(resource_group=ResourceGroup.reference(name="rgexists", subscription=TEST_SUB)),
         output_dir=export_dir[0],
-        infra_dir=export_dir[2],
-        name="test",
+        infra_dir=export_dir[2]
     )
 
 

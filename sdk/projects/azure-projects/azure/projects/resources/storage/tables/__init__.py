@@ -14,10 +14,12 @@ from typing import (
     Literal,
     Mapping,
     Tuple,
+    Type,
     Union,
     Optional,
     Any,
     cast,
+    overload,
 )
 from typing_extensions import TypeVar, Unpack
 
@@ -30,6 +32,7 @@ from .. import StorageAccount, StorageAccountKwargs
 if TYPE_CHECKING:
     from .types import TableServiceResource, TablesCorsRule
     from azure.data.tables import TableServiceClient
+    from azure.data.tables.aio import TableServiceClient as AsyncTableServiceClient
 
 
 class TableStorageKwargs(StorageAccountKwargs, total=False):
@@ -149,9 +152,38 @@ class TableStorage(_ClientResource[TableServiceResourceType]):
             )
         }
 
+    @overload
     def get_client(
         self,
-        cls: Optional[Callable[..., ClientType]] = None,
+        /,
+        *,
+        transport: Any = None,
+        credential: Any = None,
+        api_version: Optional[str] = None,
+        audience: Optional[str] = None,
+        config_store: Optional[Mapping[str, Any]] = None,
+        use_async: Optional[Literal[False]] = None,
+        **client_options,
+    ) -> "TableServiceClient":
+        ...
+    @overload
+    def get_client(
+        self,
+        /,
+        *,
+        transport: Any = None,
+        credential: Any = None,
+        api_version: Optional[str] = None,
+        audience: Optional[str] = None,
+        config_store: Optional[Mapping[str, Any]] = None,
+        use_async: Literal[True],
+        **client_options,
+    ) -> "AsyncTableServiceClient":
+        ...
+    @overload
+    def get_client(
+        self,
+        cls: Type[ClientType],
         /,
         *,
         transport: Any = None,
@@ -162,18 +194,32 @@ class TableStorage(_ClientResource[TableServiceResourceType]):
         use_async: Optional[bool] = None,
         **client_options,
     ) -> ClientType:
+        ...
+    def get_client(
+        self,
+        cls = None,
+        /,
+        *,
+        transport = None,
+        credential = None,
+        api_version = None,
+        audience = None,
+        config_store = None,
+        use_async = None,
+        **client_options,
+    ):
         if cls is None:
             if use_async:
                 from azure.data.tables.aio import TableServiceClient as AsyncTableServiceClient
 
-                cls = AsyncTableServiceClient  # type: ignore[assignment]  # TODO: Not sure why it doesn't like this
+                cls = AsyncTableServiceClient
             else:
                 from azure.data.tables import TableServiceClient as SyncTableServiceClient
 
-                cls = SyncTableServiceClient  # type: ignore[assignment]  # TODO: Not sure why it doesn't like this
+                cls = SyncTableServiceClient
                 use_async = False
         return super().get_client(
-            cast(Callable[..., ClientType], cls),
+            cls,
             transport=transport,
             credential=credential,
             api_version=api_version,

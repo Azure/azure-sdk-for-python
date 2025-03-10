@@ -6,7 +6,7 @@
 # pylint: disable=arguments-differ
 
 from collections import defaultdict
-from typing import TYPE_CHECKING, Callable, Dict, List, Literal, Mapping, Tuple, Union, Optional, Any, cast
+from typing import TYPE_CHECKING, Callable, Dict, List, Literal, Mapping, Tuple, Type, Union, Optional, Any, cast, overload
 from typing_extensions import TypeVar, Unpack
 
 from ...._component import ComponentField
@@ -19,6 +19,7 @@ from .. import StorageAccount, StorageAccountKwargs
 if TYPE_CHECKING:
     from .types import BlobServiceResource, BlobsCorsRule
     from azure.storage.blob import BlobServiceClient
+    from azure.storage.blob.aio import BlobServiceClient as AsyncBlobServiceClient
 
 
 class BlobStorageKwargs(StorageAccountKwargs, total=False):
@@ -222,9 +223,38 @@ class BlobStorage(_ClientResource[BlobServiceResourceType]):
             )
         }
 
+    @overload
     def get_client(
         self,
-        cls: Optional[Callable[..., ClientType]] = None,
+        /,
+        *,
+        transport: Any = None,
+        credential: Any = None,
+        api_version: Optional[str] = None,
+        audience: Optional[str] = None,
+        config_store: Optional[Mapping[str, Any]] = None,
+        use_async: Optional[Literal[False]] = None,
+        **client_options,
+    ) -> 'BlobServiceClient':
+        ...
+    @overload
+    def get_client(
+        self,
+        /,
+        *,
+        transport: Any = None,
+        credential: Any = None,
+        api_version: Optional[str] = None,
+        audience: Optional[str] = None,
+        config_store: Optional[Mapping[str, Any]] = None,
+        use_async: Literal[True],
+        **client_options,
+    ) -> 'AsyncBlobServiceClient':
+        ...
+    @overload
+    def get_client(
+        self,
+        cls: Type[ClientType],
         /,
         *,
         transport: Any = None,
@@ -235,18 +265,32 @@ class BlobStorage(_ClientResource[BlobServiceResourceType]):
         use_async: Optional[bool] = None,
         **client_options,
     ) -> ClientType:
+        ...
+    def get_client(
+        self,
+        cls = None,
+        /,
+        *,
+        transport = None,
+        credential = None,
+        api_version = None,
+        audience = None,
+        config_store = None,
+        use_async = None,
+        **client_options,
+    ):
         if cls is None:
             if use_async:
                 from azure.storage.blob.aio import BlobServiceClient as AsyncBlobServiceClient
 
-                cls = AsyncBlobServiceClient  # type: ignore[assignment]  # TODO: Not sure why it doesn't like this
+                cls = AsyncBlobServiceClient
             else:
                 from azure.storage.blob import BlobServiceClient as SyncBlobServiceClient
 
-                cls = SyncBlobServiceClient  # type: ignore[assignment]  # TODO: Not sure why it doesn't like this
+                cls = SyncBlobServiceClient
                 use_async = False
         return super().get_client(
-            cast(Callable[..., ClientType], cls),
+            cls,
             transport=transport,
             credential=credential,
             api_version=api_version,

@@ -216,36 +216,36 @@ def test_storage_blobs_defaults():
 
 
 def test_storage_blobs_export(export_dir):
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r: BlobStorage = BlobStorage()
 
-    export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_storage_blobs_export_existing(export_dir):
     with pytest.raises(ValueError):
         BlobStorage.reference(account=StorageAccount(), resource_group="foo")
 
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r: BlobStorage = field(default=BlobStorage.reference(account=StorageAccount.reference(name="storagetest")))
 
-    infra = TestInfra(resource_group=ResourceGroup.reference(name="rgtest"), identity=None)
-    export(infra, output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    infra = test(resource_group=ResourceGroup.reference(name="rgtest"), identity=None)
+    export(infra, output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_storage_blobs_export_existing_new_rg(export_dir):
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r: BlobStorage = field(default=BlobStorage.reference(account="storagetest", resource_group="rgtest"))
 
-    infra = TestInfra(identity=None)
-    export(infra, output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    infra = test(identity=None)
+    export(infra, output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_storage_blobs_export_with_properties(export_dir):
     with pytest.raises(TypeError):
         BlobStorage(account=StorageAccount(), location="westus", sku="Premium_LRS")
 
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r: BlobStorage = field(
             default=BlobStorage(
                 {"properties": {}},
@@ -256,23 +256,23 @@ def test_storage_blobs_export_with_properties(export_dir):
             )
         )
 
-    export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_storage_blobs_export_with_role_assignments(export_dir):
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r: BlobStorage = field(default=BlobStorage(roles=[], user_roles=[]))
 
-    export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_storage_blobs_export_with_no_user_access(export_dir):
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r: BlobStorage = field(
             default=BlobStorage(roles=["Storage Blob Data Owner"], user_roles=["Storage Blob Data Contributor"])
         )
 
-    export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test", user_access=False)
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2], user_access=False)
 
 
 def test_storage_blobs_client():

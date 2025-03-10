@@ -195,18 +195,18 @@ def test_storage_defaults():
 
 
 def test_storage_export(export_dir):
-    class Infra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r: StorageAccount = StorageAccount()
 
-    export(Infra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_storage_export_existing(export_dir):
-    class Infra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r: StorageAccount = field(default=StorageAccount.reference(name="storagetest"))
 
-    infra = Infra(resource_group=ResourceGroup.reference(name="rgtest"), identity=None)
-    export(infra, output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    infra = test(resource_group=ResourceGroup.reference(name="rgtest"), identity=None)
+    export(infra, output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_storage_export_with_properties(export_dir):
@@ -216,7 +216,7 @@ def test_storage_export_with_properties(export_dir):
         StorageAccount({"properties": {"customDomain": Parameter("custom")}}, custom_domain_use_subdomain_name=False)
     StorageAccount(custom_domain_name="foo", custom_domain_use_subdomain_name=True)
 
-    class Infra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r: StorageAccount = field(
             default=StorageAccount(
                 {"properties": {}},
@@ -250,25 +250,25 @@ def test_storage_export_with_properties(export_dir):
             )
         )
 
-    export(Infra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_storage_export_with_role_assignments(export_dir):
-    class Infra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r: StorageAccount = field(
             default=StorageAccount(roles=["Storage Blob Data Owner"], user_roles=["Storage Blob Data Contributor"])
         )
 
-    export(Infra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_storage_export_with_no_user_access(export_dir):
-    class Infra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r: StorageAccount = field(
             default=StorageAccount(roles=["Storage Blob Data Owner"], user_roles=["Storage Blob Data Contributor"])
         )
 
-    export(Infra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test", user_access=False)
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2], user_access=False)
 
 
 def test_storage_client():

@@ -18,6 +18,7 @@ from typing import (
     Tuple,
     Optional,
     Callable,
+    Type,
     Union,
     Dict,
     List,
@@ -575,7 +576,7 @@ class Resource(Generic[ResourcePropertiesType]):  # pylint: disable=too-many-ins
 
     def get_client(
         self,
-        cls: Callable[..., ClientType],
+        cls: Type[ClientType],
         /,
         *,
         transport: Any = None,
@@ -586,6 +587,8 @@ class Resource(Generic[ResourcePropertiesType]):  # pylint: disable=too-many-ins
         use_async: Optional[bool] = None,
         **client_options,
     ) -> ClientType:
+        if cls is self.__class__:
+            return self
         raise TypeError(f"Resource '{repr(self)}' has no compatible Client endpoint.")
 
 
@@ -640,7 +643,7 @@ class _ClientResource(Resource[ResourcePropertiesType]):
 
     def get_client(
         self,
-        cls: Callable[..., ClientType],
+        cls: Type[ClientType],
         /,
         *,
         transport: Any = None,
@@ -651,12 +654,12 @@ class _ClientResource(Resource[ResourcePropertiesType]):
         use_async: Optional[bool] = None,
         **client_options,
     ) -> ClientType:
+        if cls is self.__class__:
+            return self
         if config_store is None:
             config_store = _load_dev_environment()
 
         endpoint: str = self._settings["endpoint"](config_store=config_store)
-        # TODO: AI endpoints!!!
-        endpoint = endpoint.replace("cognitiveservices.azure.com", "openai.azure.com")
         client_kwargs = {}
         client_kwargs.update(client_options)
         try:
@@ -664,8 +667,6 @@ class _ClientResource(Resource[ResourcePropertiesType]):
         except RuntimeError:
             pass
         try:
-            # TODO: Overwrite this in the deployment resource
-            # client_kwargs['credential_scopes'] = self._settings['audience'](audience, config_store=config_store)
             client_kwargs["audience"] = self._settings["audience"](audience, config_store=config_store)
         except RuntimeError:
             pass

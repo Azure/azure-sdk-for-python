@@ -19,13 +19,13 @@ IDENTITY = {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["ma
 
 
 def test_aifoundry_export(export_dir):
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r: AIHub = AIHub()
 
     with pytest.raises(ValueError):
-        export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+        export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])
 
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         ai: AIServices = AIServices()
         search: SearchService = SearchService()
         storage: BlobStorage = BlobStorage()
@@ -33,4 +33,4 @@ def test_aifoundry_export(export_dir):
         hub: AIHub = AIHub()
         project: AIProject = AIProject()
 
-    export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])

@@ -169,11 +169,10 @@ class AIConnection(Resource[ConnectionResourceType]):
         properties = properties or {}
         if "properties" not in properties:
             properties["properties"] = {"category": category, "target": target}
-        else:
-            if category:
-                properties["properties"]["category"] = category
-            if target:
-                properties["properties"]["target"] = target
+        if category:
+            properties["properties"]["category"] = category
+        if target:
+            properties["properties"]["target"] = target
         if name:
             properties["name"] = name
         # TODO: Rest of the kwargs support

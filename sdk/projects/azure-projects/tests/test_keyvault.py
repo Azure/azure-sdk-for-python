@@ -205,26 +205,25 @@ def test_keyvault_defaults():
 
 
 def test_keyvault_export(export_dir):
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r: KeyVault = KeyVault()
 
-    export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_keyvault_export_existing(export_dir):
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r: KeyVault = field(default=KeyVault.reference(name="kvtest"))
 
     export(
-        TestInfra(resource_group=ResourceGroup.reference(name="kvtest"), identity=None),
+        test(resource_group=ResourceGroup.reference(name="kvtest"), identity=None),
         output_dir=export_dir[0],
-        infra_dir=export_dir[2],
-        name="test",
+        infra_dir=export_dir[2]
     )
 
 
 def test_keyvault_export_with_properties(export_dir):
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r: KeyVault = field(
             default=KeyVault(
                 {"properties": {}},
@@ -236,48 +235,48 @@ def test_keyvault_export_with_properties(export_dir):
             )
         )
 
-    export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_keyvault_export_with_role_assignments(export_dir):
     user_role = Parameter("UserRole")
 
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r: KeyVault = KeyVault(roles=["Key Vault Administrator"], user_roles=["Key Vault Administrator"])
 
-    export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_keyvault_export_with_no_user_access(export_dir):
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r: KeyVault = field(default=KeyVault(roles=["Key Vault Administrator"], user_roles=["Key Vault Administrator"]))
 
-    export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test", user_access=False)
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2], user_access=False)
 
 
 def test_keyvault_export_multiple_vaults(export_dir):
     # TODO: If these are ordered the other way around they are merged....
     # Is that correct?
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r1: KeyVault = KeyVault()
         r2: KeyVault = KeyVault(name="foo", public_network_access="Enabled")
 
-    export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_keyvault_export_duplicate_vaults(export_dir):
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r1: KeyVault = KeyVault(public_network_access="Enabled")
         r2: KeyVault = KeyVault(public_network_access=Parameter("LocalAuth"))
 
     with pytest.raises(ValueError):
-        export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+        export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])
 
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r1: KeyVault = KeyVault(public_network_access="Enabled")
         r2: KeyVault = KeyVault()
 
-    export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 # TODO:

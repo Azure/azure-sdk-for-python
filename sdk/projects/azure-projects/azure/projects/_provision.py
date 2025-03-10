@@ -35,6 +35,17 @@ _BICEP_PARAMS = {
 }
 
 
+def _deprovision_project(name: str, label: Optional[str] = None, purge: bool = False) -> None:
+    project_name = name + (f"-{label}" if label else "")
+    args = ["azd", "down", "-e", project_name, "--force"]
+    if purge:
+        args.append(["--purge"])
+    print("Running: ", args)
+    output = subprocess.run(args, check=False)
+    print(output)
+    return output.returncode
+
+
 def _provision_project(name: str, label: Optional[str] = None) -> None:
     project_name = name + (f"-{label}" if label else "")
     args = ["azd", "provision", "-e", project_name]
@@ -95,18 +106,28 @@ def _get_component_resources(component: Type[Resource]) -> Dict[str, Resource]:
     return resources
 
 
+def deprovision(
+    deployment: AzureInfrastructure,
+    /,
+    *,
+    purge: bool = False
+) -> None:
+    _deprovision_project(
+        deployment.__class__.__name__,
+        purge=purge
+    )
+    
 def provision(
-    deployment: Union[Resource, AzureInfrastructure],  # TODO: Naked resource needs a resource group + identity?
+    deployment: AzureInfrastructure,
     /,
     infra_dir: str = "infra",
     main_bicep: str = "main",
     output_dir: str = ".",
     user_access: bool = True,
     location: Optional[str] = None,
-    name: Optional[str] = None,
     config_store: Optional[MutableMapping[str, Any]] = None,
 ) -> MutableMapping[str, Any]:
-    deployment_name = name or deployment.__class__.__name__
+    deployment_name = deployment.__class__.__name__
     config_store = config_store or {}
     working_dir = os.path.abspath(output_dir)
     export(
@@ -116,7 +137,6 @@ def provision(
         output_dir=output_dir,
         user_access=user_access,
         location=location,
-        name=deployment_name,
         config_store=config_store,
     )
     returncode = _init_project(
@@ -140,10 +160,9 @@ def export(
     output_dir: str = ".",
     user_access: bool = True,
     location: Optional[str] = None,
-    name: Optional[str] = None,
-    config_store: Optional[Mapping[str, Any]] = None,
+    config_store: Optional[MutableMapping[str, Any]] = None,
 ) -> None:
-    deployment_name = name or deployment.__class__.__name__
+    deployment_name = deployment.__class__.__name__
     config_store = config_store or {}
     print("Building bicep...")
     working_dir = os.path.abspath(output_dir)

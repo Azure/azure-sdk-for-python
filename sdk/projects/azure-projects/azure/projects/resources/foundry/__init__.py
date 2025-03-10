@@ -15,9 +15,11 @@ from typing import (
     List,
     Literal,
     Mapping,
+    Type,
     Union,
     Optional,
     cast,
+    overload,
 )
 from typing_extensions import TypeVar, Unpack, TypedDict
 
@@ -40,6 +42,7 @@ from ._connection import AIConnection
 if TYPE_CHECKING:
     from .types import MachineLearningWorkspaceResource
     from azure.ai.projects import AIProjectClient
+    from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
 
 
 class MachineLearningWorkspaceKwargs(TypedDict, total=False):
@@ -519,7 +522,13 @@ class AIProject(MLWorkspace[MachineLearningWorkspaceResourceType]):
                 current_properties["properties"]["hubResourceId"] = hub.symbol.id
         return output_config
 
-    def _build_credential(self, cls: Callable[..., ClientType], *, use_async: Optional[bool], credential: Any) -> Any:
+    def _build_credential(
+        self,
+        cls: Type[ClientType],
+        *,
+        use_async: Optional[bool],
+        credential: Any
+    ) -> Any:
         # TODO: This needs work - how to close the credential.
         if credential:
             try:
@@ -542,9 +551,34 @@ class AIProject(MLWorkspace[MachineLearningWorkspaceResourceType]):
 
         return SyncDefaultAzureCredential()
 
+    @overload
     def get_client(
         self,
-        cls: Callable[..., ClientType],
+        /,
+        *,
+        transport: Any = None,
+        credential: Any = None,
+        config_store: Optional[Mapping[str, Any]] = None,
+        use_async: Optional[Literal[False]] = None,
+        **client_options,
+    ) -> "AIProjectClient":
+        ...
+    @overload
+    def get_client(
+        self,
+        /,
+        *,
+        transport: Any = None,
+        credential: Any = None,
+        config_store: Optional[Mapping[str, Any]] = None,
+        use_async: Literal[True],
+        **client_options,
+    ) -> "AsyncAIProjectClient":
+        ...
+    @overload
+    def get_client(
+        self,
+        cls: Type[ClientType],
         /,
         *,
         transport: Any = None,
@@ -553,6 +587,20 @@ class AIProject(MLWorkspace[MachineLearningWorkspaceResourceType]):
         use_async: Optional[bool] = None,
         **client_options,
     ) -> ClientType:
+        ...
+    def get_client(
+        self,
+        cls = None,
+        /,
+        *,
+        transport = None,
+        credential = None,
+        config_store = None,
+        use_async = None,
+        **client_options,
+    ):
+        if cls is self.__class__:
+            return self
         if config_store is None:
             config_store = _load_dev_environment()
         if cls is None:

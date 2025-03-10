@@ -285,32 +285,32 @@ def test_aiservices_embeddings_defaults():
 
 
 def test_aiservices_embeddings_export(export_dir):
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r: AIEmbeddings = AIEmbeddings()
 
-    export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_aiservices_embeddings_export_existing(export_dir):
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r: AIEmbeddings = field(default=AIEmbeddings.reference(name="aitest", account="aitest"))
 
-    export(TestInfra(identity=None), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(identity=None), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_aiservices_embeddings_export_with_properties(export_dir):
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r: AIEmbeddings = field(default=AIEmbeddings(sku="test", capacity=15, format="foo", version="2"))
 
-    export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_aiservices_embeddings_export_multiple_deployments(export_dir):
-    class TestInfra(AzureInfrastructure):
+    class test(AzureInfrastructure):
         r: AIEmbeddings = field(default=AIEmbeddings(model="one"))
         b: AIEmbeddings = field(default=AIEmbeddings(model="two"))
 
-    export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_aiservices_embeddings_client():
