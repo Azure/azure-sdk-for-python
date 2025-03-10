@@ -4,13 +4,14 @@
 
 import math
 import re
-from typing import Dict, TypeVar, Union
+from typing import Dict, TypeVar, Union, Optional
 
 from promptflow.core import AsyncPrompty
 from typing_extensions import override
 
 from azure.ai.evaluation._common.constants import PROMPT_BASED_REASON_EVALUATORS
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+from azure.ai.evaluation._model_configurations import EvaluatorConfig
 from ..._common.utils import construct_prompty_model_config, validate_model_config, parse_quality_evaluator_reason_score
 from . import EvaluatorBase
 
@@ -38,16 +39,35 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
     :param ignore_queries: If True, queries will be ignored in conversation evaluations. Default is False.
         Useful since some evaluators of this format are response-only.
     :type ignore_queries: bool
+    :param evaluator_config: Optional configuration for the evaluator, which can include a threshold override.
+    :type evaluator_config: Optional[EvaluatorConfig]
+    :param threshold: Optional threshold value for determining pass/fail status of evaluation results.
+        Default is 3 for quality-based evaluators (1-5 scale).
+    :type threshold: Optional[Union[int, float, str]]
     """
 
     _LLM_CALL_TIMEOUT = 600
     _DEFAULT_OPEN_API_VERSION = "2024-02-15-preview"
 
-    def __init__(self, *, result_key: str, prompty_file: str, model_config: dict, eval_last_turn: bool = False):
+    def __init__(
+        self, 
+        *, 
+        result_key: str, 
+        prompty_file: str, 
+        model_config: dict, 
+        eval_last_turn: bool = False,
+        evaluator_config: Optional[EvaluatorConfig] = None,
+        threshold: float = 3.0
+    ):
         self._result_key = result_key
         self._prompty_file = prompty_file
-        super().__init__(eval_last_turn=eval_last_turn)
-
+        
+        super().__init__(
+            eval_last_turn=eval_last_turn,
+            threshold=threshold,
+            evaluator_config=evaluator_config
+        )
+        
         subclass_name = self.__class__.__name__
         user_agent = f"{USER_AGENT} (type=evaluator subtype={subclass_name})"
         prompty_model_config = construct_prompty_model_config(

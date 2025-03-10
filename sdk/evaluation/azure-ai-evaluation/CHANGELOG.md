@@ -3,6 +3,8 @@
 ## 1.4.0 (Unreleased)
 
 ### Features Added
+- Added threshold support for evaluators to determine pass/fail status. Quality-based evaluators default to a threshold of 3, and safety evaluators default to "Medium". The threshold can be overridden via the evaluator_config parameter.
+- Added <evaluator>_threshold and <evaluator>_result columns in evaluation outputs to show threshold values and pass/fail results.
 
 ### Breaking Changes
 
