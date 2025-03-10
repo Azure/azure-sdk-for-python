@@ -211,7 +211,7 @@ if __name__ == "__main__":
         
         # Fix the file and get results
         result = fix_file(str(file_path))
-        
+      
         if result['status'] == 'success':
             print("-----"*80)
             print(f"Fixed file: {result['fixed_file']}")
@@ -228,3 +228,7 @@ if __name__ == "__main__":
             print("\n\n\n")     
         else:
             print(f"Error fixing file {file_path}: {result['error']}")
+    
+    for key, value in pylint_scores.items():
+        print(f"{key}: {value}")
+        print("-----"*80)
