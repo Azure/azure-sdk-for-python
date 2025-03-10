@@ -154,9 +154,7 @@ class RedTeamAgent(_SafetyEvaluation):
         )
 
         self.rai_client = RAIClient(azure_ai_project=self.azure_ai_project, token_manager=self.token_manager)
-        #self.generated_rai_client = GeneratedRAIClient(azure_ai_project=self.azure_ai_project, token_manager=self.token_manager.get_aad_credential())
-        from azure.identity import DefaultAzureCredential
-        self.generated_rai_client = GeneratedRAIClient(azure_ai_project=self.azure_ai_project, token_manager=DefaultAzureCredential())
+        self.generated_rai_client = GeneratedRAIClient(azure_ai_project=self.azure_ai_project, token_manager=self.token_manager.get_aad_credential())
 
         self.adversarial_template_handler = AdversarialTemplateHandler(
             azure_ai_project=self.azure_ai_project, rai_client=self.rai_client

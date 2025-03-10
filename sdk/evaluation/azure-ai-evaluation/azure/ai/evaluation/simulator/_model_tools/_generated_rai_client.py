@@ -93,7 +93,6 @@ class GeneratedRAIClient:
             return response
             
         except Exception as e:
-            import pdb; pdb.set_trace()
             # For now, while the API might not be fully implemented, return a mock response
             mock_objectives = {
                 "objectives": [
