@@ -805,22 +805,7 @@ class RedTeamAgent():
                         asr_values = converter_group[harm].tolist()
                         asr_value = round(list_mean_nan_safe(asr_values) * 100, 2)
                         detailed_joint_risk_attack_asr[complexity][harm_key][f"{converter_name}_ASR"] = asr_value
-        
-        if "baseline" in results_df["complexity_level"].unique():
-            baseline_df = results_df[results_df["complexity_level"] == "baseline"]
-            if not baseline_df.empty:
-                detailed_joint_risk_attack_asr["baseline"] = {}
-                
-                for harm in harms_cols:
-                    harm_key = harm.replace("-", "_")
-                    detailed_joint_risk_attack_asr["baseline"][harm_key] = {}
-                    
-                    converter_groups = baseline_df.groupby("converter")
-                    for converter_name, converter_group in converter_groups:
-                        asr_values = converter_group[harm].tolist()
-                        asr_value = round(list_mean_nan_safe(asr_values) * 100, 2)
-                        detailed_joint_risk_attack_asr["baseline"][harm_key][f"{converter_name}_ASR"] = asr_value
-        
+                        
         scorecard = {
             "risk_category_summary": risk_category_summary,
             "attack_technique_summary": attack_technique_summary,
