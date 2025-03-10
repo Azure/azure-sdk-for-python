@@ -2,3 +2,7 @@ azure-identity
 openai
 pylint
 azure-core
+azure-keyvault
+aiohttp
+requests
+httpx
