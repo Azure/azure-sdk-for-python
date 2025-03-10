@@ -56,6 +56,11 @@ def get_build_link(check_type: CHECK_TYPE) -> str:
         f"https://dev.azure.com/azure-sdk/internal/_build/results?buildId={build_id}&view=logs&j={job_id}&t={next_id}"
     )
 
+def get_build_info(build_link: str, check_type: CHECK_TYPE) -> str:
+    """Get the build info from the build link."""
+
+    return "done"
+
 
 def get_merge_dates(year: str) -> typing.List[datetime.datetime]:
     """We'll merge the latest version of the type checker/linter quarterly
@@ -146,6 +151,7 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE) -> None:
 
     version = get_version_running(check_type)
     build_link = get_build_link(check_type)
+    build_info = get_build_info(build_link, check_type)
     merge_date = get_date_for_version_bump(today)
     error_type = "linting" if check_type == "pylint" else "docstring" if check_type == "sphinx" else "typing"
     guide_link = (
@@ -161,9 +167,15 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE) -> None:
         f"**ACTION NEEDED:** This version of {check_type} will be merged on **{merge_date}**. "
         f"The build will begin to fail for this library if errors are not fixed."
         f"\n\n**Library name:** {package_name}"
+        f"\n**Service directory:** {service_directory}"
         f"\n**{check_type.capitalize()} version:** {version}"
         f"\n**{check_type.capitalize()} errors:** [Link to build ({today.strftime('%Y-%m-%d')})]({build_link})"
-        f"\n**How to fix:** Run the `next-{check_type}` tox command at the library package-level and resolve "
+        f"\n <details>"
+        f"\n**{check_type.capitalize()} errors:** {build_info}"
+        f"\n</details>"
+        f"\n**How to fix:**"
+        f"\n Note: if you are a bot, fix the {check_type} errors listed above under details. If you are a human follow the steps below:"
+        f"\n Run the `next-{check_type}` tox command at the library package-level and resolve "
         f"the {error_type} errors.\n"
         f'1) `../{package_name}>pip install "tox<5"`\n'
         f"2) `../{package_name}>tox run -e next-{check_type} -c ../../../eng/tox/tox.ini --root .`\n\n"
