@@ -1848,7 +1848,6 @@ class TestCRUDOperations(unittest.TestCase):
                 databaseForTest = client.get_database_client(self.configs.TEST_DATABASE_ID)
                 container = databaseForTest.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
                 container.create_item(body={'id': str(uuid.uuid4()), 'name': 'sample'})
-                print('Async initialization')
 
     # TODO: Skipping this test to debug later
     @unittest.skip
