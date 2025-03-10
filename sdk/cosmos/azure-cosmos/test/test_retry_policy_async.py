@@ -15,7 +15,7 @@ from azure.cosmos.aio import CosmosClient
 from azure.cosmos.aio import DatabaseProxy, ContainerProxy
 import azure.cosmos.aio._retry_utility_async as _retry_utility
 
-@pytest.mark.cosmosEmulator
+@pytest.mark.cosmosQuery
 class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
     created_database: DatabaseProxy = None
     created_collection: ContainerProxy = None
@@ -52,7 +52,6 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
         self.client = CosmosClient(self.host, self.masterKey, consistency_level="Session",
                                                 connection_policy=self.connectionPolicy)
-
         self.created_database = self.client.get_database_client(self.TEST_DATABASE_ID)
         self.retry_after_in_milliseconds = 1000
         self.created_collection = await self.created_database.create_container(self.TEST_CONTAINER_SINGLE_PARTITION_ID,
