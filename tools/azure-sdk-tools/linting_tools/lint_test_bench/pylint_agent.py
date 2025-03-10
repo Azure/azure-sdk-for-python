@@ -48,7 +48,7 @@ def ensure_directories():
         (base_dir / dir_name).mkdir(exist_ok=True)
     return base_dir
 
-def get_test_cases_from_github():
+def get_test_cases():
     """
     Read test cases from local test_files directory.
     Returns:
@@ -93,18 +93,15 @@ def fix_file(file_path: str, logger) -> dict:
         # Define output paths
         fixed_path = base_dir / 'fixed_files' / f"{file_name}_fixed.{datetime.now().strftime('%Y%m%d_%H%M%S')}.py"
         # fixed_path = base_dir / 'fixed_files_without_comments' / f"{file_name}_fixed.{datetime.now().strftime('%Y%m%d_%H%M%S')}.py"
-        # backup_path = base_dir / 'backup_files' / f"{file_name}.{datetime.now().strftime('%Y%m%d_%H%M%S')}.bak"
 
         # Read the original content
         with open(file_path, 'r', encoding='utf-8') as f:
             original_content = f.read()
 
-        # Create backup
-        # shutil.copy2(file_path, backup_path)
-
-        # added "run pylint"
-        fix_file_prompt = "You are a helpful assistant that fixes pylint warnings and custom pylint warnings from these rules: https://github.com/Azure/azure-sdk-tools/blob/main/tools/pylint-extensions/azure-pylint-guidelines-checker/pylint_guidelines_checker.py. \
-                 Given a python file that has a pylint issue, you will identify the issue and output ONLY the fixed code. Any explainations need to be outputted as python comments."
+        fix_file_prompt = "You are a helpful assistant that fixes pylint warnings. If you are not sure about a specific pylint error, " \
+        "you can check the pylint specific guidelines from the readme: https://github.com/Azure/azure-sdk-tools/blob/5e36502f0161bf3e2bc824ac216d4c0d244f498a/tools/pylint-extensions/azure-pylint-guidelines-checker/README.md," \
+        "or the pylint documentation: https://pylint.readthedocs.io/en/stable/user_guide/checkers/features.html." \
+        "Given a python file that has pylint issues, identify the issues and output ONLY the fixed code without comments or markdown. For help, there is a comment that specifies which rules are being violated in each file."
         logger.debug(f"PROMPT FOR FIXING FILE: {fix_file_prompt}")
         
 
@@ -133,7 +130,6 @@ def fix_file(file_path: str, logger) -> dict:
             'status': 'success',
             'original_file': file_path,
             'fixed_file': fixed_path,
-            # 'backup_file': backup_path,
             'original_content': original_content,
             'fixed_content': fixed_content
         }
@@ -188,9 +184,6 @@ def run_pylint(file_path: str, logger) -> dict:
         except:
             pylint_scores[pylint_name] = [results.linter.stats.global_note]
 
-        # Parse JSON output
-        # result = json.loads(output.getvalue())
-        
         return {
             'status': 'success',
             'messages': results,
@@ -205,29 +198,10 @@ def run_pylint(file_path: str, logger) -> dict:
             'file': file_path
         }
 
-def get_azure_llm_issue_creation(prompt: str) -> str:
-    """
-    Get a response from Azure OpenAI LLM using DefaultAzureCredential.
-    """
-    try:
-        response = client.chat.completions.create(
-            model=os.environ["AZURE_OPENAI_MODEL"],  # Update this to your deployed model name
-            messages=[
-                {"role": "system", "content": "You are a helpful assistant that fixes pylint issues. \
-                 You will be given a custom pylint rule and you will create a test case for it."},
-                {"role": "user", "content": prompt}
-            ],
-            # temperature=0.7
-        )
-        return response.choices[0].message.content
-    except Exception as e:
-        print(f"Error while communicating with Azure OpenAI: {e}")
-        return None
-
 # Example usage
 if __name__ == "__main__":
     ensure_directories()
-    test_cases = get_test_cases_from_github()
+    test_cases = get_test_cases()
     next = uuid.uuid4()
     for test_case in test_cases:
         logger = my_custom_logger(f"Logger_{test_case['name']}_{next}.log")
