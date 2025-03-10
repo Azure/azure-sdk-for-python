@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 from typing_extensions import Self
 from urllib.parse import urlparse
 
@@ -12,6 +12,24 @@ from azure.core.pipeline.transport import HttpTransport, RequestsTransportRespon
 from azure.core.rest import HttpRequest
 from requests import Response
 from urllib3 import HTTPResponse
+
+
+class ProgressTracker:
+    def __init__(self, total: int, step: int):
+        self.total = total
+        self.step = step
+        self.current = 0
+
+    def assert_progress(self, current: int, total: Optional[int]):
+        if self.current != self.total:
+            self.current += self.step
+
+        if total:
+            assert self.total == total
+        assert self.current == current
+
+    def assert_complete(self):
+        assert self.total == self.current
 
 
 class MockHttpClientResponse(Response):
