@@ -14,7 +14,6 @@ from datetime import datetime
 
 import logging
 
-# Replace with your Cosmos DB details
 
 def get_random_item():
     random_int = random.randint(1, 10000)
@@ -40,6 +39,7 @@ async def run_workload(client_id):
         while True:
             try:
                 await upsert_item_concurrently(cont, 5)
+                time.sleep(.5)
             except Exception as e:
                 logger.error(e)
                 raise e

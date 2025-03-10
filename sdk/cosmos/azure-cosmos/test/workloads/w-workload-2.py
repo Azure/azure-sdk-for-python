@@ -14,7 +14,6 @@ from datetime import datetime
 
 import logging
 
-# Replace with your Cosmos DB details
 
 def get_random_item():
     random_int = random.randint(1, 10000)
