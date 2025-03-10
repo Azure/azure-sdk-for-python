@@ -67,10 +67,10 @@ def fix_coverage_xml(coverage_file):
         line = cov_file.read()
 
         # replace relative paths in folder structure pattern
-        out = re.sub("\/\.tox\/[\s\S_]*?\/site-packages", "", line)
+        out = re.sub(r"\/\.tox\/[\s\S_]*?\/site-packages", "", line)
 
         # replace relative paths in python import pattern
-        out = re.sub("\.?\.tox[\s\S\.\d]*?\.site-packages", "", out)
+        out = re.sub(r"\.?\.tox[\s\S\.\d]*?\.site-packages", "", out)
 
     if out:
         with open(coverage_file, "w") as cov_file:
