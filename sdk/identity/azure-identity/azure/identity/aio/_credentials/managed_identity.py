@@ -12,7 +12,7 @@ from .._internal import AsyncContextManager
 from .._internal.decorators import log_get_token_async
 from ... import CredentialUnavailableError
 from ..._constants import EnvironmentVariables
-from ..._credentials.managed_identity import validate_identity_config
+from ..._credentials.managed_identity import validate_identity_config, SERVICE_FABRIC_ERROR_MESSAGE
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -56,9 +56,10 @@ class ManagedIdentityCredential(AsyncContextManager):
                     managed_identity_type = "Service Fabric managed identity"
                     from .service_fabric import ServiceFabricCredential
 
-                    self._credential = ServiceFabricCredential(
-                        client_id=client_id, identity_config=identity_config, **kwargs
-                    )
+                    if client_id or identity_config:
+                        raise ValueError(SERVICE_FABRIC_ERROR_MESSAGE)
+
+                    self._credential = ServiceFabricCredential(**kwargs)
                 else:
                     managed_identity_type = "App Service managed identity"
                     from .app_service import AppServiceCredential
