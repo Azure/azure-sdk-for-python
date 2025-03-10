@@ -6,10 +6,9 @@ pip install -e ".[pyrit]"
 """
 
 
-from azure.ai.evaluation._safety_evaluation._red_team_agent import RedTeamAgent, AttackStrategy
+from azure.ai.evaluation._safety_evaluation import RedTeamAgent, AttackStrategy, AttackObjectiveGenerator, RiskCategory
 import os
 from azure.identity import DefaultAzureCredential
-from azure.ai.evaluation.simulator import AdversarialScenario
 
 
 async def main():
@@ -29,6 +28,12 @@ async def main():
 
 
     ## Minimal inputs
+    attack_objective_generator = AttackObjectiveGenerator(
+        risk_categories=[
+            RiskCategory.HateUnfairness,
+        ],
+        num_objectives=10,
+    )
     red_team_agent = RedTeamAgent(
         azure_ai_project=azure_ai_project,
         credential=DefaultAzureCredential(),
@@ -36,11 +41,21 @@ async def main():
 
     outputs = await red_team_agent.attack(
         target=test_target_fn, # type: ignore
+        attack_objective_generator=attack_objective_generator,
     )
     print(outputs)
 
 
     ## Maximal inputs
+    attack_objective_generator = AttackObjectiveGenerator(
+        risk_categories=[
+            RiskCategory.HateUnfairness,
+            RiskCategory.Violence,
+            RiskCategory.Sexual,
+            RiskCategory.SelfHarm,
+        ],
+        num_objectives=10,
+    )
     red_team_agent = RedTeamAgent(
         azure_ai_project=azure_ai_project,
         credential=DefaultAzureCredential(),
@@ -53,11 +68,20 @@ async def main():
             AttackStrategy.LOW,
             AttackStrategy.Morse],
         output_path="RacoonRedTeamEvalResults.jsonl", 
+        attack_objective_generator=attack_objective_generator,
     )
 
     print(outputs)
 
     ## High budget with duplicates and model config as target
+    attack_objective_generator = AttackObjectiveGenerator(
+        risk_categories=[
+            RiskCategory.HateUnfairness,
+            RiskCategory.Violence
+        ],
+        num_objectives=10,
+    )
+
     red_team_agent = RedTeamAgent(
         azure_ai_project=azure_ai_project,
         credential=DefaultAzureCredential(),
@@ -67,7 +91,8 @@ async def main():
         evaluation_name="HighBudget-Duplicates",
         target=model_config, # type: ignore
         attack_strategy=[AttackStrategy.HIGH, AttackStrategy.Compose([AttackStrategy.Math, AttackStrategy.Tense])],
-        output_path="HighBudget-Duplicates.jsonl"
+        output_path="HighBudget-Duplicates.jsonl",
+        attack_objective_generator=attack_objective_generator,
     )
 
     print(outputs)
