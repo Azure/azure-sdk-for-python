@@ -4,6 +4,7 @@
 
 """End-to-end test.
 """
+import asyncio
 import json
 import logging
 import os.path
@@ -1686,7 +1687,9 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
                 with self.assertRaises(Exception):
                     databaseForTest = client.get_database_client(self.configs.TEST_DATABASE_ID)
                     container = databaseForTest.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
-                    await container.create_item(body={'id': str(uuid.uuid4()), 'name': 'sample'})
+                    item = {'id': str(uuid.uuid4()), 'name': 'sample'}
+                    await container.create_item(body=item)
+                    await container.read_item(item=item['id'], partition_key=item['id'])
                     print('Async initialization')
 
     async def test_read_timeout_async(self):
@@ -1709,13 +1712,15 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
             with self.assertRaises(AzureError):
                 databaseForTest = client.get_database_client(self.configs.TEST_DATABASE_ID)
                 container = databaseForTest.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
-                await container.create_item(body={'id': str(uuid.uuid4()), 'name': 'sample'})
+                item = {'id': str(uuid.uuid4()), 'name': 'sample'}
+                await container.create_item(body=item)
+                await container.read_item(item=item['id'], partition_key=item['id'])
                 print('Async Initialization')
 
     async def test_client_connection_retry_configuration_async(self):
         total_time_for_two_retries = await self.initialize_client_with_connection_urllib_retry_config(2)
-        total_time_for_three_retries = await self.initialize_client_with_connection_urllib_retry_config(3)
-        assert total_time_for_three_retries > total_time_for_two_retries
+        total_time_for_four_retries = await self.initialize_client_with_connection_urllib_retry_config(4)
+        assert total_time_for_four_retries > total_time_for_two_retries
 
     async def initialize_client_with_connection_urllib_retry_config(self, retries):
         async with CosmosClient(TestCRUDOperationsAsync.host, TestCRUDOperationsAsync.masterKey,
@@ -1729,7 +1734,9 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
             # there is a forced timeout for those calls
 
             try:
-                await container.create_item(body={'id': str(uuid.uuid4()), 'name': 'sample'})
+                item = {'id': str(uuid.uuid4()), 'name': 'sample'}
+                await container.create_item(body=item)
+                await container.read_item(item=item['id'], partition_key=item['id'])
                 print('Async initialization')
                 self.fail()
             except AzureError as e:
