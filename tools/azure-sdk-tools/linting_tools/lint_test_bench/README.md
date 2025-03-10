@@ -1,0 +1,3 @@
+# README
+
+azure-pylint-guidelines-checker==0.5.2 --index-url="https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"

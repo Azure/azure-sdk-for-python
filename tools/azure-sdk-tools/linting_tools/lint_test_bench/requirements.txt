@@ -1,0 +1,4 @@
+azure-identity
+openai
+pylint
+azure-core
