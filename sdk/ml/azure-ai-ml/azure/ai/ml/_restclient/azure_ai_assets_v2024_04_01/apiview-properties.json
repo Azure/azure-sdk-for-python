@@ -1,0 +1,21 @@
+{
+    "CrossLanguagePackageId": "Microsoft.MachineLearningServices",
+    "CrossLanguageDefinitionId": {
+        "azure.ai.resources.autogen.models.Index": "Microsoft.MachineLearningServices.Index",
+        "azure.ai.resources.autogen.models.Prompt": "Microsoft.MachineLearningServices.Prompt",
+        "azure.ai.resources.autogen.models.SystemData": "Microsoft.MachineLearningServices.SystemData",
+        "azure.ai.resources.autogen.models.VersionInfo": "Microsoft.MachineLearningServices.VersionInfo",
+        "azure.ai.resources.autogen.MachineLearningServicesClient.indexes.get": "Microsoft.MachineLearningServices.Indexes.get",
+        "azure.ai.resources.autogen.MachineLearningServicesClient.indexes.create_or_update": "Microsoft.MachineLearningServices.Indexes.createOrUpdate",
+        "azure.ai.resources.autogen.MachineLearningServicesClient.indexes.list": "Microsoft.MachineLearningServices.Indexes.list",
+        "azure.ai.resources.autogen.MachineLearningServicesClient.indexes.get_latest": "Microsoft.MachineLearningServices.Indexes.getLatest",
+        "azure.ai.resources.autogen.MachineLearningServicesClient.indexes.get_next_version": "Microsoft.MachineLearningServices.Indexes.getNextVersion",
+        "azure.ai.resources.autogen.MachineLearningServicesClient.indexes.list_latest": "Microsoft.MachineLearningServices.Indexes.listLatest",
+        "azure.ai.resources.autogen.MachineLearningServicesClient.prompts.get": "Microsoft.MachineLearningServices.Prompts.get",
+        "azure.ai.resources.autogen.MachineLearningServicesClient.prompts.create_or_update": "Microsoft.MachineLearningServices.Prompts.createOrUpdate",
+        "azure.ai.resources.autogen.MachineLearningServicesClient.prompts.list": "Microsoft.MachineLearningServices.Prompts.list",
+        "azure.ai.resources.autogen.MachineLearningServicesClient.prompts.get_latest": "Microsoft.MachineLearningServices.Prompts.getLatest",
+        "azure.ai.resources.autogen.MachineLearningServicesClient.prompts.get_next_version": "Microsoft.MachineLearningServices.Prompts.getNextVersion",
+        "azure.ai.resources.autogen.MachineLearningServicesClient.prompts.list_latest": "Microsoft.MachineLearningServices.Prompts.listLatest"
+    }
+}

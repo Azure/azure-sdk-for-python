@@ -52,6 +52,7 @@ class DocumentModelAdministrationPolling(OperationResourcePolling):
         """
         return None
 
+
 class AnalyzeDocumentLROPoller(LROPoller[PollingReturnType_co]):
     @property
     def details(self) -> Mapping[str, Any]:
@@ -306,7 +307,13 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
 
         if polling is True:
             polling_method: PollingMethod = cast(
-                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, lro_algorithms=[DocumentModelAdministrationPolling()], **kwargs)
+                PollingMethod,
+                LROBasePolling(
+                    lro_delay,
+                    path_format_arguments=path_format_arguments,
+                    lro_algorithms=[DocumentModelAdministrationPolling()],
+                    **kwargs,
+                ),
             )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())

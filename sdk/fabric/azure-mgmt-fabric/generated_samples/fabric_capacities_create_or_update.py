@@ -42,6 +42,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2023-11-01/FabricCapacities_CreateOrUpdate.json
+# x-ms-original-file: 2025-01-15-preview/FabricCapacities_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

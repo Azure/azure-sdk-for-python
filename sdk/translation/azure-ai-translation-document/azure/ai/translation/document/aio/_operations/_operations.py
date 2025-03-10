@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -35,7 +35,7 @@ from azure.core.utils import case_insensitive_dict
 from ... import _model_base, models as _models
 from ..._model_base import SdkJSONEncoder, _deserialize
 from ..._operations._operations import (
-    build_document_translation__begin_translation_request,
+    build_document_translation_begin_translation_request,
     build_document_translation_cancel_translation_request,
     build_document_translation_get_document_status_request,
     build_document_translation_get_supported_formats_request,
@@ -44,6 +44,7 @@ from ..._operations._operations import (
     build_document_translation_list_translation_statuses_request,
     build_single_document_translation_translate_request,
 )
+from ..._validation import api_version_validation
 from ..._vendor import prepare_multipart_form_data
 from .._vendor import DocumentTranslationClientMixinABC, SingleDocumentTranslationClientMixinABC
 
@@ -58,7 +59,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 
 class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC):
 
-    async def __begin_translation_initial(
+    async def _begin_translation_initial(
         self, body: Union[_models.StartTranslationDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -82,7 +83,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_document_translation__begin_translation_request(
+        _request = build_document_translation_begin_translation_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -120,7 +121,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         return deserialized  # type: ignore
 
     @overload
-    async def _begin_translation(
+    async def begin_translation(
         self, body: _models.StartTranslationDetails, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.TranslationStatus]:
         """Submit a document translation request to the Document Translation service.
@@ -158,7 +159,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         """
 
     @overload
-    async def _begin_translation(
+    async def begin_translation(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.TranslationStatus]:
         """Submit a document translation request to the Document Translation service.
@@ -196,7 +197,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         """
 
     @overload
-    async def _begin_translation(
+    async def begin_translation(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.TranslationStatus]:
         """Submit a document translation request to the Document Translation service.
@@ -234,7 +235,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         """
 
     @distributed_trace_async
-    async def _begin_translation(
+    async def begin_translation(
         self, body: Union[_models.StartTranslationDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[_models.TranslationStatus]:
         """Submit a document translation request to the Document Translation service.
@@ -277,7 +278,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self.__begin_translation_initial(
+            raw_result = await self._begin_translation_initial(
                 body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
             await raw_result.http_response.read()  # type: ignore
@@ -989,6 +990,7 @@ class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-to
         source_language: Optional[str] = None,
         category: Optional[str] = None,
         allow_fallback: Optional[bool] = None,
+        translate_text_within_image: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         """Submit a single document translation request to the Document Translation service.
@@ -1019,6 +1021,9 @@ class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-to
          when a custom system doesn't exist.
          Possible values are: true (default) or false. Default value is None.
         :paramtype allow_fallback: bool
+        :keyword translate_text_within_image: Optional boolean parameter to translate text within an
+         image in the document. Default value is None.
+        :paramtype translate_text_within_image: bool
         :return: AsyncIterator[bytes]
         :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1033,6 +1038,7 @@ class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-to
         source_language: Optional[str] = None,
         category: Optional[str] = None,
         allow_fallback: Optional[bool] = None,
+        translate_text_within_image: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         """Submit a single document translation request to the Document Translation service.
@@ -1063,12 +1069,18 @@ class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-to
          when a custom system doesn't exist.
          Possible values are: true (default) or false. Default value is None.
         :paramtype allow_fallback: bool
+        :keyword translate_text_within_image: Optional boolean parameter to translate text within an
+         image in the document. Default value is None.
+        :paramtype translate_text_within_image: bool
         :return: AsyncIterator[bytes]
         :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        params_added_on={"2024-11-01-preview": ["translate_text_within_image"]},
+    )
     async def translate(
         self,
         body: Union[_models.DocumentTranslateContent, JSON],
@@ -1077,6 +1089,7 @@ class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-to
         source_language: Optional[str] = None,
         category: Optional[str] = None,
         allow_fallback: Optional[bool] = None,
+        translate_text_within_image: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         """Submit a single document translation request to the Document Translation service.
@@ -1108,6 +1121,9 @@ class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-to
          when a custom system doesn't exist.
          Possible values are: true (default) or false. Default value is None.
         :paramtype allow_fallback: bool
+        :keyword translate_text_within_image: Optional boolean parameter to translate text within an
+         image in the document. Default value is None.
+        :paramtype translate_text_within_image: bool
         :return: AsyncIterator[bytes]
         :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1135,6 +1151,7 @@ class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-to
             source_language=source_language,
             category=category,
             allow_fallback=allow_fallback,
+            translate_text_within_image=translate_text_within_image,
             api_version=self._config.api_version,
             files=_files,
             data=_data,
@@ -1163,6 +1180,13 @@ class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-to
             raise HttpResponseError(response=response)
 
         response_headers = {}
+        response_headers["x-metered-usage"] = self._deserialize("int", response.headers.get("x-metered-usage"))
+        response_headers["total-image-scans-succeeded"] = self._deserialize(
+            "int", response.headers.get("total-image-scans-succeeded")
+        )
+        response_headers["total-image-scans-failed"] = self._deserialize(
+            "int", response.headers.get("total-image-scans-failed")
+        )
         response_headers["x-ms-client-request-id"] = self._deserialize(
             "str", response.headers.get("x-ms-client-request-id")
         )

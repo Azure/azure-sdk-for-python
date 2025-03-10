@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -24,8 +25,6 @@ class BaseExportModel(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     ExportQuery, ExportResource, ExportResourceGroup
 
-    All required parameters must be populated in order to send to server.
-
     :ivar type: The parameter type. Required. Known values are: "ExportResource",
      "ExportResourceGroup", and "ExportQuery".
     :vartype type: str or ~azure.mgmt.terraform.models.Type
@@ -40,15 +39,21 @@ class BaseExportModel(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    type: str = rest_discriminator(name="type")
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The parameter type. Required. Known values are: \"ExportResource\", \"ExportResourceGroup\",
      and \"ExportQuery\"."""
-    target_provider: Optional[Union[str, "_models.TargetProvider"]] = rest_field(name="targetProvider")
+    target_provider: Optional[Union[str, "_models.TargetProvider"]] = rest_field(
+        name="targetProvider", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The target Azure Terraform Provider. Known values are: \"azurerm\" and \"azapi\"."""
-    full_properties: Optional[bool] = rest_field(name="fullProperties")
+    full_properties: Optional[bool] = rest_field(
+        name="fullProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Whether to output all non-computed properties in the generated Terraform configuration? This
      probably needs manual modifications to make it valid."""
-    mask_sensitive: Optional[bool] = rest_field(name="maskSensitive")
+    mask_sensitive: Optional[bool] = rest_field(
+        name="maskSensitive", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Mask sensitive attributes in the Terraform configuration."""
 
     @overload
@@ -75,8 +80,6 @@ class BaseExportModel(_model_base.Model):
 class ErrorAdditionalInfo(_model_base.Model):
     """The resource management error additional info.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
@@ -91,8 +94,6 @@ class ErrorAdditionalInfo(_model_base.Model):
 
 class ErrorDetail(_model_base.Model):
     """The error detail.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar code: The error code.
     :vartype code: str
@@ -128,7 +129,7 @@ class ErrorResponse(_model_base.Model):
     :vartype error: ~azure.mgmt.terraform.models.ErrorDetail
     """
 
-    error: Optional["_models.ErrorDetail"] = rest_field()
+    error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The error object."""
 
     @overload
@@ -152,8 +153,6 @@ class ErrorResponse(_model_base.Model):
 class ExportQuery(BaseExportModel, discriminator="ExportQuery"):
     """Export parameter for resources queried by ARG (Azure Resource Graph).
 
-    All required parameters must be populated in order to send to server.
-
     :ivar target_provider: The target Azure Terraform Provider. Known values are: "azurerm" and
      "azapi".
     :vartype target_provider: str or ~azure.mgmt.terraform.models.TargetProvider
@@ -172,18 +171,33 @@ class ExportQuery(BaseExportModel, discriminator="ExportQuery"):
     :vartype recursive: bool
     :ivar type: The parameter type. Required.
     :vartype type: str or ~azure.mgmt.terraform.models.EXPORT_QUERY
+    :ivar table: The ARG table name.
+    :vartype table: str
+    :ivar authorization_scope_filter: The ARG Scope Filter parameter. Known values are:
+     "AtScopeAndBelow", "AtScopeAndAbove", "AtScopeAboveAndBelow", and "AtScopeExact".
+    :vartype authorization_scope_filter: str or
+     ~azure.mgmt.terraform.models.AuthorizationScopeFilter
     """
 
-    query: str = rest_field()
+    query: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ARG where predicate. Note that you can combine multiple conditions in one ``where``
      predicate, e.g. ``resourceGroup =~ \"my-rg\" and type =~
      \"microsoft.network/virtualnetworks\"``. Required."""
-    name_pattern: Optional[str] = rest_field(name="namePattern")
+    name_pattern: Optional[str] = rest_field(
+        name="namePattern", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The name pattern of the Terraform resources."""
-    recursive: Optional[bool] = rest_field()
+    recursive: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Whether to recursively list child resources of the query result."""
-    type: Literal[Type.EXPORT_QUERY] = rest_discriminator(name="type")  # type: ignore
+    type: Literal[Type.EXPORT_QUERY] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The parameter type. Required."""
+    table: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ARG table name."""
+    authorization_scope_filter: Optional[Union[str, "_models.AuthorizationScopeFilter"]] = rest_field(
+        name="authorizationScopeFilter", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ARG Scope Filter parameter. Known values are: \"AtScopeAndBelow\", \"AtScopeAndAbove\",
+     \"AtScopeAboveAndBelow\", and \"AtScopeExact\"."""
 
     @overload
     def __init__(
@@ -195,6 +209,8 @@ class ExportQuery(BaseExportModel, discriminator="ExportQuery"):
         mask_sensitive: Optional[bool] = None,
         name_pattern: Optional[str] = None,
         recursive: Optional[bool] = None,
+        table: Optional[str] = None,
+        authorization_scope_filter: Optional[Union[str, "_models.AuthorizationScopeFilter"]] = None,
     ) -> None: ...
 
     @overload
@@ -210,8 +226,6 @@ class ExportQuery(BaseExportModel, discriminator="ExportQuery"):
 
 class ExportResource(BaseExportModel, discriminator="ExportResource"):
     """Export parameter for individual resources.
-
-    All required parameters must be populated in order to send to server.
 
     :ivar target_provider: The target Azure Terraform Provider. Known values are: "azurerm" and
      "azapi".
@@ -235,15 +249,21 @@ class ExportResource(BaseExportModel, discriminator="ExportResource"):
     :vartype type: str or ~azure.mgmt.terraform.models.EXPORT_RESOURCE
     """
 
-    resource_ids: List[str] = rest_field(name="resourceIds")
+    resource_ids: List[str] = rest_field(name="resourceIds", visibility=["read", "create", "update", "delete", "query"])
     """The id of the resource to be exported. Required."""
-    resource_name: Optional[str] = rest_field(name="resourceName")
+    resource_name: Optional[str] = rest_field(
+        name="resourceName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The Terraform resource name. Only works when ``resourceIds`` contains only one item."""
-    resource_type: Optional[str] = rest_field(name="resourceType")
+    resource_type: Optional[str] = rest_field(
+        name="resourceType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The Terraform resource type. Only works when ``resourceIds`` contains only one item."""
-    name_pattern: Optional[str] = rest_field(name="namePattern")
+    name_pattern: Optional[str] = rest_field(
+        name="namePattern", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The name pattern of the Terraform resources."""
-    type: Literal[Type.EXPORT_RESOURCE] = rest_discriminator(name="type")  # type: ignore
+    type: Literal[Type.EXPORT_RESOURCE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The parameter type. Required."""
 
     @overload
@@ -273,8 +293,6 @@ class ExportResource(BaseExportModel, discriminator="ExportResource"):
 class ExportResourceGroup(BaseExportModel, discriminator="ExportResourceGroup"):
     """Export parameter for a resource group.
 
-    All required parameters must be populated in order to send to server.
-
     :ivar target_provider: The target Azure Terraform Provider. Known values are: "azurerm" and
      "azapi".
     :vartype target_provider: str or ~azure.mgmt.terraform.models.TargetProvider
@@ -291,11 +309,15 @@ class ExportResourceGroup(BaseExportModel, discriminator="ExportResourceGroup"):
     :vartype type: str or ~azure.mgmt.terraform.models.EXPORT_RESOURCE_GROUP
     """
 
-    resource_group_name: str = rest_field(name="resourceGroupName")
+    resource_group_name: str = rest_field(
+        name="resourceGroupName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The name of the resource group to be exported. Required."""
-    name_pattern: Optional[str] = rest_field(name="namePattern")
+    name_pattern: Optional[str] = rest_field(
+        name="namePattern", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The name pattern of the Terraform resources."""
-    type: Literal[Type.EXPORT_RESOURCE_GROUP] = rest_discriminator(name="type")  # type: ignore
+    type: Literal[Type.EXPORT_RESOURCE_GROUP] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The parameter type. Required."""
 
     @overload
@@ -325,6 +347,9 @@ class ExportResult(_model_base.Model):
 
     :ivar configuration: The Terraform configuration content.
     :vartype configuration: str
+    :ivar import_property: The Terraform import blocks for the current export, which users can use
+     to run "terraform plan" with to import the resources.
+    :vartype import_property: str
     :ivar skipped_resources: A list of Azure resources which are not exported to Terraform due to
      there is no corresponding resources in Terraform.
     :vartype skipped_resources: list[str]
@@ -332,12 +357,21 @@ class ExportResult(_model_base.Model):
     :vartype errors: list[~azure.mgmt.terraform.models.ErrorDetail]
     """
 
-    configuration: Optional[str] = rest_field()
+    configuration: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The Terraform configuration content."""
-    skipped_resources: Optional[List[str]] = rest_field(name="skippedResources")
+    import_property: Optional[str] = rest_field(
+        name="import", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Terraform import blocks for the current export, which users can use to run \"terraform
+     plan\" with to import the resources."""
+    skipped_resources: Optional[List[str]] = rest_field(
+        name="skippedResources", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of Azure resources which are not exported to Terraform due to there is no corresponding
      resources in Terraform."""
-    errors: Optional[List["_models.ErrorDetail"]] = rest_field()
+    errors: Optional[List["_models.ErrorDetail"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of errors derived during exporting each resource."""
 
     @overload
@@ -345,6 +379,7 @@ class ExportResult(_model_base.Model):
         self,
         *,
         configuration: Optional[str] = None,
+        import_property: Optional[str] = None,
         skipped_resources: Optional[List[str]] = None,
         errors: Optional[List["_models.ErrorDetail"]] = None,
     ) -> None: ...
@@ -362,8 +397,6 @@ class ExportResult(_model_base.Model):
 
 class Operation(_model_base.Model):
     """Details of a REST API operation, returned from the Resource Provider Operations API.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
      "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
@@ -389,13 +422,15 @@ class Operation(_model_base.Model):
     is_data_action: Optional[bool] = rest_field(name="isDataAction", visibility=["read"])
     """Whether the operation applies to data-plane. This is \"true\" for data-plane operations and
      \"false\" for Azure Resource Manager/control-plane operations."""
-    display: Optional["_models.OperationDisplay"] = rest_field(visibility=["read"])
+    display: Optional["_models.OperationDisplay"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Localized display information for this particular operation."""
     origin: Optional[Union[str, "_models.Origin"]] = rest_field(visibility=["read"])
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
      logs UX. Default value is \"user,system\". Known values are: \"user\", \"system\", and
      \"user,system\"."""
-    action_type: Optional[Union[str, "_models.ActionType"]] = rest_field(name="actionType")
+    action_type: Optional[Union[str, "_models.ActionType"]] = rest_field(name="actionType", visibility=["read"])
     """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for
      internal only APIs. \"Internal\""""
 
@@ -403,7 +438,7 @@ class Operation(_model_base.Model):
     def __init__(
         self,
         *,
-        action_type: Optional[Union[str, "_models.ActionType"]] = None,
+        display: Optional["_models.OperationDisplay"] = None,
     ) -> None: ...
 
     @overload
@@ -419,8 +454,6 @@ class Operation(_model_base.Model):
 
 class OperationDisplay(_model_base.Model):
     """Localized display information for and operation.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
@@ -453,9 +486,6 @@ class OperationDisplay(_model_base.Model):
 class TerraformOperationStatus(_model_base.Model):
     """The status of the LRO operation.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar properties: RP-specific properties for the operationStatus resource, only appears when
      operation ended with Succeeded status.
     :vartype properties: ~azure.mgmt.terraform.models.ExportResult
@@ -477,7 +507,9 @@ class TerraformOperationStatus(_model_base.Model):
     properties: Optional["_models.ExportResult"] = rest_field(visibility=["read"])
     """RP-specific properties for the operationStatus resource, only appears when operation ended with
      Succeeded status."""
-    status: Union[str, "_models.ResourceProvisioningState"] = rest_field()
+    status: Union[str, "_models.ResourceProvisioningState"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The operation status. Required. Known values are: \"Succeeded\", \"Failed\", and \"Canceled\"."""
     name: Optional[str] = rest_field(visibility=["read"])
     """The name of the  operationStatus resource."""
