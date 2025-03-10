@@ -27,6 +27,7 @@ from typing import List, Optional, TYPE_CHECKING, Union, Dict, Any
 from typing_extensions import Literal, TypedDict
 
 from ._retry_options import RetryOptions
+from .cosmos_excluded_locations import CosmosExcludedLocations
 
 if TYPE_CHECKING:
     from ._retry_utility import ConnectionRetryPolicy
@@ -308,6 +309,13 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
         locations in this list are specified as the names of the azure Cosmos
         locations like, 'West US', 'East US', 'Central India' and so on.
     :vartype PreferredLocations: List[str]
+    :ivar ExcludedLocations:
+        Gets or sets the excluded locations for geo-replicated database
+        accounts. When ExcludedLocations is non-empty, the client will skip this
+        set of locations from the final location evaluation. The locations in
+        this list are specified as the names of the azure Cosmos locations like,
+        'West US', 'East US', 'Central India' and so on.
+    :vartype ExcludedLocations: ~CosmosExcludedLocations
     :ivar RetryOptions:
         Gets or sets the retry options to be applied to all requests when
         retrying.
@@ -346,6 +354,7 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
         self.ProxyConfiguration: Optional[ProxyConfiguration] = None
         self.EnableEndpointDiscovery: bool = True
         self.PreferredLocations: List[str] = []
+        self.ExcludedLocations: CosmosExcludedLocations = CosmosExcludedLocations(set())
         self.RetryOptions: RetryOptions = RetryOptions()
         self.DisableSSLVerification: bool = False
         self.UseMultipleWriteLocations: bool = False

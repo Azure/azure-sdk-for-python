@@ -118,8 +118,24 @@ def get_endpoints_by_location(new_locations,
             except Exception as e:
                 raise e
 
-    return endpoints_by_location, parsed_locations
+    # Also store a hash map of endpoints for each location
+    locations_by_endpoints = {value.get_current(): key for key, value in endpoints_by_location.items()}
 
+    return endpoints_by_location, locations_by_endpoints, parsed_locations
+
+def get_applicable_regional_endpoints(endpoints, region_name_by_endpoint, fall_back_endpoint,
+                                      exclude_location_list):
+    # filter endpoints by excluded locations
+    applicable_endpoints = []
+    for endpoint in endpoints:
+        if region_name_by_endpoint.get(endpoint.get_current()) not in exclude_location_list:
+            applicable_endpoints.append(endpoint)
+
+    # if endpoint is empty add fallback endpoint
+    if not applicable_endpoints:
+        applicable_endpoints.append(fall_back_endpoint)
+
+    return applicable_endpoints
 
 class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
     def current_time_millis(self):
@@ -132,6 +148,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         enable_endpoint_discovery,
         use_multiple_write_locations,
         refresh_time_interval_in_ms,
+        connection_policy,
     ):
         self.preferred_locations = preferred_locations
         self.default_regional_endpoint = RegionalEndpoint(default_endpoint, default_endpoint)
@@ -145,8 +162,11 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         self.last_cache_update_time_stamp = 0
         self.available_read_regional_endpoints_by_location = {} # pylint: disable=name-too-long
         self.available_write_regional_endpoints_by_location = {} # pylint: disable=name-too-long
+        self.available_locations_by_read_regional_endpoints = {} # pylint: disable=name-too-long
+        self.available_locations_by_write_regional_endpoints = {} # pylint: disable=name-too-long
         self.available_write_locations = []
         self.available_read_locations = []
+        self.connection_policy = connection_policy
 
     def check_and_update_cache(self):
         if (
@@ -204,11 +224,34 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                            str(regional_endpoint))
             regional_endpoint.swap()
 
+    # TODOs: This wrapper function is a placeholder for excluded regions on requests feature
+    #        To enable it a new parameter request needs to be passed and check if request contains excluded locations
+    #        In JAVA, the excluded locations from requests overrides excluded locations in client level
+    def get_applicable_read_regional_endpoints(self):
+        regional_endpoints = self.get_read_regional_endpoints()
+        excluded_locations = self.connection_policy.ExcludedLocations.get_excluded_locations()
+        return get_applicable_regional_endpoints(
+            regional_endpoints,
+            self.available_locations_by_read_regional_endpoints,
+            self.default_regional_endpoint,
+            excluded_locations)
+
+    def get_applicable_write_regional_endpoints(self):
+        regional_endpoints = self.get_write_regional_endpoints()
+        excluded_locations = self.connection_policy.ExcludedLocations.get_excluded_locations()
+        return get_applicable_regional_endpoints(
+            regional_endpoints,
+            self.available_locations_by_write_regional_endpoints,
+            self.default_regional_endpoint,
+            excluded_locations)
+
     def resolve_service_endpoint(self, request):
         if request.location_endpoint_to_route:
             return request.location_endpoint_to_route
 
+        # TODO(@allekim): this is always 0 since 'request.location_index_to_route' cannot be None
         location_index = int(request.location_index_to_route) if request.location_index_to_route else 0
+        # TODO(@allekim): check if there is any case if `request.use_preferred_locations` not None
         use_preferred_locations = (
             request.use_preferred_locations if request.use_preferred_locations is not None else True
         )
@@ -221,6 +264,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             # or when client cannot use multiple write locations, flip-flop between the
             # first and the second writable region in DatabaseAccount (for manual failover)
             if self.enable_endpoint_discovery and self.available_write_locations:
+                # TODO(@allenkim): if location_index is always 0, available_write_locations won't affect anything
                 location_index = min(location_index % 2, len(self.available_write_locations) - 1)
                 write_location = self.available_write_locations[location_index]
                 if (self.available_write_locations
@@ -234,9 +278,9 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                 return self.default_regional_endpoint.get_current()
 
         regional_endpoints = (
-            self.get_write_regional_endpoints()
+            self.get_applicable_write_regional_endpoints()
             if documents._OperationType.IsWriteOperation(request.operation_type)
-            else self.get_read_regional_endpoints()
+            else self.get_applicable_read_regional_endpoints()
         )
         regional_endpoint = regional_endpoints[location_index % len(regional_endpoints)]
         if (request.last_routed_location_endpoint_within_region is not None
@@ -328,6 +372,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             self.current_time_millis() - unavailability_info["lastUnavailabilityCheckTimeStamp"]
             > self.refresh_time_interval_in_ms
         ):
+            # TODO(@allekim): Shouldn't we remove the endpoint from unavailable info map before returning false?
             return False
         # Unexpired entry present. Endpoint is unavailable
         return True
@@ -369,6 +414,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         if self.enable_endpoint_discovery:
             if read_locations:
                 (self.available_read_regional_endpoints_by_location,
+                 self.available_locations_by_read_regional_endpoints,
                  self.available_read_locations) = get_endpoints_by_location(
                     read_locations,
                     self.available_read_regional_endpoints_by_location,
@@ -379,6 +425,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
 
             if write_locations:
                 (self.available_write_regional_endpoints_by_location,
+                 self.available_locations_by_write_regional_endpoints,
                  self.available_write_locations) = get_endpoints_by_location(
                     write_locations,
                     self.available_write_regional_endpoints_by_location,

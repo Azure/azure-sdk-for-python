@@ -52,6 +52,7 @@ class _GlobalEndpointManager(object):
             self.EnableEndpointDiscovery,
             client.connection_policy.UseMultipleWriteLocations,
             self.refresh_time_interval_in_ms,
+            client.connection_policy,
         )
         self.refresh_needed = False
         self.refresh_lock = asyncio.Lock()

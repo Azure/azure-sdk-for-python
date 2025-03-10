@@ -5,6 +5,8 @@ import time
 import unittest
 
 import pytest
+from azure.cosmos import documents
+from azure.cosmos.cosmos_excluded_locations import CosmosExcludedLocations
 
 from azure.cosmos.documents import DatabaseAccount, _OperationType
 from azure.cosmos.http_constants import ResourceType
@@ -35,16 +37,17 @@ def create_database_account(enable_multiple_writable_locations):
     return db_acc
 
 
-def refresh_location_cache(preferred_locations, use_multiple_write_locations):
+def refresh_location_cache(preferred_locations, use_multiple_write_locations, connection_policy=documents.ConnectionPolicy()):
     lc = LocationCache(preferred_locations=preferred_locations,
                        default_endpoint=default_endpoint,
                        enable_endpoint_discovery=True,
                        use_multiple_write_locations=use_multiple_write_locations,
-                       refresh_time_interval_in_ms=refresh_time_interval_in_ms)
+                       refresh_time_interval_in_ms=refresh_time_interval_in_ms,
+                       connection_policy=connection_policy)
     return lc
 
 @pytest.mark.cosmosEmulator
-class TestLocationCache(unittest.TestCase):
+class TestLocationCache:
 
     def test_mark_endpoint_unavailable(self):
         lc = refresh_location_cache([], False)
@@ -157,6 +160,39 @@ class TestLocationCache(unittest.TestCase):
         assert read_resolved == write_resolved
         assert read_resolved == default_endpoint
 
+    @pytest.mark.parametrize("test_data",
+                             [
+                                 [{location1_name}, [location2_endpoint], [location2_endpoint, location3_endpoint]],
+                                 [{location1_name, location2_name}, [default_endpoint], [location3_endpoint]],
+                                 [{location1_name, location2_name, location3_name}, [default_endpoint], [default_endpoint]],
+                                 [{location4_name}, [location1_endpoint, location2_endpoint], [location1_endpoint, location2_endpoint, location3_endpoint]],
+                                 [set(), [location1_endpoint, location2_endpoint], [location1_endpoint, location2_endpoint, location3_endpoint]],
+                             ])
+    def test_get_applicable_regional_endpoints_excluded_regions(self, test_data):
+        # Init test data
+        excluded_locations = test_data[0]
+        expected_read_endpoints = test_data[1]
+        expected_write_endpoints = test_data[2]
+
+        # Init excluded_locations in ConnectionPolicy
+        connection_policy = documents.ConnectionPolicy()
+        connection_policy.ExcludedLocations = CosmosExcludedLocations(excluded_locations)
+        assert excluded_locations == connection_policy.ExcludedLocations.get_excluded_locations()
+
+        # Init location_cache
+        location_cache = refresh_location_cache([location1_name, location2_name, location3_name], True, connection_policy)
+        database_account = create_database_account(True)
+        location_cache.perform_on_database_account_read(database_account)
+
+        # Test if read endpoints were correctly filtered
+        read_doc_endpoint = location_cache.get_applicable_read_regional_endpoints()
+        read_doc_endpoint = [regional_endpoint.get_current() for regional_endpoint in read_doc_endpoint]
+        assert read_doc_endpoint == expected_read_endpoints
+
+        # Test if write endpoints were correctly filtered
+        write_doc_endpoint = location_cache.get_applicable_write_regional_endpoints()
+        write_doc_endpoint = [regional_endpoint.get_current() for regional_endpoint in write_doc_endpoint]
+        assert write_doc_endpoint == expected_write_endpoints
 
 if __name__ == "__main__":
     unittest.main()
