@@ -140,12 +140,6 @@ class IndexingMode:
     consistency level for the collection.
     The index is always kept up to date with the data.
     """
-    Lazy: Literal["lazy"] = "lazy"
-    """Index is updated asynchronously with respect to a create or update
-    operation. Not supported for new containers since June/2020.
-    With lazy indexing, queries are eventually consistent. The index is
-    updated when the collection is idle.
-    """
     NoIndex: Literal["none"] = "none"
     """No index is provided.
     Setting IndexingMode to "None" drops the index. Use this if you don't
@@ -196,7 +190,7 @@ class DataType:
 
 
 class IndexingDirective:
-    """Specifies whether or not the resource is to be indexed."""
+    """Specifies whether the resource is to be indexed."""
     Default: int = 0
     """Use any pre-defined/pre-configured defaults."""
     Exclude: int = 1
@@ -224,7 +218,7 @@ class PermissionMode:
 
 
 class TriggerType:
-    """Specifies the type of a trigger."""
+    """Specifies the type of trigger."""
     Pre: Literal["pre"] = "pre"
     """Trigger should be executed before the associated operation(s)."""
     Post: Literal["post"] = "post"
