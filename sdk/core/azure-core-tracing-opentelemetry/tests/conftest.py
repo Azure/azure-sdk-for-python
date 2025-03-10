@@ -3,7 +3,9 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
+from typing import Generator
 
+from azure.core.settings import settings
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
@@ -25,11 +27,13 @@ def enable_tracing():
 
 
 @pytest.fixture(scope="function")
-def tracing_helper() -> TracingTestHelper:
+def tracing_helper() -> Generator[TracingTestHelper, None, None]:
+    settings.tracing_implementation = "opentelemetry"
     span_exporter = InMemorySpanExporter()
     processor = SimpleSpanProcessor(span_exporter)
     trace.get_tracer_provider().add_span_processor(processor)
-    return TracingTestHelper(trace.get_tracer(__name__), span_exporter)
+    yield TracingTestHelper(trace.get_tracer(__name__), span_exporter)
+    settings.tracing_implementation = None
 
 
 @pytest.fixture(scope="session")
