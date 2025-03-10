@@ -3,6 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import json
 import os
 import azure.ai.inference as sdk
 from azure.ai.inference.tracing import AIInferenceInstrumentor
@@ -320,6 +321,58 @@ class TestClientTracing(ModelClientTestBase):
         ]
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
+        AIInferenceInstrumentor().uninstrument()
+
+    @ServicePreparerChatCompletions()
+    @recorded_by_proxy
+    def test_chat_completion_tracing_content_unicode(self, **kwargs):
+        # Make sure code is not instrumented due to a previous test exception
+        try:
+            AIInferenceInstrumentor().uninstrument()
+        except RuntimeError as e:
+            pass
+        self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "True")
+        client = self._create_chat_client(**kwargs)
+        processor, exporter = self.setup_memory_trace_exporter()
+        AIInferenceInstrumentor().instrument()
+        response = client.complete(
+            messages=[
+                sdk.models.SystemMessage(content="You are a helpful assistant."),
+                sdk.models.UserMessage(content="将“hello world”翻译成中文和乌克兰语"),
+            ],
+        )
+        processor.force_flush()
+        spans = exporter.get_spans_by_name_starts_with("chat ")
+        assert len(spans) == 1
+        expected_events = [
+            {
+                "name": "gen_ai.system.message",
+                "attributes": {
+                    "gen_ai.system": "az.ai.inference",
+                    "gen_ai.event.content": '{"role": "system", "content": "You are a helpful assistant."}',
+                },
+            },
+            {
+                "name": "gen_ai.user.message",
+                "attributes": {
+                    "gen_ai.system": "az.ai.inference",
+                    "gen_ai.event.content": '{"role": "user", "content": "将“hello world”翻译成中文和乌克兰语"}',
+                },
+            },
+            {
+                "name": "gen_ai.choice",
+                "attributes": {
+                    "gen_ai.system": "az.ai.inference",
+                    "gen_ai.event.content": '{"message": {"content": "*"}, "finish_reason": "stop", "index": 0}',
+                },
+            },
+        ]
+        events_match = GenAiTraceVerifier().check_span_events(spans[0], expected_events)
+        assert events_match == True
+
+        completion_event_content = json.loads(spans[0].events[2].attributes["gen_ai.event.content"])
+        assert False == completion_event_content["message"]["content"].isascii()
+        assert response.choices[0].message.content == completion_event_content["message"]["content"]
         AIInferenceInstrumentor().uninstrument()
 
     @ServicePreparerChatCompletions()

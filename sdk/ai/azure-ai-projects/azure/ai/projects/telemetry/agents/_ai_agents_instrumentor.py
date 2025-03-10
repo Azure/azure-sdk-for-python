@@ -343,7 +343,7 @@ class _AIAgentsInstrumentorPreview:
             message_status=message_status,
             usage=usage,
         )
-        attributes[GEN_AI_EVENT_CONTENT] = json.dumps(event_body)
+        attributes[GEN_AI_EVENT_CONTENT] = json.dumps(event_body, ensure_ascii=False)
         span.span_instance.add_event(name=f"gen_ai.{role}.message", attributes=attributes)
 
     def _get_field(self, obj: Any, field: str) -> Any:
@@ -374,7 +374,7 @@ class _AIAgentsInstrumentorPreview:
                 event_body["content"] = instructions or additional_instructions
 
         attributes = self._create_event_attributes(agent_id=agent_id, thread_id=thread_id)
-        attributes[GEN_AI_EVENT_CONTENT] = json.dumps(event_body)
+        attributes[GEN_AI_EVENT_CONTENT] = json.dumps(event_body, ensure_ascii=False)
         span.span_instance.add_event(name=GEN_AI_SYSTEM_MESSAGE, attributes=attributes)
 
     def _get_role(self, role: Optional[Union[str, MessageRole]]) -> str:
@@ -413,10 +413,10 @@ class _AIAgentsInstrumentorPreview:
         )
 
         if _trace_agents_content:
-            attributes[GEN_AI_EVENT_CONTENT] = json.dumps({"tool_calls": tool_calls})
+            attributes[GEN_AI_EVENT_CONTENT] = json.dumps({"tool_calls": tool_calls}, ensure_ascii=False)
         else:
             tool_calls_non_recording = self._remove_function_call_names_and_arguments(tool_calls=tool_calls)
-            attributes[GEN_AI_EVENT_CONTENT] = json.dumps({"tool_calls": tool_calls_non_recording})
+            attributes[GEN_AI_EVENT_CONTENT] = json.dumps({"tool_calls": tool_calls_non_recording}, ensure_ascii=False)
         span.span_instance.add_event(name="gen_ai.assistant.message", attributes=attributes)
 
     def set_end_run(self, span: "AbstractSpan", run: Optional[ThreadRun]) -> None:
@@ -518,7 +518,7 @@ class _AIAgentsInstrumentorPreview:
                     body = {"content": tool_output["output"], "id": tool_output["tool_call_id"]}
                 else:
                     body = {"content": "", "id": tool_output["tool_call_id"]}
-                span.span_instance.add_event("gen_ai.tool.message", {"gen_ai.event.content": json.dumps(body)})
+                span.span_instance.add_event("gen_ai.tool.message", {"gen_ai.event.content": json.dumps(body, ensure_ascii=False)})
             return True
 
         return False
