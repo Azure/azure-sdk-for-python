@@ -185,12 +185,7 @@ def run_pylint(file_path: str, logger) -> dict:
         except:
             pylint_scores[pylint_name] = [results.linter.stats.global_note]
 
-        return {
-            'status': 'success',
-            'messages': results,
-            'score': results[0]['message-id'] if result else 10.0,
-            'file': file_path
-        }
+        return results.linter.stats.global_note
 
     except Exception as e:
         return {
@@ -204,31 +199,36 @@ if __name__ == "__main__":
     ensure_directories()
     test_cases = get_test_cases()
     next = uuid.uuid4()
-    for test_case in test_cases:
-        logger = my_custom_logger(f"Logger_{test_case['name']}_{next}.log")
-        logger.debug(test_case['name'])
-        file_path = Path(__file__).parent / 'test_files' / test_case['name']
-        # file_path = Path(__file__).parent / 'test_files_without_comment' / test_case['name']
+    try:
+        for test_case in test_cases:
+            logger = my_custom_logger(f"Logger_{test_case['name']}_{next}.log")
+            logger.debug(test_case['name'])
+            file_path = Path(__file__).parent / 'test_files' / test_case['name']
+            # file_path = Path(__file__).parent / 'test_files_without_comment' / test_case['name']
         
-        # Fix the file and get results
-        result = fix_file(str(file_path), logger)
-      
-        if result['status'] == 'success':
-            logger.debug("-----"*80)
-            logger.debug(f"Fixed file: {result['fixed_file']}")
-            logger.debug("-----"*80)
-            
-            # Run pylint on both original and fixed files
+                
+            # Run pylint on both original file
             logger.debug("Running pylint on original file...")
             original_pylint = run_pylint(str(file_path), logger)
             logger.debug("-----"*80)
-            logger.debug("Running pylint on fixed file...")
-            fixed_pylint = run_pylint(str(result['fixed_file']), logger)
+
+
+            fixed_pylint = original_pylint
+            counter = 0
+            while fixed_pylint != 10 and counter < 3:
+                # Fix the file and get results
+                logger.debug("Fixing file...")
+                result = fix_file(str(file_path), logger)
+                logger.debug("Running pylint on fixed file...")
+                fixed_pylint = run_pylint(str(result['fixed_file']), logger)
+                # Update file_path for next iteration
+                logger.debug("-----"*80)
+                file_path = str(result['fixed_file'])
+                counter += 1
             logger.debug("-----"*80)
             logger.debug("\n\n\n")     
-        else:
-            logger.debug(f"Error fixing file {file_path}: {result['error']}")
-    
+    except:
+        print("Error in processing test cases")
     base_dir = Path(__file__).parent
     with open(f"{base_dir}/output_logs/final_{next}", 'w', encoding='utf-8') as f:
         for key, value in pylint_scores.items():
