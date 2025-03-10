@@ -235,15 +235,13 @@ class RedTeamAgent(_SafetyEvaluation):
         }
 
     
-    async def _get_attack_objectives(self, attack_objective_generator, application_scenario: Optional[str] = None, num_rows: int = 3, strategy: Optional[str] = None) -> List[str]:
+    async def _get_attack_objectives(self, attack_objective_generator, application_scenario: Optional[str] = None, strategy: Optional[str] = None) -> List[str]:
         """Get attack objectives from the RAI client based on the risk categories in the attack objective generator.
         
         :param attack_objective_generator: The generator with risk categories to get attack objectives for
         :type attack_objective_generator: ~azure.ai.evaluation.redteam.AttackObjectiveGenerator
         :param application_scenario: Optional description of the application scenario for context
         :type application_scenario: str
-        :param num_rows: The maximum number of objectives to retrieve
-        :type num_rows: int
         :param strategy: Optional attack strategy to get specific objectives for
         :type strategy: str
         :return: A list of attack objective prompts
@@ -252,29 +250,16 @@ class RedTeamAgent(_SafetyEvaluation):
         # Convert risk categories to lowercase for consistent caching
         risk_categories = [cat.value.lower() for cat in attack_objective_generator.risk_categories]
         risk_categories.sort()  # Sort to ensure consistent cache key
-        
+        num_objectives = attack_objective_generator.num_objectives
         self.logger.info("=" * 80)
         self.logger.info(f"GET ATTACK OBJECTIVES REQUEST")
         self.logger.info(f"Risk categories: {risk_categories}")
         self.logger.info(f"Application scenario: {application_scenario}")
-        self.logger.info(f"Number of rows requested: {num_rows}")
+        self.logger.info(f"Number of rows requested: {num_objectives}")
         self.logger.info(f"Strategy: {strategy}")
         
         # Create a cache key based on risk categories and strategy
         cache_key = (tuple(risk_categories), strategy)
-        
-        # Check if we already have cached objectives for this combination
-        if cache_key in self.attack_objectives_cache:
-            cached_data = self.attack_objectives_cache[cache_key]
-            self.logger.info(f"CACHE HIT - Found {len(cached_data)} cached objectives")
-            self.logger.info(f"Returning {min(num_rows, len(cached_data))} objectives from cache")
-            self.logger.info("Sample cached objectives:")
-            for i, obj in enumerate(cached_data[:min(3, len(cached_data))]):
-                self.logger.info(f"  [{i}] {obj[:100]}...")
-            self.logger.info("=" * 80)
-            return cached_data[:num_rows]  # Return only the requested number of rows
-        
-        self.logger.info(f"CACHE MISS - Need to fetch attack objectives from RAI client")
 
         # Fetch objectives from RAI client
         try:
@@ -341,9 +326,9 @@ class RedTeamAgent(_SafetyEvaluation):
         # Build a balanced set of objectives
         all_prompts = []
         if risk_categories:
-            prompts_per_category = max(1, num_rows // len(risk_categories))
+            prompts_per_category = max(1, num_objectives // len(risk_categories))
             self.logger.info(f"Target prompts per category: {prompts_per_category}")
-            remaining_slots = num_rows
+            remaining_slots = num_objectives
             
             for cat in risk_categories:
                 cat_objectives = objectives_by_category[cat]
@@ -370,8 +355,8 @@ class RedTeamAgent(_SafetyEvaluation):
         
         # If we couldn't fill all slots with categorized objectives, add uncategorized ones
         if not all_prompts and uncategorized_objectives:
-            self.logger.info(f"No categorized objectives found, using {min(num_rows, len(uncategorized_objectives))} uncategorized objectives")
-            all_prompts = uncategorized_objectives[:num_rows]
+            self.logger.info(f"No categorized objectives found, using {min(num_objectives, len(uncategorized_objectives))} uncategorized objectives")
+            all_prompts = uncategorized_objectives[:num_objectives]
         
         total_objectives = len(all_prompts)
         self.logger.info(f"FINAL RESULTS: Retrieved a total of {total_objectives} attack objectives")
@@ -745,7 +730,6 @@ class RedTeamAgent(_SafetyEvaluation):
             strategy_objectives[strategy_name] = await self._get_attack_objectives(
                 attack_objective_generator=attack_objective_generator,
                 application_scenario=application_scenario,
-                num_rows=num_rows,
                 strategy=strategy_name
             )
         

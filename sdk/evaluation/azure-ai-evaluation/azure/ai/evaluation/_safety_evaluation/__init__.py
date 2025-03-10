@@ -26,5 +26,6 @@ class AttackObjectiveGenerator:
 
     def __init__(self, risk_categories: list[RiskCategory], num_objectives: int = 10):
         self.risk_categories = risk_categories
+        self.num_objectives = num_objectives
 
 __all__ = ["RedTeamAgent", "AttackStrategy", "RiskCategory", "AttackObjectiveGenerator"]
