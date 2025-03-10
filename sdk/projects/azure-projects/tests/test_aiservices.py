@@ -244,7 +244,7 @@ def test_aiservices_export_existing(export_dir):
     export(
         test(resource_group=ResourceGroup.reference(name="aitest"), identity=None),
         output_dir=export_dir[0],
-        infra_dir=export_dir[2]
+        infra_dir=export_dir[2],
     )
 
 

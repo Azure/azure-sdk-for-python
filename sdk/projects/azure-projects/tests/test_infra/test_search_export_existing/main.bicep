@@ -25,17 +25,6 @@ var azdTags = {
   'azd-env-name': environmentName
 }
 
-@sys.description('ID of the managed identity to assign application roles')
-param managedIdentityId string = ''
-
-@sys.secure()
-@sys.description('Principal ID of the managed identity to assign application roles')
-param managedIdentityPrincipalId string = ''
-
-@sys.secure()
-@sys.description('Client ID of the managed identity to assign application roles')
-param managedIdentityClientId string = ''
-
 resource resourcegroup_test 'Microsoft.Resources/resourceGroups@2021-04-01' existing = {
   name: 'test'
 }
@@ -51,9 +40,6 @@ module test_module 'test.bicep' = {
     principalId: principalId
     tenantId: tenantId
     azdTags: azdTags
-    managedIdentityId: managedIdentityId
-    managedIdentityPrincipalId: managedIdentityPrincipalId
-    managedIdentityClientId: managedIdentityClientId
   }
 }
 output AZURE_SEARCH_ID_TEST string = test_module.outputs.AZURE_SEARCH_ID_TEST

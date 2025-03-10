@@ -5,9 +5,6 @@ param defaultName string
 param principalId string
 param tenantId string
 param azdTags object
-param managedIdentityId string
-param managedIdentityPrincipalId string
-param managedIdentityClientId string
 
 resource resourcegroup_rgtest 'Microsoft.Resources/resourceGroups@2021-04-01' existing = {
   name: 'rgtest'

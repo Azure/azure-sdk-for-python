@@ -9,7 +9,6 @@ from collections import defaultdict
 import inspect
 from typing import (
     TYPE_CHECKING,
-    Callable,
     Dict,
     List,
     Literal,
@@ -115,7 +114,10 @@ class ContainerKwargs(TypedDict, total=False):
 
 
 _DEFAULT_CONTAINER: "ContainerResource" = {"name": GLOBAL_PARAMS["defaultName"]}
-_DEFAULT_CONTAINER_EXTENSIONS: ExtensionResources = {}
+_DEFAULT_CONTAINER_EXTENSIONS: ExtensionResources = {
+    "managed_identity_roles": ["Storage Blob Data Contributor"],
+    "user_roles": ["Storage Blob Data Contributor"],
+}
 ContainerResourceType = TypeVar("ContainerResourceType", bound=Mapping[str, Any], default="ContainerResource")
 ClientType = TypeVar("ClientType", default="ContainerClient")
 
@@ -243,8 +245,7 @@ class BlobContainer(_ClientResource[ContainerResourceType]):
         config_store: Optional[Mapping[str, Any]] = None,
         use_async: Optional[Literal[False]] = None,
         **client_options,
-    ) -> "ContainerClient":
-        ...
+    ) -> "ContainerClient": ...
     @overload
     def get_client(
         self,
@@ -257,8 +258,7 @@ class BlobContainer(_ClientResource[ContainerResourceType]):
         config_store: Optional[Mapping[str, Any]] = None,
         use_async: Literal[True],
         **client_options,
-    ) -> "AsyncContainerClient":
-        ...
+    ) -> "AsyncContainerClient": ...
     @overload
     def get_client(
         self,
@@ -272,19 +272,18 @@ class BlobContainer(_ClientResource[ContainerResourceType]):
         config_store: Optional[Mapping[str, Any]] = None,
         use_async: Optional[bool] = None,
         **client_options,
-    ) -> ClientType:
-        ...
+    ) -> ClientType: ...
     def get_client(
         self,
-        cls = None,
+        cls=None,
         /,
         *,
-        transport = None,
-        credential = None,
-        api_version = None,
-        audience = None,
-        config_store = None,
-        use_async = None,
+        transport=None,
+        credential=None,
+        api_version=None,
+        audience=None,
+        config_store=None,
+        use_async=None,
         **client_options,
     ):
         if cls is None:

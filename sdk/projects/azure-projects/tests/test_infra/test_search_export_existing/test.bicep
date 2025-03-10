@@ -5,9 +5,6 @@ param defaultName string
 param principalId string
 param tenantId string
 param azdTags object
-param managedIdentityId string
-param managedIdentityPrincipalId string
-param managedIdentityClientId string
 
 resource searchservice_test 'Microsoft.Search/searchServices@2024-06-01-Preview' existing = {
   name: 'test'

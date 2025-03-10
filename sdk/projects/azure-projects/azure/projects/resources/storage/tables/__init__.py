@@ -8,7 +8,6 @@
 from collections import defaultdict
 from typing import (
     TYPE_CHECKING,
-    Callable,
     Dict,
     List,
     Literal,
@@ -164,8 +163,7 @@ class TableStorage(_ClientResource[TableServiceResourceType]):
         config_store: Optional[Mapping[str, Any]] = None,
         use_async: Optional[Literal[False]] = None,
         **client_options,
-    ) -> "TableServiceClient":
-        ...
+    ) -> "TableServiceClient": ...
     @overload
     def get_client(
         self,
@@ -178,8 +176,7 @@ class TableStorage(_ClientResource[TableServiceResourceType]):
         config_store: Optional[Mapping[str, Any]] = None,
         use_async: Literal[True],
         **client_options,
-    ) -> "AsyncTableServiceClient":
-        ...
+    ) -> "AsyncTableServiceClient": ...
     @overload
     def get_client(
         self,
@@ -193,19 +190,18 @@ class TableStorage(_ClientResource[TableServiceResourceType]):
         config_store: Optional[Mapping[str, Any]] = None,
         use_async: Optional[bool] = None,
         **client_options,
-    ) -> ClientType:
-        ...
+    ) -> ClientType: ...
     def get_client(
         self,
-        cls = None,
+        cls=None,
         /,
         *,
-        transport = None,
-        credential = None,
-        api_version = None,
-        audience = None,
-        config_store = None,
-        use_async = None,
+        transport=None,
+        credential=None,
+        api_version=None,
+        audience=None,
+        config_store=None,
+        use_async=None,
         **client_options,
     ):
         if cls is None:

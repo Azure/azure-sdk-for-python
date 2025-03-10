@@ -6,7 +6,7 @@
 
 from typing_extensions import TypedDict
 
-from ._bicep.expressions import Parameter, UniqueString, Subscription, Variable
+from ._bicep.expressions import Parameter, UniqueString, Subscription, Variable, PlaceholderParameter
 
 
 LOCATION = Parameter(
@@ -44,7 +44,7 @@ TENANT_ID = Parameter(
     env_var="AZURE_TENANT_ID",
     type="string",
 )
-_MANAGED_IDENTITY_ID = Parameter(
+_MANAGED_IDENTITY_ID = PlaceholderParameter(
     "managedIdentityId",
     description="ID of the managed identity to assign application roles",
     env_var="AZURE_MANAGED_IDENTITY_ID",
@@ -52,7 +52,7 @@ _MANAGED_IDENTITY_ID = Parameter(
     type="string",
 )
 # TODO: The ManagedIdentity parameters are a bit wonky. Need to test more thoroughly.
-_MANAGED_IDENTITY_PRINCIPAL_ID = Parameter(
+_MANAGED_IDENTITY_PRINCIPAL_ID = PlaceholderParameter(
     "managedIdentityPrincipalId",
     description="Principal ID of the managed identity to assign application roles",
     env_var="AZURE_MANAGED_IDENTITY_PRINCIPAL_ID",
@@ -60,7 +60,7 @@ _MANAGED_IDENTITY_PRINCIPAL_ID = Parameter(
     default="",
     type="string",
 )
-_MANAGED_IDENTITY_CLIENT_ID = Parameter(
+_MANAGED_IDENTITY_CLIENT_ID = PlaceholderParameter(
     "managedIdentityClientId",
     description="Client ID of the managed identity to assign application roles",
     env_var="AZURE_MANAGED_IDENTITY_CLIENT_ID",

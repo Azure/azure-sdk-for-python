@@ -204,9 +204,7 @@ def test_identity_export_with_parameter(export_dir):
     class test(AzureInfrastructure):
         identity: UserAssignedIdentity = field(default=UserAssignedIdentity(location=param))
 
-    export(
-        test(), output_dir=export_dir[0], infra_dir=export_dir[2], config_store={"testLocation": "eastus"}
-    )
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2], config_store={"testLocation": "eastus"})
 
 
 def test_identity_export_existing(export_dir):
@@ -232,7 +230,7 @@ def test_identity_export_existing_with_resourcegroup_and_subscription(export_dir
     export(
         test(resource_group=ResourceGroup.reference(name="rgexists", subscription=TEST_SUB)),
         output_dir=export_dir[0],
-        infra_dir=export_dir[2]
+        infra_dir=export_dir[2],
     )
 
 

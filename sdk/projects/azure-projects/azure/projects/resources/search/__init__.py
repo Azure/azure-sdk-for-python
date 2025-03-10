@@ -9,7 +9,6 @@ from collections import defaultdict
 from typing import (
     TYPE_CHECKING,
     Any,
-    Callable,
     Dict,
     List,
     Literal,
@@ -61,7 +60,7 @@ class SearchServiceKwargs(TypedDict, total=False):
     """Location for all Resources."""
     # lock: 'Lock'
     # """The lock settings for all Resources in the solution."""
-    managed_identities: "ManagedIdentity"
+    managed_identities: Optional["ManagedIdentity"]
     """The managed identity definition for this resource."""
     network_acls: Union["SearchNetworkRuleSet", Parameter]
     """Network specific rules that determine how the Azure Cognitive Search service may be reached."""
@@ -258,8 +257,7 @@ class SearchService(_ClientResource[SearchServiceResourceType]):
         config_store: Optional[Mapping[str, Any]] = None,
         use_async: Optional[Literal[False]] = None,
         **client_options,
-    ) -> "SearchIndexClient":
-        ...
+    ) -> "SearchIndexClient": ...
     @overload
     def get_client(
         self,
@@ -272,8 +270,8 @@ class SearchService(_ClientResource[SearchServiceResourceType]):
         config_store: Optional[Mapping[str, Any]] = None,
         use_async: Literal[True],
         **client_options,
-    ) -> "AsyncSearchIndexClient":
-        ...
+    ) -> "AsyncSearchIndexClient": ...
+
     # TODO: I don't know why these don't work with either mypy or pyright.
     # @overload
     # def get_client(
@@ -318,19 +316,18 @@ class SearchService(_ClientResource[SearchServiceResourceType]):
         config_store: Optional[Mapping[str, Any]] = None,
         use_async: Optional[bool] = None,
         **client_options,
-    ) -> ClientType:
-        ...
+    ) -> ClientType: ...
     def get_client(
         self,
-        cls = None,
+        cls=None,
         /,
         *,
-        transport = None,
-        credential = None,
-        api_version = None,
-        audience = None,
-        config_store = None,
-        use_async = None,
+        transport=None,
+        credential=None,
+        api_version=None,
+        audience=None,
+        config_store=None,
+        use_async=None,
         **client_options,
     ):
         if cls is None:

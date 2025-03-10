@@ -348,11 +348,7 @@ def test_storage_blobs_container_export_with_field_reference_resource_no_default
         storage: BlobStorage = field()
         r: BlobContainer = BlobContainer(account=storage)
 
-    export(
-        test(storage=BlobStorage(account="teststorage")),
-        output_dir=export_dir[0],
-        infra_dir=export_dir[2]
-    )
+    export(test(storage=BlobStorage(account="teststorage")), output_dir=export_dir[0], infra_dir=export_dir[2])
 
 
 def test_storage_blobs_container_client():

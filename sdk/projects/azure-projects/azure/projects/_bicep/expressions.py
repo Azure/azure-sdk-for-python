@@ -243,6 +243,14 @@ class Parameter(Expression):
         return {}
 
 
+class PlaceholderParameter(Parameter): ...
+
+
+# TODO:
+# class RequiredParameter(Parameter):
+#     ...
+
+
 class Variable(Parameter):
     def __init__(
         self,

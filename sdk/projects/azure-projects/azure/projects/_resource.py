@@ -575,17 +575,10 @@ class Resource(Generic[ResourcePropertiesType]):  # pylint: disable=too-many-ins
         return (symbol, *parents)
 
     def get_client(
-        self,
+        self,  # pylint: disable=unused-argument
         cls: Type[ClientType],
         /,
-        *,
-        transport: Any = None,
-        credential: Any = None,
-        api_version: Optional[str] = None,
-        audience: Optional[str] = None,
-        config_store: Optional[Mapping[str, Any]] = None,
-        use_async: Optional[bool] = None,
-        **client_options,
+        **kwargs,
     ) -> ClientType:
         if cls is self.__class__:
             return self

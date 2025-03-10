@@ -10,7 +10,6 @@ import inspect
 from typing import (
     TYPE_CHECKING,
     Any,
-    Callable,
     Dict,
     List,
     Literal,
@@ -80,7 +79,7 @@ class MachineLearningWorkspaceKwargs(TypedDict, total=False):
     """Location for all resources."""
     # lock: 'Lock'
     # """The lock settings of the service."""
-    managed_identities: "ManagedIdentity"
+    managed_identities: Optional["ManagedIdentity"]
     """The managed identity definition for this resource. At least one identity type is required."""
     managed_network: Union["ManagedNetworkSetting", Parameter]  # type: ignore[name-defined]  # TODO
     """Managed Network settings for a machine learning workspace."""
@@ -522,13 +521,7 @@ class AIProject(MLWorkspace[MachineLearningWorkspaceResourceType]):
                 current_properties["properties"]["hubResourceId"] = hub.symbol.id
         return output_config
 
-    def _build_credential(
-        self,
-        cls: Type[ClientType],
-        *,
-        use_async: Optional[bool],
-        credential: Any
-    ) -> Any:
+    def _build_credential(self, cls: Type[ClientType], *, use_async: Optional[bool], credential: Any) -> Any:
         # TODO: This needs work - how to close the credential.
         if credential:
             try:
@@ -561,8 +554,7 @@ class AIProject(MLWorkspace[MachineLearningWorkspaceResourceType]):
         config_store: Optional[Mapping[str, Any]] = None,
         use_async: Optional[Literal[False]] = None,
         **client_options,
-    ) -> "AIProjectClient":
-        ...
+    ) -> "AIProjectClient": ...
     @overload
     def get_client(
         self,
@@ -573,8 +565,7 @@ class AIProject(MLWorkspace[MachineLearningWorkspaceResourceType]):
         config_store: Optional[Mapping[str, Any]] = None,
         use_async: Literal[True],
         **client_options,
-    ) -> "AsyncAIProjectClient":
-        ...
+    ) -> "AsyncAIProjectClient": ...
     @overload
     def get_client(
         self,
@@ -586,17 +577,16 @@ class AIProject(MLWorkspace[MachineLearningWorkspaceResourceType]):
         config_store: Optional[Mapping[str, Any]] = None,
         use_async: Optional[bool] = None,
         **client_options,
-    ) -> ClientType:
-        ...
+    ) -> ClientType: ...
     def get_client(
         self,
-        cls = None,
+        cls=None,
         /,
         *,
-        transport = None,
-        credential = None,
-        config_store = None,
-        use_async = None,
+        transport=None,
+        credential=None,
+        config_store=None,
+        use_async=None,
         **client_options,
     ):
         if cls is self.__class__:

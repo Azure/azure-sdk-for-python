@@ -43,7 +43,7 @@ class CognitiveServicesKwargs(TypedDict, total=False):
     """The flag to enable dynamic throttling."""
     location: Union[str, Parameter]
     """Location for all Resources."""
-    managed_identities: "ManagedIdentity"
+    managed_identities: Optional["ManagedIdentity"]
     """The managed identity definition for this resource."""
     migration_token: Union[str, Parameter]
     """Resource migration token."""

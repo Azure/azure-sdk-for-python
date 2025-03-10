@@ -4,11 +4,11 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Literal, Any, Union, TYPE_CHECKING
+from typing import Dict, List, Literal, Any, Optional, Union, TYPE_CHECKING
 from typing_extensions import Required, TypedDict
 
 from .roles import RoleAssignment as RoleResource, BUILT_IN_ROLES
-from ..._bicep.expressions import Parameter, ResourceSymbol, Expression, Guid
+from ..._bicep.expressions import Parameter, PlaceholderParameter, ResourceSymbol, Expression, Guid
 from ..._bicep.utils import clean_name
 
 if TYPE_CHECKING:
@@ -56,8 +56,11 @@ class ManagedIdentity(TypedDict, total=False):
     """The resource ID(s) to assign to the resource. Required if a user assigned identity is used for encryption."""
 
 
-def convert_managed_identities(managed_identities: ManagedIdentity) -> Identity:
+# TODO: Automatically set None identities if there's no User Assigned identity in the infrastructure.
+def convert_managed_identities(managed_identities: Optional[ManagedIdentity]) -> Identity:
     identity: Identity = {"type": "None", "userAssignedIdentities": {}}
+    if managed_identities is None:
+        return identity
     user_assigned_identities = managed_identities.get("userAssignedResourceIds", [])
     if managed_identities.get("systemAssigned", False):
         if user_assigned_identities:
@@ -115,9 +118,9 @@ def _build_role_assignment(
     return new_role.__bicep__(fields, parameters=parameters)[0]
 
 
-def add_extensions(fields: "FieldsType", parameters: Dict[str, "Parameter"]):
+def add_extensions(fields: "FieldsType", parameters: Dict[str, Parameter]):
     for field in list(fields.values()):
-        if parameters.get("managedIdentityPrincipalId"):
+        if not isinstance(parameters["managedIdentityPrincipalId"], PlaceholderParameter):
             role_symbols = []
             for role in field.extensions.get("managed_identity_roles", []):
                 role_symbols.append(

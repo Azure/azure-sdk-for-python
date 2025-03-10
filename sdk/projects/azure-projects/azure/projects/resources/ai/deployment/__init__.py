@@ -8,7 +8,6 @@
 from collections import defaultdict
 from typing import (
     TYPE_CHECKING,
-    Callable,
     Dict,
     Literal,
     Mapping,
@@ -443,7 +442,7 @@ class AIEmbeddings(AIDeployment[AIDeploymentResourceType]):
         )
         return outputs
 
-    def get_client(
+    def get_client(  # pylint: disable=too-many-statements
         self,
         cls: Optional[Type[EmbeddingsClientType]] = None,
         /,

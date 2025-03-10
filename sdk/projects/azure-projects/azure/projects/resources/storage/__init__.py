@@ -94,7 +94,7 @@ class StorageAccountKwargs(TypedDict, total=False):
     # TODO: support locks
     # lock: 'Lock'
     # """The lock settings of the service."""
-    managed_identities: "ManagedIdentity"
+    managed_identities: Optional["ManagedIdentity"]
     """The managed identity definition for this resource."""
     # TODO: support management policies
     # management_policy_rules: List[object]

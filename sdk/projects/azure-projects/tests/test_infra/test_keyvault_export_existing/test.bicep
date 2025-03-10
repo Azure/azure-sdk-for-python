@@ -5,9 +5,6 @@ param defaultName string
 param principalId string
 param tenantId string
 param azdTags object
-param managedIdentityId string
-param managedIdentityPrincipalId string
-param managedIdentityClientId string
 
 resource vault_kvtest 'Microsoft.KeyVault/vaults@2024-12-01-preview' existing = {
   name: 'kvtest'

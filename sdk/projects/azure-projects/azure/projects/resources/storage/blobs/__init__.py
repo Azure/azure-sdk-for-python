@@ -6,7 +6,20 @@
 # pylint: disable=arguments-differ
 
 from collections import defaultdict
-from typing import TYPE_CHECKING, Callable, Dict, List, Literal, Mapping, Tuple, Type, Union, Optional, Any, cast, overload
+from typing import (
+    TYPE_CHECKING,
+    Dict,
+    List,
+    Literal,
+    Mapping,
+    Tuple,
+    Type,
+    Union,
+    Optional,
+    Any,
+    cast,
+    overload,
+)
 from typing_extensions import TypeVar, Unpack
 
 from ...._component import ComponentField
@@ -235,8 +248,7 @@ class BlobStorage(_ClientResource[BlobServiceResourceType]):
         config_store: Optional[Mapping[str, Any]] = None,
         use_async: Optional[Literal[False]] = None,
         **client_options,
-    ) -> 'BlobServiceClient':
-        ...
+    ) -> "BlobServiceClient": ...
     @overload
     def get_client(
         self,
@@ -249,8 +261,7 @@ class BlobStorage(_ClientResource[BlobServiceResourceType]):
         config_store: Optional[Mapping[str, Any]] = None,
         use_async: Literal[True],
         **client_options,
-    ) -> 'AsyncBlobServiceClient':
-        ...
+    ) -> "AsyncBlobServiceClient": ...
     @overload
     def get_client(
         self,
@@ -264,19 +275,18 @@ class BlobStorage(_ClientResource[BlobServiceResourceType]):
         config_store: Optional[Mapping[str, Any]] = None,
         use_async: Optional[bool] = None,
         **client_options,
-    ) -> ClientType:
-        ...
+    ) -> ClientType: ...
     def get_client(
         self,
-        cls = None,
+        cls=None,
         /,
         *,
-        transport = None,
-        credential = None,
-        api_version = None,
-        audience = None,
-        config_store = None,
-        use_async = None,
+        transport=None,
+        credential=None,
+        api_version=None,
+        audience=None,
+        config_store=None,
+        use_async=None,
         **client_options,
     ):
         if cls is None:

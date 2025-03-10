@@ -5,9 +5,6 @@ param defaultName string
 param principalId string
 param tenantId string
 param azdTags object
-param managedIdentityId string
-param managedIdentityPrincipalId string
-param managedIdentityClientId string
 
 resource storageaccount_storagetest 'Microsoft.Storage/storageAccounts@2023-05-01' existing = {
   name: 'storagetest'

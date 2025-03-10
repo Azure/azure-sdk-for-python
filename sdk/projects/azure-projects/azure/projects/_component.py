@@ -16,7 +16,6 @@ from typing import (
     Mapping,
     MutableMapping,
     Protocol,
-    TypeVar,
     Any,
     Union,
     Literal,
@@ -53,12 +52,16 @@ class DefaultFactory(Protocol):
     def __call__(self, **kwargs) -> Any: ...
 
 
+class AsyncDefaultFactory(Protocol):
+    async def __call__(self, **kwargs) -> Any: ...
+
+
 class ComponentField(Parameter):
     def __init__(
         self,
         *,
         default: Any,
-        factory: Union[Literal[Default.MISSING], DefaultFactory],
+        factory: Union[Literal[Default.MISSING], DefaultFactory, AsyncDefaultFactory],
         repr: bool,
         init: bool,
         alias: Optional[str],
@@ -102,6 +105,13 @@ class ComponentField(Parameter):
         except KeyError:
             raise RuntimeError(f"'{owner.__name__}.{name}' is missing type hint.") from None
 
+    async def _run_factory(self):
+        factory = self._factory(**self._kwargs)
+        try:
+            await factory
+        except TypeError:
+            return factory
+
     def __get__(
         self,
         obj,
@@ -111,7 +121,7 @@ class ComponentField(Parameter):
             if self.default is not MISSING:
                 return self.default
             if self._factory is not MISSING:
-                return self._factory(**self._kwargs)
+                return run_coroutine_sync(self._run_factory())
             raise AttributeError(f"No default value provided for '{self._owner.__name__}.{self._name}'.")
         return getattr(obj, self._attrname)
 
@@ -125,7 +135,7 @@ class ComponentField(Parameter):
 def field(
     *,
     default: Union[Any, Literal[Default.MISSING]] = MISSING,
-    factory: Union[DefaultFactory, Literal[Default.MISSING]] = MISSING,
+    factory: Union[DefaultFactory, AsyncDefaultFactory, Literal[Default.MISSING]] = MISSING,
     repr: bool = True,
     init: bool = True,  # TODO: Support init
     alias: Optional[str] = None,
@@ -133,7 +143,7 @@ def field(
 ) -> ComponentField:
     if default is not MISSING and factory is not MISSING:
         raise ValueError("Cannot specify both 'default' and 'factory'.")
-    return ComponentField(default=default, factory=factory, repr=repr, init=True, alias=alias, **kwargs)
+    return ComponentField(default=default, factory=factory, repr=repr, init=init, alias=alias, **kwargs)
 
 
 @dataclass_transform(field_specifiers=(field,), kw_only_default=True)
@@ -195,7 +205,7 @@ class AzureInfraComponent(type):
 
 
 class AzureInfrastructure(metaclass=AzureInfraComponent):
-    _parent: Optional["AzureInfrastructure"] = None
+    _parent: Optional["AzureInfrastructure"] = field(default=None, init=False)
     resource_group: ResourceGroup = field(default=ResourceGroup(), repr=False)
     identity: Optional[UserAssignedIdentity] = field(default=UserAssignedIdentity(), repr=False)
 
@@ -225,7 +235,7 @@ class AzureInfrastructure(metaclass=AzureInfraComponent):
             # been instantiated).
             # raise AttributeError(f"Referenced attribute {repr(attr)} cannot be resolved.")
         return attr
-    
+
     def down(self, *, purge: bool = False) -> None:
         from ._provision import deprovision
 
@@ -371,6 +381,7 @@ def run_coroutine_sync(coroutine: Coroutine[Any, Any, T], timeout: float = 30) -
 
 InfrastructureType = TypeVar("InfrastructureType", bound=AzureInfrastructure, default=AzureInfrastructure)
 
+
 class AzureApp(Generic[InfrastructureType], metaclass=AzureAppComponent):
     # TODO: As these will have classattribute defaults, need to test behaviour
     # Might need to build a specifier object or use field
@@ -378,7 +389,7 @@ class AzureApp(Generic[InfrastructureType], metaclass=AzureAppComponent):
     _config_store: Mapping[str, Any] = field(alias="config_store", factory=dict, repr=False)
 
     def __init__(self, **kwargs):
-        self._config_store = kwargs.pop('_config_store')
+        self._config_store = kwargs.pop("_config_store")
         self._client_annotations = kwargs.pop("_client_annotations")
         for key, value in kwargs.items():
             setattr(self, key, value)
@@ -396,8 +407,7 @@ class AzureApp(Generic[InfrastructureType], metaclass=AzureAppComponent):
         *,
         config_store: Optional[MutableMapping[str, Any]] = None,
         env_name: Optional[str] = None,
-    ) -> Self:
-        ...
+    ) -> Self: ...
     @overload
     @classmethod
     def load(
@@ -407,16 +417,15 @@ class AzureApp(Generic[InfrastructureType], metaclass=AzureAppComponent):
         *,
         config_store: Optional[MutableMapping[str, Any]] = None,
         env_name: Optional[str] = None,
-    ) -> Self:
-        ...
+    ) -> Self: ...
     @classmethod
     def load(
         cls,
-        infra = None,
-        attr_map = None,
+        infra=None,
+        attr_map=None,
         *,
-        config_store = None,
-        env_name = None,
+        config_store=None,
+        env_name=None,
     ):
         if attr_map and not infra:
             raise ValueError("Cannot specify attr_map without providing infrastructure object.")
@@ -457,8 +466,7 @@ class AzureApp(Generic[InfrastructureType], metaclass=AzureAppComponent):
         *,
         config_store: Optional[Mapping[str, Any]] = None,
         **kwargs,
-    ) -> Self:
-        ...
+    ) -> Self: ...
     @overload
     @classmethod
     def provision(
@@ -468,15 +476,14 @@ class AzureApp(Generic[InfrastructureType], metaclass=AzureAppComponent):
         attr_map: Optional[Mapping[str, str]] = None,
         config_store: Optional[Mapping[str, Any]] = None,
         **kwargs,
-    ) -> Self:
-        ...
+    ) -> Self: ...
     @classmethod
     def provision(
         cls,
-        infra = None,
+        infra=None,
         *,
-        attr_map = None,
-        config_store = None,
+        attr_map=None,
+        config_store=None,
         **kwargs,
     ):
         if attr_map and not infra:

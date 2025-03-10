@@ -8,7 +8,6 @@ from typing import (
     IO,
     Any,
     List,
-    Mapping,
     MutableMapping,
     Optional,
     Type,
@@ -23,7 +22,7 @@ from ._version import VERSION
 from ._component import AzureInfrastructure
 from ._parameters import GLOBAL_PARAMS
 from ._bicep.utils import resolve_value, serialize_dict
-from ._bicep.expressions import MISSING, Output, Parameter, ResourceSymbol
+from ._bicep.expressions import MISSING, Output, Parameter, PlaceholderParameter, ResourceSymbol
 from ._resource import FieldType, Resource, FieldsType, _load_dev_environment
 from .resources._extension import add_extensions
 from .resources import ResourceIdentifiers
@@ -106,17 +105,10 @@ def _get_component_resources(component: Type[Resource]) -> Dict[str, Resource]:
     return resources
 
 
-def deprovision(
-    deployment: AzureInfrastructure,
-    /,
-    *,
-    purge: bool = False
-) -> None:
-    _deprovision_project(
-        deployment.__class__.__name__,
-        purge=purge
-    )
-    
+def deprovision(deployment: AzureInfrastructure, /, *, purge: bool = False) -> None:
+    _deprovision_project(deployment.__class__.__name__, purge=purge)
+
+
 def provision(
     deployment: AzureInfrastructure,
     /,
@@ -195,7 +187,8 @@ def export(
     with open(bicep_main, "w", encoding="utf-8") as main:
         main.write("targetScope = 'subscription'\n\n")
         for parameter in parameters.values():
-            if parameter.name and not isinstance(parameter, Output):
+            # TODO: Maybe add a "public: bool" attribute to Outputs and Placeholders?
+            if parameter.name and not isinstance(parameter, (Output, PlaceholderParameter)):
                 main.write(parameter.__bicep__(config_store.get(parameter.name, MISSING)))
         _write_resources(
             bicep=main,
@@ -275,14 +268,14 @@ def _write_resources(  # pylint: disable=too-many-statements
                 bicep.write(f"  scope: {field.symbol.value}\n")
                 bicep.write("  params: {\n")
                 for parameter in parameters.values():
-                    if parameter.name and not isinstance(parameter, Output):
+                    if parameter.name and not isinstance(parameter, (Output, PlaceholderParameter)):
                         bicep.write(f"    {parameter.name}: {parameter.value}\n")
                 bicep.write("  }\n")
                 bicep.write("}\n")
                 bicep_module = os.path.join(infra_dir, f"{deployment_name}.bicep")
                 with open(bicep_module, "w", encoding="utf-8") as module:
                     for parameter in parameters.values():
-                        if parameter.name and not isinstance(parameter, Output):
+                        if parameter.name and not isinstance(parameter, (Output, PlaceholderParameter)):
                             # TODO: This will default to type "string" which may not be true.
                             module.write(f"param {parameter.name} {parameter.type}\n")
 
