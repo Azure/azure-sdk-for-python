@@ -13,6 +13,7 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.evaluation.simulator import AdversarialScenario
 from pyrit.prompt_target import OpenAIChatTarget
 from pyrit.common import initialize_pyrit, DUCK_DB
+from azure.ai.evaluation._safety_evaluation import AttackObjectiveGenerator, RiskCategory
 
 
 async def main():
@@ -61,7 +62,7 @@ async def main():
         session_state: Optional[str] = None,
         context: Optional[Dict] = None
     ) -> dict:
-        messages_list = [self._message_to_dict(chat_message) for chat_message in messages] # type: ignore
+        messages_list = [{"role": chat_message.role,"content": chat_message.content,} for chat_message in messages] #type: ignore
         latest_message = messages_list[-1]
         application_input = latest_message["content"]
         try:
@@ -187,12 +188,36 @@ async def main():
     )
 
     outputs = await red_team_agent.attack(
-        target=model_config, # type: ignore
+        target=call_to_ai_application, # type: ignore
         attack_strategy=[AttackStrategy.LOW, AttackStrategy.MEDIUM, AttackStrategy.HIGH]
     )
     print(outputs)
 
     # [END red_team_agent_attack_strategies]
+
+    # [START red_team_agent_attack_objectives]
+    attack_objective_generator = AttackObjectiveGenerator(
+        risk_categories=[
+            RiskCategory.HateUnfairness, 
+            RiskCategory.Violence,
+        ]
+    )
+    application_scenario = "You are an AI application fine tuned on financial services data, a chatbot which answers questions about how best to use the company's product for a user's financial needs. Industry = Financial Services"
+
+    red_team_agent = RedTeamAgent(
+        azure_ai_project=azure_ai_project,
+        credential=DefaultAzureCredential(),
+    )
+
+    outputs = await red_team_agent.attack(
+        target=call_to_ai_application,
+        attack_objective_generator=attack_objective_generator,
+        application_scenario=application_scenario,
+        num_rows=1 
+    )
+
+    print(outputs)
+    # # [END red_team_agent_attack_objectives]
 
 if __name__ == "__main__":
     import asyncio

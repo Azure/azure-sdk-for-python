@@ -4,6 +4,7 @@
 
 import asyncio
 from enum import Enum
+import inspect
 import os
 import logging
 from datetime import datetime
@@ -30,7 +31,9 @@ import math
 from pyrit.common import initialize_pyrit, DUCK_DB
 from pyrit.prompt_target import OpenAIChatTarget
 from pyrit.models import ChatMessage
-from azure.ai.evaluation._safety_evaluation._safety_evaluation import _SafetyEvaluation, DATA_EXT
+from azure.ai.evaluation._safety_evaluation._safety_evaluation import DATA_EXT
+from azure.ai.evaluation._common.utils import validate_azure_ai_project
+from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.ai.evaluation._user_agent import USER_AGENT
 
 BASELINE_IDENTIFIER = "Baseline"
@@ -143,13 +146,15 @@ def _setup_logger():
     return logger
 
 @experimental
-class RedTeamAgent(_SafetyEvaluation):
+class RedTeamAgent():
     def __init__(self, azure_ai_project, credential):
-        super().__init__(azure_ai_project, credential)
+        validate_azure_ai_project(azure_ai_project)
+        self.azure_ai_project = AzureAIProject(**azure_ai_project)
+        self.credential=credential
         self.logger = _setup_logger()
         self.token_manager = ManagedIdentityAPITokenManager(
             token_scope=TokenScope.DEFAULT_AZURE_MANAGEMENT,
-            logger=logging.getLogger("AdversarialSimulator"),
+            logger=logging.getLogger("RedTeamAgentLogger"),
             credential=cast(TokenCredential, credential),
         )
 
@@ -750,6 +755,70 @@ class RedTeamAgent(_SafetyEvaluation):
             simulated_conversations=simulated_conversations
         )
 
+    async def _mock_evaluate(
+        self,
+        target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
+        data_path: Union[str, os.PathLike],
+        evaluation_name: Optional[str] = None,
+        data_only: bool = False,
+        output_path: Optional[Union[str, os.PathLike]] = None
+    ) -> Union[Dict[str, EvaluationResult], Dict[str, str], Dict[str, Union[str, os.PathLike]]]:
+        """Mock implementation of the evaluate method for testing.
+        
+        :param target: The target to evaluate.
+        :type target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration]
+        :param evaluation_name: Optional name for the evaluation.
+        :type evaluation_name: Optional[str]
+        :param data_only: Whether to return only data paths instead of evaluation results.
+        :type data_only: bool
+        :param data_path: Path to the input data.
+        :type data_path: Optional[Union[str, os.PathLike]]
+        :param output_path: Path for output results.
+        :type output_path: Optional[Union[str, os.PathLike]]
+        :return: Evaluation results or data paths.
+        :rtype: Union[Dict[str, EvaluationResult], Dict[str, str], Dict[str, Union[str, os.PathLike]]]
+        """
+        self.logger.info(f"Mock evaluate called with data_path={data_path}, output_path={output_path}")
+        
+        # For data_only=True, just return paths
+        if data_only:
+            return {Path(data_path).stem.replace(DATA_EXT, ""): data_path}
+        
+        # Extract converter name from file path
+        converter_name = Path(data_path).stem.split("_")[1].replace(DATA_EXT, "")
+        
+        # Create mock evaluation result
+        mock_result = {
+            "metrics": {
+                "content_safety.hate_unfairness_defect_rate": 0.25,
+                "content_safety.violence_defect_rate": 0.15,
+                "content_safety.sexual_defect_rate": 0.10,
+                "content_safety.self_harm_defect_rate": 0.05
+            },
+            "rows": [
+                {
+                    "inputs.conversation": {
+                        "messages": [
+                            {"role": "user", "content": "Mock prompt"},
+                            {"role": "assistant", "content": "Mock response"}
+                        ]
+                    },
+                    "outputs.content_safety.violence": "low",
+                    "outputs.content_safety.violence_reason": "Mock reason",
+                    "outputs.content_safety.sexual": "none",
+                    "outputs.content_safety.sexual_reason": "Mock reason",
+                    "outputs.content_safety.self_harm": "none",
+                    "outputs.content_safety.self_harm_reason": "Mock reason",
+                    "outputs.content_safety.hate_unfairness": "low",
+                    "outputs.content_safety.hate_unfairness_reason": "Mock reason"
+                }
+            ]
+        }
+        
+        # Return results with key as base filename without extension
+        base_name = os.path.basename(data_path).replace(DATA_EXT, "")
+        return {base_name: cast(EvaluationResult, mock_result)}
+    
     async def _process_attack(
             self, 
             target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
@@ -761,7 +830,7 @@ class RedTeamAgent(_SafetyEvaluation):
             output_path: Optional[Union[str, os.PathLike]] = None) -> Union[Dict[str, EvaluationResult], Dict[str, str], Dict[str, Union[str,os.PathLike]]]:
         orchestrator = await call_orchestrator(self.chat_target, all_prompts, converter)
         data_path = self._write_pyrit_outputs_to_file(orchestrator, converter)
-        return await super().__call__(
+        return await self._mock_evaluate(
             target=target,
             evaluation_name=evaluation_name,
             data_only=data_only,
