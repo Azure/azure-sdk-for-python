@@ -317,9 +317,9 @@ class RedTeamAgent():
             self.logger.info(f"  - risk_categories={risk_categories}")
             self.logger.info(f"  - application_scenario={application_scenario}")
             self.logger.info(f"  - strategy={strategy}")
-            
+            # setting risk_categories to [] for now
             objectives_response = await self.generated_rai_client.get_attack_objectives(
-                risk_categories=risk_categories,
+                risk_categories=[],
                 application_scenario=application_scenario,
                 strategy=strategy
             )
@@ -888,7 +888,6 @@ class RedTeamAgent():
                 strategy_objectives[strategy_name] = await self._get_attack_objectives(
                     attack_objective_generator=attack_objective_generator,
                     application_scenario=application_scenario,
-                    num_rows=num_rows,
                     strategy=strategy_name
                 )
         

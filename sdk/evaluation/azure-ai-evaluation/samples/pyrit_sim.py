@@ -141,7 +141,7 @@ async def main():
     )
     print(outputs)
 
-    # Low budget
+    # EASY budget
     red_team_agent = RedTeamAgent(
         azure_ai_project=azure_ai_project,
         credential=DefaultAzureCredential(),
@@ -149,12 +149,12 @@ async def main():
 
     outputs = await red_team_agent.attack(
         target=call_to_ai_application, # type: ignore
-        attack_strategy=[AttackStrategy.LOW],
+        attack_strategy=[AttackStrategy.EASY],
         attack_objective_generator=attack_objective_generator,
     )
     print(outputs)
 
-    # Medium budget
+    # MODERATE budget
     red_team_agent = RedTeamAgent(
         azure_ai_project=azure_ai_project,
         credential=DefaultAzureCredential(),
@@ -162,12 +162,12 @@ async def main():
     
     outputs = await red_team_agent.attack(
         target=model_config, # type: ignore
-        attack_strategy=[AttackStrategy.MEDIUM],
+        attack_strategy=[AttackStrategy.MODERATE],
         attack_objective_generator=attack_objective_generator,
     )
     print(outputs)
 
-    # High budget
+    # DIFFICULT budget
     red_team_agent = RedTeamAgent(
         azure_ai_project=azure_ai_project,
         credential=DefaultAzureCredential(),
@@ -175,7 +175,7 @@ async def main():
 
     outputs = await red_team_agent.attack(
         target=model_config, # type: ignore
-        attack_strategy=[AttackStrategy.HIGH],
+        attack_strategy=[AttackStrategy.DIFFICULT],
         attack_objective_generator=attack_objective_generator,
     )
 
@@ -188,7 +188,7 @@ async def main():
     outputs = await red_team_agent.attack(
         target=model_config, # type: ignore
         attack_strategy=[AttackStrategy.Compose([AttackStrategy.Flip, AttackStrategy.Base64]), 
-            AttackStrategy.LOW,
+            AttackStrategy.EASY,
             AttackStrategy.Morse],
         output_path="RacoonRedTeamEvalResults.jsonl", 
         attack_objective_generator=attack_objective_generator,
@@ -203,13 +203,13 @@ async def main():
 
     outputs = await red_team_agent.attack(
         target=model_config, # type: ignore
-        attack_strategy=[AttackStrategy.HIGH, AttackStrategy.Compose([AttackStrategy.Math, AttackStrategy.Tense])],
-        output_path="HighBudget-Duplicates.jsonl",
+        attack_strategy=[AttackStrategy.DIFFICULT, AttackStrategy.Compose([AttackStrategy.Math, AttackStrategy.Tense])],
+        output_path="DIFFICULTBudget-Duplicates.jsonl",
         attack_objective_generator=attack_objective_generator,
     )
     print(outputs)
 
-    # Low, medium, and high
+    # EASY, MODERATE, and DIFFICULT
     red_team_agent = RedTeamAgent(
         azure_ai_project=azure_ai_project,
         credential=DefaultAzureCredential(),
@@ -217,7 +217,7 @@ async def main():
 
     outputs = await red_team_agent.attack(
         target=call_to_ai_application, # type: ignore
-        attack_strategy=[AttackStrategy.LOW, AttackStrategy.MEDIUM, AttackStrategy.HIGH],
+        attack_strategy=[AttackStrategy.EASY, AttackStrategy.MODERATE, AttackStrategy.DIFFICULT],
         attack_objective_generator=attack_objective_generator,
     )
     print(outputs)
