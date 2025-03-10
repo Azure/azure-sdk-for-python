@@ -1,14 +1,37 @@
 # Release History
 
-## 1.32.1 (Unreleased)
+## 1.33.0 (Unreleased)
 
 ### Features Added
 
+- Added native OpenTelemetry tracing to Azure Core which enables users to use OpenTelemetry to trace Azure SDK operations without needing to install a plugin. #39563
+    - To enable native OpenTelemetry tracing, users need to:
+        1. Have `opentelemetry-api` installed.
+        2. Ensure that `settings.tracing_implementation` is not set.
+        3. Ensure that `settings.tracing_enabled` is set to `True`.
+    - If `setting.tracing_implementation` is set, the tracing plugin will be used instead of the native tracing.
+    - If `settings.tracing_enabled` is set to `False`, tracing will be disabled.
+    - The `OpenTelemetryTracer` class was added to the `azure.core.tracing.opentelemetry` module. This is a wrapper around the OpenTelemetry tracer that is used to create spans for Azure SDK operations.
+    - Added a `get_tracer` method to the new `azure.core.instrumentation` module. This method returns an instance of the `OpenTelemetryTracer` class if OpenTelemetry is available.
+    - A `TracingOptions` TypedDict class was added to define the options that SDK users can use to configure tracing per-operation. These options include the ability to enable or disable tracing and set additional attributes on spans.
+        - Example usage: `client.method(tracing_options={"enabled": True, "attributes": {"foo": "bar"}})`
+    - The `DistributedTracingPolicy` and `distributed_trace`/`distributed_trace_async` decorators now uses the OpenTelemetry tracer if it is available and native tracing is enabled.
+        - SDK clients can define an `_instrumentation_config` class variable to configure the OpenTelemetry tracer used in method span creation. Possible configuration options are `library_name`, `library_version`, `schema_url`, and `attributes`.
+        - `DistributedTracingPolicy` now accepts a `instrumentation_config` keyword argument to configure the OpenTelemetry tracer used in HTTP span creation.
+
 ### Breaking Changes
+
+- Removed automatic tracing enablement for the OpenTelemetry plugin if `opentelemetry` was imported. To enable tracing with the plugin, please import `azure.core.settings.settings` and set `settings.tracing_implementation` to `"opentelemetry"`. #39563
+- In `DistributedTracingPolicy`, the default span name is now just the HTTP method (e.g., "GET", "POST") and no longer includes the URL path. This change was made to converge with the OpenTelemetry HTTP semantic conventions. The full URL is still included in the span attributes.
+- Renamed span attributes in `DistributedTracingPolicy`:
+    - "x-ms-client-request-id" is now "az.client_request_id"
+    - "x-ms-request-id" is now "az.service_request_id"
 
 ### Bugs Fixed
 
 ### Other Changes
+
+- Added `opentelemetry-api` as an optional dependency for tracing. This can be installed with `pip install azure-core[tracing]`. #39563
 
 ## 1.32.0 (2024-10-31)
 

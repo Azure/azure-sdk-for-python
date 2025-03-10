@@ -75,74 +75,71 @@ def add_args_to_kwargs(
             kwargs[key] = value
 
 def validate_kwargs(
-        kwargs: Dict[str, Any]
+        keyword_arguments: Dict[str, Any]
     ) -> None:
-    """Validate keyword arguments(kwargs).
-    The values of keyword arguments must match the expect type and conditions. If the conditions do not match,
-    errors will be raised with the error messages and possible ways to correct the errors.
+    """Validate keyword arguments for change_feed API.
+    The values of keyword arguments must match the expected type and conditions. If the conditions do not match,
+    errors will be raised with the proper error messages and possible ways to correct the errors.
 
-    :param kwargs: Keyword arguments to verify for query_items_change_feed API
-    :keyword mode: Must be one of the values in the Enum, 'ChangeFeedMode'.
-        If the value is 'ALL_VERSIONS_AND_DELETES', the following keywords must be in the right condition:
-            - 'partition_key_range_id': Cannot be used at any time
-            - 'is_start_from_beginning': Must be 'False'
-            - 'start_time': Must be "Now"
-    :paramtype mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]]
-    :keyword partition_key_range_id: Deprecated Warning.
-    :paramtype partition_key_range_id: str
-    :keyword is_start_from_beginning: Deprecated Warning. Cannot be used with 'start_time'.
-    :paramtype is_start_from_beginning: bool
-    :keyword start_time: Must be in supported types.
-    :paramtype start_time: Union[~datetime.datetime, Literal["Now", "Beginning"]]
-    :type kwargs: dict[str, Any]
+    :param dict[str, Any] keyword_arguments: Keyword arguments to verify for query_items_change_feed API
+        - Literal["LatestVersion", "AllVersionsAndDeletes"] mode: Must be one of the values in the Enum,
+            'ChangeFeedMode'. If the value is 'ALL_VERSIONS_AND_DELETES', the following keywords must be in the right
+            conditions:
+                - 'partition_key_range_id': Cannot be used at any time
+                - 'is_start_from_beginning': Must be 'False'
+                - 'start_time': Must be "Now"
+        - str partition_key_range_id: Deprecated Warning.
+        - bool is_start_from_beginning: Deprecated Warning. Cannot be used with 'start_time'.
+        - Union[~datetime.datetime, Literal["Now", "Beginning"]] start_time: Must be in supported types.
     """
     # Filter items with value None
-    kwargs = {key: value for key, value in kwargs.items() if value is not None}
+    keyword_arguments = {key: value for key, value in keyword_arguments.items() if value is not None}
 
     # Validate the keyword arguments
-    if "mode" in kwargs:
-        mode = kwargs["mode"]
+    if "mode" in keyword_arguments:
+        mode = keyword_arguments["mode"]
         if mode not in CHANGE_FEED_MODES:
             raise ValueError(
-                f"Invalid mode was used: '{kwargs['mode']}'."
+                f"Invalid mode was used: '{keyword_arguments['mode']}'."
                 f" Supported modes are {CHANGE_FEED_MODES}.")
 
         if mode == 'AllVersionsAndDeletes':
-            if "partition_key_range_id" in kwargs:
+            if "partition_key_range_id" in keyword_arguments:
                 raise ValueError(
                     "'AllVersionsAndDeletes' mode is not supported if 'partition_key_range_id'"
                     " was used. Please use 'feed_range' instead.")
-            if "is_start_from_beginning" in kwargs and kwargs["is_start_from_beginning"] is not False:
+            if ("is_start_from_beginning" in keyword_arguments
+                    and keyword_arguments["is_start_from_beginning"] is not False):
                 raise ValueError(
                     "'AllVersionsAndDeletes' mode is only supported if 'is_start_from_beginning'"
                     " is 'False'. Please use 'is_start_from_beginning=False' or 'continuation' instead.")
-            if "start_time" in kwargs and kwargs["start_time"] != "Now":
+            if "start_time" in keyword_arguments and keyword_arguments["start_time"] != "Now":
                 raise ValueError(
                     "'AllVersionsAndDeletes' mode is only supported if 'start_time' is 'Now'."
                     " Please use 'start_time=\"Now\"' or 'continuation' instead.")
 
-    if "partition_key_range_id" in kwargs:
+    if "partition_key_range_id" in keyword_arguments:
         warnings.warn(
             "'partition_key_range_id' is deprecated. Please pass in 'feed_range' instead.",
             DeprecationWarning
         )
 
-    if "is_start_from_beginning" in kwargs:
+    if "is_start_from_beginning" in keyword_arguments:
         warnings.warn(
             "'is_start_from_beginning' is deprecated. Please pass in 'start_time' instead.",
             DeprecationWarning
         )
 
-        if not isinstance(kwargs["is_start_from_beginning"], bool):
+        if not isinstance(keyword_arguments["is_start_from_beginning"], bool):
             raise TypeError(
                 f"'is_start_from_beginning' must be 'bool' type,"
-                f" but given '{type(kwargs['is_start_from_beginning']).__name__}'.")
+                f" but given '{type(keyword_arguments['is_start_from_beginning']).__name__}'.")
 
-        if kwargs["is_start_from_beginning"] is True and "start_time" in kwargs:
+        if keyword_arguments["is_start_from_beginning"] is True and "start_time" in keyword_arguments:
             raise ValueError("'is_start_from_beginning' and 'start_time' are exclusive, please only set one of them.")
 
-    if "start_time" in kwargs:
-        if not isinstance(kwargs['start_time'], datetime):
-            if kwargs['start_time'].lower() not in ["now", "beginning"]:
+    if "start_time" in keyword_arguments:
+        if not isinstance(keyword_arguments['start_time'], datetime):
+            if keyword_arguments['start_time'].lower() not in ["now", "beginning"]:
                 raise ValueError(
-                    f"'start_time' must be either 'Now' or 'Beginning', but given '{kwargs['start_time']}'.")
+                    f"'start_time' must be either 'Now' or 'Beginning', but given '{keyword_arguments['start_time']}'.")

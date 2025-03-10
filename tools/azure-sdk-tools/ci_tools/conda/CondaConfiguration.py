@@ -48,35 +48,20 @@ http = urllib3.PoolManager()
 #       version: 12.7.0
 
 
-def get_pypi_page(package: str, version: str) -> bs4.BeautifulSoup:
-    url = f"https://pypi.org/project/{package}/{version}/"
-
-    try:
-        r = http.request("GET", url)
-    except Exception as e:
-        raise RuntimeError(
-            f'This package "{package}" has been configured to retrieve package source distribution from PyPI at URL "{url}".'
-            + "Unable to retrieve these bits from PyPI. Check conda package configuration in conda-sdk-client.yml and retry."
-        )
-
-    return bs4.BeautifulSoup(r.data.decode("utf-8"), "html.parser")
-
-
 def get_package_sdist_url(package: str, version: str) -> str:
-    soup = get_pypi_page(package, version)
+    url = f"https://pypi.org/pypi/{package}/{version}/json"
+    response = http.request("GET", url)
 
-    # source distribution always first on the page
-    try:
-        target_zip = soup.select("div.file__card a")[0]["href"]
-    except Exception as e:
-        print(f"Can't get data from {package} and {version}")
-        raise e
-    filename = os.path.basename(target_zip)
+    if response.status != 200:
+        raise RuntimeError(f"Failed to fetch metadata for {package}@{version} from PyPI.")
 
-    if filename.endswith("tar.gz") or filename.endswith(".zip"):
-        return target_zip
-    else:
-        raise ValueError(f"Unable to find a source distribution for {package}@{version}.")
+    data = response.json()
+
+    for file_info in data.get("urls", []):
+        if file_info.get("packagetype") == "sdist":
+            return file_info["url"]
+
+    raise ValueError(f"Unable to find a source distribution for {package}@{version}.")
 
 
 class CheckoutConfiguration:

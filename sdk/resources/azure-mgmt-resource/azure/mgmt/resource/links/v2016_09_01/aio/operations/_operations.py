@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +7,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, AsyncIterable, Callable, Dict, IO, Literal, Optional, Type, TypeVar, Union, overload
+from typing import Any, AsyncIterable, Callable, Dict, IO, Literal, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -40,7 +39,7 @@ from ...operations._operations import (
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -80,7 +79,7 @@ class Operations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-09-01"))
         cls: ClsType[_models.OperationListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -161,7 +160,8 @@ class ResourceLinksOperations:
         self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @distributed_trace_async
-    async def delete(self, link_id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    async def delete(self, link_id: str, **kwargs: Any) -> None:
+        # pylint: disable=line-too-long
         """Deletes a resource link with the specified ID.
 
         :param link_id: The fully qualified ID of the resource link. Use the format,
@@ -174,7 +174,7 @@ class ResourceLinksOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -214,6 +214,7 @@ class ResourceLinksOperations:
     async def create_or_update(
         self, link_id: str, parameters: _models.ResourceLink, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ResourceLink:
+        # pylint: disable=line-too-long
         """Creates or updates a resource link between the specified resources.
 
         :param link_id: The fully qualified ID of the resource link. Use the format,
@@ -236,6 +237,7 @@ class ResourceLinksOperations:
     async def create_or_update(
         self, link_id: str, parameters: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ResourceLink:
+        # pylint: disable=line-too-long
         """Creates or updates a resource link between the specified resources.
 
         :param link_id: The fully qualified ID of the resource link. Use the format,
@@ -258,6 +260,7 @@ class ResourceLinksOperations:
     async def create_or_update(
         self, link_id: str, parameters: Union[_models.ResourceLink, IO[bytes]], **kwargs: Any
     ) -> _models.ResourceLink:
+        # pylint: disable=line-too-long
         """Creates or updates a resource link between the specified resources.
 
         :param link_id: The fully qualified ID of the resource link. Use the format,
@@ -273,7 +276,7 @@ class ResourceLinksOperations:
         :rtype: ~azure.mgmt.resource.links.v2016_09_01.models.ResourceLink
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -327,6 +330,7 @@ class ResourceLinksOperations:
 
     @distributed_trace_async
     async def get(self, link_id: str, **kwargs: Any) -> _models.ResourceLink:
+        # pylint: disable=line-too-long
         """Gets a resource link with the specified ID.
 
         :param link_id: The fully qualified Id of the resource link. For example,
@@ -337,7 +341,7 @@ class ResourceLinksOperations:
         :rtype: ~azure.mgmt.resource.links.v2016_09_01.models.ResourceLink
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -398,7 +402,7 @@ class ResourceLinksOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-09-01"))
         cls: ClsType[_models.ResourceLinkResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -484,7 +488,7 @@ class ResourceLinksOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-09-01"))
         cls: ClsType[_models.ResourceLinkResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
