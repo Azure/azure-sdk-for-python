@@ -1,6 +1,10 @@
 # Release History
 
-## 5.14.1 (Unreleased)
+## 5.15.0 (Unreleased)
+
+### Features Added
+
+- Added a class method `from bytes` to create `EventData` from a message payload of bytes. ([#39711](https://github.com/Azure/azure-sdk-for-python/issues/39711))
 
 ### Bugs Fixed
 
@@ -10,7 +14,7 @@
 
 ### Features Added
 
-- Add support for Decimal128 in pyAMQP ([#39511]https://github.com/Azure/azure-sdk-for-python/pull/39511)
+- Add support for Decimal128 in pyAMQP ([#39511](https://github.com/Azure/azure-sdk-for-python/pull/39511))
 
 ### Bugs Fixed
 
