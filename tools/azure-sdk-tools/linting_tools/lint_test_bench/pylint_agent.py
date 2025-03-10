@@ -101,8 +101,9 @@ def fix_file(file_path: str, logger) -> dict:
         fix_file_prompt = "You are a helpful assistant that fixes pylint warnings. If you are not sure about a specific pylint error, " \
         "you can check the pylint specific guidelines from the readme: https://github.com/Azure/azure-sdk-tools/blob/5e36502f0161bf3e2bc824ac216d4c0d244f498a/tools/pylint-extensions/azure-pylint-guidelines-checker/README.md," \
         "or the pylint documentation: https://pylint.readthedocs.io/en/stable/user_guide/checkers/features.html." \
-        "Given a python file that has pylint issues, identify the issues and output ONLY the fixed code without comments or markdown. For help, there is a comment that specifies which rules are being violated in each file."
+        "Given a python file that has pylint issues, identify the issues and output ONLY the fixed code. For help, there is a comment that specifies which rules are being violated in each file."
         logger.debug(f"PROMPT FOR FIXING FILE: {fix_file_prompt}")
+        logger.debug(f"MODEL: {os.environ['AZURE_OPENAI_MODEL']}")
         
 
         # Get fixed content from Azure OpenAI
