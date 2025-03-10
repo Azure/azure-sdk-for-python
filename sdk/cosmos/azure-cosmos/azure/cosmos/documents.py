@@ -336,6 +336,7 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
     __defaultMaxBackoff: int = 1 # seconds
 
     def __init__(self) -> None:
+        # RequestTimeout is the connection timeout for all operations except database account
         self.RequestTimeout: int = self.__defaultRequestTimeout
         self.DBAConnectionTimeout: int = self.__defaultDBAConnectionTimeout
         self.ReadTimeout: int = self.__defaultReadTimeout

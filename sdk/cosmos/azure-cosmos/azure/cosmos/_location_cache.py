@@ -25,7 +25,7 @@ DatabaseAccount with multiple writable and readable locations.
 import collections
 import logging
 import time
-from typing import Set
+from typing import Set, Any
 from urllib.parse import urlparse
 
 from . import documents
@@ -125,7 +125,7 @@ def _get_health_check_endpoints(
     # only check 2 read regions and 2 write regions
     region_count = 2
     # should use the endpoints in the order returned from gateway and only the ones specified in preferred locations
-    endpoints = set()
+    endpoints: set[Any] = set()
     i = 0
     preferred_endpoints = {context.get_primary() for context in regional_routing_contexts}.union(
         {context.get_alternate() for context in regional_routing_contexts}
@@ -230,7 +230,8 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                 write_location = self.account_write_locations[location_index]
                 if (self.account_write_regional_routing_contexts_by_location
                         and write_location in self.account_write_regional_routing_contexts_by_location):
-                    write_regional_routing_context = self.account_write_regional_routing_contexts_by_location[write_location]
+                    write_regional_routing_context = (
+                        self.account_write_regional_routing_contexts_by_location)[write_location]
                     if (
                             request.last_routed_location_endpoint_within_region is not None
                             and request.last_routed_location_endpoint_within_region
@@ -309,8 +310,8 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                     and self.is_endpoint_unavailable_internal(endpoint.get_alternate(), operation_type))
 
         # For reads mark the region as down if either of the endpoints are unavailable
-        return (self.is_endpoint_unavailable_internal(endpoint.get_primary(), operation_type)
-                or self.is_endpoint_unavailable_internal(endpoint.get_alternate(), operation_type))
+        ## double check this change
+        return self.is_endpoint_unavailable_internal(endpoint.get_primary(), operation_type)
 
     def is_endpoint_unavailable_internal(self, endpoint: str, expected_available_operation: str):
         unavailability_info = (
@@ -377,20 +378,20 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                     self.account_write_regional_routing_contexts_by_location,
                     self.default_regional_routing_context,
                     True,
-                    self.use_multiple_write_locations,
+                    self.use_multiple_write_locations
                 )
 
         self.write_regional_routing_contexts = self.get_preferred_regional_routing_contexts(
             self.account_write_regional_routing_contexts_by_location,
             self.account_write_locations,
             EndpointOperationType.WriteType,
-            self.default_regional_routing_context,
+            self.default_regional_routing_context
         )
         self.read_regional_routing_contexts = self.get_preferred_regional_routing_contexts(
             self.account_read_regional_routing_contexts_by_location,
             self.account_read_locations,
             EndpointOperationType.ReadType,
-            self.write_regional_routing_contexts[0],
+            self.write_regional_routing_contexts[0]
         )
         self.last_cache_update_timestamp = self.current_time_millis()  # pylint: disable=attribute-defined-outside-init
 

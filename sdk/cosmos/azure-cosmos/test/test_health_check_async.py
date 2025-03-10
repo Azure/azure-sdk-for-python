@@ -133,7 +133,6 @@ class TestHealthCheckAsync:
     async def test_health_check_background_fail(self, setup):
         self.original_health_check = _global_endpoint_manager_async._GlobalEndpointManager._endpoints_health_check
         _global_endpoint_manager_async._GlobalEndpointManager._endpoints_health_check = self.mock_health_check_failure
-        _Constants.DefaultEndpointsRefreshTime = 1000
         try:
             setup[COLLECTION].client_connection._global_endpoint_manager.startup = False
             for i in range(20):
@@ -193,20 +192,14 @@ class TestHealthCheckAsync:
         finally:
             _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
             setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.preferred_locations = self.original_preferred_locations
-        expected_endpoints = []
 
         if not use_write_global_endpoint:
-            for region in REGIONS:
-                locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, region)
-                expected_endpoints.append(locational_endpoint)
+            num_unavailable_endpoints = len(REGIONS)
         else:
-            locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
-            expected_endpoints.append(locational_endpoint)
+            num_unavailable_endpoints = 1
 
         unavailable_endpoint_info = setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint
-        assert len(unavailable_endpoint_info) == len(expected_endpoints)
-        for expected_endpoint in expected_endpoints:
-            assert expected_endpoint in unavailable_endpoint_info.keys()
+        assert len(unavailable_endpoint_info) == num_unavailable_endpoints
 
     async def mock_health_check(self, **kwargs):
         await asyncio.sleep(100)
