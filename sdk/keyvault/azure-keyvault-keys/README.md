@@ -238,7 +238,7 @@ key = key_client.get_key("key-name")
 crypto_client = CryptographyClient(key, credential=credential)
 plaintext = b"plaintext"
 
-result = crypto_client.encrypt(EncryptionAlgorithm.rsa_oaep, plaintext)
+result = crypto_client.encrypt(EncryptionAlgorithm.rsa_oaep_256, plaintext)
 decrypted = crypto_client.decrypt(result.algorithm, result.ciphertext)
 ```
 

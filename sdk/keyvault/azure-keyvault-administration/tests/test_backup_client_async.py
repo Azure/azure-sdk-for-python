@@ -31,11 +31,17 @@ class TestBackupClientTests(KeyVaultTestCase):
         set_bodiless_matcher()
         # backup the vault
         container_uri = kwargs.pop("container_uri")
+        check_poller = await client.begin_pre_backup(container_uri, use_managed_identity=True)
+        check_result = await check_poller.result()
+        assert check_result.error is None
         backup_poller = await client.begin_backup(container_uri, use_managed_identity=True)
         backup_operation = await backup_poller.result()
         assert backup_operation.folder_url
 
         # restore the backup
+        check_poller = await client.begin_pre_restore(backup_operation.folder_url, use_managed_identity=True)
+        check_result = await check_poller.result()
+        assert check_result.error is None
         restore_poller = await client.begin_restore(backup_operation.folder_url, use_managed_identity=True)
         await restore_poller.wait()
         if self.is_live:
@@ -169,11 +175,17 @@ class TestBackupClientTests(KeyVaultTestCase):
         # backup the vault
         container_uri = kwargs.pop("container_uri")
         sas_token = kwargs.pop("sas_token")
+        check_poller = await client.begin_pre_backup(container_uri, sas_token=sas_token)
+        check_result = await check_poller.result()
+        assert check_result.error is None
         backup_poller = await client.begin_backup(container_uri, sas_token)
         backup_operation = await backup_poller.result()
         assert backup_operation.folder_url
 
         # restore the backup
+        check_poller = await client.begin_pre_restore(backup_operation.folder_url, sas_token=sas_token)
+        check_result = await check_poller.result()
+        assert check_result.error is None
         restore_poller = await client.begin_restore(backup_operation.folder_url, sas_token)
         await restore_poller.wait()
         if self.is_live:

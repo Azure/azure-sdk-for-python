@@ -64,6 +64,7 @@ class CertificateClient(KeyVaultClientBase):
         *,
         enabled: Optional[bool] = None,
         tags: Optional[Dict[str, str]] = None,
+        preserve_certificate_order: Optional[bool] = None,
         **kwargs: Any,
     ) -> LROPoller[Union[KeyVaultCertificate, CertificateOperation]]:
         """Creates a new certificate.
@@ -81,6 +82,7 @@ class CertificateClient(KeyVaultClientBase):
         :keyword bool enabled: Whether the certificate is enabled for use.
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
+        :keyword bool preserve_certificate_order: Whether to preserve the order of the certificate chain.
 
         :returns: An LROPoller for the create certificate operation. Waiting on the poller gives you the certificate if
             creation is successful, or the CertificateOperation if not.
@@ -113,7 +115,8 @@ class CertificateClient(KeyVaultClientBase):
         parameters = self._models.CertificateCreateParameters(
             certificate_policy=policy._to_certificate_policy_bundle(),
             certificate_attributes=attributes,
-            tags=tags
+            tags=tags,
+            preserve_cert_order=preserve_certificate_order,
         )
 
         pipeline_response, cert_bundle = self._client.create_certificate(
@@ -353,6 +356,7 @@ class CertificateClient(KeyVaultClientBase):
         tags: Optional[Dict[str, str]] = None,
         password: Optional[str] = None,
         policy: Optional[CertificatePolicy] = None,
+        preserve_certificate_order: Optional[bool] = None,
         **kwargs: Any,
     ) -> KeyVaultCertificate:
         """Import a certificate created externally. Requires certificates/import permission.
@@ -376,6 +380,7 @@ class CertificateClient(KeyVaultClientBase):
             with :attr:`~azure.keyvault.certificates.CertificatePolicy.content_type` set to
             :attr:`~azure.keyvault.certificates.CertificateContentType.pem`.
         :paramtype policy: ~azure.keyvault.certificates.CertificatePolicy
+        :keyword bool preserve_certificate_order: Whether to preserve the order of the certificate chain.
 
         :returns: The imported KeyVaultCertificate
         :rtype: ~azure.keyvault.certificates.KeyVaultCertificate
@@ -395,6 +400,7 @@ class CertificateClient(KeyVaultClientBase):
             certificate_policy=policy._to_certificate_policy_bundle() if policy else None,
             certificate_attributes=attributes,
             tags=tags,
+            preserve_cert_order=preserve_certificate_order,
         )
 
         bundle = self._client.import_certificate(

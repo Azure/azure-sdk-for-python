@@ -53,6 +53,44 @@ class JsonWebKey(object):
         return jwk
 
 
+class KeyAttestation:
+    """The key attestation information.
+
+    :ivar certificate_pem_file: The certificate used for attestation validation, in PEM format.
+    :vartype certificate_pem_file: bytes or None
+    :ivar private_key_attestation: The key attestation corresponding to the private key material of the key.
+    :vartype private_key_attestation: bytes or None
+    :ivar public_key_attestation: The key attestation corresponding to the public key material of the key.
+    :vartype public_key_attestation: bytes or None
+    :ivar version: The version of the attestation.
+    :vartype version: str or None
+    """
+
+    def __init__(
+        self,
+        certificate_pem_file: Optional[bytes] = None,
+        private_key_attestation: Optional[bytes] = None,
+        public_key_attestation: Optional[bytes] = None,
+        version: Optional[str] = None,
+    ) -> None:
+        self.certificate_pem_file = certificate_pem_file
+        self.private_key_attestation = private_key_attestation
+        self.public_key_attestation = public_key_attestation
+        self.version = version
+
+    def __repr__(self) -> str:
+        return f"<KeyAttestation [{self.version}]>"[:1024]
+
+    @classmethod
+    def _from_generated(cls, attestation: "_models.KeyAttestation") -> "KeyAttestation":
+        return cls(
+            certificate_pem_file=attestation.certificate_pem_file,
+            private_key_attestation=attestation.private_key_attestation,
+            public_key_attestation=attestation.public_key_attestation,
+            version=attestation.version,
+        )
+
+
 class KeyProperties(object):
     """A key's ID and attributes.
 
@@ -261,6 +299,19 @@ class KeyProperties(object):
         # hsm_platform was added in 7.5-preview.1
         if self._attributes:
             return getattr(self._attributes, "hsm_platform", None)
+        return None
+
+    @property
+    def attestation(self) -> Optional[KeyAttestation]:
+        """The key attestation, if available and requested.
+
+        :returns: The key or key version attestation information.
+        :rtype: ~azure.keyvault.keys.KeyAttestation or None
+        """
+        # attestation was added in 7.6-preview.2
+        if self._attributes:
+            attestation = getattr(self._attributes, "attestation", None)
+            return KeyAttestation._from_generated(attestation=attestation) if attestation else None  # pylint:disable=protected-access
         return None
 
 

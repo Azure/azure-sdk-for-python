@@ -37,7 +37,7 @@ class TestCryptoExamples(KeyVaultTestCase, KeysTestCase):
         from azure.keyvault.keys.crypto import EncryptionAlgorithm
 
         # the result holds the ciphertext and identifies the encryption key and algorithm used
-        result = client.encrypt(EncryptionAlgorithm.rsa_oaep, b"plaintext")
+        result = client.encrypt(EncryptionAlgorithm.rsa_oaep_256, b"plaintext")
         ciphertext = result.ciphertext
         print(result.key_id)
         print(result.algorithm)
@@ -46,7 +46,7 @@ class TestCryptoExamples(KeyVaultTestCase, KeysTestCase):
         # [START decrypt]
         from azure.keyvault.keys.crypto import EncryptionAlgorithm
 
-        result = client.decrypt(EncryptionAlgorithm.rsa_oaep, ciphertext)
+        result = client.decrypt(EncryptionAlgorithm.rsa_oaep_256, ciphertext)
         print(result.plaintext)
         # [END decrypt]
 
@@ -65,7 +65,7 @@ class TestCryptoExamples(KeyVaultTestCase, KeysTestCase):
         from azure.keyvault.keys.crypto import KeyWrapAlgorithm
 
         # the result holds the encrypted key and identifies the encryption key and algorithm used
-        result = client.wrap_key(KeyWrapAlgorithm.rsa_oaep, key_bytes)
+        result = client.wrap_key(KeyWrapAlgorithm.rsa_oaep_256, key_bytes)
         encrypted_key = result.encrypted_key
         print(result.key_id)
         print(result.algorithm)
@@ -74,7 +74,7 @@ class TestCryptoExamples(KeyVaultTestCase, KeysTestCase):
         # [START unwrap_key]
         from azure.keyvault.keys.crypto import KeyWrapAlgorithm
 
-        result = client.unwrap_key(KeyWrapAlgorithm.rsa_oaep, encrypted_key)
+        result = client.unwrap_key(KeyWrapAlgorithm.rsa_oaep_256, encrypted_key)
         key = result.key
         # [END unwrap_key]
 
