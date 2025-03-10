@@ -96,6 +96,8 @@ class Link:  # pylint: disable=too-many-instance-attributes
         self._on_link_state_change = kwargs.get("on_link_state_change")
         self._on_attach = kwargs.get("on_attach")
         self._error: Optional[AMQPLinkError] = None
+        self._drain_state = False
+        self._received_drain_response = False
         self.total_link_credit = self.link_credit
 
     async def __aenter__(self) -> "Link":
@@ -208,7 +210,11 @@ class Link:  # pylint: disable=too-many-instance-attributes
             "echo": kwargs.get("echo"),
             "properties": kwargs.get("properties"),
         }
-        await self._session._outgoing_flow(flow_frame)  # pylint: disable=protected-access
+        self._received_drain_response = False
+        # If we aren't still in a drain - for prefetch purposes, we were sending out a flow before receiving a drain
+        if not self._drain_state:
+            await self._session._outgoing_flow(flow_frame)  # pylint: disable=protected-access
+            self._drain_state = kwargs.get("drain", False)
 
     async def _incoming_flow(self, frame):
         pass
@@ -223,6 +229,9 @@ class Link:  # pylint: disable=too-many-instance-attributes
         await self._session._outgoing_detach(detach_frame)  # pylint: disable=protected-access
         if close:
             self._is_closed = True
+            # self.links.pop(self.name, None)
+            # self._input_handles.pop(self.remote_handle, None)
+            # self._output_handles.pop(self.handle, None)
 
     async def _incoming_detach(self, frame) -> None:
         if self.network_trace:
@@ -282,10 +291,15 @@ class Link:  # pylint: disable=too-many-instance-attributes
         # minus the current link credit on the wire `self.total_link_credit`.
         self.current_link_credit = link_credit - self.total_link_credit if link_credit is not None else self.link_credit
 
+        if kwargs.get("drain"):
+            self.current_link_credit = 0
+            _LOGGER.debug("There is sufficient credit but we want to drain the link", extra=self.network_trace_params)
+            await self._outgoing_flow(**kwargs)
+
         # If the link credit to flow is greater than 0 (i.e the desired link credit
         # is greater than the current link credit on the wire), then we will send a
         # flow to issue more link credit. Otherwise link credit on the wire is sufficient.
-        if self.current_link_credit > 0:
+        elif self.current_link_credit > 0:
             # Calculate the total link credit on the wire, by adding the credit
             # we will flow to the total link credit.
             self.total_link_credit = (

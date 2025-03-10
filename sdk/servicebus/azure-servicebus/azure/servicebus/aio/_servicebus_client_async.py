@@ -115,6 +115,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         if uamqp_transport:
             try:
                 from ._transport._uamqp_transport_async import UamqpTransportAsync
+
                 amqp_transport = UamqpTransportAsync
             except ImportError:
                 raise ValueError("To use the uAMQP transport, please install `uamqp>=1.6.3,<2.0.0`.") from None
@@ -170,7 +171,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         )
 
     @classmethod
-    def from_connection_string( # pylint: disable=docstring-keyword-should-match-keyword-only
+    def from_connection_string(  # pylint: disable=docstring-keyword-should-match-keyword-only
         cls,
         conn_str: str,
         *,
@@ -270,13 +271,13 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
             await self._connection.close()
 
     def get_queue_sender(
-            self,
-            queue_name: str,
-            *,
-            client_identifier: Optional[str] = None,
-            socket_timeout: Optional[float] = None,
-            **kwargs: Any
-        ) -> ServiceBusSender:
+        self,
+        queue_name: str,
+        *,
+        client_identifier: Optional[str] = None,
+        socket_timeout: Optional[float] = None,
+        **kwargs: Any,
+    ) -> ServiceBusSender:
         """Get ServiceBusSender for the specific queue.
 
         :param str queue_name: The path of specific Service Bus Queue the client connects to.
@@ -463,7 +464,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         *,
         client_identifier: Optional[str] = None,
         socket_timeout: Optional[float] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> ServiceBusSender:
         """Get ServiceBusSender for the specific topic.
 
