@@ -21,7 +21,9 @@
 
 """Represents a request object.
 """
-from typing import Optional
+from typing import Optional, Mapping, Any, Set
+
+from azure.cosmos.cosmos_excluded_locations import CosmosExcludedLocations
 
 class RequestObject(object):
     def __init__(self, resource_type: str, operation_type: str, endpoint_override: Optional[str] = None) -> None:
@@ -33,6 +35,7 @@ class RequestObject(object):
         self.location_index_to_route: Optional[int] = None
         self.location_endpoint_to_route: Optional[str] = None
         self.last_routed_location_endpoint_within_region: Optional[str] = None
+        self.excluded_locations: CosmosExcludedLocations = CosmosExcludedLocations(set())
 
     def route_to_location_with_preferred_location_flag(  # pylint: disable=name-too-long
         self,
@@ -52,3 +55,11 @@ class RequestObject(object):
         self.location_index_to_route = None
         self.use_preferred_locations = None
         self.location_endpoint_to_route = None
+
+    def set_excluded_location_from_options(self, options: Mapping[str, Any]) -> None:
+        if options is not None and 'excludedLocations' in options:
+            self.set_excluded_location(options['excludedLocations'])
+
+    def set_excluded_location(self, locations: Set[str]) -> None:
+        if locations is not None:
+            self.excluded_locations = CosmosExcludedLocations(locations)

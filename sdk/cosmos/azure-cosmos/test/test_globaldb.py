@@ -256,6 +256,8 @@ class TestGlobalDB(unittest.TestCase):
             self.assertEqual(str(content_location_url.hostname), str(read_location2_url.hostname))
             self.assertEqual(client.client_connection.ReadEndpoint, self.read_location2_host)
 
+# #TODO: add test for excluded_locations similar to 'test_global_db_preferred_locations'
+
     def test_global_db_endpoint_assignments(self):
         connection_policy = documents.ConnectionPolicy()
         connection_policy.EnableEndpointDiscovery = False

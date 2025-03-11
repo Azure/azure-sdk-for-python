@@ -160,39 +160,86 @@ class TestLocationCache:
         assert read_resolved == write_resolved
         assert read_resolved == default_endpoint
 
-    @pytest.mark.parametrize("test_data",
-                             [
-                                 [{location1_name}, [location2_endpoint], [location2_endpoint, location3_endpoint]],
-                                 [{location1_name, location2_name}, [default_endpoint], [location3_endpoint]],
-                                 [{location1_name, location2_name, location3_name}, [default_endpoint], [default_endpoint]],
-                                 [{location4_name}, [location1_endpoint, location2_endpoint], [location1_endpoint, location2_endpoint, location3_endpoint]],
-                                 [set(), [location1_endpoint, location2_endpoint], [location1_endpoint, location2_endpoint, location3_endpoint]],
-                             ])
-    def test_get_applicable_regional_endpoints_excluded_regions(self, test_data):
+    @pytest.mark.parametrize("test_type",["OnClient", "OnRequest", "OnBoth"])
+    def test_get_applicable_regional_endpoints_excluded_regions(self, test_type):
         # Init test data
-        excluded_locations = test_data[0]
-        expected_read_endpoints = test_data[1]
-        expected_write_endpoints = test_data[2]
+        if test_type == "OnClient":
+            excluded_locations_on_client_list = [
+                {location1_name},
+                {location1_name, location2_name},
+                {location1_name, location2_name, location3_name},
+                {location4_name},
+                set(),
+            ]
+            excluded_locations_on_requests_list = [set()] * 5
+        elif test_type == "OnRequest":
+            excluded_locations_on_client_list = [set()] * 5
+            excluded_locations_on_requests_list = [
+                {location1_name},
+                {location1_name, location2_name},
+                {location1_name, location2_name, location3_name},
+                {location4_name},
+                set(),
+            ]
+        else:
+            excluded_locations_on_client_list = [
+                {location1_name},
+                {location1_name, location2_name, location3_name},
+                {location1_name, location2_name},
+                {location2_name},
+                set(),
+            ]
+            excluded_locations_on_requests_list = [
+                {location1_name},
+                {location1_name, location2_name},
+                {location1_name, location2_name, location3_name},
+                {location4_name},
+                set(),
+            ]
 
-        # Init excluded_locations in ConnectionPolicy
-        connection_policy = documents.ConnectionPolicy()
-        connection_policy.ExcludedLocations = CosmosExcludedLocations(excluded_locations)
-        assert excluded_locations == connection_policy.ExcludedLocations.get_excluded_locations()
+        expected_read_endpoints_list = [
+            [location2_endpoint],
+            [default_endpoint],
+            [default_endpoint],
+            [location1_endpoint, location2_endpoint],
+            [location1_endpoint, location2_endpoint],
+        ]
+        expected_write_endpoints_list = [
+            [location2_endpoint, location3_endpoint],
+            [location3_endpoint],
+            [default_endpoint],
+            [location1_endpoint, location2_endpoint, location3_endpoint],
+            [location1_endpoint, location2_endpoint, location3_endpoint],
+        ]
 
-        # Init location_cache
-        location_cache = refresh_location_cache([location1_name, location2_name, location3_name], True, connection_policy)
-        database_account = create_database_account(True)
-        location_cache.perform_on_database_account_read(database_account)
+        # Loop over each test cases
+        for excluded_locations_on_client, excluded_locations_on_requests, expected_read_endpoints, expected_write_endpoints in zip(excluded_locations_on_client_list, excluded_locations_on_requests_list, expected_read_endpoints_list, expected_write_endpoints_list):
+            # Init excluded_locations in ConnectionPolicy
+            connection_policy = documents.ConnectionPolicy()
+            connection_policy.ExcludedLocations = CosmosExcludedLocations(excluded_locations_on_client)
+            assert excluded_locations_on_client == connection_policy.ExcludedLocations.get()
 
-        # Test if read endpoints were correctly filtered
-        read_doc_endpoint = location_cache.get_applicable_read_regional_endpoints()
-        read_doc_endpoint = [regional_endpoint.get_current() for regional_endpoint in read_doc_endpoint]
-        assert read_doc_endpoint == expected_read_endpoints
+            # Init location_cache
+            location_cache = refresh_location_cache([location1_name, location2_name, location3_name], True,
+                                                    connection_policy)
+            database_account = create_database_account(True)
+            location_cache.perform_on_database_account_read(database_account)
 
-        # Test if write endpoints were correctly filtered
-        write_doc_endpoint = location_cache.get_applicable_write_regional_endpoints()
-        write_doc_endpoint = [regional_endpoint.get_current() for regional_endpoint in write_doc_endpoint]
-        assert write_doc_endpoint == expected_write_endpoints
+            # Init requests and set excluded regions on requests
+            write_doc_request = RequestObject(ResourceType.Document, _OperationType.Create)
+            write_doc_request.set_excluded_location(excluded_locations_on_requests)
+            read_doc_request = RequestObject(ResourceType.Document, _OperationType.Read)
+            read_doc_request.set_excluded_location(excluded_locations_on_requests)
+
+            # Test if read endpoints were correctly filtered on client level
+            read_doc_endpoint = location_cache.get_applicable_read_regional_endpoints(read_doc_request)
+            read_doc_endpoint = [regional_endpoint.get_current() for regional_endpoint in read_doc_endpoint]
+            assert read_doc_endpoint == expected_read_endpoints
+
+            # Test if write endpoints were correctly filtered on client level
+            write_doc_endpoint = location_cache.get_applicable_write_regional_endpoints(write_doc_request)
+            write_doc_endpoint = [regional_endpoint.get_current() for regional_endpoint in write_doc_endpoint]
+            assert write_doc_endpoint == expected_write_endpoints
 
 if __name__ == "__main__":
     unittest.main()

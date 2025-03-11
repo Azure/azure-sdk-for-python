@@ -30,6 +30,7 @@ from urllib.parse import urlparse
 from . import documents
 from . import http_constants
 from .documents import _OperationType
+from ._request_object import RequestObject
 
 # pylint: disable=protected-access
 
@@ -224,26 +225,46 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                            str(regional_endpoint))
             regional_endpoint.swap()
 
-    # TODOs: This wrapper function is a placeholder for excluded regions on requests feature
-    #        To enable it a new parameter request needs to be passed and check if request contains excluded locations
-    #        In JAVA, the excluded locations from requests overrides excluded locations in client level
-    def get_applicable_read_regional_endpoints(self):
-        regional_endpoints = self.get_read_regional_endpoints()
-        excluded_locations = self.connection_policy.ExcludedLocations.get_excluded_locations()
-        return get_applicable_regional_endpoints(
-            regional_endpoints,
-            self.available_locations_by_read_regional_endpoints,
-            self.default_regional_endpoint,
-            excluded_locations)
+    def _get_configured_excluded_locations(self, request: RequestObject):
+        # If excluded locations were configured on request, use request level excluded locations.
+        if request.excluded_locations.is_configured():
+            return request.excluded_locations.get()
 
-    def get_applicable_write_regional_endpoints(self):
-        regional_endpoints = self.get_write_regional_endpoints()
-        excluded_locations = self.connection_policy.ExcludedLocations.get_excluded_locations()
-        return get_applicable_regional_endpoints(
-            regional_endpoints,
-            self.available_locations_by_write_regional_endpoints,
-            self.default_regional_endpoint,
-            excluded_locations)
+        # If excluded locations were only configured on client(connection_policy), use client level excluded locations.
+        if self.connection_policy.ExcludedLocations.is_configured() > 0:
+            return self.connection_policy.ExcludedLocations.get()
+
+        return None
+
+    def get_applicable_read_regional_endpoints(self, request: RequestObject):
+        # Get configured excluded locations
+        excluded_locations = self._get_configured_excluded_locations(request)
+
+        # If excluded locations were configured, return filtered regional endpoints by excluded locations.
+        if excluded_locations:
+            return get_applicable_regional_endpoints(
+                self.get_read_regional_endpoints(),
+                self.available_locations_by_read_regional_endpoints,
+                self.default_regional_endpoint,
+                excluded_locations)
+
+        # Else, return all regional endpoints
+        return self.get_read_regional_endpoints()
+
+    def get_applicable_write_regional_endpoints(self, request: RequestObject):
+        # Get configured excluded locations
+        excluded_locations = self._get_configured_excluded_locations(request)
+
+        # If excluded locations were configured, return filtered regional endpoints by excluded locations.
+        if excluded_locations:
+            return get_applicable_regional_endpoints(
+                self.get_write_regional_endpoints(),
+                self.available_locations_by_write_regional_endpoints,
+                self.default_regional_endpoint,
+                excluded_locations)
+
+        # Else, return all regional endpoints
+        return self.get_write_regional_endpoints()
 
     def resolve_service_endpoint(self, request):
         if request.location_endpoint_to_route:
@@ -278,9 +299,9 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                 return self.default_regional_endpoint.get_current()
 
         regional_endpoints = (
-            self.get_applicable_write_regional_endpoints()
+            self.get_applicable_write_regional_endpoints(request)
             if documents._OperationType.IsWriteOperation(request.operation_type)
-            else self.get_applicable_read_regional_endpoints()
+            else self.get_applicable_read_regional_endpoints(request)
         )
         regional_endpoint = regional_endpoints[location_index % len(regional_endpoints)]
         if (request.last_routed_location_endpoint_within_region is not None
