@@ -7,6 +7,14 @@ from enum import Enum
 import inspect
 import os
 import logging
+from azure.ai.evaluation._evaluate._eval_run import EvalRun
+from azure.ai.evaluation._evaluate._utils import _trace_destination_from_project_scope
+from azure.ai.evaluation._model_configurations import AzureAIProject
+from azure.ai.evaluation._constants import EvaluationRunProperties
+from azure.ai.evaluation._evaluate._utils import _get_ai_studio_url
+from azure.ai.evaluation._version import VERSION
+from azure.ai.evaluation._evaluate._utils import _write_output
+import tempfile
 from datetime import datetime
 from azure.ai.evaluation._common._experimental import experimental
 from typing import Callable, Dict, List, Optional,  TypedDict, Union, cast
@@ -33,8 +41,6 @@ from pyrit.prompt_target import OpenAIChatTarget
 from pyrit.models import ChatMessage
 from azure.ai.evaluation._safety_evaluation._safety_evaluation import DATA_EXT
 from azure.ai.evaluation._common.utils import validate_azure_ai_project
-from azure.ai.evaluation._model_configurations import AzureAIProject
-from azure.ai.evaluation._user_agent import USER_AGENT
 
 BASELINE_IDENTIFIER = "Baseline"
 
@@ -128,6 +134,7 @@ class RedTeamAgentResult(TypedDict):
     redteaming_scorecard: RedTeamingScorecard
     redteaming_simulation_parameters: RedTeamingSimulationParameters
     redteaming_simulation_data: List[SimulatedConversation]
+    studio_url: Optional[str]
 
 @experimental
 class AttackStrategy(Enum):
@@ -214,6 +221,86 @@ class RedTeamAgent():
         self.attack_objectives_cache = {}
         
         initialize_pyrit(memory_db_type=DUCK_DB)
+
+    async def _log_redteam_results_to_mlflow(
+        self,
+        redteam_result: RedTeamAgentResult,
+        azure_ai_project: Optional[AzureAIProject] = None,
+        run_name: Optional[str] = None
+    ) -> Optional[str]:
+        """Log the Red Team Agent results to MLFlow.
+        
+        :param redteam_result: The results from the red team agent evaluation
+        :type redteam_result: ~azure.ai.evaluation._safety_evaluation.RedTeamAgentResult
+        :param azure_ai_project: Azure AI project details for logging
+        :type azure_ai_project: Optional[~azure.ai.evaluation.AzureAIProject]
+        :param run_name: Optional name for the MLFlow run
+        :type run_name: Optional[str]
+        :return: The URL to the run in Azure AI Studio, if available
+        :rtype: Optional[str]
+        """
+        if not azure_ai_project:
+            self.logger.info("No azure_ai_project provided, skipping MLFlow logging")
+            return None
+        
+        trace_destination = _trace_destination_from_project_scope(azure_ai_project)
+        if not trace_destination:
+            self.logger.info("Could not determine trace destination from project scope")
+            return None
+        
+        # Extract workspace details from trace destination
+        from azure.ai.evaluation._evaluate._utils import extract_workspace_triad_from_trace_provider
+        ws_triad = extract_workspace_triad_from_trace_provider(trace_destination)
+        
+        # Create management client
+        from azure.ai.evaluation._azure._clients import LiteMLClient
+        management_client = LiteMLClient(
+            subscription_id=ws_triad.subscription_id,
+            resource_group=ws_triad.resource_group_name,
+            logger=self.logger,
+            credential=azure_ai_project.get("credential")
+        )
+        
+        tracking_uri = management_client.workspace_get_info(ws_triad.workspace_name).ml_flow_tracking_uri
+        
+        run_display_name = run_name or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
+        
+        # Create and start a run
+        with EvalRun(
+            run_name=run_display_name,
+            tracking_uri=cast(str, tracking_uri),
+            subscription_id=ws_triad.subscription_id,
+            group_name=ws_triad.resource_group_name,
+            workspace_name=ws_triad.workspace_name,
+            management_client=management_client,                                     
+        ) as ev_run:
+            ev_run.write_properties_to_run_history({
+                EvaluationRunProperties.RUN_TYPE: "eval_run",
+                "redteaming": "asr", # Red team agent specific run properties to help UI identify this as a redteaming run
+                EvaluationRunProperties.EVALUATION_SDK: f"azure-ai-evaluation:{VERSION}",
+            })
+
+            scorecard = redteam_result["redteaming_scorecard"]
+            
+            if scorecard["risk_category_summary"]:
+                risk_summary = scorecard["risk_category_summary"][0]
+                for key, value in risk_summary.items():
+                    ev_run.log_metric(key, value)
+            
+            if scorecard["attack_technique_summary"]:
+                technique_summary = scorecard["attack_technique_summary"][0]
+                for key, value in technique_summary.items():
+                    ev_run.log_metric(f"attack_technique.{key}", value)
+            
+            with tempfile.TemporaryDirectory() as tmpdir:
+                artifact_file = Path(tmpdir) / "redteam_results.json"
+                with open(artifact_file, "w", encoding="utf-8") as f:
+                    json.dump(redteam_result, f)
+                
+                ev_run.log_artifact(tmpdir, "redteam_results.json")
+            
+            return _get_ai_studio_url(trace_destination=trace_destination, evaluation_id=ev_run.info.run_id)
+
 
     def _strategy_converter_map(self):
         return{
@@ -805,7 +892,7 @@ class RedTeamAgent():
                         asr_values = converter_group[harm].tolist()
                         asr_value = round(list_mean_nan_safe(asr_values) * 100, 2)
                         detailed_joint_risk_attack_asr[complexity][harm_key][f"{converter_name}_ASR"] = asr_value
-                        
+
         scorecard = {
             "risk_category_summary": risk_category_summary,
             "attack_technique_summary": attack_technique_summary,
@@ -1010,6 +1097,25 @@ class RedTeamAgent():
         merged_results = {}
         for d in results:
             merged_results.update(d)
-        if not data_only: 
-            return self._to_red_team_agent_result(cast(Dict[str, EvaluationResult], merged_results))
-        return merged_results
+
+        if data_only: 
+            return merged_results
+        
+        red_team_agent_result = self._to_red_team_agent_result(cast(Dict[str, EvaluationResult], merged_results))
+        
+        # Log results to MLFlow
+        studio_url = None
+        if self.azure_ai_project:
+            studio_url = await self._log_redteam_results_to_mlflow(
+                redteam_result=red_team_agent_result,
+                azure_ai_project=self.azure_ai_project,
+                run_name=evaluation_name
+            )
+
+            if studio_url:
+                red_team_agent_result["studio_url"] = studio_url
+
+        if output_path:
+            _write_output(output_path, red_team_agent_result)
+            
+        return red_team_agent_result
