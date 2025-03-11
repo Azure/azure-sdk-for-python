@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+* Fix for a bug in agent tracing causing event handler return values to not be returned when tracing is enabled.
+
 ### Breaking Changes
 
 ## 1.0.0b7 (2025-03-06)
