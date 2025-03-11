@@ -6,7 +6,6 @@ import unittest
 
 import pytest
 from azure.cosmos import documents
-from azure.cosmos.cosmos_excluded_locations import CosmosExcludedLocations
 
 from azure.cosmos.documents import DatabaseAccount, _OperationType
 from azure.cosmos.http_constants import ResourceType
