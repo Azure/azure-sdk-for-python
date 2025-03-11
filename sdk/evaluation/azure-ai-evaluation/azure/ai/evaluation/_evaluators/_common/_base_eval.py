@@ -93,7 +93,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
     def __init__(
         self,
         *,
-        threshold: int,
+        threshold: int = 3,
         not_singleton_inputs: List[str] = ["conversation", "kwargs"],
         eval_last_turn: bool = False,
         conversation_aggregation_type: _AggregationType = _AggregationType.MEAN,

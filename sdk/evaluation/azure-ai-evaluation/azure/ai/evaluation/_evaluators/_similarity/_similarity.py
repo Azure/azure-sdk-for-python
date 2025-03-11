@@ -54,10 +54,10 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config):
+    def __init__(self, model_config, threshold=3, _higher_is_better=True):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
-        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY)
+        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY, threshold=threshold, _higher_is_better=_higher_is_better)
 
     # Ignoring a mypy error about having only 1 overload function.
     # We want to use the overload style for all evals, even single-inputs. This is both to make
