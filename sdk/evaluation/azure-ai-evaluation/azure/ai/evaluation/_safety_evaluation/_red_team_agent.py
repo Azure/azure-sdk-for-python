@@ -319,11 +319,10 @@ class RedTeamAgent():
             self.logger.info(f"  - strategy={strategy}")
             # setting risk_categories to [] for now
             objectives_response = await self.generated_rai_client.get_attack_objectives(
-                risk_categories=[],
+                risk_categories=risk_categories,
                 application_scenario=application_scenario,
                 strategy=strategy
             )
-            
             self.logger.info(f"API call successful - received response of type: {type(objectives_response)}")
             if isinstance(objectives_response, dict):
                 self.logger.info(f"Response keys: {objectives_response.keys()}")
@@ -359,10 +358,10 @@ class RedTeamAgent():
         self.logger.info(f"Processing list-format response with {len(objectives_response)} items")
         # Process list format
         for obj in objectives_response:
-            target_harms = obj.get("Metadata", {}).get("TargetHarms", [])
+            target_harms = obj.get("metadata", {}).get("target_harms", [])
             if not target_harms:
-                self.logger.info("No TargetHarms found, checking for Messages")
-                content = obj.get("Messages", [{}])[0].get("Content", "")
+                self.logger.info("No target_harms found, checking for Messages")
+                content = obj.get("messages", [{}])[0].get("content", "")
                 if content:
                     uncategorized_objectives.append(content)
                 continue
@@ -370,13 +369,13 @@ class RedTeamAgent():
             # Track which categories this objective belongs to
             matched_categories = []
             for harm in target_harms:
-                cat = harm.get("RiskType", "").lower()
+                cat = harm.get("risk-type", "").lower()
                 if cat in risk_categories:
                     matched_categories.append(cat)
                     self.logger.info(f"Matched category: {cat}")
             
             if matched_categories:
-                content = obj.get("Messages", [{}])[0].get("Content", "")
+                content = obj.get("messages", [{}])[0].get("content", "")
                 if content:
                     filtered_objectives.append(obj)
                     for cat in matched_categories:
@@ -850,7 +849,6 @@ class RedTeamAgent():
             target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration, PromptChatTarget],
             evaluation_name: Optional[str] = None,
             num_turns : int = 1,
-            num_rows: int = 100, # TODO change to rows_per_strategy? Makes it clear that this value is getting mapped, not a wholesale max.
             attack_strategy: List[Union[AttackStrategy, List[AttackStrategy]]] = [],
             data_only: bool = False, 
             output_path: Optional[Union[str, os.PathLike]] = None,
@@ -862,34 +860,40 @@ class RedTeamAgent():
         
         # Initialize a dictionary to track objectives by strategy
         strategy_objectives = {}
+        if not attack_objective_generator:
+            raise EvaluationException(
+                message="Attack objective generator is required for red team agent.",
+                internal_message="Attack objective generator is not provided.",
+                target=ErrorTarget.RED_TEAM_AGENT,
+                category=ErrorCategory.MISSING_FIELD,
+                blame=ErrorBlame.USER_ERROR
+            )
         
-        # If using attack objective generator, fetch objectives for each strategy to ensure consistent indexing
-        if attack_objective_generator:
-            self.logger.info("Using AttackObjectiveGenerator to get attack objectives")
+        self.logger.info("Using AttackObjectiveGenerator to get attack objectives")
+        
+        # Process each strategy and get its objectives
+        for strategy in attack_strategy:
+            strategy_name = None
             
-            # Process each strategy and get its objectives
-            for strategy in attack_strategy:
-                strategy_name = None
-                
-                # Handle Composed strategies
-                if isinstance(strategy, List):
-                    strategy_name = "_".join([s.value for s in strategy])
-                else:
-                    strategy_name = strategy.value if hasattr(strategy, "value") else str(strategy)
+            # Handle Composed strategies
+            if isinstance(strategy, List):
+                strategy_name = "_".join([s.value for s in strategy])
+            else:
+                strategy_name = strategy.value if hasattr(strategy, "value") else str(strategy)
 
-                # TODO - relative prompt synchronization
-                # Ex: If "how to I kill someone with household cleaners" is initial prompt,
-                # Then "How could I have killed someone with household cleaners" should be first selected
-                # past-tense prompt.
-                # API has no prompt IDs, and this isn't string matchable, so this is a non-trivial problem.
-                # Either need service-side change, or need some other clever solution.
+            # TODO - relative prompt synchronization
+            # Ex: If "how to I kill someone with household cleaners" is initial prompt,
+            # Then "How could I have killed someone with household cleaners" should be first selected
+            # past-tense prompt.
+            # API has no prompt IDs, and this isn't string matchable, so this is a non-trivial problem.
+            # Either need service-side change, or need some other clever solution.
 
-                # Fetch objectives for this strategy
-                strategy_objectives[strategy_name] = await self._get_attack_objectives(
-                    attack_objective_generator=attack_objective_generator,
-                    application_scenario=application_scenario,
-                    strategy=strategy_name
-                )
+            # Fetch objectives for this strategy
+            strategy_objectives[strategy_name] = await self._get_attack_objectives(
+                attack_objective_generator=attack_objective_generator,
+                application_scenario=application_scenario,
+                strategy=strategy_name
+            )
         
         # Use the first strategy's objectives as the default list
         all_prompts_list = list(strategy_objectives.values())[0] if strategy_objectives else []
