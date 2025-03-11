@@ -67,7 +67,7 @@ class TestCryptoExamples(KeyVaultTestCase):
         key = await key_client.create_rsa_key(key_name)
         client = CryptographyClient(key, credential, api_version=key_client.api_version)
 
-        key_bytes = b"5063e6aaa845f150200547944fd199679c98ed6f99da0a0b2dafeaf1f4684496fd532c1c229968cb9dee44957fcef7ccef59ceda0b362e56bcd78fd3faee5781c623c0bb22b35beabde0664fd30e0e824aba3dd1b0afffc4a3d955ede20cf6a854d52cfd"
+        key_bytes = b'\xc5\xb0\xfc\xf1C\x8a\x88pj\x11\x8d\xe5\x94\xe8\xff\x04\x0eY\xfeu\x8a\xe9<\x06(\xdb\x7f\xa9~\x85\x02\x04'
 
         # [START wrap_key]
         from azure.keyvault.keys.crypto import KeyWrapAlgorithm
