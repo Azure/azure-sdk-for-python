@@ -325,15 +325,25 @@ class RAISvcOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_attack_objectives(self, *, risk_types: List[str], lang: str, **kwargs: Any) -> str:
+    async def get_attack_objectives(
+        self,
+        *,
+        risk_types: Optional[List[str]] = None,
+        lang: Optional[str] = None,
+        strategy: Optional[str] = None,
+        **kwargs: Any
+    ) -> List[_models.AttackObjective]:
         """Get the attack objectives.
 
-        :keyword risk_types: Risk types for the attack objectives dataset. Required.
+        :keyword risk_types: Risk types for the attack objectives dataset. Default value is None.
         :paramtype risk_types: list[str]
-        :keyword lang: The language for the attack objectives dataset, defaults to 'en'. Required.
+        :keyword lang: The language for the attack objectives dataset, defaults to 'en'. Default value
+         is None.
         :paramtype lang: str
-        :return: str
-        :rtype: str
+        :keyword strategy: The strategy. Default value is None.
+        :paramtype strategy: str
+        :return: list of AttackObjective
+        :rtype: list[~raiclient.models.AttackObjective]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -347,11 +357,12 @@ class RAISvcOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[str] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.AttackObjective]] = kwargs.pop("cls", None)
 
         _request = build_rai_svc_get_attack_objectives_request(
             risk_types=risk_types,
             lang=lang,
+            strategy=strategy,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -385,7 +396,7 @@ class RAISvcOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(str, response.json())
+            deserialized = _deserialize(List[_models.AttackObjective], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
