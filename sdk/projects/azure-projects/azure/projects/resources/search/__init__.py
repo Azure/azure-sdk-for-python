@@ -13,6 +13,7 @@ from typing import (
     List,
     Literal,
     Mapping,
+    Tuple,
     Type,
     Union,
     Optional,
@@ -29,11 +30,14 @@ from ..._bicep.expressions import Output, ResourceSymbol, Parameter
 from ..._resource import _ClientResource, ResourceReference, ExtensionResources
 
 if TYPE_CHECKING:
-    from .types import SearchServiceResource, SearchNetworkRuleSet
+    from azure.core.credentials import SupportsTokenInfo
+    from azure.core.credentials_async import AsyncSupportsTokenInfo
     from azure.search.documents.indexes import SearchIndexClient
     from azure.search.documents.indexes.aio import SearchIndexClient as AsyncSearchIndexClient
     from azure.search.documents import SearchClient
     from azure.search.documents.aio import SearchClient as AsyncSearchClient
+
+    from .types import SearchServiceResource, SearchNetworkRuleSet
 
 
 class SearchServiceKwargs(TypedDict, total=False):
@@ -315,8 +319,24 @@ class SearchService(_ClientResource[SearchServiceResourceType]):
         audience: Optional[str] = None,
         config_store: Optional[Mapping[str, Any]] = None,
         use_async: Optional[bool] = None,
+        return_credential: Literal[False] = False,
         **client_options,
     ) -> ClientType: ...
+    @overload
+    def get_client(
+        self,
+        cls: Type[ClientType],
+        /,
+        *,
+        transport: Any = None,
+        credential: Any = None,
+        api_version: Optional[str] = None,
+        audience: Optional[str] = None,
+        config_store: Optional[Mapping[str, Any]] = None,
+        use_async: Optional[bool] = None,
+        return_credential: Literal[True],
+        **client_options,
+    ) -> Tuple[ClientType, Union["SupportsTokenInfo", "AsyncSupportsTokenInfo"]]: ...
     def get_client(
         self,
         cls=None,
@@ -328,6 +348,7 @@ class SearchService(_ClientResource[SearchServiceResourceType]):
         audience=None,
         config_store=None,
         use_async=None,
+        return_credential=False,
         **client_options,
     ):
         if cls is None:
@@ -358,5 +379,6 @@ class SearchService(_ClientResource[SearchServiceResourceType]):
             audience=audience,
             config_store=config_store,
             use_async=use_async,
+            return_credential=return_credential,
             **client_options,
         )

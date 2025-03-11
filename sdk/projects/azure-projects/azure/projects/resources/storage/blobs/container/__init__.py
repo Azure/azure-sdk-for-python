@@ -23,7 +23,6 @@ from typing import (
 )
 from typing_extensions import TypeVar, Unpack, TypedDict
 
-from ....._component import ComponentField
 from ....._parameters import GLOBAL_PARAMS
 from ...._identifiers import ResourceIdentifiers
 from ....._bicep.expressions import Output, Parameter, ResourceSymbol
@@ -35,6 +34,9 @@ if TYPE_CHECKING:
     from ...._extension import RoleAssignment
     from ....resourcegroup import ResourceGroup
     from .types import ContainerResource
+
+    from azure.core.credentials import SupportsTokenInfo
+    from azure.core.credentials_async import AsyncSupportsTokenInfo
     from azure.storage.blob import ContainerClient
     from azure.storage.blob.aio import ContainerClient as AsyncContainerClient
 
@@ -133,7 +135,7 @@ class BlobContainer(_ClientResource[ContainerResourceType]):
         properties: Optional["ContainerResource"] = None,
         /,
         name: Optional[str] = None,
-        account: Optional[Union[str, Parameter, BlobStorage, ComponentField]] = None,
+        account: Optional[Union[str, Parameter, BlobStorage]] = None,
         **kwargs: Unpack["ContainerKwargs"],
     ) -> None:
         # 'existing' is passed by the reference classmethod.
@@ -271,8 +273,24 @@ class BlobContainer(_ClientResource[ContainerResourceType]):
         audience: Optional[str] = None,
         config_store: Optional[Mapping[str, Any]] = None,
         use_async: Optional[bool] = None,
+        return_credential: Literal[False] = False,
         **client_options,
     ) -> ClientType: ...
+    @overload
+    def get_client(
+        self,
+        cls: Type[ClientType],
+        /,
+        *,
+        transport: Any = None,
+        credential: Any = None,
+        api_version: Optional[str] = None,
+        audience: Optional[str] = None,
+        config_store: Optional[Mapping[str, Any]] = None,
+        use_async: Optional[bool] = None,
+        return_credential: Literal[True],
+        **client_options,
+    ) -> Tuple[ClientType, Union["SupportsTokenInfo", "AsyncSupportsTokenInfo"]]: ...
     def get_client(
         self,
         cls=None,
@@ -284,6 +302,7 @@ class BlobContainer(_ClientResource[ContainerResourceType]):
         audience=None,
         config_store=None,
         use_async=None,
+        return_credential=False,
         **client_options,
     ):
         if cls is None:
@@ -309,5 +328,6 @@ class BlobContainer(_ClientResource[ContainerResourceType]):
             audience=audience,
             config_store=config_store,
             use_async=use_async,
+            return_credential=return_credential,
             **client_options,
         )

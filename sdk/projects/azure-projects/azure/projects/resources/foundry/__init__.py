@@ -14,6 +14,7 @@ from typing import (
     List,
     Literal,
     Mapping,
+    Tuple,
     Type,
     Union,
     Optional,
@@ -40,6 +41,9 @@ from ._connection import AIConnection
 
 if TYPE_CHECKING:
     from .types import MachineLearningWorkspaceResource
+
+    from azure.core.credentials import SupportsTokenInfo
+    from azure.core.credentials_async import AsyncSupportsTokenInfo
     from azure.ai.projects import AIProjectClient
     from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
 
@@ -172,7 +176,7 @@ class MLWorkspace(Resource[MachineLearningWorkspaceResourceType]):
         self,
         properties: Optional["MachineLearningWorkspaceResource"] = None,
         /,
-        name: Optional[str] = None,
+        name: Optional[Union[str, Parameter]] = None,
         *,
         kind: Literal["Default", "FeatureStore", "Hub", "Project"],
         **kwargs: Unpack[MachineLearningWorkspaceKwargs],
@@ -550,7 +554,7 @@ class AIProject(MLWorkspace[MachineLearningWorkspaceResourceType]):
         /,
         *,
         transport: Any = None,
-        credential: Any = None,
+        credential: Optional[Union["SupportsTokenInfo", "AsyncSupportsTokenInfo"]] = None,
         config_store: Optional[Mapping[str, Any]] = None,
         use_async: Optional[Literal[False]] = None,
         **client_options,
@@ -561,7 +565,7 @@ class AIProject(MLWorkspace[MachineLearningWorkspaceResourceType]):
         /,
         *,
         transport: Any = None,
-        credential: Any = None,
+        credential: Optional[Union["SupportsTokenInfo", "AsyncSupportsTokenInfo"]] = None,
         config_store: Optional[Mapping[str, Any]] = None,
         use_async: Literal[True],
         **client_options,
@@ -573,11 +577,25 @@ class AIProject(MLWorkspace[MachineLearningWorkspaceResourceType]):
         /,
         *,
         transport: Any = None,
-        credential: Any = None,
+        credential: Optional[Union["SupportsTokenInfo", "AsyncSupportsTokenInfo"]] = None,
         config_store: Optional[Mapping[str, Any]] = None,
         use_async: Optional[bool] = None,
+        return_credential: Literal[False] = False,
         **client_options,
     ) -> ClientType: ...
+    @overload
+    def get_client(
+        self,
+        cls: Type[ClientType],
+        /,
+        *,
+        transport: Any = None,
+        credential: Optional[Union["SupportsTokenInfo", "AsyncSupportsTokenInfo"]] = None,
+        config_store: Optional[Mapping[str, Any]] = None,
+        use_async: Optional[bool] = None,
+        return_credential: Literal[True],
+        **client_options,
+    ) -> Tuple[ClientType, Union["SupportsTokenInfo", "AsyncSupportsTokenInfo"]]: ...
     def get_client(
         self,
         cls=None,
@@ -587,10 +605,9 @@ class AIProject(MLWorkspace[MachineLearningWorkspaceResourceType]):
         credential=None,
         config_store=None,
         use_async=None,
+        return_credential=False,
         **client_options,
     ):
-        if cls is self.__class__:
-            return self
         if config_store is None:
             config_store = _load_dev_environment()
         if cls is None:
@@ -609,11 +626,15 @@ class AIProject(MLWorkspace[MachineLearningWorkspaceResourceType]):
                 use_async = False
         if transport:
             client_options["transport"] = transport
-        return cls(
+        credential = self._build_credential(cls, use_async=use_async, credential=credential)
+        client = cls(
             endpoint=self._settings["endpoint"](config_store=config_store).rstrip("/discovery/").lstrip("https://"),
             subscription_id=self._settings["subscription"](config_store=config_store),
             resource_group_name=self._settings["resource_group"](config_store=config_store),
             project_name=self._settings["name"](config_store=config_store),
-            credential=self._build_credential(cls, use_async=use_async, credential=credential),
+            credential=credential,
             **client_options,
         )
+        if return_credential:
+            return client, credential
+        return client

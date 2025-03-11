@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import List, Dict, Any
+from typing import List, Dict, Any, cast
 import json
 import random
 import string
@@ -12,10 +12,9 @@ import string
 
 def resolve_value(value: Any) -> str:
     try:
-        value: str = value.value
+        return cast(str, value.value)
     except AttributeError:
-        value: str = json.dumps(value).replace('"', "'")
-    return value
+        return json.dumps(value).replace('"', "'")
 
 
 def resolve_key(key: Any) -> str:

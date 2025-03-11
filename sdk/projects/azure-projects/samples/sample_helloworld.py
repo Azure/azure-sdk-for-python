@@ -46,10 +46,10 @@ async def main():
     # This will create a default resource group, default managed identity, and default storage account
     # with the correct user access roles.
     # The resources will be provisioned by AZD in a new environment named with the app class name.
-    # When first provisioning, AZD will prompt you to select a seubscription and default deploy location.
+    # When first provisioning, AZD will prompt you to select a subscription and default deploy location.
     with MyFirstApp.provision() as first_app:
-        container = first_app.data.create_container("samplecontainer")
-        container.upload_blob("sampleblob.txt", b"Hello World", overwrite=True)
+        new_container = first_app.data.create_container("samplecontainer")
+        new_container.upload_blob("sampleblob.txt", b"Hello World", overwrite=True)
 
         # Provisioning an app will automatically create the underlying infrastructure derived
         # from the type hints. To see what resources have been detected, you can inspect the 'infra'
@@ -67,7 +67,7 @@ async def main():
     # An AzureApp class functions similar to a Python dataclass, so defaults or factories can be provided.
     # Unlike dataclasses, additional keyword-argments can be provided to the field specifier which
     # will be passed into the client constructor (or default factory if provided).
-    # The type annotations can use any combination of synchronous or asynchronous clients.
+    # The app definition can also use asynchronous clients.
     from azure.projects import field
     from azure.storage.blob.aio import ContainerClient
 
@@ -81,7 +81,7 @@ async def main():
     from azure.projects.resources.storage.blobs.container import BlobContainer
 
     # You can also see and update the default configuration that the resources are deployed with.
-    StorageAccount.DEFAULTS["sku"]["name"] = "Standard_LRS"
+    StorageAccount.DEFAULTS["sku"] = {"name": "Standard_LRS"}
     print(f"Default Storage configuration: {StorageAccount.DEFAULTS}")
 
     class MyStorage(AzureInfrastructure):

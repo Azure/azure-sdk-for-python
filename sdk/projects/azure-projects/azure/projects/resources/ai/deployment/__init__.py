@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=arguments-differ
+# pylint: disable=arguments-differ, too-many-statements, too-many-return-statements, too-many-branches
 
 from collections import defaultdict
 from typing import (
@@ -16,6 +16,8 @@ from typing import (
     Union,
     Optional,
     Any,
+    cast,
+    overload,
 )
 from typing_extensions import TypeVar, Unpack, TypedDict
 
@@ -30,13 +32,22 @@ from ...._resource import (
     _ClientResource,
     _build_envs,
     _load_dev_environment,
+    SyncClient,
+    AsyncClient,
 )
 
 from .. import AIServices
 
 if TYPE_CHECKING:
     from .types import DeploymentResource
-    from azure.ai.inference import ChatCompletionsClient
+
+    from azure.core.credentials import SupportsTokenInfo
+    from azure.core.credentials_async import AsyncSupportsTokenInfo
+    from azure.ai.inference import ChatCompletionsClient, EmbeddingsClient
+    from azure.ai.inference.aio import (
+        ChatCompletionsClient as AsyncChatCompletionsClient,
+        EmbeddingsClient as AsyncEmbeddingsClient,
+    )
 
 
 class DeploymentKwargs(TypedDict, total=False):
@@ -64,22 +75,27 @@ AIDeploymentResourceType = TypeVar("AIDeploymentResourceType", bound=Mapping[str
 
 
 class AIDeployment(_ClientResource[AIDeploymentResourceType]):
-    DEFAULTS: "DeploymentResource" = _DEFAULT_DEPLOYMENT
+    DEFAULTS: "DeploymentResource" = _DEFAULT_DEPLOYMENT  # type: ignore[assignment]
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_AI_DEPLOYMENT_EXTENSIONS
     properties: AIDeploymentResourceType
-    parent: AIServices
+    parent: AIServices  # type: ignore[reportIncompatibleVariableOverride]
 
     def __init__(
         self,
         properties: Optional["DeploymentResource"] = None,
         /,
-        name: Optional[str] = None,
-        account: Optional[Union[str, AIServices]] = None,
+        name: Optional[Union[str, Parameter]] = None,
+        account: Optional[Union[str, Parameter, AIServices]] = None,
         **kwargs: Unpack["DeploymentKwargs"],
     ) -> None:
-        existing = kwargs.pop("existing", False)
-        extensions: ExtensionResources = defaultdict(list)
-        parent = account if isinstance(account, AIServices) else kwargs.pop("parent", AIServices(name=account))
+        # 'existing' is passed by the reference classmethod.
+        existing = kwargs.pop("existing", False)  # type: ignore[typeddict-item]
+        extensions: ExtensionResources = defaultdict(list)  # type: ignore  # Doesn't like the default dict.
+        if isinstance(account, AIServices):
+            parent = account
+        else:
+            # 'parent' is passed by the reference classmethod.
+            parent = kwargs.pop("parent", AIServices(name=account))  # type: ignore[typeddict-item]
         if not existing:
             properties = properties or {}
             if "properties" not in properties:
@@ -88,31 +104,47 @@ class AIDeployment(_ClientResource[AIDeploymentResourceType]):
                 properties["name"] = name
             if "model" in kwargs:
                 properties["properties"]["model"] = properties["properties"].get("model", {})
+                if isinstance(properties["properties"]["model"], Parameter):
+                    param_name = properties["properties"]["model"].name
+                    raise ValueError(f"Cannot add keyword 'model' to Parameter '{param_name}'.")
                 properties["properties"]["model"]["name"] = kwargs.pop("model")
             if "format" in kwargs:
                 properties["properties"]["model"] = properties["properties"].get("model", {})
+                if isinstance(properties["properties"]["model"], Parameter):
+                    param_name = properties["properties"]["model"].name
+                    raise ValueError(f"Cannot add keyword 'format' to Parameter '{param_name}'.")
                 properties["properties"]["model"]["format"] = kwargs.pop("format")
             if "version" in kwargs:
                 properties["properties"]["model"] = properties["properties"].get("model", {})
+                if isinstance(properties["properties"]["model"], Parameter):
+                    param_name = properties["properties"]["model"].name
+                    raise ValueError(f"Cannot add keyword 'model' to Parameter '{param_name}'.")
                 properties["properties"]["model"]["version"] = kwargs.pop("version")
             if "sku" in kwargs:
                 properties["sku"] = properties.get("sku", {})
+                if isinstance(properties["sku"], Parameter):
+                    param_name = properties["sku"].name
+                    raise ValueError(f"Cannot add keyword 'sku' to Parameter '{param_name}'.")
                 properties["sku"]["name"] = kwargs.pop("sku")
             if "capacity" in kwargs:
                 properties["sku"] = properties.get("sku", {})
+                if isinstance(properties["sku"], Parameter):
+                    param_name = properties["sku"].name
+                    raise ValueError(f"Cannot add keyword 'capacity' to Parameter '{param_name}'.")
                 properties["sku"]["capacity"] = kwargs.pop("capacity")
             if "rai_policy" in kwargs:
                 properties["properties"]["raiPolicyName"] = kwargs.pop("rai_policy")
             if "tags" in kwargs:
                 properties["tags"] = kwargs.pop("tags")
+        # The kwargs service_prefix and identifier can be passed by child classes.
         super().__init__(
-            properties,
+            cast(Dict[str, Any], properties),
             extensions=extensions,
             existing=existing,
             parent=parent,
             subresource="deployments",
-            service_prefix=kwargs.pop("service_prefix", ["ai_deployment"]),
-            identifier=kwargs.pop("identifier", ResourceIdentifiers.ai_deployment),
+            service_prefix=kwargs.pop("service_prefix", ["ai_deployment"]),  # type: ignore[typeddict-item]
+            identifier=kwargs.pop("identifier", ResourceIdentifiers.ai_deployment),  # type: ignore[typeddict-item]
             **kwargs,
         )
         self._properties_to_merge.append("sku")
@@ -134,12 +166,12 @@ class AIDeployment(_ClientResource[AIDeploymentResourceType]):
         return VERSION
 
     @classmethod
-    def reference(
+    def reference(  # type: ignore[override]  # Parameter subset and renames
         cls,
         *,
         name: Union[str, Parameter],
-        account: Union[str, Parameter, AIServices],
-        resource_group: Optional[Union[str, Parameter, "ResourceGroup"]] = None,
+        account: Union[str, Parameter, AIServices[ResourceReference]],
+        resource_group: Optional[Union[str, Parameter, ResourceGroup[ResourceReference]]] = None,
     ) -> "AIDeployment[ResourceReference]":
         if isinstance(account, (str, Parameter)):
             parent = AIServices.reference(
@@ -148,7 +180,8 @@ class AIDeployment(_ClientResource[AIDeploymentResourceType]):
             )
         else:
             parent = account
-        return super().reference(name=name, parent=parent)
+        existing = super().reference(name=name, parent=parent)
+        return cast(AIDeployment[ResourceReference], existing)
 
     def _build_endpoint(self, *, config_store: Mapping[str, Any]) -> str:
         return (
@@ -156,7 +189,7 @@ class AIDeployment(_ClientResource[AIDeploymentResourceType]):
             + f"deployments/{self._settings['name'](config_store=config_store)}"
         )
 
-    def _outputs(
+    def _outputs(  # type: ignore[override]  # Parameter subset
         self,
         *,
         symbol: ResourceSymbol,
@@ -192,7 +225,7 @@ _DEFAULT_AI_CHAT: "DeploymentResource" = {
 }
 
 
-ChatClientType = TypeVar("ChatClientType", default="ChatCompletionsClient")
+ChatClientType = TypeVar("ChatClientType", bound=Union[SyncClient, AsyncClient], default="ChatCompletionsClient")
 
 
 class AIChat(AIDeployment[AIDeploymentResourceType]):
@@ -211,23 +244,21 @@ class AIChat(AIDeployment[AIDeploymentResourceType]):
             properties,
             name=deployment_name or kwargs.get("model"),
             account=account,
-            service_prefix=["ai_chat"],
-            identifier=ResourceIdentifiers.ai_chat_deployment,
+            service_prefix=["ai_chat"],  # type: ignore[call-arg]
+            identifier=ResourceIdentifiers.ai_chat_deployment,  # type: ignore[call-arg]
             **kwargs,
         )
-        # TODO: What to do about API version?
-        self._settings["api_version"].set_value("2024-08-01-preview")
 
     @classmethod
-    def reference(
+    def reference(  # type: ignore[override]  # Parameter subset and renames
         cls,
         *,
         name: Union[str, Parameter],
-        account: Union[str, Parameter, AIServices],
-        resource_group: Optional[Union[str, "ResourceGroup"]] = None,
+        account: Union[str, Parameter, AIServices[ResourceReference]],
+        resource_group: Optional[Union[str, Parameter, ResourceGroup[ResourceReference]]] = None,
     ) -> "AIChat[ResourceReference]":
         existing = super().reference(name=name, account=account, resource_group=resource_group)
-        return existing
+        return cast(AIChat[ResourceReference], existing)
 
     def _build_endpoint(self, *, config_store: Mapping[str, Any]) -> str:
         return (
@@ -237,10 +268,10 @@ class AIChat(AIDeployment[AIDeploymentResourceType]):
 
     def _build_symbol(self) -> ResourceSymbol:
         symbol = super()._build_symbol()
-        symbol._value = "chat_" + symbol._value  # pylint: disable=protected-access
+        symbol._value = "chat_" + symbol.value  # pylint: disable=protected-access
         return symbol
 
-    def _outputs(
+    def _outputs(  # type: ignore[override]  # Parameter subset
         self,
         *,
         symbol: ResourceSymbol,
@@ -260,9 +291,36 @@ class AIChat(AIDeployment[AIDeploymentResourceType]):
         )
         return outputs
 
-    def get_client(  # pylint: disable=too-many-statements
+    @overload
+    def get_client(
         self,
-        cls: Optional[Type[ChatClientType]] = None,
+        /,
+        *,
+        transport: Any = None,
+        credential: Any = None,
+        api_version: Optional[str] = None,
+        audience: Optional[str] = None,
+        config_store: Optional[Mapping[str, Any]] = None,
+        use_async: Optional[Literal[False]] = None,
+        **client_options,
+    ) -> "ChatCompletionsClient": ...
+    @overload
+    def get_client(
+        self,
+        /,
+        *,
+        transport: Any = None,
+        credential: Any = None,
+        api_version: Optional[str] = None,
+        audience: Optional[str] = None,
+        config_store: Optional[Mapping[str, Any]] = None,
+        use_async: Literal[True],
+        **client_options,
+    ) -> "AsyncChatCompletionsClient": ...
+    @overload
+    def get_client(
+        self,
+        cls: Type[ChatClientType],
         /,
         *,
         transport: Any = None,
@@ -271,14 +329,42 @@ class AIChat(AIDeployment[AIDeploymentResourceType]):
         audience: Optional[str] = None,
         config_store: Optional[Mapping[str, Any]] = None,
         use_async: Optional[bool] = None,
+        return_credential: Literal[False] = False,
         **client_options,
-    ) -> ChatClientType:
-        if cls is self.__class__:
-            return self
+    ) -> ChatClientType: ...
+    @overload
+    def get_client(
+        self,
+        cls: Type[ChatClientType],
+        /,
+        *,
+        transport: Any = None,
+        credential: Any = None,
+        api_version: Optional[str] = None,
+        audience: Optional[str] = None,
+        config_store: Optional[Mapping[str, Any]] = None,
+        use_async: Optional[bool] = None,
+        return_credential: Literal[True],
+        **client_options,
+    ) -> Tuple[ChatClientType, Union["SupportsTokenInfo", "AsyncSupportsTokenInfo"]]: ...
+    def get_client(
+        self,
+        cls=None,
+        /,
+        *,
+        transport=None,
+        credential=None,
+        api_version=None,
+        audience=None,
+        config_store=None,
+        use_async=None,
+        return_credential=False,
+        **client_options,
+    ):
         if config_store is None:
             config_store = _load_dev_environment()
 
-        endpoint: str = self._settings["endpoint"](config_store=config_store)
+        endpoint = self._settings["endpoint"](config_store=config_store)
         # TODO: AI endpoints!!!
         endpoint = endpoint.replace("cognitiveservices.azure.com", "openai.azure.com")
         client_kwargs = {}
@@ -286,7 +372,8 @@ class AIChat(AIDeployment[AIDeploymentResourceType]):
         try:
             client_kwargs["api_version"] = self._settings["api_version"](api_version, config_store=config_store)
         except RuntimeError:
-            pass
+            # TODO: What to do about API version?
+            client_kwargs["api_version"] = "2024-08-01-preview"
         try:
             audience = self._settings["audience"](audience, config_store=config_store)
         except RuntimeError:
@@ -319,45 +406,56 @@ class AIChat(AIDeployment[AIDeploymentResourceType]):
                 http_client=client_kwargs.pop("http_client", transport),
                 **client_kwargs,
             )
+            # TODO: Better check than just class name?
             if cls.__name__ == "Chat":
-                client = client.chat
-            elif cls.__name__ == "Completions":
-                client = client.chat.completions
-            client.__resource_settings__ = self
+                if return_credential:
+                    return client.chat, credential
+                return client.chat
+            if cls.__name__ == "Completions":
+                if return_credential:
+                    return client.chat.completions, credential
+                return client.chat.completions
+            if return_credential:
+                return client, credential
             return client
 
         # These are the asynchronous OpenAI clients.
         if cls.__name__ in ["AsyncAzureOpenAI", "AsyncChat", "AsyncCompletions"]:
             from openai import AsyncAzureOpenAI
-            from azure.identity.aio import get_bearer_token_provider
+            from azure.identity.aio import get_bearer_token_provider as async_get_bearer_token_provider
 
             credential = self._build_credential(cls, use_async=True, credential=credential)
-            token_provider = get_bearer_token_provider(credential, f"{audience}/.default")
-            client = AsyncAzureOpenAI(
+            async_token_provider = async_get_bearer_token_provider(credential, f"{audience}/.default")
+            async_client = AsyncAzureOpenAI(
                 azure_endpoint=endpoint,
-                azure_ad_token_provider=token_provider,
+                azure_ad_token_provider=async_token_provider,
                 azure_deployment=self._settings["name"](config_store=config_store),
                 http_client=client_kwargs.pop("http_client", transport),
                 **client_kwargs,
             )
             if cls.__name__ == "AsyncChat":
-                client = client.chat
-            elif cls.__name__ == "AsyncCompletions":
-                client = client.chat.completions
-            client.__resource_settings__ = self
-            return client
+                if return_credential:
+                    return async_client.chat, credential
+                return async_client.chat
+            if cls.__name__ == "AsyncCompletions":
+                if return_credential:
+                    return async_client.chat.completions, credential
+                return async_client.chat.completions
+            if return_credential:
+                return async_client, credential
+            return async_client
 
         if cls.__name__ == "ChatCompletionsClient":
             # TODO: Remove this once the inference constructor has been fixed to use 'audience'.
             client_kwargs["credential_scopes"] = [f"{audience}/.default"]
         else:
             client_kwargs["audience"] = audience
-        client_kwargs["credential"] = self._build_credential(cls, use_async=use_async, credential=credential)
+        credential = self._build_credential(cls, use_async=use_async, credential=credential)
         if transport is not None:
             client_kwargs["transport"] = transport
-        client = cls(endpoint, **client_kwargs)
-        client.__resource_settings__ = self
-        # TODO: Store kwargs and credential?
+        client = cls(endpoint, credential=credential, **client_kwargs)
+        if return_credential:
+            return client, credential
         return client
 
 
@@ -376,7 +474,7 @@ _DEFAULT_AI_TEXT_EMBEDDINGS: "DeploymentResource" = {
     },
 }
 
-EmbeddingsClientType = TypeVar("EmbeddingsClientType", default="EmbeddingsClient")
+EmbeddingsClientType = TypeVar("EmbeddingsClientType", bound=Union[SyncClient, AsyncClient], default="EmbeddingsClient")
 
 
 class AIEmbeddings(AIDeployment[AIDeploymentResourceType]):
@@ -395,21 +493,21 @@ class AIEmbeddings(AIDeployment[AIDeploymentResourceType]):
             properties,
             name=deployment_name or kwargs.get("model"),
             account=account,
-            service_prefix=["ai_embeddings"],
-            identifier=ResourceIdentifiers.ai_embeddings_deployment,
+            service_prefix=["ai_embeddings"],  # type: ignore[call-arg]
+            identifier=ResourceIdentifiers.ai_embeddings_deployment,  # type: ignore[call-arg]
             **kwargs,
         )
-        self._settings["api_version"].set_value("2023-05-15")
 
     @classmethod
-    def reference(
+    def reference(  # type: ignore[override]  # Parameter subset and renames
         cls,
         *,
         name: Union[str, Parameter],
-        account: Optional[Union[str, AIServices]] = None,
-        resource_group: Optional[Union[str, "ResourceGroup"]] = None,
+        account: Union[str, Parameter, AIServices[ResourceReference]],
+        resource_group: Optional[Union[str, Parameter, ResourceGroup[ResourceReference]]] = None,
     ) -> "AIEmbeddings[ResourceReference]":
-        return super().reference(name=name, account=account, resource_group=resource_group)
+        existing = super().reference(name=name, account=account, resource_group=resource_group)
+        return cast(AIEmbeddings[ResourceReference], existing)
 
     def _build_endpoint(self, *, config_store: Mapping[str, Any]) -> str:
         return (
@@ -419,10 +517,10 @@ class AIEmbeddings(AIDeployment[AIDeploymentResourceType]):
 
     def _build_symbol(self) -> ResourceSymbol:
         symbol = super()._build_symbol()
-        symbol._value = "embeddings_" + symbol._value  # pylint: disable=protected-access
+        symbol._value = "embeddings_" + symbol.value  # pylint: disable=protected-access
         return symbol
 
-    def _outputs(
+    def _outputs(  # type: ignore[override]  # Parameter subset
         self,
         *,
         symbol: ResourceSymbol,
@@ -442,9 +540,36 @@ class AIEmbeddings(AIDeployment[AIDeploymentResourceType]):
         )
         return outputs
 
-    def get_client(  # pylint: disable=too-many-statements
+    @overload
+    def get_client(
         self,
-        cls: Optional[Type[EmbeddingsClientType]] = None,
+        /,
+        *,
+        transport: Any = None,
+        credential: Any = None,
+        api_version: Optional[str] = None,
+        audience: Optional[str] = None,
+        config_store: Optional[Mapping[str, Any]] = None,
+        use_async: Optional[Literal[False]] = None,
+        **client_options,
+    ) -> "EmbeddingsClient": ...
+    @overload
+    def get_client(
+        self,
+        /,
+        *,
+        transport: Any = None,
+        credential: Any = None,
+        api_version: Optional[str] = None,
+        audience: Optional[str] = None,
+        config_store: Optional[Mapping[str, Any]] = None,
+        use_async: Literal[True],
+        **client_options,
+    ) -> "AsyncEmbeddingsClient": ...
+    @overload
+    def get_client(
+        self,
+        cls: Type[EmbeddingsClientType],
         /,
         *,
         transport: Any = None,
@@ -453,14 +578,42 @@ class AIEmbeddings(AIDeployment[AIDeploymentResourceType]):
         audience: Optional[str] = None,
         config_store: Optional[Mapping[str, Any]] = None,
         use_async: Optional[bool] = None,
+        return_credential: Literal[False] = False,
         **client_options,
-    ) -> EmbeddingsClientType:
-        if cls is self.__class__:
-            return self
+    ) -> EmbeddingsClientType: ...
+    @overload
+    def get_client(
+        self,
+        cls: Type[EmbeddingsClientType],
+        /,
+        *,
+        transport: Any = None,
+        credential: Any = None,
+        api_version: Optional[str] = None,
+        audience: Optional[str] = None,
+        config_store: Optional[Mapping[str, Any]] = None,
+        use_async: Optional[bool] = None,
+        return_credential: Literal[True],
+        **client_options,
+    ) -> Tuple[EmbeddingsClientType, Union["SupportsTokenInfo", "AsyncSupportsTokenInfo"]]: ...
+    def get_client(
+        self,
+        cls=None,
+        /,
+        *,
+        transport=None,
+        credential=None,
+        api_version=None,
+        audience=None,
+        config_store=None,
+        use_async=None,
+        return_credential=False,
+        **client_options,
+    ):
         if config_store is None:
             config_store = _load_dev_environment()
 
-        endpoint: str = self._settings["endpoint"](config_store=config_store)
+        endpoint = self._settings["endpoint"](config_store=config_store)
         # TODO: AI endpoints!!!
         endpoint = endpoint.replace("cognitiveservices.azure.com", "openai.azure.com")
         client_kwargs = {}
@@ -468,7 +621,7 @@ class AIEmbeddings(AIDeployment[AIDeploymentResourceType]):
         try:
             client_kwargs["api_version"] = self._settings["api_version"](api_version, config_store=config_store)
         except RuntimeError:
-            pass
+            client_kwargs["api_version"] = "2023-05-15"
         try:
             audience = self._settings["audience"](audience, config_store=config_store)
         except RuntimeError:
@@ -502,17 +655,20 @@ class AIEmbeddings(AIDeployment[AIDeploymentResourceType]):
                 **client_kwargs,
             )
             if cls.__name__ == "Embeddings":
-                client = client.embeddings
-            client.__resource_settings__ = self
+                if return_credential:
+                    return client.embeddings, credential
+                return client.embeddings
+            if return_credential:
+                return client, credential
             return client
 
         # These are the asynchronous OpenAI clients.
         if cls.__name__ in ["AsyncAzureOpenAI", "AsyncEmbeddings"]:
             from openai import AsyncAzureOpenAI
-            from azure.identity.aio import get_bearer_token_provider
+            from azure.identity.aio import get_bearer_token_provider as async_get_bearer_token_provider
 
             credential = self._build_credential(cls, use_async=True, credential=credential)
-            token_provider = get_bearer_token_provider(credential, f"{audience}/.default")
+            token_provider = async_get_bearer_token_provider(credential, f"{audience}/.default")
             client = AsyncAzureOpenAI(
                 azure_endpoint=endpoint,
                 azure_ad_token_provider=token_provider,
@@ -521,8 +677,11 @@ class AIEmbeddings(AIDeployment[AIDeploymentResourceType]):
                 **client_kwargs,
             )
             if cls.__name__ == "AsyncEmbeddings":
-                client = client.embeddings
-            client.__resource_settings__ = self
+                if return_credential:
+                    return client.embeddings, credential
+                return client.embeddings
+            if return_credential:
+                return client, credential
             return client
 
         if cls.__name__ == "EmbeddingsClient":
@@ -530,10 +689,10 @@ class AIEmbeddings(AIDeployment[AIDeploymentResourceType]):
             client_kwargs["credential_scopes"] = [f"{audience}/.default"]
         else:
             client_kwargs["audience"] = audience
-        client_kwargs["credential"] = self._build_credential(cls, use_async=use_async, credential=credential)
+        credential = self._build_credential(cls, use_async=use_async, credential=credential)
         if transport is not None:
             client_kwargs["transport"] = transport
-        client = cls(endpoint, **client_kwargs)
-        client.__resource_settings__ = self
-        # TODO: Store kwargs and credential?
+        client = cls(endpoint, credential=credential, **client_kwargs)
+        if return_credential:
+            return client, credential
         return client

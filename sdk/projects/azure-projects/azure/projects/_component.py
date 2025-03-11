@@ -27,7 +27,7 @@ from typing import (
 from typing_extensions import Self, TypeVar, dataclass_transform
 
 from ._bicep.expressions import Parameter, MISSING, Default
-from ._resource import Resource, _load_dev_environment
+from ._resource import Resource, _load_dev_environment, SyncClient, AsyncClient
 from .resources import RESOURCE_FROM_CLIENT_ANNOTATION
 from .resources.resourcegroup import ResourceGroup
 from .resources.managedidentity import UserAssignedIdentity
@@ -140,7 +140,7 @@ def field(
     init: bool = True,  # TODO: Support init
     alias: Optional[str] = None,
     **kwargs,
-) -> ComponentField:
+):
     if default is not MISSING and factory is not MISSING:
         raise ValueError("Cannot specify both 'default' and 'factory'.")
     return ComponentField(default=default, factory=factory, repr=repr, init=init, alias=alias, **kwargs)
@@ -345,8 +345,16 @@ class AzureAppComponent(type):
             argument = "argument" if len(missing) == 1 else "arguments"
             attrs = ", ".join([f"'{attr}'" for attr in missing])
             raise TypeError(f"{cls.__name__} missing required keyword {argument}: {attrs}.")
-        instance_kwargs["_client_annotations"] = client_annotations
-        return super().__call__(**instance_kwargs)
+
+        # We pop these and pass explicitly because they need to be ordered first.
+        config_store = instance_kwargs.pop("_config_store")
+        closeables = instance_kwargs.pop("_closeables")
+        return super().__call__(
+            _config_store=config_store,
+            _closeables=closeables,
+            _client_annotations=client_annotations,
+            **instance_kwargs,
+        )
 
 
 T = TypeVar("T")
@@ -385,20 +393,19 @@ InfrastructureType = TypeVar("InfrastructureType", bound=AzureInfrastructure, de
 class AzureApp(Generic[InfrastructureType], metaclass=AzureAppComponent):
     # TODO: As these will have classattribute defaults, need to test behaviour
     # Might need to build a specifier object or use field
-    __infra__: Optional[InfrastructureType] = field(default=None, init=False, repr=False)
+    _infra: Optional[InfrastructureType] = field(alias="infra", default=None, repr=False)
     _config_store: Mapping[str, Any] = field(alias="config_store", factory=dict, repr=False)
+    _closeables: List[Union[SyncClient, AsyncClient]] = field(factory=list, init=False, repr=False)
 
     def __init__(self, **kwargs):
-        self._config_store = kwargs.pop("_config_store")
-        self._client_annotations = kwargs.pop("_client_annotations")
         for key, value in kwargs.items():
             setattr(self, key, value)
 
     @property
     def infra(self) -> InfrastructureType:
-        if self.__infra__ is None:
+        if self._infra is None:
             raise ValueError("AzureApp has no associated Infrastructure object.")
-        return self.__infra__
+        return self._infra
 
     @overload
     @classmethod
@@ -457,7 +464,7 @@ class AzureApp(Generic[InfrastructureType], metaclass=AzureAppComponent):
 
         # TODO: duplicate config loading
         config_store.update(_load_dev_environment(infra.__class__.__name__))
-        return cls(config_store=config_store, __infra__=infra, **kwargs)
+        return cls(config_store=config_store, _infra=infra, **kwargs)
 
     @overload
     @classmethod
@@ -515,15 +522,24 @@ class AzureApp(Generic[InfrastructureType], metaclass=AzureAppComponent):
         return f"{self.__class__.__name__}({repr_str})"
 
     def __setattr__(self, name, value):
-        if name.startswith("_field__") or name in ["_config_store", "_client_annotations"]:
-            return super().__setattr__(name, value)
         if isinstance(value, Resource):
             kwargs = {}
             if isinstance(self.__class__.__dict__.get(name), ComponentField):
                 kwargs = self.__class__.__dict__[name]._kwargs
             cls_type = get_annotations(self.__class__)[name]
             # TODO: Need to reduce the number of times get_annotations is called.
-            value = value.get_client(cls_type, config_store=self._config_store, **kwargs)
+            value, credential = value.get_client(
+                cls_type, config_store=self._config_store, return_credential=True, **kwargs
+            )
+            self._closeables.append(value)
+            if credential not in self._closeables:
+                self._closeables.append(credential)
+        else:
+            try:
+                if callable(value.close) and value not in self._closeables:
+                    self._closeables.append(value)
+            except AttributeError:
+                pass
         return super().__setattr__(name, value)
 
     def __enter__(self) -> Self:
@@ -538,11 +554,8 @@ class AzureApp(Generic[InfrastructureType], metaclass=AzureAppComponent):
     async def __aexit__(self, *args) -> None:
         await self.aclose()
 
-    async def _close_client(self, client) -> None:
-        try:
-            closer = client.close()
-        except (AttributeError, TypeError):
-            return
+    async def _close_client(self, client: Union[SyncClient, AsyncClient]) -> None:
+        closer = client.close()
         try:
             await closer
         except TypeError:
@@ -552,4 +565,4 @@ class AzureApp(Generic[InfrastructureType], metaclass=AzureAppComponent):
         run_coroutine_sync(self.aclose())
 
     async def aclose(self) -> None:
-        await asyncio.gather(*[self._close_client(c) for c in self.__dict__.values()])
+        await asyncio.gather(*[self._close_client(c) for c in self._closeables])

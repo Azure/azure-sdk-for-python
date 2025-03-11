@@ -30,6 +30,9 @@ from .. import StorageAccount, StorageAccountKwargs
 
 if TYPE_CHECKING:
     from .types import TableServiceResource, TablesCorsRule
+
+    from azure.core.credentials import SupportsTokenInfo
+    from azure.core.credentials_async import AsyncSupportsTokenInfo
     from azure.data.tables import TableServiceClient
     from azure.data.tables.aio import TableServiceClient as AsyncTableServiceClient
 
@@ -189,8 +192,24 @@ class TableStorage(_ClientResource[TableServiceResourceType]):
         audience: Optional[str] = None,
         config_store: Optional[Mapping[str, Any]] = None,
         use_async: Optional[bool] = None,
+        return_credential: Literal[False] = False,
         **client_options,
     ) -> ClientType: ...
+    @overload
+    def get_client(
+        self,
+        cls: Type[ClientType],
+        /,
+        *,
+        transport: Any = None,
+        credential: Any = None,
+        api_version: Optional[str] = None,
+        audience: Optional[str] = None,
+        config_store: Optional[Mapping[str, Any]] = None,
+        use_async: Optional[bool] = None,
+        return_credential: Literal[True],
+        **client_options,
+    ) -> Tuple[ClientType, Union["SupportsTokenInfo", "AsyncSupportsTokenInfo"]]: ...
     def get_client(
         self,
         cls=None,
@@ -202,6 +221,7 @@ class TableStorage(_ClientResource[TableServiceResourceType]):
         audience=None,
         config_store=None,
         use_async=None,
+        return_credential=False,
         **client_options,
     ):
         if cls is None:
@@ -221,5 +241,7 @@ class TableStorage(_ClientResource[TableServiceResourceType]):
             api_version=api_version,
             audience=audience,
             config_store=config_store,
+            use_async=use_async,
+            return_credential=return_credential,
             **client_options,
         )

@@ -13,6 +13,7 @@ import os
 from typing import (
     Generator,
     Generic,
+    Literal,
     Mapping,
     MutableMapping,
     Tuple,
@@ -24,6 +25,11 @@ from typing import (
     List,
     Any,
     Sequence,
+    Protocol,
+    AsyncContextManager,
+    ContextManager,
+    overload,
+    runtime_checkable,
     TYPE_CHECKING,
 )
 from typing_extensions import Self, NamedTuple, TypedDict, TypeVar
@@ -38,12 +44,25 @@ from ._bicep.expressions import Output, Expression, Parameter, ResourceSymbol, R
 from ._bicep.utils import clean_name
 
 if TYPE_CHECKING:
+    from azure.core.credentials import SupportsTokenInfo
+    from azure.core.credentials_async import AsyncSupportsTokenInfo
+
     from .resources.resourcegroup import ResourceGroup
     from .resources._extension import RoleAssignment
     from ._component import AzureInfrastructure
 
 
-ClientType = TypeVar("ClientType")
+@runtime_checkable
+class SyncClient(Protocol, ContextManager["SyncClient"]):
+    def close(self) -> None: ...
+
+
+@runtime_checkable
+class AsyncClient(Protocol, AsyncContextManager["AsyncClient"]):  # pylint: disable=async-client-bad-name
+    async def close(self) -> None: ...
+
+
+ClientType = TypeVar("ClientType", bound=Union[SyncClient, AsyncClient])
 
 
 def _load_dev_environment(name: Optional[str] = None, label: Optional[str] = None) -> Dict[str, str]:
@@ -145,7 +164,7 @@ class Resource(Generic[ResourcePropertiesType]):  # pylint: disable=too-many-ins
         # These determine how resource properties are handled when building up the bicep
         # definitions for the same resource declared in multiple places. Anything in the
         # 'properties' field of a resource will error on conflict
-        self._properties_to_merge = kwargs.pop("properties_to_merge", ["properties", "tags"])
+        self._properties_to_merge: List[str] = kwargs.pop("properties_to_merge", ["properties", "tags"])
 
         self._settings: Dict[str, StoredPrioritizedSetting] = {
             "name": StoredPrioritizedSetting(
@@ -574,14 +593,7 @@ class Resource(Generic[ResourcePropertiesType]):  # pylint: disable=too-many-ins
         outputs.update(resource_outputs)
         return (symbol, *parents)
 
-    def get_client(
-        self,  # pylint: disable=unused-argument
-        cls: Type[ClientType],
-        /,
-        **kwargs,
-    ) -> ClientType:
-        if cls is self.__class__:
-            return self
+    def get_client(self, cls: Type[ClientType], /, **kwargs) -> ClientType:
         raise TypeError(f"Resource '{repr(self)}' has no compatible Client endpoint.")
 
 
@@ -611,13 +623,16 @@ class _ClientResource(Resource[ResourcePropertiesType]):
     def _build_endpoint(self, *, config_store: Mapping[str, Any]) -> str:
         raise NotImplementedError("This must be implemented by child resources.")
 
-    def _build_credential(self, cls: Callable[..., ClientType], *, use_async: Optional[bool], credential: Any) -> Any:
+    def _build_credential(
+        self,
+        cls: Type[ClientType],
+        *,
+        use_async: Optional[bool],
+        credential: Optional[Union["SupportsTokenInfo", "AsyncSupportsTokenInfo"]],
+    ) -> Union["SupportsTokenInfo", "AsyncSupportsTokenInfo"]:
         # TODO: This needs work - how to close the credential.
         if credential:
-            try:
-                return credential()
-            except TypeError:
-                return credential
+            return credential
         if use_async is None:
             try:
                 use_async = inspect.iscoroutinefunction(getattr(cls, "close"))
@@ -634,25 +649,54 @@ class _ClientResource(Resource[ResourcePropertiesType]):
 
         return DefaultAzureCredential()
 
+    @overload
     def get_client(
         self,
         cls: Type[ClientType],
         /,
         *,
         transport: Any = None,
-        credential: Any = None,
+        credential: Optional[Union["SupportsTokenInfo", "AsyncSupportsTokenInfo"]] = None,
         api_version: Optional[str] = None,
         audience: Optional[str] = None,
         config_store: Optional[Mapping[str, Any]] = None,
         use_async: Optional[bool] = None,
+        return_credential: Literal[False] = False,
         **client_options,
-    ) -> ClientType:
-        if cls is self.__class__:
-            return self
+    ) -> ClientType: ...
+    @overload
+    def get_client(  # pylint: disable=arguments-differ
+        self,
+        cls: Type[ClientType],
+        /,
+        *,
+        transport: Any = None,
+        credential: Optional[Union["SupportsTokenInfo", "AsyncSupportsTokenInfo"]] = None,
+        api_version: Optional[str] = None,
+        audience: Optional[str] = None,
+        config_store: Optional[Mapping[str, Any]] = None,
+        use_async: Optional[bool] = None,
+        return_credential: Literal[True],
+        **client_options,
+    ) -> Tuple[ClientType, Union["SupportsTokenInfo", "AsyncSupportsTokenInfo"]]: ...
+    def get_client(
+        self,
+        cls,
+        /,
+        *,
+        transport=None,
+        credential=None,
+        api_version=None,
+        audience=None,
+        config_store=None,
+        use_async=None,
+        return_credential=False,
+        **client_options,
+    ):
         if config_store is None:
             config_store = _load_dev_environment()
 
-        endpoint: str = self._settings["endpoint"](config_store=config_store)
+        endpoint = self._settings["endpoint"](config_store=config_store)
         client_kwargs = {}
         client_kwargs.update(client_options)
         try:
@@ -664,10 +708,10 @@ class _ClientResource(Resource[ResourcePropertiesType]):
         except RuntimeError:
             pass
 
-        client_kwargs["credential"] = self._build_credential(cls, use_async=use_async, credential=credential)
+        credential = self._build_credential(cls, use_async=use_async, credential=credential)
         if transport is not None:
             client_kwargs["transport"] = transport
-        client = cls(endpoint, **client_kwargs)
-        client.__resource_settings__ = self
-        # TODO: Store kwargs and credential?
+        client = cls(endpoint, credential=credential, **client_kwargs)
+        if return_credential:
+            return client, credential
         return client

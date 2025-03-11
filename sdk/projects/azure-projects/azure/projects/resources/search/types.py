@@ -55,6 +55,7 @@ class SearchSku(TypedDict, total=False):
 
 
 class SearchServiceResource(TypedDict, total=False):
+    # TODO: Test different identity configurations - if this is a parameter, how does the merge work?
     identity: Union[SearchIdentity, Parameter]
     """The identity of the resource."""
     location: Union[str, Parameter]

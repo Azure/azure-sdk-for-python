@@ -52,6 +52,6 @@ class KeyVaultResource(TypedDict, total=False):
     name: Union[str, Parameter]
     """The resource name."""
     properties: "VaultProperties"  # type: ignore[name-defined]  # TODO
-    """Properties of Cognitive Services account."""
+    """Properties of the KeyVault account."""
     tags: Union[Dict[str, Union[str, Parameter]], Parameter]
     """Dictionary of tag names and values."""

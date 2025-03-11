@@ -10,12 +10,12 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Dict,
-    Generator,
     List,
     Literal,
     Mapping,
     Union,
     Optional,
+    cast,
 )
 from typing_extensions import TypeVar, Unpack, TypedDict
 
@@ -23,8 +23,8 @@ from ..resourcegroup import ResourceGroup
 from .._identifiers import ResourceIdentifiers
 from .._extension import convert_managed_identities, ManagedIdentity, RoleAssignment
 from ..._parameters import GLOBAL_PARAMS
-from ..._bicep.expressions import Output, Expression, ResourceSymbol, Parameter
-from ..._resource import _ClientResource, FieldsType, FieldType, ResourceReference, ExtensionResources
+from ..._bicep.expressions import Output, ResourceSymbol, Parameter
+from ..._resource import _ClientResource, ResourceReference, ExtensionResources
 
 if TYPE_CHECKING:
     from .types import CognitiveServicesAccountResource, ApiProperties, CognitiveServicesNetworkRuleSet
@@ -166,16 +166,16 @@ _DEFAULT_COGNITIVE_SERVICES_EXTENSIONS: ExtensionResources = {"managed_identity_
 
 
 class CognitiveServicesAccount(_ClientResource[CognitiveServicesAccountResourceType]):
-    DEFAULTS: "CognitiveServicesAccountResource" = _DEFAULT_COGNITIVE_SERVICES
+    DEFAULTS: "CognitiveServicesAccountResource" = _DEFAULT_COGNITIVE_SERVICES  # type: ignore[assignment]
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_COGNITIVE_SERVICES_EXTENSIONS
     properties: CognitiveServicesAccountResourceType
-    parent: None
+    parent: None  # type: ignore[reportIncompatibleVariableOverride]
 
     def __init__(
         self,
         properties: Optional["CognitiveServicesAccountResource"] = None,
         /,
-        name: Optional[str] = None,
+        name: Optional[Union[str, Parameter]] = None,
         *,
         kind: Union[
             Parameter,
@@ -208,12 +208,13 @@ class CognitiveServicesAccount(_ClientResource[CognitiveServicesAccountResourceT
         ],
         **kwargs: Unpack[CognitiveServicesKwargs],
     ) -> None:
-        existing = kwargs.pop("existing", False)
-        extensions: ExtensionResources = defaultdict(list)
+        # 'existing' is passed by the reference classmethod.
+        existing = kwargs.pop("existing", False)  # type: ignore[typeddict-item]
+        extensions: ExtensionResources = defaultdict(list)  # type: ignore  # Doesn't like the default dict.
         properties = properties or {}
         properties["kind"] = kind
         if "roles" in kwargs:
-            extensions["managed_identity_roles"] = kwargs.pop("roles")  # type:ignore[misc] Popping from TypedDict
+            extensions["managed_identity_roles"] = kwargs.pop("roles")
         if "user_roles" in kwargs:
             extensions["user_roles"] = kwargs.pop("user_roles")
         if not existing:
@@ -248,30 +249,31 @@ class CognitiveServicesAccount(_ClientResource[CognitiveServicesAccountResourceT
                     "restrict_outbound_network_access"
                 )
             if "sku" in kwargs:
-                properties["sku"] = properties.get("sku", {})
-                properties["sku"]["name"] = kwargs.pop("sku")
+                properties["sku"] = {"name": kwargs.pop("sku")}
             if "tags" in kwargs:
                 properties["tags"] = kwargs.pop("tags")
+        # The kwarg identifier can be passed by child classes.
         super().__init__(
-            properties,
+            cast(Dict[str, Any], properties),
             extensions=extensions,
             service_prefix=[f"ai_{kind}"],
             existing=existing,
-            identifier=kwargs.pop("identifier", ResourceIdentifiers.cognitive_services),
+            identifier=kwargs.pop("identifier", ResourceIdentifiers.cognitive_services),  # type: ignore[typeddict-item]
             **kwargs,
         )
 
     @classmethod
-    def reference(
+    def reference(  # type: ignore[override]  # Parameter subset and renames
         cls,
         *,
         name: Union[str, Parameter],
-        resource_group: Optional[Union[str, Parameter, ResourceGroup]] = None,
+        resource_group: Optional[Union[str, Parameter, ResourceGroup[ResourceReference]]] = None,
     ) -> "CognitiveServicesAccount[ResourceReference]":
-        return super().reference(
+        existing = super().reference(
             name=name,
             resource_group=resource_group,
         )
+        return cast(CognitiveServicesAccount[ResourceReference], existing)
 
     @property
     def resource(self) -> Literal["Microsoft.CognitiveServices/accounts"]:
@@ -288,39 +290,8 @@ class CognitiveServicesAccount(_ClientResource[CognitiveServicesAccountResourceT
 
     def _build_symbol(self) -> ResourceSymbol:
         symbol = super()._build_symbol()
-        symbol._value = f"{self.properties['kind'].lower()}_" + symbol._value  # pylint: disable=protected-access
+        symbol._value = f"{self.properties['kind'].lower()}_" + symbol.value  # pylint: disable=protected-access
         return symbol
-
-    def _find_all_resource_match(
-        self,
-        fields: FieldsType,
-        *,
-        resource: Optional[str] = None,
-        resource_group: Optional[ResourceSymbol] = None,
-        name: Optional[Union[str, Expression]] = None,
-        parent: Optional[ResourceSymbol] = None,
-    ) -> Generator[FieldType, None, None]:
-        resource = resource or self.resource
-        for field in (f for f in reversed(list(fields.values())) if f.resource == resource):
-            if resource == self.resource and field.properties["kind"] != self.properties["kind"]:
-                continue
-            if name and resource_group:
-                if field.properties.get("name") == name and field.resource_group == resource_group:
-                    yield field
-            elif name and parent:
-                if field.properties.get("name") == name and field.properties["parent"] == parent:
-                    yield field
-            elif resource_group:
-                if field.resource_group == resource_group:
-                    yield field
-            elif parent:
-                if field.properties["parent"] == parent:
-                    yield field
-            elif name:
-                if field.properties.get("name") == name:
-                    yield field
-            else:
-                yield field
 
     def _outputs(self, *, symbol: ResourceSymbol, suffix: Optional[str] = None, **kwargs) -> Dict[str, Output]:
         outputs = super()._outputs(symbol=symbol, suffix=suffix, **kwargs)
@@ -490,10 +461,29 @@ class AIServices(CognitiveServicesAccount[CognitiveServicesAccountResourceType])
         self,
         properties: Optional["CognitiveServicesAccountResource"] = None,
         /,
-        name: Optional[str] = None,
+        name: Optional[Union[str, Parameter]] = None,
         **kwargs: Unpack[AIServicesKwargs],
     ) -> None:
-        super().__init__(properties, name=name, kind="AIServices", identifier=ResourceIdentifiers.ai_services, **kwargs)
+        super().__init__(
+            properties,
+            name=name,
+            kind="AIServices",
+            identifier=ResourceIdentifiers.ai_services,  # type: ignore[call-arg]
+            **kwargs,
+        )
 
     def _build_endpoint(self, *, config_store: Mapping[str, Any]) -> str:
         return f"https://{self._settings['name'](config_store=config_store)}.openai.azure.com/"
+
+    @classmethod
+    def reference(  # type: ignore[override]  # Parameter subset and renames
+        cls,
+        *,
+        name: Union[str, Parameter],
+        resource_group: Optional[Union[str, Parameter, ResourceGroup[ResourceReference]]] = None,
+    ) -> "AIServices[ResourceReference]":
+        existing = super().reference(
+            name=name,
+            resource_group=resource_group,
+        )
+        return cast(AIServices[ResourceReference], existing)

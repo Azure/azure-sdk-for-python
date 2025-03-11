@@ -6,7 +6,7 @@
 # pylint: disable=line-too-long
 
 from typing import Literal, Dict, Union
-from typing_extensions import Required, TypedDict
+from typing_extensions import TypedDict
 
 from ...._bicep.expressions import Parameter
 
@@ -31,9 +31,9 @@ class DeploymentScaleSettings(TypedDict, total=False):
 class DeploymentModel(TypedDict, total=False):
     """Properties of Cognitive Services account deployment model."""
 
-    format: Required[Union[str, Parameter]]
+    format: Union[str, Parameter]
     """Deployment model format."""
-    name: Required[Union[str, Parameter]]
+    name: Union[str, Parameter]
     """Deployment model name."""
     version: Union[str, Parameter]
     """Deployment model version. If version is not specified, a default version will be assigned. The default version is different for different models and might change when there is new version available for a model. Default version for a model could be found from list models API."""
@@ -48,7 +48,7 @@ class DeploymentModel(TypedDict, total=False):
 class DeploymentSku(TypedDict, total=False):
     """The resource model definition representing SKU."""
 
-    name: Required[Union[str, Parameter]]
+    name: Union[str, Parameter]
     """The name of the SKU. Ex - P3. It is typically a letter+number code."""
     capacity: Union[int, Parameter]
     """If the SKU supports scale out/in then the capacity integer should be included. If scale out/in is not possible for the resource this may be omitted."""
