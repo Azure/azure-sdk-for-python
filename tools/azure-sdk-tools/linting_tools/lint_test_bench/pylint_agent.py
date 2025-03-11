@@ -99,7 +99,7 @@ def fix_file(file_path: str, logger) -> dict:
             original_content = f.read()
 
         fix_file_prompt = "You are a helpful assistant that fixes pylint warnings. If you are not sure about a specific pylint error, " \
-        "you can check the pylint specific guidelines from the readme: https://github.com/Azure/azure-sdk-tools/blob/5e36502f0161bf3e2bc824ac216d4c0d244f498a/tools/pylint-extensions/azure-pylint-guidelines-checker/README.md," \
+        "you can check the pylint specific guidelines and helpful code examples from the readme: https://github.com/Azure/azure-sdk-tools/blob/c56e3f5914fad39db3250bab6fc0c61d5a7168cb/tools/pylint-extensions/azure-pylint-guidelines-checker/README.md," \
         "or the pylint documentation: https://pylint.readthedocs.io/en/stable/user_guide/checkers/features.html." \
         "Given a python file that has pylint issues, identify the issues and output ONLY the fixed code. For help, there is a comment that specifies which rules are being violated in each file."
         logger.debug(f"PROMPT FOR FIXING FILE: {fix_file_prompt}")
