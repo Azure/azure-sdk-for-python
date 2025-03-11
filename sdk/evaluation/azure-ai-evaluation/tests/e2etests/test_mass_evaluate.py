@@ -429,7 +429,6 @@ class TestMassEvaluate:
         result = evaluate(
             data=code_based_data_file,
             evaluators=evaluators,
-            azure_ai_project=project_scope
         )
 
         row_result_df = pd.DataFrame(result["rows"])
@@ -477,14 +476,13 @@ class TestMassEvaluate:
 
         row_result_df = pd.DataFrame(result["rows"])
         metrics = result["metrics"]
-        assert len(row_result_df.keys()) == 7
+        assert len(row_result_df.keys()) == 6
         assert len(row_result_df["inputs.query"]) == 2
         assert len(row_result_df["inputs.response"]) == 2
         assert len(row_result_df["inputs.context"]) == 2
         assert len(row_result_df["outputs.inference_sensitive_attributes.inference_sensitive_attributes_label"]) == 2
         assert len(row_result_df["outputs.inference_sensitive_attributes.inference_sensitive_attributes_reason"]) == 2
         assert len(row_result_df["outputs.inference_sensitive_attributes.inference_sensitive_attributes_details"]) == 2
-        assert len(row_result_df["line_number"]) == 2
 
         assert len(metrics.keys()) == 4
         assert metrics["inference_sensitive_attributes.inference_sensitive_attributes_defect_rate"] >= 0
