@@ -54,7 +54,7 @@ class TestComputeManagementDedicatedHostGroupsOperations(AzureMgmtRecordedTestCa
                 "type": "str",
                 "zones": ["str"],
             },
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -92,7 +92,7 @@ class TestComputeManagementDedicatedHostGroupsOperations(AzureMgmtRecordedTestCa
                 "tags": {"str": "str"},
                 "zones": ["str"],
             },
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -104,7 +104,7 @@ class TestComputeManagementDedicatedHostGroupsOperations(AzureMgmtRecordedTestCa
         response = self.client.dedicated_host_groups.delete(
             resource_group_name=resource_group.name,
             host_group_name="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -116,7 +116,7 @@ class TestComputeManagementDedicatedHostGroupsOperations(AzureMgmtRecordedTestCa
         response = self.client.dedicated_host_groups.get(
             resource_group_name=resource_group.name,
             host_group_name="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -127,7 +127,7 @@ class TestComputeManagementDedicatedHostGroupsOperations(AzureMgmtRecordedTestCa
     def test_dedicated_host_groups_list_by_resource_group(self, resource_group):
         response = self.client.dedicated_host_groups.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -137,7 +137,7 @@ class TestComputeManagementDedicatedHostGroupsOperations(AzureMgmtRecordedTestCa
     @recorded_by_proxy
     def test_dedicated_host_groups_list_by_subscription(self, resource_group):
         response = self.client.dedicated_host_groups.list_by_subscription(
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
