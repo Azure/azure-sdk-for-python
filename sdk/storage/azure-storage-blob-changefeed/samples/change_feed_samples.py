@@ -76,24 +76,6 @@ class ChangeFeedSamples(object):
         for event in change_feed:
             print(event)
 
-    def list_events_using_continuation_token(self):
-
-        # Instantiate a ChangeFeedClient
-        cf_client = ChangeFeedClient("https://{}.blob.core.windows.net".format(self.ACCOUNT_NAME),
-                                     credential=self.ACCOUNT_KEY)
-        # to get continuation token
-        change_feed = cf_client.list_changes(results_per_page=2).by_page()
-        change_feed_page1 = next(change_feed)
-        for event in change_feed_page1:
-            print(event)
-        token = change_feed.continuation_token
-
-        # restart using the continuation token
-        change_feed2 = cf_client.list_changes(results_per_page=56).by_page(continuation_token=token)
-        change_feed_page2 = next(change_feed2)
-        for event in change_feed_page2:
-            print(event)
-
     def list_events_in_live_mode(self):
         # Instantiate a ChangeFeedClient
         cf_client = ChangeFeedClient("https://{}.blob.core.windows.net".format(self.ACCOUNT_NAME),
@@ -105,7 +87,7 @@ class ChangeFeedSamples(object):
             for page in change_feed:
                 for event in page:
                     print(event)
-            token = change_feed.continuation_token
+            token = change_feed.continuation_token  # type: ignore [attr-defined]
 
             sleep(60)
             print("continue printing events")
@@ -116,6 +98,4 @@ if __name__ == '__main__':
     sample.list_events_by_page()
     sample.list_all_events()
     sample.list_range_of_events()
-    sample.list_events_using_continuation_token()
     sample.list_events_in_live_mode()
-
