@@ -55,79 +55,79 @@ class ComputeManagementClient:  # pylint: disable=too-many-instance-attributes
     """Compute Client.
 
     :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.compute.v2024_07_01.operations.Operations
+    :vartype operations: azure.mgmt.compute.v2024_11_01.operations.Operations
     :ivar usage: UsageOperations operations
-    :vartype usage: azure.mgmt.compute.v2024_07_01.operations.UsageOperations
+    :vartype usage: azure.mgmt.compute.v2024_11_01.operations.UsageOperations
     :ivar virtual_machine_sizes: VirtualMachineSizesOperations operations
     :vartype virtual_machine_sizes:
-     azure.mgmt.compute.v2024_07_01.operations.VirtualMachineSizesOperations
+     azure.mgmt.compute.v2024_11_01.operations.VirtualMachineSizesOperations
     :ivar virtual_machine_scale_sets: VirtualMachineScaleSetsOperations operations
     :vartype virtual_machine_scale_sets:
-     azure.mgmt.compute.v2024_07_01.operations.VirtualMachineScaleSetsOperations
+     azure.mgmt.compute.v2024_11_01.operations.VirtualMachineScaleSetsOperations
     :ivar virtual_machine_scale_set_extensions: VirtualMachineScaleSetExtensionsOperations
      operations
     :vartype virtual_machine_scale_set_extensions:
-     azure.mgmt.compute.v2024_07_01.operations.VirtualMachineScaleSetExtensionsOperations
+     azure.mgmt.compute.v2024_11_01.operations.VirtualMachineScaleSetExtensionsOperations
     :ivar virtual_machine_scale_set_rolling_upgrades:
      VirtualMachineScaleSetRollingUpgradesOperations operations
     :vartype virtual_machine_scale_set_rolling_upgrades:
-     azure.mgmt.compute.v2024_07_01.operations.VirtualMachineScaleSetRollingUpgradesOperations
+     azure.mgmt.compute.v2024_11_01.operations.VirtualMachineScaleSetRollingUpgradesOperations
     :ivar virtual_machine_scale_set_vm_extensions: VirtualMachineScaleSetVMExtensionsOperations
      operations
     :vartype virtual_machine_scale_set_vm_extensions:
-     azure.mgmt.compute.v2024_07_01.operations.VirtualMachineScaleSetVMExtensionsOperations
+     azure.mgmt.compute.v2024_11_01.operations.VirtualMachineScaleSetVMExtensionsOperations
     :ivar virtual_machine_scale_set_vms: VirtualMachineScaleSetVMsOperations operations
     :vartype virtual_machine_scale_set_vms:
-     azure.mgmt.compute.v2024_07_01.operations.VirtualMachineScaleSetVMsOperations
+     azure.mgmt.compute.v2024_11_01.operations.VirtualMachineScaleSetVMsOperations
     :ivar virtual_machine_extensions: VirtualMachineExtensionsOperations operations
     :vartype virtual_machine_extensions:
-     azure.mgmt.compute.v2024_07_01.operations.VirtualMachineExtensionsOperations
+     azure.mgmt.compute.v2024_11_01.operations.VirtualMachineExtensionsOperations
     :ivar virtual_machines: VirtualMachinesOperations operations
-    :vartype virtual_machines: azure.mgmt.compute.v2024_07_01.operations.VirtualMachinesOperations
+    :vartype virtual_machines: azure.mgmt.compute.v2024_11_01.operations.VirtualMachinesOperations
     :ivar virtual_machine_images: VirtualMachineImagesOperations operations
     :vartype virtual_machine_images:
-     azure.mgmt.compute.v2024_07_01.operations.VirtualMachineImagesOperations
+     azure.mgmt.compute.v2024_11_01.operations.VirtualMachineImagesOperations
     :ivar virtual_machine_images_edge_zone: VirtualMachineImagesEdgeZoneOperations operations
     :vartype virtual_machine_images_edge_zone:
-     azure.mgmt.compute.v2024_07_01.operations.VirtualMachineImagesEdgeZoneOperations
+     azure.mgmt.compute.v2024_11_01.operations.VirtualMachineImagesEdgeZoneOperations
     :ivar virtual_machine_extension_images: VirtualMachineExtensionImagesOperations operations
     :vartype virtual_machine_extension_images:
-     azure.mgmt.compute.v2024_07_01.operations.VirtualMachineExtensionImagesOperations
+     azure.mgmt.compute.v2024_11_01.operations.VirtualMachineExtensionImagesOperations
     :ivar availability_sets: AvailabilitySetsOperations operations
     :vartype availability_sets:
-     azure.mgmt.compute.v2024_07_01.operations.AvailabilitySetsOperations
+     azure.mgmt.compute.v2024_11_01.operations.AvailabilitySetsOperations
     :ivar proximity_placement_groups: ProximityPlacementGroupsOperations operations
     :vartype proximity_placement_groups:
-     azure.mgmt.compute.v2024_07_01.operations.ProximityPlacementGroupsOperations
+     azure.mgmt.compute.v2024_11_01.operations.ProximityPlacementGroupsOperations
     :ivar dedicated_host_groups: DedicatedHostGroupsOperations operations
     :vartype dedicated_host_groups:
-     azure.mgmt.compute.v2024_07_01.operations.DedicatedHostGroupsOperations
+     azure.mgmt.compute.v2024_11_01.operations.DedicatedHostGroupsOperations
     :ivar dedicated_hosts: DedicatedHostsOperations operations
-    :vartype dedicated_hosts: azure.mgmt.compute.v2024_07_01.operations.DedicatedHostsOperations
+    :vartype dedicated_hosts: azure.mgmt.compute.v2024_11_01.operations.DedicatedHostsOperations
     :ivar ssh_public_keys: SshPublicKeysOperations operations
-    :vartype ssh_public_keys: azure.mgmt.compute.v2024_07_01.operations.SshPublicKeysOperations
+    :vartype ssh_public_keys: azure.mgmt.compute.v2024_11_01.operations.SshPublicKeysOperations
     :ivar images: ImagesOperations operations
-    :vartype images: azure.mgmt.compute.v2024_07_01.operations.ImagesOperations
+    :vartype images: azure.mgmt.compute.v2024_11_01.operations.ImagesOperations
     :ivar restore_point_collections: RestorePointCollectionsOperations operations
     :vartype restore_point_collections:
-     azure.mgmt.compute.v2024_07_01.operations.RestorePointCollectionsOperations
+     azure.mgmt.compute.v2024_11_01.operations.RestorePointCollectionsOperations
     :ivar restore_points: RestorePointsOperations operations
-    :vartype restore_points: azure.mgmt.compute.v2024_07_01.operations.RestorePointsOperations
+    :vartype restore_points: azure.mgmt.compute.v2024_11_01.operations.RestorePointsOperations
     :ivar capacity_reservation_groups: CapacityReservationGroupsOperations operations
     :vartype capacity_reservation_groups:
-     azure.mgmt.compute.v2024_07_01.operations.CapacityReservationGroupsOperations
+     azure.mgmt.compute.v2024_11_01.operations.CapacityReservationGroupsOperations
     :ivar capacity_reservations: CapacityReservationsOperations operations
     :vartype capacity_reservations:
-     azure.mgmt.compute.v2024_07_01.operations.CapacityReservationsOperations
+     azure.mgmt.compute.v2024_11_01.operations.CapacityReservationsOperations
     :ivar log_analytics: LogAnalyticsOperations operations
-    :vartype log_analytics: azure.mgmt.compute.v2024_07_01.operations.LogAnalyticsOperations
+    :vartype log_analytics: azure.mgmt.compute.v2024_11_01.operations.LogAnalyticsOperations
     :ivar virtual_machine_run_commands: VirtualMachineRunCommandsOperations operations
     :vartype virtual_machine_run_commands:
-     azure.mgmt.compute.v2024_07_01.operations.VirtualMachineRunCommandsOperations
+     azure.mgmt.compute.v2024_11_01.operations.VirtualMachineRunCommandsOperations
     :ivar virtual_machine_scale_set_vm_run_commands: VirtualMachineScaleSetVMRunCommandsOperations
      operations
     :vartype virtual_machine_scale_set_vm_run_commands:
-     azure.mgmt.compute.v2024_07_01.operations.VirtualMachineScaleSetVMRunCommandsOperations
+     azure.mgmt.compute.v2024_11_01.operations.VirtualMachineScaleSetVMRunCommandsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure
@@ -135,7 +135,7 @@ class ComputeManagementClient:  # pylint: disable=too-many-instance-attributes
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2024-07-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2024-11-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -176,77 +176,77 @@ class ComputeManagementClient:  # pylint: disable=too-many-instance-attributes
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize, "2024-07-01")
-        self.usage = UsageOperations(self._client, self._config, self._serialize, self._deserialize, "2024-07-01")
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize, "2024-11-01")
+        self.usage = UsageOperations(self._client, self._config, self._serialize, self._deserialize, "2024-11-01")
         self.virtual_machine_sizes = VirtualMachineSizesOperations(
-            self._client, self._config, self._serialize, self._deserialize, "2024-07-01"
+            self._client, self._config, self._serialize, self._deserialize, "2024-11-01"
         )
         self.virtual_machine_scale_sets = VirtualMachineScaleSetsOperations(
-            self._client, self._config, self._serialize, self._deserialize, "2024-07-01"
+            self._client, self._config, self._serialize, self._deserialize, "2024-11-01"
         )
         self.virtual_machine_scale_set_extensions = VirtualMachineScaleSetExtensionsOperations(
-            self._client, self._config, self._serialize, self._deserialize, "2024-07-01"
+            self._client, self._config, self._serialize, self._deserialize, "2024-11-01"
         )
         self.virtual_machine_scale_set_rolling_upgrades = VirtualMachineScaleSetRollingUpgradesOperations(
-            self._client, self._config, self._serialize, self._deserialize, "2024-07-01"
+            self._client, self._config, self._serialize, self._deserialize, "2024-11-01"
         )
         self.virtual_machine_scale_set_vm_extensions = VirtualMachineScaleSetVMExtensionsOperations(
-            self._client, self._config, self._serialize, self._deserialize, "2024-07-01"
+            self._client, self._config, self._serialize, self._deserialize, "2024-11-01"
         )
         self.virtual_machine_scale_set_vms = VirtualMachineScaleSetVMsOperations(
-            self._client, self._config, self._serialize, self._deserialize, "2024-07-01"
+            self._client, self._config, self._serialize, self._deserialize, "2024-11-01"
         )
         self.virtual_machine_extensions = VirtualMachineExtensionsOperations(
-            self._client, self._config, self._serialize, self._deserialize, "2024-07-01"
+            self._client, self._config, self._serialize, self._deserialize, "2024-11-01"
         )
         self.virtual_machines = VirtualMachinesOperations(
-            self._client, self._config, self._serialize, self._deserialize, "2024-07-01"
+            self._client, self._config, self._serialize, self._deserialize, "2024-11-01"
         )
         self.virtual_machine_images = VirtualMachineImagesOperations(
-            self._client, self._config, self._serialize, self._deserialize, "2024-07-01"
+            self._client, self._config, self._serialize, self._deserialize, "2024-11-01"
         )
         self.virtual_machine_images_edge_zone = VirtualMachineImagesEdgeZoneOperations(
-            self._client, self._config, self._serialize, self._deserialize, "2024-07-01"
+            self._client, self._config, self._serialize, self._deserialize, "2024-11-01"
         )
         self.virtual_machine_extension_images = VirtualMachineExtensionImagesOperations(
-            self._client, self._config, self._serialize, self._deserialize, "2024-07-01"
+            self._client, self._config, self._serialize, self._deserialize, "2024-11-01"
         )
         self.availability_sets = AvailabilitySetsOperations(
-            self._client, self._config, self._serialize, self._deserialize, "2024-07-01"
+            self._client, self._config, self._serialize, self._deserialize, "2024-11-01"
         )
         self.proximity_placement_groups = ProximityPlacementGroupsOperations(
-            self._client, self._config, self._serialize, self._deserialize, "2024-07-01"
+            self._client, self._config, self._serialize, self._deserialize, "2024-11-01"
         )
         self.dedicated_host_groups = DedicatedHostGroupsOperations(
-            self._client, self._config, self._serialize, self._deserialize, "2024-07-01"
+            self._client, self._config, self._serialize, self._deserialize, "2024-11-01"
         )
         self.dedicated_hosts = DedicatedHostsOperations(
-            self._client, self._config, self._serialize, self._deserialize, "2024-07-01"
+            self._client, self._config, self._serialize, self._deserialize, "2024-11-01"
         )
         self.ssh_public_keys = SshPublicKeysOperations(
-            self._client, self._config, self._serialize, self._deserialize, "2024-07-01"
+            self._client, self._config, self._serialize, self._deserialize, "2024-11-01"
         )
-        self.images = ImagesOperations(self._client, self._config, self._serialize, self._deserialize, "2024-07-01")
+        self.images = ImagesOperations(self._client, self._config, self._serialize, self._deserialize, "2024-11-01")
         self.restore_point_collections = RestorePointCollectionsOperations(
-            self._client, self._config, self._serialize, self._deserialize, "2024-07-01"
+            self._client, self._config, self._serialize, self._deserialize, "2024-11-01"
         )
         self.restore_points = RestorePointsOperations(
-            self._client, self._config, self._serialize, self._deserialize, "2024-07-01"
+            self._client, self._config, self._serialize, self._deserialize, "2024-11-01"
         )
         self.capacity_reservation_groups = CapacityReservationGroupsOperations(
-            self._client, self._config, self._serialize, self._deserialize, "2024-07-01"
+            self._client, self._config, self._serialize, self._deserialize, "2024-11-01"
         )
         self.capacity_reservations = CapacityReservationsOperations(
-            self._client, self._config, self._serialize, self._deserialize, "2024-07-01"
+            self._client, self._config, self._serialize, self._deserialize, "2024-11-01"
         )
         self.log_analytics = LogAnalyticsOperations(
-            self._client, self._config, self._serialize, self._deserialize, "2024-07-01"
+            self._client, self._config, self._serialize, self._deserialize, "2024-11-01"
         )
         self.virtual_machine_run_commands = VirtualMachineRunCommandsOperations(
-            self._client, self._config, self._serialize, self._deserialize, "2024-07-01"
+            self._client, self._config, self._serialize, self._deserialize, "2024-11-01"
         )
         self.virtual_machine_scale_set_vm_run_commands = VirtualMachineScaleSetVMRunCommandsOperations(
-            self._client, self._config, self._serialize, self._deserialize, "2024-07-01"
+            self._client, self._config, self._serialize, self._deserialize, "2024-11-01"
         )
 
     def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:

@@ -26,7 +26,7 @@ class TestComputeManagementVirtualMachineExtensionImagesOperations(AzureMgmtReco
             publisher_name="str",
             type="str",
             version="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestComputeManagementVirtualMachineExtensionImagesOperations(AzureMgmtReco
         response = self.client.virtual_machine_extension_images.list_types(
             location="str",
             publisher_name="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -51,7 +51,7 @@ class TestComputeManagementVirtualMachineExtensionImagesOperations(AzureMgmtReco
             location="str",
             publisher_name="str",
             type="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
