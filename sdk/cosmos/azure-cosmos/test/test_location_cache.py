@@ -165,36 +165,36 @@ class TestLocationCache:
         # Init test data
         if test_type == "OnClient":
             excluded_locations_on_client_list = [
-                {location1_name},
-                {location1_name, location2_name},
-                {location1_name, location2_name, location3_name},
-                {location4_name},
-                set(),
+                [location1_name],
+                [location1_name, location2_name],
+                [location1_name, location2_name, location3_name],
+                [location4_name],
+                [],
             ]
-            excluded_locations_on_requests_list = [set()] * 5
+            excluded_locations_on_requests_list = [[]] * 5
         elif test_type == "OnRequest":
-            excluded_locations_on_client_list = [set()] * 5
+            excluded_locations_on_client_list = [[]] * 5
             excluded_locations_on_requests_list = [
-                {location1_name},
-                {location1_name, location2_name},
-                {location1_name, location2_name, location3_name},
-                {location4_name},
-                set(),
+                [location1_name],
+                [location1_name, location2_name],
+                [location1_name, location2_name, location3_name],
+                [location4_name],
+                [],
             ]
         else:
             excluded_locations_on_client_list = [
-                {location1_name},
-                {location1_name, location2_name, location3_name},
-                {location1_name, location2_name},
-                {location2_name},
-                set(),
+                [location1_name],
+                [location1_name, location2_name, location3_name],
+                [location1_name, location2_name],
+                [location2_name],
+                [],
             ]
             excluded_locations_on_requests_list = [
-                {location1_name},
-                {location1_name, location2_name},
-                {location1_name, location2_name, location3_name},
-                {location4_name},
-                set(),
+                [location1_name],
+                [location1_name, location2_name],
+                [location1_name, location2_name, location3_name],
+                [location4_name],
+                [],
             ]
 
         expected_read_endpoints_list = [
@@ -216,8 +216,7 @@ class TestLocationCache:
         for excluded_locations_on_client, excluded_locations_on_requests, expected_read_endpoints, expected_write_endpoints in zip(excluded_locations_on_client_list, excluded_locations_on_requests_list, expected_read_endpoints_list, expected_write_endpoints_list):
             # Init excluded_locations in ConnectionPolicy
             connection_policy = documents.ConnectionPolicy()
-            connection_policy.ExcludedLocations = CosmosExcludedLocations(excluded_locations_on_client)
-            assert excluded_locations_on_client == connection_policy.ExcludedLocations.get()
+            connection_policy.ExcludedLocations = excluded_locations_on_client
 
             # Init location_cache
             location_cache = refresh_location_cache([location1_name, location2_name, location3_name], True,
@@ -227,9 +226,9 @@ class TestLocationCache:
 
             # Init requests and set excluded regions on requests
             write_doc_request = RequestObject(ResourceType.Document, _OperationType.Create)
-            write_doc_request.set_excluded_location(excluded_locations_on_requests)
+            write_doc_request.excluded_locations = excluded_locations_on_requests
             read_doc_request = RequestObject(ResourceType.Document, _OperationType.Read)
-            read_doc_request.set_excluded_location(excluded_locations_on_requests)
+            read_doc_request.excluded_locations = excluded_locations_on_requests
 
             # Test if read endpoints were correctly filtered on client level
             read_doc_endpoint = location_cache.get_applicable_read_regional_endpoints(read_doc_request)

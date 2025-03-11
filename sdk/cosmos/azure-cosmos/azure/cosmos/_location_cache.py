@@ -30,7 +30,6 @@ from urllib.parse import urlparse
 from . import documents
 from . import http_constants
 from .documents import _OperationType
-from ._request_object import RequestObject
 
 # pylint: disable=protected-access
 
@@ -225,18 +224,15 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                            str(regional_endpoint))
             regional_endpoint.swap()
 
-    def _get_configured_excluded_locations(self, request: RequestObject):
+    def _get_configured_excluded_locations(self, request):
         # If excluded locations were configured on request, use request level excluded locations.
-        if request.excluded_locations.is_configured():
-            return request.excluded_locations.get()
+        excluded_locations = request.excluded_locations
+        if len(excluded_locations) == 0:
+            # If excluded locations were only configured on client(connection_policy), use client level
+            excluded_locations = self.connection_policy.ExcludedLocations
+        return excluded_locations
 
-        # If excluded locations were only configured on client(connection_policy), use client level excluded locations.
-        if self.connection_policy.ExcludedLocations.is_configured() > 0:
-            return self.connection_policy.ExcludedLocations.get()
-
-        return None
-
-    def get_applicable_read_regional_endpoints(self, request: RequestObject):
+    def get_applicable_read_regional_endpoints(self, request):
         # Get configured excluded locations
         excluded_locations = self._get_configured_excluded_locations(request)
 
@@ -251,7 +247,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         # Else, return all regional endpoints
         return self.get_read_regional_endpoints()
 
-    def get_applicable_write_regional_endpoints(self, request: RequestObject):
+    def get_applicable_write_regional_endpoints(self, request):
         # Get configured excluded locations
         excluded_locations = self._get_configured_excluded_locations(request)
 

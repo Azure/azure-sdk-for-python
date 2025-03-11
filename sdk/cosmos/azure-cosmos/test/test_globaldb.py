@@ -257,6 +257,42 @@ class TestGlobalDB(unittest.TestCase):
             self.assertEqual(client.client_connection.ReadEndpoint, self.read_location2_host)
 
 # #TODO: add test for excluded_locations similar to 'test_global_db_preferred_locations'
+    def test_global_db_excluded_locations(self):
+        preferred_locations = ['West US 3', 'West US', 'East US 2']
+        excluded_locations = {'West US 3'}
+
+        connection_policy = documents.ConnectionPolicy()
+        connection_policy.PreferredLocations = preferred_locations
+        connection_policy.ExcludedLocations = CosmosExcludedLocations(excluded_locations)
+
+        client = cosmos_client.CosmosClient(self.host, self.masterKey,
+                                            connection_policy=connection_policy)
+
+        document_definition = {'id': 'doc3',
+                               'pk': 'pk',
+                               'name': 'sample document',
+                               'key': 'value'}
+
+        database = client.get_database_client(self.configs.TEST_DATABASE_ID)
+        container = database.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
+
+        created_document = container.create_item(document_definition)
+
+        item = container.read_item(created_document['id'], created_document['pk'])
+        print(item)
+
+
+
+
+        return
+        # Delay to get these resources replicated to read location due to Eventual consistency
+        time.sleep(5)
+
+        read_response = container.read_item(item=created_document, partition_key=created_document['pk'])
+        content_location = str(read_response.get_response_headers()[HttpHeaders.ContentLocation])
+
+        content_location_url = urlparse(content_location)
+        write_location_url = urlparse(self.write_location_host)
 
     def test_global_db_endpoint_assignments(self):
         connection_policy = documents.ConnectionPolicy()

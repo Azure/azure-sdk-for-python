@@ -27,7 +27,6 @@ from typing import List, Optional, TYPE_CHECKING, Union, Dict, Any
 from typing_extensions import Literal, TypedDict
 
 from ._retry_options import RetryOptions
-from .cosmos_excluded_locations import CosmosExcludedLocations
 
 if TYPE_CHECKING:
     from ._retry_utility import ConnectionRetryPolicy
@@ -354,7 +353,7 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
         self.ProxyConfiguration: Optional[ProxyConfiguration] = None
         self.EnableEndpointDiscovery: bool = True
         self.PreferredLocations: List[str] = []
-        self.ExcludedLocations: CosmosExcludedLocations = CosmosExcludedLocations(set())
+        self.ExcludedLocations: List[str] = []
         self.RetryOptions: RetryOptions = RetryOptions()
         self.DisableSSLVerification: bool = False
         self.UseMultipleWriteLocations: bool = False
