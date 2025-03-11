@@ -9,7 +9,7 @@ from unittest.mock import patch
 import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
-from promptflow.client import PFClient
+from azure.ai.evaluation._legacy.client import PFClient
 
 from azure.ai.evaluation._common.math import list_mean
 from azure.ai.evaluation import (
@@ -69,12 +69,6 @@ def evaluate_test_data_jsonl_file():
 @pytest.fixture
 def evaluate_test_data_conversion_jsonl_file():
     return _get_file("evaluate_test_data_conversation.jsonl")
-
-
-@pytest.fixture
-def pf_client() -> PFClient:
-    """The fixture, returning PRClient"""
-    return PFClient()
 
 
 @pytest.fixture

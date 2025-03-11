@@ -64,8 +64,8 @@ setup(
     ),
     python_requires=">=3.9",
     install_requires=[
-        "promptflow-devkit>=1.17.1",
-        "promptflow-core>=1.17.1",
+        #"promptflow-devkit>=1.17.1",
+        #"promptflow-core>=1.17.1",
         "pyjwt>=2.8.0",
         # pickle support for credentials was added to this release
         "azure-identity>=1.16.0",
@@ -73,6 +73,12 @@ setup(
         "nltk>=3.9.1",
         "azure-storage-blob>=12.10.0",
         "httpx>=0.19.0",
+
+        # Dependencies added since Promptflow was removed
+        "pandas>=1.5.3,<3.0.0",
+        "openai>=1.4.0",  # TODO ralphe: What is a sensible lower bound here?
+        "ruamel.yaml>=0.17.10,<1.0.0",
+        "msrest>=0.6.18"
     ],
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",

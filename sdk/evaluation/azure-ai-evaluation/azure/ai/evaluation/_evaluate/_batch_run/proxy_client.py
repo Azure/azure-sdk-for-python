@@ -12,25 +12,17 @@ from datetime import datetime
 from collections import OrderedDict
 from concurrent.futures import Future
 from typing import Any, Callable, Dict, Optional, Union, cast
-from typing_extensions import TypeAlias
 
+from azure.ai.evaluation._legacy.entities import Run
+from azure.ai.evaluation._legacy._configuration import Configuration
+from azure.ai.evaluation._legacy.client import PFClient
+from azure.ai.evaluation._legacy.tracing import ThreadPoolExecutorWithContext
 import pandas as pd
 
 from azure.ai.evaluation._evaluate._batch_run.batch_clients import BatchClientRun, HasAsyncCallable
 
 
-Run: TypeAlias = "_Run"
-
-try:
-    from promptflow._sdk._configuration import Configuration
-    from promptflow.entities import Run as _Run
-
-    Configuration.get_instance().set_config("trace.destination", "none")
-except ImportError:
-    # We can ignore this for now
-    pass
-
-
+Configuration.get_instance().set_config("trace.destination", "none")
 LOGGER = logging.getLogger(__name__)
 
 
@@ -44,9 +36,6 @@ class ProxyClient:  # pylint: disable=client-accepts-api-version-keyword
         self,
         **kwargs: Any,
     ) -> None:
-        from promptflow.client import PFClient
-        from promptflow.tracing import ThreadPoolExecutorWithContext
-
         self._pf_client = PFClient(**kwargs)
         self._thread_pool = ThreadPoolExecutorWithContext(thread_name_prefix="evaluators_thread")
 

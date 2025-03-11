@@ -6,14 +6,13 @@ import math
 import re
 from typing import Dict, TypeVar, Union
 
-#from promptflow.core import AsyncPrompty
+from azure.ai.evaluation._legacy._flows import AsyncPrompty
 from typing_extensions import override
 
 from azure.ai.evaluation._common.constants import PROMPT_BASED_REASON_EVALUATORS
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from ..._common.utils import construct_prompty_model_config, validate_model_config, parse_quality_evaluator_reason_score
 from . import EvaluatorBase
-from azure.ai.evaluation.prompty import AsyncPrompty
 
 try:
     from ..._user_agent import USER_AGENT

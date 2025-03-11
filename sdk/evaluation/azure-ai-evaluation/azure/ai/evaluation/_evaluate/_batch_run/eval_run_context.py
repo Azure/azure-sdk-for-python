@@ -5,9 +5,9 @@ import os
 import types
 from typing import Optional, Type, Union
 
-from promptflow._sdk._constants import PF_FLOW_ENTRY_IN_TMP, PF_FLOW_META_LOAD_IN_SUBPROCESS
-from promptflow._utils.user_agent_utils import ClientUserAgentUtil
-from promptflow.tracing._integrations._openai_injector import inject_openai_api, recover_openai_api
+from azure.ai.evaluation._legacy._constants import PF_FLOW_ENTRY_IN_TMP, PF_FLOW_META_LOAD_IN_SUBPROCESS
+from azure.ai.evaluation._legacy.utils import ClientUserAgentUtil
+from azure.ai.evaluation._legacy.tracing import inject_openai_api, recover_openai_api
 
 from azure.ai.evaluation._constants import (
     OTEL_EXPORTER_OTLP_TRACES_TIMEOUT,

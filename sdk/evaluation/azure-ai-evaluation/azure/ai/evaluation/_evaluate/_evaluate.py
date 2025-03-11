@@ -8,6 +8,9 @@ import os
 import re
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypedDict, Union, cast
 
+from azure.ai.evaluation._legacy._constants import LINE_NUMBER
+from azure.ai.evaluation._legacy._errors import MissingRequiredPackage
+from azure.ai.evaluation._legacy.entities import Run
 import pandas as pd
 
 from azure.ai.evaluation._common.math import list_mean_nan_safe, apply_transform_nan_safe
@@ -458,7 +461,7 @@ def _apply_target_to_data(
     initial_data: pd.DataFrame,
     evaluation_name: Optional[str] = None,
     **kwargs,
-) -> Tuple[pd.DataFrame, Set[str], Any]:
+) -> Tuple[pd.DataFrame, Set[str], Run]:
     """
     Apply the target function to the data set and return updated data and generated columns.
 
@@ -475,7 +478,6 @@ def _apply_target_to_data(
     :return: The tuple, containing data frame and the list of added columns.
     :rtype: Tuple[pandas.DataFrame, List[str]]
     """
-    from promptflow._sdk._constants import LINE_NUMBER
 
     if not isinstance(batch_client, ProxyClient):
         raise ValueError("Only ProxyClient supports target runs for now.")
@@ -590,7 +592,6 @@ def _rename_columns_conditionally(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-# @log_evaluate_activity
 def evaluate(
     *,
     data: Union[str, os.PathLike],
@@ -746,7 +747,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     column_mapping = column_mapping or {}
     column_mapping.setdefault("default", {})
 
-    target_run: Any = None
+    target_run: Optional[Run] = None
     target_generated_columns: Set[str] = set()
     batch_run_client: BatchClient
     batch_run_data: Union[str, os.PathLike, pd.DataFrame] = data
@@ -865,7 +866,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     metrics.update(evaluators_metric)
 
     # Since tracing is disabled, pass None for target_run so a dummy evaluation run will be created each time.
-    target_run = None
+    target_run: Optional[Run] = None
     trace_destination = _trace_destination_from_project_scope(azure_ai_project) if azure_ai_project else None
     studio_url = None
     if trace_destination:

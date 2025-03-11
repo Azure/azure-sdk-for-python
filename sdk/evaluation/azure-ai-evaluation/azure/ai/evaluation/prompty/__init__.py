@@ -13,8 +13,8 @@ from azure.ai.evaluation.prompty._exceptions import (
 )
 
 # =========================================================================================================
-# NOTE: All of the code here is largely copy of code from Promptflow. Generally speaking, the following
-#       changes were made:
+# NOTE: All of the code here is largely copy of code from the Promptflow repo. Generally speaking, the
+#       following changes were made:
 #       - Added type annotations
 #       - Removed some unused/unneeded code
 #       - Minor obvious tweaks to improve code readability
