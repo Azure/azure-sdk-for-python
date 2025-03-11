@@ -8,6 +8,7 @@ from typing_extensions import overload, override
 from azure.ai.evaluation._common.utils import nltk_tokenize
 
 from azure.ai.evaluation._evaluators._common import EvaluatorBase
+from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 
 
 class GleuScoreEvaluator(EvaluatorBase):
@@ -36,8 +37,10 @@ class GleuScoreEvaluator(EvaluatorBase):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self):
-        super().__init__()
+    def __init__(self, threshold=0.5, _higher_is_better=True):
+        self._threshold = threshold
+        self._higher_is_better = _higher_is_better
+        super().__init__(threshold=threshold, _higher_is_better=_higher_is_better)
 
     @override
     async def _do_eval(self, eval_input: Dict) -> Dict[str, float]:
@@ -54,9 +57,17 @@ class GleuScoreEvaluator(EvaluatorBase):
         hypothesis_tokens = nltk_tokenize(response)
 
         score = sentence_gleu([reference_tokens], hypothesis_tokens)
-
+        binary_result = False
+        if self._higher_is_better:
+            if score >= self._threshold:
+                binary_result = True
+        else:
+            if score <= self._threshold:
+                binary_result = True
         return {
             "gleu_score": score,
+            "gleu_resut": EVALUATION_PASS_FAIL_MAPPING[binary_result],
+            "gleu_threshold": self._threshold,
         }
 
     @overload  # type: ignore
