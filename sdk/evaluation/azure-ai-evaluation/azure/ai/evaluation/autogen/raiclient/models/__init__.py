@@ -15,6 +15,7 @@ if TYPE_CHECKING:
 
 from ._models import (  # type: ignore
     AnnotationDTO,
+    AttackObjective,
     Content,
     CustomizationParameters,
     Data,
@@ -22,9 +23,12 @@ from ._models import (  # type: ignore
     GraderConfigBase,
     GradersDTO,
     LongRunningResponse,
+    Message,
+    Metadata,
     ModelConfig,
     SampleGenerator,
     SimulationDTO,
+    TargetHarm,
 )
 
 from ._enums import (  # type: ignore
@@ -36,6 +40,7 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "AnnotationDTO",
+    "AttackObjective",
     "Content",
     "CustomizationParameters",
     "Data",
@@ -43,9 +48,12 @@ __all__ = [
     "GraderConfigBase",
     "GradersDTO",
     "LongRunningResponse",
+    "Message",
+    "Metadata",
     "ModelConfig",
     "SampleGenerator",
     "SimulationDTO",
+    "TargetHarm",
     "SimulationType",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
