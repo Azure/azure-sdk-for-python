@@ -132,6 +132,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         try:
             database_account = self._GetDatabaseAccountStub(self.DefaultEndpoint, **kwargs)
             self._database_account_cache = database_account
+            self.location_cache.mark_endpoint_available(self.DefaultEndpoint)
             return database_account, self.DefaultEndpoint
         # If for any reason(non-globaldb related), we are not able to get the database
         # account from the above call to GetDatabaseAccount, we would try to get this
@@ -149,6 +150,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                 try:
                     database_account = self._GetDatabaseAccountStub(locational_endpoint, **kwargs)
                     self._database_account_cache = database_account
+                    self.location_cache.mark_endpoint_available(locational_endpoint)
                     return database_account, locational_endpoint
                 except (exceptions.CosmosHttpResponseError, AzureError):
                     self.mark_endpoint_unavailable_for_read(locational_endpoint, False)
