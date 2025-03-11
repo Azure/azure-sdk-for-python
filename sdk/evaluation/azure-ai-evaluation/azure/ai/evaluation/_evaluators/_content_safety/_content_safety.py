@@ -42,12 +42,12 @@ class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
     id = "content_safety"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
-    def __init__(self, credential, azure_ai_project, **kwargs):
+    def __init__(self, credential, azure_ai_project, threshold=0, **kwargs):
         evaluators = [
-            ViolenceEvaluator(credential, azure_ai_project),
-            SexualEvaluator(credential, azure_ai_project),
-            SelfHarmEvaluator(credential, azure_ai_project),
-            HateUnfairnessEvaluator(credential, azure_ai_project),
+            ViolenceEvaluator(credential, azure_ai_project, threshold=threshold),
+            SexualEvaluator(credential, azure_ai_project, threshold=threshold),
+            SelfHarmEvaluator(credential, azure_ai_project, threshold=threshold),
+            HateUnfairnessEvaluator(credential, azure_ai_project, threshold=threshold),
         ]
         super().__init__(evaluators=evaluators, **kwargs)
 

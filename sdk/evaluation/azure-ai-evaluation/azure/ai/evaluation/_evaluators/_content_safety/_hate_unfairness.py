@@ -67,12 +67,15 @@ class HateUnfairnessEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
         self,
         credential,
         azure_ai_project,
+        threshold: int = 0,
     ):
         super().__init__(
             eval_metric=EvaluationMetrics.HATE_FAIRNESS,
             azure_ai_project=azure_ai_project,
             credential=credential,
             conversation_aggregation_type=_AggregationType.MAX,
+            threshold=threshold,
+            _higher_is_better=False,
         )
 
     @overload
