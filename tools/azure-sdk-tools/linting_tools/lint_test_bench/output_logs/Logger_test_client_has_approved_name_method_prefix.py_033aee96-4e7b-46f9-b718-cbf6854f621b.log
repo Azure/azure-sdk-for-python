@@ -1,0 +1,186 @@
+2025-03-10 17:05:39,611 — Logger_test_client_has_approved_name_method_prefix.py_033aee96-4e7b-46f9-b718-cbf6854f621b.log — DEBUG — <module>:205 — test_client_has_approved_name_method_prefix.py
+2025-03-10 17:05:39,612 — Logger_test_client_has_approved_name_method_prefix.py_033aee96-4e7b-46f9-b718-cbf6854f621b.log — DEBUG — <module>:211 — Running pylint on original file...
+2025-03-10 17:05:39,702 — Logger_test_client_has_approved_name_method_prefix.py_033aee96-4e7b-46f9-b718-cbf6854f621b.log — DEBUG — run_pylint:181 — PYLINT SCORE: 5.151515151515151
+2025-03-10 17:05:39,703 — Logger_test_client_has_approved_name_method_prefix.py_033aee96-4e7b-46f9-b718-cbf6854f621b.log — DEBUG — <module>:213 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-10 17:05:39,706 — Logger_test_client_has_approved_name_method_prefix.py_033aee96-4e7b-46f9-b718-cbf6854f621b.log — DEBUG — <module>:220 — Fixing file...
+2025-03-10 17:05:39,719 — Logger_test_client_has_approved_name_method_prefix.py_033aee96-4e7b-46f9-b718-cbf6854f621b.log — DEBUG — fix_file:105 — PROMPT FOR FIXING FILE: You are a helpful assistant that fixes pylint warnings. If you are not sure about a specific pylint error, you can check the pylint specific guidelines from the readme: https://github.com/Azure/azure-sdk-tools/blob/5e36502f0161bf3e2bc824ac216d4c0d244f498a/tools/pylint-extensions/azure-pylint-guidelines-checker/README.md,or the pylint documentation: https://pylint.readthedocs.io/en/stable/user_guide/checkers/features.html.Given a python file that has pylint issues, identify the issues and output ONLY the fixed code. For help, there is a comment that specifies which rules are being violated in each file.
+2025-03-10 17:05:39,720 — Logger_test_client_has_approved_name_method_prefix.py_033aee96-4e7b-46f9-b718-cbf6854f621b.log — DEBUG — fix_file:106 — MODEL: gpt-40-mini
+2025-03-10 17:05:41,822 — Logger_test_client_has_approved_name_method_prefix.py_033aee96-4e7b-46f9-b718-cbf6854f621b.log — DEBUG — fix_file:123 — FIXED CONTENT: # Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+# This code violates unapproved-client-method-name-prefix
+
+class Client():
+    def build_configuration(self) -> None:
+        pass
+
+    def generate_thing(self) -> None:
+        pass
+
+    def make_thing(self) -> None:
+        pass
+
+    def insert_thing(self) -> None:
+        pass
+
+    def put_thing(self) -> None:
+        pass
+
+    def creates_configuration(self) -> None:
+        pass
+
+    def gets_thing(self) -> None:
+        pass
+
+    def lists_thing(self) -> None:
+        pass
+
+    def upserts_thing(self) -> None:
+        pass
+
+    def sets_thing(self) -> None:
+        pass
+
+    def updates_thing(self) -> None:
+        pass
+
+    def replaces_thing(self) -> None:
+        pass
+
+    def appends_thing(self) -> None:
+        pass
+
+    def adds_thing(self) -> None:
+        pass
+
+    def deletes_thing(self) -> None:
+        pass
+
+    def removes_thing(self) -> None:
+        pass
+2025-03-10 17:05:41,822 — Logger_test_client_has_approved_name_method_prefix.py_033aee96-4e7b-46f9-b718-cbf6854f621b.log — DEBUG — <module>:222 — Running pylint on fixed file...
+2025-03-10 17:05:41,866 — Logger_test_client_has_approved_name_method_prefix.py_033aee96-4e7b-46f9-b718-cbf6854f621b.log — DEBUG — run_pylint:181 — PYLINT SCORE: 5.151515151515151
+2025-03-10 17:05:41,867 — Logger_test_client_has_approved_name_method_prefix.py_033aee96-4e7b-46f9-b718-cbf6854f621b.log — DEBUG — <module>:225 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-10 17:05:41,867 — Logger_test_client_has_approved_name_method_prefix.py_033aee96-4e7b-46f9-b718-cbf6854f621b.log — DEBUG — <module>:220 — Fixing file...
+2025-03-10 17:05:41,867 — Logger_test_client_has_approved_name_method_prefix.py_033aee96-4e7b-46f9-b718-cbf6854f621b.log — DEBUG — fix_file:105 — PROMPT FOR FIXING FILE: You are a helpful assistant that fixes pylint warnings. If you are not sure about a specific pylint error, you can check the pylint specific guidelines from the readme: https://github.com/Azure/azure-sdk-tools/blob/5e36502f0161bf3e2bc824ac216d4c0d244f498a/tools/pylint-extensions/azure-pylint-guidelines-checker/README.md,or the pylint documentation: https://pylint.readthedocs.io/en/stable/user_guide/checkers/features.html.Given a python file that has pylint issues, identify the issues and output ONLY the fixed code. For help, there is a comment that specifies which rules are being violated in each file.
+2025-03-10 17:05:41,867 — Logger_test_client_has_approved_name_method_prefix.py_033aee96-4e7b-46f9-b718-cbf6854f621b.log — DEBUG — fix_file:106 — MODEL: gpt-40-mini
+2025-03-10 17:05:44,602 — Logger_test_client_has_approved_name_method_prefix.py_033aee96-4e7b-46f9-b718-cbf6854f621b.log — DEBUG — fix_file:123 — FIXED CONTENT: # Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+# This code violates unapproved-client-method-name-prefix
+
+class Client():
+    def build_config(self) -> None:
+        pass
+
+    def generate_thing(self) -> None:
+        pass
+
+    def make_thing(self) -> None:
+        pass
+
+    def insert_thing(self) -> None:
+        pass
+
+    def put_thing(self) -> None:
+        pass
+
+    def create_config(self) -> None:
+        pass
+
+    def get_thing(self) -> None:
+        pass
+
+    def list_things(self) -> None:
+        pass
+
+    def upsert_thing(self) -> None:
+        pass
+
+    def set_thing(self) -> None:
+        pass
+
+    def update_thing(self) -> None:
+        pass
+
+    def replace_thing(self) -> None:
+        pass
+
+    def append_thing(self) -> None:
+        pass
+
+    def add_thing(self) -> None:
+        pass
+
+    def delete_thing(self) -> None:
+        pass
+
+    def remove_thing(self) -> None:
+        pass
+2025-03-10 17:05:44,604 — Logger_test_client_has_approved_name_method_prefix.py_033aee96-4e7b-46f9-b718-cbf6854f621b.log — DEBUG — <module>:222 — Running pylint on fixed file...
+2025-03-10 17:05:44,765 — Logger_test_client_has_approved_name_method_prefix.py_033aee96-4e7b-46f9-b718-cbf6854f621b.log — DEBUG — run_pylint:181 — PYLINT SCORE: 8.484848484848484
+2025-03-10 17:05:44,765 — Logger_test_client_has_approved_name_method_prefix.py_033aee96-4e7b-46f9-b718-cbf6854f621b.log — DEBUG — <module>:225 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-10 17:05:44,765 — Logger_test_client_has_approved_name_method_prefix.py_033aee96-4e7b-46f9-b718-cbf6854f621b.log — DEBUG — <module>:220 — Fixing file...
+2025-03-10 17:05:44,766 — Logger_test_client_has_approved_name_method_prefix.py_033aee96-4e7b-46f9-b718-cbf6854f621b.log — DEBUG — fix_file:105 — PROMPT FOR FIXING FILE: You are a helpful assistant that fixes pylint warnings. If you are not sure about a specific pylint error, you can check the pylint specific guidelines from the readme: https://github.com/Azure/azure-sdk-tools/blob/5e36502f0161bf3e2bc824ac216d4c0d244f498a/tools/pylint-extensions/azure-pylint-guidelines-checker/README.md,or the pylint documentation: https://pylint.readthedocs.io/en/stable/user_guide/checkers/features.html.Given a python file that has pylint issues, identify the issues and output ONLY the fixed code. For help, there is a comment that specifies which rules are being violated in each file.
+2025-03-10 17:05:44,766 — Logger_test_client_has_approved_name_method_prefix.py_033aee96-4e7b-46f9-b718-cbf6854f621b.log — DEBUG — fix_file:106 — MODEL: gpt-40-mini
+2025-03-10 17:05:47,333 — Logger_test_client_has_approved_name_method_prefix.py_033aee96-4e7b-46f9-b718-cbf6854f621b.log — DEBUG — fix_file:123 — FIXED CONTENT: # Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+# This code violates unapproved-client-method-name-prefix
+
+class Client():
+    def build_config(self) -> None:
+        pass
+
+    def generate_thing(self) -> None:
+        pass
+
+    def create_thing(self) -> None:
+        pass
+
+    def insert_thing(self) -> None:
+        pass
+
+    def put_thing(self) -> None:
+        pass
+
+    def create_config(self) -> None:
+        pass
+
+    def get_thing(self) -> None:
+        pass
+
+    def list_things(self) -> None:
+        pass
+
+    def upsert_thing(self) -> None:
+        pass
+
+    def set_thing(self) -> None:
+        pass
+
+    def update_thing(self) -> None:
+        pass
+
+    def replace_thing(self) -> None:
+        pass
+
+    def append_thing(self) -> None:
+        pass
+
+    def add_thing(self) -> None:
+        pass
+
+    def delete_thing(self) -> None:
+        pass
+
+    def remove_thing(self) -> None:
+        pass
+2025-03-10 17:05:47,333 — Logger_test_client_has_approved_name_method_prefix.py_033aee96-4e7b-46f9-b718-cbf6854f621b.log — DEBUG — <module>:222 — Running pylint on fixed file...
+2025-03-10 17:05:47,496 — Logger_test_client_has_approved_name_method_prefix.py_033aee96-4e7b-46f9-b718-cbf6854f621b.log — DEBUG — run_pylint:181 — PYLINT SCORE: 8.787878787878787
+2025-03-10 17:05:47,496 — Logger_test_client_has_approved_name_method_prefix.py_033aee96-4e7b-46f9-b718-cbf6854f621b.log — DEBUG — <module>:225 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-10 17:05:47,496 — Logger_test_client_has_approved_name_method_prefix.py_033aee96-4e7b-46f9-b718-cbf6854f621b.log — DEBUG — <module>:228 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-10 17:05:47,496 — Logger_test_client_has_approved_name_method_prefix.py_033aee96-4e7b-46f9-b718-cbf6854f621b.log — DEBUG — <module>:229 — 
+
+
+

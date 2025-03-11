@@ -1,0 +1,195 @@
+2025-03-10 17:08:37,884 — Logger_test_name_property_length.py_4243c932-913e-49f7-9379-3dd34f217048.log — DEBUG — <module>:205 — test_name_property_length.py
+2025-03-10 17:08:37,884 — Logger_test_name_property_length.py_4243c932-913e-49f7-9379-3dd34f217048.log — DEBUG — <module>:211 — Running pylint on original file...
+2025-03-10 17:08:37,964 — Logger_test_name_property_length.py_4243c932-913e-49f7-9379-3dd34f217048.log — DEBUG — run_pylint:181 — PYLINT SCORE: 8.88888888888889
+2025-03-10 17:08:37,964 — Logger_test_name_property_length.py_4243c932-913e-49f7-9379-3dd34f217048.log — DEBUG — <module>:213 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-10 17:08:37,964 — Logger_test_name_property_length.py_4243c932-913e-49f7-9379-3dd34f217048.log — DEBUG — <module>:220 — Fixing file...
+2025-03-10 17:08:37,965 — Logger_test_name_property_length.py_4243c932-913e-49f7-9379-3dd34f217048.log — DEBUG — fix_file:105 — PROMPT FOR FIXING FILE: You are a helpful assistant that fixes pylint warnings. If you are not sure about a specific pylint error, you can check the pylint specific guidelines from the readme: https://github.com/Azure/azure-sdk-tools/blob/5e36502f0161bf3e2bc824ac216d4c0d244f498a/tools/pylint-extensions/azure-pylint-guidelines-checker/README.md,or the pylint documentation: https://pylint.readthedocs.io/en/stable/user_guide/checkers/features.html.Given a python file that has pylint issues, identify the issues and output ONLY the fixed code. For help, there is a comment that specifies which rules are being violated in each file.
+2025-03-10 17:08:37,965 — Logger_test_name_property_length.py_4243c932-913e-49f7-9379-3dd34f217048.log — DEBUG — fix_file:106 — MODEL: gpt-35-turbo
+2025-03-10 17:08:42,191 — Logger_test_name_property_length.py_4243c932-913e-49f7-9379-3dd34f217048.log — DEBUG — fix_file:123 — FIXED CONTENT: from typing import Any, List
+from azure.core.tracing.decorator import distributed_trace
+
+# This code violates name-too-long
+class TooLongClientClassName:
+    def __init__(self, credential: str, *, api_version: str = "2018", **kwargs: Any) -> None:
+        """
+        :param credential: The credential to use for authentication.
+        :type credential: str
+        :keyword api_version: The API version to use for the client.
+        :paramtype api_version: str
+        :keyword eight: The eighth parameter.
+        :paramtype eight: str
+        """
+        self.credential: str = credential
+        self.eight: str = kwargs.get("eight")
+        self._api_version: str = api_version
+
+
+class GoodClientClassName:
+    @distributed_trace
+    def function_name_too_long_for_rule(self, **kwargs: Any) -> str:
+        seven = kwargs.get("seven")
+        return seven
+
+    @distributed_trace
+    def get_function_good(self, **kwargs: Any) -> List:
+        long_list_name = []
+        six = kwargs.get("six")
+        six = six + ""
+        return long_list_name
+
+    def _private_function_over_length_requirements(self, **kwargs) -> str:
+        this_lists_name = []
+        five = kwargs.get("five")
+        five = five + ""
+        return this_lists_name
+
+    def __init__(self, credential: str, this_name_too_long_to_use_anymore_reqs: str, *,
+                 api_version: str = "2018", **kwargs: Any) -> None:
+        """
+        :param credential: The credential to use for authentication.
+        :type credential: str
+        :param this_name_too_long_to_use_anymore_reqs: The first parameter.
+        :paramtype this_name_too_long_to_use_anymore_reqs: str
+        :keyword api_version: The API version to use for the client.
+        :paramtype api_version: str
+        :keyword four: The fourth parameter.
+        :paramtype four: str
+        """
+        self.credential: str = credential
+        self.this_name_too_long_to_use_anymore_reqs: str = this_name_too_long_to_use_anymore_reqs
+        self._api_version: str = api_version
+        self.four: str = kwargs.get("four")
+
+TooLongClientClassNameNameTooLongToUseAnymoreReqs = 10
+2025-03-10 17:08:42,192 — Logger_test_name_property_length.py_4243c932-913e-49f7-9379-3dd34f217048.log — DEBUG — <module>:222 — Running pylint on fixed file...
+2025-03-10 17:08:42,242 — Logger_test_name_property_length.py_4243c932-913e-49f7-9379-3dd34f217048.log — DEBUG — run_pylint:181 — PYLINT SCORE: 9.62962962962963
+2025-03-10 17:08:42,242 — Logger_test_name_property_length.py_4243c932-913e-49f7-9379-3dd34f217048.log — DEBUG — <module>:225 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-10 17:08:42,242 — Logger_test_name_property_length.py_4243c932-913e-49f7-9379-3dd34f217048.log — DEBUG — <module>:220 — Fixing file...
+2025-03-10 17:08:42,242 — Logger_test_name_property_length.py_4243c932-913e-49f7-9379-3dd34f217048.log — DEBUG — fix_file:105 — PROMPT FOR FIXING FILE: You are a helpful assistant that fixes pylint warnings. If you are not sure about a specific pylint error, you can check the pylint specific guidelines from the readme: https://github.com/Azure/azure-sdk-tools/blob/5e36502f0161bf3e2bc824ac216d4c0d244f498a/tools/pylint-extensions/azure-pylint-guidelines-checker/README.md,or the pylint documentation: https://pylint.readthedocs.io/en/stable/user_guide/checkers/features.html.Given a python file that has pylint issues, identify the issues and output ONLY the fixed code. For help, there is a comment that specifies which rules are being violated in each file.
+2025-03-10 17:08:42,242 — Logger_test_name_property_length.py_4243c932-913e-49f7-9379-3dd34f217048.log — DEBUG — fix_file:106 — MODEL: gpt-35-turbo
+2025-03-10 17:08:47,115 — Logger_test_name_property_length.py_4243c932-913e-49f7-9379-3dd34f217048.log — DEBUG — fix_file:123 — FIXED CONTENT: from typing import Any, List
+from azure.core.tracing.decorator import distributed_trace
+
+# This code violates name-too-long
+class Client:
+    def __init__(self, credential: str, *, api_version: str = "2018", **kwargs: Any) -> None:
+        """
+        :param credential: The credential to use for authentication.
+        :type credential: str
+        :keyword api_version: The API version to use for the client.
+        :paramtype api_version: str
+        :keyword eight: The eighth parameter.
+        :paramtype eight: str
+        """
+        self.credential: str = credential
+        self.eight: str = kwargs.get("eight")
+        self._api_version: str = api_version
+
+
+class GoodClientClassName:
+    @distributed_trace
+    def function_name(self, **kwargs: Any) -> str:
+        seven = kwargs.get("seven")
+        return seven
+
+    @distributed_trace
+    def get_function(self, **kwargs: Any) -> List:
+        long_list_name = []
+        six = kwargs.get("six")
+        six = six + ""
+        return long_list_name
+
+    def _private_function(self, **kwargs) -> str:
+        this_lists_name = []
+        five = kwargs.get("five")
+        five = five + ""
+        return this_lists_name
+
+    def __init__(self, credential: str, first_param: str, *,
+                 api_version: str = "2018", **kwargs: Any) -> None:
+        """
+        :param credential: The credential to use for authentication.
+        :type credential: str
+        :param first_param: The first parameter.
+        :paramtype first_param: str
+        :keyword api_version: The API version to use for the client.
+        :paramtype api_version: str
+        :keyword four: The fourth parameter.
+        :paramtype four: str
+        """
+        self.credential: str = credential
+        self.first_param: str = first_param
+        self._api_version: str = api_version
+        self.four: str = kwargs.get("four")
+
+NameTooLong = 10
+2025-03-10 17:08:47,116 — Logger_test_name_property_length.py_4243c932-913e-49f7-9379-3dd34f217048.log — DEBUG — <module>:222 — Running pylint on fixed file...
+2025-03-10 17:08:47,178 — Logger_test_name_property_length.py_4243c932-913e-49f7-9379-3dd34f217048.log — DEBUG — run_pylint:181 — PYLINT SCORE: 9.62962962962963
+2025-03-10 17:08:47,179 — Logger_test_name_property_length.py_4243c932-913e-49f7-9379-3dd34f217048.log — DEBUG — <module>:225 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-10 17:08:47,179 — Logger_test_name_property_length.py_4243c932-913e-49f7-9379-3dd34f217048.log — DEBUG — <module>:220 — Fixing file...
+2025-03-10 17:08:47,180 — Logger_test_name_property_length.py_4243c932-913e-49f7-9379-3dd34f217048.log — DEBUG — fix_file:105 — PROMPT FOR FIXING FILE: You are a helpful assistant that fixes pylint warnings. If you are not sure about a specific pylint error, you can check the pylint specific guidelines from the readme: https://github.com/Azure/azure-sdk-tools/blob/5e36502f0161bf3e2bc824ac216d4c0d244f498a/tools/pylint-extensions/azure-pylint-guidelines-checker/README.md,or the pylint documentation: https://pylint.readthedocs.io/en/stable/user_guide/checkers/features.html.Given a python file that has pylint issues, identify the issues and output ONLY the fixed code. For help, there is a comment that specifies which rules are being violated in each file.
+2025-03-10 17:08:47,181 — Logger_test_name_property_length.py_4243c932-913e-49f7-9379-3dd34f217048.log — DEBUG — fix_file:106 — MODEL: gpt-35-turbo
+2025-03-10 17:08:50,455 — Logger_test_name_property_length.py_4243c932-913e-49f7-9379-3dd34f217048.log — DEBUG — fix_file:123 — FIXED CONTENT: from typing import Any, List
+from azure.core.tracing.decorator import distributed_trace
+
+# Resolved name-too-long issue by shortening the class name
+class Client:
+    def __init__(self, credential: str, *, api_version: str = "2018", **kwargs: Any) -> None:
+        """
+        :param credential: The credential to use for authentication.
+        :type credential: str
+        :keyword api_version: The API version to use for the client.
+        :paramtype api_version: str
+        :keyword eight: The eighth parameter.
+        :paramtype eight: str
+        """
+        self.credential: str = credential
+        self.eight: str = kwargs.get("eight")
+        self._api_version: str = api_version
+
+
+class GoodClientClassName:
+    @distributed_trace
+    def function_name(self, **kwargs: Any) -> str:
+        seven = kwargs.get("seven")
+        return seven
+
+    @distributed_trace
+    def get_function(self, **kwargs: Any) -> List:
+        long_list_name = []
+        six = kwargs.get("six")
+        six = six + ""
+        return long_list_name
+
+    def _private_function(self, **kwargs) -> str:
+        this_lists_name = []
+        five = kwargs.get("five")
+        five = five + ""
+        return this_lists_name
+
+    def __init__(self, credential: str, first_param: str, *,
+                 api_version: str = "2018", **kwargs: Any) -> None:
+        """
+        :param credential: The credential to use for authentication.
+        :type credential: str
+        :param first_param: The first parameter.
+        :paramtype first_param: str
+        :keyword api_version: The API version to use for the client.
+        :paramtype api_version: str
+        :keyword four: The fourth parameter.
+        :paramtype four: str
+        """
+        self.credential: str = credential
+        self.first_param: str = first_param
+        self._api_version: str = api_version
+        self.four: str = kwargs.get("four")
+
+NameTooLong = 10
+2025-03-10 17:08:50,456 — Logger_test_name_property_length.py_4243c932-913e-49f7-9379-3dd34f217048.log — DEBUG — <module>:222 — Running pylint on fixed file...
+2025-03-10 17:08:50,516 — Logger_test_name_property_length.py_4243c932-913e-49f7-9379-3dd34f217048.log — DEBUG — run_pylint:181 — PYLINT SCORE: 9.62962962962963
+2025-03-10 17:08:50,516 — Logger_test_name_property_length.py_4243c932-913e-49f7-9379-3dd34f217048.log — DEBUG — <module>:225 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-10 17:08:50,516 — Logger_test_name_property_length.py_4243c932-913e-49f7-9379-3dd34f217048.log — DEBUG — <module>:228 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-10 17:08:50,516 — Logger_test_name_property_length.py_4243c932-913e-49f7-9379-3dd34f217048.log — DEBUG — <module>:229 — 
+
+
+
