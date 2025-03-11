@@ -41,9 +41,12 @@ import math
 from pyrit.common import initialize_pyrit, DUCK_DB
 from pyrit.prompt_target import OpenAIChatTarget
 from pyrit.models import ChatMessage
-from azure.ai.evaluation._safety_evaluation._safety_evaluation import DATA_EXT
+from azure.ai.evaluation._safety_evaluation._safety_evaluation import DATA_EXT, RESULTS_EXT
 from azure.ai.evaluation._common.utils import validate_azure_ai_project
 import random
+from azure.ai.evaluation._safety_evaluation._mock_attack_objective import MockAttackObjective
+from azure.ai.evaluation._evaluators._content_safety import ContentSafetyEvaluator
+from azure.ai.evaluation import evaluate
 
 BASELINE_IDENTIFIER = "Baseline"
 
@@ -422,19 +425,20 @@ class RedTeamAgent():
             self.logger.error(f"Error calling get_attack_objectives: {str(e)}")
             self.logger.error(f"Exception type: {type(e)}")
             self.logger.exception("Stack trace:")
-            objectives_response = {
-                "objectives": [
-                    {
-                        "risk_category": cat,
-                        "conversation_starter": f"This is a mocked attack objective for {cat}",
-                        "metadata": {
-                            "category": cat
-                        }
-                    } for cat in risk_categories
-                ]
-            }
+            objectives_response = MockAttackObjective.create_mock_response(
+                risk_categories=risk_categories,
+                count=num_objectives
+            )
             self.logger.info(f"Using mock response with {len(objectives_response['objectives'])} objectives")
         
+        # Check if the response is valid
+        if not objectives_response or (isinstance(objectives_response, dict) and not objectives_response.get("objectives")):
+            self.logger.warning("Empty or invalid response, using mock data")
+            objectives_response = MockAttackObjective.create_mock_response(
+                risk_categories=risk_categories,
+                count=num_objectives
+            )
+
         # Process the response
         filtered_objectives = []
         objectives_by_category = {cat: [] for cat in risk_categories}
@@ -442,8 +446,9 @@ class RedTeamAgent():
 
         self.logger.info(f"Processing list-format response with {len(objectives_response)} items")
         # Process list format
-        for obj in objectives_response:
-            target_harms = obj.get("metadata", {}).get("target_harms", [])
+        #TODO fix if necessary once the INT issue is fixed
+        for obj in objectives_response['objectives']:
+            target_harms = obj.get("metadata", {}).get("category", [])
             if not target_harms:
                 self.logger.info("No target_harms found, checking for Messages")
                 content = obj.get("messages", [{}])[0].get("content", "")
@@ -453,8 +458,9 @@ class RedTeamAgent():
             
             # Track which categories this objective belongs to
             matched_categories = []
-            for harm in target_harms:
-                cat = harm.get("risk-type", "").lower()
+            #TODO fix if necessary once the INT issue is fixed
+            for _, harm in target_harms.items():
+                cat = harm.lower()
                 if cat in risk_categories:
                     matched_categories.append(cat)
                     self.logger.info(f"Matched category: {cat}")
@@ -846,6 +852,55 @@ class RedTeamAgent():
         )
         
         return red_team_agent_result
+    
+    async def _evaluate(
+        self,
+        target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
+        data_path: Union[str, os.PathLike],
+        evaluation_name: Optional[str] = None,
+        data_only: bool = False,
+        output_path: Optional[Union[str, os.PathLike]] = None
+    ) -> Union[Dict[str, EvaluationResult], Dict[str, str], Dict[str, Union[str, os.PathLike]]]:
+        """Call the evaluate method if not data_only.
+        
+        :param target: The target to evaluate.
+        :type target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration]
+        :param evaluation_name: Optional name for the evaluation.
+        :type evaluation_name: Optional[str]
+        :param data_only: Whether to return only data paths instead of evaluation results.
+        :type data_only: bool
+        :param data_path: Path to the input data.
+        :type data_path: Optional[Union[str, os.PathLike]]
+        :param output_path: Path for output results.
+        :type output_path: Optional[Union[str, os.PathLike]]
+        :return: Evaluation results or data paths.
+        :rtype: Union[Dict[str, EvaluationResult], Dict[str, str], Dict[str, Union[str, os.PathLike]]]
+        """
+        self.logger.info(f"Mock evaluate called with data_path={data_path}, output_path={output_path}")
+        
+        # For data_only=True, just return paths
+        if data_only:
+            return {Path(data_path).stem.replace(DATA_EXT, ""): data_path}
+        
+        # Extract converter name from file path
+        converter_name = Path(data_path).stem.split("_")[1].replace(DATA_EXT, "")
+
+        evaluators_dict = {
+            "content_safety": ContentSafetyEvaluator(azure_ai_project=self.azure_ai_project, credential=self.credential)
+        }
+
+        if evaluation_name: output_prefix = evaluation_name + "_"
+        else: output_prefix = ""
+
+        evaluate_outputs = evaluate(
+                            data=data_path,
+                            evaluators=evaluators_dict,
+                            azure_ai_project=self.azure_ai_project,
+                            evaluation_name=evaluation_name,
+                            output_path=output_path if output_path else f"{output_prefix}{converter_name}{RESULTS_EXT}",
+                            _use_pf_client=False, #TODO: Remove this once eval logic for red team agent is moved to red team agent
+                        )
+        return {converter_name: evaluate_outputs}
 
     async def _mock_evaluate(
         self,
@@ -1040,5 +1095,44 @@ class RedTeamAgent():
 
         if output_path:
             _write_output(output_path, red_team_agent_result)
+
+        print(self._to_scorecard(red_team_agent_result))
             
         return red_team_agent_result
+
+    def _to_scorecard(self, redteam_result: RedTeamAgentResult) -> str:
+        """Format the RedTeamAgentResult into a human-readable scorecard.
+        
+        The scorecard presents a summary of attack success rates across different risk categories
+        and attack complexity levels in a tabular format.
+
+        :param redteam_result: The RedTeamAgentResult object to format
+        :type redteam_result: RedTeamAgentResult
+        :return: A formatted scorecard as a string
+        :rtype: str
+        """
+        scorecard = redteam_result["redteaming_scorecard"]
+        overall_asr = scorecard["risk_category_summary"][0]["overall_asr"] if scorecard["risk_category_summary"] else 0
+        
+        output = ["Scorecard:"]
+        output.append(f"Overall ASR: {overall_asr}%")
+        
+        separator = "-" * 108
+        output.append(separator)
+        output.append(f"{'Risk Category':<15}| {'Baseline ASR':<14} | {'Easy-Complexity Attacks ASR':<28} | {'Moderate-Complexity Attacks ASR':<30} | {'Difficult-Complexity Attacks ASR':<30}")
+        output.append(separator)
+        
+        for item in scorecard["joint_risk_attack_summary"]:
+            risk_category = item["risk_category"].replace("_", "-").capitalize()
+            baseline = f"{item['baseline_asr']}%" if 'baseline_asr' in item else "N/A"
+            easy = f"{item['easy_complexity_asr']}%" if 'easy_complexity_asr' in item else "N/A"
+            moderate = f"{item['moderate_complexity_asr']}%" if 'moderate_complexity_asr' in item else "N/A"
+            difficult = f"{item['difficult_complexity_asr']}%" if 'difficult_complexity_asr' in item else "N/A"
+            
+            output.append(f"{risk_category:<15}| {baseline:<14} | {easy:<28} | {moderate:<31} | {difficult:<30}")
+        
+        if redteam_result.get("studio_url"):
+            output.append("\nDetailed results available at:")
+            output.append(redteam_result["studio_url"] or "")
+        
+        return "\n".join(output)

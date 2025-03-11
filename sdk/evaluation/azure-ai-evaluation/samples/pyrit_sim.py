@@ -245,10 +245,7 @@ async def main():
         attack_objective_generator=attack_objective_generator,
         application_scenario=application_scenario,
         attack_strategy=[AttackStrategy.EASY, AttackStrategy.MODERATE, AttackStrategy.DIFFICULT],
-        num_rows=1 
     )
-
-    print(outputs)
     # # [END red_team_agent_attack_objectives]
 
 if __name__ == "__main__":
