@@ -32,15 +32,13 @@ from openai import AsyncStream
 from openai.types.chat import ChatCompletion, ChatCompletionChunk
 
 from azure.ai.evaluation._constants import DefaultOpenEncoding
-from azure.ai.evaluation.prompty._exceptions import (
+from azure.ai.evaluation.legacy.prompty._exceptions import (
     InvalidInputError,
     JinjaTemplateError,
     PromptyException,
 )
 
-# from azure.ai.evaluation.prompty._image import Base64Image, FileImage, ImageBase, InjectedImage, LazyUrlImage
-# from azure.ai.evaluation.prompty._image import InjectedImage
-from azure.ai.evaluation.prompty._yaml_utils import load_yaml
+from azure.ai.evaluation.legacy.prompty._yaml_utils import load_yaml
 
 
 # region: Resolving references
@@ -235,9 +233,6 @@ FILE_EXT_TO_MIME: Final[Mapping[str, str]] = {
     ".webp": "image/webp",
 }
 """Mapping of file extensions to mime types"""
-
-# DATA_IMAGE_URL_DELIM_PATTERN = re.compile(r"[\(\):;,]")
-# """Pattern used to split the image URL from the markdown syntax"""
 
 
 def render_jinja_template(template_str: str, *, trim_blocks=True, keep_trailing_newline=True, **kwargs) -> str:

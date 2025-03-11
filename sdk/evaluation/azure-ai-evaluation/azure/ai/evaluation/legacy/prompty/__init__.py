@@ -2,9 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from azure.ai.evaluation.prompty._prompty import AsyncPrompty
-from azure.ai.evaluation.prompty._connection import Connection, OpenAIConnection, AzureOpenAIConnection
-from azure.ai.evaluation.prompty._exceptions import (
+from azure.ai.evaluation.legacy.prompty._prompty import AsyncPrompty
+from azure.ai.evaluation.legacy.prompty._connection import Connection, OpenAIConnection, AzureOpenAIConnection
+from azure.ai.evaluation.legacy.prompty._exceptions import (
     PromptyException,
     MissingRequiredInputError,
     InvalidInputError,
@@ -18,8 +18,11 @@ from azure.ai.evaluation.prompty._exceptions import (
 #       - Added type annotations
 #       - Removed some unused/unneeded code
 #       - Minor obvious tweaks to improve code readability
-#       - Helper classes may have been reworked for simplicity, but the core logic remains the same
+#       - Helper classes have been reworked for simplicity, but the core logic remains largely the same
 #       - Legacy or deprecated functionality has been removed (e.g. no more support for completions API)
+#       - Reworked the way images are handled to 1) Reduce the amount of code brought over, 2) remove
+#         the need to do two passes over the template to insert images, 3) remove the completely unnecessary
+#         loading of image data from the internet when it is not actually needed
 # =========================================================================================================
 
 __all__ = [

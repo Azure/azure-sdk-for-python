@@ -11,15 +11,15 @@ from openai import AsyncAzureOpenAI, AsyncOpenAI, NotGiven
 
 from azure.ai.evaluation._exceptions import ErrorTarget
 from azure.ai.evaluation._constants import DefaultOpenEncoding
-from azure.ai.evaluation.prompty._exceptions import (
+from azure.ai.evaluation.legacy.prompty._exceptions import (
     InvalidInputError,
     PromptyException,
     MissingRequiredInputError,
     NotSupportedError,
 )
-from azure.ai.evaluation.prompty._connection import AzureOpenAIConnection, Connection, OpenAIConnection
-from azure.ai.evaluation.prompty._yaml_utils import load_yaml_string
-from azure.ai.evaluation.prompty._utils import (
+from azure.ai.evaluation.legacy.prompty._connection import AzureOpenAIConnection, Connection, OpenAIConnection
+from azure.ai.evaluation.legacy.prompty._yaml_utils import load_yaml_string
+from azure.ai.evaluation.legacy.prompty._utils import (
     dataclass_from_dict,
     PromptyModelConfiguration,
     OpenAIChatResponseType,
@@ -67,8 +67,8 @@ class AsyncPrompty:
 
     .. code-block:: python
 
-        from promptflow.core import Prompty
-        prompty = Prompty.load(source="path/to/prompty.prompty")
+        from azure.ai.evaluation.legacy.prompty import AsyncPrompty
+        prompty = Prompty(path="path/to/prompty.prompty")
         result = prompty(input_a=1, input_b=2)
 
         # Override model config with dict
@@ -89,7 +89,7 @@ class AsyncPrompty:
         result = prompty(input_a=1, input_b=2)
 
         # Override model config with configuration
-        from promptflow.core import AzureOpenAIModelConfiguration
+        from azure.ai.evaluation.legacy.prompty._connection import AzureOpenAIConnection
         model_config = {
             "api": "chat",
             "configuration": AzureOpenAIModelConfiguration(
@@ -102,11 +102,11 @@ class AsyncPrompty:
                 "max_token": 512
             }
         }
-        prompty = Prompty.load(source="path/to/prompty.prompty", model=model_config)
+        prompty = Prompty(path="path/to/prompty.prompty", model=model_config)
         result = prompty(input_a=1, input_b=2)
 
         # Override model config with created connection
-        from promptflow.core._model_configuration import AzureOpenAIModelConfiguration
+        from azure.ai.evaluation.legacy.prompty._connection import AzureOpenAIConnection
         model_config = {
             "api": "chat",
             "configuration": AzureOpenAIModelConfiguration(
@@ -117,7 +117,7 @@ class AsyncPrompty:
                 "max_token": 512
             }
         }
-        prompty = Prompty.load(source="path/to/prompty.prompty", model=model_config)
+        prompty = Prompty(path="path/to/prompty.prompty", model=model_config)
         result = prompty(input_a=1, input_b=2)
     """
 
