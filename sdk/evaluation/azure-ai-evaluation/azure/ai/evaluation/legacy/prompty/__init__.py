@@ -16,13 +16,11 @@ from azure.ai.evaluation.legacy.prompty._exceptions import (
 # NOTE: All of the code here is largely copy of code from Promptflow. Generally speaking, the following
 #       changes were made:
 #       - Added type annotations
-#       - Removed some unused/unneeded code
-#       - Minor obvious tweaks to improve code readability
-#       - Helper classes have been reworked for simplicity, but the core logic remains largely the same
 #       - Legacy or deprecated functionality has been removed (e.g. no more support for completions API)
 #       - Reworked the way images are handled to 1) Reduce the amount of code brought over, 2) remove
 #         the need to do two passes over the template to insert images, 3) remove the completely unnecessary
 #         loading of image data from the internet when it is not actually needed
+#       - Minor obvious tweaks to improve code readability, and removal of unused code paths
 # =========================================================================================================
 
 __all__ = [

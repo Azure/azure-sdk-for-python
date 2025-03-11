@@ -170,7 +170,7 @@ def add_sanitizers(
             replacement='"root_run_id": "azure_ai_evaluation_evaluators_common_base_eval_asyncevaluatorbase_SANITIZED"',
         )
 
-    def evalutation_run_sanitizer() -> None:
+    def evaluatation_run_sanitizer() -> None:
         # By default, the test proxy will sanitize all "key" values in a JSON body to "Sanitized". Unfortunately,
         # when retrieving the datastore secrets, the key that comes back needs to be a valid Base64 encoded string.
         # So we disable this default rule, and add a replacement rule to santize to MA== (which is "0")
@@ -207,7 +207,7 @@ def add_sanitizers(
     azure_ai_generative_sanitizer()
     live_connection_file_values()
     promptflow_root_run_id_sanitizer()
-    evalutation_run_sanitizer()
+    evaluatation_run_sanitizer()
 
 
 @pytest.fixture
