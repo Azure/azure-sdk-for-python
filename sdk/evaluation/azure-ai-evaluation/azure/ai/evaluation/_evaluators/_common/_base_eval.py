@@ -422,7 +422,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                             else:
                                 result[result_key] = EVALUATION_PASS_FAIL_MAPPING[False]
             except Exception as e:
-                import pdb; pdb.set_trace()
+                pass
             per_turn_results.append(result)
         # Return results as-is if only one result was produced.
 
