@@ -23,6 +23,10 @@ async def main():
         "project_name": os.environ.get("AZURE_PROJECT_NAME"),
     }
 
+    # Mock function target to simulate an AI application
+    def call_to_ai_application(query: str) -> str:
+        return "mock response"
+
 
     # [START red_team_agent_targets]
     # Model config target 
@@ -40,10 +44,6 @@ async def main():
         target=model_config, # type: ignore
     )
     print(outputs)
-
-    # Mock function target to simulate an AI application
-    def call_to_ai_application(query: str) -> str:
-        return "mock response"
     
     red_team_agent = RedTeamAgent(
         azure_ai_project=azure_ai_project,
@@ -57,12 +57,12 @@ async def main():
     
     # Mock function callback target to simulate an AI application wrapped with the openAI chat protocol
     def callback_target(
-        messages: List[Dict],
+        messages: Dict,
         stream: bool = False,
         session_state: Optional[str] = None,
         context: Optional[Dict] = None
     ) -> dict:
-        messages_list = [{"role": chat_message.role,"content": chat_message.content,} for chat_message in messages] #type: ignore
+        messages_list = [{"role": chat_message.role,"content": chat_message.content,} for chat_message in messages] 
         latest_message = messages_list[-1]
         application_input = latest_message["content"]
         try:
@@ -76,7 +76,7 @@ async def main():
             "role": "assistant",
             "context":{},
         }
-        messages_list.append(formatted_response) # type: ignore
+        messages_list.append(formatted_response)
         return {"messages": messages_list, "stream": stream, "session_state": session_state, "context": {}}
     
     red_team_agent = RedTeamAgent(
@@ -85,7 +85,7 @@ async def main():
     )
 
     outputs = await red_team_agent.attack(
-        target=callback_target, # type: ignore
+        target=callback_target, 
     )
     print(outputs)
 
@@ -120,7 +120,7 @@ async def main():
     )
     print(outputs)
 
-    # Low budget
+    # Easy complexity
     red_team_agent = RedTeamAgent(
         azure_ai_project=azure_ai_project,
         credential=DefaultAzureCredential(),
@@ -128,11 +128,11 @@ async def main():
 
     outputs = await red_team_agent.attack(
         target=call_to_ai_application, # type: ignore
-        attack_strategy=[AttackStrategy.LOW]
+        attack_strategy=[AttackStrategy.EASY]
     )
     print(outputs)
 
-    # Medium budget
+    # Moderate complexity
     red_team_agent = RedTeamAgent(
         azure_ai_project=azure_ai_project,
         credential=DefaultAzureCredential(),
@@ -140,11 +140,11 @@ async def main():
     
     outputs = await red_team_agent.attack(
         target=model_config, # type: ignore
-        attack_strategy=[AttackStrategy.MEDIUM]
+        attack_strategy=[AttackStrategy.MODERATE]
     )
     print(outputs)
 
-    # High budget
+    # Difficult complexity
     red_team_agent = RedTeamAgent(
         azure_ai_project=azure_ai_project,
         credential=DefaultAzureCredential(),
@@ -152,7 +152,7 @@ async def main():
 
     outputs = await red_team_agent.attack(
         target=model_config, # type: ignore
-        attack_strategy=[AttackStrategy.HIGH]
+        attack_strategy=[AttackStrategy.DIFFICULT]
     )
 
     # Compose attack strategies
@@ -164,7 +164,7 @@ async def main():
     outputs = await red_team_agent.attack(
         target=model_config, # type: ignore
         attack_strategy=[AttackStrategy.Compose([AttackStrategy.Flip, AttackStrategy.Base64]), 
-            AttackStrategy.LOW,
+            AttackStrategy.EASY,
             AttackStrategy.Morse],
     )
     print(outputs)
@@ -177,11 +177,11 @@ async def main():
 
     outputs = await red_team_agent.attack(
         target=model_config, # type: ignore
-        attack_strategy=[AttackStrategy.HIGH, AttackStrategy.Compose([AttackStrategy.Math, AttackStrategy.Tense])],
+        attack_strategy=[AttackStrategy.DIFFICULT, AttackStrategy.Compose([AttackStrategy.Math, AttackStrategy.Tense])],
     )
     print(outputs)
 
-    # Low, medium, and high
+    # Easy, moderate, and difficult
     red_team_agent = RedTeamAgent(
         azure_ai_project=azure_ai_project,
         credential=DefaultAzureCredential(),
@@ -189,7 +189,7 @@ async def main():
 
     outputs = await red_team_agent.attack(
         target=call_to_ai_application, # type: ignore
-        attack_strategy=[AttackStrategy.LOW, AttackStrategy.MEDIUM, AttackStrategy.HIGH]
+        attack_strategy=[AttackStrategy.EASY, AttackStrategy.MODERATE, AttackStrategy.DIFFICULT]
     )
     print(outputs)
 
@@ -198,7 +198,6 @@ async def main():
     # [START red_team_agent_attack_objectives]
     attack_objective_generator = AttackObjectiveGenerator(
         risk_categories=[
-            RiskCategory.HateUnfairness, 
             RiskCategory.Violence,
         ]
     )
@@ -213,6 +212,7 @@ async def main():
         target=call_to_ai_application,
         attack_objective_generator=attack_objective_generator,
         application_scenario=application_scenario,
+        attack_strategy=[AttackStrategy.EASY, AttackStrategy.MODERATE, AttackStrategy.DIFFICULT],
         num_rows=1 
     )
 

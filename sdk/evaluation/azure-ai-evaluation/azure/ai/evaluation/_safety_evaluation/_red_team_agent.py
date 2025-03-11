@@ -10,9 +10,11 @@ import logging
 from azure.ai.evaluation._evaluate._eval_run import EvalRun
 from azure.ai.evaluation._evaluate._utils import _trace_destination_from_project_scope
 from azure.ai.evaluation._model_configurations import AzureAIProject
-from azure.ai.evaluation._constants import EvaluationRunProperties
+from azure.ai.evaluation._constants import EvaluationRunProperties, DefaultOpenEncoding
 from azure.ai.evaluation._evaluate._utils import _get_ai_studio_url
+from azure.ai.evaluation._evaluate._utils import extract_workspace_triad_from_trace_provider
 from azure.ai.evaluation._version import VERSION
+from azure.ai.evaluation._azure._clients import LiteMLClient
 from azure.ai.evaluation._evaluate._utils import _write_output
 import tempfile
 from datetime import datetime
@@ -41,6 +43,7 @@ from pyrit.prompt_target import OpenAIChatTarget
 from pyrit.models import ChatMessage
 from azure.ai.evaluation._safety_evaluation._safety_evaluation import DATA_EXT
 from azure.ai.evaluation._common.utils import validate_azure_ai_project
+import random
 
 BASELINE_IDENTIFIER = "Baseline"
 
@@ -248,12 +251,8 @@ class RedTeamAgent():
             self.logger.info("Could not determine trace destination from project scope")
             return None
         
-        # Extract workspace details from trace destination
-        from azure.ai.evaluation._evaluate._utils import extract_workspace_triad_from_trace_provider
         ws_triad = extract_workspace_triad_from_trace_provider(trace_destination)
         
-        # Create management client
-        from azure.ai.evaluation._azure._clients import LiteMLClient
         management_client = LiteMLClient(
             subscription_id=ws_triad.subscription_id,
             resource_group=ws_triad.resource_group_name,
@@ -274,31 +273,30 @@ class RedTeamAgent():
             workspace_name=ws_triad.workspace_name,
             management_client=management_client,                                     
         ) as ev_run:
+            artifact_name = "instance_results.json"
+
+            with tempfile.TemporaryDirectory() as tmpdir:
+                artifact_file = Path(tmpdir) / artifact_name
+                with open(artifact_file, "w", encoding=DefaultOpenEncoding.WRITE) as f:
+                    json.dump(redteam_result, f)
+                ev_run.log_artifact(tmpdir, artifact_name)
+
             ev_run.write_properties_to_run_history({
                 EvaluationRunProperties.RUN_TYPE: "eval_run",
                 "redteaming": "asr", # Red team agent specific run properties to help UI identify this as a redteaming run
                 EvaluationRunProperties.EVALUATION_SDK: f"azure-ai-evaluation:{VERSION}",
+                "_azureml.evaluate_artifacts": json.dumps([{"path": artifact_name, "type": "table"}]),
             })
 
             scorecard = redteam_result["redteaming_scorecard"]
             
-            if scorecard["risk_category_summary"]:
-                risk_summary = scorecard["risk_category_summary"][0]
-                for key, value in risk_summary.items():
-                    ev_run.log_metric(key, value)
-            
-            if scorecard["attack_technique_summary"]:
-                technique_summary = scorecard["attack_technique_summary"][0]
-                for key, value in technique_summary.items():
-                    ev_run.log_metric(f"attack_technique.{key}", value)
-            
-            with tempfile.TemporaryDirectory() as tmpdir:
-                artifact_file = Path(tmpdir) / "redteam_results.json"
-                with open(artifact_file, "w", encoding="utf-8") as f:
-                    json.dump(redteam_result, f)
-                
-                ev_run.log_artifact(tmpdir, "redteam_results.json")
-            
+            if scorecard["joint_risk_attack_summary"]:
+                for risk_category_summary in scorecard["joint_risk_attack_summary"]:
+                    risk_category = risk_category_summary.get("risk_category").lower()
+                    for key, value in risk_category_summary.items():
+                        if key != "risk_category":
+                            ev_run.log_metric(f"{risk_category}_{key}", value)
+
             return _get_ai_studio_url(trace_destination=trace_destination, evaluation_id=ev_run.info.run_id)
 
 
@@ -780,6 +778,7 @@ class RedTeamAgent():
             complexity_level = get_complexity_for_converter.get(converter_name, "easy")
             complexity_levels.append(complexity_level)
 
+            #TODO: use actual asr and not defect rate
             hate_unfairness_asr_list.append(eval_result["metrics"].get("content_safety.hate_unfairness_defect_rate", math.nan))
             violence_asr_list.append(eval_result["metrics"].get("content_safety.violence_defect_rate", math.nan))
             sexual_asr_list.append(eval_result["metrics"].get("content_safety.sexual_defect_rate", math.nan))
@@ -788,7 +787,7 @@ class RedTeamAgent():
             rows = eval_result["rows"]
             for r in rows:
                 simulated_conversations.append({
-                    "attack_success": False,  # Default to false until we have logic to determine success
+                    "attack_success": False,  # TODO: Default to false until we have logic to determine success
                     "attack_technique": converter_name.replace("Converter", "").replace("Prompt", ""),
                     "attack_complexity": complexity_level,
                     "conversation": r["inputs.conversation"]["messages"],
@@ -960,10 +959,10 @@ class RedTeamAgent():
         # Create mock evaluation result
         mock_result = {
             "metrics": {
-                "content_safety.hate_unfairness_defect_rate": 0.25,
-                "content_safety.violence_defect_rate": 0.15,
-                "content_safety.sexual_defect_rate": 0.10,
-                "content_safety.self_harm_defect_rate": 0.05
+                "content_safety.hate_unfairness_defect_rate": random.uniform(0,1),
+                "content_safety.violence_defect_rate": random.uniform(0,1),
+                "content_safety.sexual_defect_rate": random.uniform(0,1),
+                "content_safety.self_harm_defect_rate": random.uniform(0,1)
             },
             "rows": [
                 {
@@ -973,13 +972,13 @@ class RedTeamAgent():
                             {"role": "assistant", "content": "Mock response"}
                         ]
                     },
-                    "outputs.content_safety.violence": "low",
+                    "outputs.content_safety.violence": random.choice(["Very low", "Low", "Medium", "High"]),
                     "outputs.content_safety.violence_reason": "Mock reason",
-                    "outputs.content_safety.sexual": "none",
+                    "outputs.content_safety.sexual": random.choice(["Very low", "Low", "Medium", "High"]),
                     "outputs.content_safety.sexual_reason": "Mock reason",
-                    "outputs.content_safety.self_harm": "none",
+                    "outputs.content_safety.self_harm": random.choice(["Very low", "Low", "Medium", "High"]),
                     "outputs.content_safety.self_harm_reason": "Mock reason",
-                    "outputs.content_safety.hate_unfairness": "low",
+                    "outputs.content_safety.hate_unfairness": random.choice(["Very low", "Low", "Medium", "High"]),
                     "outputs.content_safety.hate_unfairness_reason": "Mock reason"
                 }
             ]
