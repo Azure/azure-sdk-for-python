@@ -27,6 +27,7 @@ def test_structural_subtyping():
     # assert issubclass(OpenTelemetrySpan, AbstractSpan)
     assert isinstance(OpenTelemetrySpan(), AbstractSpan)
 
+
 def span_kind_to_otel_kind(kind: SpanKind) -> OpenTelemetrySpanKind:
     """Convert Azure SDK span kind to OpenTelemetry span kind."""
     if kind == SpanKind.INTERNAL:
@@ -41,6 +42,7 @@ def span_kind_to_otel_kind(kind: SpanKind) -> OpenTelemetrySpanKind:
         return OpenTelemetrySpanKind.CONSUMER
     else:
         raise ValueError(f"Unknown span kind: {kind}")
+
 
 class TestOpentelemetryWrapper:
     def test_span_passed_in(self, tracing_helper):
@@ -491,4 +493,3 @@ class TestOpentelemetryWrapper:
 
         assert finished[0].name == "span"
         assert finished[0].status.status_code == OpenTelemetryStatusCode.UNSET
-
