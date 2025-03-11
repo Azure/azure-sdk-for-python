@@ -1,0 +1,63 @@
+2025-03-10 16:50:50,919 — Logger_test_async_client_naming.py_2717039c-20ef-4681-8891-bfa6c47e5e7f.log — DEBUG — <module>:205 — test_async_client_naming.py
+2025-03-10 16:50:50,919 — Logger_test_async_client_naming.py_2717039c-20ef-4681-8891-bfa6c47e5e7f.log — DEBUG — <module>:211 — Running pylint on original file...
+2025-03-10 16:50:50,962 — Logger_test_async_client_naming.py_2717039c-20ef-4681-8891-bfa6c47e5e7f.log — DEBUG — run_pylint:181 — PYLINT SCORE: 9.375
+2025-03-10 16:50:50,962 — Logger_test_async_client_naming.py_2717039c-20ef-4681-8891-bfa6c47e5e7f.log — DEBUG — <module>:213 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-10 16:50:50,962 — Logger_test_async_client_naming.py_2717039c-20ef-4681-8891-bfa6c47e5e7f.log — DEBUG — <module>:220 — Fixing file...
+2025-03-10 16:50:50,962 — Logger_test_async_client_naming.py_2717039c-20ef-4681-8891-bfa6c47e5e7f.log — DEBUG — fix_file:105 — PROMPT FOR FIXING FILE: You are a helpful assistant that fixes pylint warnings. If you are not sure about a specific pylint error, you can check the pylint specific guidelines from the readme: https://github.com/Azure/azure-sdk-tools/blob/5e36502f0161bf3e2bc824ac216d4c0d244f498a/tools/pylint-extensions/azure-pylint-guidelines-checker/README.md,or the pylint documentation: https://pylint.readthedocs.io/en/stable/user_guide/checkers/features.html.Given a python file that has pylint issues, identify the issues and output ONLY the fixed code. For help, there is a comment that specifies which rules are being violated in each file.
+2025-03-10 16:50:50,963 — Logger_test_async_client_naming.py_2717039c-20ef-4681-8891-bfa6c47e5e7f.log — DEBUG — fix_file:106 — MODEL: gpt-4o
+2025-03-10 16:50:55,011 — Logger_test_async_client_naming.py_2717039c-20ef-4681-8891-bfa6c47e5e7f.log — DEBUG — fix_file:123 — FIXED CONTENT: # --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+from typing import Any
+
+# This code violates async-client-bad-name
+class SomeClientAsync():
+    def __init__(self, credential: str, *, api_version: str ="2018", **kwargs: Any) -> None:
+        """
+        :param credential: The credential to use for authentication.
+        :type credential: str
+        :keyword api_version: The API version to use for the client.
+        :paramtype api_version: str
+        :keyword eight: The eighth parameter.
+        :paramtype eight: str
+        """
+        self.credential: str = credential
+        self.eight: str = kwargs.get("eight")
+        self._api_version: str = api_version
+
+class _SomeClientAsync():
+    def __init__(self, credential: str, *, api_version: str ="2018", **kwargs: Any) -> None:
+        """
+        :param credential: The credential to use for authentication.
+        :type credential: str
+        :keyword api_version: The API version to use for the client.
+        :paramtype api_version: str
+        :keyword eight: The eighth parameter.
+        :paramtype eight: str
+        """
+        self.credential: str = credential
+        self.eight: str = kwargs.get("eight")
+        self._api_version: str = api_version
+
+class SomeClientBaseAsync():
+    def __init__(self, credential: str, *, api_version: str ="2018", **kwargs: Any) -> None:
+        """
+        :param credential: The credential to use for authentication.
+        :type credential: str
+        :keyword api_version: The API version to use for the client.
+        :paramtype api_version: str
+        :keyword eight: The eighth parameter.
+        :paramtype eight: str
+        """
+        self.credential: str = credential
+        self.eight: str = kwargs.get("eight")
+        self._api_version: str = api_version
+2025-03-10 16:50:55,011 — Logger_test_async_client_naming.py_2717039c-20ef-4681-8891-bfa6c47e5e7f.log — DEBUG — <module>:222 — Running pylint on fixed file...
+2025-03-10 16:50:55,054 — Logger_test_async_client_naming.py_2717039c-20ef-4681-8891-bfa6c47e5e7f.log — DEBUG — run_pylint:181 — PYLINT SCORE: 10.0
+2025-03-10 16:50:55,054 — Logger_test_async_client_naming.py_2717039c-20ef-4681-8891-bfa6c47e5e7f.log — DEBUG — <module>:225 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-10 16:50:55,054 — Logger_test_async_client_naming.py_2717039c-20ef-4681-8891-bfa6c47e5e7f.log — DEBUG — <module>:228 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-10 16:50:55,054 — Logger_test_async_client_naming.py_2717039c-20ef-4681-8891-bfa6c47e5e7f.log — DEBUG — <module>:229 — 
+
+
+

@@ -1,0 +1,53 @@
+2025-03-10 16:58:28,334 — Logger_test_do_not_hardcode_conn_verify.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — <module>:205 — test_do_not_hardcode_conn_verify.py
+2025-03-10 16:58:28,334 — Logger_test_do_not_hardcode_conn_verify.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — <module>:211 — Running pylint on original file...
+2025-03-10 16:58:28,589 — Logger_test_do_not_hardcode_conn_verify.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — run_pylint:181 — PYLINT SCORE: 8.75
+2025-03-10 16:58:28,589 — Logger_test_do_not_hardcode_conn_verify.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — <module>:213 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-10 16:58:28,589 — Logger_test_do_not_hardcode_conn_verify.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — <module>:220 — Fixing file...
+2025-03-10 16:58:28,589 — Logger_test_do_not_hardcode_conn_verify.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — fix_file:105 — PROMPT FOR FIXING FILE: You are a helpful assistant that fixes pylint warnings. If you are not sure about a specific pylint error, you can check the pylint specific guidelines from the readme: https://github.com/Azure/azure-sdk-tools/blob/5e36502f0161bf3e2bc824ac216d4c0d244f498a/tools/pylint-extensions/azure-pylint-guidelines-checker/README.md,or the pylint documentation: https://pylint.readthedocs.io/en/stable/user_guide/checkers/features.html.Given a python file that has pylint issues, identify the issues and output ONLY the fixed code. For help, there is a comment that specifies which rules are being violated in each file.
+2025-03-10 16:58:28,590 — Logger_test_do_not_hardcode_conn_verify.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — fix_file:106 — MODEL: gpt-40-mini
+2025-03-10 16:58:31,728 — Logger_test_do_not_hardcode_conn_verify.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — fix_file:123 — FIXED CONTENT: # Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+# This code violates do-not-harcode-connection-verify
+
+
+class FunctionKeywordArgumentsErrors:
+    def create(self, x, connection_verify=None):
+        if connection_verify is not None and connection_verify:
+            return x + 1
+        return x
+
+    def run(self):
+        client = self.create(x=0, connection_verify=False)
+        return client
+2025-03-10 16:58:31,729 — Logger_test_do_not_hardcode_conn_verify.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — <module>:222 — Running pylint on fixed file...
+2025-03-10 16:58:31,783 — Logger_test_do_not_hardcode_conn_verify.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — run_pylint:181 — PYLINT SCORE: 8.75
+2025-03-10 16:58:31,783 — Logger_test_do_not_hardcode_conn_verify.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — <module>:225 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-10 16:58:31,783 — Logger_test_do_not_hardcode_conn_verify.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — <module>:220 — Fixing file...
+2025-03-10 16:58:31,783 — Logger_test_do_not_hardcode_conn_verify.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — fix_file:105 — PROMPT FOR FIXING FILE: You are a helpful assistant that fixes pylint warnings. If you are not sure about a specific pylint error, you can check the pylint specific guidelines from the readme: https://github.com/Azure/azure-sdk-tools/blob/5e36502f0161bf3e2bc824ac216d4c0d244f498a/tools/pylint-extensions/azure-pylint-guidelines-checker/README.md,or the pylint documentation: https://pylint.readthedocs.io/en/stable/user_guide/checkers/features.html.Given a python file that has pylint issues, identify the issues and output ONLY the fixed code. For help, there is a comment that specifies which rules are being violated in each file.
+2025-03-10 16:58:31,783 — Logger_test_do_not_hardcode_conn_verify.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — fix_file:106 — MODEL: gpt-40-mini
+2025-03-10 16:58:33,198 — Logger_test_do_not_hardcode_conn_verify.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — fix_file:123 — FIXED CONTENT: # Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+# This code violates do-not-harcode-connection-verify
+
+
+class FunctionKeywordArgumentsErrors:
+    def create(self, x, connection_verify=None):
+        if connection_verify is not None and connection_verify:
+            return x + 1
+        return x
+
+    def run(self):
+        # Use a variable for connection_verify to avoid hardcoding
+        connection_verify_value = False
+        client = self.create(x=0, connection_verify=connection_verify_value)
+        return client
+2025-03-10 16:58:33,199 — Logger_test_do_not_hardcode_conn_verify.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — <module>:222 — Running pylint on fixed file...
+2025-03-10 16:58:33,231 — Logger_test_do_not_hardcode_conn_verify.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — run_pylint:181 — PYLINT SCORE: 10.0
+2025-03-10 16:58:33,231 — Logger_test_do_not_hardcode_conn_verify.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — <module>:225 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-10 16:58:33,231 — Logger_test_do_not_hardcode_conn_verify.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — <module>:228 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-10 16:58:33,231 — Logger_test_do_not_hardcode_conn_verify.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — <module>:229 — 
+
+
+
