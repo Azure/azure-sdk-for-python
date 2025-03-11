@@ -46,6 +46,15 @@ def data_convo_file():
     data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
     return os.path.join(data_path, "evaluate_test_data_conversation.jsonl")
 
+@pytest.fixture
+def code_based_data_file():
+    data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
+    return os.path.join(data_path, "evaluate_test_data_with_code.jsonl")
+
+@pytest.fixture
+def chat_based_data_file():
+    data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
+    return os.path.join(data_path, "evaluate_test_data_with_chat.jsonl")
 
 # I didn't feel like using gross-looking package manipulation commands,
 # or importing the lazy_fixture 3p decorator. So we have this monster instead,
@@ -103,8 +112,7 @@ class TestMassEvaluate:
         # run the evaluation
         result = evaluate(
             data=data_file,
-            evaluators=evaluators,
-            azure_ai_project=project_scope,
+            evaluators=evaluators
         )
 
         row_result_df = pd.DataFrame(result["rows"])
@@ -411,3 +419,75 @@ class TestMassEvaluate:
         assert 0 <= metrics.get("protected_material.logos_and_brands_defect_rate") <= 1
         assert 0 <= metrics.get("protected_material.artwork_defect_rate") <= 1
         assert 0 <= metrics.get("sexual.sexual_defect_rate") <= 1
+
+    def test_evaluate_code_based_inputs(self, azure_cred, project_scope, code_based_data_file):
+        evaluators = {
+            "code_vulnerability": CodeVulnerabilityEvaluator(azure_cred, project_scope),
+        }
+
+        # run the evaluation
+        result = evaluate(
+            data=code_based_data_file,
+            evaluators=evaluators,
+            azure_ai_project=project_scope
+        )
+
+        row_result_df = pd.DataFrame(result["rows"])
+        metrics = result["metrics"]
+        assert len(row_result_df.keys()) == 7
+        assert len(row_result_df["inputs.query"]) == 2
+        assert len(row_result_df["inputs.response"]) == 2
+        assert len(row_result_df["outputs.code_vulnerability.code_vulnerability_label"]) == 2
+        assert len(row_result_df["outputs.code_vulnerability.code_vulnerability_reason"]) == 2
+        assert len(row_result_df["outputs.code_vulnerability.code_vulnerability_details"]) == 2
+        assert len(row_result_df["line_number"]) == 2
+        
+        assert len(metrics.keys()) == 20
+        assert metrics["code_vulnerability.code_vulnerability_defect_rate"] >= 0
+        assert metrics["code_vulnerability.code_vulnerability_details.code_injection_defect_rate"] >= 0
+        assert metrics["code_vulnerability.code_vulnerability_details.full_ssrf_defect_rate"] >= 0
+        assert metrics["code_vulnerability.code_vulnerability_details.path_injection_defect_rate"] >= 0
+        assert metrics["code_vulnerability.code_vulnerability_details.hardcoded_credentials_defect_rate"] >= 0
+        assert metrics["code_vulnerability.code_vulnerability_details.stack_trace_exposure_defect_rate"] >= 0
+        assert metrics["code_vulnerability.code_vulnerability_details.incomplete_url_substring_sanitization_defect_rate"] >= 0
+        assert metrics["code_vulnerability.code_vulnerability_details.flask_debug_defect_rate"] >= 0
+        assert metrics["code_vulnerability.code_vulnerability_details.potentially_weak_cryptographic_algorithm_defect_rate"] >= 0
+        assert metrics["code_vulnerability.code_vulnerability_details.clear_text_logging_sensitive_data_defect_rate"] >= 0
+        assert metrics["code_vulnerability.code_vulnerability_details.incomplete_hostname_regexp_defect_rate"] >= 0
+        assert metrics["code_vulnerability.code_vulnerability_details.sql_injection_defect_rate"] >= 0
+        assert metrics["code_vulnerability.code_vulnerability_details.insecure_randomness_defect_rate"] >= 0
+        assert metrics["code_vulnerability.code_vulnerability_details.bind_socket_all_network_interfaces_defect_rate"] >= 0
+        assert metrics["code_vulnerability.code_vulnerability_details.client_side_unvalidated_url_redirection_defect_rate"] >= 0
+        assert metrics["code_vulnerability.code_vulnerability_details.likely_bugs_defect_rate"] >= 0
+        assert metrics["code_vulnerability.code_vulnerability_details.server_side_unvalidated_url_redirection_defect_rate"] >= 0
+        assert metrics["code_vulnerability.code_vulnerability_details.clear_text_storage_sensitive_data_defect_rate"] >= 0
+        assert metrics["code_vulnerability.code_vulnerability_details.tarslip_defect_rate"] >= 0
+        assert metrics["code_vulnerability.code_vulnerability_details.reflected_xss_defect_rate"] >= 0
+        
+    def test_evaluate_chat_inputs(self, azure_cred, project_scope, chat_based_data_file):
+        evaluators = {
+            "inference_sensitive_attributes": ISAEvaluator(azure_cred, project_scope),
+        }
+
+        # run the evaluation
+        result = evaluate(
+            data=chat_based_data_file,
+            evaluators=evaluators,
+        )
+
+        row_result_df = pd.DataFrame(result["rows"])
+        metrics = result["metrics"]
+        assert len(row_result_df.keys()) == 7
+        assert len(row_result_df["inputs.query"]) == 2
+        assert len(row_result_df["inputs.response"]) == 2
+        assert len(row_result_df["inputs.context"]) == 2
+        assert len(row_result_df["outputs.inference_sensitive_attributes.inference_sensitive_attributes_label"]) == 2
+        assert len(row_result_df["outputs.inference_sensitive_attributes.inference_sensitive_attributes_reason"]) == 2
+        assert len(row_result_df["outputs.inference_sensitive_attributes.inference_sensitive_attributes_details"]) == 2
+        assert len(row_result_df["line_number"]) == 2
+
+        assert len(metrics.keys()) == 4
+        assert metrics["inference_sensitive_attributes.inference_sensitive_attributes_defect_rate"] >= 0
+        assert metrics["inference_sensitive_attributes.inference_sensitive_attributes_details.emotional_state_defect_rate"] >= 0
+        assert metrics["inference_sensitive_attributes.inference_sensitive_attributes_details.protected_class_defect_rate"] >= 0
+        assert metrics["inference_sensitive_attributes.inference_sensitive_attributes_details.groundedness_defect_rate"] >= 0
