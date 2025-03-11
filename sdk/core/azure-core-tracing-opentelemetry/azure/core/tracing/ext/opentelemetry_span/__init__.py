@@ -63,6 +63,12 @@ class _SuppressionContextManager(ContextManager):
                 # Suppress INTERNAL spans within this context.
                 ctx = context.set_value(_SUPPRESSED_SPAN_FLAG, True, ctx)
 
+            if self._span.kind == SpanKind.CLIENT:
+                # Since core already instruments HTTP calls, we need to suppress any automatic HTTP instrumentation
+                # provided by other libraries to prevent duplicate spans. This has no effect if no automatic HTTP
+                # instrumentation libraries are being used.
+                ctx = context.set_value(_SUPPRESS_HTTP_INSTRUMENTATION_KEY, True, ctx)
+
             # Since the span is not suppressed, let's keep a reference to it in the context so that children spans
             # always have access to the last non-suppressed parent span.
             ctx = context.set_value(_LAST_UNSUPPRESSED_SPAN, self._span, ctx)
@@ -101,7 +107,6 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         links: Optional[List["CoreLink"]] = None,
         **kwargs: Any,
     ) -> None:
-        self._context: Optional[Context] = None
         self._current_ctxt_manager: Optional[_SuppressionContextManager] = None
 
         # TODO: Once we have additional supported versions, we should add a way to specify the version.
@@ -142,12 +147,6 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
             # Nested internal calls should be suppressed per the Azure SDK guidelines.
             self._span_instance = NonRecordingSpan(context=self.get_current_span().get_span_context())
             return
-
-        if otel_kind == OpenTelemetrySpanKind.CLIENT:
-            # Since core already instruments HTTP calls, we need to suppress any automatic HTTP instrumentation
-            # provided by other libraries to prevent duplicate spans. This has no effect if no automatic HTTP
-            # instrumentation libraries are being used.
-            self._context = context.set_value(_SUPPRESS_HTTP_INSTRUMENTATION_KEY, True)
 
         current_tracer = trace.get_tracer(
             __name__,
