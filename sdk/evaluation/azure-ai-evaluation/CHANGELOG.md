@@ -3,6 +3,7 @@
 ## 1.4.0 (Unreleased)
 
 ### Features Added
+- New Response Completeness Agentic Evaluator `CompletenessEvaluator` Added.
 
 ### Breaking Changes
 
