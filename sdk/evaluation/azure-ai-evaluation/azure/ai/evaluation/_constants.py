@@ -94,6 +94,6 @@ AZURE_OPENAI_TYPE: Literal["azure_openai"] = "azure_openai"
 OPENAI_TYPE: Literal["openai"] = "openai"
 
 EVALUATION_PASS_FAIL_MAPPING = {
-    True: "Pass",
-    False: "Fail",
+    True: "pass",
+    False: "fail",
 }
