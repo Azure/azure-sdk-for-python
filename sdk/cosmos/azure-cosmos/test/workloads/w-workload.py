@@ -2,7 +2,8 @@ import os
 import random
 import sys
 
-from workload_configs import PREFERRED_LOCATIONS, COSMOS_URI, COSMOS_KEY
+from azure.cosmos import documents
+from workload_configs import PREFERRED_LOCATIONS, COSMOS_URI, COSMOS_KEY, USE_MULTIPLE_WRITABLE_LOCATIONS
 
 sys.path.append(r"./")
 
@@ -28,10 +29,12 @@ async def upsert_item_concurrently(container, num_upserts):
 
 
 async def run_workload(client_id):
+    connectionPolicy = documents.ConnectionPolicy()
+    connectionPolicy.UseMultipleWriteLocations = USE_MULTIPLE_WRITABLE_LOCATIONS
     async with AsyncClient(COSMOS_URI, COSMOS_KEY,
                            enable_diagnostics_logging=True, logger=logger,
                            user_agent=str(client_id) + "-" + datetime.now().strftime(
-                               "%Y%m%d-%H%M%S"), preferred_locations=PREFERRED_LOCATIONS) as client:
+                               "%Y%m%d-%H%M%S"), preferred_locations=PREFERRED_LOCATIONS, connection_policy=connectionPolicy) as client:
         db = client.get_database_client("SimonDB")
         cont = db.get_container_client("SimonContainer")
         time.sleep(1)

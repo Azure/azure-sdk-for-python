@@ -4,6 +4,8 @@ import sys
 
 import aiohttp
 
+from azure.cosmos import documents
+from workload_configs import USE_MULTIPLE_WRITABLE_LOCATIONS
 from workload_configs import COSMOS_URI, COSMOS_KEY, PREFERRED_LOCATIONS
 
 sys.path.append(r"./")
@@ -51,12 +53,14 @@ async def perform_query(container):
 
 async def run_workload(client_id):
     async with aiohttp.ClientSession(trust_env=True) as proxied_aio_http_session:
+        connectionPolicy = documents.ConnectionPolicy()
+        connectionPolicy.UseMultipleWriteLocations = USE_MULTIPLE_WRITABLE_LOCATIONS
 
         transport = AioHttpTransport(session=proxied_aio_http_session, session_owner=False)
         async with AsyncClient(COSMOS_URI, COSMOS_KEY, preferred_locations=PREFERRED_LOCATIONS,
                                enable_diagnostics_logging=True, logger=logger, transport=transport,
                                user_agent=str(client_id) + "-" + datetime.now().strftime(
-                                   "%Y%m%d-%H%M%S")) as client:
+                                   "%Y%m%d-%H%M%S"), connectionPolicy=connectionPolicy) as client:
             db = client.get_database_client("SimonDB")
             cont = db.get_container_client("SimonContainer")
             time.sleep(1)

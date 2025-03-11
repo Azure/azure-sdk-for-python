@@ -2,11 +2,11 @@ import os
 import random
 import sys
 
-from workload_configs import COSMOS_URI, COSMOS_KEY, PREFERRED_LOCATIONS
+from workload_configs import COSMOS_URI, COSMOS_KEY, PREFERRED_LOCATIONS, USE_MULTIPLE_WRITABLE_LOCATIONS
 
 sys.path.append(r"./")
 
-from azure.cosmos import CosmosClient
+from azure.cosmos import CosmosClient, documents
 import asyncio
 
 import time
@@ -46,10 +46,13 @@ def perform_query(container):
 
 
 def run_workload(client_id):
+    connectionPolicy = documents.ConnectionPolicy()
+    connectionPolicy.UseMultipleWriteLocations = USE_MULTIPLE_WRITABLE_LOCATIONS
     with CosmosClient(COSMOS_URI, COSMOS_KEY,
                            enable_diagnostics_logging=True, logger=logger,
                            user_agent=str(client_id) + "-" + datetime.now().strftime(
-                               "%Y%m%d-%H%M%S"), preferred_locations=PREFERRED_LOCATIONS) as client:
+                               "%Y%m%d-%H%M%S"), preferred_locations=PREFERRED_LOCATIONS,
+                      connectionPolicy=connectionPolicy) as client:
         db = client.get_database_client("SimonDB")
         cont = db.get_container_client("SimonContainer")
         time.sleep(1)
