@@ -39,7 +39,7 @@ from .. import exceptions
 from .._container_recreate_retry_policy import ContainerRecreateRetryPolicy
 from .._retry_utility import (_configure_timeout, _has_read_retryable_headers,
                               _handle_service_response_retries, _handle_service_request_retries,
-                              _has_database_account_header)
+                              _has_database_account_header, reset_consecutive_failures)
 from ..http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 
 
@@ -102,6 +102,8 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
         try:
             if args:
                 result = await ExecuteFunctionAsync(function, global_endpoint_manager, *args, **kwargs)
+                # after a success reset the consecutive failures
+                reset_consecutive_failures(request.headers, global_endpoint_manager, *args)
             else:
                 result = await ExecuteFunctionAsync(function, *args, **kwargs)
             if not client.last_response_headers:
