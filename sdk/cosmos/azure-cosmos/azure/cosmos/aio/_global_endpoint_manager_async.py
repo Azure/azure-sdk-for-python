@@ -66,7 +66,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         self._database_account_cache = None
 
     def get_use_multiple_write_locations(self):
-        return self.location_cache.use_multiple_write_locations
+        return self.location_cache.can_use_multiple_write_locations()
 
     def get_refresh_time_interval_in_ms_stub(self):
         return constants._Constants.DefaultEndpointsRefreshTime

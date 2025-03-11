@@ -306,8 +306,8 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         return False
 
     def is_location_unavailable(self, endpoint: RegionalRoutingContext, operation_type: str):
-        # For writes only mark it unavailable if both are down
-        if not _OperationType.IsReadOnlyOperation(operation_type):
+        # For writes with single write region accounts only mark it unavailable if both are down
+        if not _OperationType.IsReadOnlyOperation(operation_type) and not self.can_use_multiple_write_locations():
             return (self.is_endpoint_unavailable_internal(endpoint.get_primary(), operation_type)
                     and self.is_endpoint_unavailable_internal(endpoint.get_alternate(), operation_type))
 
