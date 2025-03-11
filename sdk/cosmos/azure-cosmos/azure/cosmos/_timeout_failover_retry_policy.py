@@ -4,9 +4,12 @@
 """Internal class for timeout failover retry policy implementation in the Azure
 Cosmos database service.
 """
+import logging
+
 from azure.cosmos.documents import _OperationType
 
 
+logger = logging.getLogger("azure.cosmos._TimeoutFailoverRetryPolicy")
 class _TimeoutFailoverRetryPolicy(object):
 
     def __init__(self, connection_policy, global_endpoint_manager, *args):
@@ -28,6 +31,7 @@ class _TimeoutFailoverRetryPolicy(object):
         :returns: a boolean stating whether the request should be retried
         :rtype: bool
         """
+        logger.info("TimeoutFailoverRetryPolicy: ShouldRetry called with exception: %s", _exception)
         # we don't retry on write operations for timeouts or any internal server errors
         if self.request and (not _OperationType.IsReadOnlyOperation(self.request.operation_type)):
             return False

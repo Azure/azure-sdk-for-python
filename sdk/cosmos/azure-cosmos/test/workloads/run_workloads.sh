@@ -20,6 +20,10 @@ python3 r-workload-4.py &
 python3 r-workload-5.py &
 python3 r-workload-6.py &
 python3 w-workload.py &
+python3 w-workload-1.py &
+python3 w-workload-2.py &
 python3 w-proxy-workload.py &
+python3 w-proxy-workload-1.py &
+python3 w-proxy-workload-2.py &
 python3 r-w-q-workload-sync.py &
 python3 r-w-q-workload-sync-1.py &

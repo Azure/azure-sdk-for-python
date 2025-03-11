@@ -39,6 +39,7 @@ async def run_workload(client_id):
         while True:
             try:
                 await upsert_item_concurrently(cont, 5)
+                time.sleep(.2)
             except Exception as e:
                 logger.error(e)
                 raise e

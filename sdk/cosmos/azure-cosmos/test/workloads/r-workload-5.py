@@ -57,7 +57,7 @@ async def run_workload(client_id):
         while True:
             try:
                 await read_item_concurrently(cont, 10)
-                time.sleep(.5)
+                time.sleep(.2)
             except Exception as e:
                 logger.error(e)
                 raise e
