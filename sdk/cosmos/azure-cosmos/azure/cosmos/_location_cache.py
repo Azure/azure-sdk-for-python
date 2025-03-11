@@ -84,7 +84,9 @@ def get_endpoints_by_location(new_locations,
             try:
                 region_uri = new_location["databaseAccountEndpoint"]
                 parsed_locations.append(new_location["name"])
-                if new_location["name"] in old_endpoints_by_location:
+                if not writes or use_multiple_write_locations:
+                    regional_object = RegionalRoutingContext(region_uri, region_uri)
+                elif new_location["name"] in old_endpoints_by_location:
                     regional_object = old_endpoints_by_location[new_location["name"]]
                     current = regional_object.get_primary()
                     # swap the previous with current and current with new region_uri received from the gateway
@@ -95,7 +97,7 @@ def get_endpoints_by_location(new_locations,
                 else:
                     regional_object = RegionalRoutingContext(region_uri, region_uri)
                     # if it is for writes, then we update the previous to default_endpoint
-                    if writes and not use_multiple_write_locations:
+                    if writes:
                         # if region_uri is different than global endpoint set global endpoint
                         # as fallback
                         # else construct regional uri
@@ -309,8 +311,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             return (self.is_endpoint_unavailable_internal(endpoint.get_primary(), operation_type)
                     and self.is_endpoint_unavailable_internal(endpoint.get_alternate(), operation_type))
 
-        # For reads mark the region as down if either of the endpoints are unavailable
-        ## double check this change
+        # For reads mark the region as down if primary endpoint is unavailable
         return self.is_endpoint_unavailable_internal(endpoint.get_primary(), operation_type)
 
     def is_endpoint_unavailable_internal(self, endpoint: str, expected_available_operation: str):
