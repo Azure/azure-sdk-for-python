@@ -27,6 +27,20 @@ def test_structural_subtyping():
     # assert issubclass(OpenTelemetrySpan, AbstractSpan)
     assert isinstance(OpenTelemetrySpan(), AbstractSpan)
 
+def span_kind_to_otel_kind(kind: SpanKind) -> OpenTelemetrySpanKind:
+    """Convert Azure SDK span kind to OpenTelemetry span kind."""
+    if kind == SpanKind.INTERNAL:
+        return OpenTelemetrySpanKind.INTERNAL
+    elif kind == SpanKind.CLIENT:
+        return OpenTelemetrySpanKind.CLIENT
+    elif kind == SpanKind.SERVER:
+        return OpenTelemetrySpanKind.SERVER
+    elif kind == SpanKind.PRODUCER:
+        return OpenTelemetrySpanKind.PRODUCER
+    elif kind == SpanKind.CONSUMER:
+        return OpenTelemetrySpanKind.CONSUMER
+    else:
+        raise ValueError(f"Unknown span kind: {kind}")
 
 class TestOpentelemetryWrapper:
     def test_span_passed_in(self, tracing_helper):
@@ -63,7 +77,7 @@ class TestOpentelemetryWrapper:
         with tracing_helper.tracer.start_as_current_span("Root"):
             with OpenTelemetrySpan(name="outer-span", kind=outer_span_kind) as outer_span:
                 assert isinstance(outer_span.span_instance, trace.Span)
-                # assert outer_span.span_instance.kind == outer_span_kind
+                assert outer_span.span_instance.kind == span_kind_to_otel_kind(outer_span_kind)
 
                 with outer_span.span(name="inner-span", kind=SpanKind.INTERNAL) as inner_span:
                     assert isinstance(inner_span.span_instance, NonRecordingSpan)
@@ -206,7 +220,7 @@ class TestOpentelemetryWrapper:
             mock_request.return_value = response
             with OpenTelemetrySpan(name="outer-span", kind=SpanKind.CLIENT):
                 with OpenTelemetrySpan(name="client-span", kind=SpanKind.INTERNAL):
-                    # With CLIENT spans and automatic HTTP instrumentation is suppressed.
+                    # INTERNAL and non-Azure SDK HTTP spans are suppressed.
                     requests.get("https://www.foo.bar/first")
                 assert len(tracing_helper.exporter.get_finished_spans()) == 1
                 # The following requests should still be auto-instrumented since it's not in the scope
@@ -477,3 +491,4 @@ class TestOpentelemetryWrapper:
 
         assert finished[0].name == "span"
         assert finished[0].status.status_code == OpenTelemetryStatusCode.UNSET
+

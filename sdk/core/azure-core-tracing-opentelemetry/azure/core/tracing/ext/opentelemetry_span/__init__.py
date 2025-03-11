@@ -76,9 +76,6 @@ class _SuppressionContextManager(ContextManager):
             context.detach(self._context_token)
             self._context_token = None
 
-        if exc_value:
-            raise exc_value
-
 
 class OpenTelemetrySpan(HttpSpanMixin, object):
     """OpenTelemetry plugin for Azure client libraries.
@@ -104,7 +101,6 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         links: Optional[List["CoreLink"]] = None,
         **kwargs: Any,
     ) -> None:
-        self._context_token = None
         self._context: Optional[Context] = None
         self._current_ctxt_manager: Optional[_SuppressionContextManager] = None
 
