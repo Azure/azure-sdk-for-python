@@ -15,6 +15,7 @@ import re
 import calendar
 import typing
 import pathlib
+import requests
 from typing_extensions import Literal
 from github import Github, Auth
 
@@ -59,7 +60,11 @@ def get_build_link(check_type: CHECK_TYPE) -> str:
 def get_build_info(build_link: str, check_type: CHECK_TYPE) -> str:
     """Get the build info from the build link."""
 
-    return "done"
+    # Get the build info from the build link
+    build_output = requests.get(build_link)
+
+
+    return build_output.text
 
 
 def get_merge_dates(year: str) -> typing.List[datetime.datetime]:
