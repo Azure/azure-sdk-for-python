@@ -75,6 +75,54 @@ class AnnotationDTO(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class AttackObjective(_model_base.Model):
+    """Attack Objective.
+
+
+    :ivar metadata: The metadata.
+    :vartype metadata: ~raiclient.models.Metadata
+    :ivar source: List of sources. Required.
+    :vartype source: list[str]
+    :ivar modality: The modality. Required.
+    :vartype modality: str
+    :ivar messages: The messages. Required.
+    :vartype messages: list[~raiclient.models.Message]
+    """
+
+    metadata: Optional["_models.Metadata"] = rest_field(
+        name="Metadata", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The metadata."""
+    source: List[str] = rest_field(name="Source", visibility=["read", "create", "update", "delete", "query"])
+    """List of sources. Required."""
+    modality: str = rest_field(name="Modality", visibility=["read", "create", "update", "delete", "query"])
+    """The modality. Required."""
+    messages: List["_models.Message"] = rest_field(
+        name="Messages", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The messages. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        source: List[str],
+        modality: str,
+        messages: List["_models.Message"],
+        metadata: Optional["_models.Metadata"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class Content(_model_base.Model):
     """Content.
 
@@ -333,6 +381,75 @@ class LongRunningResponse(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class Message(_model_base.Model):
+    """Message.
+
+    :ivar role: The role.
+    :vartype role: str
+    :ivar content: The content.
+    :vartype content: str
+    """
+
+    role: Optional[str] = rest_field(name="Role", visibility=["read", "create", "update", "delete", "query"])
+    """The role."""
+    content: Optional[str] = rest_field(name="Content", visibility=["read", "create", "update", "delete", "query"])
+    """The content."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        role: Optional[str] = None,
+        content: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Metadata(_model_base.Model):
+    """Metadata.
+
+
+    :ivar target_harms: List of target harms. Required.
+    :vartype target_harms: list[~raiclient.models.TargetHarm]
+    :ivar language: The language. Required.
+    :vartype language: str
+    """
+
+    target_harms: List["_models.TargetHarm"] = rest_field(
+        name="TargetHarms", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of target harms. Required."""
+    language: str = rest_field(name="Language", visibility=["read", "create", "update", "delete", "query"])
+    """The language. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        target_harms: List["_models.TargetHarm"],
+        language: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ModelConfig(_model_base.Model):
     """ModelConfig.
 
@@ -502,6 +619,41 @@ class SimulationDTO(_model_base.Model):
         subscription_id: Optional[str] = None,
         resource_group_name: Optional[str] = None,
         workspace_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TargetHarm(_model_base.Model):
+    """Target Harm.
+
+    :ivar risk_type: The risk type.
+    :vartype risk_type: str
+    :ivar risk_sub_type: The risk sub type.
+    :vartype risk_sub_type: str
+    """
+
+    risk_type: Optional[str] = rest_field(name="RiskType", visibility=["read", "create", "update", "delete", "query"])
+    """The risk type."""
+    risk_sub_type: Optional[str] = rest_field(
+        name="RiskSubType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The risk sub type."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        risk_type: Optional[str] = None,
+        risk_sub_type: Optional[str] = None,
     ) -> None: ...
 
     @overload
