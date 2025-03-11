@@ -272,7 +272,10 @@ class TestAzureTraceExporter(unittest.TestCase):
             name="test",
             context=context,
             resource=resource,
-            attributes={"enduser.id": "testId"},
+            attributes={
+                "enduser.id": "testId",
+                "user_agent.synthetic.type": "bot",
+            },
             parent=context,
         )
         test_span.start()
@@ -304,6 +307,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_INTERNAL_NODE_NAME), "testServiceInstanceId")
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_ID), "{:032x}".format(context.trace_id))
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_USER_ID), "testId")
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_SYNTHETIC_SOURCE), "True")
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_PARENT_ID), "{:016x}".format(context.span_id))
 
     def test_span_to_envelope_partA_default(self):
