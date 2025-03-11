@@ -66,7 +66,7 @@ class GleuScoreEvaluator(EvaluatorBase):
                 binary_result = True
         return {
             "gleu_score": score,
-            "gleu_resut": EVALUATION_PASS_FAIL_MAPPING[binary_result],
+            "gleu_result": EVALUATION_PASS_FAIL_MAPPING[binary_result],
             "gleu_threshold": self._threshold,
         }
 
