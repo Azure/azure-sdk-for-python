@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,line-too-long,useless-suppression
 # # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -10,20 +10,14 @@ import datetime
 import functools
 import json
 import logging
-import functools
-import datetime
 import os
 import pytest
 import sys
 import io
-import asyncio
 import time
 
 from azure.ai.projects.aio import AIProjectClient
-from azure.core.pipeline.transport import RequestsTransport
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
-from azure.core.exceptions import AzureError, ServiceRequestError, HttpResponseError
-from azure.identity import DefaultAzureCredential
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.projects.models import (
     AzureFunctionTool,
@@ -43,6 +37,8 @@ from azure.ai.projects.models import (
     ResponseFormatJsonSchema,
     ResponseFormatJsonSchemaType,
     RunAdditionalFieldList,
+    RunStepDeltaChunk,
+    RunStepDeltaToolCallObject,
     RunStepFileSearchToolCall,
     RunStepFileSearchToolCallResult,
     RunStepFileSearchToolCallResults,
@@ -966,7 +962,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create run
-            run = await client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+            run = await client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
             assert run.id
             print("Created run, run ID", run.id)
 
@@ -997,7 +993,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
             # create run
             run = await client.agents.create_run(
-                thread_id=thread.id, assistant_id=agent.id, metadata={"key1": "value1", "key2": "value2"}
+                thread_id=thread.id, agent_id=agent.id, metadata={"key1": "value1", "key2": "value2"}
             )
             assert run.id
             assert run.metadata == {"key1": "value1", "key2": "value2"}
@@ -1098,7 +1094,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create run
-            run = await client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+            run = await client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
             assert run.id
             print("Created run, run ID", run.id)
 
@@ -1141,7 +1137,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created message, message ID", message.id)
 
             # create run
-            run = await client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+            run = await client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
             assert run.id
             print("Created run, run ID", run.id)
 
@@ -1198,7 +1194,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         assert runs0.data.__len__() == 0
 
         # create run and check list
-        run = await client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+        run = await client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
         assert run.id
         print("Created run, run ID", run.id)
         runs1 = await client.agents.list_runs(thread_id=thread.id)
@@ -1206,7 +1202,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         assert runs1.data[0].id == run.id
 
         # create second run
-        run2 = await client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+        run2 = await client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
         assert run2.id
         print("Created run, run ID", run2.id)
         runs2 = await client.agents.list_runs(thread_id=thread.id)
@@ -1240,7 +1236,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create run
-            run = await client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+            run = await client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
             assert run.id
             print("Created run, run ID", run.id)
 
@@ -1280,7 +1276,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
             # create run
             run = await client.agents.create_run(
-                thread_id=thread.id, assistant_id=agent.id, metadata={"key1": "value1", "key2": "value2"}
+                thread_id=thread.id, agent_id=agent.id, metadata={"key1": "value1", "key2": "value2"}
             )
             assert run.id
             assert run.metadata == {"key1": "value1", "key2": "value2"}
@@ -1322,7 +1318,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
             # create run
             run = await client.agents.create_run(
-                thread_id=thread.id, assistant_id=agent.id, metadata={"key1": "value1", "key2": "value2"}
+                thread_id=thread.id, agent_id=agent.id, metadata={"key1": "value1", "key2": "value2"}
             )
             assert run.id
             assert run.metadata == {"key1": "value1", "key2": "value2"}
@@ -1365,7 +1361,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
             # create run
             run = await client.agents.create_run(
-                thread_id=thread.id, assistant_id=agent.id, metadata={"key1": "value1", "key2": "value2"}
+                thread_id=thread.id, agent_id=agent.id, metadata={"key1": "value1", "key2": "value2"}
             )
             assert run.id
             assert run.metadata == {"key1": "value1", "key2": "value2"}
@@ -1424,7 +1420,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created message, message ID", message.id)
 
             # create run
-            run = await client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+            run = await client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
             assert run.id
             print("Created run, run ID", run.id)
 
@@ -1516,7 +1512,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created message, message ID", message.id)
 
             # create run
-            run = await client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+            run = await client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
             assert run.id
             print("Created run, run ID", run.id)
 
@@ -1609,7 +1605,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created message, message ID", message.id)
 
             # create run
-            run = await client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+            run = await client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
             assert run.id
             print("Created run, run ID", run.id)
 
@@ -1699,7 +1695,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         print("Created message, message ID", message.id)
 
         # create run
-        run = await client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+        run = await client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
         assert run.id
         print("Created run, run ID", run.id)
 
@@ -1827,7 +1823,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
         if create_thread_run:
             run = await client.agents.create_thread_and_run(
-                assistant_id=agent.id,
+                agent_id=agent.id,
                 parallel_tool_calls=use_parallel_runs,
             )
             run = await self._wait_for_run(client, run)
@@ -1837,7 +1833,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
             run = await client.agents.create_and_process_run(
                 thread_id=thread.id,
-                assistant_id=agent.id,
+                agent_id=agent.id,
                 parallel_tool_calls=use_parallel_runs,
             )
         assert run.id
@@ -1874,7 +1870,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         print("Created message, message ID", message.id)
 
         # create run
-        run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+        run = client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
         assert run.id
         print("Created run, run ID", run.id)
 
@@ -1912,7 +1908,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created agent, agent ID", agent.id)
 
             # create thread and run
-            run = await client.agents.create_thread_and_run(assistant_id=agent.id)
+            run = await client.agents.create_thread_and_run(agent_id=agent.id)
             assert run.id
             assert run.thread_id
             print("Created run, run ID", run.id)
@@ -2099,7 +2095,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created message, message ID", message.id)
 
             # create run
-            run = await client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+            run = await client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
             assert run.id
             print("Created run, run ID", run.id)
 
@@ -2162,7 +2158,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created message, message ID", message.id)
 
             # create run
-            run = await client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+            run = await client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
             assert run.id
             print("Created run, run ID", run.id)
 
@@ -2202,20 +2198,32 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         await client.close()
 
     @agentClientPreparer()
-    @pytest.mark.skip("Failing with Http Response Errors.")
     @recorded_by_proxy_async
     async def test_create_vector_store_azure(self, **kwargs):
         """Test the agent with vector store creation."""
-        await self._do_test_create_vector_store(**kwargs)
+        await self._do_test_create_vector_store(streaming=False, **kwargs)
 
     @agentClientPreparer()
     @pytest.mark.skip("File ID issues with sanitization.")
     @recorded_by_proxy_async
     async def test_create_vector_store_file_id(self, **kwargs):
         """Test the agent with vector store creation."""
-        await self._do_test_create_vector_store(file_path=self._get_data_file(), **kwargs)
+        await self._do_test_create_vector_store(streaming=False, file_path=self._get_data_file(), **kwargs)
 
-    async def _do_test_create_vector_store(self, **kwargs):
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_create_vector_store_azure_streaming(self, **kwargs):
+        """Test the agent with vector store creation."""
+        await self._do_test_create_vector_store(streaming=True, **kwargs)
+
+    @agentClientPreparer()
+    @pytest.mark.skip("File ID issues with sanitization.")
+    @recorded_by_proxy_async
+    async def test_create_vector_store_file_id_streaming(self, **kwargs):
+        """Test the agent with vector store creation."""
+        await self._do_test_create_vector_store(streaming=True, file_path=self._get_data_file(), **kwargs)
+
+    async def _do_test_create_vector_store(self, streaming, **kwargs):
         """Test the agent with vector store creation."""
         # create client
         ai_client = self.create_client(**kwargs)
@@ -2236,7 +2244,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             file_ids=file_ids, data_sources=ds, name="my_vectorstore"
         )
         assert vector_store.id
-        await self._test_file_search(ai_client, vector_store, file_id)
+        await self._test_file_search(ai_client, vector_store, file_id, streaming)
         await ai_client.close()
 
     @agentClientPreparer()
@@ -2244,16 +2252,28 @@ class TestAgentClientAsync(AzureRecordedTestCase):
     @recorded_by_proxy_async
     async def test_create_vector_store_add_file_file_id(self, **kwargs):
         """Test adding single file to vector store withn file ID."""
-        await self._do_test_create_vector_store_add_file(file_path=self._get_data_file(), **kwargs)
+        await self._do_test_create_vector_store_add_file(streaming=False, file_path=self._get_data_file(), **kwargs)
 
     @agentClientPreparer()
-    @pytest.mark.skip("Failing with Http Response Errors.")
     @recorded_by_proxy_async
     async def test_create_vector_store_add_file_azure(self, **kwargs):
         """Test adding single file to vector store with azure asset ID."""
-        await self._do_test_create_vector_store_add_file(**kwargs)
+        await self._do_test_create_vector_store_add_file(streaming=False, **kwargs)
 
-    async def _do_test_create_vector_store_add_file(self, **kwargs):
+    @agentClientPreparer()
+    @pytest.mark.skip("File ID issues with sanitization.")
+    @recorded_by_proxy_async
+    async def test_create_vector_store_add_file_file_id_streaming(self, **kwargs):
+        """Test adding single file to vector store withn file ID."""
+        await self._do_test_create_vector_store_add_file(streaming=True, file_path=self._get_data_file(), **kwargs)
+
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_create_vector_store_add_file_azure_streaming(self, **kwargs):
+        """Test adding single file to vector store with azure asset ID."""
+        await self._do_test_create_vector_store_add_file(streaming=True, **kwargs)
+
+    async def _do_test_create_vector_store_add_file(self, streaming, **kwargs):
         """Test adding single file to vector store."""
         # create client
         ai_client = self.create_client(**kwargs)
@@ -2273,7 +2293,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             vector_store_id=vector_store.id, data_source=ds, file_id=file_id
         )
         assert vector_store_file.id
-        await self._test_file_search(ai_client, vector_store, file_id)
+        await self._test_file_search(ai_client, vector_store, file_id, streaming)
         await ai_client.close()
 
     @agentClientPreparer()
@@ -2281,16 +2301,28 @@ class TestAgentClientAsync(AzureRecordedTestCase):
     @recorded_by_proxy_async
     async def test_create_vector_store_batch_file_ids(self, **kwargs):
         """Test adding multiple files to vector store with file IDs."""
-        await self._do_test_create_vector_store_batch(file_path=self._get_data_file(), **kwargs)
+        await self._do_test_create_vector_store_batch(streaming=False, file_path=self._get_data_file(), **kwargs)
 
     @agentClientPreparer()
-    @pytest.mark.skip("Failing with Http Response Errors.")
     @recorded_by_proxy_async
     async def test_create_vector_store_batch_azure(self, **kwargs):
         """Test adding multiple files to vector store with azure asset IDs."""
-        await self._do_test_create_vector_store_batch(**kwargs)
+        await self._do_test_create_vector_store_batch(streaming=False, **kwargs)
 
-    async def _do_test_create_vector_store_batch(self, **kwargs):
+    @agentClientPreparer()
+    @pytest.mark.skip("File ID issues with sanitization.")
+    @recorded_by_proxy_async
+    async def test_create_vector_store_batch_file_ids_streaming(self, **kwargs):
+        """Test adding multiple files to vector store with file IDs."""
+        await self._do_test_create_vector_store_batch(streaming=True, file_path=self._get_data_file(), **kwargs)
+
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_create_vector_store_batch_azure_streaming(self, **kwargs):
+        """Test adding multiple files to vector store with azure asset IDs."""
+        await self._do_test_create_vector_store_batch(streaming=True, **kwargs)
+
+    async def _do_test_create_vector_store_batch(self, streaming, **kwargs):
         """Test the agent with vector store creation."""
         # create client
         ai_client = self.create_client(**kwargs)
@@ -2314,13 +2346,15 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             vector_store_id=vector_store.id, data_sources=ds, file_ids=file_ids
         )
         assert vector_store_file_batch.id
-        await self._test_file_search(ai_client, vector_store, file_id)
+        await self._test_file_search(ai_client, vector_store, file_id, streaming)
 
-    async def _test_file_search(self, ai_client: AIProjectClient, vector_store: VectorStore, file_id: str) -> None:
+    async def _test_file_search(
+        self, ai_client: AIProjectClient, vector_store: VectorStore, file_id: str, streaming: bool
+    ) -> None:
         """Test the file search"""
         file_search = FileSearchTool(vector_store_ids=[vector_store.id])
         agent = await ai_client.agents.create_agent(
-            model="gpt-4o",
+            model="gpt-4",
             name="my-assistant",
             instructions="Hello, you are helpful assistant and can search information from uploaded files",
             tools=file_search.definitions,
@@ -2335,9 +2369,27 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         )
         assert message.id, "The message was not created."
 
-        run = await ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+        if streaming:
+            thread_run = None
+            async with await ai_client.agents.create_stream(thread_id=thread.id, agent_id=agent.id) as stream:
+                async for _, event_data, _ in stream:
+                    if isinstance(event_data, ThreadRun):
+                        thread_run = event_data
+                    elif (
+                        isinstance(event_data, RunStepDeltaChunk)
+                        and isinstance(event_data.delta.step_details, RunStepDeltaToolCallObject)
+                        and event_data.delta.step_details.tool_calls
+                    ):
+                        assert isinstance(
+                            event_data.delta.step_details.tool_calls[0].file_search, RunStepFileSearchToolCallResults
+                        )
+            assert thread_run is not None
+            run = await ai_client.agents.get_run(thread_id=thread_run.thread_id, run_id=thread_run.id)
+            assert run is not None
+        else:
+            run = await ai_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
         await ai_client.agents.delete_vector_store(vector_store.id)
-        assert run.status == "completed"
+        assert run.status == "completed", f"Error in run: {run.last_error}"
         messages = await ai_client.agents.list_messages(thread_id=thread.id)
         assert len(messages)
         await self._remove_file_maybe(file_id, ai_client)
@@ -2400,7 +2452,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         )
         assert message.id, "The message was not created."
 
-        run = await ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+        run = await ai_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
         assert run.id, "The run was not created."
         await self._remove_file_maybe(file_id, ai_client)
         await ai_client.agents.delete_agent(agent.id)
@@ -2450,7 +2502,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         )
         assert message.id, "The message was not created."
 
-        run = await ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+        run = await ai_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
         assert run.status == "completed", f"Error in run: {run.last_error}"
         messages = await ai_client.agents.list_messages(thread.id)
         assert len(messages)
@@ -2513,7 +2565,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         )
         assert message.id, "The message was not created."
 
-        run = await ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+        run = await ai_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
         assert run.id, "The run was not created."
         await self._remove_file_maybe(file_id, ai_client)
         assert run.status == "completed", f"Error in run: {run.last_error}"
@@ -2577,7 +2629,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         )
         assert message.id, "The message was not created."
 
-        run = await ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+        run = await ai_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
         assert run.id, "The run was not created."
         await self._remove_file_maybe(file_id, ai_client)
         assert run.status == "completed", f"Error in run: {run.last_error}"
@@ -2627,7 +2679,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         )
         assert message.id, "The message was not created."
 
-        run = await ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+        run = await ai_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
         assert run.status == "completed", f"Error in run: {run.last_error}"
         messages = await ai_client.agents.list_messages(thread.id)
         assert len(messages)
@@ -2685,7 +2737,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         thread = await ai_client.agents.create_thread(messages=[message])
         assert thread.id
 
-        run = await ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+        run = await ai_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
         assert run.status == "completed", f"Error in run: {run.last_error}"
         messages = await ai_client.agents.list_messages(thread.id)
         assert len(messages)
@@ -2747,7 +2799,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             )
             assert message.id, "The message was not created."
 
-            run = await client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+            run = await client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
             assert run.status == RunStatus.COMPLETED, f"The run is in {run.status} state."
 
             # Get messages from the thread
@@ -2787,7 +2839,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
                 ThreadMessageOptions(role=MessageRole.USER, content="What is the impedance formula?"),
             ]
             run = await client.agents.create_run(
-                thread_id=thread.id, assistant_id=agent.id, additional_messages=additional_messages
+                thread_id=thread.id, agent_id=agent.id, additional_messages=additional_messages
             )
 
             # poll the run as long as run status is queued or in progress
@@ -2859,7 +2911,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             if use_stream:
                 run = None
                 async with await ai_client.agents.create_stream(
-                    thread_id=thread.id, assistant_id=agent.id, include=include
+                    thread_id=thread.id, agent_id=agent.id, include=include
                 ) as stream:
                     async for event_type, event_data, _ in stream:
                         if isinstance(event_data, ThreadRun):
@@ -2869,7 +2921,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
                             break
             else:
                 run = await ai_client.agents.create_and_process_run(
-                    thread_id=thread.id, assistant_id=agent.id, include=include
+                    thread_id=thread.id, agent_id=agent.id, include=include
                 )
                 assert run.status == RunStatus.COMPLETED
             assert run is not None
@@ -2953,7 +3005,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             )
             assert message.id
 
-            run = await ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+            run = await ai_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
 
             assert run.status == RunStatus.COMPLETED, run.last_error.message
 

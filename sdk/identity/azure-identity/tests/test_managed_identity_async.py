@@ -5,6 +5,7 @@
 from itertools import product
 import os
 import time
+import logging
 from unittest import mock
 
 from azure.core.exceptions import ClientAuthenticationError
@@ -1301,3 +1302,41 @@ def test_validate_cloud_shell_credential():
             ManagedIdentityCredential(identity_config={"object_id": "foo"})
         with pytest.raises(ValueError):
             ManagedIdentityCredential(identity_config={"resource_id": "foo"})
+
+
+def test_log(caplog):
+    with caplog.at_level(logging.INFO, logger="azure.identity.aio._credentials.managed_identity"):
+        ManagedIdentityCredential()
+        assert "ManagedIdentityCredential will use IMDS" in caplog.text
+
+        caplog.clear()
+        with mock.patch.dict(
+            MANAGED_IDENTITY_ENVIRON,
+            {
+                EnvironmentVariables.IDENTITY_ENDPOINT: "new_endpoint",
+                EnvironmentVariables.IDENTITY_HEADER: "new_secret",
+                EnvironmentVariables.MSI_ENDPOINT: "endpoint",
+                EnvironmentVariables.MSI_SECRET: "secret",
+            },
+            clear=True,
+        ):
+            ManagedIdentityCredential()
+            assert "App Service managed identity" in caplog.text
+
+            caplog.clear()
+            ManagedIdentityCredential(client_id="foo")
+            assert "App Service managed identity with client_id: foo" in caplog.text
+
+            caplog.clear()
+            ManagedIdentityCredential(identity_config={"object_id": "bar"})
+            assert "App Service managed identity with object_id: bar" in caplog.text
+
+        caplog.clear()
+        mock_environ = {
+            EnvironmentVariables.AZURE_AUTHORITY_HOST: "authority",
+            EnvironmentVariables.AZURE_TENANT_ID: "tenant",
+            EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE: "token_file",
+        }
+        with mock.patch.dict("os.environ", mock_environ, clear=True):
+            ManagedIdentityCredential(client_id="foo")
+            assert "workload identity with client_id: foo" in caplog.text

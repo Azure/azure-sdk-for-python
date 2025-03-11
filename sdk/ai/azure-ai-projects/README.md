@@ -83,7 +83,7 @@ To report an issue with the client library, or request additional features, plea
 - A [project in Azure AI Foundry](https://learn.microsoft.com/azure/ai-studio/how-to/create-projects).
 - The project connection string. It can be found in your Azure AI Foundry project overview page, under "Project details". Below we will assume the environment variable `PROJECT_CONNECTION_STRING` was defined to hold this value.
 - Entra ID is needed to authenticate the client. Your application needs an object that implements the [TokenCredential](https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential) interface. Code samples here use [DefaultAzureCredential](https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential). To get that working, you will need:
-  * The `Contributor` role. Role assigned can be done via the "Access Control (IAM)" tab of your Azure AI Project resource in the Azure portal.
+  * An appropriate role assignment. see [Role-based access control in Azure AI Foundry portal](https://learn.microsoft.com/azure/ai-foundry/concepts/rbac-ai-foundry). Role assigned can be done via the "Access Control (IAM)" tab of your Azure AI Project resource in the Azure portal.
   * [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) installed.
   * You are logged into your Azure account by running `az login`.
   * Note that if you have multiple Azure subscriptions, the subscription that contains your Azure AI Project resource must be your default subscription. Run `az account list --output table` to list all your subscription and see which one is the default. Run `az account set --subscription "Your Subscription ID or Name"` to change your default subscription.
@@ -535,140 +535,164 @@ agent = await project_client.agents.create_agent(
 
 #### Create Agent With Azure Function Call
 
-The agent can handle Azure Function calls on the service side and return the result of the call. To use the function, we need to create the `AzureFunctionTool`, which contains the input and output queues of Azure function and the description of input parameters. Please note that in the prompt we are asking the model to invoke queue when the specific question ("What would foo say?") is being asked. See below for the instructions on function deployment.
+The AI agent leverages Azure Functions triggered asynchronously via Azure Storage Queues. To enable the agent to perform Azure Function calls, you must set up the corresponding `AzureFunctionTool`, specifying input and output queues as well as parameter definitions.
+
+Example Python snippet illustrating how you create an agent utilizing the Azure Function Tool:
 
 <!-- SNIPPET sample_agents_azure_functions.create_agent_with_azure_function_tool -->
 
 ```python
+storage_service_endpoint = "https://<your-storage>.queue.core.windows.net"
+
 azure_function_tool = AzureFunctionTool(
-    name="foo",
-    description="Get answers from the foo bot.",
+    name="get_weather",
+    description="Get weather information using Azure Function",
     parameters={
-        "type": "object",
-        "properties": {
-            "query": {"type": "string", "description": "The question to ask."},
-            "outputqueueuri": {"type": "string", "description": "The full output queue uri."},
+            "type": "object",
+            "properties": {
+                "location": {"type": "string", "description": "The location of the weather."},
+            },
+            "required": ["location"],
         },
-    },
     input_queue=AzureFunctionStorageQueue(
-        queue_name="azure-function-foo-input",
+        queue_name="input",
         storage_service_endpoint=storage_service_endpoint,
     ),
     output_queue=AzureFunctionStorageQueue(
-        queue_name="azure-function-tool-output",
+        queue_name="output",
         storage_service_endpoint=storage_service_endpoint,
     ),
 )
 
 agent = project_client.agents.create_agent(
-    model="gpt-4",
-    name="azure-function-agent-foo",
-    instructions=f"You are a helpful support agent. Use the provided function any time the prompt contains the string 'What would foo say?'. When you invoke the function, ALWAYS specify the output queue uri parameter as '{storage_service_endpoint}/azure-function-tool-output'. Always responds with \"Foo says\" and then the response from the tool.",
+    model=os.environ["MODEL_DEPLOYMENT_NAME"],
+    name="my-assistant",
+    instructions="You are a helpful assistant",
     tools=azure_function_tool.definitions,
 )
-print(f"Created agent, agent ID: {agent.id}")
 ```
-
 <!-- END SNIPPET -->
 
-To make a function call we need to create and deploy the Azure function. In the code snippet below, we have an example of function on python which can be used by the code above.
+---
+
+**Limitations**
+
+Currently, the Azure Function integration for the AI Agent has the following limitations:
+
+- Azure Functions integration is available **only for non-streaming scenarios**.
+- Supported trigger for Azure Function is currently limited to **Queue triggers** only.  
+  HTTP or other trigger types and streaming responses are not supported at this time.
+
+---
+
+**Create and Deploy Azure Function**
+
+Before you can use the agent with AzureFunctionTool, you need to create and deploy Azure Function.
+
+Below is an example Python Azure Function responding to queue-triggered messages and placing responses on the output queue:
 
 ```python
 import azure.functions as func
+import logging
 import json
-
-from urllib.parse import urlparse
-from azure.identity import DefaultAzureCredential
-from azure.storage.queue import (
-    QueueClient,
-    BinaryBase64EncodePolicy,
-    BinaryBase64DecodePolicy
-)
 
 app = func.FunctionApp()
 
+@app.get_weather(arg_name="inputQueue",
+                   queue_name="input",
+                   connection="AzureWebJobsStorage")
+@app.queue_output(arg_name="outputQueue", 
+                  queue_name="output", 
+                  connection="AzureWebJobsStorage")
+def get_weather(inputQueue: func.QueueMessage, outputQueue: func.Out[str]):
+    try:
+        messagepayload = json.loads(inputQueue.get_body().decode("utf-8"))
+        location = messagepayload["location"]
+        weather_result = f"Weather is 82 degrees and sunny in {location}."
 
-@app.function_name(name="Foo")
-@app.queue_trigger(
-    arg_name="arguments",
-    queue_name="azure-function-foo-input",
-    connection="AzureWebJobsStorage")
-def foo(arguments: func.QueueMessage) -> None:
-    """
-    The function, answering question.
+        response_message = {
+            "Value": weather_result,
+            "CorrelationId": messagepayload["CorrelationId"]
+        }
 
-    :param arguments: The arguments, containing json serialized request.
-    """
-    parsed_args = json.loads(arguments.get_body().decode('utf-8'))
-    queue_url = urlparse(parsed_args['outputqueueuri'])
+        outputQueue.set(json.dumps(response_message))
 
-    queue_client = QueueClient(
-        f"{queue_url.scheme}://{queue_url.netloc}",
-        queue_name=queue_url.path[1:],
-        credential=DefaultAzureCredential(),
-        message_encode_policy=BinaryBase64EncodePolicy(),
-        message_decode_policy=BinaryBase64DecodePolicy()
-    )
-
-    response = {
-        "Value": "Bar",
-        "CorrelationId": parsed_args['CorrelationId']
-    }
-    queue_client.send_message(json.dumps(response).encode('utf-8'))
-
+        logging.info(f"Sent message to output queue with message {response_message}")
+    except Exception as e:
+        logging.error(f"Error processing message: {e}")
+        return
 ```
 
-In this code we define function input and output class: `Arguments` and `Response` respectively. These two data classes will be serialized in JSON. It is important that these both contain field `CorrelationId`, which is the same between input and output.
+> **Important:** Both input and output payloads must contain the `CorrelationId`, which must match in request and response.
 
-In our example the function will be stored in the storage account, created with the AI hub. For that we need to allow key access to that storage. In Azure portal go to Storage account > Settings > Configuration and set "Allow storage account key access" to Enabled. If it is not done, the error will be displayed "The remote server returned an error: (403) Forbidden." 
-Before creation of the function we will need to get the python version using command `python --version`. We recommend to use python version 3.11 or above. We will need only two major digits in the next command, which deploys function and installs azure-cli:
+---
 
-```shell
-pip install -U azure-cli
-az login
-az functionapp create --resource-group your-resource-group --consumption-plan-location region --runtime python --runtime-version 3.11 --functions-version 4 --name function_name --os-type linux --storage-account storage_account_already_present_in_resource_group --app-insights existing_or_new_application_insights_name
-```
+**Azure Function Project Creation and Deployment**
 
-This function writes data to the output queue and hence needs to be authenticated to Azure, so we will need to assign the function system identity and provide it `Storage Queue Data Contributor`. To do that in Azure portal select the function, located in `your-resource-group` resource group and in Settings>Identity, switch it on and click Save. After that assign the `Storage Queue Data Contributor` permission on storage account used by our function (`storage_account_already_present_in_resource_group` in the script above) for just assigned System Managed identity.
-**Note:** in python we need to provide the explicit queue connection. It is defined in the line `connection="AzureWebJobsStorage".`. `AzureWebJobsStorage` is a setting, which can be viewed in `function_name` Settings>Environment variables>AzureWebJobsStorage and will look like DefaultEndpointsProtocol=https;EndpointSuffix=core.windows.net;AccountName=storage_account_already_present_in_resource_group;AccountKey=xxxxx. Another option is to provide the Managed identity. In this case we will need to set `connection` to prefix, present in three environment variables. For example, `connection=STORAGE_CONNECTION` and the variables will be: `STORAGE_CONNECTION__clientId` (managed entity UUID), `STORAGE_CONNECTION__credential` ("managedidentity") and `STORAGE_CONNECTION__queueServiceUri` (the URI of storage account, for example `"https://storage_account_already_present_in_resource_group.queue.core.windows.net"`).
+To deploy your function to Azure properly, follow Microsoft's official documentation step by step:
 
-Now we will create the function itself. Install [.NET](https://dotnet.microsoft.com/download) and [Core Tools](https://go.microsoft.com/fwlink/?linkid=2174087) and create the function project using next commands. 
-```
-func init FunctionProj --worker-runtime python
-cd FunctionProj
-# Use the next line in cmd
-echo.azure-identity>> requirements.txt
-echo.azure-storage-queue>> requirements.txt
-# Use the next line in PowerShell
-echo "azure-identity" >> requirements.txt
-echo "azure-storage-queue" >> requirements.txt
-```
-If you are working in virtual environment and the virtual environment folder is located in FunctionProj, make sure, the name of this folder is added to `.funcignore` as all the directory content will be uploaded to Azure.
+[Azure Functions Python Developer Guide](https://learn.microsoft.com/azure/azure-functions/create-first-function-cli-python?tabs=windows%2Cbash%2Cazure-cli%2Cbrowser)
 
-Rename function_app.py to foo.py and replace the content with the code above. To deploy the function run the command from dotnet project folder:
+**Summary of required steps:**
 
-```
-func azure functionapp publish function_name
-```
+- Use the Azure CLI or Azure Portal to create an Azure Function App.
+- Enable System Managed Identity for your Azure Function App.
+- Assign appropriate permissions to your Azure Function App identity as outlined in the Role Assignments section below
+- Create input and output queues in Azure Storage.
+- Deploy your Function code.
 
-In the `storage_account_already_present_in_resource_group` select the `Queue service` and create two queues: `azure-function-foo-input` and `azure-function-tool-output`. Note that the same queues are used in our sample. To check that the function is working, place the next message into the `azure-function-foo-input` and replace `storage_account_already_present_in_resource_group` by the actual resource group name, or just copy the output queue address. Note in python `outputqueueuri` is written in all lower case letters.
-```json
+---
+
+**Verification and Testing Azure Function**
+
+To ensure that your Azure Function deployment functions correctly:
+
+1. Place the following style message manually into the input queue (`input`):
+
 {
-  "outputqueueuri": "https://storage_account_already_present_in_resource_group.queue.core.windows.net/azure-function-tool-output",
+  "location": "Seattle",
   "CorrelationId": "42"
 }
-```
 
-Next, we will monitor the output queue or the message. You should receive the next message.
-```json
+Check the output queue (`output`) and validate the structured message response:
+
 {
-  "Value": "Bar",
+  "Value": "The weather in Seattle is sunny and warm.",
   "CorrelationId": "42"
 }
-```
-Please note that the input `CorrelationId` is the same as output.
-*Hint:* Place multiple messages to input queue and keep second internet browser window with the output queue open and hit the refresh button on the portal user interface, so that you will not miss the message. If the message instead went to `azure-function-foo-input-poison` queue, the function completed with error, please check your setup.
-After we have tested the function and made sure it works, please make sure that the Azure AI Project have the following roles for the storage account: `Storage Account Contributor`, `Storage Blob Data Contributor`, `Storage File Data Privileged Contributor`, `Storage Queue Data Contributor` and `Storage Table Data Contributor`. Now the function is ready to be used by the agent.
+
+---
+
+**Required Role Assignments (IAM Configuration)**
+
+Clearly assign the following Azure IAM roles to ensure correct permissions:
+
+1. **Azure Function App's identity:**
+   - Enable system managed identity through Azure Function App > Settings > Identity.
+   - Add permission to storage account:
+     - Go to **Storage Account > Access control (IAM)** and add role assignment:
+       - `Storage Queue Data Contributor` assigned to Azure Function managed identity
+
+2. **Azure AI Project Identity:**
+
+Ensure your Azure AI Project identity has the following storage account permissions:
+- `Storage Account Contributor`
+- `Storage Blob Data Contributor`
+- `Storage File Data Privileged Contributor`
+- `Storage Queue Data Contributor`
+- `Storage Table Data Contributor`
+
+---
+
+**Additional Important Configuration Notes**
+
+- The Azure Function configured above uses the `AzureWebJobsStorage` connection string for queue connectivity. You may alternatively use managed identity-based connections as described in the official Azure Functions Managed Identity documentation.
+- Storage queues you specify (`input` & `output`) should already exist in the storage account before the Function deployment or invocation, created manually via Azure portal or CLI.
+- When using Azure storage account connection strings, make sure the account has enabled storage account key access (`Storage Account > Settings > Configuration`).
+
+---
+
+With the above steps complete, your Azure Function integration with your AI Agent is ready for use.
 
 
 #### Create Agent With Logic Apps
@@ -891,7 +915,7 @@ Here is an example of `create_run` and poll until the run is completed:
 <!-- SNIPPET:sample_agents_basics.create_run -->
 
 ```python
-run = project_client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+run = project_client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
 
 # Poll the run as long as run status is queued or in progress
 while run.status in ["queued", "in_progress", "requires_action"]:
@@ -909,7 +933,7 @@ Here is an example:
 <!-- SNIPPET:sample_agents_run_with_toolset.create_and_process_run -->
 
 ```python
-run = project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+run = project_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
 ```
 
 <!-- END SNIPPET -->
@@ -921,7 +945,7 @@ Here is an example of streaming:
 <!-- SNIPPET:sample_agents_stream_iteration.iterate_stream -->
 
 ```python
-with project_client.agents.create_stream(thread_id=thread.id, assistant_id=agent.id) as stream:
+with project_client.agents.create_stream(thread_id=thread.id, agent_id=agent.id) as stream:
 
     for event_type, event_data, _ in stream:
 
@@ -987,7 +1011,7 @@ class MyEventHandler(AgentEventHandler[str]):
 
 ```python
 with project_client.agents.create_stream(
-    thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
+    thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler()
 ) as stream:
     for event_type, event_data, func_return in stream:
         print(f"Received data.")
@@ -1269,6 +1293,7 @@ tracer = trace.get_tracer(__name__)
 
 with tracer.start_as_current_span(scenario):
     with project_client:
+        project_client.telemetry.enable()
 ```
 
 <!-- END SNIPPET -->

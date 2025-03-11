@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -296,7 +296,7 @@ class _AIAgentsInstrumentorPreview:
             content_body,
             attachments=message.attachments,
             thread_id=message.thread_id,
-            agent_id=message.assistant_id,
+            agent_id=message.agent_id,
             message_id=message.id,
             thread_run_id=message.run_id,
             message_status=message.status,
@@ -406,7 +406,7 @@ class _AIAgentsInstrumentorPreview:
 
         attributes = self._create_event_attributes(
             thread_id=step.thread_id,
-            agent_id=step.assistant_id,
+            agent_id=step.agent_id,
             thread_run_id=step.run_id,
             message_status=step.status,
             usage=step.usage,
@@ -808,7 +808,7 @@ class _AIAgentsInstrumentorPreview:
             0
         ]._config.project_name
         thread_id = kwargs.get("thread_id")
-        assistant_id = kwargs.get("assistant_id")
+        agent_id = kwargs.get("agent_id")
         model = kwargs.get("model")
         instructions = kwargs.get("instructions")
         additional_instructions = kwargs.get("additional_instructions")
@@ -824,7 +824,7 @@ class _AIAgentsInstrumentorPreview:
             operation_name,
             project_name,
             thread_id,
-            assistant_id,
+            agent_id,
             model=model,
             instructions=instructions,
             additional_instructions=additional_instructions,
@@ -864,7 +864,7 @@ class _AIAgentsInstrumentorPreview:
             0
         ]._config.project_name
         thread_id = kwargs.get("thread_id")
-        assistant_id = kwargs.get("assistant_id")
+        agent_id = kwargs.get("agent_id")
         model = kwargs.get("model")
         instructions = kwargs.get("instructions")
         additional_instructions = kwargs.get("additional_instructions")
@@ -880,7 +880,7 @@ class _AIAgentsInstrumentorPreview:
             operation_name,
             project_name,
             thread_id,
-            assistant_id,
+            agent_id,
             model=model,
             instructions=instructions,
             additional_instructions=additional_instructions,
@@ -1067,7 +1067,7 @@ class _AIAgentsInstrumentorPreview:
             0
         ]._config.project_name
         thread_id = kwargs.get("thread_id")
-        assistant_id = kwargs.get("assistant_id")
+        agent_id = kwargs.get("agent_id")
         model = kwargs.get("model")
         instructions = kwargs.get("instructions")
         additional_instructions = kwargs.get("additional_instructions")
@@ -1084,7 +1084,7 @@ class _AIAgentsInstrumentorPreview:
             operation_name,
             project_name,
             thread_id,
-            assistant_id,
+            agent_id,
             model=model,
             instructions=instructions,
             additional_instructions=additional_instructions,
@@ -1127,7 +1127,7 @@ class _AIAgentsInstrumentorPreview:
             0
         ]._config.project_name
         thread_id = kwargs.get("thread_id")
-        assistant_id = kwargs.get("assistant_id")
+        agent_id = kwargs.get("agent_id")
         model = kwargs.get("model")
         instructions = kwargs.get("instructions")
         additional_instructions = kwargs.get("additional_instructions")
@@ -1144,7 +1144,7 @@ class _AIAgentsInstrumentorPreview:
             operation_name,
             project_name,
             thread_id,
-            assistant_id,
+            agent_id,
             model=model,
             instructions=instructions,
             additional_instructions=additional_instructions,
