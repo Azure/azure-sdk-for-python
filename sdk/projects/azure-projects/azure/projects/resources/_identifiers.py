@@ -41,6 +41,7 @@ class ResourceIdentifiers(Enum):
     ai_chat_deployment = "ai:deployment:chat"
     ai_embeddings_deployment = "ai:deployment:embeddings"
     ai_connection = "ai:connection"
+    config_store = "appconfig"
 
     def resource(  # pylint: disable=too-many-branches,too-many-statements,too-many-return-statements
         self,
@@ -139,6 +140,10 @@ class ResourceIdentifiers(Enum):
             from .foundry._connection import AIConnection
 
             return AIConnection
+        if self == self.config_store:
+            from .appconfig import ConfigStore
+
+            return ConfigStore
         raise TypeError(f"Unknown resource identifier: {self}")
 
 
@@ -156,7 +161,9 @@ RESOURCE_FROM_CLIENT_ANNOTATION: Dict[str, ResourceIdentifiers] = {
     "CertificateClient": ResourceIdentifiers.keyvault,
     "ChatCompletionsClient": ResourceIdentifiers.ai_chat_deployment,
     "Chat": ResourceIdentifiers.ai_chat_deployment,
+    "Completions": ResourceIdentifiers.ai_chat_deployment,
     "AsyncChat": ResourceIdentifiers.ai_chat_deployment,
+    "AsyncCompletions": ResourceIdentifiers.ai_chat_deployment,
     "EmbeddingsClient": ResourceIdentifiers.ai_embeddings_deployment,
     "Embeddings": ResourceIdentifiers.ai_embeddings_deployment,
     "AsyncEmbeddings": ResourceIdentifiers.ai_embeddings_deployment,
@@ -167,4 +174,5 @@ RESOURCE_FROM_CLIENT_ANNOTATION: Dict[str, ResourceIdentifiers] = {
     "SearchIndexerClient": ResourceIdentifiers.search,
     "SearchIndexClient": ResourceIdentifiers.search,
     "SearchClient": ResourceIdentifiers.search,
+    "AzureAppConfigurationClient": ResourceIdentifiers.config_store
 }

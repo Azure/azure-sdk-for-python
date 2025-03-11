@@ -12,3 +12,4 @@ azure-data-tables
 azure-keyvault-keys
 azure-keyvault-secrets
 azure-ai-inference
+azure-appconfiguration
