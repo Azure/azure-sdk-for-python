@@ -1648,25 +1648,25 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
         self.last_message: Optional[ThreadMessage] = None
         self.instrumentor = instrumentor
 
-    def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
+    def on_message_delta(self, delta: "MessageDeltaChunk") -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
-            self.inner_handler.on_message_delta(delta)
+            return self.inner_handler.on_message_delta(delta)
 
-    def on_thread_message(self, message: "ThreadMessage") -> None:
+    def on_thread_message(self, message: "ThreadMessage") -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
-            self.inner_handler.on_thread_message(message)
+            return self.inner_handler.on_thread_message(message)
 
         if message.status in {"completed", "incomplete"}:
             self.last_message = message
 
-    def on_thread_run(self, run: "ThreadRun") -> None:
+    def on_thread_run(self, run: "ThreadRun") -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
-            self.inner_handler.on_thread_run(run)
+            return self.inner_handler.on_thread_run(run)
         self.last_run = run
 
-    def on_run_step(self, step: "RunStep") -> None:
+    def on_run_step(self, step: "RunStep") -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
-            self.inner_handler.on_run_step(step)
+            return self.inner_handler.on_run_step(step)
 
         if step.status == RunStepStatus.IN_PROGRESS:
             return
@@ -1680,22 +1680,22 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
             self.instrumentor.add_thread_message_event(self.span, cast(ThreadMessage, self.last_message), step.usage)
             self.last_message = None
 
-    def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:
+    def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
-            self.inner_handler.on_run_step_delta(delta)
+            return self.inner_handler.on_run_step_delta(delta)
 
-    def on_error(self, data: str) -> None:
+    def on_error(self, data: str) -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
-            self.inner_handler.on_error(data)
+            return self.inner_handler.on_error(data)
 
-    def on_done(self) -> None:
+    def on_done(self) -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
-            self.inner_handler.on_done()
+            return self.inner_handler.on_done()
         # it could be called multiple tines (for each step) __exit__
 
-    def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
+    def on_unhandled_event(self, event_type: str, event_data: Any) -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
-            self.inner_handler.on_unhandled_event(event_type, event_data)
+            return self.inner_handler.on_unhandled_event(event_type, event_data)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if not self.ended:
@@ -1730,23 +1730,23 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
 
     async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
-            await self.inner_handler.on_message_delta(delta)
+            return await self.inner_handler.on_message_delta(delta)
 
     async def on_thread_message(self, message: "ThreadMessage") -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
-            await self.inner_handler.on_thread_message(message)
+            return await self.inner_handler.on_thread_message(message)
 
         if message.status in {"completed", "incomplete"}:
             self.last_message = message
 
     async def on_thread_run(self, run: "ThreadRun") -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
-            await self.inner_handler.on_thread_run(run)
+            return await self.inner_handler.on_thread_run(run)
         self.last_run = run
 
     async def on_run_step(self, step: "RunStep") -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
-            await self.inner_handler.on_run_step(step)
+            return await self.inner_handler.on_run_step(step)
 
         if step.status == RunStepStatus.IN_PROGRESS:
             return
@@ -1762,20 +1762,20 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
 
     async def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
-            await self.inner_handler.on_run_step_delta(delta)
+            return await self.inner_handler.on_run_step_delta(delta)
 
     async def on_error(self, data: str) -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
-            await self.inner_handler.on_error(data)
+            return await self.inner_handler.on_error(data)
 
     async def on_done(self) -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
-            await self.inner_handler.on_done()
+            return await self.inner_handler.on_done()
         # it could be called multiple tines (for each step) __exit__
 
     async def on_unhandled_event(self, event_type: str, event_data: Any) -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
-            await self.inner_handler.on_unhandled_event(event_type, event_data)
+            return await self.inner_handler.on_unhandled_event(event_type, event_data)
 
     def __aexit__(self, exc_type, exc_val, exc_tb):
         if not self.ended:
