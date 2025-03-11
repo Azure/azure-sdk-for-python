@@ -10,7 +10,7 @@ from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
 
 @experimental
 class ISAEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
-    id = "inference_of_sensitive_attributes"
+    id = "inference_sensitive_attributes"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override

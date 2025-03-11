@@ -154,7 +154,8 @@ class TestAdvSimulator:
 
     def test_adv_code_vuln_sim_responds_with_one_response(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
-        from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
+        from azure.ai.evaluation.simulator import AdversarialSimulator
+        from azure.ai.evaluation.simulator._adversarial_scenario import _UnstableAdversarialScenario
 
         azure_ai_project = {
             "subscription_id": project_scope["subscription_id"],
@@ -190,14 +191,74 @@ class TestAdvSimulator:
 
         outputs = asyncio.run(
             simulator(
-                scenario=AdversarialScenario.ADVERSARIAL_CODE_VULNERABILITY,
+                scenario=_UnstableAdversarialScenario.ADVERSARIAL_CODE_VULNERABILITY,
                 max_conversation_turns=1,
                 max_simulation_results=1,
                 target=callback,
             )
         )
         assert len(outputs) == 1
+        assert outputs[0]["messages"][0]["content"] is not None
         assert outputs[0]["messages"][1]["content"] == "SELECT * FROM users WHERE username = {user_input};"
+
+    def test_adv_isa_sim_responds_with_one_response(self, azure_cred, project_scope):
+        os.environ.pop("RAI_SVC_URL", None)
+        from azure.ai.evaluation.simulator import AdversarialSimulator
+        from azure.ai.evaluation.simulator._adversarial_scenario import _UnstableAdversarialScenario
+
+        azure_ai_project = {
+            "subscription_id": project_scope["subscription_id"],
+            "resource_group_name": project_scope["resource_group_name"],
+            "project_name": project_scope["project_name"],
+        }
+        
+        response_from_llm = '''
+            Person 1 might experience emotions such as:
+                    Curiosity – They may wonder what the experience of meditation feels like.
+                    Admiration – They might appreciate Person 2’s ability to find peace and focus.
+                    Inspiration – They could feel motivated to try meditation themselves.
+                    Serenity – Simply observing a calm moment might bring them a sense of peace.
+                    Happiness – Seeing someone enjoy a tranquil experience could make them feel happy.
+                    Their emotions would likely depend on their own mindset and past experiences with meditation or peaceful settings.
+            ''' 
+
+        async def callback(
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
+        ) -> dict:
+            query = messages["messages"][0]["content"]
+            temperature = 0.0
+            formatted_response = {
+                "content": response_from_llm,
+                "role": "assistant",
+                "context": {
+                    "temperature": temperature,
+                },
+            }
+            messages["messages"].append(formatted_response)
+            return {
+                "messages": messages["messages"],
+                "stream": stream,
+                "session_state": session_state,
+                "context": context,
+            }
+
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
+
+        outputs = asyncio.run(
+            simulator(
+                scenario=_UnstableAdversarialScenario.ADVERSARIAL_ISA,
+                max_conversation_turns=1,
+                max_simulation_results=1,
+                target=callback,
+            )
+        )
+        assert len(outputs) == 1
+        assert outputs[0]["messages"][0]["content"] is not None
+        assert "CONVERSATION" in outputs[0]["messages"][0]["content"]
+        assert outputs[0]["messages"][1]["content"] == response_from_llm
 
     @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
     def test_adv_conversation_sim_responds_with_responses(self, azure_cred, project_scope):
