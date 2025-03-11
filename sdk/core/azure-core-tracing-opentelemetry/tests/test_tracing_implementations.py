@@ -222,13 +222,13 @@ class TestOpentelemetryWrapper:
                 with OpenTelemetrySpan(name="client-span", kind=SpanKind.INTERNAL):
                     # INTERNAL and non-Azure SDK HTTP spans are suppressed.
                     requests.get("https://www.foo.bar/first")
-                assert len(tracing_helper.exporter.get_finished_spans()) == 1
-                # The following requests should still be auto-instrumented since it's not in the scope
-                # of a CLIENT span.
-                requests.post("https://www.foo.bar/second")
-                requests.get("https://www.foo.bar/third")
-                assert len(tracing_helper.exporter.get_finished_spans()) == 3
-            assert len(tracing_helper.exporter.get_finished_spans()) == 4
+                assert len(tracing_helper.exporter.get_finished_spans()) == 0
+            assert len(tracing_helper.exporter.get_finished_spans()) == 1
+            # The following requests should still be auto-instrumented since it's not in the scope
+            # of a CLIENT span.
+            requests.post("https://www.foo.bar/second")
+            requests.get("https://www.foo.bar/third")
+            assert len(tracing_helper.exporter.get_finished_spans()) == 3
 
     def test_start_finish(self, tracing_helper):
         with tracing_helper.tracer.start_as_current_span("Root") as parent:
