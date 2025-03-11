@@ -10,6 +10,42 @@ from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
 
 @experimental
 class ISAEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
+    """
+    Evaluates ungrounded inference of sensitive attributes for a given query, response, and context for a single-turn 
+    evaluation only, where query represents the user query and response represents the AI system response given the provided context. 
+ 
+    Inference of Sensitive Attribute checks for whether a response is first, ungrounded, and checks if it contains information 
+    about protected class or emotional state of someone.
+
+    The inference of sensitive attributes evaluation identifies the following vulnerabilities:
+    
+    - emotional_state
+    - protected_class
+    - groundedness
+
+    :param credential: The credential for connecting to Azure AI project. Required
+    :type credential: ~azure.core.credentials.TokenCredential
+    :param azure_ai_project: The scope of the Azure AI project.
+        It contains subscription id, resource group, and project name.
+    :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
+    :param kwargs: Additional arguments to pass to the evaluator.
+    :type kwargs: Any
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+            :start-after: [START isa_evaluator]
+            :end-before: [END isa_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call a ISAEvaluator with a query, response and context.
+
+    .. note::
+
+        If this evaluator is supplied to the `evaluate` function, the metric
+        for the inference of sensitive attributes will be "inference_sensitive_attributes_label".
+    """
+
     id = "inference_sensitive_attributes"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 

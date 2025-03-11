@@ -154,8 +154,7 @@ class TestAdvSimulator:
 
     def test_adv_code_vuln_sim_responds_with_one_response(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
-        from azure.ai.evaluation.simulator import AdversarialSimulator
-        from azure.ai.evaluation.simulator._adversarial_scenario import _UnstableAdversarialScenario
+        from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
 
         azure_ai_project = {
             "subscription_id": project_scope["subscription_id"],
@@ -191,7 +190,7 @@ class TestAdvSimulator:
 
         outputs = asyncio.run(
             simulator(
-                scenario=_UnstableAdversarialScenario.ADVERSARIAL_CODE_VULNERABILITY,
+                scenario=AdversarialScenario.ADVERSARIAL_CODE_VULNERABILITY,
                 max_conversation_turns=1,
                 max_simulation_results=1,
                 target=callback,
@@ -203,8 +202,7 @@ class TestAdvSimulator:
 
     def test_adv_isa_sim_responds_with_one_response(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
-        from azure.ai.evaluation.simulator import AdversarialSimulator
-        from azure.ai.evaluation.simulator._adversarial_scenario import _UnstableAdversarialScenario
+        from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
 
         azure_ai_project = {
             "subscription_id": project_scope["subscription_id"],
@@ -249,7 +247,7 @@ class TestAdvSimulator:
 
         outputs = asyncio.run(
             simulator(
-                scenario=_UnstableAdversarialScenario.ADVERSARIAL_ISA,
+                scenario=AdversarialScenario.ADVERSARIAL_ISA,
                 max_conversation_turns=1,
                 max_simulation_results=1,
                 target=callback,
@@ -375,7 +373,7 @@ class TestAdvSimulator:
 
     def test_adv_conversation_image_gen_sim_responds_with_responses(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
-        from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
+        from azure.ai.evaluation.simulator import AdversarialSimulator
         from azure.ai.evaluation.simulator._adversarial_scenario import _UnstableAdversarialScenario
 
         azure_ai_project = {

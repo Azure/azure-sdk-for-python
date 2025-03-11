@@ -437,7 +437,7 @@ class TestSimAndEval:
         
         simulator_output = asyncio.run(
             simulator(
-                scenario=_UnstableAdversarialScenario.ADVERSARIAL_CODE_VULNERABILITY,
+                scenario=AdversarialScenario.ADVERSARIAL_CODE_VULNERABILITY,
                 max_conversation_turns=1,
                 max_simulation_results=1,
                 target=callback,
