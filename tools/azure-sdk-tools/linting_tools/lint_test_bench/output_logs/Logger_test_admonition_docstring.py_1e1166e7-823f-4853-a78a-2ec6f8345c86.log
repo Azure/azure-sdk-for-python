@@ -1,0 +1,96 @@
+2025-03-10 16:58:50,637 — Logger_test_admonition_docstring.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — <module>:205 — test_admonition_docstring.py
+2025-03-10 16:58:50,638 — Logger_test_admonition_docstring.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — <module>:211 — Running pylint on original file...
+2025-03-10 16:58:50,712 — Logger_test_admonition_docstring.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — run_pylint:181 — PYLINT SCORE: 7.5
+2025-03-10 16:58:50,713 — Logger_test_admonition_docstring.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — <module>:213 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-10 16:58:50,714 — Logger_test_admonition_docstring.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — <module>:220 — Fixing file...
+2025-03-10 16:58:50,715 — Logger_test_admonition_docstring.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — fix_file:105 — PROMPT FOR FIXING FILE: You are a helpful assistant that fixes pylint warnings. If you are not sure about a specific pylint error, you can check the pylint specific guidelines from the readme: https://github.com/Azure/azure-sdk-tools/blob/5e36502f0161bf3e2bc824ac216d4c0d244f498a/tools/pylint-extensions/azure-pylint-guidelines-checker/README.md,or the pylint documentation: https://pylint.readthedocs.io/en/stable/user_guide/checkers/features.html.Given a python file that has pylint issues, identify the issues and output ONLY the fixed code. For help, there is a comment that specifies which rules are being violated in each file.
+2025-03-10 16:58:50,716 — Logger_test_admonition_docstring.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — fix_file:106 — MODEL: gpt-40-mini
+2025-03-10 16:58:52,523 — Logger_test_admonition_docstring.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — fix_file:123 — FIXED CONTENT: # --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+# This code violates docstring-admonition-needs-newline
+class DeadClient:
+    def get_function(self, x: int) -> int:
+        """
+        :param x: This is a parameter
+        :type x: int
+        :return: int y
+        :rtype: int
+
+        docstring
+            .. admonition:: Example:
+                This is Example content.
+                Should support multi-line.
+                Can also include file:
+                .. literalinclude:: ../samples/sample_detect_language.py
+        """
+        y = x + 1
+        return y
+2025-03-10 16:58:52,523 — Logger_test_admonition_docstring.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — <module>:222 — Running pylint on fixed file...
+2025-03-10 16:58:52,629 — Logger_test_admonition_docstring.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — run_pylint:181 — PYLINT SCORE: 7.5
+2025-03-10 16:58:52,629 — Logger_test_admonition_docstring.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — <module>:225 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-10 16:58:52,629 — Logger_test_admonition_docstring.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — <module>:220 — Fixing file...
+2025-03-10 16:58:52,629 — Logger_test_admonition_docstring.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — fix_file:105 — PROMPT FOR FIXING FILE: You are a helpful assistant that fixes pylint warnings. If you are not sure about a specific pylint error, you can check the pylint specific guidelines from the readme: https://github.com/Azure/azure-sdk-tools/blob/5e36502f0161bf3e2bc824ac216d4c0d244f498a/tools/pylint-extensions/azure-pylint-guidelines-checker/README.md,or the pylint documentation: https://pylint.readthedocs.io/en/stable/user_guide/checkers/features.html.Given a python file that has pylint issues, identify the issues and output ONLY the fixed code. For help, there is a comment that specifies which rules are being violated in each file.
+2025-03-10 16:58:52,629 — Logger_test_admonition_docstring.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — fix_file:106 — MODEL: gpt-40-mini
+2025-03-10 16:58:54,592 — Logger_test_admonition_docstring.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — fix_file:123 — FIXED CONTENT: # --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+# This code violates docstring-admonition-needs-newline
+class DeadClient:
+    def get_function(self, x: int) -> int:
+        """
+        :param x: This is a parameter
+        :type x: int
+        :return: int y
+        :rtype: int
+
+        docstring
+
+        .. admonition:: Example:
+            This is Example content.
+            Should support multi-line.
+            Can also include file:
+            .. literalinclude:: ../samples/sample_detect_language.py
+        """
+        y = x + 1
+        return y
+2025-03-10 16:58:54,593 — Logger_test_admonition_docstring.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — <module>:222 — Running pylint on fixed file...
+2025-03-10 16:58:54,651 — Logger_test_admonition_docstring.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — run_pylint:181 — PYLINT SCORE: 7.5
+2025-03-10 16:58:54,651 — Logger_test_admonition_docstring.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — <module>:225 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-10 16:58:54,651 — Logger_test_admonition_docstring.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — <module>:220 — Fixing file...
+2025-03-10 16:58:54,652 — Logger_test_admonition_docstring.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — fix_file:105 — PROMPT FOR FIXING FILE: You are a helpful assistant that fixes pylint warnings. If you are not sure about a specific pylint error, you can check the pylint specific guidelines from the readme: https://github.com/Azure/azure-sdk-tools/blob/5e36502f0161bf3e2bc824ac216d4c0d244f498a/tools/pylint-extensions/azure-pylint-guidelines-checker/README.md,or the pylint documentation: https://pylint.readthedocs.io/en/stable/user_guide/checkers/features.html.Given a python file that has pylint issues, identify the issues and output ONLY the fixed code. For help, there is a comment that specifies which rules are being violated in each file.
+2025-03-10 16:58:54,652 — Logger_test_admonition_docstring.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — fix_file:106 — MODEL: gpt-40-mini
+2025-03-10 16:58:56,416 — Logger_test_admonition_docstring.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — fix_file:123 — FIXED CONTENT: # --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+# This code violates docstring-admonition-needs-newline
+class DeadClient:
+    def get_function(self, x: int) -> int:
+        """
+        :param x: This is a parameter
+        :type x: int
+        :return: int y
+        :rtype: int
+
+        docstring
+
+        .. admonition:: Example:
+
+            This is Example content.
+            Should support multi-line.
+            Can also include file:
+            .. literalinclude:: ../samples/sample_detect_language.py
+        """
+        y = x + 1
+        return y
+2025-03-10 16:58:56,420 — Logger_test_admonition_docstring.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — <module>:222 — Running pylint on fixed file...
+2025-03-10 16:58:56,548 — Logger_test_admonition_docstring.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — run_pylint:181 — PYLINT SCORE: 7.5
+2025-03-10 16:58:56,548 — Logger_test_admonition_docstring.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — <module>:225 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-10 16:58:56,548 — Logger_test_admonition_docstring.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — <module>:228 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-10 16:58:56,548 — Logger_test_admonition_docstring.py_1e1166e7-823f-4853-a78a-2ec6f8345c86.log — DEBUG — <module>:229 — 
+
+
+
