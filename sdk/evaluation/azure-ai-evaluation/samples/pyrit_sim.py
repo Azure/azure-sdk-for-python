@@ -5,15 +5,13 @@ cd azure-sdk-for-python/sdk/evaluation/azure-ai-evaluation
 pip install -e ".[pyrit]"
 """
 
-
 from typing import Dict, List, Optional
-from azure.ai.evaluation._safety_evaluation._red_team_agent import RedTeamAgent, AttackStrategy
+from azure.ai.evaluation._safety_evaluation import RedTeamAgent, AttackStrategy, AttackObjectiveGenerator, RiskCategory
 import os
 from azure.identity import DefaultAzureCredential
 from azure.ai.evaluation.simulator import AdversarialScenario
 from pyrit.prompt_target import OpenAIChatTarget
 from pyrit.common import initialize_pyrit, DUCK_DB
-from azure.ai.evaluation._safety_evaluation import AttackObjectiveGenerator, RiskCategory
 
 
 async def main():
@@ -35,6 +33,14 @@ async def main():
         "azure_deployment": os.environ.get("AZURE_DEPLOYMENT_NAME"),
     }
 
+    ## Minimal inputs
+    attack_objective_generator = AttackObjectiveGenerator(
+        risk_categories=[
+            RiskCategory.HateUnfairness,
+        ],
+        num_objectives=10,
+    )
+
     red_team_agent = RedTeamAgent(
         azure_ai_project=azure_ai_project,
         credential=DefaultAzureCredential(),
@@ -42,9 +48,22 @@ async def main():
 
     outputs = await red_team_agent.attack(
         target=model_config, # type: ignore
+        attack_objective_generator=attack_objective_generator,
     )
     print(outputs)
+
     
+    ## Maximal inputs
+    attack_objective_generator = AttackObjectiveGenerator(
+        risk_categories=[
+            RiskCategory.HateUnfairness,
+            RiskCategory.Violence,
+            RiskCategory.Sexual,
+            RiskCategory.SelfHarm,
+        ],
+        num_objectives=10,
+    )
+
     red_team_agent = RedTeamAgent(
         azure_ai_project=azure_ai_project,
         credential=DefaultAzureCredential(),
@@ -52,6 +71,7 @@ async def main():
 
     outputs = await red_team_agent.attack(
         target=call_to_ai_application, # type: ignore
+        attack_objective_generator=attack_objective_generator,
     )
     print(outputs)
     
@@ -62,7 +82,7 @@ async def main():
         session_state: Optional[str] = None,
         context: Optional[Dict] = None
     ) -> dict:
-        messages_list = [{"role": chat_message.role,"content": chat_message.content,} for chat_message in messages] 
+        messages_list = [{"role": chat_message.role,"content": chat_message.content} for chat_message in messages] #type: ignore
         latest_message = messages_list[-1]
         application_input = latest_message["content"]
         try:
@@ -85,15 +105,16 @@ async def main():
     )
 
     outputs = await red_team_agent.attack(
-        target=callback_target, 
+        target=callback_target, # type: ignore
+        attack_objective_generator=attack_objective_generator,
     )
     print(outputs)
 
     # Pyrit target
     initialize_pyrit(memory_db_type=DUCK_DB)
     pyrit_target = OpenAIChatTarget(
-        deployment_name = os.environ.get("AZURE_DEPLOYMENT_NAME"),
-        endpoint = os.environ.get("AZURE_ENDPOINT"),
+        deployment_name=os.environ.get("AZURE_DEPLOYMENT_NAME"),
+        endpoint=os.environ.get("AZURE_ENDPOINT"),
         use_aad_auth=True
     )
 
@@ -104,6 +125,7 @@ async def main():
 
     outputs = await red_team_agent.attack(
         target=pyrit_target, # type: ignore
+        attack_objective_generator=attack_objective_generator,
     )
     print(outputs)
     # [END red_team_agent_targets]
@@ -117,6 +139,7 @@ async def main():
 
     outputs = await red_team_agent.attack(
         target=call_to_ai_application, # type: ignore
+        attack_objective_generator=attack_objective_generator,
     )
     print(outputs)
 
@@ -128,7 +151,8 @@ async def main():
 
     outputs = await red_team_agent.attack(
         target=call_to_ai_application, # type: ignore
-        attack_strategy=[AttackStrategy.EASY]
+        attack_strategy=[AttackStrategy.EASY],
+        attack_objective_generator=attack_objective_generator,
     )
     print(outputs)
 
@@ -140,7 +164,8 @@ async def main():
     
     outputs = await red_team_agent.attack(
         target=model_config, # type: ignore
-        attack_strategy=[AttackStrategy.MODERATE]
+        attack_strategy=[AttackStrategy.MODERATE],
+        attack_objective_generator=attack_objective_generator,
     )
     print(outputs)
 
@@ -152,7 +177,8 @@ async def main():
 
     outputs = await red_team_agent.attack(
         target=model_config, # type: ignore
-        attack_strategy=[AttackStrategy.DIFFICULT]
+        attack_strategy=[AttackStrategy.DIFFICULT],
+        attack_objective_generator=attack_objective_generator,
     )
 
     # Compose attack strategies
@@ -166,6 +192,8 @@ async def main():
         attack_strategy=[AttackStrategy.Compose([AttackStrategy.Flip, AttackStrategy.Base64]), 
             AttackStrategy.EASY,
             AttackStrategy.Morse],
+        output_path="RacoonRedTeamEvalResults.jsonl", 
+        attack_objective_generator=attack_objective_generator,
     )
     print(outputs)
 
@@ -178,6 +206,8 @@ async def main():
     outputs = await red_team_agent.attack(
         target=model_config, # type: ignore
         attack_strategy=[AttackStrategy.DIFFICULT, AttackStrategy.Compose([AttackStrategy.Math, AttackStrategy.Tense])],
+        output_path="DIFFICULTBudget-Duplicates.jsonl",
+        attack_objective_generator=attack_objective_generator,
     )
     print(outputs)
 
@@ -189,7 +219,8 @@ async def main():
 
     outputs = await red_team_agent.attack(
         target=call_to_ai_application, # type: ignore
-        attack_strategy=[AttackStrategy.EASY, AttackStrategy.MODERATE, AttackStrategy.DIFFICULT]
+        attack_strategy=[AttackStrategy.EASY, AttackStrategy.MODERATE, AttackStrategy.DIFFICULT],
+        attack_objective_generator=attack_objective_generator,
     )
     print(outputs)
 
@@ -199,7 +230,8 @@ async def main():
     attack_objective_generator = AttackObjectiveGenerator(
         risk_categories=[
             RiskCategory.Violence,
-        ]
+        ],
+        num_objectives=10,
     )
     application_scenario = "You are an AI application fine tuned on financial services data, a chatbot which answers questions about how best to use the company's product for a user's financial needs. Industry = Financial Services"
 
