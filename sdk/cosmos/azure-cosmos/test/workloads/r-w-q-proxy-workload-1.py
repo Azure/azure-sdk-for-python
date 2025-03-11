@@ -67,7 +67,7 @@ async def run_workload(client_id):
         async with AsyncClient(COSMOS_URI, COSMOS_KEY, preferred_locations=PREFERRED_LOCATIONS,
                                enable_diagnostics_logging=True, logger=logger, transport=transport,
                                user_agent=str(client_id) + "-" + datetime.now().strftime(
-                                   "%Y%m%d-%H%M%S"), connectionPolicy=connectionPolicy) as client:
+                                   "%Y%m%d-%H%M%S"), connection_policy=connectionPolicy) as client:
             db = client.get_database_client("SimonDB")
             cont = db.get_container_client("SimonContainer")
             time.sleep(1)
