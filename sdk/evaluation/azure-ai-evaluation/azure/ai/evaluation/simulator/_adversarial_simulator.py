@@ -224,7 +224,7 @@ class AdversarialSimulator:
         # Prepare task parameters based on scenario - but use a single append call for all scenarios
         tasks = []
         template_parameter_pairs = []
-        
+
         if scenario == AdversarialScenario.ADVERSARIAL_CONVERSATION:
             # For ADVERSARIAL_CONVERSATION, flatten the parameters
             for i, template in enumerate(templates):
@@ -236,7 +236,7 @@ class AdversarialSimulator:
             # Use original logic for other scenarios - zip parameters
             parameter_lists = [t.template_parameters for t in templates]
             zipped_parameters = list(zip(*parameter_lists))
-            
+
             for param_group in zipped_parameters:
                 for template, parameter in zip(templates, param_group):
                     template_parameter_pairs.append((template, parameter))
@@ -244,12 +244,12 @@ class AdversarialSimulator:
         # Limit to max_simulation_results if needed
         if len(template_parameter_pairs) > max_simulation_results:
             template_parameter_pairs = template_parameter_pairs[:max_simulation_results]
-        
+
         # Single task append loop for all scenarios
         for template, parameter in template_parameter_pairs:
             if _jailbreak_type == "upia":
                 parameter = self._add_jailbreak_parameter(parameter, random.choice(jailbreak_dataset))
-            
+
             tasks.append(
                 asyncio.create_task(
                     self._simulate_async(
@@ -326,7 +326,11 @@ class AdversarialSimulator:
         simulation_id: str = "",
     ) -> List[Dict]:
         user_bot = self._setup_bot(
-            role=ConversationRole.USER, template=template, parameters=parameters, scenario=scenario, simulation_id=simulation_id
+            role=ConversationRole.USER,
+            template=template,
+            parameters=parameters,
+            scenario=scenario,
+            simulation_id=simulation_id,
         )
         system_bot = self._setup_bot(
             target=target, role=ConversationRole.ASSISTANT, template=template, parameters=parameters, scenario=scenario
@@ -381,7 +385,9 @@ class AdversarialSimulator:
     ) -> ConversationBot:
         if role is ConversationRole.USER:
             model = self._get_user_proxy_completion_model(
-                template_key=template.template_name, template_parameters=parameters, simulation_id=simulation_id,
+                template_key=template.template_name,
+                template_parameters=parameters,
+                simulation_id=simulation_id,
             )
             return ConversationBot(
                 role=role,
