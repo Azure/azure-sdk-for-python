@@ -40,6 +40,7 @@ from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWork
 from azure.ai.ml._restclient.v2024_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042024Preview
 from azure.ai.ml._restclient.v2024_07_01_preview import AzureMachineLearningWorkspaces as ServiceClient072024Preview
 from azure.ai.ml._restclient.v2024_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102024Preview
+from azure.ai.ml._restclient.v2025_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012025Preview
 from azure.ai.ml._restclient.workspace_dataplane import (
     AzureMachineLearningWorkspaces as ServiceClientWorkspaceDataplane,
 )
@@ -396,6 +397,17 @@ class MLClient:
             **kwargs,
         )
 
+        self._service_client_01_2025_preview = ServiceClient012025Preview(
+            credential=self._credential,
+            subscription_id=(
+                self._ws_operation_scope._subscription_id
+                if registry_reference
+                else self._operation_scope._subscription_id
+            ),
+            base_url=base_url,
+            **kwargs,
+        )
+
         # A general purpose, user-configurable pipeline for making
         # http requests
         self._requests_pipeline = HttpPipeline(**kwargs)
@@ -683,6 +695,7 @@ class MLClient:
             requests_pipeline=self._requests_pipeline,
             service_client_01_2024_preview=self._service_client_01_2024_preview,
             service_client_10_2024_preview=self._service_client_10_2024_preview,
+            service_client_01_2025_preview=self._service_client_01_2025_preview,
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.JOB, self._jobs)

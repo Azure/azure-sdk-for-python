@@ -10,6 +10,13 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class ActivationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The activation state of the WAF. Use 'Enabled' to enable the WAF and 'Disabled' to disable it."""
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource."""
 
@@ -26,6 +33,13 @@ class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     USER_ASSIGNED = "UserAssigned"
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
     NONE = "None"
+
+
+class Level(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Warning or Info."""
+
+    INFO = "Info"
+    WARNING = "Warning"
 
 
 class NginxPrivateIPAllocationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -22,7 +22,7 @@ USAGE:
 
 import os
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import FileSearchTool, FilePurpose
+from azure.ai.projects.models import FileSearchTool, FilePurpose, MessageTextContent
 from azure.identity import DefaultAzureCredential
 
 project_client = AIProjectClient.from_connection_string(
@@ -36,7 +36,7 @@ with project_client:
     print(f"Uploaded file, file ID: {file.id}")
 
     # Create a vector store with no file and wait for it to be processed
-    vector_store = project_client.agents.create_vector_store_and_poll(file_ids=[], name="sample_vector_store")
+    vector_store = project_client.agents.create_vector_store_and_poll(file_ids=[file.id], name="sample_vector_store")
     print(f"Created vector store, vector store ID: {vector_store.id}")
 
     # Create a file search tool
@@ -60,7 +60,7 @@ with project_client:
     )
     print(f"Created message, message ID: {message.id}")
 
-    run = project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+    run = project_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
     print(f"Created run, run ID: {run.id}")
 
     project_client.agents.delete_vector_store(vector_store.id)
@@ -70,4 +70,11 @@ with project_client:
     print("Deleted agent")
 
     messages = project_client.agents.list_messages(thread_id=thread.id)
-    print(f"Messages: {messages}")
+
+    for message in reversed(messages.data):
+        # To remove characters, which are not correctly handled by print, we will encode the message
+        # and then decode it again.
+        clean_message = "\n".join(
+            text_msg.text.value.encode("ascii", "ignore").decode("utf-8") for text_msg in message.text_messages
+        )
+        print(f"Role: {message.role}  Message: {clean_message}")

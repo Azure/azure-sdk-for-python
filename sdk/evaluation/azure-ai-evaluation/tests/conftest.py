@@ -9,8 +9,9 @@ import time
 from datetime import datetime, timedelta
 import jwt
 from logging import Logger
+from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, Final, Generator, Mapping, Optional
+from typing import Any, Dict, Final, Generator, Mapping, Literal, Optional
 from unittest.mock import patch
 
 import pytest

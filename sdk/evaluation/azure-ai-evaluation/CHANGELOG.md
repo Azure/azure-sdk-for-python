@@ -1,6 +1,17 @@
 # Release History
 
-## 1.3.0 (Unreleased)
+## 1.4.0 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+- Fixed error in `GroundednessProEvaluator` when handling non-numeric values like "n/a" returned from the service.
+
+### Other Changes
+
+## 1.3.0 (2025-02-28)
 
 ### Breaking Changes
 - Multimodal specific evaluators `ContentSafetyMultimodalEvaluator`, `ViolenceMultimodalEvaluator`, `SexualMultimodalEvaluator`, `SelfHarmMultimodalEvaluator`, `HateUnfairnessMultimodalEvaluator` and `ProtectedMaterialMultimodalEvaluator` has been removed. Please use `ContentSafetyEvaluator`, `ViolenceEvaluator`, `SexualEvaluator`, `SelfHarmEvaluator`, `HateUnfairnessEvaluator` and `ProtectedMaterialEvaluator` instead.

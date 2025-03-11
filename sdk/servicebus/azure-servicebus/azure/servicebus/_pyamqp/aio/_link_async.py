@@ -237,8 +237,13 @@ class Link:  # pylint: disable=too-many-instance-attributes
         # TODO: on_detach_hook
         if frame[2]:  # error
             # frame[2][0] is condition, frame[2][1] is description, frame[2][2] is info
-            error_cls = AMQPLinkRedirect if frame[2][0] == ErrorCondition.LinkRedirect else AMQPLinkError
-            self._error = error_cls(condition=frame[2][0], description=frame[2][1], info=frame[2][2])
+            condition = frame[2][0]
+            error_cls = AMQPLinkRedirect if condition == ErrorCondition.LinkRedirect else AMQPLinkError
+            # description and info are optional fields, from the AMQP spec.
+            # https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-error
+            description = None if len(frame[2]) < 2 else frame[2][1]
+            info = None if len(frame[2]) < 3 else frame[2][2]
+            self._error = error_cls(condition=condition, description=description, info=info)
             await self._set_state(LinkState.ERROR)
         else:
             if self.state != LinkState.DETACH_SENT:
