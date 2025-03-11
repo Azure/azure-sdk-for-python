@@ -85,7 +85,7 @@ def add_sanitizers(
     test_proxy,
     mock_model_config: AzureOpenAIModelConfiguration,
     mock_project_scope: Dict[str, str],
-    connection_file: Optional[Dict[str, Any]],
+    connection_file: Dict[str, Any],
 ) -> None:
     def azureopenai_connection_sanitizer():
         """Sanitize the openai deployment name."""
@@ -149,11 +149,11 @@ def add_sanitizers(
     def live_connection_file_values():
         """Sanitize the live values from connections.json"""
 
-        if connection_file is None:
+        if not connection_file:
             return
 
-        project_scope = connection_file["azure_ai_project_scope"]["value"]
-        model_config = connection_file["azure_openai_model_config"]["value"]
+        project_scope = connection_file[KEY_AZURE_PROJECT_SCOPE]["value"]
+        model_config = connection_file[KEY_AZURE_MODEL_CONFIG]["value"]
 
         add_general_regex_sanitizer(regex=project_scope["subscription_id"], value=SanitizedValues.SUBSCRIPTION_ID)
         add_general_regex_sanitizer(

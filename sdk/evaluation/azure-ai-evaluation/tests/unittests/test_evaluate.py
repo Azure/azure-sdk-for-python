@@ -118,10 +118,8 @@ def _target_fn2(query):
     response["query"] = f"The query is as follows: {query}"
     return response
 
-
 def _target_that_fails(query):
     raise Exception("I am failing")
-
 
 def _new_answer_target():
     return {"response": "new response"}

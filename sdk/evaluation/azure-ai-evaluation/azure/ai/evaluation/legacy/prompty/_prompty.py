@@ -262,7 +262,7 @@ class AsyncPrompty:
             timeout = float(timeout_val)
 
         # disable OpenAI's built-in retry mechanism by using our own retry
-        # for better debuggability and real-time status updates.
+        # for better debugging and real-time status updates.
         max_retries = 0
 
         api_client: Union[AsyncAzureOpenAI, AsyncOpenAI]

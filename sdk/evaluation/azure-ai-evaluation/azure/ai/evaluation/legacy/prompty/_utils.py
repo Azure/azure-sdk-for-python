@@ -217,7 +217,7 @@ DEFAULT_IMAGE_MIME_TYPE: Final[str] = "image/*"
 """The mime type to use when we don't know the image type"""
 
 FILE_EXT_TO_MIME: Final[Mapping[str, str]] = {
-    ".apng": "image/apng",
+    ".apng": "image/apng",  # cspell:ignore apng
     ".avif": "image/avif",
     ".bmp": "image/bmp",
     ".gif": "image/gif",
@@ -350,7 +350,7 @@ def _inline_image(image: str, working_dir: Path, image_detail: str) -> Dict[str,
     into a base 64 data URI. Internal URLs will remained untouched. It can can accept http(s), ftp(s), as well
     as data URIs.
 
-    :param str image: The image URL in markdown format (e.g. ![altnernative text](https://www.bing.com/favicon.ico))
+    :param str image: The image URL in markdown format (e.g. ![alternative text](https://www.bing.com/favicon.ico))
     :param Path working_dir: The working directory to use when resolving relative file paths
     :param str image_detail: The image detail to use when sending the image to the AI service
     :return: The image message to send to the AI service
