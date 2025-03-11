@@ -7,7 +7,6 @@ from typing import Any, ContextManager, Dict, Optional, Union, Callable, Sequenc
 import warnings
 
 from opentelemetry import context, trace
-from opentelemetry.context import Context
 from opentelemetry.trace import (
     Span,
     Status,
