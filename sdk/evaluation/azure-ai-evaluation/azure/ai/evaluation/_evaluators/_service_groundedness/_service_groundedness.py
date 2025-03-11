@@ -27,6 +27,8 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
     :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
+    :param threshold: The threshold for the groundedness pro evaluator. Default is 5.
+    :type threshold: int
     :param kwargs: Additional arguments to pass to the evaluator.
     :type kwargs: Any
 
@@ -53,14 +55,19 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         self,
         credential,
         azure_ai_project,
+        threshold: int = 5,
+        _higher_is_better: bool = True,
         **kwargs,
     ):
-        self._passing_score = 5  # TODO update once the binarization PR is merged
+        self.threshold = threshold
+        self._higher_is_better = _higher_is_better
         self._output_prefix = "groundedness_pro"
         super().__init__(
             eval_metric=EvaluationMetrics.GROUNDEDNESS,
             azure_ai_project=azure_ai_project,
             credential=credential,
+            threshold=self.threshold,
+            _higher_is_better=self._higher_is_better,
             **kwargs,
         )
 
@@ -141,8 +148,11 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         """
         result = await super()._do_eval(eval_input)
         real_result = {}
-        real_result[self._output_prefix + "_label"] = (
-            result[EvaluationMetrics.GROUNDEDNESS + "_score"] >= self._passing_score
-        )
         real_result[self._output_prefix + "_reason"] = result[EvaluationMetrics.GROUNDEDNESS + "_reason"]
+
+        if self._higher_is_better:
+            real_result[self._output_prefix + "_score"] = max(result[EvaluationMetrics.GROUNDEDNESS + "_score"], 0)
+        else:
+            real_result[self._output_prefix + "_score"] = min(result[EvaluationMetrics.GROUNDEDNESS + "_score"], 1)
+
         return real_result
