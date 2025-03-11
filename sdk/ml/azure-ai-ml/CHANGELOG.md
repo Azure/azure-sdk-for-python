@@ -1,5 +1,5 @@
 # Release History
-## 1.26.0 (unreleased)
+## 1.26.0 (2025-03-11)
 
 ### Features Added
   - Adding parent job support for command job.
