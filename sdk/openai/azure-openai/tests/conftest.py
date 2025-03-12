@@ -34,6 +34,7 @@ DALLE_AZURE = "dalle_azure"
 GPT_4_AZURE = "gpt_4_azure"
 GPT_4_OPENAI = "gpt_4_openai"
 ASST_AZURE = "asst_azure"
+CUA_AZURE = "cua_azure"
 
 # Environment variable keys
 ENV_AZURE_OPENAI_ENDPOINT = "AZ_OPENAI_ENDPOINT"
@@ -41,6 +42,7 @@ ENV_AZURE_OPENAI_KEY = "AZURE_OPENAI_KEY"
 ENV_AZURE_OPENAI_NORTHCENTRALUS_ENDPOINT = "AZURE_OPENAI_NORTHCENTRALUS_ENDPOINT"
 ENV_AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT = "AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT"
 ENV_AZURE_OPENAI_SWEDENCENTRAL_KEY = "AZURE_OPENAI_SWEDENCENTRAL_KEY"
+ENV_AZURE_OPENAI_SOUTHINDIA_ENDPOINT = "AZURE_OPENAI_SOUTHINDIA_ENDPOINT"
 ENV_AZURE_OPENAI_SEARCH_ENDPOINT = "AZURE_OPENAI_SEARCH_ENDPOINT"
 ENV_AZURE_OPENAI_SEARCH_INDEX = "AZURE_OPENAI_SEARCH_INDEX"
 
@@ -99,6 +101,12 @@ def client(api_type, api_version):
             azure_ad_token_provider=get_bearer_token_provider(get_credential(), "https://cognitiveservices.azure.com/.default"),
             api_version=api_version,
         )
+    elif api_type == "cua_azure":
+        client = openai.AzureOpenAI(
+            azure_endpoint=os.getenv(ENV_AZURE_OPENAI_SOUTHINDIA_ENDPOINT),
+            azure_ad_token_provider=get_bearer_token_provider(get_credential(), "https://cognitiveservices.azure.com/.default"),
+            api_version=api_version,
+        )
     return client
 
 
@@ -132,6 +140,12 @@ def client_async(api_type, api_version):
     elif api_type in ["dalle_azure", "gpt_4_azure", "asst_azure"]:
         client = openai.AsyncAzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT),
+            azure_ad_token_provider=get_bearer_token_provider_async(get_credential(is_async=True), "https://cognitiveservices.azure.com/.default"),
+            api_version=api_version,
+        )
+    elif api_type == "cua_azure":
+        client = openai.AsyncAzureOpenAI(
+            azure_endpoint=os.getenv(ENV_AZURE_OPENAI_SOUTHINDIA_ENDPOINT),
             azure_ad_token_provider=get_bearer_token_provider_async(get_credential(is_async=True), "https://cognitiveservices.azure.com/.default"),
             api_version=api_version,
         )
@@ -184,6 +198,11 @@ def build_kwargs(args, api_type):
             return {"model": "gpt-4o-realtime-preview-1001"}
         elif api_type == "gpt_4_openai":
             return {"model": "gpt-4o-realtime-preview-2024-10-01"}
+    if test_feature.startswith("test_responses"):
+        if api_type in ["cua_azure"]:
+            return {"model": "gpt-4o-mini"}
+        elif api_type == "openai":
+            return {"model": "gpt-4o-mini"}
     if test_feature.startswith(("test_module_client", "test_cli")):
         return {}
     raise ValueError(f"Test feature: {test_feature} needs to have its kwargs configured.")
