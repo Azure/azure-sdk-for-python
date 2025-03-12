@@ -952,7 +952,7 @@ database = client.create_database(DATABASE_NAME, logger=logger)
 ```
 **NOTICE: The Following is a Preview Feature that is subject to significant change.**
 To further customize what gets logged, you can use a  **PREVIEW** diagnostics handler to filter out the logs you don't want to see.
-There are several ways to use the diagnostics handler, those include the following:
+There are several ways to use the diagnostics handler, you can take a look at the samples [here][cosmos_diagnostics_handler_sample] or take a look at the following:
 - Using the "CosmosDiagnosticsHandler" class, which has default behaviour that can be modified.
     **NOTE: The diagnostics handler will only be used if the `enable_diagnostics_logging` argument is passed in at the client constructor.
       The CosmosDiagnosticsHandler is also a special type of dictionary that is callable and that has preset keys. The values it expects are functions related to it's relevant diagnostic data. (e.g. ```diagnostics_handler["duration"]``` expects a function that takes in an int and returns a boolean as it relates to the duration of an operation to complete).**
@@ -996,7 +996,22 @@ There are several ways to use the diagnostics handler, those include the followi
   # Initialize the Cosmos client with custom diagnostics handler
   client = CosmosClient(endpoint, key,logger=logger, diagnostics_handler=should_log, enable_diagnostics_logging=True)
     ```
-
+- Using **filters** from the **logging** library, it is also possible to filter the diagnostics logs. All the filterable parameters available in the diagnostics handler is also avaiable in the log record when using logging filters. In this case you do not need to pass in a diagnostic handler. **Note** With large volumes of requests, the diagnostic handler is more performative than the filter, but using the filter allows one to fully leverage the logging library.
+```python
+  import logging
+  from azure.cosmos import CosmosClient
+  logger = logging.getLogger('azure.cosmos')
+  logger.setLevel(logging.INFO)
+  file_handler = logging.FileHandler('diagnostics4.output')
+  logger.addHandler(file_handler)
+  # Create a filter to filter out logs
+  class CustomFilter(logging.Filter):
+    def filter(self, record):
+        return hasattr(record, 'status_code') and record.status_code >= 400
+  # Add the filter to the logger
+  logger.addFilter(CustomFilter())
+  client = CosmosClient(endpoint, key,logger=logger, enable_diagnostics_logging=True)
+```
 ### Telemetry
 Azure Core provides the ability for our Python SDKs to use OpenTelemetry with them. The only packages that need to be installed
 to use this functionality are the following:
@@ -1060,6 +1075,7 @@ For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos
 [BM25]: https://learn.microsoft.com/azure/search/index-similarity-and-scoring
 [cosmos_fts]: https://aka.ms/cosmosfulltextsearch
 [cosmos_index_policy_change]: https://learn.microsoft.com/azure/cosmos-db/index-policy#modifying-the-indexing-policy
+[cosmos_diagnostics_handler_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/samples/diagnostics_handler_sample.py
 
 ## Contributing
 
