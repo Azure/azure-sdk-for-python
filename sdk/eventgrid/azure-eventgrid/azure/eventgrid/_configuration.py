@@ -26,8 +26,8 @@ class EventGridPublisherClientConfiguration:  # pylint: disable=too-many-instanc
     :param endpoint: The host name of the namespace, e.g.
      namespaceName1.westus-1.eventgrid.azure.net. Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Is either a
-     AzureKeyCredential type or a TokenCredential type. Required.
+    :param credential: Credential used to authenticate requests to the service. Is either a key
+     credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Default value is "2024-06-01".
@@ -83,8 +83,8 @@ class EventGridConsumerClientConfiguration:  # pylint: disable=too-many-instance
     :param endpoint: The host name of the namespace, e.g.
      namespaceName1.westus-1.eventgrid.azure.net. Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Is either a
-     AzureKeyCredential type or a TokenCredential type. Required.
+    :param credential: Credential used to authenticate requests to the service. Is either a key
+     credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Default value is "2024-06-01".

@@ -1,0 +1,32 @@
+{
+    "CrossLanguagePackageId": "DocumentTranslation",
+    "CrossLanguageDefinitionId": {
+        "azure.ai.translation.document.models.BatchOptions": "DocumentTranslation.BatchOptions",
+        "azure.ai.translation.document.models.DocumentBatch": "DocumentTranslation.BatchRequest",
+        "azure.ai.translation.document.models.DocumentFilter": "DocumentTranslation.DocumentFilter",
+        "azure.ai.translation.document.models.DocumentStatus": "DocumentTranslation.DocumentStatus",
+        "azure.ai.translation.document.models.DocumentTranslateContent": "DocumentTranslation.DocumentTranslateContent",
+        "azure.ai.translation.document.models.DocumentTranslationError": "DocumentTranslation.TranslationError",
+        "azure.ai.translation.document.models.DocumentTranslationFileFormat": "DocumentTranslation.FileFormat",
+        "azure.ai.translation.document.models.InnerTranslationError": "DocumentTranslation.InnerTranslationError",
+        "azure.ai.translation.document.models.SourceInput": "DocumentTranslation.SourceInput",
+        "azure.ai.translation.document.models.StartTranslationDetails": "DocumentTranslation.StartTranslationDetails",
+        "azure.ai.translation.document.models.TranslationErrorResponse": "DocumentTranslation.TranslationErrorResponse",
+        "azure.ai.translation.document.models.TranslationGlossary": "DocumentTranslation.Glossary",
+        "azure.ai.translation.document.models.TranslationStatus": "DocumentTranslation.TranslationStatus",
+        "azure.ai.translation.document.models.TranslationStatusSummary": "DocumentTranslation.StatusSummary",
+        "azure.ai.translation.document.models.TranslationTarget": "DocumentTranslation.TargetInput",
+        "azure.ai.translation.document.models.Status": "DocumentTranslation.Status",
+        "azure.ai.translation.document.models.TranslationErrorCode": "DocumentTranslation.TranslationErrorCode",
+        "azure.ai.translation.document.models.TranslationStorageSource": "DocumentTranslation.StorageSource",
+        "azure.ai.translation.document.models.StorageInputType": "DocumentTranslation.StorageInputType",
+        "azure.ai.translation.document.models.FileFormatType": "DocumentTranslation.FileFormatType",
+        "azure.ai.translation.document.DocumentTranslationClient.begin_translation": "ClientCustomizations.DocumentTranslationClient.startTranslation",
+        "azure.ai.translation.document.DocumentTranslationClient.list_translation_statuses": "ClientCustomizations.DocumentTranslationClient.getTranslationsStatus",
+        "azure.ai.translation.document.DocumentTranslationClient.get_document_status": "ClientCustomizations.DocumentTranslationClient.getDocumentStatus",
+        "azure.ai.translation.document.DocumentTranslationClient.get_translation_status": "ClientCustomizations.DocumentTranslationClient.getTranslationStatus",
+        "azure.ai.translation.document.DocumentTranslationClient.cancel_translation": "ClientCustomizations.DocumentTranslationClient.cancelTranslation",
+        "azure.ai.translation.document.DocumentTranslationClient.list_document_statuses": "ClientCustomizations.DocumentTranslationClient.getDocumentsStatus",
+        "azure.ai.translation.document.SingleDocumentTranslationClient.translate": "ClientCustomizations.SingleDocumentTranslationClient.documentTranslate"
+    }
+}
