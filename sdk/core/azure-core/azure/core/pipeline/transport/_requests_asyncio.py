@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 from collections.abc import AsyncIterator
 import functools
 import logging
