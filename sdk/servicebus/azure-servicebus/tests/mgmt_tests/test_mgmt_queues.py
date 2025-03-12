@@ -9,8 +9,10 @@ import pytest
 import uuid
 import datetime
 import functools
+import secrets
+import base64
 
-from azure.servicebus.management import ServiceBusAdministrationClient, QueueProperties, ApiVersion
+from azure.servicebus.management import ServiceBusAdministrationClient, QueueProperties, ApiVersion, AuthorizationRule, AccessRights
 from azure.servicebus._common.utils import utc_now
 from tests.utilities import get_logger
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
@@ -270,6 +272,20 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
         queue_name_3 = "famviq"
         topic_name = "aghadh"
 
+        def generate_random_key():
+            key256 = secrets.token_bytes(32)
+            return base64.b64encode(key256).decode('utf-8')
+
+        auth_rule = AuthorizationRule(
+            type="SharedAccessAuthorizationRule",
+            key_name="test_key",
+            claim_type="SharedAccessKey",
+            claim_value="None",
+            rights=[AccessRights.MANAGE, AccessRights.LISTEN, AccessRights.SEND],
+            primary_key=generate_random_key(),
+            secondary_key=generate_random_key(),
+        )
+
         # TODO: Why don't we have an input model (queueOptions? as superclass of QueueProperties?) and output model to not show these params?
         # TODO: This fails with the following: E           msrest.exceptions.DeserializationError: Find several XML 'prefix:DeadLetteringOnMessageExpiration' where it was not expected .tox\whl\lib\site-packages\msrest\serialization.py:1262: DeserializationError
         mgmt_service.create_topic(topic_name)
@@ -289,6 +305,7 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
             max_size_in_megabytes=3072,
             # requires_duplicate_detection=True,
             requires_session=True,
+            authorization_rules=[auth_rule],
         )
 
         mgmt_service.create_queue(
@@ -335,6 +352,8 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
             # To know more visit https://aka.ms/sbResourceMgrExceptions.
             # assert queue.requires_duplicate_detection == True
             assert queue.requires_session == True
+            assert queue.authorization_rules[0].key_name == "test_key"
+            assert len(queue.authorization_rules[0].rights) == 3
 
             queue2 = mgmt_service.get_queue(queue_name_2)
             assert queue2.name == queue_name_2
@@ -484,13 +503,30 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
         topic_name = "sagho"
         queue_description = mgmt_service.create_queue(queue_name)
         mgmt_service.create_topic(topic_name)
+        def generate_random_key():
+            key256 = secrets.token_bytes(32)
+            return base64.b64encode(key256).decode('utf-8')
+
+        auth_rule = AuthorizationRule(
+            type="SharedAccessAuthorizationRule",
+            key_name="test_key_listen",
+            claim_type="SharedAccessKey",
+            claim_value="None",
+            rights=[AccessRights.LISTEN],
+            primary_key=generate_random_key(),
+            secondary_key=generate_random_key(),
+        )
+
         try:
             # Try updating one setting.
             queue_description.lock_duration = datetime.timedelta(minutes=2)
+            queue_description.authorization_rules = [auth_rule]
             mgmt_service.update_queue(queue_description)
 
             queue_description = mgmt_service.get_queue(queue_name)
             assert queue_description.lock_duration == datetime.timedelta(minutes=2)
+            assert queue_description.authorization_rules[0].key_name == "test_key_listen"
+            assert len(queue_description.authorization_rules[0].rights) == 1
 
             # Update forwarding settings with entity name.
             queue_description.forward_to = topic_name
