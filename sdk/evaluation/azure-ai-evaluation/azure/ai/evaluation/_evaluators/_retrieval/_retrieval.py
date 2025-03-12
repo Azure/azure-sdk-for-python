@@ -67,7 +67,7 @@ class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         super().__init__(
             model_config=model_config,
             prompty_file=prompty_path,
-            result_key=self._RESULT_KEY
+            result_key=self._RESULT_KEY,
             threshold=threshold,
             higher_is_better=self._higher_is_better,
         )
