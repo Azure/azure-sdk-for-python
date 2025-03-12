@@ -176,6 +176,7 @@ class AttackStrategy(Enum):
     Url = "url"
     Variation = "variation"
     Baseline = "baseline"
+    Jailbreak = "jailbreak"
 
     @classmethod
     def Compose(cls, items: List["AttackStrategy"]) -> List["AttackStrategy"]:
@@ -335,7 +336,8 @@ class RedTeamAgent():
         AttackStrategy.UnicodeConfusable: UnicodeConfusableConverter(),
         AttackStrategy.UnicodeSubstitution: UnicodeSubstitutionConverter(),
         AttackStrategy.Url: UrlConverter(),
-        AttackStrategy.Variation: VariationConverter(converter_target=self.chat_target) # MODERATE
+        AttackStrategy.Variation: VariationConverter(converter_target=self.chat_target), # MODERATE
+        AttackStrategy.Jailbreak: None,
     }
 
     @staticmethod
@@ -369,7 +371,8 @@ class RedTeamAgent():
             "UnicodeSubstitutionConverter": "easy",
             "UrlConverter": "easy",
             "VariationConverter": "moderate",
-            "MathPromptConverterTenseConverter": "difficult"
+            "MathPromptConverterTenseConverter": "difficult",
+            "jailbreak": "easy"
         }
 
     
@@ -420,6 +423,15 @@ class RedTeamAgent():
                 self.logger.info(f"Received list with {len(objectives_response)} objectives")
             else:
                 self.logger.info(f"Response is of unexpected type: {type(objectives_response)}")
+            if strategy == "jailbreak":
+                self.logger.info("Jailbreak strategy selected prepend jailbreak prefix")
+                jailbreak_prefixes = await self.generated_rai_client.get_jailbreak_prefixes()
+                for objective in objectives_response:
+                    if "messages" in objective:
+                        if len(objective["messages"]) > 0:
+                            message = objective["messages"][0]
+                            if isinstance(message, dict) and "content" in message:
+                                message["content"] = f"{random.choice(jailbreak_prefixes)} {message['content']}"
                 
         except Exception as e:
             self.logger.error(f"Error calling get_attack_objectives: {str(e)}")
