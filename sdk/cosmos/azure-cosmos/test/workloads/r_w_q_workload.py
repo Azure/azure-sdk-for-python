@@ -3,6 +3,7 @@ import random
 import sys
 
 from azure.cosmos import documents
+from MockExecuteAsync import mock_execute_func
 from workload_configs import COSMOS_URI, COSMOS_KEY, PREFERRED_LOCATIONS, USE_MULTIPLE_WRITABLE_LOCATIONS
 
 sys.path.append(r"./")
@@ -54,7 +55,7 @@ async def perform_query(container):
 
 
 async def run_workload(client_id, client_logger):
-
+    mock_execute_func()
     connectionPolicy = documents.ConnectionPolicy()
     connectionPolicy.UseMultipleWriteLocations = USE_MULTIPLE_WRITABLE_LOCATIONS
     async with AsyncClient(COSMOS_URI, COSMOS_KEY,
@@ -75,7 +76,6 @@ async def run_workload(client_id, client_logger):
                 await query_items_concurrently(cont, 2)
             except Exception as e:
                 client_logger.error(e)
-                raise e
 
 
 if __name__ == "__main__":

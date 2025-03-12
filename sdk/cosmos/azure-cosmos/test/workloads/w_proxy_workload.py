@@ -5,6 +5,7 @@ import sys
 import aiohttp
 
 from azure.cosmos import documents
+from MockExecuteAsync import mock_execute_func
 from workload_configs import COSMOS_URI, COSMOS_KEY, PREFERRED_LOCATIONS, USE_MULTIPLE_WRITABLE_LOCATIONS
 
 sys.path.append(r"./")
@@ -34,6 +35,7 @@ async def upsert_item_concurrently(container, num_upserts):
 
 
 async def run_workload(client_id, client_logger):
+    mock_execute_func()
     async with aiohttp.ClientSession(trust_env=True) as proxied_aio_http_session:
 
         connectionPolicy = documents.ConnectionPolicy()
@@ -53,7 +55,6 @@ async def run_workload(client_id, client_logger):
                     time.sleep(1)
                 except Exception as e:
                     client_logger.error(e)
-                    raise e
 
 
 if __name__ == "__main__":

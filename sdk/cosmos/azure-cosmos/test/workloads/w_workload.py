@@ -3,6 +3,7 @@ import random
 import sys
 
 from azure.cosmos import documents
+from MockExecuteAsync import mock_execute_func
 from workload_configs import PREFERRED_LOCATIONS, COSMOS_URI, COSMOS_KEY, USE_MULTIPLE_WRITABLE_LOCATIONS
 
 sys.path.append(r"./")
@@ -29,6 +30,7 @@ async def upsert_item_concurrently(container, num_upserts):
 
 
 async def run_workload(client_id, client_logger):
+    mock_execute_func()
     connectionPolicy = documents.ConnectionPolicy()
     connectionPolicy.UseMultipleWriteLocations = USE_MULTIPLE_WRITABLE_LOCATIONS
     async with AsyncClient(COSMOS_URI, COSMOS_KEY,
@@ -45,7 +47,6 @@ async def run_workload(client_id, client_logger):
                 time.sleep(1)
             except Exception as e:
                 client_logger.error(e)
-                raise e
 
 
 if __name__ == "__main__":

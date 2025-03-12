@@ -7,7 +7,6 @@ from workload_configs import COSMOS_URI, COSMOS_KEY, PREFERRED_LOCATIONS, USE_MU
 sys.path.append(r"./")
 
 from azure.cosmos import CosmosClient, documents
-import asyncio
 
 import time
 from datetime import datetime
@@ -65,7 +64,6 @@ def run_workload(client_id, client_logger):
                 query_items(cont, 2)
             except Exception as e:
                 client_logger.error(e)
-                raise e
 
 
 if __name__ == "__main__":

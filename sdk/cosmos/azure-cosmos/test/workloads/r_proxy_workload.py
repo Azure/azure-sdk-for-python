@@ -5,6 +5,7 @@ import sys
 import aiohttp
 
 from azure.cosmos import documents
+from MockExecuteAsync import mock_execute_func
 from workload_configs import USE_MULTIPLE_WRITABLE_LOCATIONS
 from workload_configs import COSMOS_URI, COSMOS_KEY, PREFERRED_LOCATIONS
 
@@ -52,6 +53,7 @@ async def perform_query(container):
 
 
 async def run_workload(client_id, client_logger):
+    mock_execute_func()
     async with aiohttp.ClientSession(trust_env=True) as proxied_aio_http_session:
         connectionPolicy = documents.ConnectionPolicy()
         connectionPolicy.UseMultipleWriteLocations = USE_MULTIPLE_WRITABLE_LOCATIONS
@@ -72,7 +74,6 @@ async def run_workload(client_id, client_logger):
                     await query_items_concurrently(cont, 2)
                 except Exception as e:
                     client_logger.error(e)
-                    raise e
 
 
 if __name__ == "__main__":

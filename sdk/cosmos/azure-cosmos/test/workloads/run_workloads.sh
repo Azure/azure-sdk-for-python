@@ -33,5 +33,5 @@ python3 w-proxy-workload-3.py &
 python3 w-proxy-workload-4.py &
 python3 w-proxy-workload-5.py &
 python3 w-proxy-workload-6.py &
-python3 r_w_q_workload_sync.py &
-python3 r-w-q-workload-sync-1.py &
+#python3 r_w_q_workload_sync.py &
+#python3 r-w-q-workload-sync-1.py &
