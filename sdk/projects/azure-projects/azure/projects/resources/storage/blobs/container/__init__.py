@@ -10,6 +10,7 @@ import inspect
 from typing import (
     TYPE_CHECKING,
     Dict,
+    Generic,
     List,
     Literal,
     Mapping,
@@ -124,7 +125,7 @@ ContainerResourceType = TypeVar("ContainerResourceType", bound=Mapping[str, Any]
 ClientType = TypeVar("ClientType", default="ContainerClient")
 
 
-class BlobContainer(_ClientResource[ContainerResourceType]):
+class BlobContainer(_ClientResource, Generic[ContainerResourceType]):
     DEFAULTS: "ContainerResource" = _DEFAULT_CONTAINER  # type: ignore[assignment]
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_CONTAINER_EXTENSIONS
     properties: ContainerResourceType
@@ -174,7 +175,7 @@ class BlobContainer(_ClientResource[ContainerResourceType]):
                 properties["properties"]["publicAccess"] = kwargs.pop("public_access")
 
         super().__init__(
-            cast(Dict[str, Any], properties),
+            properties,
             extensions=extensions,
             existing=existing,
             parent=parent,
@@ -213,7 +214,7 @@ class BlobContainer(_ClientResource[ContainerResourceType]):
         existing = super().reference(name=name, parent=parent)
         return cast(BlobContainer[ResourceReference], existing)
 
-    def _build_endpoint(self, *, config_store: Mapping[str, Any]) -> str:
+    def _build_endpoint(self, *, config_store: Optional[Mapping[str, Any]]) -> str:
         name = self.parent.parent._settings["name"]  # pylint: disable=protected-access
         return (
             f"https://{name(config_store=config_store)}.blob.core.windows.net"

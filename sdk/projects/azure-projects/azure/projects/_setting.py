@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any, Callable, Mapping, Optional, Union, List
+from typing import Any, Callable, Mapping, Optional, Union, List, Protocol
 import os
 import re
 
@@ -13,6 +13,10 @@ from azure.core.settings import _unset, _Unset, PrioritizedSetting, ValidInputTy
 from ._bicep.expressions import Parameter, MISSING, Expression
 
 _formatted_param = re.compile(r"\$\{(.*?)\}")
+
+
+class SystemHookCallable(Protocol):
+    def __call__(self, *, config_store: Optional[Mapping[str, Any]]): ...
 
 
 class StoredPrioritizedSetting(PrioritizedSetting[ValidInputType, ValueType]):
@@ -25,7 +29,7 @@ class StoredPrioritizedSetting(PrioritizedSetting[ValidInputType, ValueType]):
         suffix: str = "",
         env_var: Optional[str] = None,
         env_vars: Optional[List[str]] = None,
-        system_hook: Optional[Callable[[], ValidInputType]] = None,
+        hook: Optional[SystemHookCallable] = None,
         default: Union[ValidInputType, _Unset] = _unset,
         user_value: Union[ValidInputType, _Unset] = _unset,
         convert: Optional[Callable[[Union[ValidInputType, str]], ValueType]] = None,
@@ -33,11 +37,11 @@ class StoredPrioritizedSetting(PrioritizedSetting[ValidInputType, ValueType]):
         super().__init__(
             name=name,
             env_var=env_var,
-            system_hook=system_hook,
             default=default,
             convert=convert,
         )
         self.suffix = suffix or ""
+        self._hook = hook
         self._user_value = user_value
         self._env_vars = env_vars or []
 
@@ -47,8 +51,13 @@ class StoredPrioritizedSetting(PrioritizedSetting[ValidInputType, ValueType]):
         settingvalue = self._raw_value(value, config_store=config_store)
         if isinstance(settingvalue, str):
             for parameter in _formatted_param.findall(settingvalue):
+                if not config_store:
+                    raise ValueError(f"No config store provided to resolve parameter: {parameter}.")
                 try:
-                    settingvalue = settingvalue.replace(f"${{{parameter}}}", config_store[parameter])
+                    # Mypy doesn't like this assignment, but we've already established settingvalue is str.
+                    settingvalue = settingvalue.replace(  # type: ignore[assignment]
+                        f"${{{parameter}}}", config_store[parameter]
+                    )
                 except KeyError as e:
                     raise RuntimeError(f"Unable to resolve parameterized value: '{settingvalue}'") from e
         return self._convert(settingvalue)
@@ -57,13 +66,14 @@ class StoredPrioritizedSetting(PrioritizedSetting[ValidInputType, ValueType]):
         if value.name in config_store:
             return config_store[value.name]
         if value.env_var and os.environ.get(value.env_var) not in [None, ""]:
-            return os.environ[value.env_var]
+            # All settings with env vars are currently strings, so this should be fine.
+            return os.environ[value.env_var]  # type: ignore[return-value]
         if value.default is not MISSING and not isinstance(value.default, Expression):
             return value.default
         raise RuntimeError(f"No value for parameter {value.name} found in config store.")
 
     def _raw_value(  # pylint: disable=too-many-return-statements
-        self, value: Optional[ValidInputType] = None, *, config_store
+        self, value: Optional[ValidInputType] = None, *, config_store: Optional[Mapping[str, Any]]
     ) -> ValidInputType:
         # 5. immediate values
         if value is not None:
@@ -88,14 +98,15 @@ class StoredPrioritizedSetting(PrioritizedSetting[ValidInputType, ValueType]):
         # 2. environment variable
         for env_var in self._env_vars:
             if env_var + self.suffix in os.environ:
-                return os.environ[env_var + self.suffix]
+                # All settings with env vars are currently strings, so this should be fine.
+                return os.environ[env_var + self.suffix]  # type: ignore[return-value]
         if self._env_var and self._env_var in os.environ:
-            return os.environ[self._env_var]
+            return os.environ[self._env_var]  # type: ignore[return-value]
 
         # 1. system setting
-        if self._system_hook:
+        if self._hook:
             try:
-                value = self._system_hook(config_store=config_store)
+                value = self._hook(config_store=config_store)
                 if isinstance(value, Parameter):
                     return self._convert_parameter(value, config_store=config_store or {})
                 return value

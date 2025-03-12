@@ -9,12 +9,12 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Dict,
+    Generic,
     List,
     Literal,
     Mapping,
     Union,
     Optional,
-    cast,
 )
 from typing_extensions import TypeVar, Unpack, TypedDict
 
@@ -150,7 +150,7 @@ _DEFAULT_CONNECTION: "ConnectionResource" = {
 ConnectionResourceType = TypeVar("ConnectionResourceType", bound=Mapping[str, Any], default="ConnectionResource")
 
 
-class AIConnection(Resource[ConnectionResourceType]):
+class AIConnection(Resource, Generic[ConnectionResourceType]):
     DEFAULTS: "ConnectionResource" = _DEFAULT_CONNECTION  # type: ignore[assignment]
     properties: ConnectionResourceType
     parent: Union["AIHub", "AIProject"]  # type: ignore[reportIncompatibleVariableOverride]
@@ -179,7 +179,7 @@ class AIConnection(Resource[ConnectionResourceType]):
         if "metadata" in kwargs:
             properties["properties"]["metadata"] = kwargs.pop("metadata")
         super().__init__(
-            cast(Dict[str, Any], properties),
+            properties,
             parent=parent,
             subresource="connections",
             service_prefix=["ai_connection"],

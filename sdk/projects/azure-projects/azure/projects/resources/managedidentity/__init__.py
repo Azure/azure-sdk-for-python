@@ -6,7 +6,7 @@
 # pylint: disable=arguments-differ
 
 from collections import defaultdict
-from typing import TYPE_CHECKING, Any, Literal, Mapping, Union, Optional, Dict, cast
+from typing import TYPE_CHECKING, Any, Generic, Literal, Mapping, Union, Optional, Dict, cast
 from typing_extensions import TypeVar, Unpack, TypedDict
 
 from .._identifiers import ResourceIdentifiers
@@ -38,8 +38,8 @@ _DEFAULT_USER_ASSIGNED_IDENTITY: "UserAssignedIdentityResource" = {
 }
 
 
-class UserAssignedIdentity(Resource[UserAssignedIdentityResourceType]):
-    DEFAULTS: "UserAssignedIdentityResource" = _DEFAULT_USER_ASSIGNED_IDENTITY
+class UserAssignedIdentity(Resource, Generic[UserAssignedIdentityResourceType]):
+    DEFAULTS: "UserAssignedIdentityResource" = _DEFAULT_USER_ASSIGNED_IDENTITY  # type: ignore[assignment]
     properties: UserAssignedIdentityResourceType
     parent: None
 
@@ -62,7 +62,7 @@ class UserAssignedIdentity(Resource[UserAssignedIdentityResourceType]):
             if "tags" in kwargs:
                 properties["tags"] = kwargs.pop("tags")
         super().__init__(
-            cast(Dict[str, Any], properties),
+            properties,
             extensions=extensions,
             service_prefix=["identity"],
             existing=existing,

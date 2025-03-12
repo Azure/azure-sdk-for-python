@@ -27,7 +27,7 @@ class ConfigStoreSku(TypedDict, total=False):
 
 
 class ConfigStoreProperties(TypedDict, total=False):
-    createMode: Union[Literal['Default', 'Recover'], Parameter]
+    createMode: Union[Literal["Default", "Recover"], Parameter]
     """Indicates whether the configuration store need to be recovered."""
     dataPlaneProxy: Union["DataPlaneProxyProperties", Parameter]  # type: ignore[name-defined]  # TODO
     """Property specifying the configuration of data plane proxy for Azure Resource Manager (ARM)."""
@@ -37,7 +37,7 @@ class ConfigStoreProperties(TypedDict, total=False):
     """Property specifying whether protection against purge is enabled for this configuration store."""
     encryption: Union["EncryptionProperties", Parameter]  # type: ignore[name-defined]  # TODO
     """The encryption settings of the configuration store."""
-    publicNetworkAccess: Union[Literal['Disabled','Enabled'], Parameter]
+    publicNetworkAccess: Union[Literal["Disabled", "Enabled"], Parameter]
     """Control permission for data plane traffic coming from public networks while private endpoint is enabled."""
     softDeleteRetentionInDays: Union[int, Parameter]
     """The amount of time in days that the configuration store will be retained when it is soft deleted."""

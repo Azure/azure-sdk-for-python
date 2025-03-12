@@ -9,6 +9,7 @@ from collections import defaultdict
 from typing import (
     TYPE_CHECKING,
     Dict,
+    Generic,
     List,
     Literal,
     Mapping,
@@ -54,7 +55,7 @@ TableServiceResourceType = TypeVar("TableServiceResourceType", bound=Mapping[str
 ClientType = TypeVar("ClientType", default="TableServiceClient")
 
 
-class TableStorage(_ClientResource[TableServiceResourceType]):
+class TableStorage(_ClientResource, Generic[TableServiceResourceType]):
     DEFAULTS: "TableServiceResource" = _DEFAULT_TABLE_SERVICE  # type: ignore[assignment]
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_TABLE_SERVICE_EXTENSIONS
     properties: TableServiceResourceType
@@ -95,7 +96,7 @@ class TableStorage(_ClientResource[TableServiceResourceType]):
                     kwargs.pop(key, None)  # type: ignore[misc]  # Not using string literal key.
 
         super().__init__(
-            cast(Dict[str, Any], properties),
+            properties,
             extensions=extensions,
             existing=existing,
             parent=parent,
@@ -140,7 +141,7 @@ class TableStorage(_ClientResource[TableServiceResourceType]):
         name = f'\'{self.parent.properties["name"]}\'' if "name" in self.parent.properties else "<default>"
         return f"{self.__class__.__name__}({name})"
 
-    def _build_endpoint(self, *, config_store: Mapping[str, Any]) -> str:
+    def _build_endpoint(self, *, config_store: Optional[Mapping[str, Any]]) -> str:
         return f"https://{self.parent._settings['name'](config_store=config_store)}.table.core.windows.net/"  # pylint: disable=protected-access
 
     def _outputs(  # type: ignore[override]  # Parameter subset

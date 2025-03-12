@@ -4,8 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Any, Dict, Literal, Mapping, Union, Optional
-from typing_extensions import TypeVar
+from typing import TYPE_CHECKING, Any, Dict, Generic, Literal, Mapping, Union, Optional
+from typing_extensions import TypeVar, Self
 
 from ..._identifiers import ResourceIdentifiers
 from ...._resource import Resource, ResourceReference
@@ -23,10 +23,10 @@ RoleAssignmentResourceType = TypeVar(
 )
 
 
-class RoleAssignment(Resource[RoleAssignmentResourceType]):
-    DEFAULTS: "RoleAssignmentResource" = _DEFAULT_ROLE_ASSIGNMENT
+class RoleAssignment(Resource, Generic[RoleAssignmentResourceType]):
+    DEFAULTS: "RoleAssignmentResource" = _DEFAULT_ROLE_ASSIGNMENT  # type: ignore[assignment]
     properties: RoleAssignmentResourceType
-    parent: None
+    parent: None  # type: ignore[reportIncompatibleVariableOverride]
 
     def __init__(self, properties: "RoleAssignmentResource", /, **kwargs) -> None:
         super().__init__(properties, identifier=ResourceIdentifiers.role_assignment, **kwargs)
@@ -45,21 +45,22 @@ class RoleAssignment(Resource[RoleAssignmentResourceType]):
     def reference(
         cls,
         *,
-        name: str,
-        resource_group: Optional[Union[str, "ResourceGroup[ResourceReference]"]] = None,
-        subscription: Optional[str] = None,
+        name: Optional[Union[str, Parameter]] = None,
+        resource_group: Optional[Union[str, Parameter, "ResourceGroup[ResourceReference]"]] = None,
+        subscription: Optional[Union[str, Parameter]] = None,
         parent: Optional[Resource] = None,
-    ) -> "RoleAssignment[ResourceReference]":
+    ) -> Self:
         raise TypeError("Referenced Role Assignments not supported.")
 
     def _outputs(self, **kwargs) -> Dict[str, Output]:
         return {}
 
     def _build_suffix(self, value: Optional[Union[str, Parameter]]) -> str:
-        try:
+        if isinstance(value, Parameter):
             return "_" + generate_name(value.value)
-        except AttributeError:
+        if value:
             return "_" + generate_name(value)
+        return ""
 
 
 BUILT_IN_ROLES: Dict[str, RoleDefinition] = {

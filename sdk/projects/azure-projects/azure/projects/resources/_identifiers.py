@@ -174,5 +174,5 @@ RESOURCE_FROM_CLIENT_ANNOTATION: Dict[str, ResourceIdentifiers] = {
     "SearchIndexerClient": ResourceIdentifiers.search,
     "SearchIndexClient": ResourceIdentifiers.search,
     "SearchClient": ResourceIdentifiers.search,
-    "AzureAppConfigurationClient": ResourceIdentifiers.config_store
+    "AzureAppConfigurationClient": ResourceIdentifiers.config_store,
 }

@@ -11,6 +11,7 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Dict,
+    Generic,
     List,
     Literal,
     Mapping,
@@ -166,7 +167,7 @@ _DEFAULT_ML_WORKSPACE: "MachineLearningWorkspaceResource" = {
 _DEFAULT_ML_WORKSPACE_EXTENSIONS: ExtensionResources = {"managed_identity_roles": [], "user_roles": []}
 
 
-class MLWorkspace(Resource[MachineLearningWorkspaceResourceType]):
+class MLWorkspace(Resource, Generic[MachineLearningWorkspaceResourceType]):
     DEFAULTS: "MachineLearningWorkspaceResource" = _DEFAULT_ML_WORKSPACE  # type: ignore[assignment]
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_ML_WORKSPACE_EXTENSIONS
     properties: MachineLearningWorkspaceResourceType
@@ -216,7 +217,7 @@ class MLWorkspace(Resource[MachineLearningWorkspaceResourceType]):
                 properties["tags"] = kwargs.pop("tags")
         # The kwargs service_prefix and identifier can be passed by child classes.
         super().__init__(
-            cast(Dict[str, Any], properties),
+            properties,
             extensions=extensions,
             service_prefix=kwargs.pop("service_prefix", [f"ml_{kind}"]),  # type: ignore[typeddict-item]
             existing=existing,

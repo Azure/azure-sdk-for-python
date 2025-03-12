@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Literal, Any, Optional, Union, TYPE_CHECKING
+from typing import Dict, List, Literal, Any, Optional, Union, TYPE_CHECKING, cast
 from typing_extensions import Required, TypedDict
 
 from .roles import RoleAssignment as RoleResource, BUILT_IN_ROLES
@@ -13,6 +13,7 @@ from ..._bicep.utils import clean_name
 
 if TYPE_CHECKING:
     from ..._resource import FieldsType
+    from .roles.types import RoleAssignmentProperties
 
 
 class RoleAssignment(TypedDict, total=False):
@@ -78,51 +79,75 @@ def convert_managed_identities(managed_identities: Optional[ManagedIdentity]) ->
 
 def _build_role_assignment(
     resource: str,
-    role: Union[str, RoleAssignment],
+    role: Union[str, Parameter, RoleAssignment],
     fields: "FieldsType",
     name: Union[str, Parameter],
     *,
     parameters: Dict[str, Parameter],
     symbol: ResourceSymbol,
     principal_id: Expression,
-    principal_type: Literal["ServicePrincipal", "User"]
+    principal_type: Literal["ServicePrincipal", "User"],
 ) -> ResourceSymbol:
-    if isinstance(role, str):
+    if isinstance(role, (str, Parameter)):
         new_role = RoleResource(
             {
+                # TODO: Should 'Guid' be a subtype of Parameter?
                 "name": Guid(resource, name, principal_type, role),
                 "properties": {
                     "principalId": principal_id,
                     "principalType": principal_type,
-                    "roleDefinitionId": BUILT_IN_ROLES.get(role, role),
+                    "roleDefinitionId": BUILT_IN_ROLES.get(cast(str, role), role),
                 },
                 "scope": symbol,
             }
         )
         return new_role.__bicep__(fields, parameters=parameters)[0]
+
+    role_properties: "RoleAssignmentProperties" = {
+        "principalId": role["principalId"],
+        "principalType": role["principalType"],
+        "roleDefinitionId": BUILT_IN_ROLES.get(
+            cast(str, role["roleDefinitionIdOrName"]), role["roleDefinitionIdOrName"]
+        ),
+    }
+    if "condition" in role:
+        role_properties["condition"] = role["condition"]
+    if "conditionVersion" in role:
+        role_properties["conditionVersion"] = role["conditionVersion"]
+    if "delegatedManagedIdentityResourceId" in role:
+        role_properties["delegatedManagedIdentityResourceId"] = role["delegatedManagedIdentityResourceId"]
+    if "description" in role:
+        role_properties["description"] = role["description"]
     new_role = RoleResource(
         {
             "name": role.get("name", Guid(resource, name, role["principalId"], role["roleDefinitionIdOrName"])),
-            "properties": {
-                "condition": role.get("condition"),
-                "conditionVersion": role.get("conditionVersion"),
-                "delegatedManagedIdentityResourceId": role.get("delegatedManagedIdentityResourceId"),
-                "description": role.get("description"),
-                "principalId": role["principalId"],
-                "principalType": role["principalType"],
-                "roleDefinitionId": BUILT_IN_ROLES.get(role["roleDefinitionIdOrName"], role["roleDefinitionIdOrName"]),
-            },
+            "properties": role_properties,
             "scope": symbol,
         }
     )
     return new_role.__bicep__(fields, parameters=parameters)[0]
 
 
+def load_roles(
+    roles_parameter: Parameter, parameters: Dict[str, Parameter]  # pylint: disable=unused-argument  # TODO
+) -> List[Union[str, RoleAssignment]]:
+    # TODO: How to resolve a parameter with a list of names? Need to pass in provision config.
+    # Can use _setting.convert_parameter logic.
+    # if roles_parameter.name in parameters:
+    #     return parameters[roles_parameter.name]
+    if roles_parameter.default:
+        return roles_parameter.default
+    raise ValueError(f"Unable to resolve parameter '{roles_parameter.name}' to build role assignments.")
+
+
 def add_extensions(fields: "FieldsType", parameters: Dict[str, Parameter]):
     for field in list(fields.values()):
         if not isinstance(parameters["managedIdentityPrincipalId"], PlaceholderParameter):
+            roles = field.extensions.get("managed_identity_roles", [])
+            if isinstance(roles, Parameter):
+                roles = load_roles(roles, parameters)
             role_symbols = []
-            for role in field.extensions.get("managed_identity_roles", []):
+            for role in roles:
                 role_symbols.append(
                     _build_role_assignment(
                         clean_name(field.resource),
@@ -135,10 +160,15 @@ def add_extensions(fields: "FieldsType", parameters: Dict[str, Parameter]):
                         principal_type="ServicePrincipal",
                     )
                 )
-            field.extensions["managed_identity_roles"] = role_symbols
+            # TODO: We shouldn't do this - not sure if we need to find a way to surface the resource
+            # symbols or if we can just safetly remove it.
+            field.extensions["managed_identity_roles"] = role_symbols  # type: ignore[typeddict-item]  # TODO
         if parameters.get("principalId"):
+            roles = field.extensions.get("user_roles", [])
+            if isinstance(roles, Parameter):
+                roles = load_roles(roles, parameters)
             role_symbols = []
-            for role in field.extensions.get("user_roles", []):
+            for role in roles:
                 role_symbols.append(
                     _build_role_assignment(
                         clean_name(field.resource),
@@ -151,4 +181,6 @@ def add_extensions(fields: "FieldsType", parameters: Dict[str, Parameter]):
                         principal_type="User",
                     )
                 )
-            field.extensions["user_roles"] = role_symbols
+            # TODO: We shouldn't do this - not sure if we need to find a way to surface the resource
+            # symbols or if we can just safetly remove it.
+            field.extensions["user_roles"] = role_symbols  # type: ignore[typeddict-item]  # TODO

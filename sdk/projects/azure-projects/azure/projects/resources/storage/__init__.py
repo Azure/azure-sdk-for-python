@@ -6,7 +6,7 @@
 # pylint: disable=arguments-differ
 
 from collections import defaultdict
-from typing import TYPE_CHECKING, Any, Dict, List, Literal, Mapping, Union, Optional, cast
+from typing import TYPE_CHECKING, Any, Dict, Generic, List, Literal, Mapping, Union, Optional, cast
 from typing_extensions import TypeVar, Unpack, TypedDict
 
 from .._identifiers import ResourceIdentifiers
@@ -229,7 +229,7 @@ _DEFAULT_STORAGE_ACCOUNT: "StorageAccountResource" = {
 }
 
 
-class StorageAccount(Resource[StorageAccountResourceType]):
+class StorageAccount(Resource, Generic[StorageAccountResourceType]):
     DEFAULTS: "StorageAccountResource" = _DEFAULT_STORAGE_ACCOUNT  # type: ignore[assignment]
     properties: StorageAccountResourceType
     parent: None  # type: ignore[reportIncompatibleVariableOverride]
@@ -313,7 +313,7 @@ class StorageAccount(Resource[StorageAccountResourceType]):
                 properties["tags"] = kwargs.pop("tags")
 
         super().__init__(
-            cast(Dict[str, Any], properties),
+            properties,
             extensions=extensions,
             service_prefix=["storage"],
             existing=existing,

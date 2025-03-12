@@ -10,6 +10,7 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Dict,
+    Generic,
     List,
     Literal,
     Mapping,
@@ -165,7 +166,7 @@ _DEFAULT_COGNITIVE_SERVICES: "CognitiveServicesAccountResource" = {
 _DEFAULT_COGNITIVE_SERVICES_EXTENSIONS: ExtensionResources = {"managed_identity_roles": [], "user_roles": []}
 
 
-class CognitiveServicesAccount(_ClientResource[CognitiveServicesAccountResourceType]):
+class CognitiveServicesAccount(_ClientResource, Generic[CognitiveServicesAccountResourceType]):
     DEFAULTS: "CognitiveServicesAccountResource" = _DEFAULT_COGNITIVE_SERVICES  # type: ignore[assignment]
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_COGNITIVE_SERVICES_EXTENSIONS
     properties: CognitiveServicesAccountResourceType
@@ -254,7 +255,7 @@ class CognitiveServicesAccount(_ClientResource[CognitiveServicesAccountResourceT
                 properties["tags"] = kwargs.pop("tags")
         # The kwarg identifier can be passed by child classes.
         super().__init__(
-            cast(Dict[str, Any], properties),
+            properties,
             extensions=extensions,
             service_prefix=[f"ai_{kind}"],
             existing=existing,
@@ -285,7 +286,7 @@ class CognitiveServicesAccount(_ClientResource[CognitiveServicesAccountResourceT
 
         return VERSION
 
-    def _build_endpoint(self, *, config_store: Mapping[str, Any]) -> str:  # pylint: disable=unused-argument
+    def _build_endpoint(self, *, config_store: Optional[Mapping[str, Any]]) -> str:  # pylint: disable=unused-argument
         raise RuntimeError("No deterministic endpoint.")
 
     def _build_symbol(self) -> ResourceSymbol:
@@ -472,7 +473,7 @@ class AIServices(CognitiveServicesAccount[CognitiveServicesAccountResourceType])
             **kwargs,
         )
 
-    def _build_endpoint(self, *, config_store: Mapping[str, Any]) -> str:
+    def _build_endpoint(self, *, config_store: Optional[Mapping[str, Any]]) -> str:
         return f"https://{self._settings['name'](config_store=config_store)}.openai.azure.com/"
 
     @classmethod

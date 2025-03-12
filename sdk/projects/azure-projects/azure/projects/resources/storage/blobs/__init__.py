@@ -9,6 +9,7 @@ from collections import defaultdict
 from typing import (
     TYPE_CHECKING,
     Dict,
+    Generic,
     List,
     Literal,
     Mapping,
@@ -99,7 +100,7 @@ BlobServiceResourceType = TypeVar("BlobServiceResourceType", bound=Mapping[str, 
 ClientType = TypeVar("ClientType", default="BlobServiceClient")
 
 
-class BlobStorage(_ClientResource[BlobServiceResourceType]):
+class BlobStorage(_ClientResource, Generic[BlobServiceResourceType]):
     DEFAULTS: "BlobServiceResource" = _DEFAULT_BLOB_SERVICE  # type: ignore[assignment]
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_BLOB_SERVICE_EXTENSIONS
     properties: BlobServiceResourceType
@@ -180,7 +181,7 @@ class BlobStorage(_ClientResource[BlobServiceResourceType]):
                 for key in StorageAccountKwargs.__annotations__:
                     kwargs.pop(key, None)  # type: ignore[misc]  # Not using string literal key.
         super().__init__(
-            cast(Dict[str, Any], properties),
+            properties,
             extensions=extensions,
             existing=existing,
             parent=parent,
@@ -225,7 +226,7 @@ class BlobStorage(_ClientResource[BlobServiceResourceType]):
         name = f'\'{self.parent.properties["name"]}\'' if "name" in self.parent.properties else "<default>"
         return f"{self.__class__.__name__}({name})"
 
-    def _build_endpoint(self, *, config_store: Mapping[str, Any]) -> str:
+    def _build_endpoint(self, *, config_store: Optional[Mapping[str, Any]]) -> str:
         return f"https://{self.parent._settings['name'](config_store=config_store)}.blob.core.windows.net/"  # pylint: disable=protected-access
 
     def _outputs(  # type: ignore[override]  # Parameter subset

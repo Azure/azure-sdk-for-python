@@ -658,7 +658,17 @@
         "aifoundry",
         "GZRS",
         "RAGZRS",
-        "nfsv"
+        "nfsv",
+        "Eloqua",
+        "Hdfs",
+        "Informix",
+        "Magento",
+        "Netezza",
+        "Odbc",
+        "Serp",
+        "Sybase",
+        "Vertica",
+        "Xero"
       ]
     },
     {

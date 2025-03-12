@@ -20,13 +20,17 @@ IDENTITY = {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["ma
 
 def _get_outputs(suffix="", rg=None):
     outputs = {
-        "resource_id": Output(f"AZURE_APPCONFIG_ID{suffix.upper()}", "id", ResourceSymbol(f"configurationstore{suffix}")),
+        "resource_id": Output(
+            f"AZURE_APPCONFIG_ID{suffix.upper()}", "id", ResourceSymbol(f"configurationstore{suffix}")
+        ),
         "name": Output(f"AZURE_APPCONFIG_NAME{suffix.upper()}", "name", ResourceSymbol(f"configurationstore{suffix}")),
         "resource_group": Output(
             f"AZURE_APPCONFIG_RESOURCE_GROUP{suffix.upper()}", rg if rg else DefaultResourceGroup().name
         ),
         "endpoint": Output(
-            f"AZURE_APPCONFIG_ENDPOINT{suffix.upper()}", "properties.endpoint", ResourceSymbol(f"configurationstore{suffix}")
+            f"AZURE_APPCONFIG_ENDPOINT{suffix.upper()}",
+            "properties.endpoint",
+            ResourceSymbol(f"configurationstore{suffix}"),
         ),
     }
     return outputs
@@ -59,7 +63,11 @@ def test_appconfig_properties():
     r2.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
     assert list(fields.keys()) == ["configurationstore"]
     assert fields["configurationstore"].resource == "Microsoft.AppConfiguration/configurationStores"
-    assert fields["configurationstore"].properties == {"location": "westus", "properties": {}, "sku": {"name": "Standard"}}
+    assert fields["configurationstore"].properties == {
+        "location": "westus",
+        "properties": {},
+        "sku": {"name": "Standard"},
+    }
     assert fields["configurationstore"].outputs == _get_outputs()
     assert fields["configurationstore"].extensions == {}
     assert fields["configurationstore"].existing == False
@@ -294,7 +302,6 @@ def test_appconfig_client():
     assert isinstance(client, AzureAppConfigurationClient)
     assert client._client._config.endpoint == "https://test.search.windows.net/"
     assert client._client._config.api_version == "1234"
-
 
     client = r.get_client(use_async=True)
     assert isinstance(client, AsyncAzureAppConfigurationClient)

@@ -6,7 +6,7 @@
 # pylint: disable=arguments-differ
 
 from collections import defaultdict
-from typing import TYPE_CHECKING, Dict, Literal, Mapping, Tuple, Union, Optional, Any, cast
+from typing import TYPE_CHECKING, Dict, Generic, Literal, Mapping, Tuple, Union, Optional, Any, cast
 from typing_extensions import TypeVar, Unpack, TypedDict
 
 from .._identifiers import ResourceIdentifiers
@@ -40,8 +40,8 @@ ResourceGroupResourceType = TypeVar(
 )
 
 
-class ResourceGroup(Resource[ResourceGroupResourceType]):
-    DEFAULTS: "ResourceGroupResource" = _DEFAULT_RESOURCE_GROUP
+class ResourceGroup(Resource, Generic[ResourceGroupResourceType]):
+    DEFAULTS: "ResourceGroupResource" = _DEFAULT_RESOURCE_GROUP  # type: ignore[assignment]
     properties: ResourceGroupResourceType
     parent: None
 
@@ -64,7 +64,7 @@ class ResourceGroup(Resource[ResourceGroupResourceType]):
             if "tags" in kwargs:
                 properties["tags"] = kwargs.pop("tags")
         super().__init__(
-            cast(Dict[str, Any], properties),
+            properties,
             extensions=extensions,
             service_prefix=["resource_group"],
             existing=existing,
@@ -92,7 +92,7 @@ class ResourceGroup(Resource[ResourceGroupResourceType]):
 
         return VERSION
 
-    def _build_resource_id(self, *, config_store: Mapping[str, Any]) -> str:
+    def _build_resource_id(self, *, config_store: Optional[Mapping[str, Any]]) -> str:
         prefix = f"/subscriptions/{self._settings['subscription'](config_store=config_store)}/providers/"
         return prefix + f"{self.resource}/{self._settings['name'](config_store=config_store)}"
 
@@ -126,10 +126,10 @@ class ResourceGroup(Resource[ResourceGroupResourceType]):
             fields[self._get_field_id(symbol, ())] = field
             return (symbol,)
 
-        field = self._find_last_resource_match(fields, name=properties.get("name"))
-        if field:
-            params = field.properties
-            symbol = field.symbol
+        field_match = self._find_last_resource_match(fields, name=properties.get("name"))
+        if field_match:
+            params = field_match.properties
+            symbol = field_match.symbol
         else:
             params = {}
             symbol = self._build_symbol()

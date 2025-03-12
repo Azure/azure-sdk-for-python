@@ -9,6 +9,7 @@ from collections import defaultdict
 from typing import (
     TYPE_CHECKING,
     Dict,
+    Generic,
     Literal,
     Mapping,
     Tuple,
@@ -74,7 +75,7 @@ _DEFAULT_AI_DEPLOYMENT_EXTENSIONS: ExtensionResources = {"managed_identity_roles
 AIDeploymentResourceType = TypeVar("AIDeploymentResourceType", bound=Mapping[str, Any], default="DeploymentResource")
 
 
-class AIDeployment(_ClientResource[AIDeploymentResourceType]):
+class AIDeployment(_ClientResource, Generic[AIDeploymentResourceType]):
     DEFAULTS: "DeploymentResource" = _DEFAULT_DEPLOYMENT  # type: ignore[assignment]
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_AI_DEPLOYMENT_EXTENSIONS
     properties: AIDeploymentResourceType
@@ -138,7 +139,7 @@ class AIDeployment(_ClientResource[AIDeploymentResourceType]):
                 properties["tags"] = kwargs.pop("tags")
         # The kwargs service_prefix and identifier can be passed by child classes.
         super().__init__(
-            cast(Dict[str, Any], properties),
+            properties,
             extensions=extensions,
             existing=existing,
             parent=parent,
@@ -183,7 +184,7 @@ class AIDeployment(_ClientResource[AIDeploymentResourceType]):
         existing = super().reference(name=name, parent=parent)
         return cast(AIDeployment[ResourceReference], existing)
 
-    def _build_endpoint(self, *, config_store: Mapping[str, Any]) -> str:
+    def _build_endpoint(self, *, config_store: Optional[Mapping[str, Any]]) -> str:
         return (
             f"https://{self.parent._settings['name'](config_store=config_store)}.openai.azure.com/openai/"  # pylint: disable=protected-access
             + f"deployments/{self._settings['name'](config_store=config_store)}"
@@ -260,7 +261,7 @@ class AIChat(AIDeployment[AIDeploymentResourceType]):
         existing = super().reference(name=name, account=account, resource_group=resource_group)
         return cast(AIChat[ResourceReference], existing)
 
-    def _build_endpoint(self, *, config_store: Mapping[str, Any]) -> str:
+    def _build_endpoint(self, *, config_store: Optional[Mapping[str, Any]]) -> str:
         return (
             f"https://{self.parent._settings['name'](config_store=config_store)}.openai.azure.com/openai/"  # pylint: disable=protected-access
             + f"deployments/{self._settings['name'](config_store=config_store)}"  # /chat/completions"
@@ -509,7 +510,7 @@ class AIEmbeddings(AIDeployment[AIDeploymentResourceType]):
         existing = super().reference(name=name, account=account, resource_group=resource_group)
         return cast(AIEmbeddings[ResourceReference], existing)
 
-    def _build_endpoint(self, *, config_store: Mapping[str, Any]) -> str:
+    def _build_endpoint(self, *, config_store: Optional[Mapping[str, Any]]) -> str:
         return (
             f"https://{self.parent._settings['name'](config_store=config_store)}.openai.azure.com/openai/"  # pylint: disable=protected-access
             + f"deployments/{self._settings['name'](config_store=config_store)}"  # /embeddings"

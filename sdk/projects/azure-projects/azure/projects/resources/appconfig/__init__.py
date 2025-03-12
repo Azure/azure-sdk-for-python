@@ -10,6 +10,7 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Dict,
+    Generic,
     List,
     Literal,
     Mapping,
@@ -39,7 +40,7 @@ if TYPE_CHECKING:
 
 
 class ConfigStoreKwargs(TypedDict, total=False):
-    create_mode: Union[Literal['Default', 'Recover'], Parameter]
+    create_mode: Union[Literal["Default", "Recover"], Parameter]
     """Indicates whether the configuration store need to be recovered."""
     # customerManagedKey: 'CustomerManagedKey'
     # """The customer managed key definition."""
@@ -48,7 +49,9 @@ class ConfigStoreKwargs(TypedDict, total=False):
     disable_local_auth: Union[bool, Parameter]
     """Disables all authentication methods other than AAD authentication."""
     enable_purge_protection: Union[bool, Parameter]
-    """Property specifying whether protection against purge is enabled for this configuration store. Defaults to true unless sku is set to Free, since purge protection is not available in Free tier."""
+    """Property specifying whether protection against purge is enabled for this configuration store. Defaults to true
+    unless sku is set to Free, since purge protection is not available in Free tier.
+    """
     # keyValues: List['KeyValue']
     # """All Key / Values to create. Requires local authentication to be enabled."""
     location: Union[str, Parameter]
@@ -58,9 +61,13 @@ class ConfigStoreKwargs(TypedDict, total=False):
     managed_identities: Optional[ManagedIdentity]
     """The managed identity definition for this resource."""
     # privateEndpoints: List['PrivateEndpoint']
-    # """Configuration details for private endpoints. For security reasons, it is recommended to use private endpoints whenever possible."""
-    public_network_access: Union[Literal['Disabled', 'Enabled'], Parameter]
-    """Whether or not public network access is allowed for this resource. For security reasons it should be disabled. If not specified, it will be disabled by default if private endpoints are set."""
+    # """Configuration details for private endpoints. For security reasons, it is recommended to use private
+    # endpoints whenever possible.
+    # """
+    public_network_access: Union[Literal["Disabled", "Enabled"], Parameter]
+    """Whether or not public network access is allowed for this resource. For security reasons it should be
+    disabled. If not specified, it will be disabled by default if private endpoints are set.
+    """
     # replica_locations: Union[List[Union[str, Parameter]], Parameter]
     # """All Replicas to create."""
     roles: Union[
@@ -70,15 +77,15 @@ class ConfigStoreKwargs(TypedDict, total=False):
                 Parameter,
                 "RoleAssignment",
                 Literal[
-                    'App Compliance Automation Administrator',
-                    'App Compliance Automation Reader',
-                    'App Configuration Data Owner',
-                    'App Configuration Data Reader',
-                    'Contributor',
-                    'Owner',
-                    'Reader',
-                    'Role Based Access Control Administrator',
-                    'User Access Administrator'
+                    "App Compliance Automation Administrator",
+                    "App Compliance Automation Reader",
+                    "App Configuration Data Owner",
+                    "App Configuration Data Reader",
+                    "Contributor",
+                    "Owner",
+                    "Reader",
+                    "Role Based Access Control Administrator",
+                    "User Access Administrator",
                 ],
             ]
         ],
@@ -91,21 +98,21 @@ class ConfigStoreKwargs(TypedDict, total=False):
                 Parameter,
                 "RoleAssignment",
                 Literal[
-                    'App Compliance Automation Administrator',
-                    'App Compliance Automation Reader',
-                    'App Configuration Data Owner',
-                    'App Configuration Data Reader',
-                    'Contributor',
-                    'Owner',
-                    'Reader',
-                    'Role Based Access Control Administrator',
-                    'User Access Administrator'
+                    "App Compliance Automation Administrator",
+                    "App Compliance Automation Reader",
+                    "App Configuration Data Owner",
+                    "App Configuration Data Reader",
+                    "Contributor",
+                    "Owner",
+                    "Reader",
+                    "Role Based Access Control Administrator",
+                    "User Access Administrator",
                 ],
             ]
         ],
     ]
     """Array of role assignments to create for the user principal ID."""
-    sku: Literal['Free', 'Standard']
+    sku: Literal["Free", "Standard"]
     """Pricing tier of App Configuration."""
     soft_delete_retention: int
     """The amount of time in days that the configuration store will be retained when it is soft deleted."""
@@ -134,7 +141,7 @@ _DEFAULT_CONFIG_STORE_EXTENSIONS: ExtensionResources = {
 }
 
 
-class ConfigStore(_ClientResource[ConfigStoreResourceType]):
+class ConfigStore(_ClientResource, Generic[ConfigStoreResourceType]):
     DEFAULTS: "ConfigStoreResource" = _DEFAULT_CONFIG_STORE  # type: ignore[assignment]
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_CONFIG_STORE_EXTENSIONS
     properties: ConfigStoreResourceType
@@ -179,7 +186,7 @@ class ConfigStore(_ClientResource[ConfigStoreResourceType]):
             if "tags" in kwargs:
                 properties["tags"] = kwargs.pop("tags")
         super().__init__(
-            cast(Dict[str, Any], properties),
+            properties,
             extensions=extensions,
             existing=existing,
             identifier=ResourceIdentifiers.config_store,
@@ -210,7 +217,7 @@ class ConfigStore(_ClientResource[ConfigStoreResourceType]):
         )
         return cast(ConfigStore[ResourceReference], existing)
 
-    def _build_endpoint(self, *, config_store: Mapping[str, Any]) -> str:
+    def _build_endpoint(self, *, config_store: Optional[Mapping[str, Any]]) -> str:
         raise RuntimeError()
         # TODO: Validate URL structure after deployment.
         # return f"https://{self._settings['name'](config_store=config_store)}.vault.azure.net/"

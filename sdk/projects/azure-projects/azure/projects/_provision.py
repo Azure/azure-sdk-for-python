@@ -8,9 +8,10 @@ from typing import (
     IO,
     Any,
     List,
+    Mapping,
     MutableMapping,
     Optional,
-    Type,
+    Tuple,
     Dict,
     Union,
 )
@@ -34,18 +35,18 @@ _BICEP_PARAMS = {
 }
 
 
-def _deprovision_project(name: str, label: Optional[str] = None, purge: bool = False) -> None:
+def _deprovision_project(name: str, label: Optional[str] = None, purge: bool = False) -> int:
     project_name = name + (f"-{label}" if label else "")
     args = ["azd", "down", "-e", project_name, "--force"]
     if purge:
-        args.append(["--purge"])
+        args.append("--purge")
     print("Running: ", args)
     output = subprocess.run(args, check=False)
     print(output)
     return output.returncode
 
 
-def _provision_project(name: str, label: Optional[str] = None) -> None:
+def _provision_project(name: str, label: Optional[str] = None) -> int:
     project_name = name + (f"-{label}" if label else "")
     args = ["azd", "provision", "-e", project_name]
     print("Running: ", args)
@@ -63,7 +64,7 @@ def _init_project(
     location: Optional[str] = None,
     label: Optional[str] = None,
     metadata: Optional[Dict[str, str]] = None,
-) -> None:
+) -> int:
     azure_dir = os.path.join(root_path, ".azure")
     azure_yaml = os.path.join(root_path, "azure.yaml")
     project_name = name + (f"-{label}" if label else "")
@@ -100,13 +101,14 @@ def _init_project(
     return returncode
 
 
-def _get_component_resources(component: Type[Resource]) -> Dict[str, Resource]:
-    resources = {k: v for k, v in component.__dict__.items() if isinstance(v, (Resource, AzureInfrastructure))}
-    return resources
+def _get_component_resources(component: AzureInfrastructure) -> Dict[str, Union[Resource, AzureInfrastructure]]:
+    return {k: v for k, v in component.__dict__.items() if isinstance(v, (Resource, AzureInfrastructure))}
 
 
 def deprovision(deployment: AzureInfrastructure, /, *, purge: bool = False) -> None:
-    _deprovision_project(deployment.__class__.__name__, purge=purge)
+    returncode = _deprovision_project(deployment.__class__.__name__, purge=purge)
+    if returncode != 0:
+        raise RuntimeError()
 
 
 def provision(
@@ -145,21 +147,23 @@ def provision(
 
 
 def export(
-    deployment: Union[Resource, AzureInfrastructure],
+    deployment: AzureInfrastructure,
     /,
     infra_dir: str = "infra",
     main_bicep: str = "main",
     output_dir: str = ".",
     user_access: bool = True,
     location: Optional[str] = None,
-    config_store: Optional[MutableMapping[str, Any]] = None,
+    config_store: Optional[Mapping[str, Any]] = None,
 ) -> None:
     deployment_name = deployment.__class__.__name__
     config_store = config_store or {}
+    # TODO: Replace print statements with logging
     print("Building bicep...")
     working_dir = os.path.abspath(output_dir)
     infra_dir = os.path.join(working_dir, infra_dir)
-    parameters: Dict[str, Parameter] = dict(GLOBAL_PARAMS)
+    # Not sure why a TypedDict is incompatible with SupportsKeysAndGetItem
+    parameters: Dict[str, Parameter] = dict(GLOBAL_PARAMS)  # type: ignore[arg-type]
     if not user_access:
         # If we don't want any local access, simply remove the parameter.
         parameters.pop("principalId")
@@ -201,7 +205,7 @@ def export(
         main.write("\n")
     # TODO: Full parameters file
     main_parameters = os.path.join(infra_dir, f"{main_bicep}.parameters.json")
-    params_content = dict(_BICEP_PARAMS)
+    params_content: Dict[str, Any] = dict(_BICEP_PARAMS)
     params_content["parameters"] = {}
     for parameter in parameters.values():
         if parameter.name and parameter.env_var:
@@ -217,7 +221,7 @@ def _parse_module(
     component: AzureInfrastructure,
     component_resources: Dict[str, Union[Resource, AzureInfrastructure]],
     component_fields: FieldsType,
-) -> FieldsType:
+) -> None:
     for resource in component_resources.values():
         if isinstance(resource, Resource):
             resource.__bicep__(component_fields, parameters=parameters, infra_component=component)
@@ -237,9 +241,9 @@ def _write_resources(  # pylint: disable=too-many-statements
     parameters: Dict[str, Parameter],
     infra_dir: str,
     deployment_name: str,
-    config: Dict[str, Any],
+    config: Mapping[str, Any],
     resource_group_scope: Optional[ResourceSymbol] = None,
-) -> None:
+) -> List[Tuple[str, str]]:
     all_outputs = []
     for index, field in enumerate(fields):
         if field.identifier == ResourceIdentifiers.resource_group:
@@ -287,10 +291,10 @@ def _write_resources(  # pylint: disable=too-many-statements
                         infra_dir=infra_dir,
                         config=config,
                         resource_group_scope=field.symbol,
-                        deployment_name=None,  # TODO: support submodules/resource groups
+                        deployment_name="",  # TODO: support submodules/resource groups
                     )
-                    for output, type in outputs:
-                        bicep.write(f"output {output} {type} = {deployment_name}_module.outputs.{output}\n")
+                    for output_name, type in outputs:
+                        bicep.write(f"output {output_name} {type} = {deployment_name}_module.outputs.{output_name}\n")
                     bicep.write("\n")
                 break
         elif field.existing:

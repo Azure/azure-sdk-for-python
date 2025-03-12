@@ -65,7 +65,7 @@ async def main():
         first_app.infra.down()
 
     # An AzureApp class functions similar to a Python dataclass, so defaults or factories can be provided.
-    # Unlike dataclasses, additional keyword-argments can be provided to the field specifier which
+    # Unlike dataclasses, additional keyword-arguments can be provided to the field specifier which
     # will be passed into the client constructor (or default factory if provided).
     # The app definition can also use asynchronous clients.
     from azure.projects import field
@@ -91,7 +91,7 @@ async def main():
         blob_container: BlobContainer = BlobContainer(name="images", metadata={"az_samples": "storage"})
 
     # Each AzureInfrastructure class comes with a new default resource group and user-assigned managed
-    # identity. These can be overridden in the class definition, or overidding values can be provided
+    # identity. These can be overridden in the class definition, or overridding values can be provided
     # when the object is constructed.
     infra = MyStorage(
         # Here we will provide a named resource group to create instead of the default one.

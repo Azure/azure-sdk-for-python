@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import json
-from typing import Dict, Iterable, List, Literal, Mapping, Optional, Any, Union
+from typing import Dict, Iterable, List, Literal, Mapping, Optional, Any, Union, cast
 from enum import Enum
 
 from .utils import resolve_value, serialize
@@ -37,11 +37,10 @@ class Expression:
     def __hash__(self):
         return hash(self.value)
 
-    def _resolve_expression(self, expression: Union["Expression", str]):
-        try:
+    def _resolve_expression(self, expression: Union["Expression", str]) -> str:
+        if isinstance(expression, Expression):
             return expression.value
-        except AttributeError:
-            return expression
+        return expression
 
     @property
     def value(self) -> str:
@@ -116,7 +115,7 @@ class ResourceSymbol(Expression):
 
     @property
     def value(self) -> str:
-        return self._value
+        return cast(str, self._value)
 
     @property
     def name(self) -> "Output":
@@ -134,7 +133,6 @@ class ResourceSymbol(Expression):
 
 
 class Parameter(Expression):
-    name: str
     env_var: Optional[str]
     default: Any
 
@@ -167,11 +165,11 @@ class Parameter(Expression):
 
     @property
     def name(self) -> str:
-        return self._value
+        return cast(str, self._value)
 
     @property
     def value(self) -> str:
-        return self._value
+        return cast(str, self._value)
 
     @property
     def type(self) -> str:
@@ -280,7 +278,7 @@ class Variable(Parameter):
 class Output(Parameter):
     def __init__(
         self,
-        name: str,
+        name: Optional[str],
         value: Union[Expression, str],
         symbol: Optional[ResourceSymbol] = None,
         *,
@@ -288,7 +286,7 @@ class Output(Parameter):
     ) -> None:
         self.symbol = symbol
         self._path = value
-        super().__init__(name=name, description=description, type="string")
+        super().__init__(name=name or "", description=description, type="string")
 
     def __repr__(self) -> str:
         return f"output({self.value})"
@@ -300,7 +298,7 @@ class Output(Parameter):
         value = resolve_value(self._path)
         return value
 
-    def __bicep__(self) -> str:  # pylint:disable=arguments-differ
+    def __bicep__(self, *args) -> str:  # pylint: disable=arguments-differ, unused-argument
         declaration = ""
         if self._description:
             declaration += f"@sys.description('{self._description}')\n"

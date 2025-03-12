@@ -31,12 +31,13 @@ from ._resource import Resource, _load_dev_environment, SyncClient, AsyncClient
 from .resources import RESOURCE_FROM_CLIENT_ANNOTATION
 from .resources.resourcegroup import ResourceGroup
 from .resources.managedidentity import UserAssignedIdentity
+from .resources.appconfig import ConfigStore
 
 
 def get_annotations(cls: Type) -> Mapping[str, Any]:
     # This is needed for Python <3.10
     try:
-        from inspect import get_annotations as _get_annotations
+        from inspect import get_annotations as _get_annotations  # type: ignore[attr-defined]
 
         return _get_annotations(cls)
     except ImportError:
@@ -49,10 +50,14 @@ def get_annotations(cls: Type) -> Mapping[str, Any]:
 
 
 class DefaultFactory(Protocol):
+    __name__: str
+
     def __call__(self, **kwargs) -> Any: ...
 
 
 class AsyncDefaultFactory(Protocol):
+    __name__: str
+
     async def __call__(self, **kwargs) -> Any: ...
 
 
@@ -74,7 +79,6 @@ class ComponentField(Parameter):
         self._owner: Optional[Type] = None
         self._attrname: Optional[str] = None
         self._name: Optional[str] = None
-        self._type: Optional[Type] = None
         self.repr = repr
         self.init = init
         self.alias = alias
@@ -93,17 +97,18 @@ class ComponentField(Parameter):
         if self.default is not MISSING:
             return f"Field(default={repr(self.default)})"
         if self._factory is not MISSING:
-            return f"Field(default={self._factory.__name__}(**kwargs))"
+            return f"Field(default={getattr(self._factory.__name__, 'factory')}(**kwargs))"
         return "Field()"
 
     def __set_name__(self, owner: Type, name: str) -> None:
         self._owner = owner
         self._name = name
         self._attrname = "_field__" + name
-        try:
-            self._type = get_annotations(owner)[name]
-        except KeyError:
-            raise RuntimeError(f"'{owner.__name__}.{name}' is missing type hint.") from None
+        # TODO: Don't think we need this.
+        # try:
+        #     self._type = get_annotations(owner)[name]
+        # except KeyError:
+        #     raise RuntimeError(f"'{owner.__name__}.{name}' is missing type hint.") from None
 
     async def _run_factory(self):
         factory = self._factory(**self._kwargs)
@@ -134,11 +139,11 @@ class ComponentField(Parameter):
 
 def field(
     *,
-    default: Union[Any, Literal[Default.MISSING]] = MISSING,
-    factory: Union[DefaultFactory, AsyncDefaultFactory, Literal[Default.MISSING]] = MISSING,
-    repr: bool = True,
-    init: bool = True,  # TODO: Support init
-    alias: Optional[str] = None,
+    default=MISSING,
+    factory=MISSING,
+    repr=True,
+    init=True,  # TODO: Support init
+    alias=None,
     **kwargs,
 ):
     if default is not MISSING and factory is not MISSING:
@@ -154,7 +159,7 @@ class AzureInfraComponent(type):
     def __call__(cls, **kwargs):
         instance_kwargs = {}
         missing_kwargs = []
-        child_infra_components: List[AzureInfrastructure] = []
+        child_infra_components = []
         mro = cls.mro()
         # We want to skip objects in the heirachy above AzureInfrastructure, which should
         # only be 'object', but just in case that changes, we'll strip everything.
@@ -208,6 +213,7 @@ class AzureInfrastructure(metaclass=AzureInfraComponent):
     _parent: Optional["AzureInfrastructure"] = field(default=None, init=False)
     resource_group: ResourceGroup = field(default=ResourceGroup(), repr=False)
     identity: Optional[UserAssignedIdentity] = field(default=UserAssignedIdentity(), repr=False)
+    config_store: Optional[ConfigStore] = field(default=None)
 
     def __init__(self, **kwargs):
         for key, value in kwargs.items():
@@ -243,6 +249,7 @@ class AzureInfrastructure(metaclass=AzureInfraComponent):
 
 
 def make_infra(cls_name, fields, *, bases=(), namespace=None, module=None) -> Type[AzureInfrastructure]:
+    # pylint: disable=protected-access
     # This code is taken from stdlib dataclasses.make_dataclass.
     if namespace is None:
         namespace = {}
@@ -292,10 +299,10 @@ def make_infra(cls_name, fields, *, bases=(), namespace=None, module=None) -> Ty
     # where the dataclass is created.
     if module is None:
         try:
-            module = sys._getframemodulename(1) or "__main__"  # pylint: disable=protected-access
+            module = sys._getframemodulename(1) or "__main__"  # type: ignore[attr-defined]
         except AttributeError:
             try:
-                module = sys._getframe(1).f_globals.get("__name__", "__main__")  # pylint: disable=protected-access
+                module = sys._getframe(1).f_globals.get("__name__", "__main__")
             except (AttributeError, ValueError):
                 pass
     if module is not None:
@@ -537,6 +544,7 @@ class AzureApp(Generic[InfrastructureType], metaclass=AzureAppComponent):
         else:
             try:
                 if callable(value.close) and value not in self._closeables:
+                    # TODO: Confirm 'callable()' works for coroutines/
                     self._closeables.append(value)
             except AttributeError:
                 pass
@@ -554,7 +562,7 @@ class AzureApp(Generic[InfrastructureType], metaclass=AzureAppComponent):
     async def __aexit__(self, *args) -> None:
         await self.aclose()
 
-    async def _close_client(self, client: Union[SyncClient, AsyncClient]) -> None:
+    async def _close_client(self, client):
         closer = client.close()
         try:
             await closer

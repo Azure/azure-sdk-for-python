@@ -10,6 +10,7 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Dict,
+    Generic,
     List,
     Literal,
     Mapping,
@@ -165,7 +166,7 @@ _DEFAULT_SEARCH_SERVICE_EXTENSIONS: ExtensionResources = {
 }
 
 
-class SearchService(_ClientResource[SearchServiceResourceType]):
+class SearchService(_ClientResource, Generic[SearchServiceResourceType]):
     DEFAULTS: "SearchServiceResource" = _DEFAULT_SEARCH_SERVICE  # type: ignore[assignment]
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_SEARCH_SERVICE_EXTENSIONS
     properties: SearchServiceResourceType
@@ -205,7 +206,7 @@ class SearchService(_ClientResource[SearchServiceResourceType]):
             if "tags" in kwargs:
                 properties["tags"] = kwargs.pop("tags")
         super().__init__(
-            cast(Dict[str, Any], properties),
+            properties,
             extensions=extensions,
             existing=existing,
             identifier=ResourceIdentifiers.search,
@@ -236,7 +237,7 @@ class SearchService(_ClientResource[SearchServiceResourceType]):
         )
         return cast(SearchService[ResourceReference], existing)
 
-    def _build_endpoint(self, *, config_store: Mapping[str, Any]) -> str:
+    def _build_endpoint(self, *, config_store: Optional[Mapping[str, Any]]) -> str:
         return f"https://{self._settings['name'](config_store=config_store)}.search.windows.net/"
 
     def _outputs(  # type: ignore[override]

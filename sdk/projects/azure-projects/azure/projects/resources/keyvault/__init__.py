@@ -10,6 +10,7 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Dict,
+    Generic,
     List,
     Literal,
     Mapping,
@@ -139,7 +140,7 @@ _DEFAULT_KEY_VAULT_EXTENSIONS: ExtensionResources = {
 }
 
 
-class KeyVault(_ClientResource[KeyVaultResourceType]):
+class KeyVault(_ClientResource, Generic[KeyVaultResourceType]):
     DEFAULTS: "KeyVaultResource" = _DEFAULT_KEY_VAULT  # type: ignore[assignment]
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_KEY_VAULT_EXTENSIONS
     properties: KeyVaultResourceType
@@ -177,7 +178,7 @@ class KeyVault(_ClientResource[KeyVaultResourceType]):
             if "tags" in kwargs:
                 properties["tags"] = kwargs.pop("tags")
         super().__init__(
-            cast(Dict[str, Any], properties),
+            properties,
             extensions=extensions,
             existing=existing,
             identifier=ResourceIdentifiers.keyvault,
@@ -208,7 +209,7 @@ class KeyVault(_ClientResource[KeyVaultResourceType]):
         )
         return cast(KeyVault[ResourceReference], existing)
 
-    def _build_endpoint(self, *, config_store: Mapping[str, Any]) -> str:
+    def _build_endpoint(self, *, config_store: Optional[Mapping[str, Any]]) -> str:
         return f"https://{self._settings['name'](config_store=config_store)}.vault.azure.net/"
 
     def _outputs(self, *, symbol: ResourceSymbol, suffix: Optional[str] = None, **kwargs) -> Dict[str, Output]:

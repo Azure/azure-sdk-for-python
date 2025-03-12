@@ -12,7 +12,6 @@ from collections import defaultdict
 import os
 from typing import (
     Generator,
-    Generic,
     Literal,
     Mapping,
     MutableMapping,
@@ -52,20 +51,7 @@ if TYPE_CHECKING:
     from ._component import AzureInfrastructure
 
 
-@runtime_checkable
-class SyncClient(Protocol, ContextManager["SyncClient"]):
-    def close(self) -> None: ...
-
-
-@runtime_checkable
-class AsyncClient(Protocol, AsyncContextManager["AsyncClient"]):  # pylint: disable=async-client-bad-name
-    async def close(self) -> None: ...
-
-
-ClientType = TypeVar("ClientType", bound=Union[SyncClient, AsyncClient])
-
-
-def _load_dev_environment(name: Optional[str] = None, label: Optional[str] = None) -> Dict[str, str]:
+def _load_dev_environment(name: Optional[str] = None, label: Optional[str] = None) -> Dict[str, Optional[str]]:
     azd_dir = os.path.join(os.getcwd(), ".azure")
     if name and not name.endswith(".env"):
         if not os.path.isdir(azd_dir):
@@ -90,13 +76,33 @@ def _build_envs(services: List[str], attributes: List[str]) -> List[str]:
     return ["_".join(["AZURE"] + list(var)).upper() for var in all_vars]
 
 
-_EMPTY_DEFAULT = {}
-_EMPTY_DEFAULT_EXTENSIONS = {}
+@runtime_checkable
+class SyncClient(Protocol, ContextManager["SyncClient"]):
+    def close(self) -> None: ...
+
+
+@runtime_checkable
+class AsyncClient(Protocol, AsyncContextManager["AsyncClient"]):  # pylint: disable=async-client-bad-name
+    async def close(self) -> None: ...
+
+
+class FieldType(NamedTuple):
+    resource: str
+    identifier: ResourceIdentifiers
+    version: str
+    properties: Dict[str, Any]
+    symbol: ResourceSymbol
+    outputs: Dict[str, Output]
+    resource_group: Optional[ResourceSymbol]
+    extensions: "ExtensionResources"
+    existing: bool
+    name: Optional[Union[str, Parameter]]
+    add_defaults: Optional[Callable[[FieldType, Dict[str, Parameter]], None]]  # TODO: Clean this up?
 
 
 class ResourceReference(TypedDict, total=False):
     name: Union[str, Parameter]
-    resource_group: "ResourceGroup"
+    resource_group: "ResourceGroup[ResourceReference]"
     subscription: Union[str, Parameter]
     parent: Resource
 
@@ -116,37 +122,23 @@ class ExtensionResources(TypedDict, total=False):
     # secret store?
 
 
-ResourcePropertiesType = TypeVar("ResourcePropertiesType", bound=Mapping[str, Any])
-
-
-class FieldType(NamedTuple):
-    resource: str
-    identifier: ResourceIdentifiers
-    version: str
-    properties: Dict[str, Any]
-    symbol: ResourceSymbol
-    outputs: Dict[str, Output]
-    resource_group: Optional[ResourceSymbol]
-    extensions: ExtensionResources
-    existing: bool
-    name: Optional[Union[str, Parameter]]
-    add_defaults: Optional[Callable[[FieldType, Dict[str, Parameter]], None]]  # TODO: Clean this up?
-
-
 FieldsType = Dict[str, FieldType]
+ClientType = TypeVar("ClientType", bound=Union[SyncClient, AsyncClient])
+_EMPTY_DEFAULT: MutableMapping[str, Any] = {}
+_EMPTY_DEFAULT_EXTENSIONS: ExtensionResources = {}
 
 
-class Resource(Generic[ResourcePropertiesType]):  # pylint: disable=too-many-instance-attributes
+class Resource:  # pylint: disable=too-many-instance-attributes
     DEFAULTS: MutableMapping[str, Any] = _EMPTY_DEFAULT
     DEFAULT_EXTENSIONS: ExtensionResources = _EMPTY_DEFAULT_EXTENSIONS
     identifier: ResourceIdentifiers
-    properties: ResourcePropertiesType
+    properties: Mapping[str, Any]
     extensions: ExtensionResources
     parent: Optional[Resource]
 
-    def __init__(self, properties: Optional[Dict[str, Any]] = None, /, **kwargs) -> None:
+    def __init__(self, properties: Optional[Mapping[str, Any]] = None, /, **kwargs) -> None:
         """This constructor should not be used directly."""
-        self.properties: ResourcePropertiesType = properties or {}
+        self.properties = properties or {}
         self.extensions: ExtensionResources = kwargs.pop("extensions", {})
         self.identifier = kwargs.pop("identifier")
         self.parent: Optional[Resource] = kwargs.pop("parent", self.properties.get("parent"))
@@ -164,19 +156,20 @@ class Resource(Generic[ResourcePropertiesType]):  # pylint: disable=too-many-ins
         # These determine how resource properties are handled when building up the bicep
         # definitions for the same resource declared in multiple places. Anything in the
         # 'properties' field of a resource will error on conflict
+        # TODO: Should be able to remove this.
         self._properties_to_merge: List[str] = kwargs.pop("properties_to_merge", ["properties", "tags"])
 
         self._settings: Dict[str, StoredPrioritizedSetting] = {
             "name": StoredPrioritizedSetting(
                 "name",
                 env_vars=_build_envs(self._prefixes, ["NAME"]),
-                system_hook=self._get_default_name,
+                hook=self._get_default_name,
                 suffix=self._suffix,
             ),
             "resource_id": StoredPrioritizedSetting(
                 name="resource_id",
                 env_vars=_build_envs(self._prefixes, ["ID", "RESOURCE_ID"]),
-                system_hook=self._build_resource_id,
+                hook=self._build_resource_id,
                 suffix=self._suffix,
             ),
         }
@@ -236,7 +229,7 @@ class Resource(Generic[ResourcePropertiesType]):  # pylint: disable=too-many-ins
         resource_group: Optional[Union[str, Parameter, "ResourceGroup[ResourceReference]"]] = None,
         subscription: Optional[Union[str, Parameter]] = None,
         parent: Optional[Resource] = None,
-    ) -> Self[ResourceReference]:
+    ) -> Self:
         if parent and resource_group:
             raise ValueError("Cannot specify both parent and resource_group.")
         properties = ResourceReference(name=name) if name else {}
@@ -276,9 +269,7 @@ class Resource(Generic[ResourcePropertiesType]):  # pylint: disable=too-many-ins
         else:
             resource_ref = resource_ref.rstrip("s")
         symbol = f"{resource_ref}{self._suffix.lower()}" if self._suffix else resource_ref
-        principal_id = None
-        if self.properties.get("identity", {}).get("type", "").startswith("SystemAssigned"):
-            principal_id = "principalId"
+        principal_id = self.properties.get("identity", {}).get("type", "").startswith("SystemAssigned")
         return ResourceSymbol(symbol, principal_id=principal_id)
 
     def _build_resource_id(self, *, config_store: Optional[Mapping[str, Any]]) -> str:
@@ -291,7 +282,7 @@ class Resource(Generic[ResourcePropertiesType]):  # pylint: disable=too-many-ins
         rg_prefix = f"/resourceGroups/{self._settings['resource_group'](config_store=config_store)}"
         return sub_prefix + rg_prefix + f"/providers/{self.resource}/{name}"
 
-    def _get_default_name(self, *, config_store: Mapping[str, Any]) -> str:  # pylint: disable=unused-argument
+    def _get_default_name(self, *, config_store: Optional[Mapping[str, Any]]) -> str:  # pylint: disable=unused-argument
         try:
             # TODO: Test what this will do if "name" is a ComponentField - either resource or string.
             return self.properties["name"]
@@ -412,14 +403,17 @@ class Resource(Generic[ResourcePropertiesType]):  # pylint: disable=too-many-ins
         return self._resolve_properties(self.properties, parameters, component)
 
     def _resolve_properties(
-        self, properties: Dict[str, Any], parameters: Dict[str, Parameter], component: AzureInfrastructure = None
-    ) -> Dict[str, Any]:
+        self,
+        properties: Mapping[Union[str, Parameter], Any],
+        parameters: Dict[str, Parameter],
+        component: Optional[AzureInfrastructure] = None,
+    ) -> Dict[Union[str, Parameter], Any]:
         # TODO: Better design here? We need to gather Parameters both
         # with and without resolving ComponentFields.
         # TODO We also need to resolve reource references to a ResourceSymbol.id.
         from ._component import ComponentField
 
-        new_props = {}
+        new_props: Dict[Union[str, Parameter], Any] = {}
         for key, value in properties.items():
             if isinstance(key, Parameter) and key.name:
                 if key.name in parameters:
@@ -477,7 +471,9 @@ class Resource(Generic[ResourcePropertiesType]):  # pylint: disable=too-many-ins
             else:
                 field.properties[key] = value
         # TODO: This is making a copy of the properties, very slow...
-        field.properties.update(self._resolve_properties(field.properties, parameters))
+        # file.properties is Dict[str, Any], but resolve properties supports Dict[Union[Parameter, str], Any] which
+        # would only expect to show up in sub-dicts like tags.
+        field.properties.update(self._resolve_properties(field.properties, parameters))  # type: ignore[arg-type]
         if "managed_identity_roles" not in field.extensions:
             field.extensions["managed_identity_roles"] = self.DEFAULT_EXTENSIONS.get("managed_identity_roles", [])
         if "user_roles" not in field.extensions:
@@ -491,9 +487,9 @@ class Resource(Generic[ResourcePropertiesType]):  # pylint: disable=too-many-ins
         infra_component: Optional[AzureInfrastructure] = None,
     ) -> Tuple[ResourceSymbol, ...]:
         properties = self._resolve_resource(parameters, infra_component)
-        extensions = defaultdict(list)
+        extensions: ExtensionResources = defaultdict(list)  # type: ignore[assignment]  # Doesn't like defaultdict
         extensions.update(self.extensions)
-        parents: Tuple[ResourceSymbol] = ()
+        parents: Tuple[ResourceSymbol, ...] = ()
         if self.parent:
             if "parent" in properties:
                 parents = (properties["parent"],)
@@ -544,22 +540,28 @@ class Resource(Generic[ResourcePropertiesType]):  # pylint: disable=too-many-ins
         # We can probably remove this and just default using the current RG scope.
         rg = self._find_resource_group(fields)
         if not parents:
-            field = self._find_last_resource_match(fields, resource_group=rg, name=properties.get("name"))
+            field_match = self._find_last_resource_match(fields, resource_group=rg, name=properties.get("name"))
         else:
-            field = self._find_last_resource_match(fields, parent=parents[0], name=properties.get("name"))
+            field_match = self._find_last_resource_match(fields, parent=parents[0], name=properties.get("name"))
 
-        if field:
-            params = field.properties
-            symbol = field.symbol
-            outputs = field.outputs
+        if field_match:
+            params = field_match.properties
+            symbol = field_match.symbol
+            outputs = field_match.outputs
             if "managed_identity_roles" in self.extensions:
                 # TODO: Need to confirm the behaviour here as I think this might be mutating the original copy
                 # of extensions.
                 # We don't really care if this causes duplicate roles because they should be
                 # cleaned up when exported to bicep.
-                field.extensions["managed_identity_roles"].extend(extensions["managed_identity_roles"])
+                # TODO: Should maybe replace the namedtuple with a slotted-dataclass so we can mutate the
+                # value and assign a fresh list here.
+                field_match.extensions["managed_identity_roles"].extend(  # type: ignore[union-attr]  # TODO
+                    extensions["managed_identity_roles"]
+                )
             if "user_roles" in self.extensions:
-                field.extensions["user_roles"].extend(extensions["user_roles"])
+                field_match.extensions["user_roles"].extend(  # type: ignore[union-attr]  # TODO
+                    extensions["user_roles"]
+                )
         else:
             params = {}
             if self.parent:
@@ -597,8 +599,8 @@ class Resource(Generic[ResourcePropertiesType]):  # pylint: disable=too-many-ins
         raise TypeError(f"Resource '{repr(self)}' has no compatible Client endpoint.")
 
 
-class _ClientResource(Resource[ResourcePropertiesType]):
-    def __init__(self, properties=None, /, **kwargs) -> None:
+class _ClientResource(Resource):
+    def __init__(self, properties: Optional[Mapping[str, Any]] = None, /, **kwargs) -> None:
         settings_passthrough = "settings" in kwargs
         super().__init__(properties, **kwargs)
         if not settings_passthrough:
@@ -611,7 +613,7 @@ class _ClientResource(Resource[ResourcePropertiesType]):
                     "endpoint": StoredPrioritizedSetting(
                         name="endpoint",
                         env_vars=_build_envs(self._prefixes, ["ENDPOINT"]),
-                        system_hook=self._build_endpoint,
+                        hook=self._build_endpoint,
                         suffix=self._suffix,
                     ),
                     "api_version": StoredPrioritizedSetting(
@@ -620,7 +622,7 @@ class _ClientResource(Resource[ResourcePropertiesType]):
                 }
             )
 
-    def _build_endpoint(self, *, config_store: Mapping[str, Any]) -> str:
+    def _build_endpoint(self, *, config_store: Optional[Mapping[str, Any]]) -> str:
         raise NotImplementedError("This must be implemented by child resources.")
 
     def _build_credential(
@@ -642,9 +644,9 @@ class _ClientResource(Resource[ResourcePropertiesType]):
                     "Please specify 'use_async' keyword argument."
                 ) from None
         if use_async:
-            from azure.identity.aio import DefaultAzureCredential
+            from azure.identity.aio import DefaultAzureCredential as AsyncDefaultAzureCredential
 
-            return DefaultAzureCredential()
+            return AsyncDefaultAzureCredential()
         from azure.identity import DefaultAzureCredential
 
         return DefaultAzureCredential()
