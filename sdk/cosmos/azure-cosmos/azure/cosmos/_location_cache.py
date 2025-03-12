@@ -385,7 +385,6 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             self.current_time_millis() - unavailability_info["lastUnavailabilityCheckTimeStamp"]
             > self.refresh_time_interval_in_ms
         ):
-            # TODO(@allekim): Shouldn't we remove the endpoint from unavailable info map before returning false?
             return False
         # Unexpired entry present. Endpoint is unavailable
         return True
