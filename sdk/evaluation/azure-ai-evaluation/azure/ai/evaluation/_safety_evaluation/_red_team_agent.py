@@ -423,7 +423,12 @@ class RedTeamAgent():
             if strategy == "jailbreak":
                 self.logger.info("Jailbreak strategy selected prepend jailbreak prefix")
                 jailbreak_prefixes = await self.generated_rai_client.get_jailbreak_prefixes()
-                self.logger.info(f"Jailbreak prefixes: {type(jailbreak_prefixes)}")
+                for objective in objectives_response:
+                    if "messages" in objective:
+                        if len(objective["messages"]) > 0:
+                            message = objective["messages"][0]
+                            if isinstance(message, dict) and "content" in message:
+                                message["content"] = f"{random.choice(jailbreak_prefixes)} {message['content']}"
                 
         except Exception as e:
             self.logger.error(f"Error calling get_attack_objectives: {str(e)}")
