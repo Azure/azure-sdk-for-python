@@ -81,15 +81,13 @@ def get_build_info(build_link: str, check_type: CHECK_TYPE) -> str:
     for record in response_json['records']:
         if record['id'] == job_id:
             log_id = record['log']['id']
-            return log_id
+            logs_link = f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds/{build_id}/logs/{log_id}?api-version=6.0"
+
+            # Get the build info from the build link
+            build_output = requests.get(logs_link)
+            build_output = build_output.text
+
     return "0"
-
-    # logs_link = f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds/{build_id}/logs/{log_id}?api-version=6.0"
-
-
-    # Get the build info from the build link
-    # build_output = requests.get(logs_link)
-    # build_output = build_output.text
     
 
 
