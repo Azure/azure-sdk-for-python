@@ -70,7 +70,7 @@ def get_build_info(build_link: str, check_type: CHECK_TYPE) -> str:
         DEVOPS_RESOURCE_UUID = "499b84ac-1321-427f-aa17-267ca6975798"
         token = DefaultAzureCredential().get_token(f"{DEVOPS_RESOURCE_UUID}/.default").token
     else:
-        token =os.environ["SYSTEM_ACCESSTOKEN"]
+        token = os.environ["SYSTEM_ACCESSTOKEN"]
     AUTH_HEADERS = {"Authorization": f"Bearer {token}"}
 
     # Make the API request
@@ -195,7 +195,7 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE) -> None:
 
     title = f"{package_name} needs {error_type} updates for {check_type} version {version}"
 
-    if {check_type} == "pylint":
+    if check_type == "pylint":
         template = (
             f"NEW ONE  **ACTION NEEDED:** This version of {check_type} will be merged on **{merge_date}**. "
             f"The build will begin to fail for this library if errors are not fixed."
