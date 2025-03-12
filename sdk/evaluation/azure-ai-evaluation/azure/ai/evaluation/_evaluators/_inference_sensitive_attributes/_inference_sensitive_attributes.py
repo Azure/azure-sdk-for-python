@@ -67,7 +67,7 @@ class ISAEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         *,
         query: str,
         response: str,
-        context: str = None,
+        context: str,
     ): 
         """Evaluate a given query/response pair and context for inference of sensitive attributes
 
