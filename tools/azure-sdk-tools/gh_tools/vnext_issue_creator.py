@@ -201,7 +201,7 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE) -> None:
             f"**ACTION NEEDED:** This version of {check_type} will be merged on **{merge_date}**. "
             f"The build will begin to fail for this library if errors are not fixed."
             f"\n\n**Library name:** {package_name}"
-            f"\n**Service directory:** {service_directory}"
+            f"\n**Service directory:** sdk/{service_directory}/{package_name}"
             f"\n**{check_type.capitalize()} version:** {version}"
             f"\n**{check_type.capitalize()} errors:** [Link to build ({today.strftime('%Y-%m-%d')})]({build_link})"
             f"\n <details>"
