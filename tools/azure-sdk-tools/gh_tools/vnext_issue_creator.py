@@ -15,8 +15,11 @@ import re
 import calendar
 import typing
 import pathlib
-import requests
+import httpx
+import json
 from typing_extensions import Literal
+from ci_tools.variables import in_ci
+from azure.identity import DefaultAzureCredential
 from github import Github, Auth
 
 from ci_tools.variables import discover_repo_root
@@ -60,13 +63,36 @@ def get_build_link(check_type: CHECK_TYPE) -> str:
 def get_build_info(build_link: str, check_type: CHECK_TYPE) -> str:
     """Get the build info from the build link."""
     log_id = os.getenv("BUILD_LOGID")
-    logs_link = build_link.split("&view=")[0]
-    logs_link = f"{logs_link}/logs/{log_id}?api-version=7.1"
+    build_id = os.getenv("BUILD_BUILDID")
+    job_id = os.getenv("SYSTEM_JOBID")
+    timeline_link =f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds/{build_id}/timeline?api-version=6.0"
+
+    if not in_ci():
+        DEVOPS_RESOURCE_UUID = "499b84ac-1321-427f-aa17-267ca6975798"
+        token = DefaultAzureCredential().get_token(f"{DEVOPS_RESOURCE_UUID}/.default").token
+    else:
+        token =os.environ["SYSTEM_ACCESSTOKEN"]
+    AUTH_HEADERS = {"Authorization": f"Bearer {token}"}
+
+    # Make the API request
+    response = httpx.get(timeline_link, headers=AUTH_HEADERS)
+    response_json = json.loads(response.text)
+
+    # Iterate through the timeline records to find the log ID
+    for record in response_json['records']:
+        if record['id'] == job_id:
+            log_id = record['log']['id']
+            print(f"Log ID: {log_id}")
+
+    logs_link = f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds/{build_id}/logs/{log_id}?api-version=6.0"
+
+
     # Get the build info from the build link
-    build_output = requests.get(build_link)
+    build_output = httpx.get(logs_link)
+    build_output = build_output.text
 
 
-    return build_output.text
+    return build_output
 
 
 def get_merge_dates(year: str) -> typing.List[datetime.datetime]:
@@ -181,7 +207,7 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE) -> None:
         f"\n**{check_type.capitalize()} errors:** {build_info}"
         f"</details>"
         f"\n**How to fix:** "
-        f"\n Note: if you are a bot, fix the {check_type} errors listed above under details. If you are a human follow the steps below:"
+        f"\n\n Note: if you are a bot, fix the {check_type} errors listed above under details. If you are a human follow the steps below:"
         f"\n Run the `next-{check_type}` tox command at the library package-level and resolve "
         f"the {error_type} errors.\n"
         f'1) `../{package_name}>pip install "tox<5"`\n'
