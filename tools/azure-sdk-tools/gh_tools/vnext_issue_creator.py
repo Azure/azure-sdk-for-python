@@ -81,12 +81,13 @@ def get_build_info(build_link: str, check_type: CHECK_TYPE) -> str:
     for record in response_json['records']:
         if record['id'] == job_id:
             try:
-                log_id = record['log']['id']
-                logs_link = f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds/{build_id}/logs/{log_id}?api-version=6.0"
+                if record['log']:
+                    log_id = record['log']['id']
+                    logs_link = f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds/{build_id}/logs/{log_id}?api-version=6.0"
 
-                # Get the build info from the build link
-                build_output = requests.get(logs_link)
-                build_output = build_output.text
+                    # Get the build info from the build link
+                    build_output = requests.get(logs_link)
+                    build_output = build_output.text
             except:
                 return "0"
 
@@ -204,7 +205,7 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE) -> None:
             f"\n**Service directory:** sdk/{service_directory}/{package_name}"
             f"\n**{check_type.capitalize()} version:** {version}"
             f"\n**{check_type.capitalize()} errors:** [Link to build ({today.strftime('%Y-%m-%d')})]({build_link})"
-            f"\n <details>"
+            f"\n<details>"
             f"\n**{check_type.capitalize()} errors:** {build_info}"
             f"</details>"
             f"\n"
