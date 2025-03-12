@@ -43,7 +43,7 @@ class GleuScoreEvaluator(EvaluatorBase):
     def __init__(self, threshold=0.5):
         self._threshold = threshold
         self._higher_is_better = True
-        super().__init__(threshold=threshold, _higher_is_better=_higher_is_better)
+        super().__init__(threshold=threshold, _higher_is_better=self._higher_is_better)
 
     @override
     async def _do_eval(self, eval_input: Dict) -> Dict[str, float]:

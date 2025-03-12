@@ -45,7 +45,7 @@ class F1ScoreEvaluator(EvaluatorBase):
     def __init__(self, threshold=0.5):
         self._threshold = threshold
         self._higher_is_better = True
-        super().__init__(threshold=threshold, _higher_is_better=_higher_is_better)
+        super().__init__(threshold=threshold, _higher_is_better=self._higher_is_better)
 
     @classmethod
     def _compute_f1_score(cls, response: str, ground_truth: str) -> float:
