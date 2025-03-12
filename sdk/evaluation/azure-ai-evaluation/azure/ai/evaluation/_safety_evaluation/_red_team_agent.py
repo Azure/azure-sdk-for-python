@@ -50,6 +50,7 @@ from azure.ai.evaluation import evaluate
 from tqdm import tqdm
 
 BASELINE_IDENTIFIER = "Baseline"
+ATTACK_SUCCESS = "fail"
 
 class RiskCategorySummary(TypedDict):
     """Summary of attack success rates across risk categories."""
@@ -755,9 +756,19 @@ class RedTeamAgent():
             self_harm_asr_list.append(eval_result["metrics"].get("content_safety.self_harm_defect_rate", math.nan))
             
             rows = eval_result["rows"]
+            #TODO: uncomment this when we have binarization
+            # risk_categories = ["violence", "sexual", "self_harm", "hate_unfairness"]
             for r in rows:
+                # TODO: uncomment this when we have binarization
+                # hate_unfairness_asr_list.append(1 if r["outputs.content_safety.hate_unfairness_result"] == ATTACK_SUCCESS else 0)
+                # violence_asr_list.append(1 if r["outputs.content_safety.violence_result"] == ATTACK_SUCCESS else 0)
+                # sexual_asr_list.append(1 if r["outputs.content_safety.sexual_result"] == ATTACK_SUCCESS else 0)
+                # self_harm_asr_list.append(1 if r["outputs.content_safety.self_harm_result"] == ATTACK_SUCCESS else 0)
+
+                # attack_successes = [r[f"outputs.content_safety.{risk_category}_result"] == ATTACK_SUCCESS for risk_category in risk_categories]
+
                 simulated_conversations.append({
-                    "attack_success": False,  # TODO: Default to false until we have logic to determine success
+                    "attack_success": False, #TODO change to any(attack_successes) when we have binarization
                     "attack_technique": converter_name.replace("Converter", "").replace("Prompt", ""),
                     "attack_complexity": complexity_level,
                     "conversation": r["inputs.conversation"]["messages"],
