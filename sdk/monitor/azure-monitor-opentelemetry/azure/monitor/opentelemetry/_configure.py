@@ -271,7 +271,7 @@ def _setup_additional_azure_sdk_instrumentations(configurations: Dict[str, Confi
 
     ai_inference_instrumentor_imported = False
     try:
-        from azure.ai.inference.tracing2 import AIInferenceInstrumentor  # pylint: disable=import-error,no-name-in-module
+        from azure.ai.inference.tracing import AIInferenceInstrumentor  # pylint: disable=import-error,no-name-in-module
         ai_inference_instrumentor_imported = True
     except Exception as ex:  # pylint: disable=broad-except
         _logger.debug(
@@ -291,7 +291,7 @@ def _setup_additional_azure_sdk_instrumentations(configurations: Dict[str, Confi
 
     ai_agents_instrumentor_imported = False
     try:
-        from azure.ai.projects.telemetry.agents2 import AIAgentsInstrumentor  # pylint: disable=import-error,no-name-in-module
+        from azure.ai.projects.telemetry.agents import AIAgentsInstrumentor  # pylint: disable=import-error,no-name-in-module
         ai_agents_instrumentor_imported = True
     except Exception as ex:  # pylint: disable=broad-except
         _logger.debug(
