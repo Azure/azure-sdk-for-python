@@ -119,6 +119,11 @@ class ManagedIdentityClient(ManagedIdentityClientBase):
         resource = _scopes_to_resource(*scopes)
         request = self._request_factory(resource)
         request_time = int(time.time())
+        # https://github.com/Azure/azure-sdk-for-python/issues/39793
+        # Remove unsupported parameters
+        kwargs.pop("claims", None)
+        kwargs.pop("tenant_id", None)
+        kwargs.pop("enable_cae", None)
         response = self._pipeline.run(request, retry_on_methods=[request.method], **kwargs)
         token = self._process_response(response=response, request_time=request_time, resource=resource)
         return token
