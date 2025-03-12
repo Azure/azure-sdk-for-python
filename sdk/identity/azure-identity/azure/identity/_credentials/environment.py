@@ -46,6 +46,9 @@ class EnvironmentCredential:
         when no value is given.
 
     User with username and password:
+      **Deprecated**: Username and password authentication doesn't support multifactor authentication (MFA).
+      For more details on Microsoft Entra MFA enforcement, see https://aka.ms/azsdk/identity/mfa.
+
       - **AZURE_CLIENT_ID**: the application's client ID
       - **AZURE_USERNAME**: a username (usually an email address)
       - **AZURE_PASSWORD**: that user's password
@@ -168,7 +171,7 @@ class EnvironmentCredential:
         :keyword options: A dictionary of options for the token request. Unknown options will be ignored. Optional.
         :paramtype options: ~azure.core.credentials.TokenRequestOptions
 
-        :rtype: AccessTokenInfo
+        :rtype: ~azure.core.credentials.AccessTokenInfo
         :return: An AccessTokenInfo instance containing information about the token.
 
         :raises ~azure.identity.CredentialUnavailableError: environment variable configuration is incomplete.

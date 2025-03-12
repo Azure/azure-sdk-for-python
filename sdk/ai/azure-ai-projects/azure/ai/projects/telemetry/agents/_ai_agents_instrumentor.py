@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -268,7 +268,7 @@ class _AIAgentsInstrumentorPreview:
             attrs[GEN_AI_MESSAGE_ID] = message_id
 
         if message_status:
-            attrs[GEN_AI_MESSAGE_STATUS] = message_status
+            attrs[GEN_AI_MESSAGE_STATUS] = self._status_to_string(message_status)
 
         if usage:
             attrs[GEN_AI_USAGE_INPUT_TOKENS] = usage.prompt_tokens
@@ -287,7 +287,7 @@ class _AIAgentsInstrumentorPreview:
                     content_details = {"value": self._get_field(typed_content, "value")}
                     annotations = self._get_field(typed_content, "annotations")
                     if annotations:
-                        content_details["annotations"] = annotations
+                        content_details["annotations"] = [a.as_dict() for a in annotations]
                     content_body[content.type] = content_details
 
         self._add_message_event(
@@ -296,7 +296,7 @@ class _AIAgentsInstrumentorPreview:
             content_body,
             attachments=message.attachments,
             thread_id=message.thread_id,
-            agent_id=message.assistant_id,
+            agent_id=message.agent_id,
             message_id=message.id,
             thread_run_id=message.run_id,
             message_status=message.status,
@@ -386,6 +386,9 @@ class _AIAgentsInstrumentorPreview:
 
         return role
 
+    def _status_to_string(self, status: Any) -> str:
+        return status.value if hasattr(status, "value") else status
+
     def _add_tool_assistant_message_event(self, span, step: RunStep) -> None:
         # do we want a new event for it ?
         tool_calls = [
@@ -403,7 +406,7 @@ class _AIAgentsInstrumentorPreview:
 
         attributes = self._create_event_attributes(
             thread_id=step.thread_id,
-            agent_id=step.assistant_id,
+            agent_id=step.agent_id,
             thread_run_id=step.run_id,
             message_status=step.status,
             usage=step.usage,
@@ -418,7 +421,7 @@ class _AIAgentsInstrumentorPreview:
 
     def set_end_run(self, span: "AbstractSpan", run: Optional[ThreadRun]) -> None:
         if run and span and span.span_instance.is_recording:
-            span.add_attribute(GEN_AI_THREAD_RUN_STATUS, run.status)
+            span.add_attribute(GEN_AI_THREAD_RUN_STATUS, self._status_to_string(run.status))
             span.add_attribute(GEN_AI_RESPONSE_MODEL, run.model)
             if run and run.usage:
                 span.add_attribute(GEN_AI_USAGE_INPUT_TOKENS, run.usage.prompt_tokens)
@@ -805,7 +808,7 @@ class _AIAgentsInstrumentorPreview:
             0
         ]._config.project_name
         thread_id = kwargs.get("thread_id")
-        assistant_id = kwargs.get("assistant_id")
+        agent_id = kwargs.get("agent_id")
         model = kwargs.get("model")
         instructions = kwargs.get("instructions")
         additional_instructions = kwargs.get("additional_instructions")
@@ -821,7 +824,7 @@ class _AIAgentsInstrumentorPreview:
             operation_name,
             project_name,
             thread_id,
-            assistant_id,
+            agent_id,
             model=model,
             instructions=instructions,
             additional_instructions=additional_instructions,
@@ -861,7 +864,7 @@ class _AIAgentsInstrumentorPreview:
             0
         ]._config.project_name
         thread_id = kwargs.get("thread_id")
-        assistant_id = kwargs.get("assistant_id")
+        agent_id = kwargs.get("agent_id")
         model = kwargs.get("model")
         instructions = kwargs.get("instructions")
         additional_instructions = kwargs.get("additional_instructions")
@@ -877,7 +880,7 @@ class _AIAgentsInstrumentorPreview:
             operation_name,
             project_name,
             thread_id,
-            assistant_id,
+            agent_id,
             model=model,
             instructions=instructions,
             additional_instructions=additional_instructions,
@@ -897,7 +900,7 @@ class _AIAgentsInstrumentorPreview:
             try:
                 result = await function(*args, **kwargs)
                 if span.span_instance.is_recording:
-                    span.add_attribute(GEN_AI_THREAD_RUN_STATUS, result.status)
+                    span.add_attribute(GEN_AI_THREAD_RUN_STATUS, self._status_to_string(result.status))
                     span.add_attribute(GEN_AI_RESPONSE_MODEL, result.model)
                     if result.usage:
                         span.add_attribute(GEN_AI_USAGE_INPUT_TOKENS, result.usage.prompt_tokens)
@@ -1064,7 +1067,7 @@ class _AIAgentsInstrumentorPreview:
             0
         ]._config.project_name
         thread_id = kwargs.get("thread_id")
-        assistant_id = kwargs.get("assistant_id")
+        agent_id = kwargs.get("agent_id")
         model = kwargs.get("model")
         instructions = kwargs.get("instructions")
         additional_instructions = kwargs.get("additional_instructions")
@@ -1081,7 +1084,7 @@ class _AIAgentsInstrumentorPreview:
             operation_name,
             project_name,
             thread_id,
-            assistant_id,
+            agent_id,
             model=model,
             instructions=instructions,
             additional_instructions=additional_instructions,
@@ -1097,8 +1100,6 @@ class _AIAgentsInstrumentorPreview:
         if span is None:
             return function(*args, **kwargs)
 
-        # TODO: how to keep span active in the current context without existing?
-        # TODO: dummy span for none
         with span.change_context(span.span_instance):
             try:
                 kwargs["event_handler"] = self.wrap_handler(event_handler, span)
@@ -1124,7 +1125,7 @@ class _AIAgentsInstrumentorPreview:
             0
         ]._config.project_name
         thread_id = kwargs.get("thread_id")
-        assistant_id = kwargs.get("assistant_id")
+        agent_id = kwargs.get("agent_id")
         model = kwargs.get("model")
         instructions = kwargs.get("instructions")
         additional_instructions = kwargs.get("additional_instructions")
@@ -1141,7 +1142,7 @@ class _AIAgentsInstrumentorPreview:
             operation_name,
             project_name,
             thread_id,
-            assistant_id,
+            agent_id,
             model=model,
             instructions=instructions,
             additional_instructions=additional_instructions,
@@ -1329,24 +1330,33 @@ class _AIAgentsInstrumentorPreview:
             class_function_name = function.__qualname__
 
             if class_function_name.startswith("AgentsOperations.create_agent"):
+                kwargs.setdefault('merge_span', True)
                 return self.trace_create_agent(function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.create_thread"):
+                kwargs.setdefault('merge_span', True)
                 return self.trace_create_thread(function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.create_message"):
+                kwargs.setdefault('merge_span', True)
                 return self.trace_create_message(function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.create_run"):
+                kwargs.setdefault('merge_span', True)
                 return self.trace_create_run(OperationName.START_THREAD_RUN, function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.create_and_process_run"):
+                kwargs.setdefault('merge_span', True)
                 return self.trace_create_run(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.submit_tool_outputs_to_run"):
+                kwargs.setdefault('merge_span', True)
                 return self.trace_submit_tool_outputs(False, function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.submit_tool_outputs_to_stream"):
+                kwargs.setdefault('merge_span', True)
                 return self.trace_submit_tool_outputs(True, function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations._handle_submit_tool_outputs"):
                 return self.trace_handle_submit_tool_outputs(function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.create_stream"):
+                kwargs.setdefault('merge_span', True)
                 return self.trace_create_stream(function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.list_messages"):
+                kwargs.setdefault('merge_span', True)
                 return self.trace_list_messages(function, *args, **kwargs)
             if class_function_name.startswith("AgentRunStream.__exit__"):
                 return self.handle_run_stream_exit(function, *args, **kwargs)
@@ -1388,24 +1398,33 @@ class _AIAgentsInstrumentorPreview:
             class_function_name = function.__qualname__
 
             if class_function_name.startswith("AgentsOperations.create_agent"):
+                kwargs.setdefault('merge_span', True)
                 return await self.trace_create_agent_async(function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.create_thread"):
+                kwargs.setdefault('merge_span', True)
                 return await self.trace_create_thread_async(function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.create_message"):
+                kwargs.setdefault('merge_span', True)
                 return await self.trace_create_message_async(function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.create_run"):
+                kwargs.setdefault('merge_span', True)
                 return await self.trace_create_run_async(OperationName.START_THREAD_RUN, function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.create_and_process_run"):
+                kwargs.setdefault('merge_span', True)
                 return await self.trace_create_run_async(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.submit_tool_outputs_to_run"):
+                kwargs.setdefault('merge_span', True)
                 return await self.trace_submit_tool_outputs_async(False, function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.submit_tool_outputs_to_stream"):
+                kwargs.setdefault('merge_span', True)
                 return await self.trace_submit_tool_outputs_async(True, function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations._handle_submit_tool_outputs"):
                 return await self.trace_handle_submit_tool_outputs_async(function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.create_stream"):
+                kwargs.setdefault('merge_span', True)
                 return await self.trace_create_stream_async(function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.list_messages"):
+                kwargs.setdefault('merge_span', True)
                 return await self.trace_list_messages_async(function, *args, **kwargs)
             if class_function_name.startswith("AsyncAgentRunStream.__aexit__"):
                 return self.handle_run_stream_exit(function, *args, **kwargs)
@@ -1700,7 +1719,7 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
             self.instrumentor.set_end_run(self.span, self.last_run)
 
             if self.last_run and self.last_run.last_error:
-                self.span.set_status(
+                self.span.span_instance.set_status(
                     StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
                     self.last_run.last_error.message,
                 )

@@ -486,8 +486,10 @@ def _apply_target_to_data(
     run_summary = batch_client.get_run_summary(run)
 
     if run_summary["completed_lines"] == 0:
-        msg = (f"Evaluation target failed to produce any results."
-               f" Please check the logs at {run_summary['log_path']} for more details about cause of failure.")
+        msg = (
+            f"Evaluation target failed to produce any results."
+            f" Please check the logs at {run_summary['log_path']} for more details about cause of failure."
+        )
         raise EvaluationException(
             message=msg,
             target=ErrorTarget.EVALUATE,

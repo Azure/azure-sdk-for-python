@@ -6,9 +6,11 @@
 import logging
 import pytest
 import datetime
+import secrets
+import base64
 
 from azure.servicebus.aio.management import ServiceBusAdministrationClient
-from azure.servicebus.management import TopicProperties
+from azure.servicebus.management import TopicProperties, AccessRights, AuthorizationRule
 from azure.servicebus.aio._base_handler_async import ServiceBusSharedKeyCredential
 from azure.servicebus.management import ApiVersion
 from tests.utilities import get_logger
@@ -54,6 +56,19 @@ class TestServiceBusAdministrationClientTopicAsync(AzureMgmtRecordedTestCase):
         topic_name = "iweidk"
         topic_name_2 = "dkozq"
         topic_name_3 = "famviq"
+        def generate_random_key():
+            key256 = secrets.token_bytes(32)
+            return base64.b64encode(key256).decode('utf-8')
+
+        auth_rule = AuthorizationRule(
+            type="SharedAccessAuthorizationRule",
+            key_name="test_key",
+            claim_type="SharedAccessKey",
+            claim_value="None",
+            rights=[AccessRights.MANAGE, AccessRights.LISTEN, AccessRights.SEND],
+            primary_key=generate_random_key(),
+            secondary_key=generate_random_key(),
+        )
         try:
             await mgmt_service.create_topic(
                 topic_name=topic_name,
@@ -64,6 +79,7 @@ class TestServiceBusAdministrationClientTopicAsync(AzureMgmtRecordedTestCase):
                 enable_express=True,
                 enable_partitioning=True,
                 max_size_in_megabytes=3072,
+                authorization_rules=[auth_rule],
             )
             topic = await mgmt_service.get_topic(topic_name)
             assert topic.name == topic_name
@@ -74,6 +90,8 @@ class TestServiceBusAdministrationClientTopicAsync(AzureMgmtRecordedTestCase):
             assert topic.enable_express
             assert topic.enable_partitioning
             assert topic.max_size_in_megabytes % 3072 == 0
+            assert topic.authorization_rules[0].key_name == "test_key"
+            assert len(topic.authorization_rules[0].rights) == 3
 
             await mgmt_service.create_topic(
                 topic_name=topic_name_2,
@@ -194,11 +212,25 @@ class TestServiceBusAdministrationClientTopicAsync(AzureMgmtRecordedTestCase):
         )
         await clear_topics(mgmt_service)
         topic_name = "fjrui"
+        def generate_random_key():
+            key256 = secrets.token_bytes(32)
+            return base64.b64encode(key256).decode('utf-8')
+
+        auth_rule = AuthorizationRule(
+            type="SharedAccessAuthorizationRule",
+            key_name="test_key_listen",
+            claim_type="SharedAccessKey",
+            claim_value="None",
+            rights=[AccessRights.LISTEN],
+            primary_key=generate_random_key(),
+            secondary_key=generate_random_key(),
+        )
         try:
             topic_description = await mgmt_service.create_topic(topic_name)
 
             # Try updating one setting.
             topic_description.default_message_time_to_live = datetime.timedelta(minutes=2)
+            topic_description.authorization_rules = [auth_rule]
             await mgmt_service.update_topic(topic_description)
             topic_description = await mgmt_service.get_topic(topic_name)
             assert topic_description.default_message_time_to_live == datetime.timedelta(minutes=2)
@@ -214,6 +246,8 @@ class TestServiceBusAdministrationClientTopicAsync(AzureMgmtRecordedTestCase):
             # topic_description.requires_duplicate_detection = True # Read only
             # topic_description.requires_session = True # Cannot be changed after creation
             topic_description.support_ordering = True
+            assert topic_description.authorization_rules[0].key_name == "test_key_listen"
+            assert len(topic_description.authorization_rules[0].rights) == 1
 
             await mgmt_service.update_topic(topic_description)
             topic_description = await mgmt_service.get_topic(topic_name)

@@ -1,5 +1,15 @@
 # Release History
 
+## 5.15.0b2 (2025-03-12)
+
+### Features Added
+
+- Implemented a new websockets library so that using `AmqpOverWebsocket` no longer requires separate optional dependency installations.
+
+### Bugs Fixed
+
+- Fixed a bug where service errors were incorrectly required and expected to have info/description fields.
+
 ## 5.15.0b1 (2025-02-13)
 
 ### Features Added

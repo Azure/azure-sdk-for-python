@@ -289,3 +289,21 @@ class TestUtils(unittest.TestCase):
     def test_attach_off_app_service_with_agent(self, mock_isdir):
         # This is not an expected scenario and just tests the default
         self.assertEqual(_utils._is_attach_enabled(), False)
+
+    # Synthetic
+
+    def test_is_synthetic_source_bot(self):
+        properties = {"user_agent.synthetic.type": "bot"}
+        self.assertTrue(_utils._is_synthetic_source(properties))
+
+    def test_is_synthetic_source_test(self):
+        properties = {"user_agent.synthetic.type": "test"}
+        self.assertTrue(_utils._is_synthetic_source(properties))
+
+    def test_is_synthetic_source_none(self):
+        properties = {}
+        self.assertFalse(_utils._is_synthetic_source(properties))
+
+    def test_is_synthetic_source_other(self):
+        properties = {"user_agent.synthetic.type": "user"}
+        self.assertFalse(_utils._is_synthetic_source(properties))
