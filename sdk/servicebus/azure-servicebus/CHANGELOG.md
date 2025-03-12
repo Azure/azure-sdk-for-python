@@ -1,5 +1,11 @@
 # Release History
 
+## 5.15.0b2 (2025-02-13)
+
+### Features Added
+
+- Added support for a new websocket library.
+
 ## 7.14.0 (2025-02-11)
 
 ### Features Added
