@@ -6,16 +6,60 @@ from azure.ai.projects.models import ThreadRun, RunStep, RunStepToolCallDetails,
 from typing import List
 
 # Constants.
-from ._models import _USER, _AGENT, _TOOL_CALLS, _FUNCTION
+from _models import _USER, _AGENT, _TOOL_CALLS, _FUNCTION
 
 # Message instances.
-from ._models import Message, SystemMessage, UserMessage, AssistantMessage, ToolCall
+from _models import Message, SystemMessage, UserMessage, ToolMessage, AssistantMessage, ToolCall
 
 # Intermediate definitions to hold results.
-from ._models import ToolDefinition, ConvertedResult
+from _models import ToolDefinition, ConvertedResult
 
 # Utilities.
-from ._models import break_tool_call_into_messages
+from _models import break_tool_call_into_messages, convert_message
+
+
+def convert_from_file(filename: str, run_id: str) -> dict:
+    """
+    Converts the agent run from a JSON file to a format suitable for the OpenAI API, the JSON file being a thread.
+
+    :param filename: The path to the JSON file.
+    :type filename: str
+    :param run_id: The ID of the run.
+    :type run_id: str
+    :return: The converted data in dictionary format.
+    :rtype: dict
+    """
+    with open(filename, 'r') as file:
+        data = json.load(file)
+
+    messages = data.get("messages", [])
+    converted_messages: List[Message] = [convert_message(msg) for msg in messages]
+    tools = data.get("tools", [])
+
+    # Create the tool definitions
+    tool_definitions = [
+        ToolDefinition(
+            id=tool["id"],
+            name=tool["name"],
+            description=tool.get("description"),
+            parameters=tool["parameters"]
+        ) for tool in tools
+    ]
+
+    # # Separate messages into query and response
+    query_messages = [what for what in converted_messages if what.run_id != run_id]
+    response_messages = [what for what in converted_messages if what.run_id == run_id]
+
+    # Convert messages to the appropriate Message subclasses
+
+    # Create the final result
+    final_result = ConvertedResult(
+        query=query_messages,
+        response=response_messages,
+        tool_definitions=tool_definitions
+    )
+
+    return json.loads(final_result.to_json())
 
 
 class AIAgentConverter:

@@ -35,7 +35,7 @@ class Message(BaseModel):
     :type content: Union[str, List[dict]]
     """
 
-    createdAt: Optional[datetime.datetime] = None # SystemMessage wouldn't have this
+    createdAt: Optional[Union[datetime.datetime, int]] = None # SystemMessage wouldn't have this
     run_id: Optional[str] = None
     tool_call_id: Optional[str] = None  # see ToolMessage
     role: str
@@ -223,3 +223,30 @@ def safe_loads(data: str) -> Union[dict, str]:
         return json.loads(data)
     except json.JSONDecodeError:
         return data
+
+def convert_message(msg: dict) -> Message:
+    """
+    Converts a dictionary to the appropriate Message subclass.
+
+    :param msg: The message dictionary.
+    :type msg: dict
+    :return: The Message object.
+    :rtype: Message
+    """
+    role = msg["role"]
+    if role == "system":
+        return SystemMessage(content=str(msg["content"]))
+    elif role == "user":
+        return UserMessage(content=msg["content"],
+                           createdAt=msg["createdAt"])
+    elif role == "assistant":
+        return AssistantMessage(run_id=str(msg["run_id"]),
+                                content=msg["content"],
+                                createdAt=msg["createdAt"])
+    elif role == "tool":
+        return ToolMessage(run_id=str(msg["run_id"]),
+                           tool_call_id=str(msg["tool_call_id"]),
+                           content=msg["content"],
+                           createdAt=msg["createdAt"])
+    else:
+        raise ValueError(f"Unknown role: {role}")
