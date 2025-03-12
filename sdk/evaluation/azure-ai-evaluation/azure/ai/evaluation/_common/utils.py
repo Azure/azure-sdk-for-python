@@ -284,6 +284,7 @@ def parse_quality_evaluator_reason_score(llm_output: str) -> Tuple[float, str]:
         - Retrieval
         - Groundedness
         - Coherence
+        - IntentResolution
 
     :param llm_output: The output of the prompt-based quality evaluator.
     :type llm_output: str
@@ -294,12 +295,17 @@ def parse_quality_evaluator_reason_score(llm_output: str) -> Tuple[float, str]:
     reason = ""
     if llm_output:
         try:
-            score_pattern = r"<S2>\D*?([1-5]).*?</S2>"
+            score_ordinal_pattern = r"<S2>\D*?([1-5]).*?</S2>"
+            score_float_pattern = r"<S2>\D*?((?:0(?:\.\d+)?|1(?:\.0+)?)).*?</S2>"
             reason_pattern = r"<S1>(.*?)</S1>"
-            score_match = re.findall(score_pattern, llm_output, re.DOTALL)
-            reason_match = re.findall(reason_pattern, llm_output, re.DOTALL)
+            score_match = re.findall(score_ordinal_pattern, llm_output, re.DOTALL)
             if score_match:
                 score = float(score_match[0].strip())
+            else:
+                score_match = re.findall(score_float_pattern, llm_output, re.DOTALL)
+                if score_match:
+                    score = float(score_match[0].strip())
+            reason_match = re.findall(reason_pattern, llm_output, re.DOTALL)
             if reason_match:
                 reason = reason_match[0].strip()
         except ValueError as exc:
