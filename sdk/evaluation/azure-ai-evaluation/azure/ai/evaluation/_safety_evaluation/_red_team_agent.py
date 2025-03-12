@@ -209,7 +209,7 @@ def _setup_logger():
 class RedTeamAgent():
     def __init__(self, azure_ai_project, credential):
         validate_azure_ai_project(azure_ai_project)
-        self.azure_ai_project = AzureAIProject(**azure_ai_project)
+        self.azure_ai_project = AzureAIProject(**azure_ai_project) #type: ignore
         self.credential=credential
         self.logger = _setup_logger()
         self.token_manager = ManagedIdentityAPITokenManager(
@@ -276,8 +276,8 @@ class RedTeamAgent():
             subscription_id=ws_triad.subscription_id,
             group_name=ws_triad.resource_group_name,
             workspace_name=ws_triad.workspace_name,
-            management_client=management_client,                                     
-        ) as ev_run:
+            management_client=management_client, # type: ignore
+        ) as ev_run: 
             artifact_name = "instance_results.json"
 
             with tempfile.TemporaryDirectory() as tmpdir:
@@ -300,7 +300,7 @@ class RedTeamAgent():
                     risk_category = risk_category_summary.get("risk_category").lower()
                     for key, value in risk_category_summary.items():
                         if key != "risk_category":
-                            ev_run.log_metric(f"{risk_category}_{key}", value)
+                            ev_run.log_metric(f"{risk_category}_{key}", cast(float, value))
 
             return _get_ai_studio_url(trace_destination=trace_destination, evaluation_id=ev_run.info.run_id)
 
@@ -412,7 +412,7 @@ class RedTeamAgent():
             # setting risk_categories to [] for now
             objectives_response = await self.generated_rai_client.get_attack_objectives(
                 risk_categories=risk_categories,
-                application_scenario=application_scenario,
+                application_scenario=application_scenario or "",
                 strategy=strategy
             )
             self.logger.info(f"API call successful - received response of type: {type(objectives_response)}")
@@ -861,7 +861,8 @@ class RedTeamAgent():
         red_team_agent_result = RedTeamAgentResult(
             redteaming_scorecard=cast(RedTeamingScorecard, scorecard),
             redteaming_simulation_parameters=cast(RedTeamingSimulationParameters, simulation_parameters),
-            redteaming_simulation_data=simulated_conversations
+            redteaming_simulation_data=simulated_conversations,
+            studio_url=None
         )
         
         return red_team_agent_result
