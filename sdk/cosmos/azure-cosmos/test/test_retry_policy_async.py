@@ -15,7 +15,8 @@ from azure.cosmos.aio import CosmosClient
 from azure.cosmos.aio import DatabaseProxy, ContainerProxy
 import azure.cosmos.aio._retry_utility_async as _retry_utility
 
-@pytest.mark.cosmosQuery
+
+@pytest.mark.cosmosEmulator
 class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
     created_database: DatabaseProxy = None
     created_collection: ContainerProxy = None
@@ -26,6 +27,7 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
     counter = 0
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
     TEST_CONTAINER_SINGLE_PARTITION_ID = "test-retry-policy-container-" + str(uuid.uuid4())
+    retry_after_in_milliseconds = 1000
 
     def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
         """Assert HTTP failure with status.
@@ -49,98 +51,89 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-    async def asyncSetUp(self):
-        self.client = CosmosClient(self.host, self.masterKey, consistency_level="Session",
-                                                connection_policy=self.connectionPolicy)
-        self.created_database = self.client.get_database_client(self.TEST_DATABASE_ID)
-        self.retry_after_in_milliseconds = 1000
-        self.created_collection = await self.created_database.create_container(self.TEST_CONTAINER_SINGLE_PARTITION_ID,
-                                                                         partition_key=PartitionKey("/pk"))
-
-    async def asyncTearDown(self):
-        try:
-            await self.created_database.delete_container(self.TEST_CONTAINER_SINGLE_PARTITION_ID)
-        except exceptions.CosmosHttpResponseError:
-            pass
-        finally:
-            await self.client.close()
-
     async def test_resource_throttle_retry_policy_default_retry_after_async(self):
         connection_policy = TestRetryPolicyAsync.connectionPolicy
         connection_policy.RetryOptions = retry_options.RetryOptions(5)
+        async with CosmosClient(self.host, self.masterKey, connection_policy=connection_policy) as client:
+            database = client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
+            container = database.get_container_client(test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
-        self.original_execute_function = _retry_utility.ExecuteFunctionAsync
-        try:
-            _retry_utility.ExecuteFunctionAsync = self._MockExecuteFunction
-
-            document_definition = {'id': str(uuid.uuid4()),
-                                   'pk': 'pk',
-                                   'name': 'sample document',
-                                   'key': 'value'}
-
+            self.original_execute_function = _retry_utility.ExecuteFunctionAsync
             try:
-                await self.created_collection.create_item(body=document_definition)
-            except exceptions.CosmosHttpResponseError as e:
-                self.assertEqual(e.status_code, StatusCodes.TOO_MANY_REQUESTS)
-                self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount,
-                                 self.created_collection.client_connection.last_response_headers[
-                                     HttpHeaders.ThrottleRetryCount])
-                self.assertGreaterEqual(self.created_collection.client_connection.last_response_headers[
-                                            HttpHeaders.ThrottleRetryWaitTimeInMs],
-                                        connection_policy.RetryOptions.MaxRetryAttemptCount *
-                                        self.retry_after_in_milliseconds)
-        finally:
-            _retry_utility.ExecuteFunctionAsync = self.original_execute_function
+                _retry_utility.ExecuteFunctionAsync = self._MockExecuteFunction
+
+                document_definition = {'id': str(uuid.uuid4()),
+                                       'pk': 'pk',
+                                       'name': 'sample document',
+                                       'key': 'value'}
+
+                try:
+                    await container.create_item(body=document_definition)
+                except exceptions.CosmosHttpResponseError as e:
+                    self.assertEqual(e.status_code, StatusCodes.TOO_MANY_REQUESTS)
+                    self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount,
+                                     container.client_connection.last_response_headers[
+                                         HttpHeaders.ThrottleRetryCount])
+                    self.assertGreaterEqual(container.client_connection.last_response_headers[
+                                                HttpHeaders.ThrottleRetryWaitTimeInMs],
+                                            connection_policy.RetryOptions.MaxRetryAttemptCount *
+                                            self.retry_after_in_milliseconds)
+            finally:
+                _retry_utility.ExecuteFunctionAsync = self.original_execute_function
 
     async def test_resource_throttle_retry_policy_fixed_retry_after_async(self):
         connection_policy = TestRetryPolicyAsync.connectionPolicy
         connection_policy.RetryOptions = retry_options.RetryOptions(5, 2000)
-
-        self.original_execute_function = _retry_utility.ExecuteFunctionAsync
-        try:
-            _retry_utility.ExecuteFunctionAsync = self._MockExecuteFunction
-
-            document_definition = {'id': str(uuid.uuid4()),
-                                   'pk': 'pk',
-                                   'name': 'sample document',
-                                   'key': 'value'}
-
+        async with CosmosClient(self.host, self.masterKey, connection_policy=connection_policy) as client:
+            database = client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
+            container = database.get_container_client(test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID)
+            self.original_execute_function = _retry_utility.ExecuteFunctionAsync
             try:
-                await self.created_collection.create_item(body=document_definition)
-            except exceptions.CosmosHttpResponseError as e:
-                self.assertEqual(e.status_code, StatusCodes.TOO_MANY_REQUESTS)
-                self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount,
-                                 self.created_collection.client_connection.last_response_headers[
-                                     HttpHeaders.ThrottleRetryCount])
-                self.assertGreaterEqual(self.created_collection.client_connection.last_response_headers[
-                                            HttpHeaders.ThrottleRetryWaitTimeInMs],
-                                        connection_policy.RetryOptions.MaxRetryAttemptCount * connection_policy.RetryOptions.FixedRetryIntervalInMilliseconds)
+                _retry_utility.ExecuteFunctionAsync = self._MockExecuteFunction
 
-        finally:
-            _retry_utility.ExecuteFunctionAsync = self.original_execute_function
+                document_definition = {'id': str(uuid.uuid4()),
+                                       'pk': 'pk',
+                                       'name': 'sample document',
+                                       'key': 'value'}
+
+                try:
+                    await container.create_item(body=document_definition)
+                except exceptions.CosmosHttpResponseError as e:
+                    self.assertEqual(e.status_code, StatusCodes.TOO_MANY_REQUESTS)
+                    self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount,
+                                     container.client_connection.last_response_headers[
+                                         HttpHeaders.ThrottleRetryCount])
+                    self.assertGreaterEqual(container.client_connection.last_response_headers[
+                                                HttpHeaders.ThrottleRetryWaitTimeInMs],
+                                            connection_policy.RetryOptions.MaxRetryAttemptCount * connection_policy.RetryOptions.FixedRetryIntervalInMilliseconds)
+
+            finally:
+                _retry_utility.ExecuteFunctionAsync = self.original_execute_function
 
     async def test_resource_throttle_retry_policy_max_wait_time_async(self):
         connection_policy = TestRetryPolicyAsync.connectionPolicy
         connection_policy.RetryOptions = retry_options.RetryOptions(5, 2000, 3)
-
-        self.original_execute_function = _retry_utility.ExecuteFunctionAsync
-        try:
-            _retry_utility.ExecuteFunctionAsync = self._MockExecuteFunction
-
-            document_definition = {'id': str(uuid.uuid4()),
-                                   'pk': 'pk',
-                                   'name': 'sample document',
-                                   'key': 'value'}
-
+        async with CosmosClient(self.host, self.masterKey, connection_policy=connection_policy) as client:
+            database = client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
+            container = database.get_container_client(test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID)
+            self.original_execute_function = _retry_utility.ExecuteFunctionAsync
             try:
-                await self.created_collection.create_item(body=document_definition)
-            except exceptions.CosmosHttpResponseError as e:
-                self.assertEqual(e.status_code, StatusCodes.TOO_MANY_REQUESTS)
-                self.assertGreaterEqual(self.created_collection.client_connection.last_response_headers[
-                                            HttpHeaders.ThrottleRetryWaitTimeInMs],
-                                        connection_policy.RetryOptions.MaxWaitTimeInSeconds * 1000)
-        finally:
-            _retry_utility.ExecuteFunctionAsync = self.original_execute_function
+                _retry_utility.ExecuteFunctionAsync = self._MockExecuteFunction
+
+                document_definition = {'id': str(uuid.uuid4()),
+                                       'pk': 'pk',
+                                       'name': 'sample document',
+                                       'key': 'value'}
+
+                try:
+                    await container.create_item(body=document_definition)
+                except exceptions.CosmosHttpResponseError as e:
+                    self.assertEqual(e.status_code, StatusCodes.TOO_MANY_REQUESTS)
+                    self.assertGreaterEqual(container.client_connection.last_response_headers[
+                                                HttpHeaders.ThrottleRetryWaitTimeInMs],
+                                            connection_policy.RetryOptions.MaxWaitTimeInSeconds * 1000)
+            finally:
+                _retry_utility.ExecuteFunctionAsync = self.original_execute_function
 
     async def test_resource_throttle_retry_policy_query_async(self):
         connection_policy = TestRetryPolicyAsync.connectionPolicy
@@ -150,33 +143,35 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
                                'pk': 'pk',
                                'name': 'sample document',
                                'key': 'value'}
+        async with CosmosClient(self.host, self.masterKey, connection_policy=connection_policy) as client:
+            database = client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
+            container = database.get_container_client(test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID)
+            await container.create_item(body=document_definition)
 
-        await self.created_collection.create_item(body=document_definition)
-
-        self.original_execute_function = _retry_utility.ExecuteFunctionAsync
-        try:
-            _retry_utility.ExecuteFunctionAsync = self._MockExecuteFunction
-
+            self.original_execute_function = _retry_utility.ExecuteFunctionAsync
             try:
-                query_results = self.created_collection.query_items(
-                    {
-                        'query': 'SELECT * FROM root r WHERE r.id=@id',
-                        'parameters': [
-                            {'name': '@id', 'value': document_definition['id']}
-                        ]
-                    })
-                async for item in query_results:
-                    pass
-            except exceptions.CosmosHttpResponseError as e:
-                self.assertEqual(e.status_code, StatusCodes.TOO_MANY_REQUESTS)
-                self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount,
-                                 self.created_collection.client_connection.last_response_headers[
-                                     HttpHeaders.ThrottleRetryCount])
-                self.assertGreaterEqual(self.created_collection.client_connection.last_response_headers[
-                                            HttpHeaders.ThrottleRetryWaitTimeInMs],
-                                        connection_policy.RetryOptions.MaxRetryAttemptCount * self.retry_after_in_milliseconds)
-        finally:
-            _retry_utility.ExecuteFunctionAsync = self.original_execute_function
+                _retry_utility.ExecuteFunctionAsync = self._MockExecuteFunction
+
+                try:
+                    query_results = container.query_items(
+                        {
+                            'query': 'SELECT * FROM root r WHERE r.id=@id',
+                            'parameters': [
+                                {'name': '@id', 'value': document_definition['id']}
+                            ]
+                        })
+                    async for item in query_results:
+                        pass
+                except exceptions.CosmosHttpResponseError as e:
+                    self.assertEqual(e.status_code, StatusCodes.TOO_MANY_REQUESTS)
+                    self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount,
+                                     container.client_connection.last_response_headers[
+                                         HttpHeaders.ThrottleRetryCount])
+                    self.assertGreaterEqual(container.client_connection.last_response_headers[
+                                                HttpHeaders.ThrottleRetryWaitTimeInMs],
+                                            connection_policy.RetryOptions.MaxRetryAttemptCount * self.retry_after_in_milliseconds)
+            finally:
+                _retry_utility.ExecuteFunctionAsync = self.original_execute_function
 
     # TODO: Need to validate the query retries
     @pytest.mark.skip
@@ -198,7 +193,7 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
             _retry_utility.ExecuteFunctionAsync = mf
 
             docs = await self.created_collection.query_items(query="Select * from c order by c._ts", max_item_count=1,
-                                                       enable_cross_partition_query=True)
+                                                             enable_cross_partition_query=True)
 
             result_docs = list(docs)
             self.assertEqual(result_docs[0]['id'], document_definition_1['id'])
@@ -213,43 +208,48 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
                                'pk': 'pk',
                                'name': 'sample document',
                                'key': 'value'}
+        async with CosmosClient(self.host, self.masterKey) as client:
+            database = client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
+            container = database.get_container_client(test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
-        try:
-            self.original_execute_function = _retry_utility.ExecuteFunctionAsync
-            mf = self.MockExecuteFunctionConnectionReset(self.original_execute_function)
-            _retry_utility.ExecuteFunctionAsync = mf
-
-            created_document = {}
             try:
-                created_document = await self.created_collection.create_item(body=document_definition)
-            except exceptions.CosmosHttpResponseError as err:
-                self.assertEqual(err.status_code, 10054)
+                self.original_execute_function = _retry_utility.ExecuteFunctionAsync
+                mf = self.MockExecuteFunctionConnectionReset(self.original_execute_function)
+                _retry_utility.ExecuteFunctionAsync = mf
 
-            self.assertDictEqual(created_document, {})
+                created_document = {}
+                try:
+                    created_document = await container.create_item(body=document_definition)
+                except exceptions.CosmosHttpResponseError as err:
+                    self.assertEqual(err.status_code, 10054)
 
-            self.assertEqual(mf.counter, 1)
-        finally:
-            _retry_utility.ExecuteFunctionAsync = self.original_execute_function
+                self.assertDictEqual(created_document, {})
+
+                self.assertEqual(mf.counter, 2)
+            finally:
+                _retry_utility.ExecuteFunctionAsync = self.original_execute_function
 
     async def test_timeout_failover_retry_policy_for_read_async(self):
         document_definition = {'id': 'failoverDoc',
                                'pk': 'pk',
                                'name': 'sample document',
                                'key': 'value'}
-
-        created_document = await self.created_collection.create_item(body=document_definition)
-        self.original_execute_function = _retry_utility.ExecuteFunctionAsync
-        try:
-            mf = self.MockExecuteFunctionTimeout(self.original_execute_function)
-            _retry_utility.ExecuteFunctionAsync = mf
+        async with CosmosClient(self.host, self.masterKey) as client:
+            database = client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
+            container = database.get_container_client(test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID)
+            created_document = await container.create_item(body=document_definition)
+            self.original_execute_function = _retry_utility.ExecuteFunctionAsync
             try:
-                doc = await self.created_collection.read_item(item=created_document['id'],
-                                                        partition_key=created_document['pk'])
-                self.assertEqual(doc['id'], 'doc')
-            except exceptions.CosmosHttpResponseError as err:
-                self.assertEqual(err.status_code, 408)
-        finally:
-            _retry_utility.ExecuteFunctionAsync = self.original_execute_function
+                mf = self.MockExecuteFunctionTimeout(self.original_execute_function)
+                _retry_utility.ExecuteFunctionAsync = mf
+                try:
+                    doc = await container.read_item(item=created_document['id'],
+                                                                  partition_key=created_document['pk'])
+                    self.assertEqual(doc['id'], 'doc')
+                except exceptions.CosmosHttpResponseError as err:
+                    self.assertEqual(err.status_code, 408)
+            finally:
+                _retry_utility.ExecuteFunctionAsync = self.original_execute_function
 
     async def test_resource_throttle_retry_policy_with_retry_total_async(self):
         # Testing the kwarg retry_total still has ability to set throttle's max retry attempt count
@@ -270,7 +270,9 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
                 self.assertEqual(container.client_connection.connection_policy.RetryOptions.MaxRetryAttemptCount,
                                  container.client_connection.last_response_headers[
                                      HttpHeaders.ThrottleRetryCount])
-                self.assertEqual(container.client_connection.connection_policy.ConnectionRetryConfiguration.total_retries, max_total_retries)
+                self.assertEqual(
+                    container.client_connection.connection_policy.ConnectionRetryConfiguration.total_retries,
+                    max_total_retries)
                 self.assertGreaterEqual(container.client_connection.last_response_headers[
                                             HttpHeaders.ThrottleRetryWaitTimeInMs],
                                         container.client_connection.connection_policy.RetryOptions.MaxRetryAttemptCount *
@@ -279,7 +281,7 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
                 _retry_utility.ExecuteFunctionAsync = self.original_execute_function
 
     async def test_resource_throttle_retry_policy_with_retry_throttle_total_async(self):
-        #Testing the kwarg retry_throttle_total is behaving as expected
+        # Testing the kwarg retry_throttle_total is behaving as expected
         async with CosmosClient(self.host, self.masterKey, retry_throttle_total=5) as client:
             database = client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
             container = database.get_container_client(test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID)
@@ -309,7 +311,8 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
         max_retry_throttle_retries = 15
         max_total_retries = 20
 
-        async with CosmosClient(self.host, self.masterKey, retry_throttle_total=max_retry_throttle_retries, retry_total=max_total_retries) as client:
+        async with CosmosClient(self.host, self.masterKey, retry_throttle_total=max_retry_throttle_retries,
+                                retry_total=max_total_retries) as client:
             database = client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
             container = database.get_container_client(test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID)
             try:
@@ -325,7 +328,9 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
                 self.assertEqual(container.client_connection.connection_policy.RetryOptions.MaxRetryAttemptCount,
                                  container.client_connection.last_response_headers[
                                      HttpHeaders.ThrottleRetryCount])
-                self.assertEqual(container.client_connection.connection_policy.ConnectionRetryConfiguration.total_retries, max_total_retries)
+                self.assertEqual(
+                    container.client_connection.connection_policy.ConnectionRetryConfiguration.total_retries,
+                    max_total_retries)
                 self.assertGreaterEqual(container.client_connection.last_response_headers[
                                             HttpHeaders.ThrottleRetryWaitTimeInMs],
                                         container.client_connection.connection_policy.RetryOptions.MaxRetryAttemptCount *
@@ -337,7 +342,8 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
         # Tests that kwarg retry_max_backoff sets both throttle and connection retry policy
         max_backoff_in_seconds = 10
 
-        async with CosmosClient(self.host, self.masterKey, retry_backoff_max=max_backoff_in_seconds, retry_total=5) as client:
+        async with CosmosClient(self.host, self.masterKey, retry_backoff_max=max_backoff_in_seconds,
+                                retry_total=5) as client:
             database = client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
             container = database.get_container_client(test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID)
             document_definition = {'id': str(uuid.uuid4()),
@@ -352,8 +358,10 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
                 created_document = await container.create_item(body=document_definition)
             except exceptions.CosmosHttpResponseError as err:
                 self.assertEqual(err.status_code, 10054)
-                self.assertEqual(container.client_connection.connection_policy.ConnectionRetryConfiguration.backoff_max, max_backoff_in_seconds)
-                self.assertEqual(container.client_connection.connection_policy.RetryOptions._max_wait_time_in_seconds, max_backoff_in_seconds)
+                self.assertEqual(container.client_connection.connection_policy.ConnectionRetryConfiguration.backoff_max,
+                                 max_backoff_in_seconds)
+                self.assertEqual(container.client_connection.connection_policy.RetryOptions._max_wait_time_in_seconds,
+                                 max_backoff_in_seconds)
                 self.assertDictEqual(created_document, {})
             finally:
                 _retry_utility.ExecuteFunctionAsync = self.original_execute_function
@@ -362,7 +370,8 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
         # Tests that kwarg retry_throttle_backoff_max sets the throttle max backoff retry independent of connection max backoff retry
         max_throttle_backoff_in_seconds = 10
 
-        async with CosmosClient(self.host, self.masterKey, retry_throttle_backoff_max=max_throttle_backoff_in_seconds) as client:
+        async with CosmosClient(self.host, self.masterKey,
+                                retry_throttle_backoff_max=max_throttle_backoff_in_seconds) as client:
             database = client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
             container = database.get_container_client(test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID)
             document_definition = {'id': str(uuid.uuid4()),
@@ -389,7 +398,7 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
         max_throttle_backoff_in_seconds = 5
 
         async with CosmosClient(self.host, self.masterKey, retry_backoff_max=max_backoff_in_seconds,
-                                        retry_throttle_backoff_max=max_throttle_backoff_in_seconds) as client:
+                                retry_throttle_backoff_max=max_throttle_backoff_in_seconds) as client:
             database = client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
             container = database.get_container_client(test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID)
             document_definition = {'id': str(uuid.uuid4()),
@@ -414,15 +423,15 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_resource_throttle_and_connection_retry_total_retry_with_max_backoff_async(self):
         # Tests kwarg precedence respect with both max total retries and max backoff for both throttle and connection retry policies
-        max_retry_throttle_retries = 15
-        max_total_retries = 20
-        max_throttle_backoff_in_seconds = 25
-        max_backoff_in_seconds = 30
+        max_retry_throttle_retries = 5
+        max_total_retries = 10
+        max_throttle_backoff_in_seconds = 15
+        max_backoff_in_seconds = 20
 
         async with CosmosClient(self.host, self.masterKey, retry_backoff_max=max_backoff_in_seconds,
-                                        retry_throttle_backoff_max=max_throttle_backoff_in_seconds,
-                                        retry_throttle_total=max_retry_throttle_retries,
-                                        retry_total=max_total_retries) as client:
+                                retry_throttle_backoff_max=max_throttle_backoff_in_seconds,
+                                retry_throttle_total=max_retry_throttle_retries,
+                                retry_total=max_total_retries) as client:
 
             database = client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
             container = database.get_container_client(test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID)
@@ -444,7 +453,8 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
                                  max_backoff_in_seconds)
                 self.assertEqual(container.client_connection.connection_policy.RetryOptions._max_wait_time_in_seconds,
                                  max_throttle_backoff_in_seconds)
-                self.assertEqual(container.client_connection.connection_policy.ConnectionRetryConfiguration.total_retries,
+                self.assertEqual(
+                    container.client_connection.connection_policy.ConnectionRetryConfiguration.total_retries,
                     max_total_retries)
             finally:
                 _retry_utility.ExecuteFunctionAsync = self.original_execute_function

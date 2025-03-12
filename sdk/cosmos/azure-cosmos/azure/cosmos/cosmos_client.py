@@ -136,7 +136,7 @@ def _build_connection_policy(kwargs: Dict[str, Any]) -> ConnectionPolicy:
             retry_connect=kwargs.pop('retry_connect', None),
             retry_read=kwargs.pop('retry_read', None),
             retry_status=kwargs.pop('retry_status', None),
-            retry_backoff_max=max_backoff or  retry_options._max_wait_time_in_seconds,
+            retry_backoff_max=max_backoff or retry_options._max_wait_time_in_seconds,
             retry_mode=kwargs.pop('retry_mode', RetryMode.Fixed),
             retry_on_status_codes=kwargs.pop('retry_on_status_codes', []),
             retry_backoff_factor=kwargs.pop('retry_backoff_factor', 1),
