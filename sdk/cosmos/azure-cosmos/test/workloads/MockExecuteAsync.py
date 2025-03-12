@@ -4,7 +4,7 @@ from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 
 from azure.cosmos import exceptions
 from azure.cosmos.aio import _retry_utility_async
-from test import test_config
+from .. import test_config
 
 from workload_configs import COSMOS_URI, MOCK_EXECUTE_STATUS_CODE
 
