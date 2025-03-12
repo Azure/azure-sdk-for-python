@@ -73,7 +73,7 @@ class TestMassEvaluate:
     - Conversation inputs: Where a conversation is inputted and the relevant inputs are extracted.
     - Multi-modal inputs: This one has some parameters for the different types of multi-modal inputs.
     """
-    
+
     @pytest.mark.skipif(not is_live(), reason="Skip in playback due to inconsistency in evaluation results.")
     def test_evaluate_singleton_inputs(self, model_config, azure_cred, project_scope, data_file):
         # qa fails in playback but ONLY when using the pf proxy for some reason, and
