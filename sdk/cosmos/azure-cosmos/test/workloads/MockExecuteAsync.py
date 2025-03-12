@@ -4,7 +4,6 @@ from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 
 from azure.cosmos import exceptions
 from azure.cosmos.aio import _retry_utility_async
-from .. import test_config
 
 from workload_configs import COSMOS_URI, MOCK_EXECUTE_STATUS_CODE
 
@@ -25,9 +24,15 @@ class MockExecuteServiceRequestException(object):
                 raise exceptions.CosmosHttpResponseError(
                     status_code=MOCK_EXECUTE_STATUS_CODE,
                     message="Some Exception",
-                    response=test_config.FakeResponse({}))
+                    response=FakeResponse({}))
         else:
             self.original_func(func, *args, **kwargs)
+
+class FakeResponse:
+    def __init__(self, headers):
+        self.headers = headers
+        self.reason = "foo"
+        self.status_code = "bar"
 
 
 def mock_execute_func():
