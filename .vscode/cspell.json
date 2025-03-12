@@ -330,6 +330,7 @@
     "msrest",
     "msrestazure",
     "MSSQL",
+    "MSRC",
     "mutex",
     "myacr",
     "mydirectory",
