@@ -37,7 +37,7 @@ PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
 
 def _parse_operation_id(operation_location_header):
-    regex = "[^:]+://[^/]+/documentintelligence/.+/([^?/]+)"
+    regex = "[^:]+://.+/documentintelligence/.+/([^?/]+)"
     return re.match(regex, operation_location_header).group(1)
 
 
