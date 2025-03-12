@@ -21,10 +21,8 @@ if TYPE_CHECKING:
 
 class AppComponent(_model_base.Model):
     """An Azure resource object (Refer azure generic resource model
-    :https://learn.microsoft.com/en-us/rest/api/resources/resources/get-by-id#genericresource).
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
+    :`https://learn.microsoft.com/en-us/rest/api/resources/resources/get-by-id#genericresource
+    <https://learn.microsoft.com/en-us/rest/api/resources/resources/get-by-id#genericresource>`_).
 
     :ivar resource_id: fully qualified resource Id e.g
      subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}.
@@ -279,8 +277,6 @@ class DimensionValue(_model_base.Model):
 class ErrorDetails(_model_base.Model):
     """Error details if there is any failure in load test run.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar message: Error details in case test run was not successfully run.
     :vartype message: str
     """
@@ -291,7 +287,6 @@ class ErrorDetails(_model_base.Model):
 
 class FunctionFlexConsumptionResourceConfiguration(_model_base.Model):  # pylint: disable=name-too-long
     """Resource configuration instance for a Flex Consumption based Azure Function App.
-
 
     :ivar instance_memory_mb: Memory size of the instance. Supported values are 2048, 4096.
      Required.
@@ -334,7 +329,6 @@ class TargetResourceConfigurations(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     FunctionFlexConsumptionTargetResourceConfigurations
 
-
     :ivar kind: Kind of the resource for which the configurations apply. Required.
      "FunctionsFlexConsumption"
     :vartype kind: str or ~azure.developer.loadtesting.models.ResourceKind
@@ -366,7 +360,6 @@ class FunctionFlexConsumptionTargetResourceConfigurations(
     TargetResourceConfigurations, discriminator="FunctionsFlexConsumption"
 ):  # pylint: disable=name-too-long
     """Configurations for a Function App using Flex Consumption Plan.
-
 
     :ivar kind: The kind value to use when providing configuration.
      This should typically be not changed from its value. Required. Resource is a Azure FunctionApp
@@ -597,7 +590,6 @@ class MetricDefinition(_model_base.Model):
 class MetricDefinitionCollection(_model_base.Model):
     """Represents collection of metric definitions.
 
-
     :ivar value: the values for the metric definitions. Required.
     :vartype value: list[~azure.developer.loadtesting.models.MetricDefinition]
     """
@@ -658,7 +650,6 @@ class MetricNamespace(_model_base.Model):
 
 class MetricNamespaceCollection(_model_base.Model):
     """Represents collection of metric namespaces.
-
 
     :ivar value: The values for the metric namespaces. Required.
     :vartype value: list[~azure.developer.loadtesting.models.MetricNamespace]
@@ -793,7 +784,7 @@ class OptionalLoadTestConfiguration(_model_base.Model):
     """Configuration for quick load test.
 
     :ivar endpoint_url: Test URL. Provide the complete HTTP URL. For example,
-     https://contoso-app.azurewebsites.net/login.
+     `https://contoso-app.azurewebsites.net/login <https://contoso-app.azurewebsites.net/login>`_.
     :vartype endpoint_url: str
     :ivar requests_per_second: Target throughput (requests per second). This may not be necessarily
      achieved. The actual throughput will be lower if the application is not capable of handling it.
@@ -812,7 +803,7 @@ class OptionalLoadTestConfiguration(_model_base.Model):
         name="endpointUrl", visibility=["read", "create", "update", "delete", "query"]
     )
     """Test URL. Provide the complete HTTP URL. For example,
-     https://contoso-app.azurewebsites.net/login."""
+     `https://contoso-app.azurewebsites.net/login <https://contoso-app.azurewebsites.net/login>`_."""
     requests_per_second: Optional[int] = rest_field(
         name="requestsPerSecond", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -898,17 +889,14 @@ class PassFailCriteria(_model_base.Model):
 class PassFailMetric(_model_base.Model):
     """Pass fail metric.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar client_metric: The client metric on which the criteria should be applied. Known values
      are: "response_time_ms", "latency", "error", "requests", and "requests_per_sec".
     :vartype client_metric: str or ~azure.developer.loadtesting.models.PFMetrics
     :ivar aggregate: The aggregation function to be applied on the client metric. Allowed functions
 
-
      * ‘percentage’ - for error metric , ‘avg’, percentiles like ‘p50’, ‘p90’, & so on, ‘min’,
-       ‘max’ - for response_time_ms and latency metric, ‘avg’ - for requests_per_sec,
-       ‘count’ - for requests. Known values are: "count", "percentage", "avg", "p50", "p75", "p90",
+     ‘max’ - for response_time_ms and latency metric, ‘avg’ - for requests_per_sec,
+     ‘count’ - for requests. Known values are: "count", "percentage", "avg", "p50", "p75", "p90",
      "p95", "p96", "p97", "p98", "p99", "p99.9", "p99.99", "min", and "max".
     :vartype aggregate: str or ~azure.developer.loadtesting.models.PassFailAggregationFunction
     :ivar condition: The comparison operator. Supported types ‘>’, ‘<’.
@@ -938,12 +926,11 @@ class PassFailMetric(_model_base.Model):
     )
     """The aggregation function to be applied on the client metric. Allowed functions
      
-     
      * ‘percentage’ - for error metric , ‘avg’, percentiles like ‘p50’, ‘p90’, & so on, ‘min’,
-       ‘max’ - for response_time_ms and latency metric, ‘avg’ - for requests_per_sec,
-       ‘count’ - for requests. Known values are: \"count\", \"percentage\", \"avg\", \"p50\",
-     \"p75\", \"p90\", \"p95\", \"p96\", \"p97\", \"p98\", \"p99\", \"p99.9\", \"p99.99\", \"min\",
-     and \"max\"."""
+     ‘max’ - for response_time_ms and latency metric, ‘avg’ - for requests_per_sec,
+     ‘count’ - for requests. Known values are: \"count\", \"percentage\", \"avg\", \"p50\", \"p75\",
+     \"p90\", \"p95\", \"p96\", \"p97\", \"p98\", \"p99\", \"p99.9\", \"p99.99\", \"min\", and
+     \"max\"."""
     condition: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The comparison operator. Supported types ‘>’, ‘<’."""
     request_name: Optional[str] = rest_field(
@@ -988,9 +975,6 @@ class PassFailMetric(_model_base.Model):
 
 class PassFailServerMetric(_model_base.Model):
     """Pass fail server metric.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar resource_id: The resource id of the resource emitting the metric. Required.
     :vartype resource_id: str
@@ -1065,8 +1049,7 @@ class PassFailServerMetric(_model_base.Model):
 class RegionalConfiguration(_model_base.Model):
     """Region distribution configuration for the load test.
 
-
-    :ivar engine_instances: The number of engine instances to execute load test in specified
+    :ivar engine_instances:   The number of engine instances to execute load test in specified
      region. Supported values are in range of 1-400. Required.
     :vartype engine_instances: int
     :ivar region: Azure region name.
@@ -1080,7 +1063,7 @@ class RegionalConfiguration(_model_base.Model):
     engine_instances: int = rest_field(
         name="engineInstances", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The number of engine instances to execute load test in specified region. Supported values are
+    """  The number of engine instances to execute load test in specified region. Supported values are
      in range of 1-400. Required."""
     region: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Azure region name.
@@ -1111,10 +1094,8 @@ class RegionalConfiguration(_model_base.Model):
 class ResourceMetric(_model_base.Model):
     """Associated metric definition for particular metrics of the azure resource (
     Refer :
-    https://learn.microsoft.com/en-us/rest/api/monitor/metric-definitions/list#metricdefinition).
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
+    `https://learn.microsoft.com/en-us/rest/api/monitor/metric-definitions/list#metricdefinition
+    <https://learn.microsoft.com/en-us/rest/api/monitor/metric-definitions/list#metricdefinition>`_).
 
     :ivar id: Unique name for metric.
     :vartype id: str
@@ -1216,9 +1197,6 @@ class Secret(_model_base.Model):
 
 class Test(_model_base.Model):
     """Load test model.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar pass_fail_criteria: Pass fail criteria for a test.
     :vartype pass_fail_criteria: ~azure.developer.loadtesting.models.PassFailCriteria
@@ -1419,9 +1397,6 @@ class Test(_model_base.Model):
 class TestAppComponents(_model_base.Model):
     """Test app components.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar components: Azure resource collection { resource id (fully qualified resource Id e.g
      subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName})
      : resource object }. Required.
@@ -1480,9 +1455,6 @@ class TestAppComponents(_model_base.Model):
 class TestFileInfo(_model_base.Model):
     """Test file info.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar file_name: Name of the file. Required.
     :vartype file_name: str
     :ivar url: File URL.
@@ -1539,8 +1511,6 @@ class TestFileInfo(_model_base.Model):
 
 class TestInputArtifacts(_model_base.Model):
     """The input artifacts for the test.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar config_file_info: The load test YAML file that contains the the test configuration.
     :vartype config_file_info: ~azure.developer.loadtesting.models.TestFileInfo
@@ -1605,9 +1575,6 @@ class TestInputArtifacts(_model_base.Model):
 
 class TestProfile(_model_base.Model):
     """Test Profile Model.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar test_profile_id: Unique identifier for the test profile, must contain only lower-case
      alphabetic, numeric, underscore or hyphen characters. Required.
@@ -1692,9 +1659,6 @@ class TestProfile(_model_base.Model):
 
 class TestProfileRun(_model_base.Model):
     """Test Profile Run model.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar test_profile_run_id: Unique identifier for the test profile run, must contain only
      lower-case alphabetic, numeric, underscore or hyphen characters. Required.
@@ -1815,7 +1779,6 @@ class TestProfileRun(_model_base.Model):
 class TestProfileRunRecommendation(_model_base.Model):
     """A recommendation object that provides a list of configuration that optimizes its category.
 
-
     :ivar category: Category of the recommendation. Required. Known values are:
      "ThroughputOptimized" and "CostOptimized".
     :vartype category: str or ~azure.developer.loadtesting.models.RecommendationCategory
@@ -1854,9 +1817,6 @@ class TestProfileRunRecommendation(_model_base.Model):
 
 class TestRun(_model_base.Model):
     """Load test run model.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar test_run_id: Unique test run identifier for the load test run, must contain only
      lower-case alphabetic, numeric, underscore or hyphen characters. Required.
@@ -2098,9 +2058,6 @@ class TestRun(_model_base.Model):
 class TestRunAppComponents(_model_base.Model):
     """Test run app component.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar components: Azure resource collection { resource id (fully qualified resource Id e.g
      subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName})
      : resource object }. Required.
@@ -2159,8 +2116,6 @@ class TestRunAppComponents(_model_base.Model):
 class TestRunArtifacts(_model_base.Model):
     """Collection of test run artifacts.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar input_artifacts: The input artifacts for the test run.
     :vartype input_artifacts: ~azure.developer.loadtesting.models.TestRunInputArtifacts
     :ivar output_artifacts: The output artifacts for the test run.
@@ -2194,7 +2149,6 @@ class TestRunArtifacts(_model_base.Model):
 
 class TestRunDetail(_model_base.Model):
     """Details of a particular test run for a test profile run.
-
 
     :ivar status: Status of the test run. Required. Known values are: "ACCEPTED", "NOTSTARTED",
      "PROVISIONING", "PROVISIONED", "CONFIGURING", "CONFIGURED", "EXECUTING", "EXECUTED",
@@ -2241,9 +2195,6 @@ class TestRunDetail(_model_base.Model):
 
 class TestRunFileInfo(_model_base.Model):
     """Test run file info.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar file_name: Name of the file. Required.
     :vartype file_name: str
@@ -2301,8 +2252,6 @@ class TestRunFileInfo(_model_base.Model):
 
 class TestRunInputArtifacts(_model_base.Model):
     """The input artifacts for the test run.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar config_file_info: The load test YAML file that contains the the test configuration.
     :vartype config_file_info: ~azure.developer.loadtesting.models.TestRunFileInfo
@@ -2419,12 +2368,11 @@ class TestRunOutputArtifacts(_model_base.Model):
 class TestRunServerMetricsConfiguration(_model_base.Model):
     """Test run server metrics configuration.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar test_run_id: Test run identifier.
     :vartype test_run_id: str
     :ivar metrics: Azure resource metrics collection {metric id : metrics object} (Refer :
-     https://learn.microsoft.com/en-us/rest/api/monitor/metric-definitions/list#metricdefinition
+     `https://learn.microsoft.com/en-us/rest/api/monitor/metric-definitions/list#metricdefinition
+     <https://learn.microsoft.com/en-us/rest/api/monitor/metric-definitions/list#metricdefinition>`_
      for metric id).
     :vartype metrics: dict[str, ~azure.developer.loadtesting.models.ResourceMetric]
     :ivar created_date_time: The creation datetime(RFC 3339 literal format).
@@ -2443,7 +2391,8 @@ class TestRunServerMetricsConfiguration(_model_base.Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Azure resource metrics collection {metric id : metrics object} (Refer :
-     https://learn.microsoft.com/en-us/rest/api/monitor/metric-definitions/list#metricdefinition
+     `https://learn.microsoft.com/en-us/rest/api/monitor/metric-definitions/list#metricdefinition
+     <https://learn.microsoft.com/en-us/rest/api/monitor/metric-definitions/list#metricdefinition>`_
      for metric id)."""
     created_date_time: Optional[datetime.datetime] = rest_field(
         name="createdDateTime", visibility=["read"], format="rfc3339"
@@ -2478,8 +2427,6 @@ class TestRunServerMetricsConfiguration(_model_base.Model):
 
 class TestRunStatistics(_model_base.Model):
     """Test run statistics.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar transaction: Transaction name.
     :vartype transaction: str
@@ -2568,13 +2515,11 @@ class TestRunStatistics(_model_base.Model):
 class TestServerMetricsConfiguration(_model_base.Model):
     """Test server metrics configuration.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar test_id: Test identifier.
     :vartype test_id: str
     :ivar metrics: Azure resource metrics collection {metric id : metrics object} (Refer :
-     https://learn.microsoft.com/en-us/rest/api/monitor/metric-definitions/list#metricdefinition
+     `https://learn.microsoft.com/en-us/rest/api/monitor/metric-definitions/list#metricdefinition
+     <https://learn.microsoft.com/en-us/rest/api/monitor/metric-definitions/list#metricdefinition>`_
      for metric id). Required.
     :vartype metrics: dict[str, ~azure.developer.loadtesting.models.ResourceMetric]
     :ivar created_date_time: The creation datetime(RFC 3339 literal format).
@@ -2593,7 +2538,8 @@ class TestServerMetricsConfiguration(_model_base.Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Azure resource metrics collection {metric id : metrics object} (Refer :
-     https://learn.microsoft.com/en-us/rest/api/monitor/metric-definitions/list#metricdefinition
+     `https://learn.microsoft.com/en-us/rest/api/monitor/metric-definitions/list#metricdefinition
+     <https://learn.microsoft.com/en-us/rest/api/monitor/metric-definitions/list#metricdefinition>`_
      for metric id). Required."""
     created_date_time: Optional[datetime.datetime] = rest_field(
         name="createdDateTime", visibility=["read"], format="rfc3339"

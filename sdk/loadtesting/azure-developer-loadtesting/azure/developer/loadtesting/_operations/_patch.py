@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -143,8 +144,8 @@ class LoadTestAdministrationClientOperationsMixin(GeneratedAdministrationClientO
          "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT". Default value
          is None.
         :paramtype file_type: str or ~azure.developer.loadtesting.models.FileType
-        :return: TestFileInfo. The TestFileInfo is compatible with MutableMapping
-        :rtype: ~azure.developer.loadtesting.models.TestFileInfo
+        :return: An instance of LROPoller. Call `result()` on the poller object to return a :class:`~azure.developer.loadtesting.models.TestFileInfo`.
+        :rtype: ~azure.core.polling.LROPoller[~azure.developer.loadtesting.models.TestFileInfo]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -172,13 +173,13 @@ class LoadTestAdministrationClientOperationsMixin(GeneratedAdministrationClientO
         :param file_name: Unique name for test file with file extension like : App.jmx. Required.
         :type file_name: str
         :param body: The file content as application/octet-stream. Required.
-        :type body: bytes
+        :type body: IO
         :keyword file_type: File type. Known values are: "JMX_FILE", "USER_PROPERTIES",
          "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT". Default value
          is None.
         :paramtype file_type: str or ~azure.developer.loadtesting.models.FileType
-        :return: TestFileInfo. The TestFileInfo is compatible with MutableMapping
-        :rtype: ~azure.developer.loadtesting.models.TestFileInfo
+        :return: An instance of LROPoller. Call `result()` on the poller object to return a :class:`~azure.developer.loadtesting.models.TestFileInfo`.
+        :rtype: ~azure.core.polling.LROPoller[~azure.developer.loadtesting.models.TestFileInfo]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -206,13 +207,13 @@ class LoadTestAdministrationClientOperationsMixin(GeneratedAdministrationClientO
         :param file_name: Unique name for test file with file extension like : App.jmx. Required.
         :type file_name: str
         :param body: The file content as application/octet-stream. Required.
-        :type body: bytes
+        :type body: Is one of the following types: IO, bytes
         :keyword file_type: File type. Known values are: "JMX_FILE", "USER_PROPERTIES",
          "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT". Default value
          is None.
         :paramtype file_type: str or ~azure.developer.loadtesting.models.FileType
-        :return: TestFileInfo. The TestFileInfo is compatible with MutableMapping
-        :rtype: ~azure.developer.loadtesting.models.TestFileInfo
+        :return: An instance of LROPoller. Call `result()` on the poller object to return a :class:`~azure.developer.loadtesting.models.TestFileInfo`.
+        :rtype: ~azure.core.polling.LROPoller[~azure.developer.loadtesting.models.TestFileInfo]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -261,8 +262,8 @@ class LoadTestRunClientOperationsMixin(GeneratedRunClientOperations):
          existing test run. You can override the configuration values for new test run
          in the request body. Default value is None.
         :paramtype old_test_run_id: str
-        :return: TestRun. The TestRun is compatible with MutableMapping
-        :rtype: ~azure.developer.loadtesting.models.TestRun
+        :return: An instance of LROPoller. Call `result()` on the poller object to return a :class:`~azure.developer.loadtesting.models.TestRun`.
+        :rtype: ~azure.core.polling.LROPoller[~azure.developer.loadtesting.models.TestRun]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -294,8 +295,8 @@ class LoadTestRunClientOperationsMixin(GeneratedRunClientOperations):
          existing test run. You can override the configuration values for new test run
          in the request body. Default value is None.
         :paramtype old_test_run_id: str
-        :return: TestRun. The TestRun is compatible with MutableMapping
-        :rtype: ~azure.developer.loadtesting.models.TestRun
+        :return: An instance of LROPoller. Call `result()` on the poller object to return a :class:`~azure.developer.loadtesting.models.TestRun`.
+        :rtype: ~azure.core.polling.LROPoller[~azure.developer.loadtesting.models.TestRun]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -327,8 +328,8 @@ class LoadTestRunClientOperationsMixin(GeneratedRunClientOperations):
          existing test run. You can override the configuration values for new test run
          in the request body. Default value is None.
         :paramtype old_test_run_id: str
-        :return: TestRun. The TestRun is compatible with MutableMapping
-        :rtype: ~azure.developer.loadtesting.models.TestRun
+        :return: An instance of LROPoller. Call `result()` on the poller object to return a :class:`~azure.developer.loadtesting.models.TestRun`.
+        :rtype: ~azure.core.polling.LROPoller[~azure.developer.loadtesting.models.TestRun]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -357,8 +358,8 @@ class LoadTestRunClientOperationsMixin(GeneratedRunClientOperations):
          existing test run. You can override the configuration values for new test run
          in the request body. Default value is None.
         :paramtype old_test_run_id: str
-        :return: TestRun. The TestRun is compatible with MutableMapping
-        :rtype: ~azure.developer.loadtesting.models.TestRun
+        :return: An instance of LROPoller. Call `result()` on the poller object to return a :class:`~azure.developer.loadtesting.models.TestRun`.
+        :rtype: ~azure.core.polling.LROPoller[~azure.developer.loadtesting.models.TestRun]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -400,8 +401,8 @@ class LoadTestRunClientOperationsMixin(GeneratedRunClientOperations):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: TestProfileRun. The TestProfileRun is compatible with MutableMapping
-        :rtype: ~azure.developer.loadtesting.models.TestProfileRun
+        :return: An instance of LROPoller. Call `result()` on the poller object to return a :class:`~azure.developer.loadtesting.models.TestProfileRun`.
+        :rtype: ~azure.core.polling.LROPoller[~azure.developer.loadtesting.models.TestProfileRun]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -421,8 +422,8 @@ class LoadTestRunClientOperationsMixin(GeneratedRunClientOperations):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: TestProfileRun. The TestProfileRun is compatible with MutableMapping
-        :rtype: ~azure.developer.loadtesting.models.TestProfileRun
+        :return: An instance of LROPoller. Call `result()` on the poller object to return a :class:`~azure.developer.loadtesting.models.TestProfileRun`.
+        :rtype: ~azure.core.polling.LROPoller[~azure.developer.loadtesting.models.TestProfileRun]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -448,8 +449,8 @@ class LoadTestRunClientOperationsMixin(GeneratedRunClientOperations):
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
         :return: TestProfileRun. The TestProfileRun is compatible with MutableMapping
-        :rtype: ~azure.developer.loadtesting.models.TestProfileRun
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :return: An instance of LROPoller. Call `result()` on the poller object to return a :class:`~azure.developer.loadtesting.models.TestProfileRun`.
+        :rtype: ~azure.core.polling.LROPoller[~azure.developer.loadtesting.models.TestProfileRun]
         """
 
     @distributed_trace
@@ -466,8 +467,8 @@ class LoadTestRunClientOperationsMixin(GeneratedRunClientOperations):
         :param body: The resource instance. Is one of the following types: TestProfileRun, JSON,
          IO[bytes] Required.
         :type body: ~azure.developer.loadtesting.models.TestProfileRun or JSON or IO[bytes]
-        :return: TestProfileRun. The TestProfileRun is compatible with MutableMapping
-        :rtype: ~azure.developer.loadtesting.models.TestProfileRun
+        :return: An instance of LROPoller. Call `result()` on the poller object to return a :class:`~azure.developer.loadtesting.models.TestProfileRun`.
+        :rtype: ~azure.core.polling.LROPoller[~azure.developer.loadtesting.models.TestProfileRun]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling_interval = kwargs.pop("_polling_interval", None)
