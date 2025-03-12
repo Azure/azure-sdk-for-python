@@ -47,6 +47,7 @@ import random
 from azure.ai.evaluation._safety_evaluation._mock_attack_objective import MockAttackObjective
 from azure.ai.evaluation._evaluators._content_safety import ContentSafetyEvaluator
 from azure.ai.evaluation import evaluate
+from tqdm import tqdm
 
 BASELINE_IDENTIFIER = "Baseline"
 
@@ -984,18 +985,24 @@ class RedTeamAgent():
             call_orchestrator: Callable, 
             converter: Union[PromptConverter, List[PromptConverter]], 
             all_prompts: List[str],
+            progress_bar: tqdm,
+            progress_bar_lock: asyncio.Lock,
             evaluation_name: Optional[str] = None,
             data_only: bool = False, 
-            output_path: Optional[Union[str, os.PathLike]] = None) -> Union[Dict[str, EvaluationResult], Dict[str, str], Dict[str, Union[str,os.PathLike]]]:
+            output_path: Optional[Union[str, os.PathLike]] = None,
+        ) -> Union[Dict[str, EvaluationResult], Dict[str, str], Dict[str, Union[str,os.PathLike]]]:
         orchestrator = await call_orchestrator(self.chat_target, all_prompts, converter)
         data_path = self._write_pyrit_outputs_to_file(orchestrator, converter)
-        return await self._evaluate(
+        eval_result = await self._evaluate(
             target=target,
             evaluation_name=evaluation_name,
             data_only=data_only,
             data_path=data_path,
             output_path=output_path
         )
+        async with progress_bar_lock:
+            progress_bar.update(1)
+        return eval_result
 
     async def attack(
             self,             
@@ -1056,6 +1063,14 @@ class RedTeamAgent():
         converters = self._get_converters_for_attack_strategy(attack_strategy)
         orchestrators = self._get_orchestrators_for_attack_strategy(attack_strategy)
 
+        progress_bar = tqdm(
+            total=int(len(converters) * len(orchestrators)),
+            desc="Attacking: ",
+            ncols=100,
+            unit="attack",
+        )
+        progress_bar_lock = asyncio.Lock()
+
         tasks = []
         for call_orchestrator, converter in itertools.product(orchestrators, converters):
             # Determine which prompt list to use based on converter
@@ -1077,6 +1092,8 @@ class RedTeamAgent():
                     call_orchestrator=call_orchestrator,
                     converter=converter,
                     all_prompts=prompts_to_use,
+                    progress_bar=progress_bar,
+                    progress_bar_lock=progress_bar_lock,
                     evaluation_name=evaluation_name,
                     data_only=data_only,
                     output_path=output_path
@@ -1084,6 +1101,7 @@ class RedTeamAgent():
             )
 
         results = await asyncio.gather(*tasks)
+        progress_bar.close()
         merged_results = {}
         for d in results:
             merged_results.update(d)
