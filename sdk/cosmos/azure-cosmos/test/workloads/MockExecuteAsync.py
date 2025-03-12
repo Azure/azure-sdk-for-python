@@ -26,7 +26,7 @@ class MockExecuteServiceRequestException(object):
                     message="Some Exception",
                     response=FakeResponse({}))
         else:
-            self.original_func(func, *args, **kwargs)
+            return await self.original_func(func, *args, **kwargs)
 
 class FakeResponse:
     def __init__(self, headers):
