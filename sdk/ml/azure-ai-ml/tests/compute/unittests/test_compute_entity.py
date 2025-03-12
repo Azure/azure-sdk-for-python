@@ -76,7 +76,7 @@ class TestComputeEntity:
         assert rest_intermediate.tags is not None
         assert rest_intermediate.tags["test"] == "true"
         assert rest_intermediate.properties.disable_local_auth is False
-        assert rest_intermediate.properties.properties.remote_login_port_public_access is "Enabled"
+        assert rest_intermediate.properties.properties.remote_login_port_public_access == "Enabled"
 
         serializer = Serializer({"ComputeResource": ComputeResource})
         body = serializer.body(rest_intermediate, "ComputeResource")
@@ -100,7 +100,7 @@ class TestComputeEntity:
         assert rest_intermediate.properties.properties.enable_node_public_ip
         assert rest_intermediate.properties.disable_local_auth is True
         assert rest_intermediate.location == compute.location
-        assert rest_intermediate.properties.properties.remote_login_port_public_access is "NotSpecified"
+        assert rest_intermediate.properties.properties.remote_login_port_public_access == "NotSpecified"
 
     def test_aml_compute_from_yaml_with_creds_and_disable_public_access(self):
         compute: AmlCompute = load_compute("tests/test_configs/compute/compute-aml-no-identity.yaml")
@@ -112,7 +112,7 @@ class TestComputeEntity:
         assert rest_intermediate.properties.properties.enable_node_public_ip
         assert rest_intermediate.properties.disable_local_auth is False
         assert rest_intermediate.location == compute.location
-        assert rest_intermediate.properties.properties.remote_login_port_public_access is "Disabled"
+        assert rest_intermediate.properties.properties.remote_login_port_public_access == "Disabled"
 
     def test_aml_compute_from_yaml_with_disable_public_access_when_no_sshSettings(self):
 
@@ -127,7 +127,7 @@ class TestComputeEntity:
         assert rest_intermediate.properties.compute_type == "AmlCompute"
         assert rest_intermediate.properties.properties.enable_node_public_ip
         assert rest_intermediate.properties.disable_local_auth is True
-        assert rest_intermediate.properties.properties.remote_login_port_public_access is "Enabled"
+        assert rest_intermediate.properties.properties.remote_login_port_public_access == "Enabled"
         assert rest_intermediate.location == compute.location
 
     def test_compute_vm_from_yaml(self):
