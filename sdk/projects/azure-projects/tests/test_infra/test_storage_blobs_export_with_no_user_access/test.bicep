@@ -48,7 +48,7 @@ resource blobservice 'Microsoft.Storage/storageAccounts/blobServices@2024-01-01'
 output AZURE_BLOBS_ENDPOINT string = storageaccount.properties.primaryEndpoints.blob
 
 
-resource roleassignment_eqnucakyjztglyagdwqk 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_wopnzddknwicurqqzlue 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftStoragestorageAccountsblobServices', 'default', 'ServicePrincipal', 'Storage Blob Data Owner')
   properties: {
     principalId: userassignedidentity.properties.principalId

@@ -218,9 +218,7 @@ class ConfigStore(_ClientResource, Generic[ConfigStoreResourceType]):
         return cast(ConfigStore[ResourceReference], existing)
 
     def _build_endpoint(self, *, config_store: Optional[Mapping[str, Any]]) -> str:
-        raise RuntimeError()
-        # TODO: Validate URL structure after deployment.
-        # return f"https://{self._settings['name'](config_store=config_store)}.vault.azure.net/"
+        return f"https://{self._settings['name'](config_store=config_store)}.azconfig.io"
 
     def _outputs(self, *, symbol: ResourceSymbol, suffix: Optional[str] = None, **kwargs) -> Dict[str, Output]:
         outputs = super()._outputs(symbol=symbol, suffix=suffix, **kwargs)
@@ -299,7 +297,7 @@ class ConfigStore(_ClientResource, Generic[ConfigStoreResourceType]):
     ):
         if cls is None:
             if use_async:
-                from azure.appconfiguration import AzureAppConfigurationClient as AsyncAzureAppConfigurationClient
+                from azure.appconfiguration.aio import AzureAppConfigurationClient as AsyncAzureAppConfigurationClient
 
                 cls = AsyncAzureAppConfigurationClient
             else:

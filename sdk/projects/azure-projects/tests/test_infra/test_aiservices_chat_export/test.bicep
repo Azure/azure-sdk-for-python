@@ -75,7 +75,7 @@ output AZURE_AI_CHAT_MODEL_VERSION string = chat_deployment.properties.model.ver
 output AZURE_AI_CHAT_ENDPOINT string = '${aiservices_account.properties.endpoint}openai/deployments/${chat_deployment.name}'
 
 
-resource roleassignment_prmcdnytekaxfpxlctiu 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_pqjisaqxrgcysgrhdblx 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftCognitiveServicesaccounts', '${defaultName}-aiservices', 'ServicePrincipal', 'Cognitive Services OpenAI Contributor')
   properties: {
     principalId: userassignedidentity.properties.principalId
@@ -91,7 +91,7 @@ resource roleassignment_prmcdnytekaxfpxlctiu 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_eueecqmosdtphyvvcakz 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_wpbwavohdylvllgtoewg 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftCognitiveServicesaccounts', '${defaultName}-aiservices', 'ServicePrincipal', 'Cognitive Services Contributor')
   properties: {
     principalId: userassignedidentity.properties.principalId
@@ -107,7 +107,7 @@ resource roleassignment_eueecqmosdtphyvvcakz 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_iixyucpvhqitrkqrnbqa 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_mgufizgvzsqmbzqocksu 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftCognitiveServicesaccounts', '${defaultName}-aiservices', 'ServicePrincipal', 'Cognitive Services OpenAI User')
   properties: {
     principalId: userassignedidentity.properties.principalId
@@ -123,7 +123,7 @@ resource roleassignment_iixyucpvhqitrkqrnbqa 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_olhkahcaximxljdwfqux 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_xmpyattycxterihwzhjs 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftCognitiveServicesaccounts', '${defaultName}-aiservices', 'ServicePrincipal', 'Cognitive Services User')
   properties: {
     principalId: userassignedidentity.properties.principalId
@@ -139,7 +139,7 @@ resource roleassignment_olhkahcaximxljdwfqux 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_guvkdgrgirgwzahwnvou 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_pjkjzujnwnqnlupkacxk 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftCognitiveServicesaccounts', '${defaultName}-aiservices', 'User', 'Cognitive Services OpenAI Contributor')
   properties: {
     principalId: principalId
@@ -155,7 +155,7 @@ resource roleassignment_guvkdgrgirgwzahwnvou 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_lkopfjwianflbxodoeiq 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_pqrtmtgtctxarhamusgu 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftCognitiveServicesaccounts', '${defaultName}-aiservices', 'User', 'Cognitive Services Contributor')
   properties: {
     principalId: principalId
@@ -171,7 +171,7 @@ resource roleassignment_lkopfjwianflbxodoeiq 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_ddsjnquihdmohlbeapox 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_brzmmiebdqmayimhrmyf 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftCognitiveServicesaccounts', '${defaultName}-aiservices', 'User', 'Cognitive Services OpenAI User')
   properties: {
     principalId: principalId
@@ -187,7 +187,7 @@ resource roleassignment_ddsjnquihdmohlbeapox 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_wbpjzrvrnkarixpwhfwh 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_uowcqnnqpxydgmvubghf 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftCognitiveServicesaccounts', '${defaultName}-aiservices', 'User', 'Cognitive Services User')
   properties: {
     principalId: principalId

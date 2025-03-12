@@ -62,7 +62,7 @@ async def main():
             first_app.data.delete_container(container)
 
         # If no longer needed, the infrastructure can be deprovisioned.
-        first_app.infra.down()
+        first_app.infra.down(purge=True)
 
     # An AzureApp class functions similar to a Python dataclass, so defaults or factories can be provided.
     # Unlike dataclasses, additional keyword-arguments can be provided to the field specifier which
@@ -107,13 +107,16 @@ async def main():
     # if multiple clients are pointing to the same resource.
     app = MySecondApp.provision(infra, attr_map={"images": "blob_container"})
 
+    # Sometimes it take a few seconds for the role assignment permissions to propagate.
+    time.sleep(10)
+
     # An AzureApp instance can be opened in either a synchronous or an asynchronous context manager. On closing
     # the context, all clients in the app will be closed (regardless of whether they are synchronous or asynchronous).
     async with app:
         all_images = [image async for image in app.images.list_blobs()]
         print(f"Container holds {len(all_images)} image files.")
 
-        app.infra.down()
+        app.infra.down(purge=True)
 
 
 if __name__ == "__main__":

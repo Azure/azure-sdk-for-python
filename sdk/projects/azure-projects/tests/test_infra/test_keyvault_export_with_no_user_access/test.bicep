@@ -35,7 +35,7 @@ output AZURE_KEYVAULT_RESOURCE_GROUP string = resourceGroup().name
 output AZURE_KEYVAULT_ENDPOINT string = vault.properties.vaultUri
 
 
-resource roleassignment_qgdjhyhljucznkoutsgj 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_rvlirodumbwgpeecviid 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftKeyVaultvaults', defaultName, 'ServicePrincipal', 'Key Vault Administrator')
   properties: {
     principalId: userassignedidentity.properties.principalId

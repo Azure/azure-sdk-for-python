@@ -60,7 +60,7 @@ output AZURE_BLOB_CONTAINER_RESOURCE_GROUP string = resourceGroup().name
 output AZURE_BLOB_CONTAINER_ENDPOINT string = '${storageaccount.properties.primaryEndpoints.blob}${container.name}'
 
 
-resource roleassignment_bopldzzxbodmidnqjpaj 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_encgtylpbtuphwxutrla 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftStoragestorageAccountsblobServices', 'default', 'ServicePrincipal', 'Storage Blob Data Contributor')
   properties: {
     principalId: userassignedidentity.properties.principalId
@@ -76,7 +76,7 @@ resource roleassignment_bopldzzxbodmidnqjpaj 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_mcphbpynruzqieqkouut 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_jwjdmehfqcvdzcdkrkfc 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftStoragestorageAccountsblobServicescontainers', defaultName, 'ServicePrincipal', 'Storage Blob Data Owner')
   properties: {
     principalId: userassignedidentity.properties.principalId

@@ -40,7 +40,7 @@ output AZURE_STORAGE_NAME string = storageaccount.name
 output AZURE_STORAGE_RESOURCE_GROUP string = resourceGroup().name
 
 
-resource roleassignment_wogbylpbwucijixgcmkq 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_wsikippfqkgbstkfsdxa 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftStoragestorageAccounts', defaultName, 'ServicePrincipal', 'Storage Blob Data Owner')
   properties: {
     principalId: userassignedidentity.properties.principalId
@@ -56,7 +56,7 @@ resource roleassignment_wogbylpbwucijixgcmkq 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_kabjlwtaqtombqbqchrb 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_gabwmcmunkkpuawggswx 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftStoragestorageAccounts', defaultName, 'User', 'Storage Blob Data Contributor')
   properties: {
     principalId: principalId

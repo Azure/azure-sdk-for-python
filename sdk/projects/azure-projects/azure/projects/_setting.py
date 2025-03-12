@@ -52,7 +52,7 @@ class StoredPrioritizedSetting(PrioritizedSetting[ValidInputType, ValueType]):
         if isinstance(settingvalue, str):
             for parameter in _formatted_param.findall(settingvalue):
                 if not config_store:
-                    raise ValueError(f"No config store provided to resolve parameter: {parameter}.")
+                    raise RuntimeError(f"No config store provided to resolve parameterized value: '{settingvalue}'.")
                 try:
                     # Mypy doesn't like this assignment, but we've already established settingvalue is str.
                     settingvalue = settingvalue.replace(  # type: ignore[assignment]

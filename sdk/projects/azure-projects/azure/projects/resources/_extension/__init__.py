@@ -59,19 +59,21 @@ class ManagedIdentity(TypedDict, total=False):
 
 # TODO: Automatically set None identities if there's no User Assigned identity in the infrastructure.
 def convert_managed_identities(managed_identities: Optional[ManagedIdentity]) -> Identity:
-    identity: Identity = {"type": "None", "userAssignedIdentities": {}}
+    identity: Identity = {"type": "None"}
     if managed_identities is None:
         return identity
     user_assigned_identities = managed_identities.get("userAssignedResourceIds", [])
     if managed_identities.get("systemAssigned", False):
         if user_assigned_identities:
             identity["type"] = "SystemAssigned,UserAssigned"
+            identity["userAssignedIdentities"] = {}
             for uai in user_assigned_identities:
                 identity["userAssignedIdentities"][uai] = {}
         else:
             identity["type"] = "SystemAssigned"
     elif user_assigned_identities:
         identity["type"] = "UserAssigned"
+        identity["userAssignedIdentities"] = {}
         for uai in user_assigned_identities:
             identity["userAssignedIdentities"][uai] = {}
     return identity

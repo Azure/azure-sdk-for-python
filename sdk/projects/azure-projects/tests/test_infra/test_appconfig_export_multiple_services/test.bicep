@@ -65,7 +65,7 @@ output AZURE_APPCONFIG_RESOURCE_GROUP_FOO string = resourceGroup().name
 output AZURE_APPCONFIG_ENDPOINT_FOO string = configurationstore_foo.properties.endpoint
 
 
-resource roleassignment_fbfnugjrjahjtijdcakn 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_qxodouesmklfftwklutc 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftAppConfigurationconfigurationStores', defaultName, 'ServicePrincipal', 'App Configuration Data Reader')
   properties: {
     principalId: userassignedidentity.properties.principalId
@@ -81,7 +81,7 @@ resource roleassignment_fbfnugjrjahjtijdcakn 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_oqmttygsnekviediifza 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_rgfqntzclayyzscssvnm 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftAppConfigurationconfigurationStores', defaultName, 'User', 'App Configuration Data Owner')
   properties: {
     principalId: principalId
@@ -97,7 +97,7 @@ resource roleassignment_oqmttygsnekviediifza 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_yxuywnqfjzekkyejhmsu 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_nvzfuhmtbzfqnfcwpvss 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftAppConfigurationconfigurationStores', 'foo', 'ServicePrincipal', 'App Configuration Data Reader')
   properties: {
     principalId: userassignedidentity.properties.principalId
@@ -113,7 +113,7 @@ resource roleassignment_yxuywnqfjzekkyejhmsu 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_cxdtnmyvihtjexofzbut 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_rexvoysplfyqzindrbcx 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftAppConfigurationconfigurationStores', 'foo', 'User', 'App Configuration Data Owner')
   properties: {
     principalId: principalId

@@ -58,7 +58,7 @@ output AZURE_KEYVAULT_RESOURCE_GROUP_FOO string = resourceGroup().name
 output AZURE_KEYVAULT_ENDPOINT_FOO string = vault_foo.properties.vaultUri
 
 
-resource roleassignment_qgdjhyhljucznkoutsgj 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_rvlirodumbwgpeecviid 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftKeyVaultvaults', defaultName, 'ServicePrincipal', 'Key Vault Administrator')
   properties: {
     principalId: userassignedidentity.properties.principalId
@@ -74,7 +74,7 @@ resource roleassignment_qgdjhyhljucznkoutsgj 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_xotjgqfzvwectdhbwwhf 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_xblvyueyhgijfwhkgdsi 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftKeyVaultvaults', defaultName, 'User', 'Key Vault Administrator')
   properties: {
     principalId: principalId
@@ -90,7 +90,7 @@ resource roleassignment_xotjgqfzvwectdhbwwhf 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_rsoslitvdswlkijbvhek 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_xmjbmmkpphodtnlwhkeo 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftKeyVaultvaults', 'foo', 'ServicePrincipal', 'Key Vault Administrator')
   properties: {
     principalId: userassignedidentity.properties.principalId
@@ -106,7 +106,7 @@ resource roleassignment_rsoslitvdswlkijbvhek 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_nazfitmwnwmjfmzfvnkc 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_mejzahbhbirfamflmliz 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftKeyVaultvaults', 'foo', 'User', 'Key Vault Administrator')
   properties: {
     principalId: principalId

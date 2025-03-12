@@ -38,7 +38,7 @@ output AZURE_APPCONFIG_RESOURCE_GROUP string = resourceGroup().name
 output AZURE_APPCONFIG_ENDPOINT string = configurationstore.properties.endpoint
 
 
-resource roleassignment_vxffjfthwsaxalnvktrv 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_twcavdkenidppejmifec 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftAppConfigurationconfigurationStores', defaultName, 'ServicePrincipal', 'Contributor')
   properties: {
     principalId: userassignedidentity.properties.principalId

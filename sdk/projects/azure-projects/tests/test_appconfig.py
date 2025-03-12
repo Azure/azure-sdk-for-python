@@ -300,13 +300,13 @@ def test_appconfig_client():
     r._settings["api_version"].set_value("v1.0")
     client = r.get_client(api_version="1234", verify_challenge_resource=True)
     assert isinstance(client, AzureAppConfigurationClient)
-    assert client._client._config.endpoint == "https://test.search.windows.net/"
-    assert client._client._config.api_version == "1234"
+    assert client._impl._config.endpoint == "https://test.azconfig.io"
+    assert client._impl._config.api_version == "1234"
 
     client = r.get_client(use_async=True)
     assert isinstance(client, AsyncAzureAppConfigurationClient)
-    assert client._client._config.endpoint == "https://test.search.windows.net/"
-    assert client._client._config.api_version == "v1.0"
+    assert client._impl._config.endpoint == "https://test.azconfig.io"
+    assert client._impl._config.api_version == "v1.0"
 
 
 def test_appconfig_infra():
@@ -336,77 +336,60 @@ def test_appconfig_app():
 
     app = TestApp(config=r)
     assert isinstance(app.config, AzureAppConfigurationClient)
-    assert app.client._client._config.endpoint == "https://test.search.windows.net/"
+    assert app.config._impl._config.endpoint == "https://test.azconfig.io"
 
     override_client = AzureAppConfigurationClient(
-        "https://foobar.search.windows.net/", credential=DefaultAzureCredential(), index_name="index"
+        "https://foobar.azconfig.io", credential=DefaultAzureCredential()
     )
-    app = TestApp(client=override_client, indexes=r)
-    assert app.config._client._config.endpoint == "https://foobar.search.windows.net/"
+    app = TestApp(config=override_client)
+    assert app.config._impl._config.endpoint == "https://foobar.azconfig.io"
+
 
     class TestApp(AzureApp):
-        client: SearchIndexClient
-
-    with pytest.raises(TypeError):
-        app = TestApp()
-
-    app = TestApp(client=r)
-    assert isinstance(app.client, SearchIndexClient)
-    assert app.client._client._config.endpoint == "https://test.search.windows.net/"
-
-    override_client = SearchIndexClient("https://foobar.search.windows.net/", credential=DefaultAzureCredential())
-    app = TestApp(client=override_client)
-    assert app.client._client._config.endpoint == "https://foobar.search.windows.net/"
-
-    class TestApp(AzureApp):
-        client: SearchIndexClient = field(default=r, api_version="v1.0")
+        client: AzureAppConfigurationClient = field(default=r, api_version="v1.0")
 
     app = TestApp()
-    assert isinstance(app.client, SearchIndexClient)
-    assert app.client._client._config.endpoint == "https://test.search.windows.net/"
-    assert app.client._client._config.api_version == "v1.0"
+    assert isinstance(app.client, AzureAppConfigurationClient)
+    assert app.client._impl._config.endpoint == "https://test.azconfig.io"
+    assert app.client._impl._config.api_version == "v1.0"
 
-    override_client = SearchIndexClient(
-        "https://foobar.search.windows.net/", credential=DefaultAzureCredential(), api_version="v2.0"
+    override_client = AzureAppConfigurationClient(
+        "https://foobar.azconfig.io", credential=DefaultAzureCredential(), api_version="v2.0"
     )
     app = TestApp(client=override_client)
-    assert app.client._client._config.endpoint == "https://foobar.search.windows.net/"
-    assert app.client._client._config.api_version == "v2.0"
+    assert app.client._impl._config.endpoint == "https://foobar.azconfig.io"
+    assert app.client._impl._config.api_version == "v2.0"
 
     class TestApp(AzureApp):
-        client: SearchIndexClient = field(default=override_client, api_version="v1.0")
+        client: AzureAppConfigurationClient = field(default=override_client, api_version="v1.0")
 
     app = TestApp()
-    assert app.client._client._config.endpoint == "https://foobar.search.windows.net/"
-    assert app.client._client._config.api_version == "v2.0"
+    assert app.client._impl._config.endpoint == "https://foobar.azconfig.io"
+    assert app.client._impl._config.api_version == "v2.0"
 
     app = TestApp(client=r)
-    assert isinstance(app.client, SearchIndexClient)
-    assert app.client._client._config.endpoint == "https://test.search.windows.net/"
-    assert app.client._client._config.api_version == "v1.0"
+    assert isinstance(app.client, AzureAppConfigurationClient)
+    assert app.client._impl._config.endpoint == "https://test.azconfig.io"
+    assert app.client._impl._config.api_version == "v1.0"
 
     def client_builder(**kwargs):
-        return SearchIndexClient("https://different.search.windows.net/", credential=DefaultAzureCredential(), **kwargs)
+        return AzureAppConfigurationClient("https://different.azconfig.io", credential=DefaultAzureCredential(), **kwargs)
 
     class TestApp(AzureApp):
-        client: SearchIndexClient = field(factory=client_builder, api_version="v3.0")
+        client: AzureAppConfigurationClient = field(factory=client_builder, api_version="v3.0")
 
     app = TestApp()
-    assert app.client._client._config.endpoint == "https://different.search.windows.net/"
-    assert app.client._client._config.api_version == "v3.0"
+    assert app.client._impl._config.endpoint == "https://different.azconfig.io"
+    assert app.client._impl._config.api_version == "v3.0"
 
     class TestInfra(AzureInfrastructure):
         kv: ConfigStore = ConfigStore()
 
     class TestApp(AzureApp):
-        client_a: SearchIndexClient = field(api_version="v1.5")
-        client_b: SearchClient = field(index_name="foo", api_version="v2.5")
+        client: AzureAppConfigurationClient = field(api_version="v1.5")
 
     infra = TestInfra(kv=r)
     app = TestApp.load(infra)
-    assert isinstance(app.client_a, SearchIndexClient)
-    assert app.client_a._client._config.endpoint == "https://test.search.windows.net/"
-    assert app.client_a._client._config.api_version == "v1.5"
-    assert isinstance(app.client_b, SearchClient)
-    assert app.client_b._client._config.endpoint == "https://test.search.windows.net/"
-    assert app.client_b._client._config.api_version == "v2.5"
+    assert isinstance(app.client, AzureAppConfigurationClient)
+    assert app.client._impl._config.endpoint == "https://test.azconfig.io"
+    assert app.client._impl._config.api_version == "v1.5"

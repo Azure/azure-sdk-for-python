@@ -49,7 +49,7 @@ resource tableservice 'Microsoft.Storage/storageAccounts/tableServices@2024-01-0
 output AZURE_TABLES_ENDPOINT string = storageaccount.properties.primaryEndpoints.table
 
 
-resource roleassignment_pbezlzujhjijyfgfguqn 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_kzxhhollrjozydumgwnj 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftStoragestorageAccountstableServices', 'default', 'ServicePrincipal', 'Storage Table Data Contributor')
   properties: {
     principalId: userassignedidentity.properties.principalId
@@ -65,7 +65,7 @@ resource roleassignment_pbezlzujhjijyfgfguqn 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_qnirwnoaeoqetswtplqz 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_zyculqgyjtgxtfpxtzkg 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftStoragestorageAccountstableServices', 'default', 'User', 'Storage Table Data Contributor')
   properties: {
     principalId: principalId

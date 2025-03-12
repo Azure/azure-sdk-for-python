@@ -38,7 +38,7 @@ output AZURE_SEARCH_RESOURCE_GROUP string = resourceGroup().name
 output AZURE_SEARCH_ENDPOINT string = 'https://${searchservice.name}.search.windows.net/'
 
 
-resource roleassignment_qbbviszeosazsgwlhilc 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_eorarjqwqwyopflasuwc 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftSearchsearchServices', defaultName, 'ServicePrincipal', 'Contributor')
   properties: {
     principalId: userassignedidentity.properties.principalId
@@ -54,7 +54,7 @@ resource roleassignment_qbbviszeosazsgwlhilc 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_jtcyeshddycdvariajfs 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_qigknslehgtywupqxymk 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftSearchsearchServices', defaultName, 'User', 'Contributor')
   properties: {
     principalId: principalId

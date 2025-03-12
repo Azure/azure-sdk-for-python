@@ -46,7 +46,7 @@ output AZURE_AI_AISERVICES_RESOURCE_GROUP string = resourceGroup().name
 output AZURE_AI_AISERVICES_ENDPOINT string = aiservices_account.properties.endpoint
 
 
-resource roleassignment_prmcdnytekaxfpxlctiu 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_pqjisaqxrgcysgrhdblx 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftCognitiveServicesaccounts', '${defaultName}-aiservices', 'ServicePrincipal', 'Cognitive Services OpenAI Contributor')
   properties: {
     principalId: userassignedidentity.properties.principalId
@@ -62,7 +62,7 @@ resource roleassignment_prmcdnytekaxfpxlctiu 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_ddsjnquihdmohlbeapox 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_brzmmiebdqmayimhrmyf 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftCognitiveServicesaccounts', '${defaultName}-aiservices', 'User', 'Cognitive Services OpenAI User')
   properties: {
     principalId: principalId

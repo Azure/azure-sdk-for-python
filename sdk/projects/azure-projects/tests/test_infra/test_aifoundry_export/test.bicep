@@ -274,7 +274,7 @@ resource connection_vxwdzretqhgneqwxyhbo 'Microsoft.MachineLearningServices/work
 
 
 
-resource roleassignment_prmcdnytekaxfpxlctiu 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_pqjisaqxrgcysgrhdblx 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftCognitiveServicesaccounts', '${defaultName}-aiservices', 'ServicePrincipal', 'Cognitive Services OpenAI Contributor')
   properties: {
     principalId: userassignedidentity.properties.principalId
@@ -290,7 +290,7 @@ resource roleassignment_prmcdnytekaxfpxlctiu 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_eueecqmosdtphyvvcakz 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_wpbwavohdylvllgtoewg 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftCognitiveServicesaccounts', '${defaultName}-aiservices', 'ServicePrincipal', 'Cognitive Services Contributor')
   properties: {
     principalId: userassignedidentity.properties.principalId
@@ -306,7 +306,7 @@ resource roleassignment_eueecqmosdtphyvvcakz 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_iixyucpvhqitrkqrnbqa 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_mgufizgvzsqmbzqocksu 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftCognitiveServicesaccounts', '${defaultName}-aiservices', 'ServicePrincipal', 'Cognitive Services OpenAI User')
   properties: {
     principalId: userassignedidentity.properties.principalId
@@ -322,7 +322,7 @@ resource roleassignment_iixyucpvhqitrkqrnbqa 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_olhkahcaximxljdwfqux 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_xmpyattycxterihwzhjs 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftCognitiveServicesaccounts', '${defaultName}-aiservices', 'ServicePrincipal', 'Cognitive Services User')
   properties: {
     principalId: userassignedidentity.properties.principalId
@@ -338,7 +338,7 @@ resource roleassignment_olhkahcaximxljdwfqux 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_guvkdgrgirgwzahwnvou 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_pjkjzujnwnqnlupkacxk 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftCognitiveServicesaccounts', '${defaultName}-aiservices', 'User', 'Cognitive Services OpenAI Contributor')
   properties: {
     principalId: principalId
@@ -354,7 +354,7 @@ resource roleassignment_guvkdgrgirgwzahwnvou 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_lkopfjwianflbxodoeiq 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_pqrtmtgtctxarhamusgu 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftCognitiveServicesaccounts', '${defaultName}-aiservices', 'User', 'Cognitive Services Contributor')
   properties: {
     principalId: principalId
@@ -370,7 +370,7 @@ resource roleassignment_lkopfjwianflbxodoeiq 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_ddsjnquihdmohlbeapox 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_brzmmiebdqmayimhrmyf 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftCognitiveServicesaccounts', '${defaultName}-aiservices', 'User', 'Cognitive Services OpenAI User')
   properties: {
     principalId: principalId
@@ -386,7 +386,7 @@ resource roleassignment_ddsjnquihdmohlbeapox 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_wbpjzrvrnkarixpwhfwh 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_uowcqnnqpxydgmvubghf 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftCognitiveServicesaccounts', '${defaultName}-aiservices', 'User', 'Cognitive Services User')
   properties: {
     principalId: principalId
@@ -402,7 +402,7 @@ resource roleassignment_wbpjzrvrnkarixpwhfwh 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_npmrnriktxggevypexnt 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_cdonmjaqgybenzhvmfxb 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftSearchsearchServices', defaultName, 'ServicePrincipal', 'Search Index Data Contributor')
   properties: {
     principalId: userassignedidentity.properties.principalId
@@ -418,7 +418,7 @@ resource roleassignment_npmrnriktxggevypexnt 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_tcntafhtedyooituoovj 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_vgmyhposexgcatgnydmr 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftSearchsearchServices', defaultName, 'ServicePrincipal', 'Search Index Data Reader')
   properties: {
     principalId: userassignedidentity.properties.principalId
@@ -434,7 +434,7 @@ resource roleassignment_tcntafhtedyooituoovj 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_zcwvdaahcvxqfctejcey 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_pojtkcjzvggpxotmpbhb 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftSearchsearchServices', defaultName, 'ServicePrincipal', 'Search Service Contributor')
   properties: {
     principalId: userassignedidentity.properties.principalId
@@ -450,7 +450,7 @@ resource roleassignment_zcwvdaahcvxqfctejcey 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_qmbddeizydnvppopafhn 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_gsqyzpufbonqoitqiiyw 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftSearchsearchServices', defaultName, 'User', 'Search Index Data Contributor')
   properties: {
     principalId: principalId
@@ -466,7 +466,7 @@ resource roleassignment_qmbddeizydnvppopafhn 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_lwgbaxmwgckeacgtyitj 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_finkmwrfduymlwanhzyj 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftSearchsearchServices', defaultName, 'User', 'Search Index Data Reader')
   properties: {
     principalId: principalId
@@ -482,7 +482,7 @@ resource roleassignment_lwgbaxmwgckeacgtyitj 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_hanzilafpyksoxhwmdrt 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_fqkkmaqkhvvaicolyhhg 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftSearchsearchServices', defaultName, 'User', 'Search Service Contributor')
   properties: {
     principalId: principalId
@@ -498,7 +498,7 @@ resource roleassignment_hanzilafpyksoxhwmdrt 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_bopldzzxbodmidnqjpaj 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_encgtylpbtuphwxutrla 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftStoragestorageAccountsblobServices', 'default', 'ServicePrincipal', 'Storage Blob Data Contributor')
   properties: {
     principalId: userassignedidentity.properties.principalId
@@ -514,7 +514,7 @@ resource roleassignment_bopldzzxbodmidnqjpaj 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_kutzxiqaacvpglqusjyi 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_kucxlyfeelslmhoskuin 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftStoragestorageAccountsblobServices', 'default', 'User', 'Storage Blob Data Contributor')
   properties: {
     principalId: principalId
@@ -530,7 +530,7 @@ resource roleassignment_kutzxiqaacvpglqusjyi 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_qgdjhyhljucznkoutsgj 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_rvlirodumbwgpeecviid 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftKeyVaultvaults', defaultName, 'ServicePrincipal', 'Key Vault Administrator')
   properties: {
     principalId: userassignedidentity.properties.principalId
@@ -546,7 +546,7 @@ resource roleassignment_qgdjhyhljucznkoutsgj 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_xotjgqfzvwectdhbwwhf 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_xblvyueyhgijfwhkgdsi 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftKeyVaultvaults', defaultName, 'User', 'Key Vault Administrator')
   properties: {
     principalId: principalId
@@ -562,7 +562,7 @@ resource roleassignment_xotjgqfzvwectdhbwwhf 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_pvnezisjxmzvzycxpdgz 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_mvraisqpdcgsnsagubkr 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftMachineLearningServicesworkspaces', '${defaultName}-project', 'ServicePrincipal', 'Contributor')
   properties: {
     principalId: userassignedidentity.properties.principalId
@@ -578,7 +578,7 @@ resource roleassignment_pvnezisjxmzvzycxpdgz 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_jadfqovrjrbvlmlpppfa 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_heujtrbfiqbyxhwslcai 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftMachineLearningServicesworkspaces', '${defaultName}-project', 'User', 'Contributor')
   properties: {
     principalId: principalId

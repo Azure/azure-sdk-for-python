@@ -61,7 +61,7 @@ output AZURE_BLOB_CONTAINER_RESOURCE_GROUP string = resourceGroup().name
 output AZURE_BLOB_CONTAINER_ENDPOINT string = '${storageaccount.properties.primaryEndpoints.blob}${container.name}'
 
 
-resource roleassignment_bopldzzxbodmidnqjpaj 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_encgtylpbtuphwxutrla 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftStoragestorageAccountsblobServices', 'default', 'ServicePrincipal', 'Storage Blob Data Contributor')
   properties: {
     principalId: userassignedidentity.properties.principalId
@@ -77,7 +77,7 @@ resource roleassignment_bopldzzxbodmidnqjpaj 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_kutzxiqaacvpglqusjyi 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_kucxlyfeelslmhoskuin 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftStoragestorageAccountsblobServices', 'default', 'User', 'Storage Blob Data Contributor')
   properties: {
     principalId: principalId
@@ -93,7 +93,7 @@ resource roleassignment_kutzxiqaacvpglqusjyi 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_ppbakhvyffeebnehvcvk 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_pqicrokotcyzfiargzyr 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftStoragestorageAccountsblobServicescontainers', 'foo', 'ServicePrincipal', 'Storage Blob Data Contributor')
   properties: {
     principalId: userassignedidentity.properties.principalId
@@ -109,7 +109,7 @@ resource roleassignment_ppbakhvyffeebnehvcvk 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_nbzllspadrypjyluzwtc 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource roleassignment_tdlbvflfbryeohohifqw 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftStoragestorageAccountsblobServicescontainers', 'foo', 'User', 'Storage Blob Data Contributor')
   properties: {
     principalId: principalId

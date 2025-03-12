@@ -210,7 +210,7 @@ class AzureInfraComponent(type):
 
 
 class AzureInfrastructure(metaclass=AzureInfraComponent):
-    _parent: Optional["AzureInfrastructure"] = field(default=None, init=False)
+    _parent: Optional["AzureInfrastructure"] = field(default=None, init=False, repr=False)
     resource_group: ResourceGroup = field(default=ResourceGroup(), repr=False)
     identity: Optional[UserAssignedIdentity] = field(default=UserAssignedIdentity(), repr=False)
     config_store: Optional[ConfigStore] = field(default=None)
@@ -453,7 +453,7 @@ class AzureApp(Generic[InfrastructureType], metaclass=AzureAppComponent):
                     resource_cls = RESOURCE_FROM_CLIENT_ANNOTATION[annotation.__name__].resource()
                     attr_map[attr] = attr
                     fields.append((attr, resource_cls, field(default=resource_cls())))
-            infra = make_infra(f"_{cls.__name__}Infra", fields)()
+            infra = make_infra(f"AutoInfra{cls.__name__}", fields)()
         if attr_map:
             kwargs = {c_attr: getattr(infra, i_attr) for c_attr, i_attr in attr_map.items()}
         else:
