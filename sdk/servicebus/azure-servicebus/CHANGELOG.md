@@ -1,6 +1,12 @@
 # Release History
 
-## 7.14.1 (Unreleased)
+## 7.15.0b1 (2025-03-12)
+
+### Features Added
+
+- Implemented a new websockets library so that using `AmqpOverWebsocket` no longer requires separate optional dependency installations.
+
+## 7.14.1 (2025-03-12)
 
 ### Bugs Fixed
 
