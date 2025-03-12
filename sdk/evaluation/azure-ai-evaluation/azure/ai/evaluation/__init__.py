@@ -64,5 +64,5 @@ __all__ = [
     "EvaluatorConfig",
     "Conversation",
     "Message",
-    "EvaluationResult"
+    "EvaluationResult",
 ]
