@@ -1,6 +1,5 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-import traceback
 import unittest
 import uuid
 
