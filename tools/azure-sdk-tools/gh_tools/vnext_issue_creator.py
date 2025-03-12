@@ -88,6 +88,7 @@ def get_build_info(build_link: str, check_type: CHECK_TYPE) -> str:
                     # Get the build info from the build link
                     build_output = requests.get(logs_link)
                     build_output = build_output.text
+                    return build_output
             except:
                 return "0"
 
