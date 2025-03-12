@@ -1,2 +1,2 @@
--e .[ghtools]
 httpx==0.25.2
+-e .[ghtools]
