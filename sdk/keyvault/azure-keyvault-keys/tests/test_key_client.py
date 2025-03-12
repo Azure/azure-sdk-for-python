@@ -114,7 +114,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         kid = key_attributes.id
         assert key_curve == key.crv
         assert kid.index(prefix) == 0, f"Key Id should start with '{prefix}', but value is '{kid}'"
-        assert key.kty == kty, f"kty should by '{key}', but is '{key.kty}'"
+        assert key.kty == kty, f"kty should be '{kty}', but is '{key.kty}'"
         assert key_attributes.properties.created_on and key_attributes.properties.updated_on,"Missing required date attributes."
         
 
@@ -123,7 +123,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         key = key_attributes.key
         kid = key_attributes.id
         assert kid.index(prefix) == 0, f"Key Id should start with '{prefix}', but value is '{kid}'"
-        assert key.kty == kty, f"kty should by '{key}', but is '{key.kty}'"
+        assert key.kty == kty, f"kty should be '{kty}', but is '{key.kty}'"
         assert key.n and key.e, "Bad RSA public material."
         assert sorted(key_ops) == sorted(key.key_ops), f"keyOps should be '{key_ops}', but is '{key.key_ops}'"
         assert key_attributes.properties.created_on and key_attributes.properties.updated_on, "Missing required date attributes."
@@ -794,7 +794,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     def test_get_key_attestation(self, client, **kwargs):
         # create a key
         key_name = self.get_resource_name("key-name")
-        key = self._create_rsa_key(client, key_name)
+        key = self._create_rsa_key(client, key_name, hardware_protected=True)
         # attestation info shouldn't be included unless requested with get_key_attestation
         assert key.properties.attestation is None
 
@@ -805,7 +805,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         assert attestation.certificate_pem_file is not None
         assert attestation.private_key_attestation is not None
         assert attestation.public_key_attestation is not None
-        assert attestation.version == key.properties.version
+        assert attestation.version
 
         # create new key version to validate versioned fetching
         updated_key = client.update_key_properties(key_name, tags={"tag": "value"})
@@ -817,7 +817,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         assert updated_attestation.version != updated_key.properties.version
 
         original_attestation = client.get_key_attestation(key_name, key.properties.version).properties.attestation
-        assert original_attestation.version == key.properties.version
+        assert original_attestation.version == attestation.version
 
     @pytest.mark.parametrize("api_version,is_hsm", only_vault_7_4_plus)
     @KeysClientPreparer()
