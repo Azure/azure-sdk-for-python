@@ -26,7 +26,7 @@ import azure.core.exceptions
 from azure.batch import models
 from azure.batch.aio import BatchClient as AsyncBatchClient
 from azure.batch import BatchClient as SyncBatchClient
-from typing import Any, Callable, Dict, Iterable, Optional, TypeVar
+from typing import Any, Callable, Dict, Iterable, Optional, TypeVar, Union
 
 from batch_preparers import AccountPreparer, PoolPreparer, JobPreparer
 from async_wrapper import async_wrapper
@@ -41,7 +41,7 @@ from devtools_testutils import (
 
 # toggle to test sync or async client
 TEST_SYNC_CLIENT = False
-BatchClient = SyncBatchClient if TEST_SYNC_CLIENT else AsyncBatchClient
+BatchClient = Union[SyncBatchClient, AsyncBatchClient]
 
 AZURE_LOCATION = "eastus2"
 BATCH_ENVIRONMENT = None  # Set this to None if testing against prod
@@ -106,7 +106,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             models.UserAccount(
                 name="test-user-2",
                 password="secret",
-                elevation_level=models.ElevationLevel.admin,
+                elevation_level=models.ElevationLevel.ADMIN,
             ),
         ]
         test_iaas_pool = models.BatchPoolCreateContent(
@@ -121,9 +121,9 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 node_agent_sku_id="batch.node.windows amd64",
                 windows_configuration=models.WindowsConfiguration(enable_automatic_updates=True),
             ),
-            task_scheduling_policy=models.BatchTaskSchedulingPolicy(node_fill_type=models.BatchNodeFillType.pack),
+            task_scheduling_policy=models.BatchTaskSchedulingPolicy(node_fill_type=models.BatchNodeFillType.PACK),
             user_accounts=users,
-            target_node_communication_mode=models.BatchNodeCommunicationMode.classic,
+            target_node_communication_mode=models.BatchNodeCommunicationMode.CLASSIC,
         )
         response = await async_wrapper(client.create_pool(test_iaas_pool))
         assert response is None
@@ -190,14 +190,14 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 node_agent_sku_id="batch.node.ubuntu 18.04",
                 data_disks=[data_disk],
             ),
-            target_node_communication_mode=models.BatchNodeCommunicationMode.classic,
+            target_node_communication_mode=models.BatchNodeCommunicationMode.CLASSIC,
         )
         response = await async_wrapper(client.create_pool(test_disk_pool))
         assert response is None
         disk_pool = await async_wrapper(client.get_pool(test_disk_pool.id))
         assert disk_pool.virtual_machine_configuration.data_disks[0].logical_unit_number == 1
         assert disk_pool.virtual_machine_configuration.data_disks[0].disk_size_gb == 50
-        assert disk_pool.target_node_communication_mode == models.BatchNodeCommunicationMode.classic
+        assert disk_pool.target_node_communication_mode == models.BatchNodeCommunicationMode.CLASSIC
 
         # Test Create Pool with Azure Disk Encryption
         test_ade_pool = models.BatchPoolCreateContent(
@@ -206,7 +206,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             virtual_machine_configuration=models.VirtualMachineConfiguration(
                 image_reference=models.ImageReference(publisher="Canonical", offer="UbuntuServer", sku="18.04-LTS"),
                 disk_encryption_configuration=models.DiskEncryptionConfiguration(
-                    targets=[models.DiskEncryptionTarget.temporary_disk]
+                    targets=[models.DiskEncryptionTarget.TEMPORARY_DISK]
                 ),
                 node_agent_sku_id="batch.node.ubuntu 18.04",
             ),
@@ -215,7 +215,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert response is None
         ade_pool = await async_wrapper(client.get_pool(test_ade_pool.id))
         assert ade_pool.virtual_machine_configuration.disk_encryption_configuration.targets == [
-            models.DiskEncryptionTarget.temporary_disk
+            models.DiskEncryptionTarget.TEMPORARY_DISK
         ]
 
         # Test List Pools without Filters
@@ -257,7 +257,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 node_agent_sku_id="batch.node.windows amd64",
                 windows_configuration=models.WindowsConfiguration(enable_automatic_updates=True),
             ),
-            task_scheduling_policy=models.BatchTaskSchedulingPolicy(node_fill_type=models.BatchNodeFillType.pack),
+            task_scheduling_policy=models.BatchTaskSchedulingPolicy(node_fill_type=models.BatchNodeFillType.PACK),
             mount_configuration=[
                 models.MountConfiguration(
                     azure_blob_file_system_configuration=models.AzureBlobFileSystemConfiguration(
@@ -296,7 +296,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 resource_files=[models.ResourceFile(http_url="https://contoso.com", file_path="filename.txt")],
                 environment_settings=[models.EnvironmentSetting(name="ENV_VAR", value="env_value")],
                 user_identity=models.UserIdentity(
-                    auto_user=models.AutoUserSpecification(elevation_level=models.ElevationLevel.admin)
+                    auto_user=models.AutoUserSpecification(elevation_level=models.ElevationLevel.ADMIN)
                 ),
             ),
         )
@@ -308,7 +308,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             # certificateReferences=[],
             application_package_references=[],
             metadata=[models.MetadataItem(name="foo", value="bar")],
-            target_node_communication_mode=models.BatchNodeCommunicationMode.classic,
+            target_node_communication_mode=models.BatchNodeCommunicationMode.CLASSIC,
         )
         # certRef = { "certificateReferences": [] }
         response = await async_wrapper(client.replace_pool_properties(test_paas_pool.id, params))
@@ -327,20 +327,20 @@ class TestBatch(AzureMgmtRecordedTestCase):
         pool = await async_wrapper(client.get_pool(test_paas_pool.id))
         assert isinstance(pool, models.BatchPool)
         assert pool.id == test_paas_pool.id
-        assert pool.state == models.BatchPoolState.active
-        assert pool.allocation_state == models.AllocationState.steady
+        assert pool.state == models.BatchPoolState.ACTIVE
+        assert pool.allocation_state == models.AllocationState.STEADY
         # assert pool.vm_configuration.node_agent_sku_id == "batch.node.ubuntu 18.04"
         assert pool.vm_size == DEFAULT_VM_SIZE
         assert pool.start_task is None
         assert pool.metadata[0].name == "foo2"
         assert pool.metadata[0].value == "bar2"
-        assert pool.target_node_communication_mode == models.BatchNodeCommunicationMode.classic
+        assert pool.target_node_communication_mode == models.BatchNodeCommunicationMode.CLASSIC
 
         # Test Get Pool with OData Clauses
         pool = await async_wrapper(client.get_pool(pool_id=test_paas_pool.id, select=["id,state"], expand=["stats"]))
         assert isinstance(pool, models.BatchPool)
         assert pool.id == test_paas_pool.id
-        assert pool.state == models.BatchPoolState.active
+        assert pool.state == models.BatchPoolState.ACTIVE
         assert pool.allocation_state is None
         assert pool.vm_size is None
 
@@ -382,7 +382,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
         # Test Disable Autoscale
         pool = await async_wrapper(client.get_pool(batch_pool.name))
-        while self.is_live and pool.allocation_state != models.AllocationState.steady:
+        while self.is_live and pool.allocation_state != models.AllocationState.STEADY:
             time.sleep(5)
             pool = await async_wrapper(client.get_pool(batch_pool.name))
         response = await async_wrapper(client.disable_pool_auto_scale(batch_pool.name))
@@ -390,7 +390,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
         # Test Pool Resize
         pool = await async_wrapper(client.get_pool(batch_pool.name))
-        while self.is_live and pool.allocation_state != models.AllocationState.steady:
+        while self.is_live and pool.allocation_state != models.AllocationState.STEADY:
             time.sleep(5)
             pool = await async_wrapper(client.get_pool(batch_pool.name))
         params = models.BatchPoolResizeContent(target_dedicated_nodes=0, target_low_priority_nodes=2)
@@ -401,7 +401,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         response = await async_wrapper(client.stop_pool_resize(batch_pool.name))
         assert response is None
         pool = await async_wrapper(client.get_pool(batch_pool.name))
-        while self.is_live and pool.allocation_state != models.AllocationState.steady:
+        while self.is_live and pool.allocation_state != models.AllocationState.STEADY:
             time.sleep(5)
             pool = await async_wrapper(client.get_pool(batch_pool.name))
 
@@ -416,7 +416,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         job_spec = models.BatchJobSpecification(
             pool_info=models.BatchPoolInfo(pool_id="pool_id"),
             constraints=models.BatchJobConstraints(max_task_retry_count=2),
-            on_all_tasks_complete=models.OnAllBatchTasksComplete.terminate_job,
+            on_all_tasks_complete=models.OnAllBatchTasksComplete.TERMINATE_JOB,
         )
         schedule = models.BatchJobScheduleConfiguration(
             start_window=datetime.timedelta(hours=1),
@@ -434,7 +434,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         schedule = await async_wrapper(client.get_job_schedule(schedule_id))
         assert isinstance(schedule, models.BatchJobSchedule)
         assert schedule.id == schedule_id
-        assert schedule.state == models.BatchJobScheduleState.active
+        assert schedule.state == models.BatchJobScheduleState.ACTIVE
 
         # Test Job Schedule Exists
         exists = await async_wrapper(client.job_schedule_exists(schedule_id))
@@ -485,14 +485,14 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 inbound_nat_pools=[
                     models.InboundNatPool(
                         name="TestEndpointConfig",
-                        protocol=models.InboundEndpointProtocol.udp,
+                        protocol=models.InboundEndpointProtocol.UDP,
                         backend_port=64444,
                         frontend_port_range_start=60000,
                         frontend_port_range_end=61000,
                         network_security_group_rules=[
                             models.NetworkSecurityGroupRule(
                                 priority=150,
-                                access=models.NetworkSecurityGroupRuleAccess.allow,
+                                access=models.NetworkSecurityGroupRuleAccess.ALLOW,
                                 source_address_prefix="*",
                             )
                         ],
@@ -514,7 +514,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
         await async_wrapper(client.create_pool(pool))
         network_pool: models.BatchPool = await async_wrapper(client.get_pool(pool.id))
-        while self.is_live and network_pool.allocation_state != models.AllocationState.steady:
+        while self.is_live and network_pool.allocation_state != models.AllocationState.STEADY:
             time.sleep(10)
             network_pool = await async_wrapper(client.get_pool(pool.id))
 
@@ -584,7 +584,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             client.reboot_node(
                 batch_pool.name,
                 nodes[0].id,
-                models.BatchNodeRebootContent(node_reboot_option=models.BatchNodeRebootOption.terminate),
+                models.BatchNodeRebootContent(node_reboot_option=models.BatchNodeRebootOption.TERMINATE),
             )
         )
         assert response is None
@@ -616,14 +616,14 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 inbound_nat_pools=[
                     models.InboundNatPool(
                         name="TestEndpointConfig",
-                        protocol=models.InboundEndpointProtocol.udp,
+                        protocol=models.InboundEndpointProtocol.UDP,
                         backend_port=64444,
                         frontend_port_range_start=60000,
                         frontend_port_range_end=61000,
                         network_security_group_rules=[
                             models.NetworkSecurityGroupRule(
                                 priority=150,
-                                access=models.NetworkSecurityGroupRuleAccess.allow,
+                                access=models.NetworkSecurityGroupRuleAccess.ALLOW,
                                 source_address_prefix="*",
                             )
                         ],
@@ -654,7 +654,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert response is None
 
         batch_pool = await async_wrapper(client.get_pool(batch_pool.id))
-        while self.is_live and batch_pool.allocation_state != models.AllocationState.steady:
+        while self.is_live and batch_pool.allocation_state != models.AllocationState.STEADY:
             time.sleep(10)
             batch_pool = await async_wrapper(client.get_pool(batch_pool.id))
 
@@ -681,7 +681,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
     async def test_batch_compute_node_user(self, client: BatchClient, **kwargs):
         batch_pool = kwargs.pop("batch_pool")
         nodes = list(await async_wrapper(client.list_nodes(batch_pool.name)))
-        while self.is_live and any([n for n in nodes if n.state != models.BatchNodeState.idle]):
+        while self.is_live and any([n for n in nodes if n.state != models.BatchNodeState.IDLE]):
             time.sleep(10)
             nodes = list(await async_wrapper(client.list_nodes(batch_pool.name)))
         assert len(nodes) == 1
@@ -717,7 +717,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
     async def test_batch_compute_node_remote_desktop(self, client: BatchClient, **kwargs):
         batch_pool = kwargs.pop("batch_pool")
         nodes = list(await async_wrapper(client.list_nodes(batch_pool.name)))
-        while self.is_live and any([n for n in nodes if n.state != models.BatchNodeState.idle]):
+        while self.is_live and any([n for n in nodes if n.state != models.BatchNodeState.IDLE]):
             time.sleep(10)
             nodes = list(await async_wrapper(client.list_nodes(batch_pool.name)))
         assert len(nodes) == 1
@@ -746,7 +746,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         batch_pool = kwargs.pop("batch_pool")
         batch_job = kwargs.pop("batch_job")
         nodes = list(await async_wrapper(client.list_nodes(batch_pool.name)))
-        while self.is_live and any([n for n in nodes if n.state != models.BatchNodeState.idle]):
+        while self.is_live and any([n for n in nodes if n.state != models.BatchNodeState.IDLE]):
             time.sleep(10)
             nodes = list(await async_wrapper(client.list_nodes(batch_pool.name)))
         assert len(nodes) == 1
@@ -756,7 +756,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         response = await async_wrapper(client.create_task(batch_job.id, task_param))
         assert response is None
         task = await async_wrapper(client.get_task(batch_job.id, task_id))
-        while self.is_live and task.state != models.BatchTaskState.completed:
+        while self.is_live and task.state != models.BatchTaskState.COMPLETED:
             time.sleep(5)
             task = await async_wrapper(client.get_task(batch_job.id, task_id))
 
@@ -779,7 +779,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert file_length == int(props.headers["Content-Length"])
 
         # Test Delete File from Batch Node
-        response = await async_wrapper(client.delete_node_file(batch_pool.name, node, only_files[0].name))
+        response = await async_wrapper(client.delete_node_file(batch_pool.name, node, only_files[0].name)) # TODO: maybe delete stderr to use in the next test for content_length (against "hello world")
         assert response is None
 
         # Test List Files from Task
@@ -819,17 +819,17 @@ class TestBatch(AzureMgmtRecordedTestCase):
             exit_codes=[
                 models.ExitCodeMapping(
                     code=1,
-                    exit_options=models.ExitOptions(job_action=models.BatchJobAction.terminate),
+                    exit_options=models.ExitOptions(job_action=models.BatchJobAction.TERMINATE),
                 )
             ],
             exit_code_ranges=[
                 models.ExitCodeRangeMapping(
                     start=2,
                     end=4,
-                    exit_options=models.ExitOptions(job_action=models.BatchJobAction.disable),
+                    exit_options=models.ExitOptions(job_action=models.BatchJobAction.DISABLE),
                 )
             ],
-            default=models.ExitOptions(job_action=models.BatchJobAction.none),
+            default=models.ExitOptions(job_action=models.BatchJobAction.NONE),
         )
         task_param = models.BatchTaskCreateContent(
             id=self.get_resource_name("batch_task1_"),
@@ -845,9 +845,9 @@ class TestBatch(AzureMgmtRecordedTestCase):
             raise Exception(message)
         task = await async_wrapper(client.get_task(batch_job.id, task_param.id))
         assert isinstance(task, models.BatchTask)
-        assert task.exit_conditions.default.job_action == models.BatchJobAction.none
+        assert task.exit_conditions.default.job_action == models.BatchJobAction.NONE
         assert task.exit_conditions.exit_codes[0].code == 1
-        assert task.exit_conditions.exit_codes[0].exit_options.job_action == models.BatchJobAction.terminate
+        assert task.exit_conditions.exit_codes[0].exit_options.job_action == models.BatchJobAction.TERMINATE
 
         # Test Create Task with Output Files
         container_url = "https://test.blob.core.windows.net:443/test-container"
@@ -860,7 +860,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
                     )
                 ),
                 upload_options=models.OutputFileUploadConfig(
-                    upload_condition=models.OutputFileUploadCondition.task_completion
+                    upload_condition=models.OutputFileUploadCondition.TASK_COMPLETION
                 ),
             ),
             models.OutputFile(
@@ -871,7 +871,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
                     )
                 ),
                 upload_options=models.OutputFileUploadConfig(
-                    upload_condition=models.OutputFileUploadCondition.task_failure
+                    upload_condition=models.OutputFileUploadCondition.TASK_FAILURE
                 ),
             ),
         ]
@@ -887,7 +887,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
         # Test Create Task with Auto User
         auto_user = models.AutoUserSpecification(
-            scope=models.AutoUserScope.task, elevation_level=models.ElevationLevel.admin
+            scope=models.AutoUserScope.TASK, elevation_level=models.ElevationLevel.ADMIN
         )
         task_param = models.BatchTaskCreateContent(
             id=self.get_resource_name("batch_task3_"),
@@ -897,8 +897,8 @@ class TestBatch(AzureMgmtRecordedTestCase):
         await async_wrapper(client.create_task(batch_job.id, task_param))
         task = await async_wrapper(client.get_task(batch_job.id, task_param.id))
         assert isinstance(task, models.BatchTask)
-        assert task.user_identity.auto_user.scope == models.AutoUserScope.task
-        assert task.user_identity.auto_user.elevation_level == models.ElevationLevel.admin
+        assert task.user_identity.auto_user.scope == models.AutoUserScope.TASK
+        assert task.user_identity.auto_user.elevation_level == models.ElevationLevel.ADMIN
 
 
         # Test Create Task with Container Settings
@@ -939,7 +939,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         result = await async_wrapper(client.create_task_collection(batch_job.id, task_collection=tasks))
         assert isinstance(result, models.BatchTaskAddCollectionResult)
         assert len(result.value) == 3
-        assert result.value[0].status.lower() == models.BatchTaskAddStatus.success
+        assert result.value[0].status.lower() == models.BatchTaskAddStatus.SUCCESS
 
         # Test List Tasks
         tasks = list(await async_wrapper(client.list_tasks(batch_job.id)))
@@ -955,13 +955,13 @@ class TestBatch(AzureMgmtRecordedTestCase):
         response = await async_wrapper(client.terminate_task(batch_job.id, task_param.id))
         assert response is None
         task = await async_wrapper(client.get_task(batch_job.id, task_param.id))
-        assert task.state == models.BatchTaskState.completed
+        assert task.state == models.BatchTaskState.COMPLETED
 
         # Test Reactivate Task
         response = await async_wrapper(client.reactivate_task(batch_job.id, task_param.id))
         assert response is None
         task = await async_wrapper(client.get_task(batch_job.id, task_param.id))
-        assert task.state == models.BatchTaskState.active
+        assert task.state == models.BatchTaskState.ACTIVE
 
         # Test Update Task
         response = await async_wrapper(
@@ -1028,8 +1028,8 @@ class TestBatch(AzureMgmtRecordedTestCase):
         result = await async_wrapper(client.create_task_collection(batch_job.id, tasks_to_add))
         assert isinstance(result, models.BatchTaskAddCollectionResult)
         assert len(result.value) == 733
-        assert result.value[0].status.lower() == models.BatchTaskAddStatus.success
-        assert all(t.status.lower() == models.BatchTaskAddStatus.success for t in result.value)
+        assert result.value[0].status.lower() == models.BatchTaskAddStatus.SUCCESS
+        assert all(t.status.lower() == models.BatchTaskAddStatus.SUCCESS for t in result.value)
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
@@ -1039,7 +1039,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
     async def test_batch_jobs(self, client: BatchClient, **kwargs):
         # Test Create Job
         auto_pool = models.BatchAutoPoolSpecification(
-            pool_lifetime_option=models.BatchPoolLifetimeOption.job,
+            pool_lifetime_option=models.BatchPoolLifetimeOption.JOB,
             pool=models.BatchPoolSpecification(
                 vm_size=DEFAULT_VM_SIZE,
                 virtual_machine_configuration=models.VirtualMachineConfiguration(
