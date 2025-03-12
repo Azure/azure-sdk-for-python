@@ -130,14 +130,17 @@ class ToolCall:
 class ConvertedResult(BaseModel):
     """Represents the result of a conversion.
 
-    :param messages: A list of messages.
-    :type messages: List[Message]
-    :param tools: A list of tool definitions.
-    :type tools: List[ToolDefinition]
+    :param query: A list of messages representing the system message, chat history, and user query.
+    :type query: List[Message]
+    :param response: A list of messages representing the assistant's response, including tool calls and results.
+    :type response: List[Message]
+    :param tool_definitions: A list of tool definitions used in the agent.
+    :type tool_definitions: List[ToolDefinition]
     """
 
-    messages: List[Message]
-    tools: List[ToolDefinition]
+    query: List[Message]
+    response: List[Message]
+    tool_definitions: List[ToolDefinition]
 
     def to_json(self):
         """Converts the result to a JSON string.

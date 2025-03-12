@@ -1,12 +1,12 @@
 import json
 
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import ThreadRun, RunStep, RunStepToolCallDetails, FunctionDefinition
+from azure.ai.projects.models import ThreadRun, RunStep, RunStepToolCallDetails, FunctionDefinition, ListSortOrder
 
 from typing import List
 
 # Constants.
-from ._models import _SYSTEM, _USER, _AGENT, _TOOL, _TOOL_CALLS, _FUNCTION
+from ._models import _USER, _AGENT, _TOOL_CALLS, _FUNCTION
 
 # Message instances.
 from ._models import Message, SystemMessage, UserMessage, AssistantMessage, ToolCall
@@ -29,19 +29,19 @@ class AIAgentConverter:
     def __init__(self, project_client: AIProjectClient):
         self.project_client = project_client
 
-    def list_messages_chronological(self, thread_id: str, run_id: str):
+    def list_messages_chronological(self, thread_id: str):
         """
-        Lists messages in chronological order for a given thread and run.
+        Lists messages in chronological order for a given thread.
 
         :param thread_id: The ID of the thread.
         :type thread_id: str
-        :param run_id: The ID of the run.
-        :type run_id: str
         :return: A list of messages in chronological order.
         :rtype: List[Message]
         """
-        messages = self.project_client.agents.list_messages(thread_id=thread_id, run_id=run_id)
-        return messages.data[::-1]
+        messages = self.project_client.agents.list_messages(
+            thread_id=thread_id, limit=100, order=ListSortOrder.ASCENDING
+        )
+        return messages.data
 
     def convert(self, thread_id: str, run_id: str) -> dict:
         """
@@ -67,11 +67,24 @@ class AIAgentConverter:
             final_messages.append(SystemMessage(content=instructions, createdAt=thread_run.created_at))
 
         # Second, walk through the "user-facing" conversation history and start adding messages.
-        chronological_conversation = self.list_messages_chronological(thread_id, run_id)
+        chronological_conversation = self.list_messages_chronological(thread_id)
 
         # Each visible message in the conversation is a message from the user or the assistant, we collect
         # both the text and timestamp, so we can recreate the chronological order.
+        in_my_current_run = False
         for single_turn in chronological_conversation:
+            # Since this is the conversation of the entire thread and we are interested in a given run, we need to
+            # filter out the messages that came after the run.
+            if single_turn.run_id is not None:
+                if single_turn.run_id == run_id:
+                    in_my_current_run = True
+
+            # Then, if we think that we are currently in our run and we have a message that is not from our run,
+            # it means that we have left our run.
+            if in_my_current_run and single_turn.run_id != run_id:
+                break
+
+            # Build the content of the text message.
             content = {
                 "type": "text",
                 "text": single_turn.content[0].text.value,
@@ -81,6 +94,7 @@ class AIAgentConverter:
             # run_id associated with it.
             if single_turn.role == _USER:
                 final_messages.append(UserMessage(content=[content], createdAt=single_turn.created_at))
+                continue
 
             # In this case, we have an assistant message. Unfortunately, this would only have the user-facing
             # agent's response, without any details on what tool was called, with what parameters, and what
@@ -90,12 +104,13 @@ class AIAgentConverter:
                 final_messages.append(
                     AssistantMessage(content=[content], run_id=single_turn.run_id, createdAt=single_turn.created_at)
                 )
+                continue
 
         # This is the other API request that we need to make to AI service, such that we can get the details about
         # the tool calls and results. Since the list is given in reverse chronological order, we need to reverse it.
         run_steps_chronological: List[RunStep] = self.project_client.agents.list_run_steps(
-            thread_id=thread_id, run_id=run_id
-        ).data[::-1]
+            thread_id=thread_id, run_id=run_id, limit=100, order=ListSortOrder.ASCENDING
+        ).data
 
         # Let's accumulate the function calls in chronological order. Function calls
         tool_calls_chronological: List[ToolCall] = []
@@ -145,64 +160,15 @@ class AIAgentConverter:
                     )
                 )
 
-        final_result = ConvertedResult(messages=final_messages, tools=final_tools)
+        # We need to collect all the messages that are not the current run's response.
+        query: List[Message] = [what for what in final_messages if what.run_id != run_id]
+        responses: List[Message] = [what for what in final_messages if what.run_id == run_id]
+
+        # Collect it into the final result and dump it to JSON.
+        final_result = ConvertedResult(
+            query=query,
+            response=responses,
+            tool_definitions=final_tools,
+        )
 
         return json.loads(final_result.to_json())
-
-    def convert_to_query_response(self, thread_id: str, run_id: str) -> dict:
-        """
-        Converts the agent run to a query-response format.
-
-        :param thread_id: The ID of the thread.
-        :type thread_id: str
-        :param run_id: The ID of the run.
-        :type run_id: str
-        :return: The converted data in dictionary format.
-        :rtype: dict
-        """
-        converted_result = self.convert(thread_id, run_id)
-
-        # Find all the user and system messages.
-        user_messages = [msg for msg in converted_result["messages"] if msg["role"] == _USER or msg["role"] == _SYSTEM]
-        assistant_messages = [
-            msg for msg in converted_result["messages"] if msg["role"] == _AGENT or msg["role"] == _TOOL
-        ]
-
-        # Package it up as json into each and dump.
-        return {
-            "query": json.dumps(user_messages),
-            "response": json.dumps(assistant_messages),
-            "tools": json.dumps(converted_result["tools"]),
-        }
-
-    def convert_to_instructions_history(self, thread_id: str, run_id: str) -> dict:
-        """
-        Converts the agent run to an instructions-history format.
-
-        :param thread_id: The ID of the thread.
-        :type thread_id: str
-        :param run_id: The ID of the run.
-        :type run_id: str
-        :return: The converted data in dictionary format.
-        :rtype: dict
-        """
-        converted_result = self.convert(thread_id, run_id)
-
-        # There is only one system message.
-        system_messages = [msg for msg in converted_result["messages"] if msg["role"] == _SYSTEM]
-
-        # Get all the user messages.
-        user_messages = [msg for msg in converted_result["messages"] if msg["role"] == _USER]
-
-        # Get all the assistant messages.
-        assistant_messages = [
-            msg for msg in converted_result["messages"] if msg["role"] == _AGENT or msg["role"] == _TOOL
-        ]
-
-        # Package it up as json into each and dump.
-        return {
-            "instructions": system_messages,
-            "chat_history": user_messages,
-            "response": assistant_messages,
-            "tool_definitions": converted_result["tools"],
-        }
