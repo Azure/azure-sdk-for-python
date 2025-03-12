@@ -76,7 +76,7 @@ def get_build_info(build_link: str, check_type: CHECK_TYPE) -> str:
     # Make the API request
     response = requests.get(timeline_link, headers=AUTH_HEADERS)
     response_json = json.loads(response.text)
-
+    return response_json
     # Iterate through the timeline records to find the log ID
     for record in response_json['records']:
         if record['id'] == job_id:
