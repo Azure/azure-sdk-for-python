@@ -2,15 +2,12 @@ import os
 import random
 import sys
 
-import aiohttp
-
 from azure.cosmos import documents
 from workload_configs import COSMOS_URI, COSMOS_KEY, PREFERRED_LOCATIONS, USE_MULTIPLE_WRITABLE_LOCATIONS
 
 sys.path.append(r"./")
 
 from azure.cosmos.aio import CosmosClient as AsyncClient
-from azure.core.pipeline.transport import AioHttpTransport
 import asyncio
 
 import time
@@ -19,7 +16,6 @@ from datetime import datetime
 import logging
 
 # Replace with your Cosmos DB details
-os.environ["HTTP_PROXY"] = "http://0.0.0.0:5100"
 
 def get_random_item():
     random_int = random.randint(1, 10000)
@@ -57,31 +53,29 @@ async def perform_query(container):
     items = [item async for item in results]
 
 
-async def run_workload(client_id):
+async def run_workload(client_id, client_logger):
 
     connectionPolicy = documents.ConnectionPolicy()
     connectionPolicy.UseMultipleWriteLocations = USE_MULTIPLE_WRITABLE_LOCATIONS
-    async with aiohttp.ClientSession(trust_env=True) as proxied_aio_http_session:
+    async with AsyncClient(COSMOS_URI, COSMOS_KEY,
+                           enable_diagnostics_logging=True, logger=client_logger,
+                           user_agent=str(client_id) + "-" + datetime.now().strftime(
+                               "%Y%m%d-%H%M%S"), preferred_locations=PREFERRED_LOCATIONS,
+                           connection_policy=connectionPolicy) as client:
+        db = client.get_database_client("SimonDB")
+        cont = db.get_container_client("SimonContainer")
+        time.sleep(1)
 
-        transport = AioHttpTransport(session=proxied_aio_http_session, session_owner=False)
-        async with AsyncClient(COSMOS_URI, COSMOS_KEY, preferred_locations=PREFERRED_LOCATIONS,
-                               enable_diagnostics_logging=True, logger=logger, transport=transport,
-                               user_agent=str(client_id) + "-" + datetime.now().strftime(
-                                   "%Y%m%d-%H%M%S"), connection_policy=connectionPolicy) as client:
-            db = client.get_database_client("SimonDB")
-            cont = db.get_container_client("SimonContainer")
-            time.sleep(1)
-
-            while True:
-                try:
-                    await upsert_item_concurrently(cont, 5)
-                    time.sleep(1)
-                    await read_item_concurrently(cont, 5)
-                    time.sleep(1)
-                    await query_items_concurrently(cont, 2)
-                except Exception as e:
-                    logger.error(e)
-                    raise e
+        while True:
+            try:
+                await upsert_item_concurrently(cont, 5)
+                time.sleep(1)
+                await read_item_concurrently(cont, 5)
+                time.sleep(1)
+                await query_items_concurrently(cont, 2)
+            except Exception as e:
+                client_logger.error(e)
+                raise e
 
 
 if __name__ == "__main__":
@@ -91,4 +85,4 @@ if __name__ == "__main__":
     file_handler = logging.FileHandler("log-" + first_name + "-" + datetime.now().strftime("%Y%m%d-%H%M%S") + '.log')
     logger.setLevel(logging.DEBUG)
     logger.addHandler(file_handler)
-    asyncio.run(run_workload(first_name))
+    asyncio.run(run_workload(first_name, logger))

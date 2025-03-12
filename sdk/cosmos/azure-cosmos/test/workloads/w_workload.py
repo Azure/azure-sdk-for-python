@@ -28,11 +28,11 @@ async def upsert_item_concurrently(container, num_upserts):
     await asyncio.gather(*tasks)
 
 
-async def run_workload(client_id):
+async def run_workload(client_id, client_logger):
     connectionPolicy = documents.ConnectionPolicy()
     connectionPolicy.UseMultipleWriteLocations = USE_MULTIPLE_WRITABLE_LOCATIONS
     async with AsyncClient(COSMOS_URI, COSMOS_KEY,
-                           enable_diagnostics_logging=True, logger=logger,
+                           enable_diagnostics_logging=True, logger=client_logger,
                            user_agent=str(client_id) + "-" + datetime.now().strftime(
                                "%Y%m%d-%H%M%S"), preferred_locations=PREFERRED_LOCATIONS, connection_policy=connectionPolicy) as client:
         db = client.get_database_client("SimonDB")
@@ -42,9 +42,9 @@ async def run_workload(client_id):
         while True:
             try:
                 await upsert_item_concurrently(cont, 5)
-                time.sleep(.2)
+                time.sleep(1)
             except Exception as e:
-                logger.error(e)
+                client_logger.error(e)
                 raise e
 
 
@@ -55,4 +55,4 @@ if __name__ == "__main__":
     file_handler = logging.FileHandler("log-" + first_name + "-" + datetime.now().strftime("%Y%m%d-%H%M%S") + '.log')
     logger.setLevel(logging.DEBUG)
     logger.addHandler(file_handler)
-    asyncio.run(run_workload(first_name))
+    asyncio.run(run_workload(first_name, logger))

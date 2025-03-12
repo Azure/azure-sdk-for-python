@@ -1,73 +1,15 @@
 import os
-import random
 import sys
 
-from azure.cosmos import documents
-from workload_configs import COSMOS_URI, COSMOS_KEY, PREFERRED_LOCATIONS, USE_MULTIPLE_WRITABLE_LOCATIONS
+from r_workload import run_workload
 
 sys.path.append(r"./")
 
-from azure.cosmos.aio import CosmosClient as AsyncClient
 import asyncio
 
-import time
 from datetime import datetime
 
 import logging
-
-# Replace with your Cosmos DB details
-
-def get_random_item():
-    random_int = random.randint(1, 10000)
-    return {"id": "Simon-" + str(random_int), "pk": "pk-" + str(random_int)}
-
-
-async def read_item_concurrently(container, num_upserts):
-    tasks = []
-    for _ in range(num_upserts):
-        item = get_random_item()
-        tasks.append(container.read_item(item["id"], item["pk"]))
-    await asyncio.gather(*tasks)
-
-
-async def query_items_concurrently(container, num_queries):
-    tasks = []
-    for _ in range(num_queries):
-        tasks.append(perform_query(container))
-    await asyncio.gather(*tasks)
-
-
-async def perform_query(container):
-    random_item = get_random_item()
-    results = container.query_items(query="SELECT * FROM c where c.id=@id and c.pk=@pk",
-                                    parameters=[{"name": "@id", "value": random_item["id"]},
-                                                {"name": "@pk", "value": random_item["pk"]}],
-                                    partition_key=random_item["pk"])
-    items = [item async for item in results]
-
-
-async def run_workload(client_id):
-
-    connectionPolicy = documents.ConnectionPolicy()
-    connectionPolicy.UseMultipleWriteLocations = USE_MULTIPLE_WRITABLE_LOCATIONS
-    async with AsyncClient(COSMOS_URI, COSMOS_KEY,
-                           enable_diagnostics_logging=True, logger=logger,
-                           user_agent=str(client_id) + "-" + datetime.now().strftime(
-                               "%Y%m%d-%H%M%S"), preferred_locations=PREFERRED_LOCATIONS,
-                           connection_policy=connectionPolicy) as client:
-        db = client.get_database_client("SimonDB")
-        cont = db.get_container_client("SimonContainer")
-        time.sleep(1)
-
-        while True:
-            try:
-                await read_item_concurrently(cont, 10)
-                time.sleep(.2)
-                await query_items_concurrently(cont, 2)
-            except Exception as e:
-                logger.error(e)
-                raise e
-
 
 if __name__ == "__main__":
     logger = logging.getLogger('azure.cosmos')
@@ -76,4 +18,4 @@ if __name__ == "__main__":
     file_handler = logging.FileHandler("log-" + first_name + "-" + datetime.now().strftime("%Y%m%d-%H%M%S") + '.log')
     logger.setLevel(logging.DEBUG)
     logger.addHandler(file_handler)
-    asyncio.run(run_workload(first_name))
+    asyncio.run(run_workload(first_name, logger))

@@ -2,11 +2,12 @@ import os
 import random
 import sys
 
+from azure.cosmos import documents
 from workload_configs import COSMOS_URI, COSMOS_KEY, PREFERRED_LOCATIONS, USE_MULTIPLE_WRITABLE_LOCATIONS
 
 sys.path.append(r"./")
 
-from azure.cosmos import CosmosClient, documents
+from azure.cosmos.aio import CosmosClient as AsyncClient
 import asyncio
 
 import time
@@ -14,57 +15,57 @@ from datetime import datetime
 
 import logging
 
+# Replace with your Cosmos DB details
 
 def get_random_item():
     random_int = random.randint(1, 10000)
     return {"id": "Simon-" + str(random_int), "pk": "pk-" + str(random_int)}
 
 
-def upsert_item(container, num_upserts):
-    for _ in range(num_upserts):
-        container.upsert_item(get_random_item())
-
-
-def read_item(container, num_upserts):
+async def read_item_concurrently(container, num_upserts):
+    tasks = []
     for _ in range(num_upserts):
         item = get_random_item()
-        container.read_item(item["id"], item["pk"])
+        tasks.append(container.read_item(item["id"], item["pk"]))
+    await asyncio.gather(*tasks)
 
 
-def query_items(container, num_queries):
+async def query_items_concurrently(container, num_queries):
+    tasks = []
     for _ in range(num_queries):
-        perform_query(container)
+        tasks.append(perform_query(container))
+    await asyncio.gather(*tasks)
 
 
-def perform_query(container):
+async def perform_query(container):
     random_item = get_random_item()
     results = container.query_items(query="SELECT * FROM c where c.id=@id and c.pk=@pk",
                                     parameters=[{"name": "@id", "value": random_item["id"]},
                                                 {"name": "@pk", "value": random_item["pk"]}],
                                     partition_key=random_item["pk"])
-    items = [item for item in results]
+    items = [item async for item in results]
 
 
-def run_workload(client_id):
+async def run_workload(client_id, client_logger):
+
     connectionPolicy = documents.ConnectionPolicy()
     connectionPolicy.UseMultipleWriteLocations = USE_MULTIPLE_WRITABLE_LOCATIONS
-    with CosmosClient(COSMOS_URI, COSMOS_KEY,
-                           enable_diagnostics_logging=True, logger=logger,
+    async with AsyncClient(COSMOS_URI, COSMOS_KEY,
+                           enable_diagnostics_logging=True, logger=client_logger,
                            user_agent=str(client_id) + "-" + datetime.now().strftime(
                                "%Y%m%d-%H%M%S"), preferred_locations=PREFERRED_LOCATIONS,
-                      connection_policy=connectionPolicy) as client:
+                           connection_policy=connectionPolicy) as client:
         db = client.get_database_client("SimonDB")
         cont = db.get_container_client("SimonContainer")
         time.sleep(1)
 
         while True:
             try:
-                upsert_item(cont, 5)
-                read_item(cont, 5)
+                await read_item_concurrently(cont, 5)
                 time.sleep(1)
-                query_items(cont, 2)
+                await query_items_concurrently(cont, 2)
             except Exception as e:
-                logger.error(e)
+                client_logger.error(e)
                 raise e
 
 
@@ -75,4 +76,4 @@ if __name__ == "__main__":
     file_handler = logging.FileHandler("log-" + first_name + "-" + datetime.now().strftime("%Y%m%d-%H%M%S") + '.log')
     logger.setLevel(logging.DEBUG)
     logger.addHandler(file_handler)
-    run_workload(first_name)
+    asyncio.run(run_workload(first_name, logger))

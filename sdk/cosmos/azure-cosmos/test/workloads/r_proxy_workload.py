@@ -3,6 +3,7 @@ import random
 import sys
 
 import aiohttp
+from mypyc.lower.int_ops import lower_int_ge
 
 from azure.cosmos import documents
 from workload_configs import USE_MULTIPLE_WRITABLE_LOCATIONS
@@ -51,14 +52,14 @@ async def perform_query(container):
     items = [item async for item in results]
 
 
-async def run_workload(client_id):
+async def run_workload(client_id, client_logger):
     async with aiohttp.ClientSession(trust_env=True) as proxied_aio_http_session:
         connectionPolicy = documents.ConnectionPolicy()
         connectionPolicy.UseMultipleWriteLocations = USE_MULTIPLE_WRITABLE_LOCATIONS
 
         transport = AioHttpTransport(session=proxied_aio_http_session, session_owner=False)
         async with AsyncClient(COSMOS_URI, COSMOS_KEY, preferred_locations=PREFERRED_LOCATIONS,
-                               enable_diagnostics_logging=True, logger=logger, transport=transport,
+                               enable_diagnostics_logging=True, logger=client_logger, transport=transport,
                                user_agent=str(client_id) + "-" + datetime.now().strftime(
                                    "%Y%m%d-%H%M%S"), connection_policy=connectionPolicy) as client:
             db = client.get_database_client("SimonDB")
@@ -67,11 +68,11 @@ async def run_workload(client_id):
 
             while True:
                 try:
-                    await read_item_concurrently(cont, 10)
+                    await read_item_concurrently(cont, 5)
                     time.sleep(1)
                     await query_items_concurrently(cont, 2)
                 except Exception as e:
-                    logger.error(e)
+                    client_logger.error(e)
                     raise e
 
 
@@ -82,4 +83,4 @@ if __name__ == "__main__":
     file_handler = logging.FileHandler("log-" + first_name + "-" + datetime.now().strftime("%Y%m%d-%H%M%S") + '.log')
     logger.setLevel(logging.DEBUG)
     logger.addHandler(file_handler)
-    asyncio.run(run_workload(first_name))
+    asyncio.run(run_workload(first_name, logger))
