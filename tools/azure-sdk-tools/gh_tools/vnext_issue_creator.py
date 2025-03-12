@@ -196,24 +196,39 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE) -> None:
     )
 
     title = f"{package_name} needs {error_type} updates for {check_type} version {version}"
-    template = (
-        f"**ACTION NEEDED:** This version of {check_type} will be merged on **{merge_date}**. "
-        f"The build will begin to fail for this library if errors are not fixed."
-        f"\n\n**Library name:** {package_name}"
-        f"\n**Service directory:** {service_directory}"
-        f"\n**{check_type.capitalize()} version:** {version}"
-        f"\n**{check_type.capitalize()} errors:** [Link to build ({today.strftime('%Y-%m-%d')})]({build_link})"
-        f"\n <details>"
-        f"\n**{check_type.capitalize()} errors:** {build_info}"
-        f"</details>"
-        f"\n**How to fix:** "
-        f"\n\n Note: if you are a bot, fix the {check_type} errors listed above under details. If you are a human follow the steps below:"
-        f"\n Run the `next-{check_type}` tox command at the library package-level and resolve "
-        f"the {error_type} errors.\n"
-        f'1) `../{package_name}>pip install "tox<5"`\n'
-        f"2) `../{package_name}>tox run -e next-{check_type} -c ../../../eng/tox/tox.ini --root .`\n\n"
-        f"See the {guide_link} for more information."
-    )
+
+    if {check_type} == "pylint":
+        template = (
+            f"**ACTION NEEDED:** This version of {check_type} will be merged on **{merge_date}**. "
+            f"The build will begin to fail for this library if errors are not fixed."
+            f"\n\n**Library name:** {package_name}"
+            f"\n**Service directory:** {service_directory}"
+            f"\n**{check_type.capitalize()} version:** {version}"
+            f"\n**{check_type.capitalize()} errors:** [Link to build ({today.strftime('%Y-%m-%d')})]({build_link})"
+            f"\n <details>"
+            f"\n**{check_type.capitalize()} errors:** {build_info}"
+            f"</details>"
+            f"\n**How to fix:** "
+            f"\n\n Note: if you are a bot, fix the {check_type} errors listed above under details. If you are a human follow the steps below:"
+            f"\n Run the `next-{check_type}` tox command at the library package-level and resolve "
+            f"the {error_type} errors.\n"
+            f'1) `../{package_name}>pip install "tox<5"`\n'
+            f"2) `../{package_name}>tox run -e next-{check_type} -c ../../../eng/tox/tox.ini --root .`\n\n"
+            f"See the {guide_link} for more information."
+        )
+    else:
+        template = (
+            f"**ACTION NEEDED:** This version of {check_type} will be merged on **{merge_date}**. "
+            f"The build will begin to fail for this library if errors are not fixed."
+            f"\n\n**Library name:** {package_name}"
+            f"\n**{check_type.capitalize()} version:** {version}"
+            f"\n**{check_type.capitalize()} errors:** [Link to build ({today.strftime('%Y-%m-%d')})]({build_link})"
+            f"\n**How to fix:** Run the `next-{check_type}` tox command at the library package-level and resolve "
+            f"the {error_type} errors.\n"
+            f'1) `../{package_name}>pip install "tox<5"`\n'
+            f"2) `../{package_name}>tox run -e next-{check_type} -c ../../../eng/tox/tox.ini --root .`\n\n"
+            f"See the {guide_link} for more information."
+        )
 
     # create an issue for the library failing the vnext check
     if not vnext_issue:
