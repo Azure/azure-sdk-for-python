@@ -76,11 +76,17 @@ def get_build_info(build_link: str, check_type: CHECK_TYPE) -> str:
     # Make the API request
     response = requests.get(timeline_link, headers=AUTH_HEADERS)
     response_json = json.loads(response.text)
-    return response_json
+    # return response_json
+    response_two = []
+    add = False
     # Iterate through the timeline records to find the log ID
     for record in response_json['records']:
-        if record['id'] == job_id:
-            return record
+        if record['name'] == 'Run Pylint Next':
+            add = True
+        if add:
+            response_two.append(record)
+        # if record['id'] == job_id:
+        #     return record
             # try:
             #     if record['log']:
             #         log_id = record['log']['id']
