@@ -43,7 +43,7 @@ class Message(BaseModel):
 
 
 class SystemMessage(Message):
-    """Represents a system message in an agentic conversation.
+    """Represents a system message in a conversation with agents, assistants, and tools.
 
     :param role: The role of the message sender, which is always 'system'.
     :type role: str
@@ -53,7 +53,7 @@ class SystemMessage(Message):
 
 
 class UserMessage(Message):
-    """Represents a user message in an agentic conversation.
+    """Represents a user message in a conversation with agents, assistants, and tools.
 
     :param role: The role of the message sender, which is always 'user'.
     :type role: str
@@ -63,7 +63,7 @@ class UserMessage(Message):
 
 
 class ToolMessage(Message):
-    """Represents a tool message in an agentic conversation, either a tool call or tool result.
+    """Represents a tool message in a conversation with agents, assistants, and tools.
 
     :param run_id: The ID of the run associated with the message.
     :type run_id: str
