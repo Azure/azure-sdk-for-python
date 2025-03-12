@@ -898,7 +898,7 @@ class RedTeamAgent():
                             azure_ai_project=self.azure_ai_project,
                             evaluation_name=evaluation_name,
                             output_path=output_path if output_path else f"{output_prefix}{converter_name}{RESULTS_EXT}",
-                            _use_pf_client=False, #TODO: Remove this once eval logic for red team agent is moved to red team agent
+                            _use_pf_client=False,
                         )
         return {converter_name: evaluate_outputs}
 
@@ -977,7 +977,7 @@ class RedTeamAgent():
             output_path: Optional[Union[str, os.PathLike]] = None) -> Union[Dict[str, EvaluationResult], Dict[str, str], Dict[str, Union[str,os.PathLike]]]:
         orchestrator = await call_orchestrator(self.chat_target, all_prompts, converter)
         data_path = self._write_pyrit_outputs_to_file(orchestrator, converter)
-        return await self._mock_evaluate(
+        return await self._evaluate(
             target=target,
             evaluation_name=evaluation_name,
             data_only=data_only,
