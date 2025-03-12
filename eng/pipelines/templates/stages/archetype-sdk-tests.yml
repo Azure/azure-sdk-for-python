@@ -103,64 +103,64 @@ extends:
   parameters:
     stages:
     - ${{ each package in coalesce(parameters.Packages, split(parameters.BuildTargetingString, '|')) }}:
-      - ${{ each cloud in parameters.CloudConfig }}:
-        - ${{ if or(contains(parameters.Clouds, cloud.key), and(contains(variables['Build.DefinitionName'], 'tests-weekly'), contains(parameters.SupportedClouds, cloud.key))) }}:
-          - ${{ if not(contains(parameters.UnsupportedClouds, cloud.key)) }}:
-            - stage:
-              displayName: ${{ format('{0} {1} {2}', cloud.key, parameters.JobName, package) }}
-              dependsOn: []
-              jobs:
-                - template: /eng/common/pipelines/templates/jobs/generate-job-matrix.yml
-                  parameters:
-                    SparseCheckoutPaths:
-                      - sdk/${{ parameters.ServiceDirectory }}/**/*.json
-                    JobTemplatePath: /eng/pipelines/templates/jobs/live.tests.yml
-                    OsVmImage: azsdk-pool-mms-ubuntu-2004-1espt
-                    Pool: azsdk-pool-mms-ubuntu-2004-general
-                    AdditionalParameters:
-                      ServiceDirectory: ${{ parameters.ServiceDirectory }}
-                      TestResourceDirectories: ${{ parameters.TestResourceDirectories }}
-                      PreSteps:
-                        - ${{ parameters.PlatformPreSteps }}
-                        - ${{ parameters.PreSteps }}
-                      PostSteps:
-                        - ${{ parameters.PlatformPostSteps }}
-                        - ${{ parameters.PostSteps }}
-                      EnvVars: ${{ parameters.EnvVars }}
-                      MaxParallel: ${{ parameters.MaxParallel }}
-                      BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
-                      AfterTestSteps: ${{ parameters.AfterTestSteps }}
-                      AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
-                      BuildTargetingString: ${{ package }}
-                      TestMarkArgument: ${{ parameters.TestMarkArgument }}
-                      InjectedPackages: ${{ parameters.InjectedPackages }}
-                      BuildDocs: ${{ parameters.BuildDocs }}
-                      TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
-                      TestProxy: ${{ parameters.TestProxy }}
-                      ToxTestEnv: ${{ parameters.ToxTestEnv }}
-                      UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
-                      PersistOidcToken: ${{ parameters.PersistOidcToken }}
-                    MatrixConfigs:
-                      # Enumerate platforms and additional platforms based on supported clouds (sparse platform<-->cloud matrix).
-                      - ${{ each config in parameters.MatrixConfigs }}:
-                          - ${{ config }}
-                      - ${{ each config in parameters.AdditionalMatrixConfigs }}:
-                          - ${{ config }}
-                    MatrixFilters:
-                      - ${{ each cloudFilter in cloud.value.MatrixFilters }}:
-                          - ${{ cloudFilter }}
-                      - ${{ parameters.MatrixFilters }}
-                    MatrixReplace:
-                      - ${{ each cloudReplace in cloud.value.MatrixReplace }}:
-                          - ${{ cloudReplace }}
-                      - ${{ parameters.MatrixReplace }}
-                    CloudConfig:
-                      SubscriptionConfiguration: ${{ cloud.value.SubscriptionConfiguration }}
-                      SubscriptionConfigurations: ${{ cloud.value.SubscriptionConfigurations }}
-                      Location: ${{ coalesce(cloud.value.Location, parameters.Location) }}
-                      Cloud: ${{ cloud.key }}
-                      ServiceConnection: ${{ coalesce(cloud.value.ServiceConnection, lower(format('azure-sdk-tests-{0}', cloud.key))) }}
-                      SubscriptionConfigurationFilePaths: ${{ cloud.value.SubscriptionConfigurationFilePaths }}
+      # - ${{ each cloud in parameters.CloudConfig }}:
+      #   - ${{ if or(contains(parameters.Clouds, cloud.key), and(contains(variables['Build.DefinitionName'], 'tests-weekly'), contains(parameters.SupportedClouds, cloud.key))) }}:
+      #     - ${{ if not(contains(parameters.UnsupportedClouds, cloud.key)) }}:
+      #       - stage:
+      #         displayName: ${{ format('{0} {1} {2}', cloud.key, parameters.JobName, package) }}
+      #         dependsOn: []
+      #         jobs:
+      #           - template: /eng/common/pipelines/templates/jobs/generate-job-matrix.yml
+      #             parameters:
+      #               SparseCheckoutPaths:
+      #                 - sdk/${{ parameters.ServiceDirectory }}/**/*.json
+      #               JobTemplatePath: /eng/pipelines/templates/jobs/live.tests.yml
+      #               OsVmImage: azsdk-pool-mms-ubuntu-2004-1espt
+      #               Pool: azsdk-pool-mms-ubuntu-2004-general
+      #               AdditionalParameters:
+      #                 ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      #                 TestResourceDirectories: ${{ parameters.TestResourceDirectories }}
+      #                 PreSteps:
+      #                   - ${{ parameters.PlatformPreSteps }}
+      #                   - ${{ parameters.PreSteps }}
+      #                 PostSteps:
+      #                   - ${{ parameters.PlatformPostSteps }}
+      #                   - ${{ parameters.PostSteps }}
+      #                 EnvVars: ${{ parameters.EnvVars }}
+      #                 MaxParallel: ${{ parameters.MaxParallel }}
+      #                 BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
+      #                 AfterTestSteps: ${{ parameters.AfterTestSteps }}
+      #                 AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
+      #                 BuildTargetingString: ${{ package }}
+      #                 TestMarkArgument: ${{ parameters.TestMarkArgument }}
+      #                 InjectedPackages: ${{ parameters.InjectedPackages }}
+      #                 BuildDocs: ${{ parameters.BuildDocs }}
+      #                 TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
+      #                 TestProxy: ${{ parameters.TestProxy }}
+      #                 ToxTestEnv: ${{ parameters.ToxTestEnv }}
+      #                 UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
+      #                 PersistOidcToken: ${{ parameters.PersistOidcToken }}
+      #               MatrixConfigs:
+      #                 # Enumerate platforms and additional platforms based on supported clouds (sparse platform<-->cloud matrix).
+      #                 - ${{ each config in parameters.MatrixConfigs }}:
+      #                     - ${{ config }}
+      #                 - ${{ each config in parameters.AdditionalMatrixConfigs }}:
+      #                     - ${{ config }}
+      #               MatrixFilters:
+      #                 - ${{ each cloudFilter in cloud.value.MatrixFilters }}:
+      #                     - ${{ cloudFilter }}
+      #                 - ${{ parameters.MatrixFilters }}
+      #               MatrixReplace:
+      #                 - ${{ each cloudReplace in cloud.value.MatrixReplace }}:
+      #                     - ${{ cloudReplace }}
+      #                 - ${{ parameters.MatrixReplace }}
+      #               CloudConfig:
+      #                 SubscriptionConfiguration: ${{ cloud.value.SubscriptionConfiguration }}
+      #                 SubscriptionConfigurations: ${{ cloud.value.SubscriptionConfigurations }}
+      #                 Location: ${{ coalesce(cloud.value.Location, parameters.Location) }}
+      #                 Cloud: ${{ cloud.key }}
+      #                 ServiceConnection: ${{ coalesce(cloud.value.ServiceConnection, lower(format('azure-sdk-tests-{0}', cloud.key))) }}
+      #                 SubscriptionConfigurationFilePaths: ${{ cloud.value.SubscriptionConfigurationFilePaths }}
 
       - template: /eng/pipelines/templates/stages/python-analyze-weekly.yml
         parameters:
