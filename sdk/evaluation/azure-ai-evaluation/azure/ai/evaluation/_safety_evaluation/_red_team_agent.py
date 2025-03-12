@@ -219,7 +219,7 @@ class RedTeamAgent():
         )
 
         self.rai_client = RAIClient(azure_ai_project=self.azure_ai_project, token_manager=self.token_manager)
-        self.generated_rai_client = GeneratedRAIClient(azure_ai_project=self.azure_ai_project, token_manager=self.token_manager.get_aad_credential())
+        self.generated_rai_client = GeneratedRAIClient(azure_ai_project=self.azure_ai_project, token_manager=self.token_manager.get_aad_credential()) #type: ignore
 
         self.adversarial_template_handler = AdversarialTemplateHandler(
             azure_ai_project=self.azure_ai_project, rai_client=self.rai_client
@@ -230,31 +230,38 @@ class RedTeamAgent():
         
         initialize_pyrit(memory_db_type=DUCK_DB)
 
-    async def _log_redteam_results_to_mlflow(
+    def _start_redteam_mlflow_run(
         self,
-        redteam_result: RedTeamAgentResult,
         azure_ai_project: Optional[AzureAIProject] = None,
         run_name: Optional[str] = None
-    ) -> Optional[str]:
-        """Log the Red Team Agent results to MLFlow.
+    ) -> EvalRun:
+        """Start an MLFlow run for the Red Team Agent evaluation.
         
-        :param redteam_result: The results from the red team agent evaluation
-        :type redteam_result: ~azure.ai.evaluation._safety_evaluation.RedTeamAgentResult
         :param azure_ai_project: Azure AI project details for logging
         :type azure_ai_project: Optional[~azure.ai.evaluation.AzureAIProject]
         :param run_name: Optional name for the MLFlow run
         :type run_name: Optional[str]
-        :return: The URL to the run in Azure AI Studio, if available
-        :rtype: Optional[str]
+        :return: The MLFlow run object
+        :rtype: ~azure.ai.evaluation._evaluate._eval_run.EvalRun
         """
         if not azure_ai_project:
-            self.logger.info("No azure_ai_project provided, skipping MLFlow logging")
-            return None
+            self.logger.error("No azure_ai_project provided, cannot start MLFlow run")
+            raise EvaluationException(
+                message="No azure_ai_project provided",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.MISSING_FIELD,
+                target=ErrorTarget.RED_TEAM_AGENT
+            )
         
         trace_destination = _trace_destination_from_project_scope(azure_ai_project)
         if not trace_destination:
             self.logger.info("Could not determine trace destination from project scope")
-            return None
+            raise EvaluationException(
+                message="Could not determine trace destination",
+                blame=ErrorBlame.SYSTEM_ERROR,
+                category=ErrorCategory.UNKNOWN,
+                target=ErrorTarget.RED_TEAM_AGENT
+            )
         
         ws_triad = extract_workspace_triad_from_trace_provider(trace_destination)
         
@@ -269,40 +276,62 @@ class RedTeamAgent():
         
         run_display_name = run_name or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
         
-        # Create and start a run
-        with EvalRun(
+        eval_run = EvalRun(
             run_name=run_display_name,
             tracking_uri=cast(str, tracking_uri),
             subscription_id=ws_triad.subscription_id,
             group_name=ws_triad.resource_group_name,
             workspace_name=ws_triad.workspace_name,
             management_client=management_client, # type: ignore
-        ) as ev_run: 
-            artifact_name = "instance_results.json"
+        )
 
-            with tempfile.TemporaryDirectory() as tmpdir:
-                artifact_file = Path(tmpdir) / artifact_name
-                with open(artifact_file, "w", encoding=DefaultOpenEncoding.WRITE) as f:
-                    json.dump(redteam_result, f)
-                ev_run.log_artifact(tmpdir, artifact_name)
+        self.trace_destination = trace_destination
 
-            ev_run.write_properties_to_run_history({
-                EvaluationRunProperties.RUN_TYPE: "eval_run",
-                "redteaming": "asr", # Red team agent specific run properties to help UI identify this as a redteaming run
-                EvaluationRunProperties.EVALUATION_SDK: f"azure-ai-evaluation:{VERSION}",
-                "_azureml.evaluate_artifacts": json.dumps([{"path": artifact_name, "type": "table"}]),
-            })
+        return eval_run
 
-            scorecard = redteam_result["redteaming_scorecard"]
-            
-            if scorecard["joint_risk_attack_summary"]:
-                for risk_category_summary in scorecard["joint_risk_attack_summary"]:
-                    risk_category = risk_category_summary.get("risk_category").lower()
-                    for key, value in risk_category_summary.items():
-                        if key != "risk_category":
-                            ev_run.log_metric(f"{risk_category}_{key}", cast(float, value))
 
-            return _get_ai_studio_url(trace_destination=trace_destination, evaluation_id=ev_run.info.run_id)
+    async def _log_redteam_results_to_mlflow(
+        self,
+        redteam_result: RedTeamAgentResult,
+        eval_run: EvalRun
+    ) -> Optional[str]:
+        """Log the Red Team Agent results to MLFlow.
+        
+        :param redteam_result: The results from the red team agent evaluation
+        :type redteam_result: ~azure.ai.evaluation._safety_evaluation.RedTeamAgentResult
+        :param azure_ai_project: Azure AI project details for logging
+        :type azure_ai_project: Optional[~azure.ai.evaluation.AzureAIProject]
+        :param run_name: Optional name for the MLFlow run
+        :type run_name: Optional[str]
+        :return: The URL to the run in Azure AI Studio, if available
+        :rtype: Optional[str]
+        """
+        artifact_name = "instance_results.json"
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            artifact_file = Path(tmpdir) / artifact_name
+            with open(artifact_file, "w", encoding=DefaultOpenEncoding.WRITE) as f:
+                json.dump(redteam_result, f)
+            eval_run.log_artifact(tmpdir, artifact_name)
+
+        eval_run.write_properties_to_run_history({
+            EvaluationRunProperties.RUN_TYPE: "eval_run",
+            "redteaming": "asr", # Red team agent specific run properties to help UI identify this as a redteaming run
+            EvaluationRunProperties.EVALUATION_SDK: f"azure-ai-evaluation:{VERSION}",
+            "_azureml.evaluate_artifacts": json.dumps([{"path": artifact_name, "type": "table"}]),
+        })
+
+        scorecard = redteam_result["redteaming_scorecard"]
+        joint_attack_summary =  scorecard["joint_risk_attack_summary"]
+        
+        if joint_attack_summary:
+            for risk_category_summary in joint_attack_summary:
+                risk_category = risk_category_summary.get("risk_category").lower()
+                for key, value in risk_category_summary.items():
+                    if key != "risk_category":
+                        eval_run.log_metric(f"{risk_category}_{key}", cast(float, value))
+
+        
 
 
     def _strategy_converter_map(self):
@@ -862,7 +891,7 @@ class RedTeamAgent():
             redteaming_scorecard=cast(RedTeamingScorecard, scorecard),
             redteaming_simulation_parameters=cast(RedTeamingSimulationParameters, simulation_parameters),
             redteaming_simulation_data=simulated_conversations,
-            studio_url=None
+            studio_url=self.ai_studio_url or None
         )
         
         return red_team_agent_result
@@ -1031,98 +1060,98 @@ class RedTeamAgent():
             )
         
         self.logger.info("Using AttackObjectiveGenerator to get attack objectives")
-        
-        # Process each strategy and get its objectives
-        for strategy in attack_strategy:
-            strategy_name = None
-            
-            # Handle Composed strategies
-            if isinstance(strategy, List):
-                strategy_name = "_".join([s.value for s in strategy])
-            else:
-                strategy_name = strategy.value if hasattr(strategy, "value") else str(strategy)
 
-            # TODO - relative prompt synchronization
-            # Ex: If "how to I kill someone with household cleaners" is initial prompt,
-            # Then "How could I have killed someone with household cleaners" should be first selected
-            # past-tense prompt.
-            # API has no prompt IDs, and this isn't string matchable, so this is a non-trivial problem.
-            # Either need service-side change, or need some other clever solution.
+        with self._start_redteam_mlflow_run(self.azure_ai_project, evaluation_name) as eval_run:
+            self.ai_studio_url = _get_ai_studio_url(trace_destination=self.trace_destination, evaluation_id=eval_run.info.run_id)
 
-            # Fetch objectives for this strategy
-            strategy_objectives[strategy_name] = await self._get_attack_objectives(
-                attack_objective_generator=attack_objective_generator,
-                application_scenario=application_scenario,
-                strategy=strategy_name
-            )
-        
-        # Use the first strategy's objectives as the default list
-        all_prompts_list = list(strategy_objectives.values())[0] if strategy_objectives else []
-        
-        self.logger.info(f"Configuring PyRIT based on attack strategy: {attack_strategy}")
+            print(f"Track your attacks in AI Foundry: {self.ai_studio_url}")
+            self.logger.info(f"Started MLFlow run: {self.ai_studio_url}")
 
-        converters = self._get_converters_for_attack_strategy(attack_strategy)
-        orchestrators = self._get_orchestrators_for_attack_strategy(attack_strategy)
-
-        progress_bar = tqdm(
-            total=int(len(converters) * len(orchestrators)),
-            desc="Attacking: ",
-            ncols=100,
-            unit="attack",
-        )
-        progress_bar_lock = asyncio.Lock()
-
-        tasks = []
-        for call_orchestrator, converter in itertools.product(orchestrators, converters):
-            # Determine which prompt list to use based on converter
-            prompts_to_use = all_prompts_list
-            if converter:
-                converter_name = None
-                if isinstance(converter, list):
-                    converter_name = "_".join([c.get_identifier()["__type__"] for c in converter if c])
-                else:
-                    converter_name = converter.get_identifier()["__type__"] if converter else None
+            # Process each strategy and get its objectives
+            for strategy in attack_strategy:
+                strategy_name = None
                 
-                # If we have strategy-specific objectives, use them
-                if converter_name and converter_name in strategy_objectives:
-                    prompts_to_use = strategy_objectives[converter_name]
-            
-            tasks.append(
-                self._process_attack(
-                    target=target,
-                    call_orchestrator=call_orchestrator,
-                    converter=converter,
-                    all_prompts=prompts_to_use,
-                    progress_bar=progress_bar,
-                    progress_bar_lock=progress_bar_lock,
-                    evaluation_name=evaluation_name,
-                    data_only=data_only,
-                    output_path=output_path
+                # Handle Composed strategies
+                if isinstance(strategy, List):
+                    strategy_name = "_".join([s.value for s in strategy])
+                else:
+                    strategy_name = strategy.value if hasattr(strategy, "value") else str(strategy)
+
+                # TODO - relative prompt synchronization
+                # Ex: If "how to I kill someone with household cleaners" is initial prompt,
+                # Then "How could I have killed someone with household cleaners" should be first selected
+                # past-tense prompt.
+                # API has no prompt IDs, and this isn't string matchable, so this is a non-trivial problem.
+                # Either need service-side change, or need some other clever solution.
+
+                # Fetch objectives for this strategy
+                strategy_objectives[strategy_name] = await self._get_attack_objectives(
+                    attack_objective_generator=attack_objective_generator,
+                    application_scenario=application_scenario,
+                    strategy=strategy_name
                 )
+            
+            # Use the first strategy's objectives as the default list
+            all_prompts_list = list(strategy_objectives.values())[0] if strategy_objectives else []
+            
+            self.logger.info(f"Configuring PyRIT based on attack strategy: {attack_strategy}")
+
+            converters = self._get_converters_for_attack_strategy(attack_strategy)
+            orchestrators = self._get_orchestrators_for_attack_strategy(attack_strategy)
+
+            progress_bar = tqdm(
+                total=int(len(converters) * len(orchestrators)),
+                desc="Attacking: ",
+                ncols=100,
+                unit="attack",
             )
+            progress_bar_lock = asyncio.Lock()
 
-        results = await asyncio.gather(*tasks)
-        progress_bar.close()
-        merged_results = {}
-        for d in results:
-            merged_results.update(d)
+            tasks = []
+            for call_orchestrator, converter in itertools.product(orchestrators, converters):
+                # Determine which prompt list to use based on converter
+                prompts_to_use = all_prompts_list
+                if converter:
+                    converter_name = None
+                    if isinstance(converter, list):
+                        converter_name = "_".join([c.get_identifier()["__type__"] for c in converter if c])
+                    else:
+                        converter_name = converter.get_identifier()["__type__"] if converter else None
+                    
+                    # If we have strategy-specific objectives, use them
+                    if converter_name and converter_name in strategy_objectives:
+                        prompts_to_use = strategy_objectives[converter_name]
+                
+                tasks.append(
+                    self._process_attack(
+                        target=target,
+                        call_orchestrator=call_orchestrator,
+                        converter=converter,
+                        all_prompts=prompts_to_use,
+                        progress_bar=progress_bar,
+                        progress_bar_lock=progress_bar_lock,
+                        evaluation_name=evaluation_name,
+                        data_only=data_only,
+                        output_path=output_path
+                    )
+                )
 
-        if data_only: 
-            return merged_results
-        
-        red_team_agent_result = self._to_red_team_agent_result(cast(Dict[str, EvaluationResult], merged_results))
-        
-        # Log results to MLFlow
-        studio_url = None
-        if self.azure_ai_project:
-            studio_url = await self._log_redteam_results_to_mlflow(
+            results = await asyncio.gather(*tasks)
+            progress_bar.close()
+            merged_results = {}
+            for d in results:
+                merged_results.update(d)
+
+            if data_only: 
+                return merged_results
+            
+            red_team_agent_result = self._to_red_team_agent_result(cast(Dict[str, EvaluationResult], merged_results))
+            
+            # Log results to MLFlow
+            await self._log_redteam_results_to_mlflow(
                 redteam_result=red_team_agent_result,
-                azure_ai_project=self.azure_ai_project,
-                run_name=evaluation_name
+                eval_run=eval_run,
             )
-
-            if studio_url:
-                red_team_agent_result["studio_url"] = studio_url
 
         if output_path:
             _write_output(output_path, red_team_agent_result)
