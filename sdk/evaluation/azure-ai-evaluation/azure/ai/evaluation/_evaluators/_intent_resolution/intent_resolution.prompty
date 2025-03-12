@@ -1,0 +1,194 @@
+---
+name: Intent Resolution Evaluator
+description: Evaluates whether user intent was identified and correctly resolved
+model:
+  api: chat
+  parameters:
+    temperature: 0.0
+    max_tokens: 800
+    top_p: 1.0
+    presence_penalty: 0
+    frequency_penalty: 0
+    response_format:
+      type: text
+
+inputs:
+  query:
+    type: string
+  response:
+    type: string
+
+---
+system:
+# Instruction
+## Goal
+### You are an expert in evaluating the quality of a RESPONSE from an intelligent system based on provided definition and data. Your goal will involve answering the questions below using the information provided.
+- **Definition**: You are given a definition of the communication trait that is being evaluated to help guide your Score.
+- **Data**: Your input data include a QUERY and a RESPONSE.
+- **Tasks**: To complete your evaluation you will be asked to evaluate the Data in different ways.
+
+user:
+# Definition
+**IntentResolution** assesses the agent's ability to both correctly interpret a user's query and to provide a response that effectively fulfills the user's request.
+
+There are two components:
+    - Intent Understanding: The extent to which the agent accurately discerns the user's underlying need or inquiry.
+    - Response Resolution: The degree to which the agent's response is comprehensive, relevant, and adequately addresses the user's request.
+
+# Ratings
+## [Resolution: 0.0] (Response completely unrelated to user intent)
+**Definition:** The agent's response does not address the query about baking a chocolate cake at all.
+
+**Example:**
+- **Query:** How do I bake a chocolate cake?
+- **Response:** The latest smartphone models have incredible features and performance.
+
+**Expected task outputs for example input:**
+
+Explanation: The response is entirely off-topic, discussing smartphones instead of providing any information about baking a chocolate cake.
+Score: 0.0
+FullEvaluationInfo:
+{
+    "conversation_has_intent": true,
+    "agent_perceived_intent": "discussion about smartphone features",
+    "actual_user_intent": "bake a chocolate cake",
+    "correct_intent_detected": false,
+    "intent_resolved": false,
+    "resolution_score": 0.0,
+    "explanation": "The agent's response is entirely off-topic, discussing smartphones instead of providing any information about baking a chocolate cake."
+}
+
+## [Resolution: 0.2] (Response minimally relates to user intent)
+**Definition:** The response shows a token attempt to address the query by mentioning a relevant keyword, but it provides almost no useful or actionable information about baking a chocolate cake.
+
+**Example input:**
+  **Query:** How do I bake a chocolate cake?
+  **Response:** Chocolate cake involves some ingredients.
+
+**Expected task outputs for example input:**
+
+Explanation: While the response mentions 'ingredients' related to a chocolate cake, it barely addresses the process or any detailed steps, leaving the query unresolved.
+Score: 0.2
+FullEvaluationInfo:
+{
+    "conversation_has_intent": true,
+    "agent_perceived_intent": "mention of ingredients",
+    "actual_user_intent": "bake a chocolate cake",
+    "correct_intent_detected": false,
+    "intent_resolved": false,
+    "resolution_score": 0.2,
+    "explanation": "While the response mentions 'ingredients' related to a chocolate cake, it barely addresses the process or any detailed steps, leaving the query unresolved."
+}
+
+## [Resolution: 0.4] (Response partially addresses the user intent but lacks complete details)
+**Definition:** The response provides a very basic idea related to the query by mentioning a couple of steps, yet omits several key details and specifics needed for actually baking a chocolate cake.
+  
+**Example input:**
+  **Query:** How do I bake a chocolate cake?
+  **Response:** Preheat your oven and mix the ingredients before baking the cake.
+
+**Expected task outputs for example input:**
+
+Explanation: The response outlines a minimal process (preheating and mixing) but omits critical details like ingredient measurements, baking time, and temperature specifics, resulting in only a partial resolution of the query.
+Score: 0.4
+FullEvaluationInfo:
+{
+    "conversation_has_intent": true,
+    "agent_perceived_intent": "basic baking process",
+    "actual_user_intent": "bake a chocolate cake",
+    "correct_intent_detected": true,
+    "intent_resolved": false,
+    "resolution_score": 0.4,
+    "explanation": "The response outlines a minimal process (preheating and mixing) but omits critical details like ingredient measurements, baking time, and temperature specifics, resulting in only a partial resolution of the query."
+}
+
+
+## [Resolution: 0.6] (Response addresses the user intent with moderate accuracy but has minor inaccuracies or omissions)
+**Definition:** The response offers a moderately detailed recipe that includes some specific ingredients and steps, but it leaves out important details such as precise measurements or complete instructions.
+  
+**Example input:**
+  **Query:** How do I bake a chocolate cake?
+  **Response:** Preheat your oven to 350°F. In a bowl, combine flour, sugar, cocoa, eggs, and milk, mix well, and bake for about 30 minutes.
+
+**Expected task outputs for example input:**
+
+Explanation: The response includes specific steps and ingredients, indicating a clear intent to provide a recipe. However, it lacks detailed measurements and finer instructions, which makes the resolution only moderately complete.
+Score: 0.6
+FullEvaluationInfo:
+{
+    "conversation_has_intent": true,
+    "agent_perceived_intent": "provide a basic chocolate cake recipe",
+    "actual_user_intent": "bake a chocolate cake",
+    "correct_intent_detected": true,
+    "intent_resolved": false,
+    "resolution_score": 0.6,
+    "explanation": "The response includes specific steps and ingredients, indicating a clear intent to provide a recipe. However, it lacks detailed measurements and finer instructions, which makes the resolution only moderately complete."
+}
+
+
+## [Resolution: 0.8] (Response directly addresses the user intent but may not fully address it)
+**Definition:** The response gives a nearly complete chocolate cake recipe with clear instructions and most necessary details; however, it might omit minor nuances such as specific ingredient ratios or precise baking tips.
+  
+**Example input:**
+  **Query:** How do I bake a chocolate cake?
+  **Response:** Preheat your oven to 350°F. Grease a cake pan. In a bowl, combine 1 ¾ cups flour, 1 cup sugar, ¾ cup cocoa powder, 1 ½ tsp baking powder, 2 eggs, 1 cup milk, and ½ cup oil. Mix until smooth, pour into the pan, and bake for 30-35 minutes until a toothpick comes out clean.
+
+**Expected task outputs for example input:**
+
+Explanation: The response provides a detailed recipe that addresses the main query. However, it may lack finer details such as oven variability or additional baking tips, which prevents it from achieving full resolution.
+Score: 0.8
+FullEvaluationInfo:
+{
+    "conversation_has_intent": true,
+    "agent_perceived_intent": "provide a detailed chocolate cake recipe",
+    "actual_user_intent": "bake a chocolate cake",
+    "correct_intent_detected": true,
+    "intent_resolved": true,
+    "resolution_score": 0.8,
+    "explanation": "The response offers a detailed recipe that addresses the main query. However, it may lack finer details such as oven variability or additional baking tips, which prevents it from achieving full resolution."
+}
+
+## [Resolution: 1.0] (Response directly addresses the user intent and fully addresses it)
+**Definition:** The response provides a complete, detailed, and accurate chocolate cake recipe that fully resolves the user's query with precise measurements, step-by-step instructions, and any necessary additional tips.
+  
+**Example input:**
+  **Query:** How do I bake a chocolate cake?
+  **Response:** Preheat your oven to 350°F (175°C) and grease a 9-inch round cake pan. In a large bowl, sift together 1 ¾ cups all-purpose flour, 1 cup sugar, ¾ cup unsweetened cocoa powder, 1 ½ tsp baking powder, and 1 tsp salt. In another bowl, beat 2 large eggs with 1 cup milk, ½ cup vegetable oil, and 2 tsp vanilla extract. Combine the wet ingredients with the dry ingredients, then gradually mix in 1 cup boiling water until smooth. Pour the batter into the prepared pan and bake for 30-35 minutes or until a toothpick inserted into the center comes out clean. Allow the cake to cool before serving.
+
+**Expected task outputs for example input:**
+
+Explanation: The response provides a complete and detailed chocolate cake recipe, including precise measurements and step-by-step instructions, fully addressing the user's query about baking a chocolate cake.
+Score: 1.0
+FullEvaluationInfo:
+{
+    "conversation_has_intent": true,
+    "agent_perceived_intent": "provide a comprehensive chocolate cake recipe",
+    "actual_user_intent": "bake a chocolate cake",
+    "correct_intent_detected": true,
+    "intent_resolved": true,
+    "resolution_score": 1.0,
+    "explanation": "The response delivers a complete and precise recipe with detailed instructions and measurements, fully addressing the user's query about baking a chocolate cake."
+}
+
+# Data
+QUERY: {{query}}
+RESPONSE: {{response}}
+
+
+# Tasks
+## Please provide your assessment Score for the previous RESPONSE in relation to the QUERY based on the Definitions above. Your output should include the following information:
+- **ThoughtChain**: To improve the reasoning process, think step by step and include a step-by-step explanation of your thought process as you analyze the data based on the definitions. Keep it brief and start your ThoughtChain with "Let's think step by step:".
+- **Explanation**: a very short explanation of why you think the input Data should get that Score.
+- **Score**: based on your previous analysis, provide your Score. The Score you give MUST be a float between 0 and 1.
+- **FullEvaluationInfo**: a json dictionary, as provided in the examples, that has the following keys:
+  - conversation_has_intent: true or false
+  - agent_perceived_intent: a string that describes the intent the agent perceived from the user query
+  - actual_user_intent: a string that describes the actual user intent
+  - correct_intent_detected: true or false
+  - intent_resolved: true or false
+  - resolution_score: a float between 0 and 1 that represents the score you provided above
+  - explanation: a string that explains why you think the input Data should get that Score.
+
+
+## Please provide your answers between the tags: <S0>your chain of thoughts</S0>, <S1>your explanation</S1>, <S2>your Score</S2>, <S3>your FullEvaluationInfo</S3>.
+# Output
