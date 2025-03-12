@@ -10,8 +10,8 @@
 
 ### Bugs Fixed
 
-- Fixed a bug where service errors were incorrectly required and expected to have info/description fields.
-- Fixed a bug in where the type in azure.servicebus.management.AuthorizationRule was not being correctly passed to the request.
+- Fixed a bug where service errors were incorrectly expected to have info/description fields set in all cases.
+- Fixed a bug where the type in azure.servicebus.management.AuthorizationRule was not being correctly passed to the request.
 
 ## 7.14.0 (2025-02-13)
 
