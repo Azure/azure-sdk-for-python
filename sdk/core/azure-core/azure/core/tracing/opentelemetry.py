@@ -135,7 +135,7 @@ class OpenTelemetryTracer:
         :keyword end_on_exit: Whether to end the span when exiting the context manager. Defaults to True.
         :paramtype end_on_exit: bool
         :return: The span that was started
-        :rtype: ~opentelemetry.trace.Span
+        :rtype: Iterator[~opentelemetry.trace.Span]
         """
         span = self.start_span(name, kind=kind, attributes=attributes, links=links)
         with trace.use_span(  # pylint: disable=not-context-manager
@@ -153,7 +153,7 @@ class OpenTelemetryTracer:
         :keyword end_on_exit: Whether to end the span when exiting the context manager. Defaults to True.
         :paramtype end_on_exit: bool
         :return: The span that was activated.
-        :rtype: ~opentelemetry.trace.Span
+        :rtype: Iterator[~opentelemetry.trace.Span]
         """
         with trace.use_span(  # pylint: disable=not-context-manager
             span, record_exception=False, end_on_exit=end_on_exit
@@ -209,7 +209,7 @@ class OpenTelemetryTracer:
 
     @classmethod
     def get_trace_context(cls) -> Dict[str, str]:
-        """Returns the Trace Context header values associated with the span.
+        """Returns the Trace Context header values associated with the current span.
 
         These are generally the W3C Trace Context headers (i.e. "traceparent" and "tracestate").
 
