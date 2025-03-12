@@ -743,8 +743,7 @@ class RedTeamAgent():
         complexity_levels = []
         simulated_conversations = []
         
-        for full_strategy, eval_result in results.items():
-            converter_name = full_strategy.split("_")[1]
+        for converter_name, eval_result in results.items():
             converters.append(converter_name)
             complexity_level = get_complexity_for_converter.get(converter_name, "easy")
             complexity_levels.append(complexity_level)
@@ -898,16 +897,13 @@ class RedTeamAgent():
     
     async def _evaluate(
         self,
-        target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
         data_path: Union[str, os.PathLike],
         evaluation_name: Optional[str] = None,
         data_only: bool = False,
         output_path: Optional[Union[str, os.PathLike]] = None
     ) -> Union[Dict[str, EvaluationResult], Dict[str, str], Dict[str, Union[str, os.PathLike]]]:
         """Call the evaluate method if not data_only.
-        
-        :param target: The target to evaluate.
-        :type target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration]
+
         :param evaluation_name: Optional name for the evaluation.
         :type evaluation_name: Optional[str]
         :param data_only: Whether to return only data paths instead of evaluation results.
@@ -919,7 +915,7 @@ class RedTeamAgent():
         :return: Evaluation results or data paths.
         :rtype: Union[Dict[str, EvaluationResult], Dict[str, str], Dict[str, Union[str, os.PathLike]]]
         """
-        self.logger.info(f"Mock evaluate called with data_path={data_path}, output_path={output_path}")
+        self.logger.info(f"Evaluate called with data_path={data_path}, output_path={output_path}")
         
         # For data_only=True, just return paths
         if data_only:
@@ -936,13 +932,11 @@ class RedTeamAgent():
         else: output_prefix = ""
 
         evaluate_outputs = evaluate(
-                            data=data_path,
-                            evaluators=evaluators_dict,
-                            azure_ai_project=self.azure_ai_project,
-                            evaluation_name=evaluation_name,
-                            output_path=output_path if output_path else f"{output_prefix}{converter_name}{RESULTS_EXT}",
-                            _use_pf_client=False,
-                        )
+            data=data_path,
+            evaluators=evaluators_dict,
+            output_path=output_path if output_path else f"{output_prefix}{converter_name}{RESULTS_EXT}",
+        )
+        
         return {converter_name: evaluate_outputs}
 
     async def _mock_evaluate(
@@ -1004,10 +998,8 @@ class RedTeamAgent():
                 }
             ]
         }
-        
-        # Return results with key as base filename without extension
-        base_name = os.path.basename(data_path).replace(DATA_EXT, "")
-        return {base_name: cast(EvaluationResult, mock_result)}
+
+        return {converter_name: cast(EvaluationResult, mock_result)}
     
     async def _process_attack(
             self, 
@@ -1024,7 +1016,6 @@ class RedTeamAgent():
         orchestrator = await call_orchestrator(self.chat_target, all_prompts, converter)
         data_path = self._write_pyrit_outputs_to_file(orchestrator, converter)
         eval_result = await self._evaluate(
-            target=target,
             evaluation_name=evaluation_name,
             data_only=data_only,
             data_path=data_path,
