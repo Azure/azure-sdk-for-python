@@ -48,7 +48,7 @@ class MeteorScoreEvaluator(EvaluatorBase):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, alpha: float = 0.9, beta: float = 3.0, gamma: float = 0.5, threshold: float = 0.0):
+    def __init__(self, alpha: float = 0.9, beta: float = 3.0, gamma: float = 0.5, threshold: float = 0.5):
         self._alpha = alpha
         self._beta = beta
         self._gamma = gamma
@@ -80,10 +80,10 @@ class MeteorScoreEvaluator(EvaluatorBase):
         )
         binary_result = False
         if self._higher_is_better:
-            if score > self._threshold:
+            if score >= self._threshold:
                 binary_result = True
         else:
-            if score < self._threshold:
+            if score <= self._threshold:
                 binary_result = True
         return {
             "meteor_score": score,
