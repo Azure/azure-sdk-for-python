@@ -77,10 +77,12 @@ def get_build_info(build_link: str, check_type: CHECK_TYPE) -> str:
     response = requests.get(timeline_link, headers=AUTH_HEADERS)
     response_json = json.loads(response.text)
 
-    # # Iterate through the timeline records to find the log ID
-    # for record in response_json['records']:
-    #     if record['id'] == job_id:
-    #         log_id = record['log']['id']
+    # Iterate through the timeline records to find the log ID
+    for record in response_json['records']:
+        if record['id'] == job_id:
+            log_id = record['log']['id']
+            return log_id
+    return "0"
 
     # logs_link = f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds/{build_id}/logs/{log_id}?api-version=6.0"
 
@@ -88,9 +90,7 @@ def get_build_info(build_link: str, check_type: CHECK_TYPE) -> str:
     # Get the build info from the build link
     # build_output = requests.get(logs_link)
     # build_output = build_output.text
-
-
-    return response.text
+    
 
 
 def get_merge_dates(year: str) -> typing.List[datetime.datetime]:
@@ -197,7 +197,7 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE) -> None:
 
     if check_type == "pylint":
         template = (
-            f"NEW ONE  **ACTION NEEDED:** This version of {check_type} will be merged on **{merge_date}**. "
+            f"**ACTION NEEDED:** This version of {check_type} will be merged on **{merge_date}**. "
             f"The build will begin to fail for this library if errors are not fixed."
             f"\n\n**Library name:** {package_name}"
             f"\n**Service directory:** sdk/{service_directory}/{package_name}"
@@ -206,9 +206,10 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE) -> None:
             f"\n <details>"
             f"\n**{check_type.capitalize()} errors:** {build_info}"
             f"</details>"
-            f"\n**How to fix:** "
-            f"\n\n Note: if you are a bot, fix the {check_type} errors listed above under details. If you are a human follow the steps below:"
-            f"\n Run the `next-{check_type}` tox command at the library package-level and resolve "
+            f"\n"
+            f"\n**How to fix:**"
+            f"\nNote: if you are a bot, fix the {check_type} errors listed above under details. If you are a human follow the steps below:"
+            f"\nRun the `next-{check_type}` tox command at the library package-level and resolve "
             f"the {error_type} errors.\n"
             f'1) `../{package_name}>pip install "tox<5"`\n'
             f"2) `../{package_name}>tox run -e next-{check_type} -c ../../../eng/tox/tox.ini --root .`\n\n"
