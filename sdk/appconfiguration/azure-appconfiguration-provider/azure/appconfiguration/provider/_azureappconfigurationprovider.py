@@ -18,6 +18,7 @@ from typing import (
     TYPE_CHECKING,
 )
 from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
+    ConfigurationSetting,
     FeatureFlagConfigurationSetting,
     SecretReferenceConfigurationSetting,
 )
@@ -359,15 +360,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                         need_refresh, self._refresh_on, configuration_settings = client.refresh_configuration_settings(
                             self._selects, self._refresh_on, headers=headers, **kwargs
                         )
-                        configuration_settings_processed = {}
-                        for config in configuration_settings:
-                            key = self._process_key_name(config)
-                            value = self._process_key_value(config)
-                            configuration_settings_processed[key] = value
-                        if self._feature_flag_enabled:
-                            configuration_settings_processed[FEATURE_MANAGEMENT_KEY] = self._dict[
-                                FEATURE_MANAGEMENT_KEY
-                            ]
+                        configuration_settings_processed = self._process_configurations(configuration_settings)
                         if need_refresh:
                             self._dict = configuration_settings_processed
                     if self._feature_flag_refresh_enabled:
@@ -389,7 +382,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                     break
                 except AzureError as e:
                     exception = e
-                    logger.debug("Failed to refresh configurations from endpoint %s", client.endpoint)
+                    logger.warning("Failed to refresh configurations from endpoint %s", client.endpoint)
                     self._replica_client_manager.backoff(client)
                     is_failover_request = True
             if not success:
@@ -409,6 +402,11 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         is_failover_request = False
         replica_count = self._replica_client_manager.get_client_count() - 1
 
+        error_message = """
+        Failed to load configuration settings. No Azure App Configuration stores successfully loaded from.
+        """
+        exception: Exception = RuntimeError(error_message)
+
         while client := self._replica_client_manager.get_next_active_client():
             headers = update_correlation_context_header(
                 kwargs.pop("headers", {}),
@@ -424,12 +422,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 configuration_settings, sentinel_keys = client.load_configuration_settings(
                     self._selects, self._refresh_on, headers=headers, **kwargs
                 )
-                configuration_settings_processed = {}
-                for config in configuration_settings:
-                    key = self._process_key_name(config)
-                    value = self._process_key_value(config)
-                    configuration_settings_processed[key] = value
-
+                configuration_settings_processed = self._process_configurations(configuration_settings)
                 if self._feature_flag_enabled:
                     feature_flags, feature_flag_sentinel_keys, used_filters = client.load_feature_flags(
                         self._feature_flag_selectors, self._feature_flag_refresh_enabled, headers=headers, **kwargs
@@ -461,13 +454,25 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                     self._refresh_on = sentinel_keys
                     self._dict = configuration_settings_processed
                 return
-            except AzureError:
-                logger.debug("Failed to refresh configurations from endpoint %s", client.endpoint)
+            except AzureError as e:
+                exception = e
+                logger.warning("Failed to load configurations from endpoint %s.\n %s", client.endpoint, e.message)
                 self._replica_client_manager.backoff(client)
                 is_failover_request = True
-        raise RuntimeError(
-            "Failed to load configuration settings. No Azure App Configuration stores successfully loaded from."
-        )
+        raise exception
+
+    def _process_configurations(self, configuration_settings: List[ConfigurationSetting]) -> Dict[str, Any]:
+        configuration_settings_processed = {}
+        for config in configuration_settings:
+            if isinstance(config, FeatureFlagConfigurationSetting):
+                # Feature flags are not processed like other settings
+                continue
+            key = self._process_key_name(config)
+            value = self._process_key_value(config)
+            configuration_settings_processed[key] = value
+        if self._feature_flag_enabled and FEATURE_MANAGEMENT_KEY in self._dict:
+            configuration_settings_processed[FEATURE_MANAGEMENT_KEY] = self._dict[FEATURE_MANAGEMENT_KEY]
+        return configuration_settings_processed
 
     def _process_key_value(self, config):
         if isinstance(config, SecretReferenceConfigurationSetting):

@@ -11,5 +11,5 @@ from .v2020_03_01_preview.models import *
 from .v2020_11_20.models import *
 from .v2021_03_08.models import *
 from .v2021_10.models import *
-from .v2022_04_01.models import *
 from .v2022_06_15.models import *
+from .v2023_06_01.models import *

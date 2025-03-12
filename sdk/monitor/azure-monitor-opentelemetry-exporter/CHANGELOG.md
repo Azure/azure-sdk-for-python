@@ -1,14 +1,31 @@
 # Release History
 
-## 1.0.0b35 (Unreleased)
+## 1.0.0b36 (Unreleased)
 
 ### Features Added
+
+- Support `syntheticSource` from `user_agent.synthetic.type` semantic convention
+  ([#40004](https://github.com/Azure/azure-sdk-for-python/pull/40004))
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.0.0b35 (2025-03-04)
+
+### Features Added
+
+- Support sending `customEvent` telemetry through special `microsoft` marker
+  ([#39886](https://github.com/Azure/azure-sdk-for-python/pull/39886))
+- Populate `client_Ip` on `customEvent` telemetry
+  ([#39923](https://github.com/Azure/azure-sdk-for-python/pull/39923))
+
+### Bugs Fixed
+
+- Implement `from_log_record` for `Trace` data types in live metrics
+  ([#39922](https://github.com/Azure/azure-sdk-for-python/pull/39922))
 
 ## 1.0.0b34 (2025-02-26)
 
