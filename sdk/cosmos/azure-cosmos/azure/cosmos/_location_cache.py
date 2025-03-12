@@ -266,7 +266,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         if request.location_endpoint_to_route:
             return request.location_endpoint_to_route
 
-        location_index = 0
+        location_index = int(request.location_index_to_route) if request.location_index_to_route else 0
         use_preferred_locations = (
             request.use_preferred_locations if request.use_preferred_locations is not None else True
         )
@@ -279,6 +279,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             # or when client cannot use multiple write locations, flip-flop between the
             # first and the second writable region in DatabaseAccount (for manual failover)
             if self.enable_endpoint_discovery and self.available_write_locations:
+                location_index = min(location_index % 2, len(self.available_write_locations) - 1)
                 write_location = self.available_write_locations[location_index]
                 if (self.available_write_locations
                         and write_location in self.available_write_regional_endpoints_by_location):
