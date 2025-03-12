@@ -422,7 +422,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                             else:
                                 result[result_key] = EVALUATION_PASS_FAIL_MAPPING[False]
             except Exception as e:
-                pass
+                print(f"Error calculating binary result: {e}")
             per_turn_results.append(result)
         # Return results as-is if only one result was produced.
 
