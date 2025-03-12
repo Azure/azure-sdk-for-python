@@ -1,1 +1,2 @@
+-e ./sdk/identity/azure-identity
 -e .[ghtools]
