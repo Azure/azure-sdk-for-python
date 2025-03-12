@@ -46,6 +46,8 @@ class _TimeoutFailoverRetryPolicy(object):
 
         if self.request:
             location_endpoint = self.resolve_next_region_service_endpoint()
+            logger.info("TimeoutFailoverRetryPolicy: retry count: %d, location endpoint: %s",
+                        self.retry_count, location_endpoint)
             self.request.route_to_location(location_endpoint)
         return True
 

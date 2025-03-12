@@ -14,6 +14,7 @@ class MockExecuteServiceRequestException(object):
         self.start_time = time.time()
 
     async def __call__(self, func, *args, **kwargs):
+        # after 10 minutes, we will start to throw exceptions and ends after 30 minutes
         if args[1].location_endpoint_to_route == COSMOS_URI and time.time() - self.start_time >= 600\
                 and time.time() <= self.start_time + 1800:
             if MOCK_EXECUTE_STATUS_CODE == 1:
