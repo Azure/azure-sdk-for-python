@@ -1,6 +1,5 @@
 from typing import List, Any, Optional
 import os
-import bs4
 import urllib3
 from ci_tools.variables import str_to_bool
 
