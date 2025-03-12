@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -2479,7 +2479,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
     @distributed_trace
     def list_operations(self, **kwargs: Any) -> AsyncIterable["_models.DocumentIntelligenceOperationDetails"]:
-        # pylint: disable=line-too-long
         """Lists all operations.
 
         :return: An iterator like instance of DocumentIntelligenceOperationDetails

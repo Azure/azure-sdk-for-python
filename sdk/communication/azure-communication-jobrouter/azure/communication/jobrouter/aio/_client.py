@@ -7,7 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable
+from typing import Any, Awaitable, TYPE_CHECKING
+from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
@@ -17,25 +18,26 @@ from .._serialization import Deserializer, Serializer
 from ._configuration import JobRouterAdministrationClientConfiguration, JobRouterClientConfiguration
 from ._operations import JobRouterAdministrationClientOperationsMixin, JobRouterClientOperationsMixin
 
+if TYPE_CHECKING:
+    from azure.core.credentials_async import AsyncTokenCredential
 
-class JobRouterAdministrationClient(
-    JobRouterAdministrationClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword
+
+class JobRouterAdministrationClient(JobRouterAdministrationClientOperationsMixin):
     """JobRouterAdministrationClient.
 
     :param endpoint: Uri of your Communication resource. Required.
     :type endpoint: str
+    :param credential: Credential used to authenticate requests to the service. Required.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
      "2024-01-18-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
 
-    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
-        self, endpoint: str, **kwargs: Any
-    ) -> None:
+    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         _endpoint = "{endpoint}"
-        self._config = JobRouterAdministrationClientConfiguration(endpoint=endpoint, **kwargs)
+        self._config = JobRouterAdministrationClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -81,7 +83,7 @@ class JobRouterAdministrationClient(
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
@@ -90,7 +92,7 @@ class JobRouterAdministrationClient(
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "JobRouterAdministrationClient":
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 
@@ -98,22 +100,22 @@ class JobRouterAdministrationClient(
         await self._client.__aexit__(*exc_details)
 
 
-class JobRouterClient(JobRouterClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+class JobRouterClient(JobRouterClientOperationsMixin):
     """JobRouterClient.
 
     :param endpoint: Uri of your Communication resource. Required.
     :type endpoint: str
+    :param credential: Credential used to authenticate requests to the service. Required.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
      "2024-01-18-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
 
-    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
-        self, endpoint: str, **kwargs: Any
-    ) -> None:
+    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         _endpoint = "{endpoint}"
-        self._config = JobRouterClientConfiguration(endpoint=endpoint, **kwargs)
+        self._config = JobRouterClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -159,7 +161,7 @@ class JobRouterClient(JobRouterClientOperationsMixin):  # pylint: disable=client
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
@@ -168,7 +170,7 @@ class JobRouterClient(JobRouterClientOperationsMixin):  # pylint: disable=client
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "JobRouterClient":
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 

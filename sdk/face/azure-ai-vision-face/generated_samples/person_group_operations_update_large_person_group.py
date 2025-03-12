@@ -28,6 +28,6 @@ def main():
     )
 
 
-# x-ms-original-file: v1.2-preview.1/PersonGroupOperations_UpdateLargePersonGroup.json
+# x-ms-original-file: v1.2/PersonGroupOperations_UpdateLargePersonGroup.json
 if __name__ == "__main__":
     main()

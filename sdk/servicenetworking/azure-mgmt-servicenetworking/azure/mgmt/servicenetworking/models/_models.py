@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -21,10 +21,8 @@ if TYPE_CHECKING:
 class Resource(_model_base.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -38,7 +36,7 @@ class Resource(_model_base.Model):
 
     id: Optional[str] = rest_field(visibility=["read"])
     """Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long"""
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
     name: Optional[str] = rest_field(visibility=["read"])
     """The name of the resource."""
     type: Optional[str] = rest_field(visibility=["read"])
@@ -52,11 +50,8 @@ class TrackedResource(Resource):
     """The resource model definition for an Azure Resource Manager tracked top level resource which
     has 'tags' and a 'location'.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -72,7 +67,7 @@ class TrackedResource(Resource):
     :vartype location: str
     """
 
-    tags: Optional[Dict[str, str]] = rest_field()
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     location: str = rest_field(visibility=["read", "create"])
     """The geo-location where the resource lives. Required."""
@@ -99,11 +94,8 @@ class TrackedResource(Resource):
 class Association(TrackedResource):
     """Association Subresource of Traffic Controller.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -121,7 +113,9 @@ class Association(TrackedResource):
     :vartype properties: ~azure.mgmt.servicenetworking.models.AssociationProperties
     """
 
-    properties: Optional["_models.AssociationProperties"] = rest_field()
+    properties: Optional["_models.AssociationProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The resource-specific properties for this resource."""
 
     @overload
@@ -147,9 +141,6 @@ class Association(TrackedResource):
 class AssociationProperties(_model_base.Model):
     """Association Properties.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar association_type: Association Type. Required. "subnets"
     :vartype association_type: str or ~azure.mgmt.servicenetworking.models.AssociationType
     :ivar subnet: Association Subnet.
@@ -160,9 +151,13 @@ class AssociationProperties(_model_base.Model):
     :vartype provisioning_state: str or ~azure.mgmt.servicenetworking.models.ProvisioningState
     """
 
-    association_type: Union[str, "_models.AssociationType"] = rest_field(name="associationType")
+    association_type: Union[str, "_models.AssociationType"] = rest_field(
+        name="associationType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Association Type. Required. \"subnets\""""
-    subnet: Optional["_models.AssociationSubnet"] = rest_field()
+    subnet: Optional["_models.AssociationSubnet"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Association Subnet."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
@@ -193,12 +188,11 @@ class AssociationProperties(_model_base.Model):
 class AssociationSubnet(_model_base.Model):
     """Association Subnet.
 
-
     :ivar id: Association ID. Required.
     :vartype id: str
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Association ID. Required."""
 
     @overload
@@ -222,20 +216,18 @@ class AssociationSubnet(_model_base.Model):
 class AssociationSubnetUpdate(_model_base.Model):
     """Association Subnet.
 
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Association ID. Required.
+    :ivar id: Association ID.
     :vartype id: str
     """
 
-    id: str = rest_field()
-    """Association ID. Required."""
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Association ID."""
 
     @overload
     def __init__(
         self,
         *,
-        id: str,  # pylint: disable=redefined-builtin
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
     ) -> None: ...
 
     @overload
@@ -258,9 +250,11 @@ class AssociationUpdate(_model_base.Model):
     :vartype properties: ~azure.mgmt.servicenetworking.models.AssociationUpdateProperties
     """
 
-    tags: Optional[Dict[str, str]] = rest_field()
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
-    properties: Optional["_models.AssociationUpdateProperties"] = rest_field()
+    properties: Optional["_models.AssociationUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The resource-specific properties for this resource."""
 
     @overload
@@ -291,9 +285,13 @@ class AssociationUpdateProperties(_model_base.Model):
     :vartype subnet: ~azure.mgmt.servicenetworking.models.AssociationSubnetUpdate
     """
 
-    association_type: Optional[Union[str, "_models.AssociationType"]] = rest_field(name="associationType")
+    association_type: Optional[Union[str, "_models.AssociationType"]] = rest_field(
+        name="associationType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Association Type. \"subnets\""""
-    subnet: Optional["_models.AssociationSubnetUpdate"] = rest_field()
+    subnet: Optional["_models.AssociationSubnetUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Association Subnet."""
 
     @overload
@@ -318,8 +316,6 @@ class AssociationUpdateProperties(_model_base.Model):
 class ErrorAdditionalInfo(_model_base.Model):
     """The resource management error additional info.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
@@ -334,8 +330,6 @@ class ErrorAdditionalInfo(_model_base.Model):
 
 class ErrorDetail(_model_base.Model):
     """The error detail.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar code: The error code.
     :vartype code: str
@@ -371,7 +365,7 @@ class ErrorResponse(_model_base.Model):
     :vartype error: ~azure.mgmt.servicenetworking.models.ErrorDetail
     """
 
-    error: Optional["_models.ErrorDetail"] = rest_field()
+    error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The error object."""
 
     @overload
@@ -395,11 +389,8 @@ class ErrorResponse(_model_base.Model):
 class Frontend(TrackedResource):
     """Frontend Sub Resource of Traffic Controller.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -417,7 +408,9 @@ class Frontend(TrackedResource):
     :vartype properties: ~azure.mgmt.servicenetworking.models.FrontendProperties
     """
 
-    properties: Optional["_models.FrontendProperties"] = rest_field()
+    properties: Optional["_models.FrontendProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The resource-specific properties for this resource."""
 
     @overload
@@ -443,11 +436,12 @@ class Frontend(TrackedResource):
 class FrontendProperties(_model_base.Model):
     """Frontend Properties.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar fqdn: The Fully Qualified Domain Name of the DNS record associated to a Traffic
      Controller frontend.
     :vartype fqdn: str
+    :ivar security_policy_configurations: Frontend Security Policy Configuration.
+    :vartype security_policy_configurations:
+     ~azure.mgmt.servicenetworking.models.SecurityPolicyConfigurations
     :ivar provisioning_state: Provisioning State of Traffic Controller Frontend Resource. Known
      values are: "Provisioning", "Updating", "Deleting", "Accepted", "Succeeded", "Failed", and
      "Canceled".
@@ -456,11 +450,32 @@ class FrontendProperties(_model_base.Model):
 
     fqdn: Optional[str] = rest_field(visibility=["read"])
     """The Fully Qualified Domain Name of the DNS record associated to a Traffic Controller frontend."""
+    security_policy_configurations: Optional["_models.SecurityPolicyConfigurations"] = rest_field(
+        name="securityPolicyConfigurations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Frontend Security Policy Configuration."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
     """Provisioning State of Traffic Controller Frontend Resource. Known values are: \"Provisioning\",
      \"Updating\", \"Deleting\", \"Accepted\", \"Succeeded\", \"Failed\", and \"Canceled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        security_policy_configurations: Optional["_models.SecurityPolicyConfigurations"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class FrontendUpdate(_model_base.Model):
@@ -468,16 +483,165 @@ class FrontendUpdate(_model_base.Model):
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.servicenetworking.models.FrontendUpdateProperties
     """
 
-    tags: Optional[Dict[str, str]] = rest_field()
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
+    properties: Optional["_models.FrontendUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
 
     @overload
     def __init__(
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
+        properties: Optional["_models.FrontendUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FrontendUpdateProperties(_model_base.Model):
+    """The updatable properties of the Frontend.
+
+    :ivar security_policy_configurations: Frontend Security Policy Configuration.
+    :vartype security_policy_configurations:
+     ~azure.mgmt.servicenetworking.models.SecurityPolicyConfigurations
+    """
+
+    security_policy_configurations: Optional["_models.SecurityPolicyConfigurations"] = rest_field(
+        name="securityPolicyConfigurations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Frontend Security Policy Configuration."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        security_policy_configurations: Optional["_models.SecurityPolicyConfigurations"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class IpAccessRule(_model_base.Model):
+    """Ip Access Policy Rules.
+
+    :ivar name: Name of the Ip Access Rule. Required.
+    :vartype name: str
+    :ivar priority: The priority of the rule. The value can be between 1 and 500. The priority
+     number must be unique for each rule in the collection. The lower the priority number, the
+     higher the priority of the rule. Required.
+    :vartype priority: int
+    :ivar source_address_prefixes: Source Address Prefixed Applied by the Rule. Asterisk '*' can
+     also be used to match all source IPs. Required.
+    :vartype source_address_prefixes: list[str]
+    :ivar action: Action of the Rule. Required. Known values are: "allow" and "deny".
+    :vartype action: str or ~azure.mgmt.servicenetworking.models.IpAccessRuleAction
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the Ip Access Rule. Required."""
+    priority: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The priority of the rule. The value can be between 1 and 500. The priority number must be
+     unique for each rule in the collection. The lower the priority number, the higher the priority
+     of the rule. Required."""
+    source_address_prefixes: List[str] = rest_field(
+        name="sourceAddressPrefixes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Source Address Prefixed Applied by the Rule. Asterisk '*' can also be used to match all source
+     IPs. Required."""
+    action: Union[str, "_models.IpAccessRuleAction"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Action of the Rule. Required. Known values are: \"allow\" and \"deny\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        priority: int,
+        source_address_prefixes: List[str],
+        action: Union[str, "_models.IpAccessRuleAction"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class IpAccessRulesPolicy(_model_base.Model):
+    """Ip Access Policy.
+
+    :ivar rules: Ip Access Policy Rules List.
+    :vartype rules: list[~azure.mgmt.servicenetworking.models.IpAccessRule]
+    """
+
+    rules: Optional[List["_models.IpAccessRule"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Ip Access Policy Rules List."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        rules: Optional[List["_models.IpAccessRule"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class IpAccessRulesSecurityPolicy(_model_base.Model):
+    """IpAccessRules Security Policy.
+
+    :ivar id: Resource ID of the Ip Access Rules Security Policy. Required.
+    :vartype id: str
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource ID of the Ip Access Rules Security Policy. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
     ) -> None: ...
 
     @overload
@@ -493,8 +657,6 @@ class FrontendUpdate(_model_base.Model):
 
 class Operation(_model_base.Model):
     """Details of a REST API operation, returned from the Resource Provider Operations API.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
      "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
@@ -520,7 +682,9 @@ class Operation(_model_base.Model):
     is_data_action: Optional[bool] = rest_field(name="isDataAction", visibility=["read"])
     """Whether the operation applies to data-plane. This is \"true\" for data-plane operations and
      \"false\" for Azure Resource Manager/control-plane operations."""
-    display: Optional["_models.OperationDisplay"] = rest_field()
+    display: Optional["_models.OperationDisplay"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Localized display information for this particular operation."""
     origin: Optional[Union[str, "_models.Origin"]] = rest_field(visibility=["read"])
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
@@ -550,8 +714,6 @@ class Operation(_model_base.Model):
 
 class OperationDisplay(_model_base.Model):
     """Localized display information for and operation.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
@@ -584,12 +746,11 @@ class OperationDisplay(_model_base.Model):
 class ResourceId(_model_base.Model):
     """Resource ID definition used by parent to reference child resources.
 
-
     :ivar id: Resource ID of child resource. Required.
     :vartype id: str
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource ID of child resource. Required."""
 
     @overload
@@ -613,11 +774,8 @@ class ResourceId(_model_base.Model):
 class SecurityPolicy(TrackedResource):
     """SecurityPolicy Subresource of Traffic Controller.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -635,7 +793,9 @@ class SecurityPolicy(TrackedResource):
     :vartype properties: ~azure.mgmt.servicenetworking.models.SecurityPolicyProperties
     """
 
-    properties: Optional["_models.SecurityPolicyProperties"] = rest_field()
+    properties: Optional["_models.SecurityPolicyProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The resource-specific properties for this resource."""
 
     @overload
@@ -661,20 +821,29 @@ class SecurityPolicy(TrackedResource):
 class SecurityPolicyConfigurations(_model_base.Model):
     """SecurityPolicyConfigurations Subresource of Traffic Controller.
 
-    :ivar waf_security_policy: Contains reference to a WAF-type security policy that is applied at
-     the Traffic Controller level.
+    :ivar waf_security_policy: Contains reference to a WAF-type security policy.
     :vartype waf_security_policy: ~azure.mgmt.servicenetworking.models.WafSecurityPolicy
+    :ivar ip_access_rules_security_policy: Contains reference to a IpAccessRules-type security
+     policy.
+    :vartype ip_access_rules_security_policy:
+     ~azure.mgmt.servicenetworking.models.IpAccessRulesSecurityPolicy
     """
 
-    waf_security_policy: Optional["_models.WafSecurityPolicy"] = rest_field(name="wafSecurityPolicy")
-    """Contains reference to a WAF-type security policy that is applied at the Traffic Controller
-     level."""
+    waf_security_policy: Optional["_models.WafSecurityPolicy"] = rest_field(
+        name="wafSecurityPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Contains reference to a WAF-type security policy."""
+    ip_access_rules_security_policy: Optional["_models.IpAccessRulesSecurityPolicy"] = rest_field(
+        name="ipAccessRulesSecurityPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Contains reference to a IpAccessRules-type security policy."""
 
     @overload
     def __init__(
         self,
         *,
         waf_security_policy: Optional["_models.WafSecurityPolicy"] = None,
+        ip_access_rules_security_policy: Optional["_models.IpAccessRulesSecurityPolicy"] = None,
     ) -> None: ...
 
     @overload
@@ -691,12 +860,15 @@ class SecurityPolicyConfigurations(_model_base.Model):
 class SecurityPolicyProperties(_model_base.Model):
     """SecurityPolicy Properties.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar policy_type: Type of the Traffic Controller Security Policy. "waf"
+    :ivar policy_type: Type of the Traffic Controller Security Policy. Known values are: "waf" and
+     "ipAccessRules".
     :vartype policy_type: str or ~azure.mgmt.servicenetworking.models.PolicyType
     :ivar waf_policy: Web Application Firewall Policy of the Traffic Controller Security Policy.
+     Single Security Policy can have only one policy type set.
     :vartype waf_policy: ~azure.mgmt.servicenetworking.models.WafPolicy
+    :ivar ip_access_rules_policy: Ip Access Policy of the Traffic Controller Security Policy.
+     Single Security Policy can have only one policy type set.
+    :vartype ip_access_rules_policy: ~azure.mgmt.servicenetworking.models.IpAccessRulesPolicy
     :ivar provisioning_state: Provisioning State of Traffic Controller SecurityPolicy Resource.
      Known values are: "Provisioning", "Updating", "Deleting", "Accepted", "Succeeded", "Failed",
      and "Canceled".
@@ -704,9 +876,18 @@ class SecurityPolicyProperties(_model_base.Model):
     """
 
     policy_type: Optional[Union[str, "_models.PolicyType"]] = rest_field(name="policyType", visibility=["read"])
-    """Type of the Traffic Controller Security Policy. \"waf\""""
-    waf_policy: Optional["_models.WafPolicy"] = rest_field(name="wafPolicy")
-    """Web Application Firewall Policy of the Traffic Controller Security Policy."""
+    """Type of the Traffic Controller Security Policy. Known values are: \"waf\" and
+     \"ipAccessRules\"."""
+    waf_policy: Optional["_models.WafPolicy"] = rest_field(
+        name="wafPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Web Application Firewall Policy of the Traffic Controller Security Policy. Single Security
+     Policy can have only one policy type set."""
+    ip_access_rules_policy: Optional["_models.IpAccessRulesPolicy"] = rest_field(
+        name="ipAccessRulesPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Ip Access Policy of the Traffic Controller Security Policy. Single Security Policy can have
+     only one policy type set."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -719,6 +900,7 @@ class SecurityPolicyProperties(_model_base.Model):
         self,
         *,
         waf_policy: Optional["_models.WafPolicy"] = None,
+        ip_access_rules_policy: Optional["_models.IpAccessRulesPolicy"] = None,
     ) -> None: ...
 
     @overload
@@ -741,9 +923,11 @@ class SecurityPolicyUpdate(_model_base.Model):
     :vartype properties: ~azure.mgmt.servicenetworking.models.SecurityPolicyUpdateProperties
     """
 
-    tags: Optional[Dict[str, str]] = rest_field()
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
-    properties: Optional["_models.SecurityPolicyUpdateProperties"] = rest_field()
+    properties: Optional["_models.SecurityPolicyUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The resource-specific properties for this resource."""
 
     @overload
@@ -769,17 +953,30 @@ class SecurityPolicyUpdateProperties(_model_base.Model):
     """The updatable properties of the SecurityPolicy.
 
     :ivar waf_policy: Web Application Firewall Policy of the Traffic Controller Security Policy.
+     Single Security Policy can have only one policy type set.
     :vartype waf_policy: ~azure.mgmt.servicenetworking.models.WafPolicy
+    :ivar ip_access_rules_policy: Ip Access Policy of the Traffic Controller Security Policy.
+     Single Security Policy can have only one policy type set.
+    :vartype ip_access_rules_policy: ~azure.mgmt.servicenetworking.models.IpAccessRulesPolicy
     """
 
-    waf_policy: Optional["_models.WafPolicy"] = rest_field(name="wafPolicy")
-    """Web Application Firewall Policy of the Traffic Controller Security Policy."""
+    waf_policy: Optional["_models.WafPolicy"] = rest_field(
+        name="wafPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Web Application Firewall Policy of the Traffic Controller Security Policy. Single Security
+     Policy can have only one policy type set."""
+    ip_access_rules_policy: Optional["_models.IpAccessRulesPolicy"] = rest_field(
+        name="ipAccessRulesPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Ip Access Policy of the Traffic Controller Security Policy. Single Security Policy can have
+     only one policy type set."""
 
     @overload
     def __init__(
         self,
         *,
         waf_policy: Optional["_models.WafPolicy"] = None,
+        ip_access_rules_policy: Optional["_models.IpAccessRulesPolicy"] = None,
     ) -> None: ...
 
     @overload
@@ -812,19 +1009,29 @@ class SystemData(_model_base.Model):
     :vartype last_modified_at: ~datetime.datetime
     """
 
-    created_by: Optional[str] = rest_field(name="createdBy")
+    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read", "create", "update", "delete", "query"])
     """The identity that created the resource."""
-    created_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(name="createdByType")
+    created_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(
+        name="createdByType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The type of identity that created the resource. Known values are: \"User\", \"Application\",
      \"ManagedIdentity\", and \"Key\"."""
-    created_at: Optional[datetime.datetime] = rest_field(name="createdAt", format="rfc3339")
+    created_at: Optional[datetime.datetime] = rest_field(
+        name="createdAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The timestamp of resource creation (UTC)."""
-    last_modified_by: Optional[str] = rest_field(name="lastModifiedBy")
+    last_modified_by: Optional[str] = rest_field(
+        name="lastModifiedBy", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The identity that last modified the resource."""
-    last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(name="lastModifiedByType")
+    last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(
+        name="lastModifiedByType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The type of identity that last modified the resource. Known values are: \"User\",
      \"Application\", \"ManagedIdentity\", and \"Key\"."""
-    last_modified_at: Optional[datetime.datetime] = rest_field(name="lastModifiedAt", format="rfc3339")
+    last_modified_at: Optional[datetime.datetime] = rest_field(
+        name="lastModifiedAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The timestamp of resource last modification (UTC)."""
 
     @overload
@@ -854,11 +1061,8 @@ class TrafficController(TrackedResource):
     """Concrete tracked resource types can be created by aliasing this type using a specific property
     type.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -876,7 +1080,9 @@ class TrafficController(TrackedResource):
     :vartype properties: ~azure.mgmt.servicenetworking.models.TrafficControllerProperties
     """
 
-    properties: Optional["_models.TrafficControllerProperties"] = rest_field()
+    properties: Optional["_models.TrafficControllerProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The resource-specific properties for this resource."""
 
     @overload
@@ -901,8 +1107,6 @@ class TrafficController(TrackedResource):
 
 class TrafficControllerProperties(_model_base.Model):
     """Traffic Controller Properties.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar configuration_endpoints: Configuration Endpoints.
     :vartype configuration_endpoints: list[str]
@@ -929,7 +1133,7 @@ class TrafficControllerProperties(_model_base.Model):
     security_policies: Optional[List["_models.ResourceId"]] = rest_field(name="securityPolicies", visibility=["read"])
     """Security Policies References List."""
     security_policy_configurations: Optional["_models.SecurityPolicyConfigurations"] = rest_field(
-        name="securityPolicyConfigurations"
+        name="securityPolicyConfigurations", visibility=["read", "create", "update", "delete", "query"]
     )
     """Security Policy Configuration."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
@@ -965,9 +1169,11 @@ class TrafficControllerUpdate(_model_base.Model):
     :vartype properties: ~azure.mgmt.servicenetworking.models.TrafficControllerUpdateProperties
     """
 
-    tags: Optional[Dict[str, str]] = rest_field()
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
-    properties: Optional["_models.TrafficControllerUpdateProperties"] = rest_field()
+    properties: Optional["_models.TrafficControllerUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The resource-specific properties for this resource."""
 
     @overload
@@ -998,7 +1204,7 @@ class TrafficControllerUpdateProperties(_model_base.Model):
     """
 
     security_policy_configurations: Optional["_models.SecurityPolicyConfigurations"] = rest_field(
-        name="securityPolicyConfigurations"
+        name="securityPolicyConfigurations", visibility=["read", "create", "update", "delete", "query"]
     )
     """Security Policy Configuration."""
 
@@ -1023,12 +1229,11 @@ class TrafficControllerUpdateProperties(_model_base.Model):
 class WafPolicy(_model_base.Model):
     """Web Application Firewall Policy.
 
-
     :ivar id: Resource ID of the WAF. Required.
     :vartype id: str
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource ID of the WAF. Required."""
 
     @overload
@@ -1052,12 +1257,11 @@ class WafPolicy(_model_base.Model):
 class WafSecurityPolicy(_model_base.Model):
     """Web Application Firewall Security Policy.
 
-
     :ivar id: Resource ID of the Waf Security Policy. Required.
     :vartype id: str
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource ID of the Waf Security Policy. Required."""
 
     @overload

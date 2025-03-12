@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -107,9 +108,11 @@ class DiffDiskPlacement(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     resource disk space for Ephemeral OS disk provisioning. For more information on
     Ephemeral OS disk size requirements, please refer Ephemeral OS disk size
     requirements for Windows VM at
-    https://docs.microsoft.com/azure/virtual-machines/windows/ephemeral-os-disks#size-requirements
+    `https://learn.microsoft.com/azure/virtual-machines/windows/ephemeral-os-disks#size-requirements
+    <https://learn.microsoft.com/azure/virtual-machines/windows/ephemeral-os-disks#size-requirements>`_
     and Linux VM at
-    https://docs.microsoft.com/azure/virtual-machines/linux/ephemeral-os-disks#size-requirements
+    `https://learn.microsoft.com/azure/virtual-machines/linux/ephemeral-os-disks#size-requirements
+    <https://learn.microsoft.com/azure/virtual-machines/linux/ephemeral-os-disks#size-requirements>`_
     Minimum api-version for NvmeDisk: 2024-03-01.
     """
 
@@ -125,12 +128,14 @@ class DiskControllerTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the disk controller type configured for the VM and
     VirtualMachineScaleSet. This property is only supported for virtual machines
     whose operating system disk and VM sku supports Generation 2
-    (https://docs.microsoft.com/en-us/azure/virtual-machines/generation-2), please
+    (`https://learn.microsoft.com/en-us/azure/virtual-machines/generation-2
+    <https://learn.microsoft.com/en-us/azure/virtual-machines/generation-2>`_), please
     check the HyperVGenerations capability returned as part of VM sku capabilities
     in the response of Microsoft.Compute SKUs api for the region contains V2
-    (https://docs.microsoft.com/rest/api/compute/resourceskus/list). For more
+    (`https://learn.microsoft.com/rest/api/compute/resourceskus/list
+    <https://learn.microsoft.com/rest/api/compute/resourceskus/list>`_). For more
     information about Disk Controller Types supported please refer to
-    https://aka.ms/azure-diskcontrollertypes.
+    `https://aka.ms/azure-diskcontrollertypes <https://aka.ms/azure-diskcontrollertypes>`_.
     """
 
     SCSI = "SCSI"
@@ -212,9 +217,8 @@ class IPVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class LinuxPatchAssessmentMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the mode of VM Guest Patch Assessment for the IaaS virtual
-    machine.:code:`<br />`:code:`<br />` Possible values are::code:`<br />`:code:`<br />`
-    **ImageDefault** - You
-    control the timing of patch assessments on a virtual machine. :code:`<br />`:code:`<br />`
+    machine.<br /><br /> Possible values are:<br /><br /> **ImageDefault** - You
+    control the timing of patch assessments on a virtual machine. <br /><br />
     **AutomaticByPlatform** - The platform will trigger periodic patch assessments.
     The property provisionVMAgent must be true.
     """
@@ -274,7 +278,7 @@ class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """System assigned managed identity."""
     USER_ASSIGNED = "UserAssigned"
     """User assigned managed identity."""
-    SYSTEM_AND_USER_ASSIGNED = "SystemAssigned,UserAssigned"
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
     """System and user assigned managed identity."""
 
 
@@ -474,9 +478,11 @@ class StorageAccountTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     zone redundant storage. StandardSSD_ZRS uses Standard SSD zone redundant
     storage. For more information regarding disks supported for Windows Virtual
     Machines, refer to
-    https://docs.microsoft.com/azure/virtual-machines/windows/disks-types and, for
+    `https://learn.microsoft.com/azure/virtual-machines/windows/disks-types
+    <https://learn.microsoft.com/azure/virtual-machines/windows/disks-types>`_ and, for
     Linux Virtual Machines, refer to
-    https://docs.microsoft.com/azure/virtual-machines/linux/disks-types.
+    `https://learn.microsoft.com/azure/virtual-machines/linux/disks-types
+    <https://learn.microsoft.com/azure/virtual-machines/linux/disks-types>`_.
     """
 
     STANDARD_LRS = "Standard_LRS"
@@ -501,7 +507,7 @@ class VMAttributeSupport(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     EXCLUDED = "Excluded"
     """All VMSizes having the feature support will be excluded."""
     INCLUDED = "Included"
-    """VMSizes that have the feature support and that do not have the feature support will be used.
+    """ VMSizes that have the feature support and that do not have the feature support will be used.
     Included is a union of Excluded and Required."""
     REQUIRED = "Required"
     """Only the VMSizes having the feature support will be used."""
@@ -510,7 +516,8 @@ class VMAttributeSupport(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class VMCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """VMCategories defined for Azure VMs.
     See:
-    https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/overview?tabs=breakdownseries%2Cgeneralsizelist%2Ccomputesizelist%2Cmemorysizelist%2Cstoragesizelist%2Cgpusizelist%2Cfpgasizelist%2Chpcsizelist#general-purpose.
+    `https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/overview?tabs=breakdownseries%2Cgeneralsizelist%2Ccomputesizelist%2Cmemorysizelist%2Cstoragesizelist%2Cgpusizelist%2Cfpgasizelist%2Chpcsizelist#general-purpose
+    <https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/overview?tabs=breakdownseries%2Cgeneralsizelist%2Ccomputesizelist%2Cmemorysizelist%2Cstoragesizelist%2Cgpusizelist%2Cfpgasizelist%2Chpcsizelist#general-purpose>`_.
     """
 
     GENERAL_PURPOSE = "GeneralPurpose"

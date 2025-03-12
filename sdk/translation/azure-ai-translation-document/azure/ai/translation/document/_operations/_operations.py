@@ -34,6 +34,7 @@ from azure.core.utils import case_insensitive_dict
 from .. import _model_base, models as _models
 from .._model_base import SdkJSONEncoder, _deserialize
 from .._serialization import Serializer
+from .._validation import api_version_validation
 from .._vendor import (
     DocumentTranslationClientMixinABC,
     SingleDocumentTranslationClientMixinABC,
@@ -52,14 +53,12 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_document_translation__begin_translation_request(  # pylint: disable=name-too-long
-    **kwargs: Any,
-) -> HttpRequest:
+def build_document_translation_begin_translation_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -86,12 +85,12 @@ def build_document_translation_list_translation_statuses_request(  # pylint: dis
     created_date_time_utc_start: Optional[datetime.datetime] = None,
     created_date_time_utc_end: Optional[datetime.datetime] = None,
     orderby: Optional[List[str]] = None,
-    **kwargs: Any,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -132,7 +131,7 @@ def build_document_translation_get_document_status_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -159,7 +158,7 @@ def build_document_translation_get_translation_status_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -185,7 +184,7 @@ def build_document_translation_cancel_translation_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -216,12 +215,12 @@ def build_document_translation_list_document_statuses_request(  # pylint: disabl
     created_date_time_utc_start: Optional[datetime.datetime] = None,
     created_date_time_utc_end: Optional[datetime.datetime] = None,
     orderby: Optional[List[str]] = None,
-    **kwargs: Any,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -267,7 +266,7 @@ def build_document_translation_get_supported_formats_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -290,12 +289,13 @@ def build_single_document_translation_translate_request(  # pylint: disable=name
     source_language: Optional[str] = None,
     category: Optional[str] = None,
     allow_fallback: Optional[bool] = None,
-    **kwargs: Any,
+    translate_text_within_image: Optional[bool] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
     accept = _headers.pop("Accept", "application/octet-stream")
 
     # Construct URL
@@ -310,6 +310,10 @@ def build_single_document_translation_translate_request(  # pylint: disable=name
         _params["category"] = _SERIALIZER.query("category", category, "str")
     if allow_fallback is not None:
         _params["allowFallback"] = _SERIALIZER.query("allow_fallback", allow_fallback, "bool")
+    if translate_text_within_image is not None:
+        _params["translateTextWithinImage"] = _SERIALIZER.query(
+            "translate_text_within_image", translate_text_within_image, "bool"
+        )
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -319,7 +323,7 @@ def build_single_document_translation_translate_request(  # pylint: disable=name
 
 class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC):
 
-    def __begin_translation_initial(
+    def _begin_translation_initial(
         self, body: Union[_models.StartTranslationDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -343,7 +347,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_document_translation__begin_translation_request(
+        _request = build_document_translation_begin_translation_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -381,7 +385,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         return deserialized  # type: ignore
 
     @overload
-    def _begin_translation(
+    def begin_translation(
         self, body: _models.StartTranslationDetails, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[_models.TranslationStatus]:
         """Submit a document translation request to the Document Translation service.
@@ -418,7 +422,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         """
 
     @overload
-    def _begin_translation(
+    def begin_translation(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[_models.TranslationStatus]:
         """Submit a document translation request to the Document Translation service.
@@ -455,7 +459,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         """
 
     @overload
-    def _begin_translation(
+    def begin_translation(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[_models.TranslationStatus]:
         """Submit a document translation request to the Document Translation service.
@@ -492,7 +496,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         """
 
     @distributed_trace
-    def _begin_translation(
+    def begin_translation(
         self, body: Union[_models.StartTranslationDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[_models.TranslationStatus]:
         """Submit a document translation request to the Document Translation service.
@@ -534,7 +538,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self.__begin_translation_initial(
+            raw_result = self._begin_translation_initial(
                 body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
             raw_result.http_response.read()  # type: ignore
@@ -586,7 +590,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         created_date_time_utc_start: Optional[datetime.datetime] = None,
         created_date_time_utc_end: Optional[datetime.datetime] = None,
         orderby: Optional[List[str]] = None,
-        **kwargs: Any,
+        **kwargs: Any
     ) -> Iterable["_models.TranslationStatus"]:
         """Returns a list of batch requests submitted and the status for each request.
 
@@ -615,6 +619,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         requested via top (or top is not specified and there are more items to be
         returned), @nextLink will contain the link to the next page.
 
+
         orderby query parameter can be used to sort the returned list (ex
         "orderby=createdDateTimeUtc asc" or "orderby=createdDateTimeUtc
         desc").
@@ -632,6 +637,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         The server honors
         the values specified by the client. However, clients must be prepared to handle
         responses that contain a different page size or contain a continuation token.
+
 
         When both top and skip are included, the server should first apply
         skip and then top on the collection.
@@ -980,11 +986,12 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         created_date_time_utc_start: Optional[datetime.datetime] = None,
         created_date_time_utc_end: Optional[datetime.datetime] = None,
         orderby: Optional[List[str]] = None,
-        **kwargs: Any,
+        **kwargs: Any
     ) -> Iterable["_models.DocumentStatus"]:
         """Returns the status for all documents in a batch document translation request.
 
         Returns the status for all documents in a batch document translation request.
+
 
         If the number of documents in the response exceeds our paging limit,
         server-side paging is used.
@@ -1005,6 +1012,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         maxpagesize is the maximum items returned in a page.
         If more items are requested via top (or top is not specified and there are
         more items to be returned), @nextLink will contain the link to the next page.
+
 
         orderby query parameter can be used to sort the returned list (ex
         "orderby=createdDateTimeUtc asc" or "orderby=createdDateTimeUtc
@@ -1243,7 +1251,8 @@ class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-to
         source_language: Optional[str] = None,
         category: Optional[str] = None,
         allow_fallback: Optional[bool] = None,
-        **kwargs: Any,
+        translate_text_within_image: Optional[bool] = None,
+        **kwargs: Any
     ) -> Iterator[bytes]:
         """Submit a single document translation request to the Document Translation service.
 
@@ -1273,6 +1282,9 @@ class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-to
          when a custom system doesn't exist.
          Possible values are: true (default) or false. Default value is None.
         :paramtype allow_fallback: bool
+        :keyword translate_text_within_image: Optional boolean parameter to translate text within an
+         image in the document. Default value is None.
+        :paramtype translate_text_within_image: bool
         :return: Iterator[bytes]
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1287,7 +1299,8 @@ class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-to
         source_language: Optional[str] = None,
         category: Optional[str] = None,
         allow_fallback: Optional[bool] = None,
-        **kwargs: Any,
+        translate_text_within_image: Optional[bool] = None,
+        **kwargs: Any
     ) -> Iterator[bytes]:
         """Submit a single document translation request to the Document Translation service.
 
@@ -1317,12 +1330,18 @@ class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-to
          when a custom system doesn't exist.
          Possible values are: true (default) or false. Default value is None.
         :paramtype allow_fallback: bool
+        :keyword translate_text_within_image: Optional boolean parameter to translate text within an
+         image in the document. Default value is None.
+        :paramtype translate_text_within_image: bool
         :return: Iterator[bytes]
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
+    @api_version_validation(
+        params_added_on={"2024-11-01-preview": ["translate_text_within_image"]},
+    )
     def translate(
         self,
         body: Union[_models.DocumentTranslateContent, JSON],
@@ -1331,7 +1350,8 @@ class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-to
         source_language: Optional[str] = None,
         category: Optional[str] = None,
         allow_fallback: Optional[bool] = None,
-        **kwargs: Any,
+        translate_text_within_image: Optional[bool] = None,
+        **kwargs: Any
     ) -> Iterator[bytes]:
         """Submit a single document translation request to the Document Translation service.
 
@@ -1362,6 +1382,9 @@ class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-to
          when a custom system doesn't exist.
          Possible values are: true (default) or false. Default value is None.
         :paramtype allow_fallback: bool
+        :keyword translate_text_within_image: Optional boolean parameter to translate text within an
+         image in the document. Default value is None.
+        :paramtype translate_text_within_image: bool
         :return: Iterator[bytes]
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1389,6 +1412,7 @@ class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-to
             source_language=source_language,
             category=category,
             allow_fallback=allow_fallback,
+            translate_text_within_image=translate_text_within_image,
             api_version=self._config.api_version,
             files=_files,
             data=_data,
@@ -1417,6 +1441,13 @@ class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-to
             raise HttpResponseError(response=response)
 
         response_headers = {}
+        response_headers["x-metered-usage"] = self._deserialize("int", response.headers.get("x-metered-usage"))
+        response_headers["total-image-scans-succeeded"] = self._deserialize(
+            "int", response.headers.get("total-image-scans-succeeded")
+        )
+        response_headers["total-image-scans-failed"] = self._deserialize(
+            "int", response.headers.get("total-image-scans-failed")
+        )
         response_headers["x-ms-client-request-id"] = self._deserialize(
             "str", response.headers.get("x-ms-client-request-id")
         )
