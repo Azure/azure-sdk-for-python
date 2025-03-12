@@ -15,7 +15,7 @@ import re
 import calendar
 import typing
 import pathlib
-import httpx
+import requests
 import json
 from typing_extensions import Literal
 from ci_tools.variables import in_ci
@@ -74,7 +74,7 @@ def get_build_info(build_link: str, check_type: CHECK_TYPE) -> str:
     AUTH_HEADERS = {"Authorization": f"Bearer {token}"}
 
     # Make the API request
-    response = httpx.get(timeline_link, headers=AUTH_HEADERS)
+    response = requests.get(timeline_link, headers=AUTH_HEADERS)
     response_json = json.loads(response.text)
 
     # Iterate through the timeline records to find the log ID
@@ -87,7 +87,7 @@ def get_build_info(build_link: str, check_type: CHECK_TYPE) -> str:
 
 
     # Get the build info from the build link
-    build_output = httpx.get(logs_link)
+    build_output = requests.get(logs_link)
     build_output = build_output.text
 
 
