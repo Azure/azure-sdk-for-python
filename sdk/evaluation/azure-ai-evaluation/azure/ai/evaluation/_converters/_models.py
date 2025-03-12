@@ -23,7 +23,7 @@ _TOOL_CALLS = "tool_calls"
 
 
 class Message(BaseModel):
-    """Represents a message in an agentic conversation.
+    """Represents a message in a conversation with agents, assistants, and tools.
 
     :param createdAt: The timestamp when the message was created.
     :type createdAt: datetime.datetime
@@ -35,7 +35,7 @@ class Message(BaseModel):
     :type content: Union[str, List[dict]]
     """
 
-    createdAt: datetime.datetime
+    createdAt: Optional[datetime.datetime] = None # SystemMessage wouldn't have this
     run_id: Optional[str] = None
     tool_call_id: Optional[str] = None  # see ToolMessage
     role: str
@@ -106,7 +106,7 @@ class ToolDefinition(BaseModel):
 
     id: str
     name: str
-    description: str
+    description: Optional[str] = None
     parameters: dict
 
 
@@ -174,7 +174,7 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
             "type": _FUNCTION,
             _FUNCTION: {
                 "name": tool_call.details.function.name,
-                "arguments": json.loads(tool_call.details.function.arguments),
+                "arguments": safe_loads(tool_call.details.function.arguments),
             },
         },
     }
@@ -185,7 +185,7 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
     messages.append(AssistantMessage(run_id=run_id, content=[to_dict(content_tool_call)], createdAt=tool_call.created))
 
     # Now, onto the tool result, which only includes the result of the function call.
-    content_tool_call_result = {"type": _TOOL_RESULT, _TOOL_RESULT: json.loads(tool_call.details.function.output)}
+    content_tool_call_result = {"type": _TOOL_RESULT, _TOOL_RESULT: safe_loads(tool_call.details.function.output)}
 
     # Since this is a tool's action of returning, we put it as a tool message.
     messages.append(
@@ -209,3 +209,17 @@ def to_dict(obj) -> dict:
     :rtype: dict
     """
     return json.loads(json.dumps(obj))
+
+
+def safe_loads(data: str) -> Union[dict, str]:
+    """
+    Safely loads a JSON string into a Python dictionary or returns the original string if loading fails.
+    :param data: The JSON string to be loaded.
+    :type data: str
+    :return: The loaded dictionary or the original string.
+    :rtype: Union[dict, str]
+    """
+    try:
+        return json.loads(data)
+    except json.JSONDecodeError:
+        return data

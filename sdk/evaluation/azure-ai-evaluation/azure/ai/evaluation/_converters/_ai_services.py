@@ -60,13 +60,7 @@ class AIAgentConverter:
         # We will collect messages in this accumulator.
         final_messages: List[Message] = []
 
-        # First, we need to create the first system message of the thread.
-        instructions = thread_run.instructions
-        if instructions:
-            # The system message will have a string content.
-            final_messages.append(SystemMessage(content=instructions, createdAt=thread_run.created_at))
-
-        # Second, walk through the "user-facing" conversation history and start adding messages.
+        # Walk through the "user-facing" conversation history and start adding messages.
         chronological_conversation = self.list_messages_chronological(thread_id)
 
         # Each visible message in the conversation is a message from the user or the assistant, we collect
@@ -159,6 +153,13 @@ class AIAgentConverter:
                         parameters=parameters,
                     )
                 )
+
+        # Finally, we want to force the system message to be the first one in the list.
+        # First, we need to create the first system message of the thread.
+        instructions = thread_run.instructions
+        if instructions:
+            # The system message will have a string content.
+            final_messages.insert(0, SystemMessage(content=instructions))
 
         # We need to collect all the messages that are not the current run's response.
         query: List[Message] = [what for what in final_messages if what.run_id != run_id]
