@@ -7,12 +7,11 @@
 from typing import IO, TYPE_CHECKING, Any, List, Optional, Union, overload
 from urllib.parse import urlparse
 
-from azure.communication.phonenumbers.siprouting.aio._sip_routing_client_async import ExpandEnum
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.paging import ItemPaged
 
 from ._models import SipTrunk, SipTrunkRoute
-from ._generated.models import SipConfiguration, SipTrunkInternal, SipTrunkRouteInternal
+from ._generated.models import ExpandEnum, SipConfiguration, SipTrunkInternal, SipTrunkRouteInternal, RoutesForNumber
 from ._generated._client import SIPRoutingService
 from .._shared.auth_policy_utils import get_authentication_policy
 from .._shared.utils import parse_connection_str
@@ -88,8 +87,8 @@ class SipRoutingClient(object):
 
         :param trunk_fqdn: FQDN of the desired SIP trunk.
         :type trunk_fqdn: str
-        :keyword expand: Sip configuration expand. Optional. "trunks/health" Default value is None.
-        :paramtype expand: str or ~azure.communication.phonenumbers.siprouting.models.ExpandEnum
+        :param expand: Option to retrieve detailed configuration, default value is None..
+        :type expand: str or ~azure.communication.phonenumbers.siprouting.models.ExpandEnum
         :returns: SIP trunk with specified trunk_fqdn. If it doesn't exist, throws KeyError.
         :rtype: ~azure.communication.siprouting.models.SipTrunk
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError, KeyError
@@ -142,10 +141,14 @@ class SipRoutingClient(object):
 
     @distributed_trace
     def list_trunks(
-        self, **kwargs  # type: Any
+        self, 
+        expand: Optional[Union[str, ExpandEnum]] = None,
+        **kwargs  # type: Any
     ):  # type: (...) -> ItemPaged[SipTrunk]
         """Retrieves the currently configured SIP trunks.
-
+        
+        :keyword expand: Sip configuration expand. Optional. "trunks/health" Default value is None.
+        :paramtype expand: str or ~azure.communication.phonenumbers.siprouting.
         :returns: Current SIP trunks configuration.
         :rtype: ItemPaged[~azure.communication.siprouting.models.SipTrunk]
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -157,7 +160,7 @@ class SipRoutingClient(object):
 
         # pylint: disable=unused-argument
         def get_next(nextLink=None):
-            return self._rest_service.sip_routing.get(**kwargs)
+            return self._rest_service.sip_routing.get(expand=expand, **kwargs)
 
         return ItemPaged(get_next, extract_data)
 
@@ -242,22 +245,19 @@ class SipRoutingClient(object):
     @distributed_trace
     def test_routes_with_number(
        self,
-        sip_configuration: Optional[Union[SipConfiguration, IO[bytes]]] = None,
-        *,
+        sip_configuration: SipConfiguration,
         target_phone_number: str,
         **kwargs: Any
-    ):
+    ):  # type: (...) -> RoutesForNumber
         """Gets the list of routes matching the target phone number, ordered by priority.
 
         Gets the list of routes matching the target phone number, ordered by priority.
 
-        :param sip_configuration: Sip configuration object to test with targetPhoneNumber. Is either a
-         SipConfiguration type or a IO[bytes] type. Default value is None.
+        :param sip_configuration: Sip configuration object to test with targetPhoneNumber..
         :type sip_configuration: ~azure.communication.phonenumbers.siprouting.models.SipConfiguration
-         or IO[bytes]
-        :keyword target_phone_number: Phone number to test routing patterns against. Required.
-        :paramtype target_phone_number: str
-        :return: RoutesForNumber
+        :param target_phone_number: Phone number to test routing patterns against. Required.
+        :type target_phone_number: str
+        :return: List of routes matching the target number, provided in the same order of priority as in SipConfiguration.
         :rtype: ~azure.communication.phonenumbers.siprouting.models.RoutesForNumber
         :raises ~azure.core.exceptions.HttpResponseError:
         """
