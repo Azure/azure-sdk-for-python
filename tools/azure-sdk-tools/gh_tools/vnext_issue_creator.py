@@ -59,7 +59,9 @@ def get_build_link(check_type: CHECK_TYPE) -> str:
 
 def get_build_info(build_link: str, check_type: CHECK_TYPE) -> str:
     """Get the build info from the build link."""
-
+    log_id = os.getenv("LOG_LOGID")
+    logs_link = build_link.split("&view=")[0]
+    logs_link = f"{logs_link}/logs/{log_id}?api-version=7.1"
     # Get the build info from the build link
     build_output = requests.get(build_link)
 
