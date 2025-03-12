@@ -3,7 +3,6 @@ import random
 import sys
 
 import aiohttp
-from mypyc.lower.int_ops import lower_int_ge
 
 from azure.cosmos import documents
 from workload_configs import USE_MULTIPLE_WRITABLE_LOCATIONS
