@@ -201,6 +201,7 @@ class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
         self._transport_type = kwargs.pop("transport_type", TransportType.Amqp)
         self._socket_timeout = kwargs.pop("socket_timeout", None)
         self._http_proxy = kwargs.pop("http_proxy", None)
+        self._legacy_ws = kwargs.pop("legacy_ws", False)
 
         # Custom Endpoint
         self._custom_endpoint_address = kwargs.get("custom_endpoint_address")
@@ -327,6 +328,7 @@ class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
                 custom_endpoint_address=self._custom_endpoint_address,
                 socket_timeout=self._socket_timeout,
                 use_tls=self._use_tls,
+                legacy_ws=self._legacy_ws,
             )
             self._connection.open()
         if not self._session:
