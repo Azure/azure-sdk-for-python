@@ -1,0 +1,6 @@
+{
+  "commit": "b907cfc6f8888a1766a82f0f2ebf2fb87998062c",
+  "repository_url": "https://github.com/azure/azure-rest-api-specs",
+  "typespec_src": "specification/sovereign/Sovereign.Management",
+  "@azure-tools/typespec-python": "0.39.0"
+}
