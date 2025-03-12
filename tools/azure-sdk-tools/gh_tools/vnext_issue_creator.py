@@ -62,7 +62,6 @@ def get_build_link(check_type: CHECK_TYPE) -> str:
 
 def get_build_info(build_link: str, check_type: CHECK_TYPE) -> str:
     """Get the build info from the build link."""
-    log_id = os.getenv("BUILD_LOGID")
     build_id = os.getenv("BUILD_BUILDID")
     job_id = os.getenv("SYSTEM_JOBID")
     timeline_link =f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds/{build_id}/timeline?api-version=6.0"
