@@ -241,7 +241,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             return get_applicable_regional_endpoints(
                 self.get_read_regional_endpoints(),
                 self.available_locations_by_read_regional_endpoints,
-                self.default_regional_endpoint,
+                self.get_write_regional_endpoints()[0],
                 excluded_locations)
 
         # Else, return all regional endpoints

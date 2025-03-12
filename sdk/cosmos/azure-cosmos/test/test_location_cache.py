@@ -198,8 +198,8 @@ class TestLocationCache:
 
         expected_read_endpoints_list = [
             [location2_endpoint],
-            [default_endpoint],
-            [default_endpoint],
+            [location1_endpoint],
+            [location1_endpoint],
             [location1_endpoint, location2_endpoint],
             [location1_endpoint, location2_endpoint],
         ]
