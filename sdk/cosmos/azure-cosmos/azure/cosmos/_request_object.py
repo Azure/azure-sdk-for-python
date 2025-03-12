@@ -55,9 +55,14 @@ class RequestObject(object):
         self.use_preferred_locations = None
         self.location_endpoint_to_route = None
 
-    def set_excluded_location_from_options(self, options: Mapping[str, Any]) -> None:
-        if (options is not None
+    def _can_set_excluded_location(self, options: Mapping[str, Any]) -> bool:
+        if self.resource_type.lower() in ['offers', 'conflicts']:
+            return False
+
+        return (options is not None
                 and 'excludedLocations' in options
-                and options['excludedLocations'] is not None
-        ):
-            self.excluded_locations = options['excludedLocations']
+                and options['excludedLocations'] is not None)
+
+    def set_excluded_location_from_options(self, options: Mapping[str, Any]) -> None:
+        if self._can_set_excluded_location(options):
+            self.excluded_locations = list(options['excludedLocations'])

@@ -1143,8 +1143,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """Get the ThroughputProperties object for this container.
         If no ThroughputProperties already exist for the container, an exception is raised.
 
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
-            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: Throughput for the container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exists for the container or
@@ -1167,8 +1165,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         If no ThroughputProperties already exist for the container, an exception is raised.
 
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
-            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, Any], List[Dict[str, Any]]], None]
         :returns: Throughput for the container.
@@ -1203,8 +1199,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         :param throughput: The throughput to be set.
         :type throughput: Union[int, ~azure.cosmos.ThroughputProperties]
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
-            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
         :returns: ThroughputProperties for the container, updated with new throughput.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the container
             or the throughput properties could not be updated.
@@ -1237,8 +1231,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """List all the conflicts in the container.
 
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
-            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]
         :returns: An Iterable of conflicts (dicts).
@@ -1280,8 +1272,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :param partition_key: Specifies the partition key value for the item.
         :type partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
-            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], ItemPaged[Dict[str, Any]]], None]
         :returns: An Iterable of conflicts (dicts).
@@ -1320,8 +1310,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :type conflict: Union[str, Dict[str, Any]]
         :param partition_key: Partition key for the conflict to retrieve.
         :type partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
-            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A dict representing the retrieved conflict.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given conflict couldn't be retrieved.
@@ -1352,8 +1340,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :type conflict: Union[str, Dict[str, Any]]
         :param partition_key: Partition key for the conflict to delete.
         :type partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
-            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The conflict wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The conflict does not exist in the container.
@@ -1430,8 +1416,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         :keyword bool force_refresh:
             Flag to indicate whether obtain the list of feed ranges directly from cache or refresh the cache.
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
-            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
         :returns: A list representing the feed ranges in base64 encoded string
         :rtype: Iterable[Dict[str, Any]]
 
