@@ -19,7 +19,7 @@ from devtools_testutils.proxy_testcase import (
     stop_record_or_playback,
 )
 
-from async_wrapper import async_wrapper
+from async_wrapper import wrap_result
 
 
 # A modified version of devtools_testutils.aio.recorded_by_proxy_async
@@ -149,6 +149,6 @@ def client_setup(test_func):
         except Exception as err:
             raise err
         finally:
-            await async_wrapper(client.close())
+            await wrap_result(client.close())
 
     return wrapper

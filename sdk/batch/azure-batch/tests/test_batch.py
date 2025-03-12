@@ -9,27 +9,19 @@
 import datetime
 import io
 import hashlib
-import logging
 import time
 import binascii
-import json
 import pytest
-import requests
 import six
-import os
-
-
-from wsgiref.handlers import format_date_time
-from time import mktime
 
 import azure.core.exceptions
 from azure.batch import models
 from azure.batch.aio import BatchClient as AsyncBatchClient
 from azure.batch import BatchClient as SyncBatchClient
-from typing import Any, Callable, Dict, Iterable, Optional, TypeVar, Union
+from typing import Iterable, Union
 
 from batch_preparers import AccountPreparer, PoolPreparer, JobPreparer
-from async_wrapper import async_wrapper
+from async_wrapper import wrap_list_result, wrap_result
 from decorators import recorded_by_proxy_async, client_setup
 
 from devtools_testutils import (
@@ -72,7 +64,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
     async def assertBatchError(self, code, func, *args, **kwargs):
         try:
-            await async_wrapper(func(*args, **kwargs))
+            await wrap_result(func(*args, **kwargs))
             self.fail("BatchErrorException expected but not raised")
         except azure.core.exceptions.HttpResponseError as err:
             assert err.error.code == code
@@ -81,7 +73,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
     async def assertCreateTasksError(self, code, func, *args, **kwargs):
         try:
-            await async_wrapper(func(*args, **kwargs))
+            await wrap_result(func(*args, **kwargs))
             self.fail("CreateTasksError expected but not raised")
         except models.CreateTasksError as err:
             try:
@@ -125,17 +117,18 @@ class TestBatch(AzureMgmtRecordedTestCase):
             user_accounts=users,
             target_node_communication_mode=models.BatchNodeCommunicationMode.CLASSIC,
         )
-        response = await async_wrapper(client.create_pool(test_iaas_pool))
+        response = await wrap_result(client.create_pool(test_iaas_pool))
         assert response is None
 
         # Test list pool node counnt
-        counts = list(await async_wrapper(client.list_pool_node_counts()))
+        counts = list(await wrap_list_result(client.list_pool_node_counts()))
         assert counts is not None
         assert len(counts) == 1
         assert counts[0].pool_id == test_iaas_pool.id
         assert counts[0].dedicated is not None
         assert counts[0].dedicated.total == 0
         assert counts[0].dedicated.leaving_pool == 0
+        assert counts[0].low_priority is not None
         assert counts[0].low_priority.total == 0
 
         # Test Create Pool with Network Configuration
@@ -192,9 +185,11 @@ class TestBatch(AzureMgmtRecordedTestCase):
             ),
             target_node_communication_mode=models.BatchNodeCommunicationMode.CLASSIC,
         )
-        response = await async_wrapper(client.create_pool(test_disk_pool))
+        response = await wrap_result(client.create_pool(test_disk_pool))
         assert response is None
-        disk_pool = await async_wrapper(client.get_pool(test_disk_pool.id))
+        disk_pool = await wrap_result(client.get_pool(test_disk_pool.id))
+        assert disk_pool.virtual_machine_configuration is not None
+        assert disk_pool.virtual_machine_configuration.data_disks is not None
         assert disk_pool.virtual_machine_configuration.data_disks[0].logical_unit_number == 1
         assert disk_pool.virtual_machine_configuration.data_disks[0].disk_size_gb == 50
         assert disk_pool.target_node_communication_mode == models.BatchNodeCommunicationMode.CLASSIC
@@ -211,24 +206,26 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 node_agent_sku_id="batch.node.ubuntu 18.04",
             ),
         )
-        response = await async_wrapper(client.create_pool(test_ade_pool))
-        assert response is None
-        ade_pool = await async_wrapper(client.get_pool(test_ade_pool.id))
+        response = await wrap_result(client.create_pool(test_ade_pool))
+        # assert response is None
+        ade_pool = await wrap_result(client.get_pool(test_ade_pool.id))
+        assert ade_pool.virtual_machine_configuration is not None
+        assert ade_pool.virtual_machine_configuration.disk_encryption_configuration is not None
         assert ade_pool.virtual_machine_configuration.disk_encryption_configuration.targets == [
             models.DiskEncryptionTarget.TEMPORARY_DISK
         ]
 
         # Test List Pools without Filters
-        pools = list(await async_wrapper(client.list_pools()))
+        pools = list(await wrap_list_result(client.list_pools()))
         assert len(pools) > 1
 
         # Test List Pools with Maximum
-        pools = list(await async_wrapper(client.list_pools(max_results=1)))
+        pools = list(await wrap_list_result(client.list_pools(max_results=1)))
         assert len(pools) == 3
 
         # Test List Pools with Filter
         pools = list(
-            await async_wrapper(
+            await wrap_list_result(
                 client.list_pools(
                     filter="startswith(id,'batch_ade_')",
                     select=["id,state"],
@@ -269,10 +266,10 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 )
             ],
         )
-        response = await async_wrapper(client.create_pool(test_iaas_pool))
+        response = await wrap_result(client.create_pool(test_iaas_pool))
         assert response is None
 
-        mount_pool = await async_wrapper(client.get_pool(test_iaas_pool.id))
+        mount_pool = await wrap_result(client.get_pool(test_iaas_pool.id))
         assert mount_pool.mount_configuration is not None
         assert len(mount_pool.mount_configuration) == 1
         assert mount_pool.mount_configuration[0].azure_blob_file_system_configuration is not None
@@ -300,7 +297,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 ),
             ),
         )
-        response = await async_wrapper(client.create_pool(test_paas_pool))
+        response = await wrap_result(client.create_pool(test_paas_pool))
         assert response is None
 
         # Test Update Pool Options
@@ -311,20 +308,20 @@ class TestBatch(AzureMgmtRecordedTestCase):
             target_node_communication_mode=models.BatchNodeCommunicationMode.CLASSIC,
         )
         # certRef = { "certificateReferences": [] }
-        response = await async_wrapper(client.replace_pool_properties(test_paas_pool.id, params))
+        response = await wrap_result(client.replace_pool_properties(test_paas_pool.id, params))
         assert response is None
 
         # Test Patch Pool Options
         params = models.BatchPoolUpdateContent(metadata=[models.MetadataItem(name="foo2", value="bar2")])
-        response = await async_wrapper(client.update_pool(test_paas_pool.id, params))
+        response = await wrap_result(client.update_pool(test_paas_pool.id, params))
         assert response is None
 
         # Test Pool Exists
-        response = await async_wrapper(client.pool_exists(test_paas_pool.id))
+        response = await wrap_result(client.pool_exists(test_paas_pool.id))
         assert response
 
         # Test Get Pool
-        pool = await async_wrapper(client.get_pool(test_paas_pool.id))
+        pool = await wrap_result(client.get_pool(test_paas_pool.id))
         assert isinstance(pool, models.BatchPool)
         assert pool.id == test_paas_pool.id
         assert pool.state == models.BatchPoolState.ACTIVE
@@ -332,12 +329,13 @@ class TestBatch(AzureMgmtRecordedTestCase):
         # assert pool.vm_configuration.node_agent_sku_id == "batch.node.ubuntu 18.04"
         assert pool.vm_size == DEFAULT_VM_SIZE
         assert pool.start_task is None
+        assert pool.metadata is not None
         assert pool.metadata[0].name == "foo2"
         assert pool.metadata[0].value == "bar2"
         assert pool.target_node_communication_mode == models.BatchNodeCommunicationMode.CLASSIC
 
         # Test Get Pool with OData Clauses
-        pool = await async_wrapper(client.get_pool(pool_id=test_paas_pool.id, select=["id,state"], expand=["stats"]))
+        pool = await wrap_result(client.get_pool(pool_id=test_paas_pool.id, select=["id,state"], expand=["stats"]))
         assert isinstance(pool, models.BatchPool)
         assert pool.id == test_paas_pool.id
         assert pool.state == models.BatchPoolState.ACTIVE
@@ -345,7 +343,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert pool.vm_size is None
 
         # Test Delete Pool
-        response = await async_wrapper(client.delete_pool(test_paas_pool.id))
+        response = await wrap_result(client.delete_pool(test_paas_pool.id))
         assert response is None
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
@@ -358,7 +356,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         batch_pool = kwargs.pop("batch_pool")
         # Test Enable Autoscale
         interval = datetime.timedelta(minutes=6)
-        response = await async_wrapper(
+        response = await wrap_result(
             client.enable_pool_auto_scale(
                 batch_pool.name,
                 models.BatchPoolEnableAutoScaleContent(
@@ -371,39 +369,39 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert response is None
 
         # Test Evaluate Autoscale
-        result = await async_wrapper(
+        result = await wrap_result(
             client.evaluate_pool_auto_scale(
                 batch_pool.name,
-                models.BatchPoolEnableAutoScaleContent(auto_scale_formula="$TargetDedicatedNodes=3"),
+                models.BatchPoolEvaluateAutoScaleContent(auto_scale_formula="$TargetDedicatedNodes=3"),
             )
         )
         assert isinstance(result, models.AutoScaleRun)
         assert result.results == "$TargetDedicatedNodes=3;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"
 
         # Test Disable Autoscale
-        pool = await async_wrapper(client.get_pool(batch_pool.name))
+        pool = await wrap_result(client.get_pool(batch_pool.name))
         while self.is_live and pool.allocation_state != models.AllocationState.STEADY:
             time.sleep(5)
-            pool = await async_wrapper(client.get_pool(batch_pool.name))
-        response = await async_wrapper(client.disable_pool_auto_scale(batch_pool.name))
+            pool = await wrap_result(client.get_pool(batch_pool.name))
+        response = await wrap_result(client.disable_pool_auto_scale(batch_pool.name))
         assert response is None
 
         # Test Pool Resize
-        pool = await async_wrapper(client.get_pool(batch_pool.name))
+        pool = await wrap_result(client.get_pool(batch_pool.name))
         while self.is_live and pool.allocation_state != models.AllocationState.STEADY:
             time.sleep(5)
-            pool = await async_wrapper(client.get_pool(batch_pool.name))
+            pool = await wrap_result(client.get_pool(batch_pool.name))
         params = models.BatchPoolResizeContent(target_dedicated_nodes=0, target_low_priority_nodes=2)
-        response = await async_wrapper(client.resize_pool(batch_pool.name, params))
+        response = await wrap_result(client.resize_pool(batch_pool.name, params))
         assert response is None
 
         # Test Stop Pool Resize
-        response = await async_wrapper(client.stop_pool_resize(batch_pool.name))
+        response = await wrap_result(client.stop_pool_resize(batch_pool.name))
         assert response is None
-        pool = await async_wrapper(client.get_pool(batch_pool.name))
+        pool = await wrap_result(client.get_pool(batch_pool.name))
         while self.is_live and pool.allocation_state != models.AllocationState.STEADY:
             time.sleep(5)
-            pool = await async_wrapper(client.get_pool(batch_pool.name))
+            pool = await wrap_result(client.get_pool(batch_pool.name))
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
@@ -423,54 +421,54 @@ class TestBatch(AzureMgmtRecordedTestCase):
             recurrence_interval=datetime.timedelta(days=1),
         )
         params = models.BatchJobScheduleCreateContent(id=schedule_id, schedule=schedule, job_specification=job_spec)
-        response = await async_wrapper(client.create_job_schedule(params))
+        response = await wrap_result(client.create_job_schedule(params))
         assert response is None
 
         # Test List Job Schedules
-        schedules = list(await async_wrapper(client.list_job_schedules()))
+        schedules = list(await wrap_list_result(client.list_job_schedules()))
         assert len(schedules) > 0
 
         # Test Get Job Schedule
-        schedule = await async_wrapper(client.get_job_schedule(schedule_id))
+        schedule = await wrap_result(client.get_job_schedule(schedule_id))
         assert isinstance(schedule, models.BatchJobSchedule)
         assert schedule.id == schedule_id
         assert schedule.state == models.BatchJobScheduleState.ACTIVE
 
         # Test Job Schedule Exists
-        exists = await async_wrapper(client.job_schedule_exists(schedule_id))
+        exists = await wrap_result(client.job_schedule_exists(schedule_id))
         assert exists
 
         # Test List Jobs from Schedule
-        jobs = list(await async_wrapper(client.list_jobs_from_schedule(schedule_id)))
+        jobs = list(await wrap_list_result(client.list_jobs_from_schedule(schedule_id)))
         assert len(jobs) > 0
 
         # Test Disable Job Schedule
-        response = await async_wrapper(client.disable_job_schedule(schedule_id))
+        response = await wrap_result(client.disable_job_schedule(schedule_id))
         assert response is None
 
         # Test Enable Job Schedule
-        response = await async_wrapper(client.enable_job_schedule(schedule_id))
+        response = await wrap_result(client.enable_job_schedule(schedule_id))
         assert response is None
 
         # Test Update Job Schedule
         job_spec = models.BatchJobSpecification(pool_info=models.BatchPoolInfo(pool_id="pool_id"))
         schedule = models.BatchJobScheduleConfiguration(recurrence_interval=datetime.timedelta(hours=10))
         params = models.BatchJobSchedule(schedule=schedule, job_specification=job_spec)
-        response = await async_wrapper(client.replace_job_schedule(schedule_id, params))
+        response = await wrap_result(client.replace_job_schedule(schedule_id, params))
         assert response is None
 
         # Test Patch Job Schedule
         schedule = models.BatchJobScheduleConfiguration(recurrence_interval=datetime.timedelta(hours=5))
         params = models.BatchJobScheduleUpdateContent(schedule=schedule)
-        response = await async_wrapper(client.update_job_schedule(schedule_id, params))
+        response = await wrap_result(client.update_job_schedule(schedule_id, params))
         assert response is None
 
         # Test Terminate Job Schedule
-        response = await async_wrapper(client.terminate_job_schedule(schedule_id))
+        response = await wrap_result(client.terminate_job_schedule(schedule_id))
         assert response is None
 
         # Test Delete Job Schedule
-        response = await async_wrapper(client.delete_job_schedule(schedule_id))
+        response = await wrap_result(client.delete_job_schedule(schedule_id))
         assert response is None
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
@@ -512,16 +510,17 @@ class TestBatch(AzureMgmtRecordedTestCase):
             network_configuration=network_config,
         )
 
-        await async_wrapper(client.create_pool(pool))
-        network_pool: models.BatchPool = await async_wrapper(client.get_pool(pool.id))
+        await wrap_result(client.create_pool(pool))
+        network_pool: models.BatchPool = await wrap_result(client.get_pool(pool.id))
         while self.is_live and network_pool.allocation_state != models.AllocationState.STEADY:
             time.sleep(10)
-            network_pool = await async_wrapper(client.get_pool(pool.id))
+            network_pool = await wrap_result(client.get_pool(pool.id))
 
         # Test Batch Node Config
-        nodes = list(await async_wrapper(client.list_nodes(pool.id)))
+        nodes = list(await wrap_list_result(client.list_nodes(pool.id)))
         assert len(nodes) == 1
         assert isinstance(nodes[0], models.BatchNode)
+        assert nodes[0].endpoint_configuration is not None
         assert len(nodes[0].endpoint_configuration.inbound_endpoints) == 1
         assert nodes[0].endpoint_configuration.inbound_endpoints[0].name == "TestEndpointConfig.0"
         assert nodes[0].endpoint_configuration.inbound_endpoints[0].protocol == "udp"
@@ -535,15 +534,15 @@ class TestBatch(AzureMgmtRecordedTestCase):
     async def test_batch_compute_nodes(self, client: BatchClient, **kwargs):
         batch_pool = kwargs.pop("batch_pool")
         # Test List Batch Nodes
-        nodes = list(await async_wrapper(client.list_nodes(batch_pool.name)))
+        nodes = list(await wrap_list_result(client.list_nodes(batch_pool.name)))
         assert len(nodes) == 2
         while self.is_live and any([n for n in nodes if n.state != models.BatchNodeState.IDLE]):
             time.sleep(10)
-            nodes = list(await async_wrapper(client.list_nodes(batch_pool.name)))
+            nodes = list(await wrap_list_result(client.list_nodes(batch_pool.name)))
         assert len(nodes) == 2
 
         # Test Get Batch Node
-        node = await async_wrapper(client.get_node(batch_pool.name, nodes[0].id))
+        node = await wrap_result(client.get_node(batch_pool.name, nodes[0].id))
         assert isinstance(node, models.BatchNode)
         assert node.scheduling_state == models.SchedulingState.enabled
         assert node.is_dedicated
@@ -560,13 +559,13 @@ class TestBatch(AzureMgmtRecordedTestCase):
             ignored_headers="Accept, ocp-date, client-request-id",
             excluded_headers="Connection",
         )
-        result = await async_wrapper(client.upload_node_logs(batch_pool.name, nodes[0].id, config))
+        result = await wrap_result(client.upload_node_logs(batch_pool.name, nodes[0].id, config))
         assert result is not None
         assert result.number_of_files_uploaded > 0
         assert result.virtual_directory_name is not None
 
         # Test Disable Scheduling
-        response = await async_wrapper(
+        response = await wrap_result(
             client.disable_node_scheduling(
                 batch_pool.name,
                 nodes[0].id,
@@ -576,11 +575,11 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert response is None
 
         # Test Enable Scheduling
-        response = await async_wrapper(client.enable_node_scheduling(batch_pool.name, nodes[0].id))
+        response = await wrap_result(client.enable_node_scheduling(batch_pool.name, nodes[0].id))
         assert response is None
 
         # Test Reboot Node
-        response = await async_wrapper(
+        response = await wrap_result(
             client.reboot_node(
                 batch_pool.name,
                 nodes[0].id,
@@ -601,7 +600,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
         # Test Remove Nodes
         options = models.BatchNodeRemoveContent(node_list=[n.id for n in nodes])
-        response = await async_wrapper(client.remove_nodes(batch_pool.name, options))
+        response = await wrap_result(client.remove_nodes(batch_pool.name, options))
         assert response is None
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
@@ -650,24 +649,25 @@ class TestBatch(AzureMgmtRecordedTestCase):
             virtual_machine_configuration=virtual_machine_config,
             network_configuration=network_config,
         )
-        response = await async_wrapper(client.create_pool(batch_pool))
+        response = await wrap_result(client.create_pool(batch_pool))
         assert response is None
 
-        batch_pool = await async_wrapper(client.get_pool(batch_pool.id))
+        batch_pool = await wrap_result(client.get_pool(batch_pool.id))
         while self.is_live and batch_pool.allocation_state != models.AllocationState.STEADY:
             time.sleep(10)
-            batch_pool = await async_wrapper(client.get_pool(batch_pool.id))
+            batch_pool = await wrap_result(client.get_pool(batch_pool.id))
 
-        nodes = list(await async_wrapper(client.list_nodes(batch_pool.id)))
+        nodes = list(await wrap_list_result(client.list_nodes(batch_pool.id)))
         assert len(nodes) == 1
 
-        extensions = list(await async_wrapper(client.list_node_extensions(batch_pool.id, nodes[0].id)))
+        extensions = list(await wrap_list_result(client.list_node_extensions(batch_pool.id, nodes[0].id)))
         assert extensions is not None
         assert len(extensions) == 2
-        extension = await async_wrapper(
+        extension = await wrap_result(
             client.get_node_extension(batch_pool.id, nodes[0].id, extensions[1].vm_extension.name)
         )
         assert extension is not None
+        assert extension.vm_extension is not None
         assert extension.vm_extension.name == "batchNodeExtension"
         assert extension.vm_extension.publisher == "Microsoft.Azure.Extensions"
         assert extension.vm_extension.type == "CustomScript"
@@ -680,32 +680,32 @@ class TestBatch(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_batch_compute_node_user(self, client: BatchClient, **kwargs):
         batch_pool = kwargs.pop("batch_pool")
-        nodes = list(await async_wrapper(client.list_nodes(batch_pool.name)))
+        nodes = list(await wrap_list_result(client.list_nodes(batch_pool.name)))
         while self.is_live and any([n for n in nodes if n.state != models.BatchNodeState.IDLE]):
             time.sleep(10)
-            nodes = list(await async_wrapper(client.list_nodes(batch_pool.name)))
+            nodes = list(await wrap_list_result(client.list_nodes(batch_pool.name)))
         assert len(nodes) == 1
 
         # Test Add User
         user_name = "BatchPythonSDKUser"
-        nodes = list(await async_wrapper(client.list_nodes(batch_pool.name)))
+        nodes = list(await wrap_list_result(client.list_nodes(batch_pool.name)))
         user = models.BatchNodeUserCreateContent(name=user_name, password="secret", is_admin=False)
-        response = await async_wrapper(client.create_node_user(batch_pool.name, nodes[0].id, user))
+        response = await wrap_result(client.create_node_user(batch_pool.name, nodes[0].id, user))
         assert response is None
 
         # Test Update User
         user = models.BatchNodeUserUpdateContent(password="liilef#$DdRGSa_ewkjh")
-        response = await async_wrapper(client.replace_node_user(batch_pool.name, nodes[0].id, user_name, user))
+        response = await wrap_result(client.replace_node_user(batch_pool.name, nodes[0].id, user_name, user))
         assert response is None
 
         # Test Get remote login settings
-        remote_login_settings = await async_wrapper(client.get_node_remote_login_settings(batch_pool.name, nodes[0].id))
+        remote_login_settings = await wrap_result(client.get_node_remote_login_settings(batch_pool.name, nodes[0].id))
         assert isinstance(remote_login_settings, models.BatchNodeRemoteLoginSettings)
         assert remote_login_settings.remote_login_ip_address is not None
         assert remote_login_settings.remote_login_port is not None
 
         # Test Delete User
-        response = await async_wrapper(client.delete_node_user(batch_pool.name, nodes[0].id, user_name))
+        response = await wrap_result(client.delete_node_user(batch_pool.name, nodes[0].id, user_name))
         assert response is None
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
@@ -716,15 +716,15 @@ class TestBatch(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_batch_compute_node_remote_desktop(self, client: BatchClient, **kwargs):
         batch_pool = kwargs.pop("batch_pool")
-        nodes = list(await async_wrapper(client.list_nodes(batch_pool.name)))
+        nodes = list(await wrap_list_result(client.list_nodes(batch_pool.name)))
         while self.is_live and any([n for n in nodes if n.state != models.BatchNodeState.IDLE]):
             time.sleep(10)
-            nodes = list(await async_wrapper(client.list_nodes(batch_pool.name)))
+            nodes = list(await wrap_list_result(client.list_nodes(batch_pool.name)))
         assert len(nodes) == 1
 
         # Test Get remote desktop
         with io.BytesIO() as file_handle:
-            remote_desktop_bytes = await async_wrapper(
+            remote_desktop_bytes = await wrap_result(
                 client.get_node_remote_login_settings(batch_pool.name, nodes[0].id)
             )
             assert remote_desktop_bytes is not None
@@ -745,50 +745,50 @@ class TestBatch(AzureMgmtRecordedTestCase):
     async def test_batch_files(self, client: BatchClient, **kwargs):
         batch_pool = kwargs.pop("batch_pool")
         batch_job = kwargs.pop("batch_job")
-        nodes = list(await async_wrapper(client.list_nodes(batch_pool.name)))
+        nodes = list(await wrap_list_result(client.list_nodes(batch_pool.name)))
         while self.is_live and any([n for n in nodes if n.state != models.BatchNodeState.IDLE]):
             time.sleep(10)
-            nodes = list(await async_wrapper(client.list_nodes(batch_pool.name)))
+            nodes = list(await wrap_list_result(client.list_nodes(batch_pool.name)))
         assert len(nodes) == 1
         node = nodes[0].id
         task_id = "test_task"
         task_param = models.BatchTaskCreateContent(id=task_id, command_line='cmd /c "echo hello world"')
-        response = await async_wrapper(client.create_task(batch_job.id, task_param))
+        response = await wrap_result(client.create_task(batch_job.id, task_param))
         assert response is None
-        task = await async_wrapper(client.get_task(batch_job.id, task_id))
+        task = await wrap_result(client.get_task(batch_job.id, task_id))
         while self.is_live and task.state != models.BatchTaskState.COMPLETED:
             time.sleep(5)
-            task = await async_wrapper(client.get_task(batch_job.id, task_id))
+            task = await wrap_result(client.get_task(batch_job.id, task_id))
 
         # Test List Files from Batch Node
-        all_files = await async_wrapper(client.list_node_files(batch_pool.name, node, recursive=True))
+        all_files = await wrap_list_result(client.list_node_files(batch_pool.name, node, recursive=True))
         only_files = [f for f in all_files if not f.is_directory]
         assert len(only_files) >= 2
 
         # Test File Properties from Batch Node
-        props = await async_wrapper(client.get_node_file_properties(batch_pool.name, node, only_files[0].name))
+        props = await wrap_result(client.get_node_file_properties(batch_pool.name, node, only_files[0].name))
         assert "Content-Length" in props.headers
         assert "Content-Type" in props.headers
 
         # Test Get File from Batch Node
         file_length = 0
         with io.BytesIO() as file_handle:
-            response = await async_wrapper(client.get_node_file(batch_pool.name, node, only_files[0].name))
+            response = await wrap_result(client.get_node_file(batch_pool.name, node, only_files[0].name))
             for data in response:
                 file_length += 1
         assert file_length == int(props.headers["Content-Length"])
 
         # Test Delete File from Batch Node
-        response = await async_wrapper(client.delete_node_file(batch_pool.name, node, only_files[0].name)) # TODO: maybe delete stderr to use in the next test for content_length (against "hello world")
+        response = await wrap_result(client.delete_node_file(batch_pool.name, node, only_files[0].name)) # TODO: maybe delete stderr to use in the next test for content_length (against "hello world")
         assert response is None
 
         # Test List Files from Task
-        all_files = await async_wrapper(client.list_task_files(batch_job.id, task_id))
+        all_files = await wrap_list_result(client.list_task_files(batch_job.id, task_id))
         only_files = [f for f in all_files if not f.is_directory]
         assert len(only_files) >= 1
 
         # Test File Properties from Task
-        props = await async_wrapper(
+        props = await wrap_result(
             client.get_task_file_properties(job_id=batch_job.id, task_id=task_id, file_path=only_files[0].name)
         )
         assert "Content-Length" in props.headers
@@ -797,18 +797,18 @@ class TestBatch(AzureMgmtRecordedTestCase):
         # Test Get File from Task
         file_length = 0
         with io.BytesIO() as file_handle:
-            response = await async_wrapper(client.get_task_file(batch_job.id, task_id, only_files[0].name))
+            response = await wrap_result(client.get_task_file(batch_job.id, task_id, only_files[0].name))
             for data in response:
                 file_length += len(data)
         assert file_length == int(props.headers["Content-Length"])
 
         # Test Delete File from Task
-        response = await async_wrapper(client.delete_task_file(batch_job.id, task_id, only_files[0].name))
+        response = await wrap_result(client.delete_task_file(batch_job.id, task_id, only_files[0].name))
         assert response is None
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
-    @JobPreparer(on_task_failure=models.OnBatchTaskFailure.perform_exit_options_job_action)
+    @JobPreparer(on_task_failure=models.OnBatchTaskFailure.PERFORM_EXIT_OPTIONS_JOB_ACTION)
     @pytest.mark.parametrize("BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"])
     @client_setup
     @recorded_by_proxy_async
@@ -837,15 +837,18 @@ class TestBatch(AzureMgmtRecordedTestCase):
             exit_conditions=exit_conditions,
         )
         try:
-            await async_wrapper(client.create_task(batch_job.id, task_param))
+            await wrap_result(client.create_task(batch_job.id, task_param))
         except azure.core.exceptions.HttpResponseError as e:
             message = "{}: ".format(e.error.code, e.error.message)
             for v in e.model.values:
                 message += "\n{}: {}".format(v.key, v.value)
             raise Exception(message)
-        task = await async_wrapper(client.get_task(batch_job.id, task_param.id))
+        task = await wrap_result(client.get_task(batch_job.id, task_param.id))
         assert isinstance(task, models.BatchTask)
+        assert task.exit_conditions is not None
+        assert task.exit_conditions.default is not None
         assert task.exit_conditions.default.job_action == models.BatchJobAction.NONE
+        assert task.exit_conditions.exit_codes is not None
         assert task.exit_conditions.exit_codes[0].code == 1
         assert task.exit_conditions.exit_codes[0].exit_options.job_action == models.BatchJobAction.TERMINATE
 
@@ -880,8 +883,8 @@ class TestBatch(AzureMgmtRecordedTestCase):
             command_line='cmd /c "echo hello world"',
             output_files=outputs,
         )
-        await async_wrapper(client.create_task(batch_job.id, task_param))
-        task = await async_wrapper(client.get_task(batch_job.id, task_param.id))
+        await wrap_result(client.create_task(batch_job.id, task_param))
+        task = await wrap_result(client.get_task(batch_job.id, task_param.id))
         assert isinstance(task, models.BatchTask)
         assert len(task.output_files) == 2
 
@@ -894,8 +897,8 @@ class TestBatch(AzureMgmtRecordedTestCase):
             command_line='cmd /c "echo hello world"',
             user_identity=models.UserIdentity(auto_user=auto_user),
         )
-        await async_wrapper(client.create_task(batch_job.id, task_param))
-        task = await async_wrapper(client.get_task(batch_job.id, task_param.id))
+        await wrap_result(client.create_task(batch_job.id, task_param))
+        task = await wrap_result(client.get_task(batch_job.id, task_param.id))
         assert isinstance(task, models.BatchTask)
         assert task.user_identity.auto_user.scope == models.AutoUserScope.TASK
         assert task.user_identity.auto_user.elevation_level == models.ElevationLevel.ADMIN
@@ -910,8 +913,8 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 registry=models.ContainerRegistryReference(username="username", password="password"),
             ),
         )
-        await async_wrapper(client.create_task(batch_job.id, task_param))
-        task = await async_wrapper(client.get_task(batch_job.id, task_param.id))
+        await wrap_result(client.create_task(batch_job.id, task_param))
+        task = await wrap_result(client.get_task(batch_job.id, task_param.id))
         assert isinstance(task, models.BatchTask)
         assert task.container_settings.image_name == "windows_container:latest"
         assert task.container_settings.registry.username == "username"
@@ -922,8 +925,8 @@ class TestBatch(AzureMgmtRecordedTestCase):
             command_line='cmd /c "echo hello world"',
             user_identity=models.UserIdentity(username="task-user"),
         )
-        await async_wrapper(client.create_task(batch_job.id, task_param))
-        task = await async_wrapper(client.get_task(batch_job.id, task_param.id))
+        await wrap_result(client.create_task(batch_job.id, task_param))
+        task = await wrap_result(client.get_task(batch_job.id, task_param.id))
         assert isinstance(task, models.BatchTask)
         assert task.user_identity.username == "task-user"
 
@@ -936,35 +939,35 @@ class TestBatch(AzureMgmtRecordedTestCase):
                     command_line='cmd /c "echo hello world"',
                 )
             )
-        result = await async_wrapper(client.create_task_collection(batch_job.id, task_collection=tasks))
+        result = await wrap_result(client.create_task_collection(batch_job.id, task_collection=tasks))
         assert isinstance(result, models.BatchTaskAddCollectionResult)
         assert len(result.value) == 3
         assert result.value[0].status.lower() == models.BatchTaskAddStatus.SUCCESS
 
         # Test List Tasks
-        tasks = list(await async_wrapper(client.list_tasks(batch_job.id)))
+        tasks = list(await wrap_list_result(client.list_tasks(batch_job.id)))
         assert len(tasks) == 8
 
         # Test Count Tasks
-        task_results = await async_wrapper(client.get_job_task_counts(batch_job.id))
+        task_results = await wrap_result(client.get_job_task_counts(batch_job.id))
         assert isinstance(task_results, models.BatchTaskCountsResult)
         assert task_results.task_counts.completed == 0
         assert task_results.task_counts.succeeded == 0
 
         # Test Terminate Task
-        response = await async_wrapper(client.terminate_task(batch_job.id, task_param.id))
+        response = await wrap_result(client.terminate_task(batch_job.id, task_param.id))
         assert response is None
-        task = await async_wrapper(client.get_task(batch_job.id, task_param.id))
+        task = await wrap_result(client.get_task(batch_job.id, task_param.id))
         assert task.state == models.BatchTaskState.COMPLETED
 
         # Test Reactivate Task
-        response = await async_wrapper(client.reactivate_task(batch_job.id, task_param.id))
+        response = await wrap_result(client.reactivate_task(batch_job.id, task_param.id))
         assert response is None
-        task = await async_wrapper(client.get_task(batch_job.id, task_param.id))
+        task = await wrap_result(client.get_task(batch_job.id, task_param.id))
         assert task.state == models.BatchTaskState.ACTIVE
 
         # Test Update Task
-        response = await async_wrapper(
+        response = await wrap_result(
             client.replace_task(
                 job_id=batch_job.id,
                 task_id=task_param.id,
@@ -975,11 +978,11 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
         # Test Get Subtasks
         # TODO: Test with actual subtasks
-        subtasks = list(await async_wrapper(client.list_sub_tasks(batch_job.id, task_param.id)))
+        subtasks = list(await wrap_list_result(client.list_sub_tasks(batch_job.id, task_param.id)))
         assert isinstance(subtasks, Iterable)
 
         # Test Delete Task
-        response = await async_wrapper(client.delete_task(batch_job.id, task_param.id))
+        response = await wrap_result(client.delete_task(batch_job.id, task_param.id))
         assert response is None
 
         # Test Bulk Add Task Failure
@@ -1025,7 +1028,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 resource_files=resource_files,
             )
             tasks_to_add.append(task)
-        result = await async_wrapper(client.create_task_collection(batch_job.id, tasks_to_add))
+        result = await wrap_result(client.create_task_collection(batch_job.id, tasks_to_add))
         assert isinstance(result, models.BatchTaskAddCollectionResult)
         assert len(result.value) == 733
         assert result.value[0].status.lower() == models.BatchTaskAddStatus.SUCCESS
@@ -1064,7 +1067,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
         now = datetime.datetime.now(datetime.timezone.utc)
 
-        response = await async_wrapper(client.create_job(job=job_param, ocpdate=now))
+        response = await wrap_result(client.create_job(job=job_param, ocpdate=now))
         assert response is None
 
         # Test Update Job
@@ -1074,15 +1077,15 @@ class TestBatch(AzureMgmtRecordedTestCase):
             constraints=constraints,
             pool_info=models.BatchPoolInfo(auto_pool_specification=auto_pool),
         )
-        response = await async_wrapper(client.replace_job(job_param.id, options))
+        response = await wrap_result(client.replace_job(job_param.id, options))
         assert response is None
 
         # Test Patch Job
         options = models.BatchJobUpdateContent(priority=900)
-        response = await async_wrapper(client.update_job(job_param.id, options))
+        response = await wrap_result(client.update_job(job_param.id, options))
         assert response is None
 
-        job = await async_wrapper(client.get_job(job_param.id))
+        job = await wrap_result(client.get_job(job_param.id))
         assert isinstance(job, models.BatchJob)
         assert job.id == job_param.id
         assert job.constraints.max_task_retry_count == 3
@@ -1095,20 +1098,20 @@ class TestBatch(AzureMgmtRecordedTestCase):
             on_task_failure=models.OnBatchTaskFailure.PERFORM_EXIT_OPTIONS_JOB_ACTION,
             pool_info=models.BatchPoolInfo(auto_pool_specification=auto_pool),
         )
-        response = await async_wrapper(client.create_job(job_auto_param))
+        response = await wrap_result(client.create_job(job_auto_param))
         assert response is None
-        job = await async_wrapper(client.get_job(job_auto_param.id))
+        job = await wrap_result(client.get_job(job_auto_param.id))
         assert isinstance(job, models.BatchJob)
         assert job.on_all_tasks_complete == models.OnAllBatchTasksComplete.TERMINATE_JOB
         assert job.on_task_failure == models.OnBatchTaskFailure.PERFORM_EXIT_OPTIONS_JOB_ACTION
 
         # Test List Jobs
-        jobs = await async_wrapper(client.list_jobs())
+        jobs = await wrap_list_result(client.list_jobs())
         assert isinstance(jobs, Iterable)
         assert len(list(jobs)) == 2
 
         # Test Disable Job
-        response = await async_wrapper(
+        response = await wrap_result(
             client.disable_job(
                 job_id=job_param.id,
                 content=models.BatchJobDisableContent(disable_tasks="requeue"),
@@ -1117,18 +1120,18 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert response is None
 
         # Test Enable Job
-        response = await async_wrapper(client.enable_job(job_param.id))
+        response = await wrap_result(client.enable_job(job_param.id))
         assert response is None
 
         # Prep and release task status
-        task_status = await async_wrapper(client.list_job_preparation_and_release_task_status(job_param.id))
+        task_status = await wrap_list_result(client.list_job_preparation_and_release_task_status(job_param.id))
         assert isinstance(task_status, Iterable)
         assert list(task_status) == []
 
         # Test Terminate Job
-        response = await async_wrapper(client.terminate_job(job_param.id))
+        response = await wrap_result(client.terminate_job(job_param.id))
         assert response is None
 
         # Test Delete Job
-        response = await async_wrapper(client.delete_job(job_auto_param.id))
+        response = await wrap_result(client.delete_job(job_auto_param.id))
         assert response is None
