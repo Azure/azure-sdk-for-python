@@ -53,6 +53,7 @@ extends:
                       --filter-type="Omit_management"
                   env:
                     GH_TOKEN: $(azuresdk-github-pat)
+                    SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 
                 - task: PythonScript@0
                   displayName: 'Run MyPy Next'
@@ -66,6 +67,7 @@ extends:
                       --disablecov
                   env:
                     GH_TOKEN: $(azuresdk-github-pat)
+                    SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 
                 - task: PythonScript@0
                   displayName: 'Run Pyright Next'
@@ -79,6 +81,7 @@ extends:
                       --disablecov
                   env:
                     GH_TOKEN: $(azuresdk-github-pat)
+                    SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 
                 - task: PythonScript@0
                   displayName: 'Run Ruff'
@@ -92,6 +95,7 @@ extends:
                       --disablecov
                   env:
                     GH_TOKEN: $(azuresdk-github-pat)
+                    SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 
                 - task: UsePythonVersion@0
                   displayName: 'Use Python 3.13 for docs generation'
@@ -113,3 +117,4 @@ extends:
                       --toxenv="next-sphinx"
                   env:
                     GH_TOKEN: $(azuresdk-github-pat)
+                    SYSTEM_ACCESSTOKEN: $(System.AccessToken)
