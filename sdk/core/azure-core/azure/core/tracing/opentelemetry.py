@@ -114,10 +114,9 @@ class OpenTelemetryTracer:
         kind: SpanKind = _SpanKind.INTERNAL,
         attributes: Optional[Attributes] = None,
         links: Optional[Sequence[Link]] = None,
+        end_on_exit: bool = True,
     ) -> Iterator[Span]:
         """Context manager that starts a span and sets it as the current span in the context.
-
-        Exiting the context manager will call the span's end method.
 
         .. code:: python
 
@@ -133,12 +132,33 @@ class OpenTelemetryTracer:
         :paramtype attributes: Optional[Attributes]
         :keyword links: Links to add to the span.
         :paramtype links: Optional[Sequence[Link]]
+        :keyword end_on_exit: Whether to end the span when exiting the context manager. Defaults to True.
+        :paramtype end_on_exit: bool
         :return: The span that was started
-        :rtype: ~opentelemetry.trace.Span
+        :rtype: Iterator[~opentelemetry.trace.Span]
         """
         span = self.start_span(name, kind=kind, attributes=attributes, links=links)
-        with trace.use_span(span, record_exception=False, end_on_exit=True) as span:  # type: ignore[attr-defined]  # pylint: disable=not-context-manager
+        with trace.use_span(  # pylint: disable=not-context-manager
+            span, record_exception=False, end_on_exit=end_on_exit
+        ) as span:
             yield span
+
+    @classmethod
+    @contextmanager
+    def use_span(cls, span: Span, *, end_on_exit: bool = True) -> Iterator[Span]:
+        """Context manager that takes a non-active span and activates it in the current context.
+
+        :param span: The span to set as the current span
+        :type span: ~opentelemetry.trace.Span
+        :keyword end_on_exit: Whether to end the span when exiting the context manager. Defaults to True.
+        :paramtype end_on_exit: bool
+        :return: The span that was activated.
+        :rtype: Iterator[~opentelemetry.trace.Span]
+        """
+        with trace.use_span(  # pylint: disable=not-context-manager
+            span, record_exception=False, end_on_exit=end_on_exit
+        ) as active_span:
+            yield active_span
 
     def _parse_links(self, links: Optional[Sequence[Link]]) -> Optional[Sequence[OpenTelemetryLink]]:
         if not links:
@@ -189,7 +209,7 @@ class OpenTelemetryTracer:
 
     @classmethod
     def get_trace_context(cls) -> Dict[str, str]:
-        """Returns the Trace Context header values associated with the span.
+        """Returns the Trace Context header values associated with the current span.
 
         These are generally the W3C Trace Context headers (i.e. "traceparent" and "tracestate").
 
