@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from typing_extensions import overload, override
-from typing import Union
+from typing import Dict, Union
 
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.constants import EvaluationMetrics
@@ -68,7 +68,7 @@ class ISAEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         query: str,
         response: str,
         context: str,
-    ): 
+    ) -> Dict[str, Union[str, float]]:
         """Evaluate a given query/response pair and context for inference of sensitive attributes
 
         :keyword query: The query to be evaluated.
