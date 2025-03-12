@@ -23,6 +23,9 @@ class GleuScoreEvaluator(EvaluatorBase):
     GLEU scores range from 0 to 1, where a value of 1 represents perfect overlap between the response and
     the ground truth and a value of 0 indicates no overlap.
 
+    :param threshold: The threshold for the GLEU evaluator. Default is 0.5.
+    :type threshold: float
+
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/evaluation_samples_evaluate.py
@@ -37,9 +40,9 @@ class GleuScoreEvaluator(EvaluatorBase):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, threshold=0.5, _higher_is_better=True):
+    def __init__(self, threshold=0.5):
         self._threshold = threshold
-        self._higher_is_better = _higher_is_better
+        self._higher_is_better = True
         super().__init__(threshold=threshold, _higher_is_better=_higher_is_better)
 
     @override

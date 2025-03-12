@@ -26,6 +26,8 @@ class F1ScoreEvaluator(EvaluatorBase):
     model's responses. It provides a balanced evaluation of your model's performance in terms of capturing accurate
     information in the response.
 
+    :param threshold: The threshold for the F1 score evaluator. Default is 0.5.
+    :type threshold: float
 
     .. admonition:: Example:
 
@@ -40,9 +42,9 @@ class F1ScoreEvaluator(EvaluatorBase):
     id = "azureml://registries/azureml/models/F1Score-Evaluator/versions/3"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
-    def __init__(self, threshold=0.5, _higher_is_better=True):
+    def __init__(self, threshold=0.5):
         self._threshold = threshold
-        self._higher_is_better = _higher_is_better
+        self._higher_is_better = True
         super().__init__(threshold=threshold, _higher_is_better=_higher_is_better)
 
     @classmethod

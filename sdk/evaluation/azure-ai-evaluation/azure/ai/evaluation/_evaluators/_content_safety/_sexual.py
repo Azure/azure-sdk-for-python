@@ -44,6 +44,8 @@ class SexualEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
     :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
+    :param threshold: The threshold for the Sexual evaluator. Default is 0.
+    :type threshold: int
 
     .. admonition:: Example:
 

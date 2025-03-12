@@ -52,6 +52,10 @@ class RougeScoreEvaluator(EvaluatorBase):
     information from the reference text.
 
     ROUGE scores range from 0 to 1, with higher scores indicating better quality.
+    :param rouge_type: The type of ROUGE score to calculate. Default is "rouge1".
+    :type rouge_type: str
+    :param threshold: The threshold for the ROUGE score evaluator. Default is 0.5.
+    :type threshold: float
 
     .. admonition:: Example:
 
@@ -86,22 +90,34 @@ class RougeScoreEvaluator(EvaluatorBase):
         response = eval_input["response"]
         scorer = rouge_scorer.RougeScorer(rouge_types=[self._rouge_type.value])
         metrics = scorer.score(ground_truth, response)[self._rouge_type.value]
-        binary_result = False
+        binary_f1_score_result = False
+        binary_recall_result = False
+        binary_precision_result = False
         # Convert metrics to floats, using nan for None or non-convertible values
         rouge_precision = float(metrics.precision) if metrics.precision is not None else float('nan')
         rouge_recall = float(metrics.recall) if metrics.recall is not None else float('nan')
         rouge_f1_score = float(metrics.fmeasure) if metrics.fmeasure is not None else float('nan')
         if self._higher_is_better:
-            if rouge_precision >= self._threshold and rouge_recall >= self._threshold and rouge_f1_score >= self._threshold:
-                binary_result = True
+            if rouge_precision >= self._threshold:
+                binary_precision_result = True
+            if rouge_recall >= self._threshold:
+                binary_recall_result = True
+            if rouge_f1_score >= self._threshold:
+                binary_f1_score_result = True
         else:
-            if rouge_precision <= self._threshold and rouge_recall <= self._threshold and rouge_f1_score <= self._threshold:
-                binary_result = True
+            if rouge_precision <= self._threshold:
+                binary_precision_result = True
+            if rouge_recall <= self._threshold:
+                binary_recall_result = True
+            if rouge_f1_score <= self._threshold:
+                binary_f1_score_result = True
         return {
             "rouge_precision": rouge_precision,
             "rouge_recall": rouge_recall,
             "rouge_f1_score": rouge_f1_score,
-            "rouge_result": EVALUATION_PASS_FAIL_MAPPING[binary_result],
+            "rouge_precision_result": EVALUATION_PASS_FAIL_MAPPING[binary_precision_result],
+            "rouge_recall_result": EVALUATION_PASS_FAIL_MAPPING[binary_recall_result],
+            "rouge_f1_score_result": EVALUATION_PASS_FAIL_MAPPING[binary_f1_score_result],
             "rouge_threshold": self._threshold,
         }
 

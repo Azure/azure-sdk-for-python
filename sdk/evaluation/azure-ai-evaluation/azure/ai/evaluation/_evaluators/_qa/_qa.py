@@ -50,11 +50,11 @@ class QAEvaluator(MultiEvaluatorBase[Union[str, float]]):
         self.threshold = threshold
         self._higher_is_better = _higher_is_better
         evaluators = [
-            GroundednessEvaluator(model_config, threshold=threshold, _higher_is_better=_higher_is_better),
-            RelevanceEvaluator(model_config, threshold=threshold, _higher_is_better=_higher_is_better),
-            CoherenceEvaluator(model_config, threshold=threshold, _higher_is_better=_higher_is_better),
-            FluencyEvaluator(model_config, threshold=threshold, _higher_is_better=_higher_is_better),
-            SimilarityEvaluator(model_config, threshold=threshold, _higher_is_better=_higher_is_better),
+            GroundednessEvaluator(model_config, threshold=threshold),
+            RelevanceEvaluator(model_config, threshold=threshold),
+            CoherenceEvaluator(model_config, threshold=threshold),
+            FluencyEvaluator(model_config, threshold=threshold),
+            SimilarityEvaluator(model_config, threshold=threshold),
             F1ScoreEvaluator(),
         ]
         super().__init__(evaluators=evaluators, **kwargs)

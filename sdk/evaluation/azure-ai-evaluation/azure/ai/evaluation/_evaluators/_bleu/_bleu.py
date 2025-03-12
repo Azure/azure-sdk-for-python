@@ -23,6 +23,8 @@ class BleuScoreEvaluator(EvaluatorBase):
     indicator of quality.
 
     The BLEU score ranges from 0 to 1, with higher scores indicating better quality.
+    :param threshold: The threshold for the evaluation. Default is 0.5.
+    :type threshold: float
 
     .. admonition:: Example:
 
@@ -37,14 +39,14 @@ class BleuScoreEvaluator(EvaluatorBase):
     id = "azureml://registries/azureml/models/Bleu-Score-Evaluator/versions/3"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
-    def __init__(self, threshold=0.5, _higher_is_better=True):
+    def __init__(self, threshold=0.5):
         self._threshold = threshold
-        self._higher_is_better = _higher_is_better
-        super().__init__(threshold=threshold, _higher_is_better=_higher_is_better)
+        self._higher_is_better = True
+        super().__init__(threshold=threshold, _higher_is_better=self._higher_is_better)
 
     @override
     async def _do_eval(self, eval_input: Dict) -> Dict[str, float]:
-        """Produce a glue score evaluation result.
+        """Produce a bleu score evaluation result.
 
         :param eval_input: The input to the evaluation function.
         :type eval_input: Dict

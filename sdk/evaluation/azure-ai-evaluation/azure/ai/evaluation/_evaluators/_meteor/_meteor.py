@@ -33,6 +33,8 @@ class MeteorScoreEvaluator(EvaluatorBase):
     :type beta: float
     :param gamma: The METEOR score gamma parameter. Default is 0.5.
     :type gamma: float
+    :param threshold: The threshold for the METEOR score evaluator. Default is 0.5.
+    :type threshold: float
 
     .. admonition:: Example:
 

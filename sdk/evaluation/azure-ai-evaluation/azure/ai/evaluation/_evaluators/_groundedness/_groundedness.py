@@ -33,7 +33,9 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     :param model_config: Configuration for the Azure OpenAI model.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
-
+    :param threshold: The threshold for the groundedness evaluator. Default is 5.
+    :type threshold: int
+        
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/evaluation_samples_evaluate.py
@@ -59,14 +61,20 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, threshold=3, _higher_is_better=True, **kwargs):
+    def __init__(self, model_config, threshold=3, **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE_NO_QUERY)  # Default to no query
 
-        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY, threshold=threshold, _higher_is_better=_higher_is_better)
+        self._higher_is_better = True
+        super().__init__(
+            model_config=model_config,
+            prompty_file=prompty_path,
+            result_key=self._RESULT_KEY,
+            threshold=threshold,
+            _higher_is_better=self._higher_is_better
+        )
         self._model_config = model_config
         self.threshold = threshold
-        self._higher_is_better = _higher_is_better
         # Needs to be set because it's used in call method to re-validate prompt if `query` is provided
 
     @overload
