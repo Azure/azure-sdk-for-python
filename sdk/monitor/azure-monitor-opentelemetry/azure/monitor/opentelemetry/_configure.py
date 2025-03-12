@@ -269,20 +269,42 @@ def _setup_additional_azure_sdk_instrumentations(configurations: Dict[str, Confi
         _logger.debug("Instrumentation skipped for library azure_sdk")
         return
 
+    ai_inference_instrumentor_imported = False
     try:
-        from azure.ai.inference.tracing import AIInferenceInstrumentor  # pylint: disable=import-error,no-name-in-module
+        from azure.ai.inference.tracing2 import AIInferenceInstrumentor  # pylint: disable=import-error,no-name-in-module
+        ai_inference_instrumentor_imported = True
     except Exception as ex:  # pylint: disable=broad-except
         _logger.debug(
             "Failed to import AIInferenceInstrumentor from azure-ai-inference",
             exc_info=ex,
         )
-        return
 
+    if ai_inference_instrumentor_imported:
+        try:
+            AIInferenceInstrumentor().instrument()
+        except Exception as ex:  # pylint: disable=broad-except
+            _logger.warning(
+                "Exception occurred when instrumenting: %s.",
+                "azure-ai-inference",
+                exc_info=ex,
+            )
+
+    ai_agents_instrumentor_imported = False
     try:
-        AIInferenceInstrumentor().instrument()
+        from azure.ai.projects.telemetry.agents2 import AIAgentsInstrumentor  # pylint: disable=import-error,no-name-in-module
+        ai_agents_instrumentor_imported = True
     except Exception as ex:  # pylint: disable=broad-except
-        _logger.warning(
-            "Exception occurred when instrumenting: %s.",
-            "azure-ai-inference",
+        _logger.debug(
+            "Failed to import AIAgentsInstrumentor from azure-ai-projects-telemetry-agents",
             exc_info=ex,
         )
+
+    if ai_agents_instrumentor_imported:
+        try:
+            AIAgentsInstrumentor().instrument()
+        except Exception as ex:  # pylint: disable=broad-except
+            _logger.warning(
+                "Exception occurred when instrumenting: %s.",
+                "azure-ai-projects-telemetry-agents",
+                exc_info=ex,
+            )
