@@ -27,6 +27,7 @@ import test_config
 from azure.cosmos import _retry_utility
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes
 from azure.cosmos.partition_key import PartitionKey
+from azure.identity import DefaultAzureCredential
 
 
 class TimeoutTransport(RequestsTransport):
@@ -81,7 +82,8 @@ class TestCRUDOperations(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
+        credentials = DefaultAzureCredential()
+        cls.client = cosmos_client.CosmosClient(cls.host, credentials)
         cls.databaseForTest = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
 
     def test_database_crud(self):

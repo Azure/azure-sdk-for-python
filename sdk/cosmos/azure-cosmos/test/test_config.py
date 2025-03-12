@@ -27,10 +27,10 @@ except:
 
 
 class TestConfig(object):
-    local_host = 'https://localhost:8081/'
+    local_host = 'https://localhost:8081/' # Will need to change this to your account endpoint if you're not running the emulator
     # [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Cosmos DB Emulator Key")]
     masterKey = os.getenv('ACCOUNT_KEY',
-                          'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==')
+                          'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==') # Will need to change this to your account key if you're not running the emulator
     host = os.getenv('ACCOUNT_HOST', local_host)
     connection_str = os.getenv('ACCOUNT_CONNECTION_STR', 'AccountEndpoint={};AccountKey={};'.format(host, masterKey))
 
