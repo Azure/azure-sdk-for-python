@@ -7,12 +7,16 @@ from typing import List
 
 # Constants.
 from ._models import _SYSTEM, _USER, _AGENT, _TOOL, _TOOL_CALLS, _FUNCTION
+
 # Message instances.
 from ._models import Message, SystemMessage, UserMessage, AssistantMessage, ToolCall
+
 # Intermediate definitions to hold results.
 from ._models import ToolDefinition, ConvertedResult
+
 # Utilities.
 from ._models import break_tool_call_into_messages
+
 
 class AIAgentConverter:
     """
@@ -60,8 +64,7 @@ class AIAgentConverter:
         instructions = thread_run.instructions
         if instructions:
             # The system message will have a string content.
-            final_messages.append(SystemMessage(content=instructions,
-                                                createdAt=thread_run.created_at))
+            final_messages.append(SystemMessage(content=instructions, createdAt=thread_run.created_at))
 
         # Second, walk through the "user-facing" conversation history and start adding messages.
         chronological_conversation = self.list_messages_chronological(thread_id, run_id)
@@ -70,29 +73,29 @@ class AIAgentConverter:
         # both the text and timestamp, so we can recreate the chronological order.
         for single_turn in chronological_conversation:
             content = {
-                'type': 'text',
-                'text': single_turn.content[0].text.value,
+                "type": "text",
+                "text": single_turn.content[0].text.value,
             }
 
             # If we have a user message, then we save it as such and since it's a human message, there is no
             # run_id associated with it.
             if single_turn.role == _USER:
-                final_messages.append(UserMessage(content=[content],
-                                                  createdAt=single_turn.created_at))
+                final_messages.append(UserMessage(content=[content], createdAt=single_turn.created_at))
 
             # In this case, we have an assistant message. Unfortunately, this would only have the user-facing
             # agent's response, without any details on what tool was called, with what parameters, and what
             # the result was. That will be added later in the method.
             if single_turn.role == _AGENT:
                 # We are required to put the run_id in the assistant message.
-                final_messages.append(AssistantMessage(content=[content],
-                                                       run_id=single_turn.run_id,
-                                                       createdAt=single_turn.created_at))
+                final_messages.append(
+                    AssistantMessage(content=[content], run_id=single_turn.run_id, createdAt=single_turn.created_at)
+                )
 
         # This is the other API request that we need to make to AI service, such that we can get the details about
         # the tool calls and results. Since the list is given in reverse chronological order, we need to reverse it.
-        run_steps_chronological: List[RunStep] = self.project_client.agents.list_run_steps(thread_id=thread_id,
-                                                                                           run_id=run_id).data[::-1]
+        run_steps_chronological: List[RunStep] = self.project_client.agents.list_run_steps(
+            thread_id=thread_id, run_id=run_id
+        ).data[::-1]
 
         # Let's accumulate the function calls in chronological order. Function calls
         tool_calls_chronological: List[ToolCall] = []
@@ -104,11 +107,13 @@ class AIAgentConverter:
                 continue
             if len(step_details.tool_calls) != 1:
                 continue
-            tool_calls_chronological.append(ToolCall(
-                created=run_step_chronological.created_at,
-                completed=run_step_chronological.completed_at,
-                details=step_details.tool_calls[0]
-            ))
+            tool_calls_chronological.append(
+                ToolCall(
+                    created=run_step_chronological.created_at,
+                    completed=run_step_chronological.completed_at,
+                    details=step_details.tool_calls[0],
+                )
+            )
 
         # Third, add all the tool calls and results as messages.
         for tool_call in tool_calls_chronological:
@@ -128,20 +133,19 @@ class AIAgentConverter:
                 parameters = tool_function.parameters
 
                 # The target schema doesn't support required fields, so we omit it for now.
-                if 'required' in parameters:
-                    del parameters['required']
+                if "required" in parameters:
+                    del parameters["required"]
 
-                final_tools.append(ToolDefinition(
-                    id=tool_function.name,
-                    name=tool_function.name,
-                    description=tool_function.description,
-                    parameters=parameters,
-                ))
+                final_tools.append(
+                    ToolDefinition(
+                        id=tool_function.name,
+                        name=tool_function.name,
+                        description=tool_function.description,
+                        parameters=parameters,
+                    )
+                )
 
-        final_result = ConvertedResult(
-            messages=final_messages,
-            tools=final_tools
-        )
+        final_result = ConvertedResult(messages=final_messages, tools=final_tools)
 
         return json.loads(final_result.to_json())
 
@@ -159,14 +163,16 @@ class AIAgentConverter:
         converted_result = self.convert(thread_id, run_id)
 
         # Find all the user and system messages.
-        user_messages = [msg for msg in converted_result['messages'] if msg['role'] == _USER or msg['role'] == _SYSTEM]
-        assistant_messages = [msg for msg in converted_result['messages'] if msg['role'] == _AGENT or msg['role'] == _TOOL]
+        user_messages = [msg for msg in converted_result["messages"] if msg["role"] == _USER or msg["role"] == _SYSTEM]
+        assistant_messages = [
+            msg for msg in converted_result["messages"] if msg["role"] == _AGENT or msg["role"] == _TOOL
+        ]
 
         # Package it up as json into each and dump.
         return {
-            'query': json.dumps(user_messages),
-            'response': json.dumps(assistant_messages),
-            'tools': json.dumps(converted_result['tools'])
+            "query": json.dumps(user_messages),
+            "response": json.dumps(assistant_messages),
+            "tools": json.dumps(converted_result["tools"]),
         }
 
     def convert_to_instructions_history(self, thread_id: str, run_id: str) -> dict:
@@ -183,18 +189,20 @@ class AIAgentConverter:
         converted_result = self.convert(thread_id, run_id)
 
         # There is only one system message.
-        system_messages = [msg for msg in converted_result['messages'] if msg['role'] == _SYSTEM]
+        system_messages = [msg for msg in converted_result["messages"] if msg["role"] == _SYSTEM]
 
         # Get all the user messages.
-        user_messages = [msg for msg in converted_result['messages'] if msg['role'] == _USER]
+        user_messages = [msg for msg in converted_result["messages"] if msg["role"] == _USER]
 
         # Get all the assistant messages.
-        assistant_messages = [msg for msg in converted_result['messages'] if msg['role'] == _AGENT or msg['role'] == _TOOL]
+        assistant_messages = [
+            msg for msg in converted_result["messages"] if msg["role"] == _AGENT or msg["role"] == _TOOL
+        ]
 
         # Package it up as json into each and dump.
         return {
-            'instructions': system_messages,
-            'chat_history': user_messages,
-            'response': assistant_messages,
-            'tool_definitions': converted_result['tools']
+            "instructions": system_messages,
+            "chat_history": user_messages,
+            "response": assistant_messages,
+            "tool_definitions": converted_result["tools"],
         }

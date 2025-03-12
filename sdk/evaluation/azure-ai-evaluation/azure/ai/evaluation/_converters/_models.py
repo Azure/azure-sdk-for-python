@@ -8,18 +8,19 @@ from azure.ai.projects.models import RunStepFunctionToolCall
 from typing import List, Optional, Union
 
 # Message roles constants.
-_SYSTEM = 'system'
-_USER = 'user'
-_AGENT = 'assistant'
-_TOOL = 'tool'
+_SYSTEM = "system"
+_USER = "user"
+_AGENT = "assistant"
+_TOOL = "tool"
 
 # Constant definitions for what tool details include.
-_TOOL_CALL = 'tool_call'
-_TOOL_RESULT = 'tool_result'
-_FUNCTION = 'function'
+_TOOL_CALL = "tool_call"
+_TOOL_RESULT = "tool_result"
+_FUNCTION = "function"
 
 # This is returned by AI services in the API to filter against tool invocations.
-_TOOL_CALLS = 'tool_calls'
+_TOOL_CALLS = "tool_calls"
+
 
 class Message(BaseModel):
     """Represents a message in an agentic conversation.
@@ -33,11 +34,13 @@ class Message(BaseModel):
     :param content: The content of the message, which can be a string or a list of dictionaries.
     :type content: Union[str, List[dict]]
     """
+
     createdAt: datetime.datetime
     run_id: Optional[str] = None
-    tool_call_id: Optional[str] = None # see ToolMessage
+    tool_call_id: Optional[str] = None  # see ToolMessage
     role: str
     content: Union[str, List[dict]]
+
 
 class SystemMessage(Message):
     """Represents a system message in an agentic conversation.
@@ -45,7 +48,9 @@ class SystemMessage(Message):
     :param role: The role of the message sender, which is always 'system'.
     :type role: str
     """
+
     role: str = _SYSTEM
+
 
 class UserMessage(Message):
     """Represents a user message in an agentic conversation.
@@ -53,7 +58,9 @@ class UserMessage(Message):
     :param role: The role of the message sender, which is always 'user'.
     :type role: str
     """
+
     role: str = _USER
+
 
 class ToolMessage(Message):
     """Represents a tool message in an agentic conversation, either a tool call or tool result.
@@ -65,6 +72,7 @@ class ToolMessage(Message):
     :param tool_call_id: The ID of the tool call associated with the message. Optional.
     :type tool_call_id: Optional[str]
     """
+
     run_id: str
     role: str = _TOOL
     tool_call_id: Optional[str] = None
@@ -78,8 +86,10 @@ class AssistantMessage(Message):
     :param role: The role of the message sender, which is always 'assistant'.
     :type role: str
     """
+
     run_id: str
     role: str = _AGENT
+
 
 class ToolDefinition(BaseModel):
     """Represents a tool definition that will be used in the agent.
@@ -93,10 +103,12 @@ class ToolDefinition(BaseModel):
     :param parameters: The parameters required by the tool.
     :type parameters: dict
     """
+
     id: str
     name: str
     description: str
     parameters: dict
+
 
 class ToolCall:
     """Represents a tool call, used as an intermediate step in the conversion process.
@@ -108,10 +120,12 @@ class ToolCall:
     :param details: The details of the tool call.
     :type details: RunStepFunctionToolCall
     """
+
     def __init__(self, created: datetime.datetime, completed: datetime.datetime, details: RunStepFunctionToolCall):
         self.created = created
         self.completed = completed
         self.details = details
+
 
 class ConvertedResult(BaseModel):
     """Represents the result of a conversion.
@@ -121,6 +135,7 @@ class ConvertedResult(BaseModel):
     :param tools: A list of tool definitions.
     :type tools: List[ToolDefinition]
     """
+
     messages: List[Message]
     tools: List[ToolDefinition]
 
@@ -131,6 +146,7 @@ class ConvertedResult(BaseModel):
         :rtype: str
         """
         return self.model_dump_json(exclude={}, exclude_none=True)
+
 
 def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Message]:
     """
@@ -149,36 +165,36 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
     # This is the internals of the content object that will be included with the tool call.
     tool_call_id = tool_call.details.id
     content_tool_call = {
-        'type': _TOOL_CALL,
+        "type": _TOOL_CALL,
         _TOOL_CALL: {
-            'id': tool_call_id,
-            'type': _FUNCTION,
+            "id": tool_call_id,
+            "type": _FUNCTION,
             _FUNCTION: {
-                'name': tool_call.details.function.name,
-                'arguments': json.loads(tool_call.details.function.arguments),
-            }
-        }
+                "name": tool_call.details.function.name,
+                "arguments": json.loads(tool_call.details.function.arguments),
+            },
+        },
     }
 
     # We format it into an assistant message, where the content is a singleton list of the content object.
     # I think it should be a tool message, since this is the call, but the given schema treats this message as
     # assistant's action of calling the tool.
-    messages.append(AssistantMessage(run_id=run_id,
-                                content=[to_dict(content_tool_call)],
-                                createdAt=tool_call.created))
+    messages.append(AssistantMessage(run_id=run_id, content=[to_dict(content_tool_call)], createdAt=tool_call.created))
 
     # Now, onto the tool result, which only includes the result of the function call.
-    content_tool_call_result = {
-        'type': _TOOL_RESULT,
-        _TOOL_RESULT: json.loads(tool_call.details.function.output)
-    }
+    content_tool_call_result = {"type": _TOOL_RESULT, _TOOL_RESULT: json.loads(tool_call.details.function.output)}
 
     # Since this is a tool's action of returning, we put it as a tool message.
-    messages.append(ToolMessage(run_id=run_id,
-                                tool_call_id=tool_call_id,
-                                content=[to_dict(content_tool_call_result)],
-                                createdAt=tool_call.completed))
+    messages.append(
+        ToolMessage(
+            run_id=run_id,
+            tool_call_id=tool_call_id,
+            content=[to_dict(content_tool_call_result)],
+            createdAt=tool_call.completed,
+        )
+    )
     return messages
+
 
 def to_dict(obj) -> dict:
     """
