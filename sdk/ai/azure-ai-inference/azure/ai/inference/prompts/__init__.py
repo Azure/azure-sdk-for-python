@@ -7,7 +7,7 @@ try:
     import prompty  # pylint: disable=unused-import
 except ImportError:
     raise ImportError(
-        "The 'prompty' package is required to use the 'azure.ai.projects.prompts' module. "
+        "The 'prompty' package is required to use the 'azure.ai.inference.prompts' module. "
         "Please install it by running 'pip install prompty'."
     )
 
