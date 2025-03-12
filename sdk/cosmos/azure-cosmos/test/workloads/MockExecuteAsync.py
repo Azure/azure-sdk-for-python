@@ -13,7 +13,7 @@ class MockExecuteServiceRequestException(object):
         self.original_func = original_func
         self.start_time = time.time()
 
-    def __call__(self, func, *args, **kwargs):
+    async def __call__(self, func, *args, **kwargs):
         if args[1].location_endpoint_to_route == COSMOS_URI and time.time() - self.start_time >= 600\
                 and time.time() <= self.start_time + 1800:
             if MOCK_EXECUTE_STATUS_CODE == 1:
