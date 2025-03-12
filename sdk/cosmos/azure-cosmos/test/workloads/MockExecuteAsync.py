@@ -39,5 +39,5 @@ def mock_execute_func():
        if MOCK_EXECUTE_STATUS_CODE == 0:
            return
        else:
-           mf = MockExecuteServiceRequestException(_retry_utility_async)
+           mf = MockExecuteServiceRequestException(_retry_utility_async.ExecuteFunctionAsync)
            _retry_utility_async.ExecuteFunctionAsync = mf
