@@ -106,7 +106,9 @@ class WebSocketProtocol(WebSocketMixin):
                         server_hostname = self._ws_url.hostname
                     )
                 else:
-                    self._socket = self._ssl_ctx['context'].wrap_socket(self._socket, server_hostname = self._ws_url.hostname)
+                    self._socket = self._ssl_ctx['context'].wrap_socket(
+                        self._socket, server_hostname=self._ws_url.hostname
+                    )
             # TODO: add logging
             self._socket.setblocking(True)
             self._socket.settimeout(self._timeout)
