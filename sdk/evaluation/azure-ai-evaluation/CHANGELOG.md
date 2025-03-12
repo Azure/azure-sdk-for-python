@@ -4,7 +4,7 @@
 
 ### Features Added
 - New Built-in evaluator called CodeVulnerabilityEvaluator is added. 
-  - It provides a capability to identity the following code vulnerabilities.
+  - It provides a capabilities to identify the following code vulnerabilities.
     - path-injection
     - sql-injection
     - code-injection
