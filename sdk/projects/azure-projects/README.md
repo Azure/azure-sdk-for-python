@@ -1,5 +1,5 @@
 
-# Azure Projects library for Python
+# Azure Projects client library for Python
 
 This template package matches necessary patterns that the development team has established to create a unified SDK. The packages contained herein can be installed singly or as part of the `azure` namespace. Any other introductory text should go here.
 

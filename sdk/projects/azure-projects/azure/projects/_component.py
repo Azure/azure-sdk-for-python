@@ -175,7 +175,9 @@ class AzureInfraComponent(type):
         missing_kwargs = []
         child_infra_components = []
         repr_objects = []
-        for attr, (_, attr_field) in get_mro_annotations(cls, AzureInfrastructure).items():  # pylint: disable=too-many-nested-blocks
+        for attr, (_, attr_field) in get_mro_annotations(  # pylint: disable=too-many-nested-blocks
+            cls, AzureInfrastructure
+        ).items():
             include_in_repr = True
             try:
                 if isinstance(attr_field, ComponentField):
@@ -349,7 +351,9 @@ class AzureAppComponent(type):
         instance_kwargs = {}
         missing_kwargs = []
         repr_objects = []
-        for attr, (annotation, attr_field) in get_mro_annotations(cls, AzureApp).items():  # pylint: disable=too-many-nested-blocks
+        for attr, (annotation, attr_field) in get_mro_annotations(  # pylint: disable=too-many-nested-blocks
+            cls, AzureApp
+        ).items():
             try:
                 include_in_repr = True
                 client_kwargs = {}
@@ -606,7 +610,7 @@ class AzureApp(Generic[InfrastructureType], metaclass=AzureAppComponent):
     def close(self) -> None:
         # We only close clients we instantiated via Resource.get_client()
         # If a client was either passed directly to the constructor, or returned
-        # from a field default or facotry, it is assumed that we don't own it.
+        # from a field default or factory, it is assumed that we don't own it.
         run_coroutine_sync(self.aclose())
 
     async def aclose(self) -> None:
