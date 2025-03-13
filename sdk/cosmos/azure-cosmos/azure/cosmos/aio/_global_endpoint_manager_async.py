@@ -101,9 +101,12 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         self.location_cache.update_location_cache()
 
     async def refresh_endpoint_list(self, database_account, **kwargs):
+        logger.info("Refresh endpoint list called")
         if self.refresh_task and self.refresh_task.done():
             try:
+                logger.info("Waiting for refresh task to finish")
                 await self.refresh_task
+                logger.info("Refresh task finished")
                 self.refresh_task = None
             except (Exception, CancelledError) as exception: #pylint: disable=broad-exception-caught
                 logger.exception("Health check task failed: %s", exception)
@@ -122,6 +125,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                     await self._refresh_endpoint_list_private(database_account, **kwargs)
                 except Exception as e:
                     raise e
+                logger.info("Refresh unlocked")
 
     async def _refresh_endpoint_list_private(self, database_account=None, **kwargs):
         if database_account and not self.startup:
