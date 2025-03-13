@@ -203,9 +203,6 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                 except (exceptions.CosmosHttpResponseError, AzureError):
                     self.mark_endpoint_unavailable_for_read(locational_endpoint, False)
                     self.mark_endpoint_unavailable_for_write(locational_endpoint, False)
-            logger.info("Unable to get database account from any of the endpoints %s", self.PreferredLocations)
-            logger.info("self.PreferredLocations: %s", self.PreferredLocations)
-            logger.info("self.DefaultEndpoint: %s", self.DefaultEndpoint)
             raise
 
     async def _GetDatabaseAccountStub(self, endpoint, **kwargs):

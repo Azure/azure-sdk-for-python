@@ -23,7 +23,7 @@ import logging
 os.environ["HTTP_PROXY"] = "http://0.0.0.0:5100"
 
 def get_random_item():
-    random_int = random.randint(1, 10000)
+    random_int = random.randint(1, 10000000000000000)
     return {"id": "Simon-" + str(random_int), "pk": "pk-" + str(random_int)}
 
 

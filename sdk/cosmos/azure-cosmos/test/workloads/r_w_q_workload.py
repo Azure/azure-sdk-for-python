@@ -47,6 +47,7 @@ async def query_items_concurrently(container, num_queries):
 
 async def perform_query(container):
     random_item = get_random_item()
+    logger.info("Querying item with id: %s and pk: %s", random_item["id"], random_item["pk"])
     results = container.query_items(query="SELECT * FROM c where c.id=@id and c.pk=@pk",
                                     parameters=[{"name": "@id", "value": random_item["id"]},
                                                 {"name": "@pk", "value": random_item["pk"]}],
