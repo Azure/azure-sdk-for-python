@@ -64,7 +64,6 @@ def get_build_info(build_link: str, check_type: CHECK_TYPE, service_directory: s
     """Get the build info from the build link."""
     build_id = os.getenv("BUILD_BUILDID")
     job_id = os.getenv("SYSTEM_JOBID")
-    pipeline_id = os.getenv("BUILD_DEFINITIONID")
     timeline_link =f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds/{build_id}/timeline?api-version=6.0"
 
     if not in_ci():
