@@ -34,6 +34,7 @@ def main():
         resource_group_name="sqlcrudtest-6852",
         server_name="sqlcrudtest-2080",
         database_name="sqlcrudtest-331",
+        data_masking_policy_name="Default",
         data_masking_rule_name="rule1",
         parameters={
             "properties": {
@@ -47,6 +48,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/stable/2014-04-01/examples/DataMaskingRuleCreateOrUpdateDefaultMin.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2024-05-01-preview/examples/DataMaskingRuleCreateOrUpdateDefaultMin.json
 if __name__ == "__main__":
     main()

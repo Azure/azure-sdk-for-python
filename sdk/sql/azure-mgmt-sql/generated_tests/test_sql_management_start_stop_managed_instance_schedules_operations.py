@@ -20,11 +20,11 @@ class TestSqlManagementStartStopManagedInstanceSchedulesOperations(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_instance(self, resource_group):
+    def test_start_stop_managed_instance_schedules_list_by_instance(self, resource_group):
         response = self.client.start_stop_managed_instance_schedules.list_by_instance(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
-            api_version="2022-08-01-preview",
+            api_version="2024-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,12 +32,12 @@ class TestSqlManagementStartStopManagedInstanceSchedulesOperations(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_start_stop_managed_instance_schedules_get(self, resource_group):
         response = self.client.start_stop_managed_instance_schedules.get(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             start_stop_schedule_name="str",
-            api_version="2022-08-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestSqlManagementStartStopManagedInstanceSchedulesOperations(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_start_stop_managed_instance_schedules_create_or_update(self, resource_group):
         response = self.client.start_stop_managed_instance_schedules.create_or_update(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
@@ -68,7 +68,7 @@ class TestSqlManagementStartStopManagedInstanceSchedulesOperations(AzureMgmtReco
                 "timeZoneId": "UTC",
                 "type": "str",
             },
-            api_version="2022-08-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -76,12 +76,12 @@ class TestSqlManagementStartStopManagedInstanceSchedulesOperations(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_start_stop_managed_instance_schedules_delete(self, resource_group):
         response = self.client.start_stop_managed_instance_schedules.delete(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             start_stop_schedule_name="str",
-            api_version="2022-08-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself

@@ -21,13 +21,26 @@ class TestSqlManagementWorkloadGroupsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_workload_groups_list_by_database(self, resource_group):
+        response = self.client.workload_groups.list_by_database(
+            resource_group_name=resource_group.name,
+            server_name="str",
+            database_name="str",
+            api_version="2024-05-01-preview",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_workload_groups_get(self, resource_group):
         response = await self.client.workload_groups.get(
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
             workload_group_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -35,7 +48,7 @@ class TestSqlManagementWorkloadGroupsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_workload_groups_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.workload_groups.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -53,7 +66,7 @@ class TestSqlManagementWorkloadGroupsOperationsAsync(AzureMgmtRecordedTestCase):
                     "queryExecutionTimeout": 0,
                     "type": "str",
                 },
-                api_version="2020-11-01-preview",
+                api_version="2024-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -62,29 +75,16 @@ class TestSqlManagementWorkloadGroupsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_workload_groups_begin_delete(self, resource_group):
         response = await (
             await self.client.workload_groups.begin_delete(
                 resource_group_name=resource_group.name,
                 server_name="str",
                 database_name="str",
                 workload_group_name="str",
-                api_version="2020-11-01-preview",
+                api_version="2024-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_list_by_database(self, resource_group):
-        response = self.client.workload_groups.list_by_database(
-            resource_group_name=resource_group.name,
-            server_name="str",
-            database_name="str",
-            api_version="2020-11-01-preview",
-        )
-        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

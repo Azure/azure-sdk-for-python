@@ -20,27 +20,27 @@ class TestSqlManagementDataWarehouseUserActivitiesOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
-        response = self.client.data_warehouse_user_activities.get(
+    def test_data_warehouse_user_activities_list_by_database(self, resource_group):
+        response = self.client.data_warehouse_user_activities.list_by_database(
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            data_warehouse_user_activity_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
-
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_database(self, resource_group):
-        response = self.client.data_warehouse_user_activities.list_by_database(
+    def test_data_warehouse_user_activities_get(self, resource_group):
+        response = self.client.data_warehouse_user_activities.get(
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            api_version="2020-11-01-preview",
+            data_warehouse_user_activity_name="str",
+            api_version="2024-05-01-preview",
         )
-        result = [r for r in response]
+
         # please add some check logic here by yourself
         # ...

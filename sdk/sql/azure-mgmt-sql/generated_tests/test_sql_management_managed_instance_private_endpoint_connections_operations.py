@@ -20,12 +20,24 @@ class TestSqlManagementManagedInstancePrivateEndpointConnectionsOperations(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_managed_instance_private_endpoint_connections_list_by_managed_instance(self, resource_group):
+        response = self.client.managed_instance_private_endpoint_connections.list_by_managed_instance(
+            resource_group_name=resource_group.name,
+            managed_instance_name="str",
+            api_version="2024-05-01-preview",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_managed_instance_private_endpoint_connections_get(self, resource_group):
         response = self.client.managed_instance_private_endpoint_connections.get(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             private_endpoint_connection_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -33,7 +45,7 @@ class TestSqlManagementManagedInstancePrivateEndpointConnectionsOperations(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_managed_instance_private_endpoint_connections_begin_create_or_update(self, resource_group):
         response = self.client.managed_instance_private_endpoint_connections.begin_create_or_update(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
@@ -46,7 +58,7 @@ class TestSqlManagementManagedInstancePrivateEndpointConnectionsOperations(Azure
                 "provisioningState": "str",
                 "type": "str",
             },
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -54,25 +66,13 @@ class TestSqlManagementManagedInstancePrivateEndpointConnectionsOperations(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_managed_instance_private_endpoint_connections_begin_delete(self, resource_group):
         response = self.client.managed_instance_private_endpoint_connections.begin_delete(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             private_endpoint_connection_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_list_by_managed_instance(self, resource_group):
-        response = self.client.managed_instance_private_endpoint_connections.list_by_managed_instance(
-            resource_group_name=resource_group.name,
-            managed_instance_name="str",
-            api_version="2020-11-01-preview",
-        )
-        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

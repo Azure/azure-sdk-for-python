@@ -20,12 +20,12 @@ class TestSqlManagementManagedDatabaseAdvancedThreatProtectionSettingsOperations
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_database(self, resource_group):
+    def test_managed_database_advanced_threat_protection_settings_list_by_database(self, resource_group):
         response = self.client.managed_database_advanced_threat_protection_settings.list_by_database(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             database_name="str",
-            api_version="2022-02-01-preview",
+            api_version="2024-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,13 +33,13 @@ class TestSqlManagementManagedDatabaseAdvancedThreatProtectionSettingsOperations
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_managed_database_advanced_threat_protection_settings_get(self, resource_group):
         response = self.client.managed_database_advanced_threat_protection_settings.get(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             database_name="str",
             advanced_threat_protection_name="str",
-            api_version="2022-02-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -47,7 +47,7 @@ class TestSqlManagementManagedDatabaseAdvancedThreatProtectionSettingsOperations
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_managed_database_advanced_threat_protection_settings_create_or_update(self, resource_group):
         response = self.client.managed_database_advanced_threat_protection_settings.create_or_update(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
@@ -68,7 +68,7 @@ class TestSqlManagementManagedDatabaseAdvancedThreatProtectionSettingsOperations
                 },
                 "type": "str",
             },
-            api_version="2022-02-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself

@@ -21,13 +21,13 @@ class TestSqlManagementDatabaseRecommendedActionsOperationsAsync(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_database_advisor(self, resource_group):
+    async def test_database_recommended_actions_list_by_database_advisor(self, resource_group):
         response = await self.client.database_recommended_actions.list_by_database_advisor(
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
             advisor_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -35,14 +35,14 @@ class TestSqlManagementDatabaseRecommendedActionsOperationsAsync(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_database_recommended_actions_get(self, resource_group):
         response = await self.client.database_recommended_actions.get(
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
             advisor_name="str",
             recommended_action_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -50,7 +50,7 @@ class TestSqlManagementDatabaseRecommendedActionsOperationsAsync(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update(self, resource_group):
+    async def test_database_recommended_actions_update(self, resource_group):
         response = await self.client.database_recommended_actions.update(
             resource_group_name=resource_group.name,
             server_name="str",
@@ -69,7 +69,7 @@ class TestSqlManagementDatabaseRecommendedActionsOperationsAsync(AzureMgmtRecord
                         "unit": "str",
                     }
                 ],
-                "executeActionDuration": "str",
+                "executeActionDuration": "1 day, 0:00:00",
                 "executeActionInitiatedBy": "str",
                 "executeActionInitiatedTime": "2020-02-20 00:00:00",
                 "executeActionStartTime": "2020-02-20 00:00:00",
@@ -93,7 +93,7 @@ class TestSqlManagementDatabaseRecommendedActionsOperationsAsync(AzureMgmtRecord
                     }
                 ],
                 "recommendationReason": "str",
-                "revertActionDuration": "str",
+                "revertActionDuration": "1 day, 0:00:00",
                 "revertActionInitiatedBy": "str",
                 "revertActionInitiatedTime": "2020-02-20 00:00:00",
                 "revertActionStartTime": "2020-02-20 00:00:00",
@@ -111,7 +111,7 @@ class TestSqlManagementDatabaseRecommendedActionsOperationsAsync(AzureMgmtRecord
                 "type": "str",
                 "validSince": "2020-02-20 00:00:00",
             },
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
