@@ -58,8 +58,7 @@ def sample_chat_completions_with_audio_url():
         model_deployment = None
 
     audio_url = (
-        "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/refs/tags/azure-ai-inference_1.0.0b9/"
-        + "sdk/ai/azure-ai-inference/samples/hello_how_are_you.mp3"
+        "https://github.com/Azure/azure-sdk-for-python/raw/refs/heads/main/sdk/ai/azure-ai-inference/samples/hello_how_are_you.mp3"
     )
 
     client = ChatCompletionsClient(

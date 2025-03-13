@@ -624,6 +624,7 @@ class ChatCompletionsResponseFormatText(ChatCompletionsResponseFormat, discrimin
 class ChatCompletionsToolCall(_model_base.Model):
     """A function tool call requested by the AI model.
 
+
     :ivar id: The ID of the tool call. Required.
     :vartype id: str
     :ivar type: The type of tool call. Currently, only ``function`` is supported. Required. Default
@@ -905,7 +906,7 @@ class ChatRequestUserMessage(ChatRequestMessage, discriminator="user"):
     role: Literal[ChatRole.USER] = rest_discriminator(name="role", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The chat role associated with this message, which is always 'user' for user messages. Required.
      The role that provides input for chat completions."""
-    content: Union[str, List["_models.ContentItem"]] = rest_field(
+    content: Union["str", List["_models.ContentItem"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The contents of the user message, with available input types varying by selected model.
@@ -1033,7 +1034,7 @@ class EmbeddingItem(_model_base.Model):
     :vartype index: int
     """
 
-    embedding: Union[str, List[float]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    embedding: Union["str", List[float]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of embedding values for the input prompt. These represent a measurement of the
      vector-based relatedness of the provided input. Or a base64 encoded string of the embedding
      vector. Required. Is either a str type or a [float] type."""
