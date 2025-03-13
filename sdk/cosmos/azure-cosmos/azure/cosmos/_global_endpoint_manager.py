@@ -27,6 +27,7 @@ import threading
 from typing import Tuple
 
 from azure.core.exceptions import AzureError
+from tox.session.cmd.run.common import logger
 
 from . import _constants as constants
 from . import exceptions
@@ -98,6 +99,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         self.location_cache.update_location_cache()
 
     def refresh_endpoint_list(self, database_account, **kwargs):
+        logger.info("refresh current time: %s", self.location_cache.current_time_millis())
         if self.location_cache.current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms:
             self.refresh_needed = True
         if self.refresh_needed:
