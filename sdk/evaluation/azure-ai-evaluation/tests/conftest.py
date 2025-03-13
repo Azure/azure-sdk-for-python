@@ -320,12 +320,9 @@ def get_config(
 
 
 @pytest.fixture(scope="session")
-def mock_model_config(connection_file: Mapping[str, Any]) -> AzureOpenAIModelConfiguration:
-    config = get_config(connection_file, KEY_AZURE_MODEL_CONFIG, {})
-    sanitized_endpoint = re.sub(r"([^:]+://)[^\.]+(.*)", r"\1Sanitized\2", config.get("azure_endpoint", ""))
-
+def mock_model_config() -> AzureOpenAIModelConfiguration:
     return AzureOpenAIModelConfiguration(
-        azure_endpoint=sanitized_endpoint or "https://Sanitized.cognitiveservices.azure.com",
+        azure_endpoint="https://Sanitized.cognitiveservices.azure.com",
         api_key="aoai-api-key",
         api_version="2024-08-01-preview",
         azure_deployment="aoai-deployment",
