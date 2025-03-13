@@ -23,6 +23,7 @@
 """
 import copy
 import json
+import logging
 import time
 
 from urllib.parse import urlparse
@@ -33,6 +34,7 @@ from .. import http_constants
 from . import _retry_utility_async
 from .._synchronized_request import _request_body_from_data, _replace_url_prefix
 
+logger = logging.getLogger("azure.cosmos._GlobalEndpointManager")
 
 async def _Request(global_endpoint_manager, request_params, connection_policy, pipeline_client, request, **kwargs):
     """Makes one http request using the requests module.
@@ -50,7 +52,7 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
 
     """
     # pylint: disable=protected-access
-
+    logger.info("Callling _Request function")
     connection_timeout = connection_policy.RequestTimeout
     read_timeout = connection_policy.ReadTimeout
     connection_timeout = kwargs.pop("connection_timeout", connection_timeout)
@@ -60,6 +62,7 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
     client_timeout = kwargs.get('timeout')
     start_time = time.time()
     if request_params.resource_type != http_constants.ResourceType.DatabaseAccount:
+        logger.info("Calling refresh_endpoint_list from _Request function")
         await global_endpoint_manager.refresh_endpoint_list(None, **kwargs)
     else:
         # always override database account call timeouts
