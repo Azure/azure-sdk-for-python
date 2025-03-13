@@ -68,7 +68,7 @@ class TestComputeManagementVirtualMachineExtensionsOperationsAsync(AzureMgmtReco
                     "type": "str",
                     "typeHandlerVersion": "str",
                 },
-                api_version="2024-07-01",
+                api_version="2024-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -96,7 +96,7 @@ class TestComputeManagementVirtualMachineExtensionsOperationsAsync(AzureMgmtReco
                     "type": "str",
                     "typeHandlerVersion": "str",
                 },
-                api_version="2024-07-01",
+                api_version="2024-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -111,7 +111,7 @@ class TestComputeManagementVirtualMachineExtensionsOperationsAsync(AzureMgmtReco
                 resource_group_name=resource_group.name,
                 vm_name="str",
                 vm_extension_name="str",
-                api_version="2024-07-01",
+                api_version="2024-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -125,7 +125,7 @@ class TestComputeManagementVirtualMachineExtensionsOperationsAsync(AzureMgmtReco
             resource_group_name=resource_group.name,
             vm_name="str",
             vm_extension_name="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -137,7 +137,7 @@ class TestComputeManagementVirtualMachineExtensionsOperationsAsync(AzureMgmtReco
         response = await self.client.virtual_machine_extensions.list(
             resource_group_name=resource_group.name,
             vm_name="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself

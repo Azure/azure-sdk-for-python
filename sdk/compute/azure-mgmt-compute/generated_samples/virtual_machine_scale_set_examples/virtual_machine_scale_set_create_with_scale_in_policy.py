@@ -37,7 +37,7 @@ def main():
             "location": "westus",
             "properties": {
                 "overprovision": True,
-                "scaleInPolicy": {"forceDeletion": True, "rules": ["OldestVM"]},
+                "scaleInPolicy": {"forceDeletion": True, "prioritizeUnhealthyVMs": True, "rules": ["OldestVM"]},
                 "upgradePolicy": {"mode": "Manual"},
                 "virtualMachineProfile": {
                     "networkProfile": {
@@ -87,6 +87,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2024-07-01/examples/virtualMachineScaleSetExamples/VirtualMachineScaleSet_Create_WithScaleInPolicy.json
+# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2024-11-01/examples/virtualMachineScaleSetExamples/VirtualMachineScaleSet_Create_WithScaleInPolicy.json
 if __name__ == "__main__":
     main()
