@@ -15,19 +15,24 @@ class MockExecuteServiceRequestException(object):
 
     async def __call__(self, func, *args, **kwargs):
         # after 10 minutes, we will start to throw exceptions and ends after 30 minutes
-        if args[1].location_endpoint_to_route == COSMOS_URI and time.time() - self.start_time >= 600\
-                and time.time() <= self.start_time + 1800:
-            if not args[1].endpoint_override or args[1].endpoint_override == COSMOS_URI:
-                if MOCK_EXECUTE_STATUS_CODE == 1:
-                    exception = ServiceResponseError("mock exception")
-                    exception.exc_type = Exception
-                    raise exception
-                else:
-                    raise exceptions.CosmosHttpResponseError(
-                        status_code=MOCK_EXECUTE_STATUS_CODE,
-                        message="Some Exception",
-                        response=FakeResponse({}))
+        if time.time() - self.start_time >= 600 and time.time() <= self.start_time + 1800:
+            if args[1].endpoint_override:
+                if args[1].endpoint_override == COSMOS_URI:
+                    raise_exception()
+            elif args[1].location_endpoint_to_route == COSMOS_URI:
+                raise_exception()
         return await self.original_func(func, *args, **kwargs)
+
+def raise_exception():
+    if MOCK_EXECUTE_STATUS_CODE == 1:
+        exception = ServiceResponseError("mock exception")
+        exception.exc_type = Exception
+        raise exception
+    else:
+        raise exceptions.CosmosHttpResponseError(
+            status_code=MOCK_EXECUTE_STATUS_CODE,
+            message="Some Exception",
+            response=FakeResponse({}))
 
 class FakeResponse:
     def __init__(self, headers):

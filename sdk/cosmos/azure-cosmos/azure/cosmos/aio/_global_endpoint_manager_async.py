@@ -110,7 +110,9 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         if self.location_cache.current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms:
             self.refresh_needed = True
         if self.refresh_needed:
+            logger.info("Refresh needed")
             async with self.refresh_lock:
+                logger.info("Refresh locked")
                 # if refresh is not needed or refresh is already taking place, return
                 if not self.refresh_needed:
                     return
