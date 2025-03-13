@@ -1,6 +1,6 @@
 
 
-# Azure Ai Projects 1dp client library for Python
+# Azure Ai Projects Dp1 client library for Python
 <!-- write necessary description of service -->
 
 ## Getting started
@@ -8,14 +8,14 @@
 ### Install the package
 
 ```bash
-python -m pip install azure-ai-projects-1dp
+python -m pip install azure-ai-projects-dp1
 ```
 
 #### Prequisites
 
 - Python 3.8 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
-- An existing Azure Ai Projects 1dp instance.
+- An existing Azure Ai Projects Dp1 instance.
 #### Create with an Azure Active Directory Credential
 To use an [Azure Active Directory (AAD) token credential][authenticate_with_token],
 provide an instance of the desired credential type obtained from the
@@ -32,7 +32,7 @@ Set the values of the client ID, tenant ID, and client secret of the AAD applica
 Use the returned token credential to authenticate the client:
 
 ```python
->>> from azure.ai.projects.1dp import AIProjectClient
+>>> from azure.ai.projects.dp1 import AIProjectClient
 >>> from azure.identity import DefaultAzureCredential
 >>> client = AIProjectClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 ```
@@ -40,7 +40,7 @@ Use the returned token credential to authenticate the client:
 ## Examples
 
 ```python
->>> from azure.ai.projects.1dp import AIProjectClient
+>>> from azure.ai.projects.dp1 import AIProjectClient
 >>> from azure.identity import DefaultAzureCredential
 >>> from azure.core.exceptions import HttpResponseError
 

@@ -87,7 +87,7 @@ from ...operations._operations import (
     build_datasets_list_latest_datasets_request,
     build_deployments_get_request,
     build_deployments_list_request,
-    build_evaluations_create_request,
+    build_evaluations_create_run_request,
     build_evaluations_get_request,
     build_evaluations_list_request,
     build_indexes_create_index_request,
@@ -117,7 +117,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.ai.projects.1dp.aio.AIProjectClient`'s
+        :class:`~azure.ai.projects.dp1.aio.AIProjectClient`'s
         :attr:`agents` attribute.
     """
 
@@ -159,12 +159,12 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :keyword instructions: The system instructions for the new agent to use. Default value is None.
         :paramtype instructions: str
         :keyword tools: The collection of tools to enable for the new agent. Default value is None.
-        :paramtype tools: list[~azure.ai.projects.1dp.models.ToolDefinition]
+        :paramtype tools: list[~azure.ai.projects.dp1.models.ToolDefinition]
         :keyword tool_resources: A set of resources that are used by the agent's tools. The resources
          are specific to the type of tool. For example, the ``code_interpreter``
          tool requires a list of file IDs, while the ``file_search`` tool requires a list of vector
          store IDs. Default value is None.
-        :paramtype tool_resources: ~azure.ai.projects.1dp.models.ToolResources
+        :paramtype tool_resources: ~azure.ai.projects.dp1.models.ToolResources
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output more random,
          while lower values like 0.2 will make it more focused and deterministic. Default value is
@@ -180,16 +180,16 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
          AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
         :paramtype response_format: str or str or
-         ~azure.ai.projects.1dp.models.AgentsApiResponseFormatMode or
-         ~azure.ai.projects.1dp.models.AgentsApiResponseFormat or
-         ~azure.ai.projects.1dp.models.ResponseFormatJsonSchemaType
+         ~azure.ai.projects.dp1.models.AgentsApiResponseFormatMode or
+         ~azure.ai.projects.dp1.models.AgentsApiResponseFormat or
+         ~azure.ai.projects.dp1.models.ResponseFormatJsonSchemaType
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
         :return: Agent. The Agent is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.Agent
+        :rtype: ~azure.ai.projects.dp1.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -203,7 +203,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          Default value is "application/json".
         :paramtype content_type: str
         :return: Agent. The Agent is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.Agent
+        :rtype: ~azure.ai.projects.dp1.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -219,7 +219,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          Default value is "application/json".
         :paramtype content_type: str
         :return: Agent. The Agent is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.Agent
+        :rtype: ~azure.ai.projects.dp1.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -253,12 +253,12 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :keyword instructions: The system instructions for the new agent to use. Default value is None.
         :paramtype instructions: str
         :keyword tools: The collection of tools to enable for the new agent. Default value is None.
-        :paramtype tools: list[~azure.ai.projects.1dp.models.ToolDefinition]
+        :paramtype tools: list[~azure.ai.projects.dp1.models.ToolDefinition]
         :keyword tool_resources: A set of resources that are used by the agent's tools. The resources
          are specific to the type of tool. For example, the ``code_interpreter``
          tool requires a list of file IDs, while the ``file_search`` tool requires a list of vector
          store IDs. Default value is None.
-        :paramtype tool_resources: ~azure.ai.projects.1dp.models.ToolResources
+        :paramtype tool_resources: ~azure.ai.projects.dp1.models.ToolResources
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output more random,
          while lower values like 0.2 will make it more focused and deterministic. Default value is
@@ -274,16 +274,16 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
          AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
         :paramtype response_format: str or str or
-         ~azure.ai.projects.1dp.models.AgentsApiResponseFormatMode or
-         ~azure.ai.projects.1dp.models.AgentsApiResponseFormat or
-         ~azure.ai.projects.1dp.models.ResponseFormatJsonSchemaType
+         ~azure.ai.projects.dp1.models.AgentsApiResponseFormatMode or
+         ~azure.ai.projects.dp1.models.AgentsApiResponseFormat or
+         ~azure.ai.projects.dp1.models.ResponseFormatJsonSchemaType
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
         :return: Agent. The Agent is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.Agent
+        :rtype: ~azure.ai.projects.dp1.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -378,7 +378,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype limit: int
         :keyword order: Sort order by the created_at timestamp of the objects. asc for ascending order
          and desc for descending order. Known values are: "asc" and "desc". Default value is None.
-        :paramtype order: str or ~azure.ai.projects.1dp.models.ListSortOrder
+        :paramtype order: str or ~azure.ai.projects.dp1.models.ListSortOrder
         :keyword after: A cursor for use in pagination. after is an object ID that defines your place
          in the list. For instance, if you make a list request and receive 100 objects, ending with
          obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the
@@ -391,7 +391,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype before: str
         :return: OpenAIPageableListOfAgent. The OpenAIPageableListOfAgent is compatible with
          MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.OpenAIPageableListOfAgent
+        :rtype: ~azure.ai.projects.dp1.models.OpenAIPageableListOfAgent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -454,7 +454,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :param assistant_id: Identifier of the agent. Required.
         :type assistant_id: str
         :return: Agent. The Agent is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.Agent
+        :rtype: ~azure.ai.projects.dp1.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -543,12 +543,12 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype instructions: str
         :keyword tools: The modified collection of tools to enable for the agent. Default value is
          None.
-        :paramtype tools: list[~azure.ai.projects.1dp.models.ToolDefinition]
+        :paramtype tools: list[~azure.ai.projects.dp1.models.ToolDefinition]
         :keyword tool_resources: A set of resources that are used by the agent's tools. The resources
          are specific to the type of tool. For example,
          the ``code_interpreter`` tool requires a list of file IDs, while the ``file_search`` tool
          requires a list of vector store IDs. Default value is None.
-        :paramtype tool_resources: ~azure.ai.projects.1dp.models.ToolResources
+        :paramtype tool_resources: ~azure.ai.projects.dp1.models.ToolResources
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output more random,
          while lower values like 0.2 will make it more focused and deterministic. Default value is
@@ -564,16 +564,16 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
          AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
         :paramtype response_format: str or str or
-         ~azure.ai.projects.1dp.models.AgentsApiResponseFormatMode or
-         ~azure.ai.projects.1dp.models.AgentsApiResponseFormat or
-         ~azure.ai.projects.1dp.models.ResponseFormatJsonSchemaType
+         ~azure.ai.projects.dp1.models.AgentsApiResponseFormatMode or
+         ~azure.ai.projects.dp1.models.AgentsApiResponseFormat or
+         ~azure.ai.projects.dp1.models.ResponseFormatJsonSchemaType
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
         :return: Agent. The Agent is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.Agent
+        :rtype: ~azure.ai.projects.dp1.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -591,7 +591,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          Default value is "application/json".
         :paramtype content_type: str
         :return: Agent. The Agent is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.Agent
+        :rtype: ~azure.ai.projects.dp1.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -609,7 +609,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          Default value is "application/json".
         :paramtype content_type: str
         :return: Agent. The Agent is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.Agent
+        :rtype: ~azure.ai.projects.dp1.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -648,12 +648,12 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype instructions: str
         :keyword tools: The modified collection of tools to enable for the agent. Default value is
          None.
-        :paramtype tools: list[~azure.ai.projects.1dp.models.ToolDefinition]
+        :paramtype tools: list[~azure.ai.projects.dp1.models.ToolDefinition]
         :keyword tool_resources: A set of resources that are used by the agent's tools. The resources
          are specific to the type of tool. For example,
          the ``code_interpreter`` tool requires a list of file IDs, while the ``file_search`` tool
          requires a list of vector store IDs. Default value is None.
-        :paramtype tool_resources: ~azure.ai.projects.1dp.models.ToolResources
+        :paramtype tool_resources: ~azure.ai.projects.dp1.models.ToolResources
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output more random,
          while lower values like 0.2 will make it more focused and deterministic. Default value is
@@ -669,16 +669,16 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
          AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
         :paramtype response_format: str or str or
-         ~azure.ai.projects.1dp.models.AgentsApiResponseFormatMode or
-         ~azure.ai.projects.1dp.models.AgentsApiResponseFormat or
-         ~azure.ai.projects.1dp.models.ResponseFormatJsonSchemaType
+         ~azure.ai.projects.dp1.models.AgentsApiResponseFormatMode or
+         ~azure.ai.projects.dp1.models.AgentsApiResponseFormat or
+         ~azure.ai.projects.dp1.models.ResponseFormatJsonSchemaType
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
         :return: Agent. The Agent is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.Agent
+        :rtype: ~azure.ai.projects.dp1.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -762,7 +762,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :param assistant_id: Identifier of the agent. Required.
         :type assistant_id: str
         :return: AgentDeletionStatus. The AgentDeletionStatus is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.AgentDeletionStatus
+        :rtype: ~azure.ai.projects.dp1.models.AgentDeletionStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -832,20 +832,20 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype content_type: str
         :keyword messages: The initial messages to associate with the new thread. Default value is
          None.
-        :paramtype messages: list[~azure.ai.projects.1dp.models.ThreadMessageOptions]
+        :paramtype messages: list[~azure.ai.projects.dp1.models.ThreadMessageOptions]
         :keyword tool_resources: A set of resources that are made available to the agent's tools in
          this thread. The resources are specific to the
          type of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while
          the ``file_search`` tool requires
          a list of vector store IDs. Default value is None.
-        :paramtype tool_resources: ~azure.ai.projects.1dp.models.ToolResources
+        :paramtype tool_resources: ~azure.ai.projects.dp1.models.ToolResources
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
         :return: AgentThread. The AgentThread is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.AgentThread
+        :rtype: ~azure.ai.projects.dp1.models.AgentThread
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -861,7 +861,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          Default value is "application/json".
         :paramtype content_type: str
         :return: AgentThread. The AgentThread is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.AgentThread
+        :rtype: ~azure.ai.projects.dp1.models.AgentThread
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -877,7 +877,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          Default value is "application/json".
         :paramtype content_type: str
         :return: AgentThread. The AgentThread is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.AgentThread
+        :rtype: ~azure.ai.projects.dp1.models.AgentThread
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -897,20 +897,20 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type body: JSON or IO[bytes]
         :keyword messages: The initial messages to associate with the new thread. Default value is
          None.
-        :paramtype messages: list[~azure.ai.projects.1dp.models.ThreadMessageOptions]
+        :paramtype messages: list[~azure.ai.projects.dp1.models.ThreadMessageOptions]
         :keyword tool_resources: A set of resources that are made available to the agent's tools in
          this thread. The resources are specific to the
          type of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while
          the ``file_search`` tool requires
          a list of vector store IDs. Default value is None.
-        :paramtype tool_resources: ~azure.ai.projects.1dp.models.ToolResources
+        :paramtype tool_resources: ~azure.ai.projects.dp1.models.ToolResources
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
         :return: AgentThread. The AgentThread is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.AgentThread
+        :rtype: ~azure.ai.projects.dp1.models.AgentThread
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -982,7 +982,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
         :return: AgentThread. The AgentThread is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.AgentThread
+        :rtype: ~azure.ai.projects.dp1.models.AgentThread
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1057,14 +1057,14 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          type of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while
          the ``file_search`` tool requires
          a list of vector store IDs. Default value is None.
-        :paramtype tool_resources: ~azure.ai.projects.1dp.models.ToolResources
+        :paramtype tool_resources: ~azure.ai.projects.dp1.models.ToolResources
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
         :return: AgentThread. The AgentThread is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.AgentThread
+        :rtype: ~azure.ai.projects.dp1.models.AgentThread
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1082,7 +1082,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          Default value is "application/json".
         :paramtype content_type: str
         :return: AgentThread. The AgentThread is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.AgentThread
+        :rtype: ~azure.ai.projects.dp1.models.AgentThread
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1100,7 +1100,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          Default value is "application/json".
         :paramtype content_type: str
         :return: AgentThread. The AgentThread is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.AgentThread
+        :rtype: ~azure.ai.projects.dp1.models.AgentThread
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1125,14 +1125,14 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          type of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while
          the ``file_search`` tool requires
          a list of vector store IDs. Default value is None.
-        :paramtype tool_resources: ~azure.ai.projects.1dp.models.ToolResources
+        :paramtype tool_resources: ~azure.ai.projects.dp1.models.ToolResources
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
         :return: AgentThread. The AgentThread is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.AgentThread
+        :rtype: ~azure.ai.projects.dp1.models.AgentThread
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1205,7 +1205,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
         :return: ThreadDeletionStatus. The ThreadDeletionStatus is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.ThreadDeletionStatus
+        :rtype: ~azure.ai.projects.dp1.models.ThreadDeletionStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1282,7 +1282,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          * ``assistant``\\ : Indicates the message is generated by the agent. Use this value to insert
            messages from the agent into the
            conversation. Known values are: "user" and "assistant". Required.
-        :paramtype role: str or ~azure.ai.projects.1dp.models.MessageRole
+        :paramtype role: str or ~azure.ai.projects.dp1.models.MessageRole
         :keyword content: The textual content of the initial message. Currently, robust input including
          images and annotated text may only be provided via
          a separate call to the create message API. Required.
@@ -1292,14 +1292,14 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype content_type: str
         :keyword attachments: A list of files attached to the message, and the tools they should be
          added to. Default value is None.
-        :paramtype attachments: list[~azure.ai.projects.1dp.models.MessageAttachment]
+        :paramtype attachments: list[~azure.ai.projects.dp1.models.MessageAttachment]
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
         :return: ThreadMessage. The ThreadMessage is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.ThreadMessage
+        :rtype: ~azure.ai.projects.dp1.models.ThreadMessage
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1317,7 +1317,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          Default value is "application/json".
         :paramtype content_type: str
         :return: ThreadMessage. The ThreadMessage is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.ThreadMessage
+        :rtype: ~azure.ai.projects.dp1.models.ThreadMessage
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1335,7 +1335,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          Default value is "application/json".
         :paramtype content_type: str
         :return: ThreadMessage. The ThreadMessage is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.ThreadMessage
+        :rtype: ~azure.ai.projects.dp1.models.ThreadMessage
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1365,21 +1365,21 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          * ``assistant``\\ : Indicates the message is generated by the agent. Use this value to insert
            messages from the agent into the
            conversation. Known values are: "user" and "assistant". Required.
-        :paramtype role: str or ~azure.ai.projects.1dp.models.MessageRole
+        :paramtype role: str or ~azure.ai.projects.dp1.models.MessageRole
         :keyword content: The textual content of the initial message. Currently, robust input including
          images and annotated text may only be provided via
          a separate call to the create message API. Required.
         :paramtype content: str
         :keyword attachments: A list of files attached to the message, and the tools they should be
          added to. Default value is None.
-        :paramtype attachments: list[~azure.ai.projects.1dp.models.MessageAttachment]
+        :paramtype attachments: list[~azure.ai.projects.dp1.models.MessageAttachment]
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
         :return: ThreadMessage. The ThreadMessage is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.ThreadMessage
+        :rtype: ~azure.ai.projects.dp1.models.ThreadMessage
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1472,7 +1472,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype limit: int
         :keyword order: Sort order by the created_at timestamp of the objects. asc for ascending order
          and desc for descending order. Known values are: "asc" and "desc". Default value is None.
-        :paramtype order: str or ~azure.ai.projects.1dp.models.ListSortOrder
+        :paramtype order: str or ~azure.ai.projects.dp1.models.ListSortOrder
         :keyword after: A cursor for use in pagination. after is an object ID that defines your place
          in the list. For instance, if you make a list request and receive 100 objects, ending with
          obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the
@@ -1485,7 +1485,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype before: str
         :return: OpenAIPageableListOfThreadMessage. The OpenAIPageableListOfThreadMessage is compatible
          with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.OpenAIPageableListOfThreadMessage
+        :rtype: ~azure.ai.projects.dp1.models.OpenAIPageableListOfThreadMessage
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1552,7 +1552,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :param message_id: Identifier of the message. Required.
         :type message_id: str
         :return: ThreadMessage. The ThreadMessage is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.ThreadMessage
+        :rtype: ~azure.ai.projects.dp1.models.ThreadMessage
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1631,7 +1631,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          None.
         :paramtype metadata: dict[str, str]
         :return: ThreadMessage. The ThreadMessage is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.ThreadMessage
+        :rtype: ~azure.ai.projects.dp1.models.ThreadMessage
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1651,7 +1651,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          Default value is "application/json".
         :paramtype content_type: str
         :return: ThreadMessage. The ThreadMessage is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.ThreadMessage
+        :rtype: ~azure.ai.projects.dp1.models.ThreadMessage
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1671,7 +1671,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          Default value is "application/json".
         :paramtype content_type: str
         :return: ThreadMessage. The ThreadMessage is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.ThreadMessage
+        :rtype: ~azure.ai.projects.dp1.models.ThreadMessage
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1699,7 +1699,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          None.
         :paramtype metadata: dict[str, str]
         :return: ThreadMessage. The ThreadMessage is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.ThreadMessage
+        :rtype: ~azure.ai.projects.dp1.models.ThreadMessage
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1801,7 +1801,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
          content. Default value is None.
-        :paramtype include: list[str or ~azure.ai.projects.1dp.models.RunAdditionalFieldList]
+        :paramtype include: list[str or ~azure.ai.projects.dp1.models.RunAdditionalFieldList]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1817,10 +1817,10 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype additional_instructions: str
         :keyword additional_messages: Adds additional messages to the thread before creating the run.
          Default value is None.
-        :paramtype additional_messages: list[~azure.ai.projects.1dp.models.ThreadMessageOptions]
+        :paramtype additional_messages: list[~azure.ai.projects.dp1.models.ThreadMessageOptions]
         :keyword tools: The overridden list of enabled tools that the agent should use to run the
          thread. Default value is None.
-        :paramtype tools: list[~azure.ai.projects.1dp.models.ToolDefinition]
+        :paramtype tools: list[~azure.ai.projects.dp1.models.ToolDefinition]
         :keyword stream_parameter: If ``true``\\ , returns a stream of events that happen during the
          Run as server-sent events,
          terminating when the Run enters a terminal state with a ``data: [DONE]`` message. Default
@@ -1854,20 +1854,20 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype max_completion_tokens: int
         :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
          moves forward. Default value is None.
-        :paramtype truncation_strategy: ~azure.ai.projects.1dp.models.TruncationObject
+        :paramtype truncation_strategy: ~azure.ai.projects.dp1.models.TruncationObject
         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
          the following types: str, Union[str, "_models.AgentsApiToolChoiceOptionMode"],
          AgentsNamedToolChoice Default value is None.
         :paramtype tool_choice: str or str or
-         ~azure.ai.projects.1dp.models.AgentsApiToolChoiceOptionMode or
-         ~azure.ai.projects.1dp.models.AgentsNamedToolChoice
+         ~azure.ai.projects.dp1.models.AgentsApiToolChoiceOptionMode or
+         ~azure.ai.projects.dp1.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
          following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
          AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
         :paramtype response_format: str or str or
-         ~azure.ai.projects.1dp.models.AgentsApiResponseFormatMode or
-         ~azure.ai.projects.1dp.models.AgentsApiResponseFormat or
-         ~azure.ai.projects.1dp.models.ResponseFormatJsonSchemaType
+         ~azure.ai.projects.dp1.models.AgentsApiResponseFormatMode or
+         ~azure.ai.projects.dp1.models.AgentsApiResponseFormat or
+         ~azure.ai.projects.dp1.models.ResponseFormatJsonSchemaType
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
         :paramtype parallel_tool_calls: bool
@@ -1877,7 +1877,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          None.
         :paramtype metadata: dict[str, str]
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.ThreadRun
+        :rtype: ~azure.ai.projects.dp1.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1901,12 +1901,12 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
          content. Default value is None.
-        :paramtype include: list[str or ~azure.ai.projects.1dp.models.RunAdditionalFieldList]
+        :paramtype include: list[str or ~azure.ai.projects.dp1.models.RunAdditionalFieldList]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.ThreadRun
+        :rtype: ~azure.ai.projects.dp1.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1930,12 +1930,12 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
          content. Default value is None.
-        :paramtype include: list[str or ~azure.ai.projects.1dp.models.RunAdditionalFieldList]
+        :paramtype include: list[str or ~azure.ai.projects.dp1.models.RunAdditionalFieldList]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.ThreadRun
+        :rtype: ~azure.ai.projects.dp1.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1976,7 +1976,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
          content. Default value is None.
-        :paramtype include: list[str or ~azure.ai.projects.1dp.models.RunAdditionalFieldList]
+        :paramtype include: list[str or ~azure.ai.projects.dp1.models.RunAdditionalFieldList]
         :keyword model: The overridden model name that the agent should use to run the thread. Default
          value is None.
         :paramtype model: str
@@ -1989,10 +1989,10 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype additional_instructions: str
         :keyword additional_messages: Adds additional messages to the thread before creating the run.
          Default value is None.
-        :paramtype additional_messages: list[~azure.ai.projects.1dp.models.ThreadMessageOptions]
+        :paramtype additional_messages: list[~azure.ai.projects.dp1.models.ThreadMessageOptions]
         :keyword tools: The overridden list of enabled tools that the agent should use to run the
          thread. Default value is None.
-        :paramtype tools: list[~azure.ai.projects.1dp.models.ToolDefinition]
+        :paramtype tools: list[~azure.ai.projects.dp1.models.ToolDefinition]
         :keyword stream_parameter: If ``true``\\ , returns a stream of events that happen during the
          Run as server-sent events,
          terminating when the Run enters a terminal state with a ``data: [DONE]`` message. Default
@@ -2026,20 +2026,20 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype max_completion_tokens: int
         :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
          moves forward. Default value is None.
-        :paramtype truncation_strategy: ~azure.ai.projects.1dp.models.TruncationObject
+        :paramtype truncation_strategy: ~azure.ai.projects.dp1.models.TruncationObject
         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
          the following types: str, Union[str, "_models.AgentsApiToolChoiceOptionMode"],
          AgentsNamedToolChoice Default value is None.
         :paramtype tool_choice: str or str or
-         ~azure.ai.projects.1dp.models.AgentsApiToolChoiceOptionMode or
-         ~azure.ai.projects.1dp.models.AgentsNamedToolChoice
+         ~azure.ai.projects.dp1.models.AgentsApiToolChoiceOptionMode or
+         ~azure.ai.projects.dp1.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
          following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
          AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
         :paramtype response_format: str or str or
-         ~azure.ai.projects.1dp.models.AgentsApiResponseFormatMode or
-         ~azure.ai.projects.1dp.models.AgentsApiResponseFormat or
-         ~azure.ai.projects.1dp.models.ResponseFormatJsonSchemaType
+         ~azure.ai.projects.dp1.models.AgentsApiResponseFormatMode or
+         ~azure.ai.projects.dp1.models.AgentsApiResponseFormat or
+         ~azure.ai.projects.dp1.models.ResponseFormatJsonSchemaType
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
         :paramtype parallel_tool_calls: bool
@@ -2049,7 +2049,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          None.
         :paramtype metadata: dict[str, str]
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.ThreadRun
+        :rtype: ~azure.ai.projects.dp1.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2155,7 +2155,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype limit: int
         :keyword order: Sort order by the created_at timestamp of the objects. asc for ascending order
          and desc for descending order. Known values are: "asc" and "desc". Default value is None.
-        :paramtype order: str or ~azure.ai.projects.1dp.models.ListSortOrder
+        :paramtype order: str or ~azure.ai.projects.dp1.models.ListSortOrder
         :keyword after: A cursor for use in pagination. after is an object ID that defines your place
          in the list. For instance, if you make a list request and receive 100 objects, ending with
          obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the
@@ -2168,7 +2168,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype before: str
         :return: OpenAIPageableListOfThreadRun. The OpenAIPageableListOfThreadRun is compatible with
          MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.OpenAIPageableListOfThreadRun
+        :rtype: ~azure.ai.projects.dp1.models.OpenAIPageableListOfThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2234,7 +2234,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :param run_id: Identifier of the run. Required.
         :type run_id: str
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.ThreadRun
+        :rtype: ~azure.ai.projects.dp1.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2313,7 +2313,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          None.
         :paramtype metadata: dict[str, str]
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.ThreadRun
+        :rtype: ~azure.ai.projects.dp1.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2333,7 +2333,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          Default value is "application/json".
         :paramtype content_type: str
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.ThreadRun
+        :rtype: ~azure.ai.projects.dp1.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2353,7 +2353,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          Default value is "application/json".
         :paramtype content_type: str
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.ThreadRun
+        :rtype: ~azure.ai.projects.dp1.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2381,7 +2381,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          None.
         :paramtype metadata: dict[str, str]
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.ThreadRun
+        :rtype: ~azure.ai.projects.dp1.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2468,7 +2468,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :param run_id: Identifier of the run. Required.
         :type run_id: str
         :keyword tool_outputs: A list of tools for which the outputs are being submitted. Required.
-        :paramtype tool_outputs: list[~azure.ai.projects.1dp.models.ToolOutput]
+        :paramtype tool_outputs: list[~azure.ai.projects.dp1.models.ToolOutput]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2476,7 +2476,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          server-sent events, terminating when the run enters a terminal state. Default value is None.
         :paramtype stream_parameter: bool
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.ThreadRun
+        :rtype: ~azure.ai.projects.dp1.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2498,7 +2498,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          Default value is "application/json".
         :paramtype content_type: str
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.ThreadRun
+        :rtype: ~azure.ai.projects.dp1.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2520,7 +2520,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          Default value is "application/json".
         :paramtype content_type: str
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.ThreadRun
+        :rtype: ~azure.ai.projects.dp1.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2546,12 +2546,12 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
         :keyword tool_outputs: A list of tools for which the outputs are being submitted. Required.
-        :paramtype tool_outputs: list[~azure.ai.projects.1dp.models.ToolOutput]
+        :paramtype tool_outputs: list[~azure.ai.projects.dp1.models.ToolOutput]
         :keyword stream_parameter: If true, returns a stream of events that happen during the Run as
          server-sent events, terminating when the run enters a terminal state. Default value is None.
         :paramtype stream_parameter: bool
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.ThreadRun
+        :rtype: ~azure.ai.projects.dp1.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2629,7 +2629,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :param run_id: Identifier of the run. Required.
         :type run_id: str
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.ThreadRun
+        :rtype: ~azure.ai.projects.dp1.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2715,7 +2715,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype content_type: str
         :keyword thread: The details used to create the new thread. If no thread is provided, an empty
          one will be created. Default value is None.
-        :paramtype thread: ~azure.ai.projects.1dp.models.AgentThreadCreationOptions
+        :paramtype thread: ~azure.ai.projects.dp1.models.AgentThreadCreationOptions
         :keyword model: The overridden model that the agent should use to run the thread. Default value
          is None.
         :paramtype model: str
@@ -2724,10 +2724,10 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype instructions: str
         :keyword tools: The overridden list of enabled tools the agent should use to run the thread.
          Default value is None.
-        :paramtype tools: list[~azure.ai.projects.1dp.models.ToolDefinition]
+        :paramtype tools: list[~azure.ai.projects.dp1.models.ToolDefinition]
         :keyword tool_resources: Override the tools the agent can use for this run. This is useful for
          modifying the behavior on a per-run basis. Default value is None.
-        :paramtype tool_resources: ~azure.ai.projects.1dp.models.UpdateToolResourcesOptions
+        :paramtype tool_resources: ~azure.ai.projects.dp1.models.UpdateToolResourcesOptions
         :keyword stream_parameter: If ``true``\\ , returns a stream of events that happen during the
          Run as server-sent events,
          terminating when the Run enters a terminal state with a ``data: [DONE]`` message. Default
@@ -2761,20 +2761,20 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype max_completion_tokens: int
         :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
          moves forward. Default value is None.
-        :paramtype truncation_strategy: ~azure.ai.projects.1dp.models.TruncationObject
+        :paramtype truncation_strategy: ~azure.ai.projects.dp1.models.TruncationObject
         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
          the following types: str, Union[str, "_models.AgentsApiToolChoiceOptionMode"],
          AgentsNamedToolChoice Default value is None.
         :paramtype tool_choice: str or str or
-         ~azure.ai.projects.1dp.models.AgentsApiToolChoiceOptionMode or
-         ~azure.ai.projects.1dp.models.AgentsNamedToolChoice
+         ~azure.ai.projects.dp1.models.AgentsApiToolChoiceOptionMode or
+         ~azure.ai.projects.dp1.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
          following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
          AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
         :paramtype response_format: str or str or
-         ~azure.ai.projects.1dp.models.AgentsApiResponseFormatMode or
-         ~azure.ai.projects.1dp.models.AgentsApiResponseFormat or
-         ~azure.ai.projects.1dp.models.ResponseFormatJsonSchemaType
+         ~azure.ai.projects.dp1.models.AgentsApiResponseFormatMode or
+         ~azure.ai.projects.dp1.models.AgentsApiResponseFormat or
+         ~azure.ai.projects.dp1.models.ResponseFormatJsonSchemaType
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
         :paramtype parallel_tool_calls: bool
@@ -2784,7 +2784,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          None.
         :paramtype metadata: dict[str, str]
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.ThreadRun
+        :rtype: ~azure.ai.projects.dp1.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2800,7 +2800,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          Default value is "application/json".
         :paramtype content_type: str
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.ThreadRun
+        :rtype: ~azure.ai.projects.dp1.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2816,7 +2816,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          Default value is "application/json".
         :paramtype content_type: str
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.ThreadRun
+        :rtype: ~azure.ai.projects.dp1.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2851,7 +2851,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype assistant_id: str
         :keyword thread: The details used to create the new thread. If no thread is provided, an empty
          one will be created. Default value is None.
-        :paramtype thread: ~azure.ai.projects.1dp.models.AgentThreadCreationOptions
+        :paramtype thread: ~azure.ai.projects.dp1.models.AgentThreadCreationOptions
         :keyword model: The overridden model that the agent should use to run the thread. Default value
          is None.
         :paramtype model: str
@@ -2860,10 +2860,10 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype instructions: str
         :keyword tools: The overridden list of enabled tools the agent should use to run the thread.
          Default value is None.
-        :paramtype tools: list[~azure.ai.projects.1dp.models.ToolDefinition]
+        :paramtype tools: list[~azure.ai.projects.dp1.models.ToolDefinition]
         :keyword tool_resources: Override the tools the agent can use for this run. This is useful for
          modifying the behavior on a per-run basis. Default value is None.
-        :paramtype tool_resources: ~azure.ai.projects.1dp.models.UpdateToolResourcesOptions
+        :paramtype tool_resources: ~azure.ai.projects.dp1.models.UpdateToolResourcesOptions
         :keyword stream_parameter: If ``true``\\ , returns a stream of events that happen during the
          Run as server-sent events,
          terminating when the Run enters a terminal state with a ``data: [DONE]`` message. Default
@@ -2897,20 +2897,20 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype max_completion_tokens: int
         :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
          moves forward. Default value is None.
-        :paramtype truncation_strategy: ~azure.ai.projects.1dp.models.TruncationObject
+        :paramtype truncation_strategy: ~azure.ai.projects.dp1.models.TruncationObject
         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
          the following types: str, Union[str, "_models.AgentsApiToolChoiceOptionMode"],
          AgentsNamedToolChoice Default value is None.
         :paramtype tool_choice: str or str or
-         ~azure.ai.projects.1dp.models.AgentsApiToolChoiceOptionMode or
-         ~azure.ai.projects.1dp.models.AgentsNamedToolChoice
+         ~azure.ai.projects.dp1.models.AgentsApiToolChoiceOptionMode or
+         ~azure.ai.projects.dp1.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
          following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
          AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
         :paramtype response_format: str or str or
-         ~azure.ai.projects.1dp.models.AgentsApiResponseFormatMode or
-         ~azure.ai.projects.1dp.models.AgentsApiResponseFormat or
-         ~azure.ai.projects.1dp.models.ResponseFormatJsonSchemaType
+         ~azure.ai.projects.dp1.models.AgentsApiResponseFormatMode or
+         ~azure.ai.projects.dp1.models.AgentsApiResponseFormat or
+         ~azure.ai.projects.dp1.models.ResponseFormatJsonSchemaType
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
         :paramtype parallel_tool_calls: bool
@@ -2920,7 +2920,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          None.
         :paramtype metadata: dict[str, str]
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.ThreadRun
+        :rtype: ~azure.ai.projects.dp1.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3026,9 +3026,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
          content. Default value is None.
-        :paramtype include: list[str or ~azure.ai.projects.1dp.models.RunAdditionalFieldList]
+        :paramtype include: list[str or ~azure.ai.projects.dp1.models.RunAdditionalFieldList]
         :return: RunStep. The RunStep is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.RunStep
+        :rtype: ~azure.ai.projects.dp1.models.RunStep
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3107,13 +3107,13 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
          content. Default value is None.
-        :paramtype include: list[str or ~azure.ai.projects.1dp.models.RunAdditionalFieldList]
+        :paramtype include: list[str or ~azure.ai.projects.dp1.models.RunAdditionalFieldList]
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
          100, and the default is 20. Default value is None.
         :paramtype limit: int
         :keyword order: Sort order by the created_at timestamp of the objects. asc for ascending order
          and desc for descending order. Known values are: "asc" and "desc". Default value is None.
-        :paramtype order: str or ~azure.ai.projects.1dp.models.ListSortOrder
+        :paramtype order: str or ~azure.ai.projects.dp1.models.ListSortOrder
         :keyword after: A cursor for use in pagination. after is an object ID that defines your place
          in the list. For instance, if you make a list request and receive 100 objects, ending with
          obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the
@@ -3126,7 +3126,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype before: str
         :return: OpenAIPageableListOfRunStep. The OpenAIPageableListOfRunStep is compatible with
          MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.OpenAIPageableListOfRunStep
+        :rtype: ~azure.ai.projects.dp1.models.OpenAIPageableListOfRunStep
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3194,9 +3194,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :keyword purpose: The purpose of the file. Known values are: "fine-tune", "fine-tune-results",
          "assistants", "assistants_output", "batch", "batch_output", and "vision". Default value is
          None.
-        :paramtype purpose: str or ~azure.ai.projects.1dp.models.FilePurpose
+        :paramtype purpose: str or ~azure.ai.projects.dp1.models.FilePurpose
         :return: FileListResponse. The FileListResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.FileListResponse
+        :rtype: ~azure.ai.projects.dp1.models.FileListResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3256,16 +3256,16 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         """Uploads a file for use by other operations.
 
         :keyword file: The file data, in bytes. Required.
-        :paramtype file: ~azure.ai.projects.1dp._vendor.FileType
+        :paramtype file: ~azure.ai.projects.dp1._vendor.FileType
         :keyword purpose: The intended purpose of the uploaded file. Use ``assistants`` for Agents and
          Message files, ``vision`` for Agents image file inputs, ``batch`` for Batch API, and
          ``fine-tune`` for Fine-tuning. Known values are: "fine-tune", "fine-tune-results",
          "assistants", "assistants_output", "batch", "batch_output", and "vision". Required.
-        :paramtype purpose: str or ~azure.ai.projects.1dp.models.FilePurpose
+        :paramtype purpose: str or ~azure.ai.projects.dp1.models.FilePurpose
         :keyword filename: The name of the file. Default value is None.
         :paramtype filename: str
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.OpenAIFile
+        :rtype: ~azure.ai.projects.dp1.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3276,7 +3276,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :param body: Required.
         :type body: JSON
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.OpenAIFile
+        :rtype: ~azure.ai.projects.dp1.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3295,16 +3295,16 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :param body: Is one of the following types: JSON Required.
         :type body: JSON
         :keyword file: The file data, in bytes. Required.
-        :paramtype file: ~azure.ai.projects.1dp._vendor.FileType
+        :paramtype file: ~azure.ai.projects.dp1._vendor.FileType
         :keyword purpose: The intended purpose of the uploaded file. Use ``assistants`` for Agents and
          Message files, ``vision`` for Agents image file inputs, ``batch`` for Batch API, and
          ``fine-tune`` for Fine-tuning. Known values are: "fine-tune", "fine-tune-results",
          "assistants", "assistants_output", "batch", "batch_output", and "vision". Required.
-        :paramtype purpose: str or ~azure.ai.projects.1dp.models.FilePurpose
+        :paramtype purpose: str or ~azure.ai.projects.dp1.models.FilePurpose
         :keyword filename: The name of the file. Default value is None.
         :paramtype filename: str
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.OpenAIFile
+        :rtype: ~azure.ai.projects.dp1.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3377,7 +3377,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :param file_id: The ID of the file to delete. Required.
         :type file_id: str
         :return: FileDeletionStatus. The FileDeletionStatus is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.FileDeletionStatus
+        :rtype: ~azure.ai.projects.dp1.models.FileDeletionStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3437,7 +3437,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :param file_id: The ID of the file to retrieve. Required.
         :type file_id: str
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.OpenAIFile
+        :rtype: ~azure.ai.projects.dp1.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3567,7 +3567,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype limit: int
         :keyword order: Sort order by the created_at timestamp of the objects. asc for ascending order
          and desc for descending order. Known values are: "asc" and "desc". Default value is None.
-        :paramtype order: str or ~azure.ai.projects.1dp.models.ListSortOrder
+        :paramtype order: str or ~azure.ai.projects.dp1.models.ListSortOrder
         :keyword after: A cursor for use in pagination. after is an object ID that defines your place
          in the list. For instance, if you make a list request and receive 100 objects, ending with
          obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the
@@ -3580,7 +3580,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype before: str
         :return: OpenAIPageableListOfVectorStore. The OpenAIPageableListOfVectorStore is compatible
          with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.OpenAIPageableListOfVectorStore
+        :rtype: ~azure.ai.projects.dp1.models.OpenAIPageableListOfVectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3661,19 +3661,19 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype name: str
         :keyword store_configuration: The vector store configuration, used when vector store is created
          from Azure asset URIs. Default value is None.
-        :paramtype store_configuration: ~azure.ai.projects.1dp.models.VectorStoreConfiguration
+        :paramtype store_configuration: ~azure.ai.projects.dp1.models.VectorStoreConfiguration
         :keyword expires_after: Details on when this vector store expires. Default value is None.
-        :paramtype expires_after: ~azure.ai.projects.1dp.models.VectorStoreExpirationPolicy
+        :paramtype expires_after: ~azure.ai.projects.dp1.models.VectorStoreExpirationPolicy
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Only applicable if file_ids is non-empty. Default value is None.
-        :paramtype chunking_strategy: ~azure.ai.projects.1dp.models.VectorStoreChunkingStrategyRequest
+        :paramtype chunking_strategy: ~azure.ai.projects.dp1.models.VectorStoreChunkingStrategyRequest
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
         :return: VectorStore. The VectorStore is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.VectorStore
+        :rtype: ~azure.ai.projects.dp1.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3689,7 +3689,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          Default value is "application/json".
         :paramtype content_type: str
         :return: VectorStore. The VectorStore is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.VectorStore
+        :rtype: ~azure.ai.projects.dp1.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3705,7 +3705,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          Default value is "application/json".
         :paramtype content_type: str
         :return: VectorStore. The VectorStore is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.VectorStore
+        :rtype: ~azure.ai.projects.dp1.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3733,19 +3733,19 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype name: str
         :keyword store_configuration: The vector store configuration, used when vector store is created
          from Azure asset URIs. Default value is None.
-        :paramtype store_configuration: ~azure.ai.projects.1dp.models.VectorStoreConfiguration
+        :paramtype store_configuration: ~azure.ai.projects.dp1.models.VectorStoreConfiguration
         :keyword expires_after: Details on when this vector store expires. Default value is None.
-        :paramtype expires_after: ~azure.ai.projects.1dp.models.VectorStoreExpirationPolicy
+        :paramtype expires_after: ~azure.ai.projects.dp1.models.VectorStoreExpirationPolicy
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Only applicable if file_ids is non-empty. Default value is None.
-        :paramtype chunking_strategy: ~azure.ai.projects.1dp.models.VectorStoreChunkingStrategyRequest
+        :paramtype chunking_strategy: ~azure.ai.projects.dp1.models.VectorStoreChunkingStrategyRequest
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
         :return: VectorStore. The VectorStore is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.VectorStore
+        :rtype: ~azure.ai.projects.dp1.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3824,7 +3824,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :param vector_store_id: Identifier of the vector store. Required.
         :type vector_store_id: str
         :return: VectorStore. The VectorStore is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.VectorStore
+        :rtype: ~azure.ai.projects.dp1.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3898,14 +3898,14 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :keyword name: The name of the vector store. Default value is None.
         :paramtype name: str
         :keyword expires_after: Details on when this vector store expires. Default value is None.
-        :paramtype expires_after: ~azure.ai.projects.1dp.models.VectorStoreExpirationPolicy
+        :paramtype expires_after: ~azure.ai.projects.dp1.models.VectorStoreExpirationPolicy
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
         :return: VectorStore. The VectorStore is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.VectorStore
+        :rtype: ~azure.ai.projects.dp1.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3923,7 +3923,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          Default value is "application/json".
         :paramtype content_type: str
         :return: VectorStore. The VectorStore is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.VectorStore
+        :rtype: ~azure.ai.projects.dp1.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3941,7 +3941,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          Default value is "application/json".
         :paramtype content_type: str
         :return: VectorStore. The VectorStore is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.VectorStore
+        :rtype: ~azure.ai.projects.dp1.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3965,14 +3965,14 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :keyword name: The name of the vector store. Default value is None.
         :paramtype name: str
         :keyword expires_after: Details on when this vector store expires. Default value is None.
-        :paramtype expires_after: ~azure.ai.projects.1dp.models.VectorStoreExpirationPolicy
+        :paramtype expires_after: ~azure.ai.projects.dp1.models.VectorStoreExpirationPolicy
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
         :return: VectorStore. The VectorStore is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.VectorStore
+        :rtype: ~azure.ai.projects.dp1.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4046,7 +4046,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type vector_store_id: str
         :return: VectorStoreDeletionStatus. The VectorStoreDeletionStatus is compatible with
          MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.VectorStoreDeletionStatus
+        :rtype: ~azure.ai.projects.dp1.models.VectorStoreDeletionStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4117,13 +4117,13 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type vector_store_id: str
         :keyword filter: Filter by file status. Known values are: "in_progress", "completed", "failed",
          and "cancelled". Default value is None.
-        :paramtype filter: str or ~azure.ai.projects.1dp.models.VectorStoreFileStatusFilter
+        :paramtype filter: str or ~azure.ai.projects.dp1.models.VectorStoreFileStatusFilter
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
          100, and the default is 20. Default value is None.
         :paramtype limit: int
         :keyword order: Sort order by the created_at timestamp of the objects. asc for ascending order
          and desc for descending order. Known values are: "asc" and "desc". Default value is None.
-        :paramtype order: str or ~azure.ai.projects.1dp.models.ListSortOrder
+        :paramtype order: str or ~azure.ai.projects.dp1.models.ListSortOrder
         :keyword after: A cursor for use in pagination. after is an object ID that defines your place
          in the list. For instance, if you make a list request and receive 100 objects, ending with
          obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the
@@ -4136,7 +4136,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype before: str
         :return: OpenAIPageableListOfVectorStoreFile. The OpenAIPageableListOfVectorStoreFile is
          compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.OpenAIPageableListOfVectorStoreFile
+        :rtype: ~azure.ai.projects.dp1.models.OpenAIPageableListOfVectorStoreFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4215,12 +4215,12 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :keyword file_id: Identifier of the file. Default value is None.
         :paramtype file_id: str
         :keyword data_source: Azure asset ID. Default value is None.
-        :paramtype data_source: ~azure.ai.projects.1dp.models.VectorStoreDataSource
+        :paramtype data_source: ~azure.ai.projects.dp1.models.VectorStoreDataSource
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
-        :paramtype chunking_strategy: ~azure.ai.projects.1dp.models.VectorStoreChunkingStrategyRequest
+        :paramtype chunking_strategy: ~azure.ai.projects.dp1.models.VectorStoreChunkingStrategyRequest
         :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.VectorStoreFile
+        :rtype: ~azure.ai.projects.dp1.models.VectorStoreFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -4238,7 +4238,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          Default value is "application/json".
         :paramtype content_type: str
         :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.VectorStoreFile
+        :rtype: ~azure.ai.projects.dp1.models.VectorStoreFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -4256,7 +4256,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          Default value is "application/json".
         :paramtype content_type: str
         :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.VectorStoreFile
+        :rtype: ~azure.ai.projects.dp1.models.VectorStoreFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -4280,12 +4280,12 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :keyword file_id: Identifier of the file. Default value is None.
         :paramtype file_id: str
         :keyword data_source: Azure asset ID. Default value is None.
-        :paramtype data_source: ~azure.ai.projects.1dp.models.VectorStoreDataSource
+        :paramtype data_source: ~azure.ai.projects.dp1.models.VectorStoreDataSource
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
-        :paramtype chunking_strategy: ~azure.ai.projects.1dp.models.VectorStoreChunkingStrategyRequest
+        :paramtype chunking_strategy: ~azure.ai.projects.dp1.models.VectorStoreChunkingStrategyRequest
         :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.VectorStoreFile
+        :rtype: ~azure.ai.projects.dp1.models.VectorStoreFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4360,7 +4360,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :param file_id: Identifier of the file. Required.
         :type file_id: str
         :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.VectorStoreFile
+        :rtype: ~azure.ai.projects.dp1.models.VectorStoreFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4428,7 +4428,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type file_id: str
         :return: VectorStoreFileDeletionStatus. The VectorStoreFileDeletionStatus is compatible with
          MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.VectorStoreFileDeletionStatus
+        :rtype: ~azure.ai.projects.dp1.models.VectorStoreFileDeletionStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4503,12 +4503,12 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :keyword file_ids: List of file identifiers. Default value is None.
         :paramtype file_ids: list[str]
         :keyword data_sources: List of Azure assets. Default value is None.
-        :paramtype data_sources: list[~azure.ai.projects.1dp.models.VectorStoreDataSource]
+        :paramtype data_sources: list[~azure.ai.projects.dp1.models.VectorStoreDataSource]
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
-        :paramtype chunking_strategy: ~azure.ai.projects.1dp.models.VectorStoreChunkingStrategyRequest
+        :paramtype chunking_strategy: ~azure.ai.projects.dp1.models.VectorStoreChunkingStrategyRequest
         :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.VectorStoreFileBatch
+        :rtype: ~azure.ai.projects.dp1.models.VectorStoreFileBatch
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -4526,7 +4526,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          Default value is "application/json".
         :paramtype content_type: str
         :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.VectorStoreFileBatch
+        :rtype: ~azure.ai.projects.dp1.models.VectorStoreFileBatch
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -4544,7 +4544,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          Default value is "application/json".
         :paramtype content_type: str
         :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.VectorStoreFileBatch
+        :rtype: ~azure.ai.projects.dp1.models.VectorStoreFileBatch
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -4568,12 +4568,12 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :keyword file_ids: List of file identifiers. Default value is None.
         :paramtype file_ids: list[str]
         :keyword data_sources: List of Azure assets. Default value is None.
-        :paramtype data_sources: list[~azure.ai.projects.1dp.models.VectorStoreDataSource]
+        :paramtype data_sources: list[~azure.ai.projects.dp1.models.VectorStoreDataSource]
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
-        :paramtype chunking_strategy: ~azure.ai.projects.1dp.models.VectorStoreChunkingStrategyRequest
+        :paramtype chunking_strategy: ~azure.ai.projects.dp1.models.VectorStoreChunkingStrategyRequest
         :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.VectorStoreFileBatch
+        :rtype: ~azure.ai.projects.dp1.models.VectorStoreFileBatch
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4650,7 +4650,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :param batch_id: Identifier of the file batch. Required.
         :type batch_id: str
         :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.VectorStoreFileBatch
+        :rtype: ~azure.ai.projects.dp1.models.VectorStoreFileBatch
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4716,7 +4716,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :param batch_id: Identifier of the file batch. Required.
         :type batch_id: str
         :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.VectorStoreFileBatch
+        :rtype: ~azure.ai.projects.dp1.models.VectorStoreFileBatch
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4791,13 +4791,13 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type batch_id: str
         :keyword filter: Filter by file status. Known values are: "in_progress", "completed", "failed",
          and "cancelled". Default value is None.
-        :paramtype filter: str or ~azure.ai.projects.1dp.models.VectorStoreFileStatusFilter
+        :paramtype filter: str or ~azure.ai.projects.dp1.models.VectorStoreFileStatusFilter
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
          100, and the default is 20. Default value is None.
         :paramtype limit: int
         :keyword order: Sort order by the created_at timestamp of the objects. asc for ascending order
          and desc for descending order. Known values are: "asc" and "desc". Default value is None.
-        :paramtype order: str or ~azure.ai.projects.1dp.models.ListSortOrder
+        :paramtype order: str or ~azure.ai.projects.dp1.models.ListSortOrder
         :keyword after: A cursor for use in pagination. after is an object ID that defines your place
          in the list. For instance, if you make a list request and receive 100 objects, ending with
          obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the
@@ -4810,7 +4810,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype before: str
         :return: OpenAIPageableListOfVectorStoreFile. The OpenAIPageableListOfVectorStoreFile is
          compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.OpenAIPageableListOfVectorStoreFile
+        :rtype: ~azure.ai.projects.dp1.models.OpenAIPageableListOfVectorStoreFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4876,7 +4876,7 @@ class ConnectionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.ai.projects.1dp.aio.AIProjectClient`'s
+        :class:`~azure.ai.projects.dp1.aio.AIProjectClient`'s
         :attr:`connections` attribute.
     """
 
@@ -4914,7 +4914,7 @@ class ConnectionsOperations:
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: Connection. The Connection is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.Connection
+        :rtype: ~azure.ai.projects.dp1.models.Connection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4996,13 +4996,13 @@ class ConnectionsOperations:
 
         :keyword connection_type: Specific type of connection to return in list. Known values are:
          "AzureOpenAI", "AzureBlob", "CognitiveSearch", "CosmosDB", and "ApiKey". Default value is None.
-        :paramtype connection_type: str or ~azure.ai.projects.1dp.models.ConnectionType
+        :paramtype connection_type: str or ~azure.ai.projects.dp1.models.ConnectionType
         :keyword top: The number of result items to return. Default value is None.
         :paramtype top: int
         :keyword skip: The number of result items to skip. Default value is None.
         :paramtype skip: int
         :return: An iterator like instance of Connection
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.1dp.models.Connection]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.dp1.models.Connection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -5091,7 +5091,7 @@ class EvaluationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.ai.projects.1dp.aio.AIProjectClient`'s
+        :class:`~azure.ai.projects.dp1.aio.AIProjectClient`'s
         :attr:`evaluations` attribute.
     """
 
@@ -5103,13 +5103,13 @@ class EvaluationsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def get(self, id: str, **kwargs: Any) -> _models.Evaluation:
-        """Get an evaluation.
+    async def get(self, name: str, **kwargs: Any) -> _models.Evaluation:
+        """Get an evaluation run by name.
 
-        :param id: Identifier of the evaluation. Required.
-        :type id: str
+        :param name: Identifier of the evaluation. Required.
+        :type name: str
         :return: Evaluation. The Evaluation is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.Evaluation
+        :rtype: ~azure.ai.projects.dp1.models.Evaluation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -5126,7 +5126,7 @@ class EvaluationsOperations:
         cls: ClsType[_models.Evaluation] = kwargs.pop("cls", None)
 
         _request = build_evaluations_get_request(
-            id=id,
+            name=name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5152,121 +5152,10 @@ class EvaluationsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.Evaluation, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def create(
-        self, body: _models.Evaluation, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Evaluation:
-        """Creates an evaluation.
-
-        :param body: Properties of Evaluation. Required.
-        :type body: ~azure.ai.projects.1dp.models.Evaluation
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: Evaluation. The Evaluation is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.Evaluation
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Evaluation:
-        """Creates an evaluation.
-
-        :param body: Properties of Evaluation. Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: Evaluation. The Evaluation is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.Evaluation
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create(
-        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Evaluation:
-        """Creates an evaluation.
-
-        :param body: Properties of Evaluation. Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: Evaluation. The Evaluation is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.Evaluation
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def create(self, body: Union[_models.Evaluation, JSON, IO[bytes]], **kwargs: Any) -> _models.Evaluation:
-        """Creates an evaluation.
-
-        :param body: Properties of Evaluation. Is one of the following types: Evaluation, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.ai.projects.1dp.models.Evaluation or JSON or IO[bytes]
-        :return: Evaluation. The Evaluation is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.Evaluation
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Evaluation] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_evaluations_create_request(
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
+        response_headers = {}
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
         )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -5274,7 +5163,7 @@ class EvaluationsOperations:
             deserialized = _deserialize(_models.Evaluation, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
@@ -5282,14 +5171,14 @@ class EvaluationsOperations:
     def list(
         self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable["_models.Evaluation"]:
-        """List evaluations.
+        """List evaluation runs.
 
         :keyword top: The number of result items to return. Default value is None.
         :paramtype top: int
         :keyword skip: The number of result items to skip. Default value is None.
         :paramtype skip: int
         :return: An iterator like instance of Evaluation
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.1dp.models.Evaluation]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.dp1.models.Evaluation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -5370,6 +5259,126 @@ class EvaluationsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
+    @overload
+    async def create_run(
+        self, evaluation: _models.Evaluation, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Evaluation:
+        """Creates an evaluation run.
+
+        :param evaluation: Evalution to be run. Required.
+        :type evaluation: ~azure.ai.projects.dp1.models.Evaluation
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Evaluation. The Evaluation is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.Evaluation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_run(
+        self, evaluation: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Evaluation:
+        """Creates an evaluation run.
+
+        :param evaluation: Evalution to be run. Required.
+        :type evaluation: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Evaluation. The Evaluation is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.Evaluation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_run(
+        self, evaluation: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Evaluation:
+        """Creates an evaluation run.
+
+        :param evaluation: Evalution to be run. Required.
+        :type evaluation: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Evaluation. The Evaluation is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.Evaluation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create_run(
+        self, evaluation: Union[_models.Evaluation, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.Evaluation:
+        """Creates an evaluation run.
+
+        :param evaluation: Evalution to be run. Is one of the following types: Evaluation, JSON,
+         IO[bytes] Required.
+        :type evaluation: ~azure.ai.projects.dp1.models.Evaluation or JSON or IO[bytes]
+        :return: Evaluation. The Evaluation is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.Evaluation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Evaluation] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(evaluation, (IOBase, bytes)):
+            _content = evaluation
+        else:
+            _content = json.dumps(evaluation, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_evaluations_create_run_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.Evaluation, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
 
 class DatasetsOperations:
     """
@@ -5377,7 +5386,7 @@ class DatasetsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.ai.projects.1dp.aio.AIProjectClient`'s
+        :class:`~azure.ai.projects.dp1.aio.AIProjectClient`'s
         :attr:`datasets` attribute.
     """
 
@@ -5403,9 +5412,9 @@ class DatasetsOperations:
         :paramtype continuation_token_parameter: str
         :keyword list_view_type: View type for including/excluding (for example) archived entities.
          Known values are: "ActiveOnly", "ArchivedOnly", and "All". Default value is None.
-        :paramtype list_view_type: str or ~azure.ai.projects.1dp.models.ListViewType
+        :paramtype list_view_type: str or ~azure.ai.projects.dp1.models.ListViewType
         :return: An iterator like instance of DatasetVersion
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.1dp.models.DatasetVersion]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.dp1.models.DatasetVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -5513,9 +5522,9 @@ class DatasetsOperations:
         :keyword list_view_type: [ListViewType.ActiveOnly, ListViewType.ArchivedOnly, ListViewType.All]
          View type for including/excluding (for example) archived entities. Known values are:
          "ActiveOnly", "ArchivedOnly", and "All". Default value is None.
-        :paramtype list_view_type: str or ~azure.ai.projects.1dp.models.ListViewType
+        :paramtype list_view_type: str or ~azure.ai.projects.dp1.models.ListViewType
         :return: An iterator like instance of DatasetVersion
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.1dp.models.DatasetVersion]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.dp1.models.DatasetVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -5656,7 +5665,7 @@ class DatasetsOperations:
         :param version: Version identifier. Required.
         :type version: str
         :return: DatasetVersion. The DatasetVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.DatasetVersion
+        :rtype: ~azure.ai.projects.dp1.models.DatasetVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -5726,12 +5735,12 @@ class DatasetsOperations:
         :param version: Version identifier. Required.
         :type version: str
         :param dataset_version: Version entity to create or update. Required.
-        :type dataset_version: ~azure.ai.projects.1dp.models.DatasetVersion
+        :type dataset_version: ~azure.ai.projects.dp1.models.DatasetVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: DatasetVersion. The DatasetVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.DatasetVersion
+        :rtype: ~azure.ai.projects.dp1.models.DatasetVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -5751,7 +5760,7 @@ class DatasetsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: DatasetVersion. The DatasetVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.DatasetVersion
+        :rtype: ~azure.ai.projects.dp1.models.DatasetVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -5777,7 +5786,7 @@ class DatasetsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: DatasetVersion. The DatasetVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.DatasetVersion
+        :rtype: ~azure.ai.projects.dp1.models.DatasetVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -5793,9 +5802,9 @@ class DatasetsOperations:
         :type version: str
         :param dataset_version: Version entity to create or update. Is one of the following types:
          DatasetVersion, JSON, IO[bytes] Required.
-        :type dataset_version: ~azure.ai.projects.1dp.models.DatasetVersion or JSON or IO[bytes]
+        :type dataset_version: ~azure.ai.projects.dp1.models.DatasetVersion or JSON or IO[bytes]
         :return: DatasetVersion. The DatasetVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.DatasetVersion
+        :rtype: ~azure.ai.projects.dp1.models.DatasetVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -5875,12 +5884,12 @@ class DatasetsOperations:
         :param version: Version identifier. Required.
         :type version: str
         :param pending_upload_request: Pensing upload request. Required.
-        :type pending_upload_request: ~azure.ai.projects.1dp.models.PendingUploadRequest
+        :type pending_upload_request: ~azure.ai.projects.dp1.models.PendingUploadRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.PendingUploadResponse
+        :rtype: ~azure.ai.projects.dp1.models.PendingUploadResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -5906,7 +5915,7 @@ class DatasetsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.PendingUploadResponse
+        :rtype: ~azure.ai.projects.dp1.models.PendingUploadResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -5932,7 +5941,7 @@ class DatasetsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.PendingUploadResponse
+        :rtype: ~azure.ai.projects.dp1.models.PendingUploadResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -5952,10 +5961,10 @@ class DatasetsOperations:
         :type version: str
         :param pending_upload_request: Pensing upload request. Is one of the following types:
          PendingUploadRequest, JSON, IO[bytes] Required.
-        :type pending_upload_request: ~azure.ai.projects.1dp.models.PendingUploadRequest or JSON or
+        :type pending_upload_request: ~azure.ai.projects.dp1.models.PendingUploadRequest or JSON or
          IO[bytes]
         :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.PendingUploadResponse
+        :rtype: ~azure.ai.projects.dp1.models.PendingUploadResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -6025,7 +6034,7 @@ class IndexesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.ai.projects.1dp.aio.AIProjectClient`'s
+        :class:`~azure.ai.projects.dp1.aio.AIProjectClient`'s
         :attr:`indexes` attribute.
     """
 
@@ -6051,9 +6060,9 @@ class IndexesOperations:
         :paramtype continuation_token_parameter: str
         :keyword list_view_type: View type for including/excluding (for example) archived entities.
          Known values are: "ActiveOnly", "ArchivedOnly", and "All". Default value is None.
-        :paramtype list_view_type: str or ~azure.ai.projects.1dp.models.ListViewType
+        :paramtype list_view_type: str or ~azure.ai.projects.dp1.models.ListViewType
         :return: An iterator like instance of DatasetVersion
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.1dp.models.DatasetVersion]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.dp1.models.DatasetVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -6140,7 +6149,7 @@ class IndexesOperations:
         :param version: Version of the index. Required.
         :type version: str
         :return: Index. The Index is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.Index
+        :rtype: ~azure.ai.projects.dp1.models.Index
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -6203,12 +6212,12 @@ class IndexesOperations:
         :param name: Name of the index. Required.
         :type name: str
         :param body: Properties of an Index Version. Required.
-        :type body: ~azure.ai.projects.1dp.models.Index
+        :type body: ~azure.ai.projects.dp1.models.Index
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: Index. The Index is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.Index
+        :rtype: ~azure.ai.projects.dp1.models.Index
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -6226,7 +6235,7 @@ class IndexesOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: Index. The Index is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.Index
+        :rtype: ~azure.ai.projects.dp1.models.Index
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -6244,7 +6253,7 @@ class IndexesOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: Index. The Index is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.Index
+        :rtype: ~azure.ai.projects.dp1.models.Index
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -6258,9 +6267,9 @@ class IndexesOperations:
         :type name: str
         :param body: Properties of an Index Version. Is one of the following types: Index, JSON,
          IO[bytes] Required.
-        :type body: ~azure.ai.projects.1dp.models.Index or JSON or IO[bytes]
+        :type body: ~azure.ai.projects.dp1.models.Index or JSON or IO[bytes]
         :return: Index. The Index is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.Index
+        :rtype: ~azure.ai.projects.dp1.models.Index
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -6357,7 +6366,7 @@ class IndexesOperations:
         :keyword skip: The number of result items to skip. Default value is None.
         :paramtype skip: int
         :return: An iterator like instance of Index
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.1dp.models.Index]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.dp1.models.Index]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -6500,7 +6509,7 @@ class DeploymentsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.ai.projects.1dp.aio.AIProjectClient`'s
+        :class:`~azure.ai.projects.dp1.aio.AIProjectClient`'s
         :attr:`deployments` attribute.
     """
 
@@ -6538,7 +6547,7 @@ class DeploymentsOperations:
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: Deployment. The Deployment is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.1dp.models.Deployment
+        :rtype: ~azure.ai.projects.dp1.models.Deployment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -6633,7 +6642,7 @@ class DeploymentsOperations:
         :keyword skip: The number of result items to skip. Default value is None.
         :paramtype skip: int
         :return: An iterator like instance of Deployment
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.1dp.models.Deployment]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.dp1.models.Deployment]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}

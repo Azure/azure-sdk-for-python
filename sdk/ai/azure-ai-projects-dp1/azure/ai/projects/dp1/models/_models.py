@@ -50,12 +50,12 @@ class Agent(_model_base.Model):
     :ivar instructions: The system instructions for the agent to use. Required.
     :vartype instructions: str
     :ivar tools: The collection of tools enabled for the agent. Required.
-    :vartype tools: list[~azure.ai.projects.1dp.models.ToolDefinition]
+    :vartype tools: list[~azure.ai.projects.dp1.models.ToolDefinition]
     :ivar tool_resources: A set of resources that are used by the agent's tools. The resources are
      specific to the type of tool. For example, the ``code_interpreter``
      tool requires a list of file IDs, while the ``file_search`` tool requires a list of vector
      store IDs. Required.
-    :vartype tool_resources: ~azure.ai.projects.1dp.models.ToolResources
+    :vartype tool_resources: ~azure.ai.projects.dp1.models.ToolResources
     :ivar temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
      will make the output more random,
      while lower values like 0.2 will make it more focused and deterministic. Required.
@@ -70,9 +70,9 @@ class Agent(_model_base.Model):
      following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
      AgentsApiResponseFormat, ResponseFormatJsonSchemaType
     :vartype response_format: str or str or
-     ~azure.ai.projects.1dp.models.AgentsApiResponseFormatMode or
-     ~azure.ai.projects.1dp.models.AgentsApiResponseFormat or
-     ~azure.ai.projects.1dp.models.ResponseFormatJsonSchemaType
+     ~azure.ai.projects.dp1.models.AgentsApiResponseFormatMode or
+     ~azure.ai.projects.dp1.models.AgentsApiResponseFormat or
+     ~azure.ai.projects.dp1.models.ResponseFormatJsonSchemaType
     :ivar metadata: A set of up to 16 key/value pairs that can be attached to an object, used for
      storing additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length. Required.
@@ -203,7 +203,7 @@ class AgentsApiResponseFormat(_model_base.Model):
 
     :ivar type: Must be one of ``text`` or ``json_object``. Known values are: "text" and
      "json_object".
-    :vartype type: str or ~azure.ai.projects.1dp.models.ResponseFormat
+    :vartype type: str or ~azure.ai.projects.dp1.models.ResponseFormat
     """
 
     type: Optional[Union[str, "_models.ResponseFormat"]] = rest_field(
@@ -236,9 +236,9 @@ class AgentsNamedToolChoice(_model_base.Model):
     :ivar type: the type of tool. If type is ``function``\\ , the function name must be set.
      Required. Known values are: "function", "code_interpreter", "file_search", "bing_grounding",
      "fabric_aiskill", "sharepoint_grounding", and "azure_ai_search".
-    :vartype type: str or ~azure.ai.projects.1dp.models.AgentsNamedToolChoiceType
+    :vartype type: str or ~azure.ai.projects.dp1.models.AgentsNamedToolChoiceType
     :ivar function: The name of the function to call.
-    :vartype function: ~azure.ai.projects.1dp.models.FunctionName
+    :vartype function: ~azure.ai.projects.dp1.models.FunctionName
     """
 
     type: Union[str, "_models.AgentsNamedToolChoiceType"] = rest_field(
@@ -287,7 +287,7 @@ class AgentThread(_model_base.Model):
      of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while the
      ``file_search`` tool requires a list
      of vector store IDs. Required.
-    :vartype tool_resources: ~azure.ai.projects.1dp.models.ToolResources
+    :vartype tool_resources: ~azure.ai.projects.dp1.models.ToolResources
     :ivar metadata: A set of up to 16 key/value pairs that can be attached to an object, used for
      storing additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length. Required.
@@ -339,13 +339,13 @@ class AgentThreadCreationOptions(_model_base.Model):
     """The details used to create a new agent thread.
 
     :ivar messages: The initial messages to associate with the new thread.
-    :vartype messages: list[~azure.ai.projects.1dp.models.ThreadMessageOptions]
+    :vartype messages: list[~azure.ai.projects.dp1.models.ThreadMessageOptions]
     :ivar tool_resources: A set of resources that are made available to the agent's tools in this
      thread. The resources are specific to the
      type of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while the
      ``file_search`` tool requires
      a list of vector store IDs.
-    :vartype tool_resources: ~azure.ai.projects.1dp.models.ToolResources
+    :vartype tool_resources: ~azure.ai.projects.dp1.models.ToolResources
     :ivar metadata: A set of up to 16 key/value pairs that can be attached to an object, used for
      storing additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length.
@@ -400,7 +400,7 @@ class Index(_model_base.Model):
 
     :ivar index_type: Type of index. Required. Known values are: "AzureSearch",
      "CosmosDBNoSqlVectorStore", and "ManagedAzureSearch".
-    :vartype index_type: str or ~azure.ai.projects.1dp.models.IndexType
+    :vartype index_type: str or ~azure.ai.projects.dp1.models.IndexType
     :ivar stage: Asset stage.
     :vartype stage: str
     :ivar id: A unique identifier for the asset, assetId probably?.
@@ -414,7 +414,7 @@ class Index(_model_base.Model):
     :ivar tags: Tag dictionary. Tags can be added, removed, and updated.
     :vartype tags: dict[str, str]
     :ivar system_data: System data of the resource.
-    :vartype system_data: ~azure.ai.projects.1dp.models.SystemData
+    :vartype system_data: ~azure.ai.projects.dp1.models.SystemData
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
@@ -476,9 +476,9 @@ class AzureAISearchIndex(Index, discriminator="AzureSearch"):
     :ivar tags: Tag dictionary. Tags can be added, removed, and updated.
     :vartype tags: dict[str, str]
     :ivar system_data: System data of the resource.
-    :vartype system_data: ~azure.ai.projects.1dp.models.SystemData
+    :vartype system_data: ~azure.ai.projects.dp1.models.SystemData
     :ivar index_type: Type of index. Required. Azure search
-    :vartype index_type: str or ~azure.ai.projects.1dp.models.AZURE_SEARCH
+    :vartype index_type: str or ~azure.ai.projects.dp1.models.AZURE_SEARCH
     :ivar connection_id: Connection id to Azure AI Search. Required.
     :vartype connection_id: str
     :ivar index_name: Name of index in Azure AI Search resource to attach. Required.
@@ -519,7 +519,7 @@ class AzureAISearchResource(_model_base.Model):
 
     :ivar index_list: The indices attached to this agent. There can be a maximum of 1 index
      resource attached to the agent.
-    :vartype index_list: list[~azure.ai.projects.1dp.models.IndexResource]
+    :vartype index_list: list[~azure.ai.projects.dp1.models.IndexResource]
     """
 
     index_list: Optional[List["_models.IndexResource"]] = rest_field(
@@ -620,7 +620,7 @@ class AzureFunctionBinding(_model_base.Model):
      "storage_queue".
     :vartype type: str
     :ivar storage_queue: Storage queue. Required.
-    :vartype storage_queue: ~azure.ai.projects.1dp.models.AzureFunctionStorageQueue
+    :vartype storage_queue: ~azure.ai.projects.dp1.models.AzureFunctionStorageQueue
     """
 
     type: Literal["storage_queue"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -655,13 +655,13 @@ class AzureFunctionDefinition(_model_base.Model):
 
 
     :ivar function: The definition of azure function and its parameters. Required.
-    :vartype function: ~azure.ai.projects.1dp.models.FunctionDefinition
+    :vartype function: ~azure.ai.projects.dp1.models.FunctionDefinition
     :ivar input_binding: Input storage queue. The queue storage trigger runs a function as messages
      are added to it. Required.
-    :vartype input_binding: ~azure.ai.projects.1dp.models.AzureFunctionBinding
+    :vartype input_binding: ~azure.ai.projects.dp1.models.AzureFunctionBinding
     :ivar output_binding: Output storage queue. The function writes output to this queue when the
      input items are processed. Required.
-    :vartype output_binding: ~azure.ai.projects.1dp.models.AzureFunctionBinding
+    :vartype output_binding: ~azure.ai.projects.dp1.models.AzureFunctionBinding
     """
 
     function: "_models.FunctionDefinition" = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -743,7 +743,7 @@ class AzureFunctionToolDefinition(ToolDefinition, discriminator="azure_function"
     :vartype type: str
     :ivar azure_function: The definition of the concrete function that the function tool should
      call. Required.
-    :vartype azure_function: ~azure.ai.projects.1dp.models.AzureFunctionDefinition
+    :vartype azure_function: ~azure.ai.projects.dp1.models.AzureFunctionDefinition
     """
 
     type: Literal["azure_function"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -783,7 +783,7 @@ class BaseCredential(_model_base.Model):
 
     :ivar type: Type of credential. Possible values are: AAD, SAS, ApiKey. Required. Known values
      are: "ApiKey", "AAD", and "SAS".
-    :vartype type: str or ~azure.ai.projects.1dp.models.CredentialType
+    :vartype type: str or ~azure.ai.projects.dp1.models.CredentialType
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
@@ -818,7 +818,7 @@ class BingGroundingToolDefinition(ToolDefinition, discriminator="bing_grounding"
      "bing_grounding".
     :vartype type: str
     :ivar bing_grounding: The list of connections used by the bing grounding tool. Required.
-    :vartype bing_grounding: ~azure.ai.projects.1dp.models.ToolConnectionList
+    :vartype bing_grounding: ~azure.ai.projects.dp1.models.ToolConnectionList
     """
 
     type: Literal["bing_grounding"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -857,7 +857,7 @@ class BlobReferenceForConsumption(_model_base.Model):
     :ivar storage_account_arm_id: ARM ID of the storage account to use. Required.
     :vartype storage_account_arm_id: str
     :ivar credential: Credential info to access the storage account. Required.
-    :vartype credential: ~azure.ai.projects.1dp.models.SasCredential
+    :vartype credential: ~azure.ai.projects.dp1.models.SasCredential
     """
 
     blob_uri: str = rest_field(name="blobUri", visibility=["read", "create", "update", "delete", "query"])
@@ -928,7 +928,7 @@ class CodeInterpreterToolResource(_model_base.Model):
     :vartype file_ids: list[str]
     :ivar data_sources: The data sources to be used. This option is mutually exclusive with the
      ``fileIds`` property.
-    :vartype data_sources: list[~azure.ai.projects.1dp.models.VectorStoreDataSource]
+    :vartype data_sources: list[~azure.ai.projects.dp1.models.VectorStoreDataSource]
     """
 
     file_ids: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -971,7 +971,7 @@ class Connection(_model_base.Model):
     :vartype name: str
     :ivar type: Category of the connection. Required. Known values are: "AzureOpenAI", "AzureBlob",
      "CognitiveSearch", "CosmosDB", and "ApiKey".
-    :vartype type: str or ~azure.ai.projects.1dp.models.ConnectionType
+    :vartype type: str or ~azure.ai.projects.dp1.models.ConnectionType
     :ivar target: The connection URL to be used for this service. Required.
     :vartype target: str
     :ivar properties: A collection of properties of the connection. Required.
@@ -1027,9 +1027,9 @@ class CosmosDBIndex(Index, discriminator="CosmosDBNoSqlVectorStore"):
     :ivar tags: Tag dictionary. Tags can be added, removed, and updated.
     :vartype tags: dict[str, str]
     :ivar system_data: System data of the resource.
-    :vartype system_data: ~azure.ai.projects.1dp.models.SystemData
+    :vartype system_data: ~azure.ai.projects.dp1.models.SystemData
     :ivar index_type: Type of index. Required. CosmosDB
-    :vartype index_type: str or ~azure.ai.projects.1dp.models.COSMOS_DB
+    :vartype index_type: str or ~azure.ai.projects.dp1.models.COSMOS_DB
     :ivar connection_id: Connection id to CosmosDB. Required.
     :vartype connection_id: str
     :ivar database_name: Name of the CosmosDB Database. Required.
@@ -1037,7 +1037,7 @@ class CosmosDBIndex(Index, discriminator="CosmosDBNoSqlVectorStore"):
     :ivar container_name: Name of CosmosDB Container. Required.
     :vartype container_name: str
     :ivar embedding_configuration: Embedding model configuration. Required.
-    :vartype embedding_configuration: ~azure.ai.projects.1dp.models.EmbeddingConfiguration
+    :vartype embedding_configuration: ~azure.ai.projects.dp1.models.EmbeddingConfiguration
     """
 
     index_type: Literal[IndexType.COSMOS_DB] = rest_discriminator(name="indexType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -1077,72 +1077,6 @@ class CosmosDBIndex(Index, discriminator="CosmosDBNoSqlVectorStore"):
         super().__init__(*args, index_type=IndexType.COSMOS_DB, **kwargs)
 
 
-class InputData(_model_base.Model):
-    """Abstract data class.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    Dataset
-
-
-    :ivar type: Type of the data. Required. Default value is None.
-    :vartype type: str
-    """
-
-    __mapping__: Dict[str, _model_base.Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """Type of the data. Required. Default value is None."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class Dataset(InputData, discriminator="dataset"):
-    """Dataset as source for evaluation.
-
-
-    :ivar type: Required. Default value is "dataset".
-    :vartype type: str
-    :ivar id: Evaluation input data. Required.
-    :vartype id: str
-    """
-
-    type: Literal["dataset"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Default value is \"dataset\"."""
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Evaluation input data. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="dataset", **kwargs)
-
-
 class DatasetVersion(_model_base.Model):
     """DatasetVersion Definition.
 
@@ -1153,7 +1087,7 @@ class DatasetVersion(_model_base.Model):
      https://go.microsoft.com/fwlink/?linkid=2202330. Required.
     :vartype dataset_uri: str
     :ivar dataset_type: Data type. Required. "uri_file"
-    :vartype dataset_type: str or ~azure.ai.projects.1dp.models.DatasetType
+    :vartype dataset_type: str or ~azure.ai.projects.dp1.models.DatasetType
     :ivar stage: Asset stage.
     :vartype stage: str
     :ivar id: A unique identifier for the asset, assetId probably?.
@@ -1167,7 +1101,7 @@ class DatasetVersion(_model_base.Model):
     :ivar tags: Tag dictionary. Tags can be added, removed, and updated.
     :vartype tags: dict[str, str]
     :ivar system_data: System data of the resource.
-    :vartype system_data: ~azure.ai.projects.1dp.models.SystemData
+    :vartype system_data: ~azure.ai.projects.dp1.models.SystemData
     """
 
     dataset_uri: str = rest_field(name="datasetUri", visibility=["read", "create"])
@@ -1232,11 +1166,11 @@ class Deployment(_model_base.Model):
     :ivar rai_policy_name: RAI policy enabled for model. Required.
     :vartype rai_policy_name: str
     :ivar sku: Sku of the model deployment. Required.
-    :vartype sku: ~azure.ai.projects.1dp.models.Sku
+    :vartype sku: ~azure.ai.projects.dp1.models.Sku
     :ivar connection_name: Name of the connection the model comes from.
     :vartype connection_name: str
     :ivar system_data: System data of the resource. Required.
-    :vartype system_data: ~azure.ai.projects.1dp.models.SystemData
+    :vartype system_data: ~azure.ai.projects.dp1.models.SystemData
     """
 
     deployment_name: str = rest_field(name="deploymentName", visibility=["read"])
@@ -1306,18 +1240,18 @@ class Evaluation(_model_base.Model):
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
 
-    :ivar id: Identifier of the evaluation.
+    :ivar id: Identifier of the evaluation. Required.
     :vartype id: str
     :ivar data: Data for evaluation. Required.
-    :vartype data: ~azure.ai.projects.1dp.models.InputData
-    :ivar display_name: Update stage to 'Archive' to archive the asset. Default is Development,
-     which means the asset is under development.
+    :vartype data: ~azure.ai.projects.dp1.models.InputData
+    :ivar display_name: Display Name for evaluation. It helps to find the evaluation easily in AI
+     Foundry. It does not need to be unique.
     :vartype display_name: str
     :ivar description: Description of the evaluation. It can be used to store additional
      information about the evaluation and is mutable.
     :vartype description: str
     :ivar system_data: Metadata containing createdBy and modifiedBy information.
-    :vartype system_data: ~azure.ai.projects.1dp.models.SystemData
+    :vartype system_data: ~azure.ai.projects.dp1.models.SystemData
     :ivar status: Status of the evaluation. It is set by service and is read-only.
     :vartype status: str
     :ivar tags: Evaluation's tags. Unlike properties, tags are fully mutable.
@@ -1326,18 +1260,18 @@ class Evaluation(_model_base.Model):
      property cannot be removed.
     :vartype properties: dict[str, str]
     :ivar evaluators: Evaluators to be used for the evaluation. Required.
-    :vartype evaluators: dict[str, ~azure.ai.projects.1dp.models.EvaluatorConfiguration]
+    :vartype evaluators: dict[str, ~azure.ai.projects.dp1.models.EvaluatorConfiguration]
     """
 
-    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Identifier of the evaluation."""
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Identifier of the evaluation. Required."""
     data: "_models.InputData" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Data for evaluation. Required."""
     display_name: Optional[str] = rest_field(
         name="displayName", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Update stage to 'Archive' to archive the asset. Default is Development, which means the asset
-     is under development."""
+    """Display Name for evaluation. It helps to find the evaluation easily in AI Foundry. It does not
+     need to be unique."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Description of the evaluation. It can be used to store additional information about the
      evaluation and is mutable."""
@@ -1359,9 +1293,9 @@ class Evaluation(_model_base.Model):
     def __init__(
         self,
         *,
+        id: str,  # pylint: disable=redefined-builtin
         data: "_models.InputData",
         evaluators: Dict[str, "_models.EvaluatorConfiguration"],
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
@@ -1472,7 +1406,7 @@ class FileListResponse(_model_base.Model):
     :ivar object: The object type, which is always 'list'. Required. Default value is "list".
     :vartype object: str
     :ivar data: The files returned for the request. Required.
-    :vartype data: list[~azure.ai.projects.1dp.models.OpenAIFile]
+    :vartype data: list[~azure.ai.projects.dp1.models.OpenAIFile]
     """
 
     object: Literal["list"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1577,7 +1511,7 @@ class FileSearchToolDefinition(ToolDefinition, discriminator="file_search"):
      "file_search".
     :vartype type: str
     :ivar file_search: Options overrides for the file search tool.
-    :vartype file_search: ~azure.ai.projects.1dp.models.FileSearchToolDefinitionDetails
+    :vartype file_search: ~azure.ai.projects.dp1.models.FileSearchToolDefinitionDetails
     """
 
     type: Literal["file_search"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -1616,7 +1550,7 @@ class FileSearchToolDefinitionDetails(_model_base.Model):
      search tool documentation for more information.
     :vartype max_num_results: int
     :ivar ranking_options: Ranking options for file search.
-    :vartype ranking_options: ~azure.ai.projects.1dp.models.FileSearchRankingOptions
+    :vartype ranking_options: ~azure.ai.projects.dp1.models.FileSearchRankingOptions
     """
 
     max_num_results: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1659,7 +1593,7 @@ class FileSearchToolResource(_model_base.Model):
     :ivar vector_stores: The list of vector store configuration objects from Azure.
      This list is limited to one element.
      The only element of this list contains the list of azure asset IDs used by the search tool.
-    :vartype vector_stores: list[~azure.ai.projects.1dp.models.VectorStoreConfigurations]
+    :vartype vector_stores: list[~azure.ai.projects.dp1.models.VectorStoreConfigurations]
     """
 
     vector_store_ids: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1770,7 +1704,7 @@ class FunctionToolDefinition(ToolDefinition, discriminator="function"):
     :vartype type: str
     :ivar function: The definition of the concrete function that the function tool should call.
      Required.
-    :vartype function: ~azure.ai.projects.1dp.models.FunctionDefinition
+    :vartype function: ~azure.ai.projects.dp1.models.FunctionDefinition
     """
 
     type: Literal["function"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -1803,7 +1737,7 @@ class IncompleteRunDetails(_model_base.Model):
     :ivar reason: The reason why the run is incomplete. This indicates which specific token limit
      was reached during the run. Required. Known values are: "max_completion_tokens" and
      "max_prompt_tokens".
-    :vartype reason: str or ~azure.ai.projects.1dp.models.IncompleteDetailsReason
+    :vartype reason: str or ~azure.ai.projects.dp1.models.IncompleteDetailsReason
     """
 
     reason: Union[str, "_models.IncompleteDetailsReason"] = rest_field(
@@ -1866,6 +1800,72 @@ class IndexResource(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class InputData(_model_base.Model):
+    """Abstract data class.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    InputDataset
+
+
+    :ivar type: Type of the data. Required. Default value is None.
+    :vartype type: str
+    """
+
+    __mapping__: Dict[str, _model_base.Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """Type of the data. Required. Default value is None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class InputDataset(InputData, discriminator="dataset"):
+    """Dataset as source for evaluation.
+
+
+    :ivar type: Required. Default value is "dataset".
+    :vartype type: str
+    :ivar id: Evaluation input data. Required.
+    :vartype id: str
+    """
+
+    type: Literal["dataset"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Default value is \"dataset\"."""
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Evaluation input data. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="dataset", **kwargs)
+
+
 class ManagedAzureAISearchIndex(Index, discriminator="ManagedAzureSearch"):
     """Managed Azure AI Search Index Definition.
 
@@ -1885,9 +1885,9 @@ class ManagedAzureAISearchIndex(Index, discriminator="ManagedAzureSearch"):
     :ivar tags: Tag dictionary. Tags can be added, removed, and updated.
     :vartype tags: dict[str, str]
     :ivar system_data: System data of the resource.
-    :vartype system_data: ~azure.ai.projects.1dp.models.SystemData
+    :vartype system_data: ~azure.ai.projects.dp1.models.SystemData
     :ivar index_type: Type of index. Required. Managed Azure Search
-    :vartype index_type: str or ~azure.ai.projects.1dp.models.MANAGED_AZURE_SEARCH
+    :vartype index_type: str or ~azure.ai.projects.dp1.models.MANAGED_AZURE_SEARCH
     :ivar vector_store_id: Vector store id of managed index. Required.
     :vartype vector_store_id: str
     """
@@ -1925,10 +1925,10 @@ class MessageAttachment(_model_base.Model):
     :ivar file_id: The ID of the file to attach to the message.
     :vartype file_id: str
     :ivar data_source: Azure asset ID.
-    :vartype data_source: ~azure.ai.projects.1dp.models.VectorStoreDataSource
+    :vartype data_source: ~azure.ai.projects.dp1.models.VectorStoreDataSource
     :ivar tools: The tools to add to this file. Required.
-    :vartype tools: list[~azure.ai.projects.1dp.models.CodeInterpreterToolDefinition or
-     ~azure.ai.projects.1dp.models.FileSearchToolDefinition]
+    :vartype tools: list[~azure.ai.projects.dp1.models.CodeInterpreterToolDefinition or
+     ~azure.ai.projects.dp1.models.FileSearchToolDefinition]
     """
 
     file_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -2003,7 +2003,7 @@ class MessageImageFileContent(MessageContent, discriminator="image_file"):
      "image_file".
     :vartype type: str
     :ivar image_file: The image file for this thread message content item. Required.
-    :vartype image_file: ~azure.ai.projects.1dp.models.MessageImageFileDetails
+    :vartype image_file: ~azure.ai.projects.dp1.models.MessageImageFileDetails
     """
 
     type: Literal["image_file"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -2067,7 +2067,7 @@ class MessageIncompleteDetails(_model_base.Model):
     :ivar reason: The provided reason describing why the message was marked as incomplete.
      Required. Known values are: "content_filter", "max_tokens", "run_cancelled", "run_failed", and
      "run_expired".
-    :vartype reason: str or ~azure.ai.projects.1dp.models.MessageIncompleteDetailsReason
+    :vartype reason: str or ~azure.ai.projects.dp1.models.MessageIncompleteDetailsReason
     """
 
     reason: Union[str, "_models.MessageIncompleteDetailsReason"] = rest_field(
@@ -2140,7 +2140,7 @@ class MessageTextContent(MessageContent, discriminator="text"):
     :ivar type: The object type, which is always 'text'. Required. Default value is "text".
     :vartype type: str
     :ivar text: The text and associated annotations for this thread message content item. Required.
-    :vartype text: ~azure.ai.projects.1dp.models.MessageTextDetails
+    :vartype text: ~azure.ai.projects.dp1.models.MessageTextDetails
     """
 
     type: Literal["text"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -2173,7 +2173,7 @@ class MessageTextDetails(_model_base.Model):
     :ivar value: The text data. Required.
     :vartype value: str
     :ivar annotations: A list of annotations associated with this text. Required.
-    :vartype annotations: list[~azure.ai.projects.1dp.models.MessageTextAnnotation]
+    :vartype annotations: list[~azure.ai.projects.dp1.models.MessageTextAnnotation]
     """
 
     value: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -2216,7 +2216,7 @@ class MessageTextFileCitationAnnotation(MessageTextAnnotation, discriminator="fi
     :ivar file_citation: A citation within the message that points to a specific quote from a
      specific file.
      Generated when the agent uses the "file_search" tool to search files. Required.
-    :vartype file_citation: ~azure.ai.projects.1dp.models.MessageTextFileCitationDetails
+    :vartype file_citation: ~azure.ai.projects.dp1.models.MessageTextFileCitationDetails
     :ivar start_index: The first text index associated with this text annotation.
     :vartype start_index: int
     :ivar end_index: The last text index associated with this text annotation.
@@ -2302,7 +2302,7 @@ class MessageTextFilePathAnnotation(MessageTextAnnotation, discriminator="file_p
     :vartype type: str
     :ivar file_path: A URL for the file that's generated when the agent used the code_interpreter
      tool to generate a file. Required.
-    :vartype file_path: ~azure.ai.projects.1dp.models.MessageTextFilePathDetails
+    :vartype file_path: ~azure.ai.projects.dp1.models.MessageTextFilePathDetails
     :ivar start_index: The first text index associated with this text annotation.
     :vartype start_index: int
     :ivar end_index: The last text index associated with this text annotation.
@@ -2379,7 +2379,7 @@ class MicrosoftFabricToolDefinition(ToolDefinition, discriminator="fabric_aiskil
      "fabric_aiskill".
     :vartype type: str
     :ivar fabric_aiskill: The list of connections used by the Microsoft Fabric tool. Required.
-    :vartype fabric_aiskill: ~azure.ai.projects.1dp.models.ToolConnectionList
+    :vartype fabric_aiskill: ~azure.ai.projects.dp1.models.ToolConnectionList
     """
 
     type: Literal["fabric_aiskill"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -2427,10 +2427,10 @@ class OpenAIFile(_model_base.Model):
     :vartype created_at: ~datetime.datetime
     :ivar purpose: The intended purpose of a file. Required. Known values are: "fine-tune",
      "fine-tune-results", "assistants", "assistants_output", "batch", "batch_output", and "vision".
-    :vartype purpose: str or ~azure.ai.projects.1dp.models.FilePurpose
+    :vartype purpose: str or ~azure.ai.projects.dp1.models.FilePurpose
     :ivar status: The state of the file. This field is available in Azure OpenAI only. Known values
      are: "uploaded", "pending", "running", "processed", "error", "deleting", and "deleted".
-    :vartype status: str or ~azure.ai.projects.1dp.models.FileState
+    :vartype status: str or ~azure.ai.projects.dp1.models.FileState
     :ivar status_details: The error message with details in case processing of this file failed.
      This field is available in Azure OpenAI only.
     :vartype status_details: str
@@ -2496,7 +2496,7 @@ class OpenAIPageableListOfAgent(_model_base.Model):
     :ivar object: The object type, which is always list. Required. Default value is "list".
     :vartype object: str
     :ivar data: The requested list of items. Required.
-    :vartype data: list[~azure.ai.projects.1dp.models.Agent]
+    :vartype data: list[~azure.ai.projects.dp1.models.Agent]
     :ivar first_id: The first ID represented in this list. Required.
     :vartype first_id: str
     :ivar last_id: The last ID represented in this list. Required.
@@ -2549,7 +2549,7 @@ class OpenAIPageableListOfRunStep(_model_base.Model):
     :ivar object: The object type, which is always list. Required. Default value is "list".
     :vartype object: str
     :ivar data: The requested list of items. Required.
-    :vartype data: list[~azure.ai.projects.1dp.models.RunStep]
+    :vartype data: list[~azure.ai.projects.dp1.models.RunStep]
     :ivar first_id: The first ID represented in this list. Required.
     :vartype first_id: str
     :ivar last_id: The last ID represented in this list. Required.
@@ -2602,7 +2602,7 @@ class OpenAIPageableListOfThreadMessage(_model_base.Model):
     :ivar object: The object type, which is always list. Required. Default value is "list".
     :vartype object: str
     :ivar data: The requested list of items. Required.
-    :vartype data: list[~azure.ai.projects.1dp.models.ThreadMessage]
+    :vartype data: list[~azure.ai.projects.dp1.models.ThreadMessage]
     :ivar first_id: The first ID represented in this list. Required.
     :vartype first_id: str
     :ivar last_id: The last ID represented in this list. Required.
@@ -2655,7 +2655,7 @@ class OpenAIPageableListOfThreadRun(_model_base.Model):
     :ivar object: The object type, which is always list. Required. Default value is "list".
     :vartype object: str
     :ivar data: The requested list of items. Required.
-    :vartype data: list[~azure.ai.projects.1dp.models.ThreadRun]
+    :vartype data: list[~azure.ai.projects.dp1.models.ThreadRun]
     :ivar first_id: The first ID represented in this list. Required.
     :vartype first_id: str
     :ivar last_id: The last ID represented in this list. Required.
@@ -2708,7 +2708,7 @@ class OpenAIPageableListOfVectorStore(_model_base.Model):
     :ivar object: The object type, which is always list. Required. Default value is "list".
     :vartype object: str
     :ivar data: The requested list of items. Required.
-    :vartype data: list[~azure.ai.projects.1dp.models.VectorStore]
+    :vartype data: list[~azure.ai.projects.dp1.models.VectorStore]
     :ivar first_id: The first ID represented in this list. Required.
     :vartype first_id: str
     :ivar last_id: The last ID represented in this list. Required.
@@ -2761,7 +2761,7 @@ class OpenAIPageableListOfVectorStoreFile(_model_base.Model):
     :ivar object: The object type, which is always list. Required. Default value is "list".
     :vartype object: str
     :ivar data: The requested list of items. Required.
-    :vartype data: list[~azure.ai.projects.1dp.models.VectorStoreFile]
+    :vartype data: list[~azure.ai.projects.dp1.models.VectorStoreFile]
     :ivar first_id: The first ID represented in this list. Required.
     :vartype first_id: str
     :ivar last_id: The last ID represented in this list. Required.
@@ -2814,7 +2814,7 @@ class OpenApiAuthDetails(_model_base.Model):
 
     :ivar type: The type of authentication, must be anonymous/connection/managed_identity.
      Required. Known values are: "anonymous", "connection", and "managed_identity".
-    :vartype type: str or ~azure.ai.projects.1dp.models.OpenApiAuthType
+    :vartype type: str or ~azure.ai.projects.dp1.models.OpenApiAuthType
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
@@ -2845,7 +2845,7 @@ class OpenApiAnonymousAuthDetails(OpenApiAuthDetails, discriminator="anonymous")
 
 
     :ivar type: The object type, which is always 'anonymous'. Required.
-    :vartype type: str or ~azure.ai.projects.1dp.models.ANONYMOUS
+    :vartype type: str or ~azure.ai.projects.dp1.models.ANONYMOUS
     """
 
     type: Literal[OpenApiAuthType.ANONYMOUS] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -2872,9 +2872,9 @@ class OpenApiConnectionAuthDetails(OpenApiAuthDetails, discriminator="connection
 
 
     :ivar type: The object type, which is always 'connection'. Required.
-    :vartype type: str or ~azure.ai.projects.1dp.models.CONNECTION
+    :vartype type: str or ~azure.ai.projects.dp1.models.CONNECTION
     :ivar security_scheme: Connection auth security details. Required.
-    :vartype security_scheme: ~azure.ai.projects.1dp.models.OpenApiConnectionSecurityScheme
+    :vartype security_scheme: ~azure.ai.projects.dp1.models.OpenApiConnectionSecurityScheme
     """
 
     type: Literal[OpenApiAuthType.CONNECTION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -2943,7 +2943,7 @@ class OpenApiFunctionDefinition(_model_base.Model):
     :ivar spec: The openapi function shape, described as a JSON Schema object. Required.
     :vartype spec: any
     :ivar auth: Open API authentication details. Required.
-    :vartype auth: ~azure.ai.projects.1dp.models.OpenApiAuthDetails
+    :vartype auth: ~azure.ai.projects.dp1.models.OpenApiAuthDetails
     """
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -2982,9 +2982,9 @@ class OpenApiManagedAuthDetails(OpenApiAuthDetails, discriminator="managed_ident
 
 
     :ivar type: The object type, which is always 'managed_identity'. Required.
-    :vartype type: str or ~azure.ai.projects.1dp.models.MANAGED_IDENTITY
+    :vartype type: str or ~azure.ai.projects.dp1.models.MANAGED_IDENTITY
     :ivar security_scheme: Connection auth security details. Required.
-    :vartype security_scheme: ~azure.ai.projects.1dp.models.OpenApiManagedSecurityScheme
+    :vartype security_scheme: ~azure.ai.projects.dp1.models.OpenApiManagedSecurityScheme
     """
 
     type: Literal[OpenApiAuthType.MANAGED_IDENTITY] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -3048,7 +3048,7 @@ class OpenApiToolDefinition(ToolDefinition, discriminator="openapi"):
     :ivar type: The object type, which is always 'openapi'. Required. Default value is "openapi".
     :vartype type: str
     :ivar openapi: The openapi function definition. Required.
-    :vartype openapi: ~azure.ai.projects.1dp.models.OpenApiFunctionDefinition
+    :vartype openapi: ~azure.ai.projects.dp1.models.OpenApiFunctionDefinition
     """
 
     type: Literal["openapi"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -3085,7 +3085,7 @@ class PendingUploadRequest(_model_base.Model):
     :vartype pending_upload_id: str
     :ivar pending_upload_type: TemporaryBlobReference is the only supported type. Required.
      Temporary Blob Reference is the only supported type.
-    :vartype pending_upload_type: str or ~azure.ai.projects.1dp.models.TEMPORARY_BLOB_REFERENCE
+    :vartype pending_upload_type: str or ~azure.ai.projects.dp1.models.TEMPORARY_BLOB_REFERENCE
     """
 
     pending_upload_id: Optional[str] = rest_field(
@@ -3123,12 +3123,12 @@ class PendingUploadResponse(_model_base.Model):
 
     :ivar blob_reference_for_consumption: Container-level read, write, list SAS. Required.
     :vartype blob_reference_for_consumption:
-     ~azure.ai.projects.1dp.models.BlobReferenceForConsumption
+     ~azure.ai.projects.dp1.models.BlobReferenceForConsumption
     :ivar pending_upload_id: ID for this upload request. Required.
     :vartype pending_upload_id: str
     :ivar pending_upload_type: TemporaryBlobReference is the only supported type. Required.
      Temporary Blob Reference is the only supported type.
-    :vartype pending_upload_type: str or ~azure.ai.projects.1dp.models.TEMPORARY_BLOB_REFERENCE
+    :vartype pending_upload_type: str or ~azure.ai.projects.dp1.models.TEMPORARY_BLOB_REFERENCE
     """
 
     blob_reference_for_consumption: "_models.BlobReferenceForConsumption" = rest_field(
@@ -3250,7 +3250,7 @@ class RequiredFunctionToolCall(RequiredToolCall, discriminator="function"):
     :vartype type: str
     :ivar function: Detailed information about the function to be executed by the tool that
      includes name and arguments. Required.
-    :vartype function: ~azure.ai.projects.1dp.models.RequiredFunctionToolCallDetails
+    :vartype function: ~azure.ai.projects.dp1.models.RequiredFunctionToolCallDetails
     """
 
     type: Literal["function"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -3370,7 +3370,7 @@ class ResponseFormatJsonSchemaType(_model_base.Model):
     :ivar type: Type. Required. Default value is "json_schema".
     :vartype type: str
     :ivar json_schema: The JSON schema, describing response format. Required.
-    :vartype json_schema: ~azure.ai.projects.1dp.models.ResponseFormatJsonSchema
+    :vartype json_schema: ~azure.ai.projects.dp1.models.ResponseFormatJsonSchema
     """
 
     type: Literal["json_schema"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3486,7 +3486,7 @@ class RunStep(_model_base.Model):
     :vartype object: str
     :ivar type: The type of run step, which can be either message_creation or tool_calls. Required.
      Known values are: "message_creation" and "tool_calls".
-    :vartype type: str or ~azure.ai.projects.1dp.models.RunStepType
+    :vartype type: str or ~azure.ai.projects.dp1.models.RunStepType
     :ivar assistant_id: The ID of the agent associated with the run step. Required.
     :vartype assistant_id: str
     :ivar thread_id: The ID of the thread that was run. Required.
@@ -3495,12 +3495,12 @@ class RunStep(_model_base.Model):
     :vartype run_id: str
     :ivar status: The status of this run step. Required. Known values are: "in_progress",
      "cancelled", "failed", "completed", and "expired".
-    :vartype status: str or ~azure.ai.projects.1dp.models.RunStepStatus
+    :vartype status: str or ~azure.ai.projects.dp1.models.RunStepStatus
     :ivar step_details: The details for this run step. Required.
-    :vartype step_details: ~azure.ai.projects.1dp.models.RunStepDetails
+    :vartype step_details: ~azure.ai.projects.dp1.models.RunStepDetails
     :ivar last_error: If applicable, information about the last error encountered by this run step.
      Required.
-    :vartype last_error: ~azure.ai.projects.1dp.models.RunStepError
+    :vartype last_error: ~azure.ai.projects.dp1.models.RunStepError
     :ivar created_at: The Unix timestamp, in seconds, representing when this object was created.
      Required.
     :vartype created_at: ~datetime.datetime
@@ -3516,7 +3516,7 @@ class RunStep(_model_base.Model):
     :vartype failed_at: ~datetime.datetime
     :ivar usage: Usage statistics related to the run step. This value will be ``null`` while the
      run step's status is ``in_progress``.
-    :vartype usage: ~azure.ai.projects.1dp.models.RunStepCompletionUsage
+    :vartype usage: ~azure.ai.projects.dp1.models.RunStepCompletionUsage
     :ivar metadata: A set of up to 16 key/value pairs that can be attached to an object, used for
      storing additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length. Required.
@@ -3772,7 +3772,7 @@ class RunStepCodeInterpreterImageOutput(RunStepCodeInterpreterToolCallOutput, di
     :ivar type: The object type, which is always 'image'. Required. Default value is "image".
     :vartype type: str
     :ivar image: Referential information for the image associated with this output. Required.
-    :vartype image: ~azure.ai.projects.1dp.models.RunStepCodeInterpreterImageReference
+    :vartype image: ~azure.ai.projects.dp1.models.RunStepCodeInterpreterImageReference
     """
 
     type: Literal["image"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -3876,7 +3876,7 @@ class RunStepCodeInterpreterToolCall(RunStepToolCall, discriminator="code_interp
      "code_interpreter".
     :vartype type: str
     :ivar code_interpreter: The details of the tool call to the code interpreter tool. Required.
-    :vartype code_interpreter: ~azure.ai.projects.1dp.models.RunStepCodeInterpreterToolCallDetails
+    :vartype code_interpreter: ~azure.ai.projects.dp1.models.RunStepCodeInterpreterToolCallDetails
     """
 
     type: Literal["code_interpreter"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -3914,7 +3914,7 @@ class RunStepCodeInterpreterToolCallDetails(_model_base.Model):
     :vartype input: str
     :ivar outputs: The outputs produced by the code interpreter tool back to the model in response
      to the tool call. Required.
-    :vartype outputs: list[~azure.ai.projects.1dp.models.RunStepCodeInterpreterToolCallOutput]
+    :vartype outputs: list[~azure.ai.projects.dp1.models.RunStepCodeInterpreterToolCallOutput]
     """
 
     input: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3992,7 +3992,7 @@ class RunStepDetails(_model_base.Model):
 
 
     :ivar type: The object type. Required. Known values are: "message_creation" and "tool_calls".
-    :vartype type: str or ~azure.ai.projects.1dp.models.RunStepType
+    :vartype type: str or ~azure.ai.projects.dp1.models.RunStepType
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
@@ -4023,7 +4023,7 @@ class RunStepError(_model_base.Model):
 
     :ivar code: The error code for this error. Required. Known values are: "server_error" and
      "rate_limit_exceeded".
-    :vartype code: str or ~azure.ai.projects.1dp.models.RunStepErrorCode
+    :vartype code: str or ~azure.ai.projects.dp1.models.RunStepErrorCode
     :ivar message: The human-readable text associated with this error. Required.
     :vartype message: str
     """
@@ -4068,7 +4068,7 @@ class RunStepFileSearchToolCall(RunStepToolCall, discriminator="file_search"):
      Required.
     :vartype id: str
     :ivar file_search: For now, this is always going to be an empty object. Required.
-    :vartype file_search: ~azure.ai.projects.1dp.models.RunStepFileSearchToolCallResults
+    :vartype file_search: ~azure.ai.projects.dp1.models.RunStepFileSearchToolCallResults
     """
 
     type: Literal["file_search"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -4110,7 +4110,7 @@ class RunStepFileSearchToolCallResult(_model_base.Model):
     :vartype score: float
     :ivar content: The content of the result that was found. The content is only included if
      requested via the include query parameter.
-    :vartype content: list[~azure.ai.projects.1dp.models.FileSearchToolCallContent]
+    :vartype content: list[~azure.ai.projects.dp1.models.FileSearchToolCallContent]
     """
 
     file_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -4151,9 +4151,9 @@ class RunStepFileSearchToolCallResults(_model_base.Model):
 
 
     :ivar ranking_options: Ranking options for file search.
-    :vartype ranking_options: ~azure.ai.projects.1dp.models.FileSearchRankingOptions
+    :vartype ranking_options: ~azure.ai.projects.dp1.models.FileSearchRankingOptions
     :ivar results: The array of a file search results. Required.
-    :vartype results: list[~azure.ai.projects.1dp.models.RunStepFileSearchToolCallResult]
+    :vartype results: list[~azure.ai.projects.dp1.models.RunStepFileSearchToolCallResult]
     """
 
     ranking_options: Optional["_models.FileSearchRankingOptions"] = rest_field(
@@ -4196,7 +4196,7 @@ class RunStepFunctionToolCall(RunStepToolCall, discriminator="function"):
     :ivar type: The object type, which is always 'function'. Required. Default value is "function".
     :vartype type: str
     :ivar function: The detailed information about the function called by the model. Required.
-    :vartype function: ~azure.ai.projects.1dp.models.RunStepFunctionToolCallDetails
+    :vartype function: ~azure.ai.projects.dp1.models.RunStepFunctionToolCallDetails
     """
 
     type: Literal["function"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -4273,10 +4273,10 @@ class RunStepMessageCreationDetails(RunStepDetails, discriminator="message_creat
 
     :ivar type: The object type, which is always 'message_creation'. Required. Represents a run
      step to create a message.
-    :vartype type: str or ~azure.ai.projects.1dp.models.MESSAGE_CREATION
+    :vartype type: str or ~azure.ai.projects.dp1.models.MESSAGE_CREATION
     :ivar message_creation: Information about the message creation associated with this run step.
      Required.
-    :vartype message_creation: ~azure.ai.projects.1dp.models.RunStepMessageCreationReference
+    :vartype message_creation: ~azure.ai.projects.dp1.models.RunStepMessageCreationReference
     """
 
     type: Literal[RunStepType.MESSAGE_CREATION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -4426,9 +4426,9 @@ class RunStepToolCallDetails(RunStepDetails, discriminator="tool_calls"):
 
     :ivar type: The object type, which is always 'tool_calls'. Required. Represents a run step that
      calls tools.
-    :vartype type: str or ~azure.ai.projects.1dp.models.TOOL_CALLS
+    :vartype type: str or ~azure.ai.projects.dp1.models.TOOL_CALLS
     :ivar tool_calls: A list of tool call details for this run step. Required.
-    :vartype tool_calls: list[~azure.ai.projects.1dp.models.RunStepToolCall]
+    :vartype tool_calls: list[~azure.ai.projects.dp1.models.RunStepToolCall]
     """
 
     type: Literal[RunStepType.TOOL_CALLS] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -4464,7 +4464,7 @@ class SasCredential(BaseCredential, discriminator="SAS"):
     :ivar sas_token: SAS Token. Required.
     :vartype sas_token: str
     :ivar type: Required.
-    :vartype type: str or ~azure.ai.projects.1dp.models.SAS
+    :vartype type: str or ~azure.ai.projects.dp1.models.SAS
     """
 
     sas_token: str = rest_field(name="sasToken", visibility=["read"])
@@ -4496,7 +4496,7 @@ class SharepointToolDefinition(ToolDefinition, discriminator="sharepoint_groundi
      "sharepoint_grounding".
     :vartype type: str
     :ivar sharepoint_grounding: The list of connections used by the SharePoint tool. Required.
-    :vartype sharepoint_grounding: ~azure.ai.projects.1dp.models.ToolConnectionList
+    :vartype sharepoint_grounding: ~azure.ai.projects.dp1.models.ToolConnectionList
     """
 
     type: Literal["sharepoint_grounding"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -4583,7 +4583,7 @@ class SubmitToolOutputsAction(RequiredAction, discriminator="submit_tool_outputs
     :vartype type: str
     :ivar submit_tool_outputs: The details describing tools that should be called to submit tool
      outputs. Required.
-    :vartype submit_tool_outputs: ~azure.ai.projects.1dp.models.SubmitToolOutputsDetails
+    :vartype submit_tool_outputs: ~azure.ai.projects.dp1.models.SubmitToolOutputsDetails
     """
 
     type: Literal["submit_tool_outputs"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -4618,7 +4618,7 @@ class SubmitToolOutputsDetails(_model_base.Model):
 
     :ivar tool_calls: The list of tool calls that must be resolved for the agent thread run to
      continue. Required.
-    :vartype tool_calls: list[~azure.ai.projects.1dp.models.RequiredToolCall]
+    :vartype tool_calls: list[~azure.ai.projects.dp1.models.RequiredToolCall]
     """
 
     tool_calls: List["_models.RequiredToolCall"] = rest_field(
@@ -4732,10 +4732,10 @@ class ThreadMessage(_model_base.Model):
     :vartype thread_id: str
     :ivar status: The status of the message. Required. Known values are: "in_progress",
      "incomplete", and "completed".
-    :vartype status: str or ~azure.ai.projects.1dp.models.MessageStatus
+    :vartype status: str or ~azure.ai.projects.dp1.models.MessageStatus
     :ivar incomplete_details: On an incomplete message, details about why the message is
      incomplete. Required.
-    :vartype incomplete_details: ~azure.ai.projects.1dp.models.MessageIncompleteDetails
+    :vartype incomplete_details: ~azure.ai.projects.dp1.models.MessageIncompleteDetails
     :ivar completed_at: The Unix timestamp (in seconds) for when the message was completed.
      Required.
     :vartype completed_at: ~datetime.datetime
@@ -4744,9 +4744,9 @@ class ThreadMessage(_model_base.Model):
     :vartype incomplete_at: ~datetime.datetime
     :ivar role: The role associated with the agent thread message. Required. Known values are:
      "user" and "assistant".
-    :vartype role: str or ~azure.ai.projects.1dp.models.MessageRole
+    :vartype role: str or ~azure.ai.projects.dp1.models.MessageRole
     :ivar content: The list of content items associated with the agent thread message. Required.
-    :vartype content: list[~azure.ai.projects.1dp.models.MessageContent]
+    :vartype content: list[~azure.ai.projects.dp1.models.MessageContent]
     :ivar assistant_id: If applicable, the ID of the agent that authored this message. Required.
     :vartype assistant_id: str
     :ivar run_id: If applicable, the ID of the run associated with the authoring of this message.
@@ -4754,7 +4754,7 @@ class ThreadMessage(_model_base.Model):
     :vartype run_id: str
     :ivar attachments: A list of files attached to the message, and the tools they were added to.
      Required.
-    :vartype attachments: list[~azure.ai.projects.1dp.models.MessageAttachment]
+    :vartype attachments: list[~azure.ai.projects.dp1.models.MessageAttachment]
     :ivar metadata: A set of up to 16 key/value pairs that can be attached to an object, used for
      storing additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length. Required.
@@ -4850,14 +4850,14 @@ class ThreadMessageOptions(_model_base.Model):
      * ``assistant``\\ : Indicates the message is generated by the agent. Use this value to insert
        messages from the agent into the
        conversation. Required. Known values are: "user" and "assistant".
-    :vartype role: str or ~azure.ai.projects.1dp.models.MessageRole
+    :vartype role: str or ~azure.ai.projects.dp1.models.MessageRole
     :ivar content: The textual content of the initial message. Currently, robust input including
      images and annotated text may only be provided via
      a separate call to the create message API. Required.
     :vartype content: str
     :ivar attachments: A list of files attached to the message, and the tools they should be added
      to.
-    :vartype attachments: list[~azure.ai.projects.1dp.models.MessageAttachment]
+    :vartype attachments: list[~azure.ai.projects.dp1.models.MessageAttachment]
     :ivar metadata: A set of up to 16 key/value pairs that can be attached to an object, used for
      storing additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length.
@@ -4926,18 +4926,18 @@ class ThreadRun(_model_base.Model):
     :ivar status: The status of the agent thread run. Required. Known values are: "queued",
      "in_progress", "requires_action", "cancelling", "cancelled", "failed", "completed", and
      "expired".
-    :vartype status: str or ~azure.ai.projects.1dp.models.RunStatus
+    :vartype status: str or ~azure.ai.projects.dp1.models.RunStatus
     :ivar required_action: The details of the action required for the agent thread run to continue.
-    :vartype required_action: ~azure.ai.projects.1dp.models.RequiredAction
+    :vartype required_action: ~azure.ai.projects.dp1.models.RequiredAction
     :ivar last_error: The last error, if any, encountered by this agent thread run. Required.
-    :vartype last_error: ~azure.ai.projects.1dp.models.RunError
+    :vartype last_error: ~azure.ai.projects.dp1.models.RunError
     :ivar model: The ID of the model to use. Required.
     :vartype model: str
     :ivar instructions: The overridden system instructions used for this agent thread run.
      Required.
     :vartype instructions: str
     :ivar tools: The overridden enabled tools used for this agent thread run. Required.
-    :vartype tools: list[~azure.ai.projects.1dp.models.ToolDefinition]
+    :vartype tools: list[~azure.ai.projects.dp1.models.ToolDefinition]
     :ivar created_at: The Unix timestamp, in seconds, representing when this object was created.
      Required.
     :vartype created_at: ~datetime.datetime
@@ -4956,10 +4956,10 @@ class ThreadRun(_model_base.Model):
     :vartype failed_at: ~datetime.datetime
     :ivar incomplete_details: Details on why the run is incomplete. Will be ``null`` if the run is
      not incomplete. Required.
-    :vartype incomplete_details: ~azure.ai.projects.1dp.models.IncompleteRunDetails
+    :vartype incomplete_details: ~azure.ai.projects.dp1.models.IncompleteRunDetails
     :ivar usage: Usage statistics related to the run. This value will be ``null`` if the run is not
      in a terminal state (i.e. ``in_progress``\\ , ``queued``\\ , etc.). Required.
-    :vartype usage: ~azure.ai.projects.1dp.models.RunCompletionUsage
+    :vartype usage: ~azure.ai.projects.dp1.models.RunCompletionUsage
     :ivar temperature: The sampling temperature used for this run. If not set, defaults to 1.
     :vartype temperature: float
     :ivar top_p: The nucleus sampling value used for this run. If not set, defaults to 1.
@@ -4972,26 +4972,26 @@ class ThreadRun(_model_base.Model):
     :vartype max_completion_tokens: int
     :ivar truncation_strategy: The strategy to use for dropping messages as the context windows
      moves forward. Required.
-    :vartype truncation_strategy: ~azure.ai.projects.1dp.models.TruncationObject
+    :vartype truncation_strategy: ~azure.ai.projects.dp1.models.TruncationObject
     :ivar tool_choice: Controls whether or not and which tool is called by the model. Required. Is
      one of the following types: str, Union[str, "_models.AgentsApiToolChoiceOptionMode"],
      AgentsNamedToolChoice
-    :vartype tool_choice: str or str or ~azure.ai.projects.1dp.models.AgentsApiToolChoiceOptionMode
-     or ~azure.ai.projects.1dp.models.AgentsNamedToolChoice
+    :vartype tool_choice: str or str or ~azure.ai.projects.dp1.models.AgentsApiToolChoiceOptionMode
+     or ~azure.ai.projects.dp1.models.AgentsNamedToolChoice
     :ivar response_format: The response format of the tool calls used in this run. Required. Is one
      of the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
      AgentsApiResponseFormat, ResponseFormatJsonSchemaType
     :vartype response_format: str or str or
-     ~azure.ai.projects.1dp.models.AgentsApiResponseFormatMode or
-     ~azure.ai.projects.1dp.models.AgentsApiResponseFormat or
-     ~azure.ai.projects.1dp.models.ResponseFormatJsonSchemaType
+     ~azure.ai.projects.dp1.models.AgentsApiResponseFormatMode or
+     ~azure.ai.projects.dp1.models.AgentsApiResponseFormat or
+     ~azure.ai.projects.dp1.models.ResponseFormatJsonSchemaType
     :ivar metadata: A set of up to 16 key/value pairs that can be attached to an object, used for
      storing additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length. Required.
     :vartype metadata: dict[str, str]
     :ivar tool_resources: Override the tools the agent can use for this run. This is useful for
      modifying the behavior on a per-run basis.
-    :vartype tool_resources: ~azure.ai.projects.1dp.models.UpdateToolResourcesOptions
+    :vartype tool_resources: ~azure.ai.projects.dp1.models.UpdateToolResourcesOptions
     :ivar parallel_tool_calls: Determines if tools can be executed in parallel within the run.
      Required.
     :vartype parallel_tool_calls: bool
@@ -5170,7 +5170,7 @@ class ToolConnectionList(_model_base.Model):
     :ivar connection_list: The connections attached to this tool. There can be a maximum of 1
      connection
      resource attached to the tool.
-    :vartype connection_list: list[~azure.ai.projects.1dp.models.ToolConnection]
+    :vartype connection_list: list[~azure.ai.projects.dp1.models.ToolConnection]
     """
 
     connection_list: Optional[List["_models.ToolConnection"]] = rest_field(
@@ -5242,13 +5242,13 @@ class ToolResources(_model_base.Model):
 
     :ivar code_interpreter: Resources to be used by the ``code_interpreter`` tool consisting of
      file IDs.
-    :vartype code_interpreter: ~azure.ai.projects.1dp.models.CodeInterpreterToolResource
+    :vartype code_interpreter: ~azure.ai.projects.dp1.models.CodeInterpreterToolResource
     :ivar file_search: Resources to be used by the ``file_search`` tool consisting of vector store
      IDs.
-    :vartype file_search: ~azure.ai.projects.1dp.models.FileSearchToolResource
+    :vartype file_search: ~azure.ai.projects.dp1.models.FileSearchToolResource
     :ivar azure_ai_search: Resources to be used by the ``azure_ai_search`` tool consisting of index
      IDs and names.
-    :vartype azure_ai_search: ~azure.ai.projects.1dp.models.AzureAISearchResource
+    :vartype azure_ai_search: ~azure.ai.projects.dp1.models.AzureAISearchResource
     """
 
     code_interpreter: Optional["_models.CodeInterpreterToolResource"] = rest_field(
@@ -5295,7 +5295,7 @@ class TruncationObject(_model_base.Model):
      ``auto``\\ , messages in the middle of the thread
      will be dropped to fit the context length of the model, ``max_prompt_tokens``. Required. Known
      values are: "auto" and "last_messages".
-    :vartype type: str or ~azure.ai.projects.1dp.models.TruncationStrategy
+    :vartype type: str or ~azure.ai.projects.dp1.models.TruncationStrategy
     :ivar last_messages: The number of most recent messages from the thread when constructing the
      context for the run.
     :vartype last_messages: int
@@ -5399,13 +5399,13 @@ class UpdateToolResourcesOptions(_model_base.Model):
      ``code_interpreter`` tool. There can be a maximum of 20 files
      associated with the tool.
     :vartype code_interpreter:
-     ~azure.ai.projects.1dp.models.UpdateCodeInterpreterToolResourceOptions
+     ~azure.ai.projects.dp1.models.UpdateCodeInterpreterToolResourceOptions
     :ivar file_search: Overrides the vector store attached to this agent. There can be a maximum of
      1 vector store attached to the agent.
-    :vartype file_search: ~azure.ai.projects.1dp.models.UpdateFileSearchToolResourceOptions
+    :vartype file_search: ~azure.ai.projects.dp1.models.UpdateFileSearchToolResourceOptions
     :ivar azure_ai_search: Overrides the resources to be used by the ``azure_ai_search`` tool
      consisting of index IDs and names.
-    :vartype azure_ai_search: ~azure.ai.projects.1dp.models.AzureAISearchResource
+    :vartype azure_ai_search: ~azure.ai.projects.dp1.models.AzureAISearchResource
     """
 
     code_interpreter: Optional["_models.UpdateCodeInterpreterToolResourceOptions"] = rest_field(
@@ -5465,13 +5465,13 @@ class VectorStore(_model_base.Model):
     :vartype usage_bytes: int
     :ivar file_counts: Files count grouped by status processed or being processed by this vector
      store. Required.
-    :vartype file_counts: ~azure.ai.projects.1dp.models.VectorStoreFileCount
+    :vartype file_counts: ~azure.ai.projects.dp1.models.VectorStoreFileCount
     :ivar status: The status of the vector store, which can be either ``expired``\\ ,
      ``in_progress``\\ , or ``completed``. A status of ``completed`` indicates that the vector store
      is ready for use. Required. Known values are: "expired", "in_progress", and "completed".
-    :vartype status: str or ~azure.ai.projects.1dp.models.VectorStoreStatus
+    :vartype status: str or ~azure.ai.projects.dp1.models.VectorStoreStatus
     :ivar expires_after: Details on when this vector store expires.
-    :vartype expires_after: ~azure.ai.projects.1dp.models.VectorStoreExpirationPolicy
+    :vartype expires_after: ~azure.ai.projects.dp1.models.VectorStoreExpirationPolicy
     :ivar expires_at: The Unix timestamp (in seconds) for when the vector store will expire.
     :vartype expires_at: ~datetime.datetime
     :ivar last_active_at: The Unix timestamp (in seconds) for when the vector store was last
@@ -5557,7 +5557,7 @@ class VectorStoreChunkingStrategyRequest(_model_base.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar type: The object type. Required. Known values are: "auto" and "static".
-    :vartype type: str or ~azure.ai.projects.1dp.models.VectorStoreChunkingStrategyRequestType
+    :vartype type: str or ~azure.ai.projects.dp1.models.VectorStoreChunkingStrategyRequestType
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
@@ -5589,7 +5589,7 @@ class VectorStoreAutoChunkingStrategyRequest(VectorStoreChunkingStrategyRequest,
     All required parameters must be populated in order to send to server.
 
     :ivar type: The object type, which is always 'auto'. Required.
-    :vartype type: str or ~azure.ai.projects.1dp.models.AUTO
+    :vartype type: str or ~azure.ai.projects.dp1.models.AUTO
     """
 
     type: Literal[VectorStoreChunkingStrategyRequestType.AUTO] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -5619,7 +5619,7 @@ class VectorStoreChunkingStrategyResponse(_model_base.Model):
 
 
     :ivar type: The object type. Required. Known values are: "other" and "static".
-    :vartype type: str or ~azure.ai.projects.1dp.models.VectorStoreChunkingStrategyResponseType
+    :vartype type: str or ~azure.ai.projects.dp1.models.VectorStoreChunkingStrategyResponseType
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
@@ -5650,7 +5650,7 @@ class VectorStoreAutoChunkingStrategyResponse(VectorStoreChunkingStrategyRespons
 
 
     :ivar type: The object type, which is always 'other'. Required.
-    :vartype type: str or ~azure.ai.projects.1dp.models.OTHER
+    :vartype type: str or ~azure.ai.projects.dp1.models.OTHER
     """
 
     type: Literal[VectorStoreChunkingStrategyResponseType.OTHER] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -5678,7 +5678,7 @@ class VectorStoreConfiguration(_model_base.Model):
 
 
     :ivar data_sources: Data sources. Required.
-    :vartype data_sources: list[~azure.ai.projects.1dp.models.VectorStoreDataSource]
+    :vartype data_sources: list[~azure.ai.projects.dp1.models.VectorStoreDataSource]
     """
 
     data_sources: List["_models.VectorStoreDataSource"] = rest_field(
@@ -5712,7 +5712,7 @@ class VectorStoreConfigurations(_model_base.Model):
     :ivar store_name: Name. Required.
     :vartype store_name: str
     :ivar store_configuration: Configurations. Required.
-    :vartype store_configuration: ~azure.ai.projects.1dp.models.VectorStoreConfiguration
+    :vartype store_configuration: ~azure.ai.projects.dp1.models.VectorStoreConfiguration
     """
 
     store_name: str = rest_field(name="name", visibility=["read", "create", "update", "delete", "query"])
@@ -5750,7 +5750,7 @@ class VectorStoreDataSource(_model_base.Model):
     :ivar asset_identifier: Asset URI. Required.
     :vartype asset_identifier: str
     :ivar asset_type: The asset type. Required. Known values are: "uri_asset" and "id_asset".
-    :vartype asset_type: str or ~azure.ai.projects.1dp.models.VectorStoreDataSourceAssetType
+    :vartype asset_type: str or ~azure.ai.projects.dp1.models.VectorStoreDataSourceAssetType
     """
 
     asset_identifier: str = rest_field(name="uri", visibility=["read", "create", "update", "delete", "query"])
@@ -5828,7 +5828,7 @@ class VectorStoreExpirationPolicy(_model_base.Model):
 
     :ivar anchor: Anchor timestamp after which the expiration policy applies. Supported anchors:
      ``last_active_at``. Required. "last_active_at"
-    :vartype anchor: str or ~azure.ai.projects.1dp.models.VectorStoreExpirationPolicyAnchor
+    :vartype anchor: str or ~azure.ai.projects.dp1.models.VectorStoreExpirationPolicyAnchor
     :ivar days: The anchor timestamp after which the expiration policy applies. Required.
     :vartype days: int
     """
@@ -5884,12 +5884,12 @@ class VectorStoreFile(_model_base.Model):
      ``completed``\\ , ``cancelled``\\ , or ``failed``. The status ``completed`` indicates that the
      vector store file is ready for use. Required. Known values are: "in_progress", "completed",
      "failed", and "cancelled".
-    :vartype status: str or ~azure.ai.projects.1dp.models.VectorStoreFileStatus
+    :vartype status: str or ~azure.ai.projects.dp1.models.VectorStoreFileStatus
     :ivar last_error: The last error associated with this vector store file. Will be ``null`` if
      there are no errors. Required.
-    :vartype last_error: ~azure.ai.projects.1dp.models.VectorStoreFileError
+    :vartype last_error: ~azure.ai.projects.dp1.models.VectorStoreFileError
     :ivar chunking_strategy: The strategy used to chunk the file. Required.
-    :vartype chunking_strategy: ~azure.ai.projects.1dp.models.VectorStoreChunkingStrategyResponse
+    :vartype chunking_strategy: ~azure.ai.projects.dp1.models.VectorStoreChunkingStrategyResponse
     """
 
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -5965,10 +5965,10 @@ class VectorStoreFileBatch(_model_base.Model):
     :ivar status: The status of the vector store files batch, which can be either ``in_progress``\\
      , ``completed``\\ , ``cancelled`` or ``failed``. Required. Known values are: "in_progress",
      "completed", "cancelled", and "failed".
-    :vartype status: str or ~azure.ai.projects.1dp.models.VectorStoreFileBatchStatus
+    :vartype status: str or ~azure.ai.projects.dp1.models.VectorStoreFileBatchStatus
     :ivar file_counts: Files count grouped by status processed or being processed by this vector
      store. Required.
-    :vartype file_counts: ~azure.ai.projects.1dp.models.VectorStoreFileCount
+    :vartype file_counts: ~azure.ai.projects.dp1.models.VectorStoreFileCount
     """
 
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -6114,7 +6114,7 @@ class VectorStoreFileError(_model_base.Model):
 
     :ivar code: One of ``server_error`` or ``rate_limit_exceeded``. Required. Known values are:
      "server_error", "invalid_file", and "unsupported_file".
-    :vartype code: str or ~azure.ai.projects.1dp.models.VectorStoreFileErrorCode
+    :vartype code: str or ~azure.ai.projects.dp1.models.VectorStoreFileErrorCode
     :ivar message: A human-readable description of the error. Required.
     :vartype message: str
     """
@@ -6191,9 +6191,9 @@ class VectorStoreStaticChunkingStrategyRequest(VectorStoreChunkingStrategyReques
     All required parameters must be populated in order to send to server.
 
     :ivar type: The object type, which is always 'static'. Required.
-    :vartype type: str or ~azure.ai.projects.1dp.models.STATIC
+    :vartype type: str or ~azure.ai.projects.dp1.models.STATIC
     :ivar static: The options for the static chunking strategy. Required.
-    :vartype static: ~azure.ai.projects.1dp.models.VectorStoreStaticChunkingStrategyOptions
+    :vartype static: ~azure.ai.projects.dp1.models.VectorStoreStaticChunkingStrategyOptions
     """
 
     type: Literal[VectorStoreChunkingStrategyRequestType.STATIC] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -6228,9 +6228,9 @@ class VectorStoreStaticChunkingStrategyResponse(
 
 
     :ivar type: The object type, which is always 'static'. Required.
-    :vartype type: str or ~azure.ai.projects.1dp.models.STATIC
+    :vartype type: str or ~azure.ai.projects.dp1.models.STATIC
     :ivar static: The options for the static chunking strategy. Required.
-    :vartype static: ~azure.ai.projects.1dp.models.VectorStoreStaticChunkingStrategyOptions
+    :vartype static: ~azure.ai.projects.dp1.models.VectorStoreStaticChunkingStrategyOptions
     """
 
     type: Literal[VectorStoreChunkingStrategyResponseType.STATIC] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore

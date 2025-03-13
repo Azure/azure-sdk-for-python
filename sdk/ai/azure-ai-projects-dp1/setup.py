@@ -12,8 +12,8 @@ import re
 from setuptools import setup, find_packages
 
 
-PACKAGE_NAME = "azure-ai-projects-1dp"
-PACKAGE_PPRINT_NAME = "Azure Ai Projects 1dp"
+PACKAGE_NAME = "azure-ai-projects-dp1"
+PACKAGE_PPRINT_NAME = "Azure Ai Projects Dp1"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace("-", "/")
@@ -61,7 +61,7 @@ setup(
     ),
     include_package_data=True,
     package_data={
-        "azure.ai.projects.1dp": ["py.typed"],
+        "azure.ai.projects.dp1": ["py.typed"],
     },
     install_requires=[
         "isodate>=0.6.1",

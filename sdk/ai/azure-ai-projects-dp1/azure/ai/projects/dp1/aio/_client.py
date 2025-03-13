@@ -7,15 +7,15 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, TYPE_CHECKING
+from typing import Any, Awaitable, TYPE_CHECKING
 from typing_extensions import Self
 
-from azure.core import PipelineClient
+from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
-from azure.core.rest import HttpRequest, HttpResponse
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 
+from .._serialization import Deserializer, Serializer
 from ._configuration import AIProjectClientConfiguration
-from ._serialization import Deserializer, Serializer
 from .operations import (
     AgentsOperations,
     ConnectionsOperations,
@@ -26,36 +26,36 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class AIProjectClient:
     """AIProjectClient.
 
     :ivar agents: AgentsOperations operations
-    :vartype agents: azure.ai.projects.1dp.operations.AgentsOperations
+    :vartype agents: azure.ai.projects.dp1.aio.operations.AgentsOperations
     :ivar connections: ConnectionsOperations operations
-    :vartype connections: azure.ai.projects.1dp.operations.ConnectionsOperations
+    :vartype connections: azure.ai.projects.dp1.aio.operations.ConnectionsOperations
     :ivar evaluations: EvaluationsOperations operations
-    :vartype evaluations: azure.ai.projects.1dp.operations.EvaluationsOperations
+    :vartype evaluations: azure.ai.projects.dp1.aio.operations.EvaluationsOperations
     :ivar datasets: DatasetsOperations operations
-    :vartype datasets: azure.ai.projects.1dp.operations.DatasetsOperations
+    :vartype datasets: azure.ai.projects.dp1.aio.operations.DatasetsOperations
     :ivar indexes: IndexesOperations operations
-    :vartype indexes: azure.ai.projects.1dp.operations.IndexesOperations
+    :vartype indexes: azure.ai.projects.dp1.aio.operations.IndexesOperations
     :ivar deployments: DeploymentsOperations operations
-    :vartype deployments: azure.ai.projects.1dp.operations.DeploymentsOperations
+    :vartype deployments: azure.ai.projects.dp1.aio.operations.DeploymentsOperations
     :param endpoint: Project endpoint in the form of: https://\\\\
      :code:`<aiservices-id>`.services.ai.azure.com/projects/\\\\ :code:`<project-name>`. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
      "2025-05-01-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
+    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         _endpoint = "{endpoint}"
         self._config = AIProjectClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         _policies = kwargs.pop("policies", None)
@@ -75,7 +75,7 @@ class AIProjectClient:
                 policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
                 self._config.http_logging_policy,
             ]
-        self._client: PipelineClient = PipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
+        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
@@ -87,14 +87,16 @@ class AIProjectClient:
         self.indexes = IndexesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.deployments = DeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
 
-    def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
+    def send_request(
+        self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
         >>> request = HttpRequest("GET", "https://www.example.org/")
         <HttpRequest [GET], url: 'https://www.example.org/'>
-        >>> response = client.send_request(request)
-        <HttpResponse: 200 OK>
+        >>> response = await client.send_request(request)
+        <AsyncHttpResponse: 200 OK>
 
         For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
@@ -102,7 +104,7 @@ class AIProjectClient:
         :type request: ~azure.core.rest.HttpRequest
         :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.rest.HttpResponse
+        :rtype: ~azure.core.rest.AsyncHttpResponse
         """
 
         request_copy = deepcopy(request)
@@ -113,12 +115,12 @@ class AIProjectClient:
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
-    def close(self) -> None:
-        self._client.close()
+    async def close(self) -> None:
+        await self._client.close()
 
-    def __enter__(self) -> Self:
-        self._client.__enter__()
+    async def __aenter__(self) -> Self:
+        await self._client.__aenter__()
         return self
 
-    def __exit__(self, *exc_details: Any) -> None:
-        self._client.__exit__(*exc_details)
+    async def __aexit__(self, *exc_details: Any) -> None:
+        await self._client.__aexit__(*exc_details)
