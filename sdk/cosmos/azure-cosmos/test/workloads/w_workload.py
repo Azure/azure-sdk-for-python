@@ -46,7 +46,7 @@ async def run_workload(client_id, client_logger):
                 await upsert_item_concurrently(cont, 5)
                 time.sleep(1)
             except Exception as e:
-                logger.info("Exception in application layer")
+                client_logger.info("Exception in application layer")
                 client_logger.error(e)
 
 
