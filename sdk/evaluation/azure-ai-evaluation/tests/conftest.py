@@ -197,9 +197,15 @@ def add_sanitizers(
         add_body_key_sanitizer(json_path="$..userTenantId", value=ZERO_GUID)
         add_body_key_sanitizer(json_path="$..upn", value="Sanitized")
 
-        # removes some stainless headers since they are causing some unnecessary mismatches in recordings
-        stainless_headers = ["x-stainless-retry-count", "x-stainless-read-timeout"]
-        add_remove_header_sanitizer(headers=",".join(stainless_headers))
+        # removes some headers since they are causing some unnecessary mismatches in recordings
+        headers_to_ignore = [
+            "ms-azure-ai-promptflow",
+            "ms-azure-ai-promptflow-called-from",
+            "x-ms-useragent",
+            "x-stainless-retry-count",
+            "x-stainless-read-timeout",
+        ]
+        add_remove_header_sanitizer(headers=",".join(headers_to_ignore))
 
     azure_workspace_triad_sanitizer()
     azureopenai_connection_sanitizer()
