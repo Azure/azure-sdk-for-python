@@ -26,6 +26,8 @@ class EvaluationMetrics:
     FICTIONAL_CHARACTERS = "fictional_characters"
     LOGOS_AND_BRANDS = "logos_and_brands"
     XPIA = "xpia"
+    CODE_VULNERABILITY = "code_vulnerability"
+    ISA = "inference_sensitive_attributes"
 
 
 class _InternalEvaluationMetrics:
