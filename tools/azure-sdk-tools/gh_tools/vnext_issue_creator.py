@@ -64,6 +64,7 @@ def get_build_info(build_link: str, check_type: CHECK_TYPE, service_directory: s
     """Get the build info from the build link."""
     build_id = os.getenv("BUILD_BUILDID")
     job_id = os.getenv("SYSTEM_JOBID")
+    pipeline_id = os.getenv("BUILD_DEFINITIONID")
     timeline_link =f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds/{build_id}/timeline?api-version=6.0"
 
     if not in_ci():
@@ -79,12 +80,13 @@ def get_build_info(build_link: str, check_type: CHECK_TYPE, service_directory: s
     # return response_json
     response_two = []
     add = False
+    next_id = "b33d1587-3539-5735-af43-e3e62f02ca4b"
     
     try:
 
         if response_json['records'][-1]['log']:
             log_id = response_json['records'][-1]['log']['id'] + 1
-            logs_link = f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds/{build_id}/logs?api-version=6.0"
+            logs_link = f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds/{build_id}&view=logs&j={job_id}&t={next_id}"
             # Get the build info from the build link
             logs_output = requests.get(logs_link, headers=AUTH_HEADERS)
             build_output = json.loads(logs_output.text)
