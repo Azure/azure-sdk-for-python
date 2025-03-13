@@ -243,9 +243,7 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
                 mf = self.MockExecuteFunctionTimeout(self.original_execute_function)
                 _retry_utility.ExecuteFunctionAsync = mf
                 try:
-                    doc = await container.read_item(item=created_document['id'],
-                                                                  partition_key=created_document['pk'])
-                    self.assertEqual(doc['id'], 'doc')
+                    await container.read_item(item=created_document['id'], partition_key=created_document['pk'])
                 except exceptions.CosmosHttpResponseError as err:
                     self.assertEqual(err.status_code, 408)
             finally:
@@ -459,7 +457,7 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
             finally:
                 _retry_utility.ExecuteFunctionAsync = self.original_execute_function
 
-    def _MockExecuteFunction(self, function, *args, **kwargs):
+    async def _MockExecuteFunction(self, function, *args, **kwargs):
         response = test_config.FakeResponse({HttpHeaders.RetryAfterInMilliseconds: self.retry_after_in_milliseconds})
         raise exceptions.CosmosHttpResponseError(
             status_code=StatusCodes.TOO_MANY_REQUESTS,
@@ -471,7 +469,7 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
             self.org_func = org_func
             self.counter = 0
 
-        def __call__(self, func, *args, **kwargs):
+        async def __call__(self, func, *args, **kwargs):
             raise exceptions.CosmosHttpResponseError(
                 status_code=408,
                 message="Timeout",
@@ -482,10 +480,10 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
             self.org_func = org_func
             self.counter = 0
 
-        def __call__(self, func, *args, **kwargs):
+        async def __call__(self, func, *args, **kwargs):
             self.counter = self.counter + 1
             if self.counter % 3 == 0:
-                return self.org_func(func, *args, **kwargs)
+                return await self.org_func(func, *args, **kwargs)
             else:
                 raise exceptions.CosmosHttpResponseError(
                     status_code=10054,
