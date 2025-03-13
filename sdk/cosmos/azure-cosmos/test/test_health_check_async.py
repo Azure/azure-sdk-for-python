@@ -57,7 +57,7 @@ class TestHealthCheckAsync:
 
     @pytest.mark.parametrize("preferred_location, use_write_global_endpoint, use_read_global_endpoint", health_check())
     async def test_health_check_success_startup_async(self, setup, preferred_location, use_write_global_endpoint, use_read_global_endpoint):
-
+        # checks at startup that we perform a health check on all the necessary endpoints
         self.original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
         self.original_getDatabaseAccountCheck = _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck
         mock_get_database_account_check = self.MockGetDatabaseAccountCheck()
@@ -89,10 +89,11 @@ class TestHealthCheckAsync:
 
     @pytest.mark.parametrize("preferred_location, use_write_global_endpoint, use_read_global_endpoint", health_check())
     async def test_health_check_failure_startup_async(self, setup, preferred_location, use_write_global_endpoint, use_read_global_endpoint):
-
+        # checks at startup that the health check will mark endpoints as unavailable if it gets an error
         self.original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
         _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = (
             self.MockGetDatabaseAccount(REGIONS, use_write_global_endpoint, use_read_global_endpoint))
+        # don't mock database account check because we want it to fail and the emulator doesn't have extra regions
         try:
             client = CosmosClient(self.host, self.masterKey, preferred_locations=preferred_location)
             # this will setup the location cache
@@ -117,6 +118,7 @@ class TestHealthCheckAsync:
         await client.close()
 
     async def test_health_check_background(self, setup):
+        # makes sure the health check is in the background and doesn't block by mocking it with a large sleep value
         self.original_health_check = _global_endpoint_manager_async._GlobalEndpointManager._endpoints_health_check
         _global_endpoint_manager_async._GlobalEndpointManager._endpoints_health_check = self.mock_health_check
         start_time = time.time()
@@ -131,6 +133,8 @@ class TestHealthCheckAsync:
         assert duration < 2, f"Test took too long: {duration} seconds"
 
     async def test_health_check_background_fail(self, setup):
+        # makes sure exceptions in the health check aren't bubbled up bubbled up but swallowed
+        #  by mocking health check with an error
         self.original_health_check = _global_endpoint_manager_async._GlobalEndpointManager._endpoints_health_check
         _global_endpoint_manager_async._GlobalEndpointManager._endpoints_health_check = self.mock_health_check_failure
         try:

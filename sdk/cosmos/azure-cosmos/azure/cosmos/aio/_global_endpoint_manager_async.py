@@ -142,6 +142,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         Validating if the endpoint is healthy else marking it as unavailable.
         """
         endpoints_attempted = set()
+        # get the database account from the default endpoint first
         database_account, attempted_endpoint = await self._GetDatabaseAccount(**kwargs)
         endpoints_attempted.add(attempted_endpoint)
         self.location_cache.perform_on_database_account_read(database_account)
