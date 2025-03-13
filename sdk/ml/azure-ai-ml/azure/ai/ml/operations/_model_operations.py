@@ -25,6 +25,9 @@ from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
+from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.operations._model_versions_operations import build_create_or_update_request_initial
+from azure.ai.ml._restclient.v2021_10_01_dataplanepreview._vendor import _convert_request
+
 from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
 from azure.ai.ml._restclient.v2023_08_01_preview.models import ListViewType, ModelVersion
 from azure.ai.ml._scope_dependent_operations import (
@@ -65,7 +68,16 @@ from azure.ai.ml.exceptions import (
     ValidationException,
 )
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
+from azure.core.polling import LROPoller, NoPolling
+from azure.mgmt.core.exceptions import ARMErrorFormat
+from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from ._operation_orchestrator import OperationOrchestrator
 
@@ -251,23 +263,35 @@ class ModelOperations(_ScopeDependentOperations):
             model_version_resource = model._to_rest_object()
             auto_increment_version = model._auto_increment_version
             try:
-                result = (
-                    self._model_versions_operation.begin_create_or_update(
-                        name=name,
-                        version=version,
-                        body=model_version_resource,
-                        registry_name=self._registry_name,
-                        **self._scope_kwargs,
-                    ).result()
-                    if self._registry_name
-                    else self._model_versions_operation.create_or_update(
+                result = None
+                if self._registry_name:
+                    cont_token = self._scope_kwargs.pop("continuation_token", None)  # type: Optional[str]
+                    # if continuation token is None and system_metadata attribute found
+                    # we need to send the system_metadata values in the request
+                    if cont_token is None and hasattr(model_version_resource.properties, "system_metadata"):
+                        result = self._begin_create_or_update_model_with_system_metadata(
+                            name=name,
+                            version=version,
+                            body=model_version_resource,
+                            registry_name=self._registry_name,
+                            **self._scope_kwargs,
+                        ).result()
+                    else:
+                        result = self._model_versions_operation.begin_create_or_update(
+                            name=name,
+                            version=version,
+                            body=model_version_resource,
+                            registry_name=self._registry_name,
+                            **self._scope_kwargs,
+                        ).result()
+                else:
+                    result = self._model_versions_operation.create_or_update(
                         name=name,
                         version=version,
                         body=model_version_resource,
                         workspace_name=self._workspace_name,
                         **self._scope_kwargs,
                     )
-                )
 
                 if not result and self._registry_name:
                     result = self._get(name=str(model.name), version=model.version)
@@ -294,6 +318,64 @@ class ModelOperations(_ScopeDependentOperations):
                 log_and_raise_error(ex)
             else:
                 raise ex
+
+    # this method is only used for model create/update with system metadata
+    def _begin_create_or_update_model_with_system_metadata(
+        self,
+        name,  # type: str
+        version,  # type: str
+        resource_group_name,  # type: str
+        registry_name,  # type: str
+        body,  # type: "ModelVersion"
+        **kwargs  # type: Any
+    ):
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
+        _json = self._model_versions_operation._serialize.body(body, "ModelVersionData")
+        _json['properties']['system_metadata'] = body.properties.system_metadata
+
+        request = build_create_or_update_request_initial(
+            name=name,
+            version=version,
+            subscription_id=self._model_versions_operation._config.subscription_id,
+            resource_group_name=resource_group_name,
+            registry_name=registry_name,
+            json=_json,
+            template_url=self._model_versions_operation._create_or_update_initial.metadata["url"],
+        )
+        request = _convert_request(request)
+        request.url = self._model_versions_operation._client.format_url(request.url)
+
+        pipeline_response = self._model_versions_operation._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["x-ms-async-operation-timeout"] = self._model_versions_operation._deserialize(
+            "duration", response.headers.get("x-ms-async-operation-timeout")
+        )
+        response_headers["Location"] = self._model_versions_operation._deserialize("str", response.headers.get("Location"))
+        response_headers["Retry-After"] = self._model_versions_operation._deserialize("int", response.headers.get("Retry-After"))
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        def get_long_running_output(pipeline_response):
+            if cls:
+                return cls(pipeline_response, None, {})
+
+        polling = kwargs.pop("polling", True)  # type: Union[bool, azure.core.polling.PollingMethod]
+        if polling is True:
+            lro_delay = kwargs.pop("polling_interval", self._model_versions_operation._config.polling_interval)
+            polling_method = ARMPolling(lro_delay, **kwargs)
+        elif polling is False:
+            polling_method = NoPolling()
+        else:
+            polling_method = polling
+
+        return LROPoller(self._model_versions_operation._client, pipeline_response, get_long_running_output, polling_method)
 
     def _get(self, name: str, version: Optional[str] = None) -> ModelVersion:  # name:latest
         if version:
