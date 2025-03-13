@@ -62,7 +62,7 @@ class BleuScoreEvaluator(EvaluatorBase):
         }
 
     @overload
-    def __call__(self, *, response: str, ground_truth: str):  # type: ignore
+    def __call__(self, *, response: str, ground_truth: str):
         """
         Evaluate the BLEU score between the response and the ground truth.
 
@@ -73,9 +73,10 @@ class BleuScoreEvaluator(EvaluatorBase):
         :return: The BLEU score.
         :rtype: Dict[str, float]
         """
+        ...
 
-    @override
-    def __call__(  # pylint: disable=docstring-missing-param,docstring-keyword-should-match-keyword-only,
+    @overload
+    def __call__(
         self,
         *args,
         **kwargs,
@@ -85,8 +86,20 @@ class BleuScoreEvaluator(EvaluatorBase):
 
         :param args: The arguments to pass to the evaluation function.
         :type args: Any
-        :keyword kwargs: The keyword arguments to pass to the evaluation function.
-        :type kwargs: Any
+        :rtype: Dict[str, float]"""
+        ...
+
+    @override
+    def __call__(
+        self,
+        *args,
+        **kwargs,
+    ):
+        """
+        Evaluate the BLEU score between the response and the ground truth.
+
+        :param args: The arguments to pass to the evaluation function.
+        :type args: Any
         :return: The BLEU score.
         :rtype: Dict[str, float]
         """

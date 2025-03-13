@@ -451,7 +451,7 @@ def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_proj
 def _apply_target_to_data(
     target: Callable,
     data: Union[str, os.PathLike],
-    batch_client: TClient,
+    batch_client: ProxyClient,
     initial_data: pd.DataFrame,
     evaluation_name: Optional[str] = None,
     **kwargs,

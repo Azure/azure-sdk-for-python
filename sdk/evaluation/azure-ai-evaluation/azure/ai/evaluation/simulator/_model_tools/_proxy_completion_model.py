@@ -93,7 +93,10 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
 
         super().__init__(name=name, **kwargs)
 
-    def format_request_data(  # pylint: disable=docstring-should-be-keyword
+    # NOTE: This format_request_data is not a safe override. One parent defines messages as Dict[str, str],
+    #       and an ancestor of that defines it as str with a different argument name. This fails the Liskov
+    #       Substitution Principle but suppressing this warning for now.
+    def format_request_data(  # type: ignore[override] # pylint: disable=docstring-should-be-keyword
         self, messages: List[Dict], **request_params
     ) -> Dict:
         """Format the request data to query the model with.
@@ -168,11 +171,11 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
             "User-Agent": USER_AGENT,
         }
 
-        headers = {
+        headers: Dict[str, str] = {
             "Content-Type": "application/json",
             "X-CV": f"{uuid.uuid4()}",
             "X-ModelType": self.model or "",
-            "x-ms-client-request-id": self.simulation_id,
+            "x-ms-client-request-id": self.simulation_id or "",
         }
         # add all additional headers
         headers.update(self.additional_headers)  # type: ignore[arg-type]

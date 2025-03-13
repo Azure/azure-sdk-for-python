@@ -115,7 +115,7 @@ class EvaluationSafetyEvaluationSamples(object):
         safety_evaluation_content_safety_scenario_results = asyncio.run(safety_evaluation_content_safety_scenario(
             evaluators=[_SafetyEvaluator.CONTENT_SAFETY],
             target=test_target,
-            scenario=AdversarialScenario.ADVERSARIAL_SUMMARIZATION,,
+            scenario=AdversarialScenario.ADVERSARIAL_SUMMARIZATION,
             num_rows=3,
             output_path="evaluation_outputs_safety_scenario.jsonl",
         ))

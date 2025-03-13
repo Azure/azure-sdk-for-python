@@ -106,7 +106,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
     # This needs to be overridden just to change the function header into something more informative,
     # and to be able to add a more specific docstring. The actual function contents should just be
     # super().__call__(<inputs>)
-    def __call__(  # pylint: disable=docstring-missing-param,docstring-keyword-should-match-keyword-only
+    def __call__(
         self,
         *args,
         **kwargs,
@@ -116,8 +116,6 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         The actual behavior of this function shouldn't change beyond adding more inputs to the
         async_run_allowing_running_loop call.
 
-        :keyword kwargs: A dictionary that contains inputs needed to evaluate a conversation.
-        :type kwargs: Dict
         :return: The evaluation result
         :rtype: Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]
         """

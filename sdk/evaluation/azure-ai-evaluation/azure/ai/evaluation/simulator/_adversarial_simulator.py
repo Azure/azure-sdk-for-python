@@ -193,7 +193,6 @@ class AdversarialSimulator:
         concurrent_async_task = min(concurrent_async_task, 1000)
         semaphore = asyncio.Semaphore(concurrent_async_task)
         sim_results = []
-        tasks = []
         total_tasks = sum(len(t.template_parameters) for t in templates)
         if max_simulation_results > total_tasks:
             logger.warning(
@@ -222,7 +221,7 @@ class AdversarialSimulator:
             random.shuffle(templates)
 
         # Prepare task parameters based on scenario - but use a single append call for all scenarios
-        tasks = []
+        tasks: List[asyncio.Task[List[Dict]]] = []
         template_parameter_pairs = []
 
         if scenario == AdversarialScenario.ADVERSARIAL_CONVERSATION:

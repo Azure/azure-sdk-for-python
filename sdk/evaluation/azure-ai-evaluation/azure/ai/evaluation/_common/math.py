@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import math
-from typing import List, Callable, Any
+from typing import List, Callable, Any, Sequence
 
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
@@ -32,7 +32,7 @@ def list_mean(lst: List[float]) -> float:
     return list_sum(lst) / len(lst)
 
 
-def list_mean_nan_safe(lst: List[float]) -> float:
+def list_mean_nan_safe(lst: Sequence[float]) -> float:
     """Given a list of floats, remove all nan or None values, then calculate the mean of the remaining values.
 
     :param lst: A list of floats.

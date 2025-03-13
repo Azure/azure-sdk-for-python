@@ -11,7 +11,7 @@ import os
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Awaitable, Callable, Dict, List, Optional, Union
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.math import list_mean_nan_safe
 from azure.ai.evaluation._constants import CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT, DefaultOpenEncoding
@@ -99,13 +99,12 @@ class _SafetyEvaluation:
                             ~azure.ai.evaluation.OpenAIModelConfiguration]
         :raises ValueError: If the model_config does not contain the required keys or any value is None.
         """
+        self.model_config: Optional[Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]] = None
         if model_config:
             self._validate_model_config(model_config)
             self.model_config = model_config
-        else:
-            self.model_config = None
         validate_azure_ai_project(azure_ai_project)
-        self.azure_ai_project = AzureAIProject(**azure_ai_project)
+        self.azure_ai_project = AzureAIProject(**azure_ai_project)  # type: ignore[typeddict-item]
         self.credential = credential
         self.logger = _setup_logger()
 
@@ -223,6 +222,7 @@ class _SafetyEvaluation:
         simulator_outputs = None
         jailbreak_outputs = None
         simulator_data_paths = {}
+        simulator: Callable[..., Awaitable]
 
         # if IndirectAttack, run IndirectAttackSimulator
         if adversarial_scenario == AdversarialScenarioJailbreak.ADVERSARIAL_INDIRECT_JAILBREAK:
@@ -352,7 +352,7 @@ class _SafetyEvaluation:
 
         return simulator_data_paths
 
-    def _get_scenario(
+    def _get_scenario(  # pylint: disable=too-many-return-statements
         self,
         evaluators: List[_SafetyEvaluator],
         num_turns: int = 3,
@@ -402,6 +402,7 @@ class _SafetyEvaluation:
                 category=ErrorCategory.INVALID_VALUE,
                 blame=ErrorBlame.USER_ERROR,
             )
+        return None
 
     def _get_evaluators(
         self,
@@ -415,7 +416,7 @@ class _SafetyEvaluation:
         :return: A dictionary of evaluators.
         :rtype: Dict[str, Callable]
         """
-        evaluators_dict = {}
+        evaluators_dict: Dict[str, Callable] = {}
         # Default to content safety when no evaluators are specified
         if len(evaluators) == 0:
             evaluators_dict["content_safety"] = _content_safety.ContentSafetyEvaluator(
