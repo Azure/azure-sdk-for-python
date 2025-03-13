@@ -97,6 +97,20 @@ extends:
                     GH_TOKEN: $(azuresdk-github-pat)
                     SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 
+                - task: PythonScript@0
+                  displayName: 'Get vNext Issues'
+                  continueOnError: true
+                  inputs:
+                    scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
+                    arguments: >-
+                      ${{ parameters.BuildTargetingString }}
+                      --service="${{ parameters.ServiceDirectory }}"
+                      --toxenv="vnext"
+                      --disablecov
+                  env:
+                    GH_TOKEN: $(azuresdk-github-pat)
+                    SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+
                 - task: UsePythonVersion@0
                   displayName: 'Use Python 3.13 for docs generation'
                   inputs:
