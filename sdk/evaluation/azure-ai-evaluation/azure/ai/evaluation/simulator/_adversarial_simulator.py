@@ -227,7 +227,7 @@ class AdversarialSimulator:
 
         if scenario == AdversarialScenario.ADVERSARIAL_CONVERSATION:
             # For ADVERSARIAL_CONVERSATION, flatten the parameters
-            for i, template in enumerate(templates):
+            for template in templates:
                 if not template.template_parameters:
                     continue
                 for parameter in template.template_parameters:

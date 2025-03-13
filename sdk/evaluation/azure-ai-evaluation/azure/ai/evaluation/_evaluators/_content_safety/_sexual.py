@@ -105,7 +105,7 @@ class SexualEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
         """
 
     @override
-    def __call__(  # pylint: disable=docstring-missing-param
+    def __call__(  # pylint: disable=docstring-missing-param, docstring-keyword-should-match-keyword-only
         self,
         *args,
         **kwargs,

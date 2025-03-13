@@ -106,7 +106,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
     # This needs to be overridden just to change the function header into something more informative,
     # and to be able to add a more specific docstring. The actual function contents should just be
     # super().__call__(<inputs>)
-    def __call__(  # pylint: disable=docstring-missing-param
+    def __call__(  # pylint: disable=docstring-missing-param,docstring-keyword-should-match-keyword-only
         self,
         *args,
         **kwargs,
@@ -276,7 +276,9 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
 
         return multi_modal_converter
 
-    def _convert_kwargs_to_eval_input(self, **kwargs) -> Union[List[Dict], List[DerivedEvalInput]]:
+    def _convert_kwargs_to_eval_input(  # pylint: disable=docstring-keyword-should-match-keyword-only
+        self, **kwargs
+    ) -> Union[List[Dict], List[DerivedEvalInput]]:
         """Convert an arbitrary input into a list of inputs for evaluators.
         It is assumed that evaluators generally make use of their inputs in one of two ways.
         Either they receive a collection of keyname inputs that are all single values
@@ -380,7 +382,9 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         aggregated["evaluation_per_turn"] = evaluation_per_turn
         return aggregated
 
-    async def _real_call(self, **kwargs) -> Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]:
+    async def _real_call(  # pylint: disable=docstring-keyword-should-match-keyword-only
+        self, **kwargs
+    ) -> Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]:
         """The asynchronous call where real end-to-end evaluation logic is performed.
 
         :keyword kwargs: The inputs to evaluate.

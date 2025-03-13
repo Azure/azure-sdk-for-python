@@ -57,7 +57,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         self._credential = credential
 
     @override
-    def __call__(  # pylint: disable=docstring-missing-param
+    def __call__(  # pylint: disable=docstring-missing-param,docstring-keyword-should-match-keyword-only
         self,
         *args,
         **kwargs,
@@ -97,10 +97,10 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
     async def _evaluate_conversation(self, conversation: Dict) -> Dict[str, T]:
         """
         Evaluates content according to this evaluator's metric.
-        :keyword conversation: The conversation contains list of messages to be evaluated.
-            Each message should have "role" and "content" keys.
 
-        :param conversation: The conversation to evaluate.
+        :param conversation: The conversation to evaluate. The conversation should contain a "messages" key
+                             with a list of messages to evaluate. Each message should have "role" and "content"
+                             keys.
         :type conversation: ~azure.ai.evaluation.Conversation
         :return: The evaluation score computation based on the Content Safety metric (self.metric).
         :rtype: Dict[str, Union[float, str]]

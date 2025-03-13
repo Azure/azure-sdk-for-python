@@ -2,15 +2,19 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from enum import Enum
-import os
+# pylint: disable=logging-fstring-interpolation
+
 import inspect
+import json
 import logging
+import os
 from datetime import datetime
+from enum import Enum
+from pathlib import Path
+from typing import Any, Callable, Dict, List, Optional, Union
 from azure.ai.evaluation._common._experimental import experimental
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 from azure.ai.evaluation._common.math import list_mean_nan_safe
-from azure.ai.evaluation._constants import CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT
+from azure.ai.evaluation._constants import CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT, DefaultOpenEncoding
 from azure.ai.evaluation._evaluators import (
     _content_safety,
     _protected_material,
@@ -36,10 +40,6 @@ from azure.ai.evaluation.simulator._utils import JsonLineList
 from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from azure.core.credentials import TokenCredential
-import json
-from pathlib import Path
-
-logger = logging.getLogger(__name__)
 
 
 def _setup_logger():
@@ -88,12 +88,15 @@ class _SafetyEvaluation:
         """
         Initializes a SafetyEvaluation object.
 
-        :param azure_ai_project: A dictionary defining the Azure AI project. Required keys are 'subscription_id', 'resource_group_name', and 'project_name'.
+        :param azure_ai_project: A dictionary defining the Azure AI project. Required keys are 'subscription_id',
+                                 'resource_group_name', and 'project_name'.
         :type azure_ai_project: Dict[str, str]
         :param credential: The credential for connecting to Azure AI project.
         :type credential: ~azure.core.credentials.TokenCredential
-        :param model_config: A dictionary defining the configuration for the model. Acceptable types are AzureOpenAIModelConfiguration and OpenAIModelConfiguration.
-        :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration, ~azure.ai.evaluation.OpenAIModelConfiguration]
+        :param model_config: A dictionary defining the configuration for the model. Acceptable types are
+                            AzureOpenAIModelConfiguration and OpenAIModelConfiguration.
+        :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
+                            ~azure.ai.evaluation.OpenAIModelConfiguration]
         :raises ValueError: If the model_config does not contain the required keys or any value is None.
         """
         if model_config:
@@ -141,13 +144,13 @@ class _SafetyEvaluation:
         if none_keys:
             raise ValueError(f"The following keys in model_config must not be None: {', '.join(none_keys)}")
 
-    async def _simulate(
+    async def _simulate(  # pylint: disable=too-many-statements
         self,
         target: Callable,
         max_conversation_turns: int = 1,
         max_simulation_results: int = 3,
-        conversation_turns: List[List[Union[str, Dict[str, Any]]]] = [],
-        tasks: List[str] = [],
+        conversation_turns: Optional[List[List[Union[str, Dict[str, Any]]]]] = None,
+        tasks: Optional[List[str]] = None,
         adversarial_scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]] = None,
         source_text: Optional[str] = None,
         direct_attack: bool = False,
@@ -163,15 +166,22 @@ class _SafetyEvaluation:
         :type max_simulation_results: int
         :param conversation_turns: Predefined conversation turns to simulate.
         :type conversation_turns: List[List[Union[str, Dict[str, Any]]]]
-        :param tasks A list of user tasks, each represented as a list of strings. Text should be relevant for the tasks and facilitate the simulation. One example is to use text to provide context for the tasks.
+        :param tasks: A list of user tasks, each represented as a list of strings. Text should be relevant
+                      for the tasks and facilitate the simulation. One example is to use text to provide
+                      context for the tasks.
         :type tasks: List[str] = [],
-        :param adversarial_scenario: The adversarial scenario to simulate. If None, the non-adversarial Simulator is used.
+        :param adversarial_scenario: The adversarial scenario to simulate. If None, the non-adversarial
+                                     Simulator is used.
         :type adversarial_scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]]
         :param source_text: The source text to use as grounding document in the simulation.
         :type source_text: Optional[str]
         :param direct_attack: If True, the DirectAttackSimulator will be run.
         :type direct_attack: bool
+        :return: The paths to the data files generated by the Simulator.
+        :rtype: Dict[str, str]
         """
+        conversation_turns = conversation_turns if conversation_turns else []
+        tasks = tasks if tasks else []
 
         ## Define callback
         async def callback(
@@ -190,7 +200,7 @@ class _SafetyEvaluation:
                     response, latest_context = target(query=application_input)
                 else:
                     response = target(query=application_input)
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-except
                 response = f"Something went wrong {e!s}"
 
             ## We format the response to follow the openAI chat protocol format
@@ -217,7 +227,9 @@ class _SafetyEvaluation:
         # if IndirectAttack, run IndirectAttackSimulator
         if adversarial_scenario == AdversarialScenarioJailbreak.ADVERSARIAL_INDIRECT_JAILBREAK:
             self.logger.info(
-                f"Running IndirectAttackSimulator with inputs: adversarial_scenario={adversarial_scenario}, max_conversation_turns={max_conversation_turns}, max_simulation_results={max_simulation_results}, conversation_turns={conversation_turns}, text={source_text}"
+                f"Running IndirectAttackSimulator with inputs: adversarial_scenario={adversarial_scenario}, "
+                f"max_conversation_turns={max_conversation_turns}, max_simulation_results={max_simulation_results}, "
+                f"conversation_turns={conversation_turns}, text={source_text}"
             )
             simulator = IndirectAttackSimulator(azure_ai_project=self.azure_ai_project, credential=self.credential)
             simulator_outputs = await simulator(
@@ -233,7 +245,8 @@ class _SafetyEvaluation:
         # if DirectAttack, run DirectAttackSimulator
         elif direct_attack:
             self.logger.info(
-                f"Running DirectAttackSimulator with inputs: adversarial_scenario={adversarial_scenario}, max_conversation_turns={max_conversation_turns}, max_simulation_results={max_simulation_results}"
+                f"Running DirectAttackSimulator with inputs: adversarial_scenario={adversarial_scenario}, "
+                f"max_conversation_turns={max_conversation_turns}, max_simulation_results={max_simulation_results}"
             )
             simulator = DirectAttackSimulator(azure_ai_project=self.azure_ai_project, credential=self.credential)
             simulator_outputs = await simulator(
@@ -248,7 +261,9 @@ class _SafetyEvaluation:
         ## If adversarial_scenario is not provided, run Simulator
         elif adversarial_scenario is None and self.model_config:
             self.logger.info(
-                f"Running Simulator with inputs: adversarial_scenario={adversarial_scenario}, max_conversation_turns={max_conversation_turns}, max_simulation_results={max_simulation_results}, conversation_turns={conversation_turns}, source_text={source_text}"
+                f"Running Simulator with inputs: adversarial_scenario={adversarial_scenario}, "
+                f"max_conversation_turns={max_conversation_turns}, max_simulation_results={max_simulation_results}, "
+                f"conversation_turns={conversation_turns}, source_text={source_text}"
             )
             simulator = Simulator(self.model_config)
             simulator_outputs = await simulator(
@@ -263,7 +278,9 @@ class _SafetyEvaluation:
         ## Run AdversarialSimulator
         elif adversarial_scenario:
             self.logger.info(
-                f"Running AdversarialSimulator with inputs: adversarial_scenario={adversarial_scenario}, max_conversation_turns={max_conversation_turns}, max_simulation_results={max_simulation_results}, conversation_turns={conversation_turns}, source_text={source_text}"
+                f"Running AdversarialSimulator with inputs: adversarial_scenario={adversarial_scenario}, "
+                f"max_conversation_turns={max_conversation_turns}, max_simulation_results={max_simulation_results}, "
+                f"conversation_turns={conversation_turns}, source_text={source_text}"
             )
             simulator = AdversarialSimulator(azure_ai_project=self.azure_ai_project, credential=self.credential)
             simulator_outputs = await simulator(
@@ -290,10 +307,10 @@ class _SafetyEvaluation:
         ## Write outputs to file according to scenario
         if direct_attack and jailbreak_outputs:
             jailbreak_data_path = "jailbreak_simulator_outputs.jsonl"
-            with Path(jailbreak_data_path).open("w") as f:
+            with Path(jailbreak_data_path).open("w", encoding=DefaultOpenEncoding.READ) as f:
                 f.writelines(jailbreak_outputs.to_eval_qr_json_lines())
             simulator_data_paths["jailbreak"] = jailbreak_data_path
-        with Path(data_path).open("w") as f:
+        with Path(data_path).open("w", encoding=DefaultOpenEncoding.READ) as f:
             if not adversarial_scenario or adversarial_scenario != AdversarialScenario.ADVERSARIAL_CONVERSATION:
                 if source_text or self._check_target_returns_context(target):
                     eval_input_data_json_lines = ""
@@ -350,6 +367,8 @@ class _SafetyEvaluation:
         :type num_turns: int
         :param scenario: The adversarial scenario to simulate.
         :type scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]]
+        :return: The scenario.
+        :rtype: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak
         """
         if len(evaluators) == 0:
             return AdversarialScenario.ADVERSARIAL_QA
@@ -393,6 +412,8 @@ class _SafetyEvaluation:
 
         :param evaluators: A list of SafetyEvaluator.
         :type evaluators: List[SafetyEvaluator]
+        :return: A dictionary of evaluators.
+        :rtype: Dict[str, Callable]
         """
         evaluators_dict = {}
         # Default to content safety when no evaluators are specified
@@ -459,6 +480,8 @@ class _SafetyEvaluation:
 
         :param target: The target function to check.
         :type target: Callable
+        :return: True if the target returns context, False otherwise.
+        :rtype: bool
         """
         sig = inspect.signature(target)
         ret_type = sig.return_annotation
@@ -493,7 +516,9 @@ class _SafetyEvaluation:
             self._check_target_returns_context(target) or source_text
         ):
             self.logger.error(
-                f"GroundednessEvaluator requires either source_text or a target function that returns context. Source text: {source_text}, _check_target_returns_context: {self._check_target_returns_context(target)}"
+                f"GroundednessEvaluator requires either source_text or a target function that returns context. "
+                f"Source text: {source_text}, _check_target_returns_context: "
+                f"{self._check_target_returns_context(target)}"
             )
             msg = "GroundednessEvaluator requires either source_text or a target function that returns context"
             raise EvaluationException(
@@ -558,9 +583,7 @@ class _SafetyEvaluation:
         violence_defects = []
         sexual_defects = []
         self_harm_defects = []
-        for i, row in enumerate(
-            zip(evaluation_result_dict["jailbreak"]["rows"], evaluation_result_dict["regular"]["rows"])
-        ):
+        for row in zip(evaluation_result_dict["jailbreak"]["rows"], evaluation_result_dict["regular"]["rows"]):
             hate_unfairness_defects.append(
                 1
                 if (
@@ -620,13 +643,13 @@ class _SafetyEvaluation:
     async def __call__(
         self,
         target: Callable,
-        evaluators: List[_SafetyEvaluator] = [],
+        evaluators: Optional[List[_SafetyEvaluator]] = None,
         evaluation_name: Optional[str] = None,
         num_turns: int = 1,
         num_rows: int = 5,
         scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]] = None,
-        conversation_turns: List[List[Union[str, Dict[str, Any]]]] = [],
-        tasks: List[str] = [],
+        conversation_turns: Optional[List[List[Union[str, Dict[str, Any]]]]] = None,
+        tasks: Optional[List[str]] = None,
         source_text: Optional[str] = None,
         data_path: Optional[Union[str, os.PathLike]] = None,
         jailbreak_data_path: Optional[Union[str, os.PathLike]] = None,
@@ -638,7 +661,7 @@ class _SafetyEvaluation:
         :param target: The target function to call during the evaluation.
         :type target: Callable
         :param evaluators: A list of SafetyEvaluator.
-        :type evaluators: List[_SafetyEvaluator]
+        :type evaluators: Optional[List[_SafetyEvaluator]]
         :param evaluation_name: The display name name of the evaluation.
         :type evaluation_name: Optional[str]
         :param num_turns: The number of turns in a between the target application and the caller.
@@ -648,21 +671,33 @@ class _SafetyEvaluation:
         :param scenario: The adversarial scenario to simulate.
         :type scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]]
         :param conversation_turns: Predefined conversation turns to simulate.
-        :type conversation_turns: List[List[Union[str, Dict[str, Any]]]]
-        :param tasks A list of user tasks, each represented as a list of strings. Text should be relevant for the tasks and facilitate the simulation. One example is to use text to provide context for the tasks.
-        :type tasks: List[str] = [],
+        :type conversation_turns: Optional[List[List[Union[str, Dict[str, Any]]]]]
+        :param tasks: A list of user tasks, each represented as a list of strings. Text should be relevant
+                      for the tasks and facilitate the simulation. One example is to use text to provide
+                      context for the tasks.
+        :type tasks: Optional[List[str]],
         :param source_text: The source text to use as grounding document in the evaluation.
         :type source_text: Optional[str]
         :param data_path: The path to the data file generated by the Simulator. If None, the Simulator will be run.
         :type data_path: Optional[Union[str, os.PathLike]]
-        :param jailbreak_data_path: The path to the data file generated by the Simulator for jailbreak scenario. If None, the DirectAttackSimulator will be run.
+        :param jailbreak_data_path: The path to the data file generated by the Simulator for jailbreak scenario.
+                                    If None, the DirectAttackSimulator will be run.
         :type jailbreak_data_path: Optional[Union[str, os.PathLike]]
         :param output_path: The path to write the evaluation results to if set.
         :type output_path: Optional[Union[str, os.PathLike]]
+        :return: The evaluation results.
+        :rtype: Union[EvaluationResult, Dict[str, EvaluationResult]]
         """
+        evaluators = evaluators if evaluators else []
+        conversation_turns = conversation_turns if conversation_turns else []
+        tasks = tasks if tasks else []
+
         ## Log inputs
         self.logger.info(
-            f"User inputs: evaluators{evaluators}, evaluation_name={evaluation_name}, num_turns={num_turns}, num_rows={num_rows}, conversation_turns={conversation_turns}, tasks={tasks}, source_text={source_text}, data_path={data_path}, jailbreak_data_path={jailbreak_data_path}, output_path={output_path}"
+            f"User inputs: evaluators{evaluators}, evaluation_name={evaluation_name}, num_turns={num_turns}, "
+            f"num_rows={num_rows}, conversation_turns={conversation_turns}, tasks={tasks}, "
+            f"source_text={source_text}, data_path={data_path}, jailbreak_data_path={jailbreak_data_path}, "
+            f"output_path={output_path}"
         )
 
         ## Validate arguments
@@ -682,7 +717,7 @@ class _SafetyEvaluation:
 
         ## If `data_path` is not provided, run simulator
         if data_path is None and jailbreak_data_path is None:
-            self.logger.info(f"No data_path provided. Running simulator.")
+            self.logger.info("No data_path provided. Running simulator.")
             data_paths = await self._simulate(
                 target=target,
                 adversarial_scenario=adversarial_scenario,
@@ -700,7 +735,9 @@ class _SafetyEvaluation:
         evaluation_results = {}
         if _SafetyEvaluator.DIRECT_ATTACK in evaluators and jailbreak_data_path:
             self.logger.info(
-                f"Running evaluation for jailbreak data with inputs jailbreak_data_path={jailbreak_data_path}, evaluators={evaluators_dict}, azure_ai_project={self.azure_ai_project}, output_path=jailbreak_{output_path}, credential={self.credential}"
+                f"Running evaluation for jailbreak data with inputs jailbreak_data_path={jailbreak_data_path}, "
+                f"evaluators={evaluators_dict}, azure_ai_project={self.azure_ai_project}, "
+                f"output_path=jailbreak_{output_path}, credential={self.credential}"
             )
             evaluate_outputs_jailbreak = _evaluate.evaluate(
                 data=jailbreak_data_path,
@@ -713,7 +750,8 @@ class _SafetyEvaluation:
 
         if data_path:
             self.logger.info(
-                f"Running evaluation for data with inputs data_path={data_path}, evaluators={evaluators_dict}, azure_ai_project={self.azure_ai_project}, output_path={output_path}"
+                f"Running evaluation for data with inputs data_path={data_path}, evaluators={evaluators_dict}, "
+                f"azure_ai_project={self.azure_ai_project}, output_path={output_path}"
             )
             evaluate_outputs = _evaluate.evaluate(
                 data=data_path,
@@ -727,11 +765,11 @@ class _SafetyEvaluation:
                 return self._calculate_defect_rate(evaluation_results)
 
             return evaluate_outputs
-        else:
-            raise EvaluationException(
-                message="No data path found after simulation",
-                internal_message="No data path found after simulation",
-                target=ErrorTarget.UNKNOWN,
-                category=ErrorCategory.MISSING_FIELD,
-                blame=ErrorBlame.USER_ERROR,
-            )
+
+        raise EvaluationException(
+            message="No data path found after simulation",
+            internal_message="No data path found after simulation",
+            target=ErrorTarget.UNKNOWN,
+            category=ErrorCategory.MISSING_FIELD,
+            blame=ErrorBlame.USER_ERROR,
+        )

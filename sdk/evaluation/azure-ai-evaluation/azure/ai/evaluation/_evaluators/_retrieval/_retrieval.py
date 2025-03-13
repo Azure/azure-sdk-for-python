@@ -95,7 +95,9 @@ class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         """
 
     @override
-    def __call__(self, *args, **kwargs):  # pylint: disable=docstring-missing-param
+    def __call__(  # pylint: disable=docstring-missing-param, docstring-keyword-should-match-keyword-only
+        self, *args, **kwargs
+    ):
         """Evaluates retrieval score chat scenario. Accepts either a query and context for a single evaluation,
         or a conversation for a multi-turn evaluation. If the conversation has more than one turn,
         the evaluator will aggregate the results of each turn.

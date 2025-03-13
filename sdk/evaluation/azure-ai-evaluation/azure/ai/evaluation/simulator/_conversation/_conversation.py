@@ -87,6 +87,8 @@ async def simulate_conversation(
     :paramtype bots: List[ConversationBot]
     :keyword session: The session to use for making API calls.
     :paramtype session: AsyncHttpPipeline
+    :keyword language: The language to use for the conversation.
+    :paramtype language: SupportedLanguages
     :keyword stopping_criteria: A callable that determines when the conversation should stop.
     :paramtype stopping_criteria: Callable[[str], bool]
     :keyword turn_limit: The maximum number of turns in the conversation. Defaults to 10.

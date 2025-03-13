@@ -93,14 +93,16 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
 
         super().__init__(name=name, **kwargs)
 
-    def format_request_data(self, messages: List[Dict], **request_params) -> Dict:  # type: ignore[override]
+    def format_request_data(  # pylint: disable=docstring-should-be-keyword
+        self, messages: List[Dict], **request_params
+    ) -> Dict:
         """Format the request data to query the model with.
 
         :param messages: List of messages to query the model with.
             Expected format: [{"role": "user", "content": "Hello!"}, ...]
         :type messages: List[Dict]
-        :keyword request_params: Additional parameters to pass to the model.
-        :paramtype request_params: Dict
+        :param request_params: Additional parameters to pass to the model.
+        :type request_params: Dict
         :return: The formatted request data.
         :rtype: Dict
         """
@@ -108,11 +110,11 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
         request_data.update(request_params)
         return request_data
 
-    async def get_conversation_completion(
+    async def get_conversation_completion(  # pylint: disable=unused-argument,docstring-should-be-keyword
         self,
         messages: List[Dict],
         session: AsyncHttpPipeline,
-        role: str = "assistant",  # pylint: disable=unused-argument
+        role: str = "assistant",
         **request_params,
     ) -> dict:
         """
@@ -126,8 +128,8 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
         :param role: The role of the user sending the message. This parameter is not used in this method;
             however, it must be included to match the method signature of the parent class. Defaults to "assistant".
         :type role: str
-        :keyword request_params: Additional parameters to pass to the model.
-        :paramtype request_params: Dict
+        :param request_params: Additional parameters to pass to the model.
+        :type request_params: Dict
         :return: A dictionary representing the completion of the conversation query.
         :rtype: Dict
         """

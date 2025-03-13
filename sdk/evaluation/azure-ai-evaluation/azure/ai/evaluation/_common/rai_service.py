@@ -317,7 +317,7 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
     return _parse_content_harm_response(batch_response, metric_name, metric_display_name)
 
 
-def _parse_content_harm_response(
+def _parse_content_harm_response(  # pylint: disable=too-many-branches,too-many-statements
     batch_response: List[Dict], metric_name: str, metric_display_name: Optional[str] = None
 ) -> Dict[str, Union[str, float]]:
     """Parse the annotation response from Responsible AI service for a content harm evaluation.

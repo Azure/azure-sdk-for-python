@@ -57,8 +57,8 @@ class QAEvaluator(MultiEvaluatorBase[Union[str, float]]):
         ]
         super().__init__(evaluators=evaluators, **kwargs)
 
-    @overload  # type: ignore
-    def __call__(self, *, query: str, response: str, context: str, ground_truth: str):
+    @overload
+    def __call__(self, *, query: str, response: str, context: str, ground_truth: str):  # type: ignore[override]
         """
         Evaluates question-answering scenario.
 
@@ -75,7 +75,7 @@ class QAEvaluator(MultiEvaluatorBase[Union[str, float]]):
         """
 
     @override
-    def __call__(  # pylint: disable=docstring-missing-param
+    def __call__(  # pylint: disable=docstring-missing-param, docstring-keyword-should-match-keyword-only
         self,
         *args,
         **kwargs,

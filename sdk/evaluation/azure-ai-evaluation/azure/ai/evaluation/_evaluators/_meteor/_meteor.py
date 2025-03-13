@@ -79,8 +79,8 @@ class MeteorScoreEvaluator(EvaluatorBase):
             "meteor_score": score,
         }
 
-    @overload  # type: ignore
-    def __call__(self, *, ground_truth: str, response: str) -> Dict[str, float]:
+    @overload
+    def __call__(self, *, ground_truth: str, response: str) -> Dict[str, float]:  # type: ignore[override]
         """
         Evaluate the METEOR score between the response and the ground truth.
 
@@ -93,7 +93,7 @@ class MeteorScoreEvaluator(EvaluatorBase):
         """
 
     @override
-    def __call__(  # pylint: disable=docstring-missing-param
+    def __call__(  # pylint: disable=docstring-missing-param, docstring-keyword-should-match-keyword-only
         self,
         *args,
         **kwargs,
