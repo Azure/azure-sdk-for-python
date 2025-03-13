@@ -33,12 +33,10 @@ class FakeResponse:
     def __init__(self, headers):
         self.headers = headers
         self.reason = "foo"
-        self.status_code = "bar"
+        self.status_code = MOCK_EXECUTE_STATUS_CODE
 
 
 def mock_execute_func():
-       if MOCK_EXECUTE_STATUS_CODE == 0:
-           return
-       else:
+       if MOCK_EXECUTE_STATUS_CODE != 0:
            mf = MockExecuteServiceRequestException(_retry_utility_async.ExecuteFunctionAsync)
            _retry_utility_async.ExecuteFunctionAsync = mf
