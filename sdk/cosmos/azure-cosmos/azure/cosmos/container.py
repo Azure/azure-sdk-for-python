@@ -843,9 +843,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword bool enable_automatic_id_generation: Enable automatic id generation if no id present.
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
-            has changed, and act according to the condition specified by the `match_condition` parameter.
-        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
@@ -858,6 +855,17 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: A CosmosDict representing the new item. The dict will be empty if `no_response` is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
+        etag = kwargs.pop('etag', None)
+        if etag is not None:
+            warnings.warn(
+                "The 'etag' flag does not apply to this method and will be removed in the future.",
+                UserWarning)
+        match_condition = kwargs.pop('match_condition', None)
+        if match_condition is not None:
+            warnings.warn(
+                "The 'match_condition' flag does not apply to this method and will be removed in the future.",
+                UserWarning)
+
         if pre_trigger_include is not None:
             kwargs['pre_trigger_include'] = pre_trigger_include
         if post_trigger_include is not None:
@@ -993,6 +1001,17 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :raises ~azure.cosmos.exceptions.CosmosBatchOperationError: A transactional batch operation failed in the batch.
         :rtype: ~azure.cosmos.CosmosList[Dict[str, Any]]
         """
+        etag = kwargs.pop('etag', None)
+        if etag is not None:
+            warnings.warn(
+                "The 'etag' flag does not apply to this method and will be removed in the future.",
+                UserWarning)
+        match_condition = kwargs.pop('match_condition', None)
+        if match_condition is not None:
+            warnings.warn(
+                "The 'match_condition' flag does not apply to this method and will be removed in the future.",
+                UserWarning)
+
         if pre_trigger_include is not None:
             kwargs['pre_trigger_include'] = pre_trigger_include
         if post_trigger_include is not None:
@@ -1304,8 +1323,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         pre_trigger_include: Optional[str] = None,
         post_trigger_include: Optional[str] = None,
         session_token: Optional[str] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
         """The delete by partition key feature is an asynchronous, background operation that allows you to delete all
@@ -1319,12 +1336,20 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
         :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
-            has changed, and act according to the condition specified by the `match_condition` parameter.
-        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :rtype: None
         """
+        etag = kwargs.pop('etag', None)
+        if etag is not None:
+            warnings.warn(
+                "The 'etag' flag does not apply to this method and will be removed in the future.",
+                UserWarning)
+        match_condition = kwargs.pop('match_condition', None)
+        if match_condition is not None:
+            warnings.warn(
+                "The 'match_condition' flag does not apply to this method and will be removed in the future.",
+                UserWarning)
+
         if pre_trigger_include is not None:
             kwargs['pre_trigger_include'] = pre_trigger_include
         if post_trigger_include is not None:
