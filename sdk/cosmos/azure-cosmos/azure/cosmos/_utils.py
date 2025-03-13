@@ -24,7 +24,7 @@
 
 import platform
 import re
-import base64
+import urllib.parse
 import json
 from typing import Any, Dict, Optional
 
@@ -55,14 +55,13 @@ def safe_user_agent_header(s: Optional[str]) -> str:
     return s
 
 
-def get_index_metrics_info(delimited_string: Optional[str]) -> Dict[str, Any]:
-    if delimited_string is None:
+def get_index_metrics_info(url_encoded_string: Optional[str]) -> Dict[str, Any]:
+    if url_encoded_string is None:
         return {}
+
     try:
-        # Decode the base64 string to bytes
-        bytes_string = base64.b64decode(delimited_string)
-        # Decode the bytes to a string using UTF-8 encoding
-        decoded_string = bytes_string.decode('utf-8')
+        # Decode the URL-encoded string
+        decoded_string = urllib.parse.unquote(url_encoded_string, encoding='utf-8')
 
         # Python's json.loads method is used for deserialization
         result = json.loads(decoded_string) or {}
