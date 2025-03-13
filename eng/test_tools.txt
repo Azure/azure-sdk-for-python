@@ -8,6 +8,7 @@ coverage==7.2.5
 bandit==1.6.2
 protobuf==3.17.3; python_version == '2.7'
 pyproject-api<1.6
+build==1.2.2.post1
 
 # locking packages defined as deps from azure-sdk-tools
 Jinja2==3.1.2
