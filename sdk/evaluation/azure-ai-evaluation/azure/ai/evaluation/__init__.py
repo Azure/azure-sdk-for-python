@@ -27,7 +27,6 @@ from ._evaluators._similarity import SimilarityEvaluator
 from ._evaluators._xpia import IndirectAttackEvaluator
 from ._evaluators._code_vulnerability import CodeVulnerabilityEvaluator
 from ._evaluators._isa import ISAEvaluator
-from ._converters._ai_services import AIAgentConverter
 from ._model_configurations import (
     AzureAIProject,
     AzureOpenAIModelConfiguration,
@@ -37,6 +36,15 @@ from ._model_configurations import (
     Message,
     OpenAIModelConfiguration,
 )
+
+# The converter from the AI service to the evaluator schema requires a dependency on
+# ai.projects, but we also don't want to force users installing ai.evaluations to pull
+# in ai.projects. So we only import it if it's available and the user has ai.projects.
+try:
+    from ._converters._ai_services import AIAgentConverter
+    _patch_all = ["AIAgentConverter"]
+except ImportError:
+    _patch_all = []
 
 __all__ = [
     "evaluate",
@@ -68,7 +76,8 @@ __all__ = [
     "Conversation",
     "Message",
     "EvaluationResult",
-    "AIAgentConverter",
     "CodeVulnerabilityEvaluator",
     "ISAEvaluator"
 ]
+
+__all__.extend([p for p in _patch_all if p not in __all__])
