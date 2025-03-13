@@ -48,6 +48,11 @@ class DocumentRetrievalEvaluator:
         actual_docs: list,
         labeled_docs: list
     ) -> int:
+        """
+        The number of documents retrieved from a search query which have no provided ground-truth label.
+        This metric is helpful for determining the accuracy of other metrics that are highly sensitive to missing ground-truth knowledge,
+        such as NDCG, XDCG, and Fidelity.
+        """
         return len(set(actual_docs).difference(set(labeled_docs)))
     
     def __compute_ndcg(
@@ -55,6 +60,10 @@ class DocumentRetrievalEvaluator:
         result_docs_groundtruth_labels: List[float],
         ideal_docs_groundtruth_labels: List[float],
     ) -> float:
+        """
+        NDCG (Normalized Discounted Cumulative Gain) calculated for the top 3 documents retrieved from a search query.
+        NDCG measures how well a document ranking compares to an ideal document ranking given a list of ground-truth documents.
+        """
         # Set the scoring function
         def calculate_dcg(relevance: float, rank: int):
             return ((math.pow(2, relevance) - 1) / (math.log2(rank + 1)))
@@ -70,6 +79,10 @@ class DocumentRetrievalEvaluator:
         self,
         result_docs_groundtruth_labels: List[float]
     ) -> float:
+        """
+        XDCG calculated for the top 3 documents retrieved from a search query.
+        XDCG measures how objectively good are the top 3 documents, discounted by their position in the list.
+        """
         def calculate_xdcg_numerator(relevance, rank):
             return (25 * relevance * math.pow(self.xdcg_discount_factor, rank - 1))
         
@@ -87,6 +100,10 @@ class DocumentRetrievalEvaluator:
         result_docs_groundtruth_labels: List[float],
         ideal_docs_groundtruth_labels: List[float],
     ) -> float:
+        """
+        Fidelity calculated over all documents retrieved from a search query.
+        Fidelity measures how objectively good are all of the documents retrieved compared with all known good documents in the underlying data store.
+        """
         def get_rating(label: float) -> str:
             if label >= 3:
                 return "perfect"
