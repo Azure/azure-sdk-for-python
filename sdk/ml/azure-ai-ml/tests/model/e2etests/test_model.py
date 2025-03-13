@@ -97,9 +97,9 @@ class TestModel(AzureRecordedTestCase):
         model_stage_list = [m.stage for m in model_list if m is not None]
         assert model.stage in model_stage_list
 
-    def test_crud_model_with_system_metadata(self, client: MLClient, randstr: Callable[[], str], tmp_path: Path) -> None:
+    def test_crud_model_with_system_metadata(self, client: MLClient, randstr: Callable[[], str]) -> None:
         path = Path("./tests/test_configs/model/model_with_system_metadata.yml")
-        model_name = randstr("model_prod_name")
+        model_name = randstr("model_with_system_metadata")
 
         model = load_model(path)
         model.name = model_name
