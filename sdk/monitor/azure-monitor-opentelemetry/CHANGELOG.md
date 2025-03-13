@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Add `logging_format` as configuration option in api
+    ([#40057](https://github.com/Azure/azure-sdk-for-python/pull/40057))
+
 ### Breaking Changes
 
 ### Bugs Fixed

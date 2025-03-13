@@ -183,7 +183,7 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
             formatter = None
             try:
                 formatter = Formatter(logging_format)
-            except Exception as ex:
+            except Exception as ex:  # pylint: disable=broad-except
                 _logger.warning(
                     "Exception occurred when constructing logging Formatter: %s.",
                     ex,
