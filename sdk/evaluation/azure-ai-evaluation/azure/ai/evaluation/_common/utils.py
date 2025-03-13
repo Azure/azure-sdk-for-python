@@ -284,6 +284,7 @@ def parse_quality_evaluator_reason_score(llm_output: str) -> Tuple[float, str]:
         - Retrieval
         - Groundedness
         - Coherence
+        - Completeness
 
     :param llm_output: The output of the prompt-based quality evaluator.
     :type llm_output: str

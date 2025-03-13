@@ -3,11 +3,12 @@
 # ---------------------------------------------------------
 
 import os
-from typing import Dict, Union
+from typing import Dict, List, Union
 
 from typing_extensions import overload, override
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._model_configurations import Conversation
 
 
 class CompletenessEvaluator(PromptyEvaluatorBase):
@@ -34,11 +35,11 @@ class CompletenessEvaluator(PromptyEvaluatorBase):
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/evaluation_samples_evaluate.py
-            :start-after: [START rouge_score_evaluator]
-            :end-before: [END rouge_score_evaluator]
+            :start-after: [START completeness_evaluator]
+            :end-before: [END completeness_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call a RougeScoreEvaluator with a four-gram rouge type.
+            :caption: Initialize and call a CompletenessEvaluator with a response and groundtruth.
 
     .. note::
 
@@ -61,25 +62,56 @@ class CompletenessEvaluator(PromptyEvaluatorBase):
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY)
 
+    @overload
+    def __call__(
+        self,
+        *,
+        response: str,
+        ground_truth: str
+    ) -> Dict[str, Union[str, float]]:
+        """Evaluate completeness in given response
+
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
+        :return: The fluency score
+        :rtype: Dict[str, float]
+        """
+
+    @overload
+    def __call__(
+        self,
+        *,
+        conversation: Conversation,
+    ) -> Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]:
+        """Evaluate completeness for a conversation
+
+        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
+            key "messages", and potentially a global context under the key "context". Conversation turns are expected
+            to be dictionaries with keys "content", "role", and possibly "context".
+        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
+        :return: The fluency score
+        :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
+        """
+
     # Ignoring a mypy error about having only 1 overload function.
     # We want to use the overload style for all evals, even single-inputs. This is both to make
     # refactoring to multi-input styles easier, stylistic consistency consistency across evals,
     # and due to the fact that non-overloaded syntax now causes various parsing issues that
     # we don't want to deal with.
-    @overload  # type: ignore
-    def __call__(self, *, response: str, ground_truth: str, threshold: float = 3) -> Dict[str, Union[str, bool, float]]:
-        """
-        Evaluate completeness.
-
-        :keyword response: The response to be evaluated.
-        :paramtype response: str
-        :keyword ground_truth: The ground truth to be evaluated.
-        :paramtype ground_truth: str
-        :keyword threshold: Threshold to calculate if response is complete
-        :paramtype threshold: float 
-        :return: The completeness score.
-        :rtype: Dict[str, Union[str, bool, float]]
-        """
+    # @overload  # type: ignore
+    # def __call__(self, *, response: str, ground_truth: str, threshold: float = 3) -> Dict[str, Union[str, bool, float]]:
+    #     """
+    #     Evaluate completeness.
+    #
+    #     :keyword response: The response to be evaluated.
+    #     :paramtype response: str
+    #     :keyword ground_truth: The ground truth to be evaluated.
+    #     :paramtype ground_truth: str
+    #     :keyword threshold: Threshold to calculate if response is complete
+    #     :paramtype threshold: float
+    #     :return: The completeness score.
+    #     :rtype: Dict[str, Union[str, bool, float]]
+    #     """
 
     @override
     def __call__(  # pylint: disable=docstring-missing-param
@@ -97,17 +129,18 @@ class CompletenessEvaluator(PromptyEvaluatorBase):
         :return: The completeness score.
         :rtype: Dict[str, Union[str, bool, float]]
         """
-        completeness_result = super().__call__(*args, **kwargs)
-        if not isinstance(completeness_result, dict) or not "response_completeness" in completeness_result:
-            raise Exception("Completeness Result is invalid") 
-        threshold = kwargs.get("threshold", 3.0)
-        response_complete_score = completeness_result.get("score")
-        explanation = completeness_result.get("explanation")
-
-        is_response_complete = response_complete_score >= threshold
-
-        return {
-            "is_response_complete": is_response_complete,
-            "response_complete_score": response_complete_score,
-            "explanation": explanation
-        }
+        # completeness_result = super().__call__(*args, **kwargs)
+        # if not isinstance(completeness_result, dict) or not "response_completeness" in completeness_result:
+        #     raise Exception("Completeness Result is invalid")
+        # threshold = kwargs.get("threshold", 3.0)
+        # response_complete_score = completeness_result.get("score")
+        # explanation = completeness_result.get("explanation")
+        #
+        # is_response_complete = response_complete_score >= threshold
+        #
+        # return {
+        #     "is_response_complete": is_response_complete,
+        #     "response_complete_score": response_complete_score,
+        #     "explanation": explanation
+        # }
+        return super().__call__(*args, **kwargs)
