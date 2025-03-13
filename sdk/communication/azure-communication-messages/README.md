@@ -3,7 +3,7 @@
 This package contains a Python SDK for Azure Communication Services for Messages(Advanced Messaging).
 Read more about Azure Communication Services [here][product_docs]
 
-[Source code][source] | [Package (Pypi)][pypi] | [Product documentation][product_docs]
+[Source code][source] | [Package (Pypi)](https://pypi.org/project/azure-communication-messages/) | [Product documentation][product_docs]
 
 ## _Disclaimer_
 
