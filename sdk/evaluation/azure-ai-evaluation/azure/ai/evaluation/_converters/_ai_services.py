@@ -6,16 +6,16 @@ from azure.ai.projects.models import ThreadRun, RunStep, RunStepToolCallDetails,
 from typing import List
 
 # Constants.
-from _models import _USER, _AGENT, _TOOL,  _TOOL_CALL, _TOOL_CALLS, _FUNCTION
+from ._models import _USER, _AGENT, _TOOL,  _TOOL_CALL, _TOOL_CALLS, _FUNCTION
 
 # Message instances.
-from _models import Message, SystemMessage, UserMessage, AssistantMessage, ToolCall
+from ._models import Message, SystemMessage, UserMessage, AssistantMessage, ToolCall
 
 # Intermediate definitions to hold results.
-from _models import ToolDefinition, ConvertedResult
+from ._models import ToolDefinition, ConvertedResult
 
 # Utilities.
-from _models import break_tool_call_into_messages, convert_message
+from ._models import break_tool_call_into_messages, convert_message
 
 
 class AIAgentConverter:
