@@ -166,6 +166,8 @@ class ContainerProxy:
         :keyword bool populate_quota_info: Enable returning collection storage quota information in response headers.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
@@ -227,6 +229,8 @@ class ContainerProxy:
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
@@ -297,6 +301,8 @@ class ContainerProxy:
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item couldn't be retrieved.
         :returns: A CosmosDict representing the retrieved item.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
@@ -359,6 +365,8 @@ class ContainerProxy:
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
@@ -443,6 +451,8 @@ class ContainerProxy:
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
 
@@ -541,6 +551,8 @@ class ContainerProxy:
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
             or 'continuation' token.
         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
@@ -578,6 +590,8 @@ class ContainerProxy:
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
             or 'continuation' token.
         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]
         :returns: An AsyncItemPaged of items (dicts).
@@ -604,6 +618,8 @@ class ContainerProxy:
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :paramtype priority: Literal["High", "Low"]
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]
         :returns: An AsyncItemPaged of items (dicts).
@@ -642,6 +658,8 @@ class ContainerProxy:
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
             or 'continuation' token.
         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]
         :returns: An AsyncItemPaged of items (dicts).
@@ -678,6 +696,8 @@ class ContainerProxy:
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
             or 'continuation' token.
         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, Any], Mapping[str, Any]], None]
         :returns: An AsyncItemPaged of items (dicts).
@@ -760,6 +780,8 @@ class ContainerProxy:
         :keyword bool no_response: Indicates whether service should be instructed to skip
             sending response payloads. When not specified explicitly here, the default value will be determined from
             client-level options.
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item could not be upserted.
         :returns: A CosmosDict representing the upserted item. The dict will be empty if
             `no_response` is specified.
@@ -833,6 +855,8 @@ class ContainerProxy:
         :keyword bool no_response: Indicates whether service should be instructed to skip
             sending response payloads. When not specified explicitly here, the default value will be determined from
             client-level options.
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The replace operation failed or the item with
             given id does not exist.
         :returns: A CosmosDict representing the item after replace went through. The dict will be empty if `no_response`
@@ -908,6 +932,8 @@ class ContainerProxy:
         :keyword bool no_response: Indicates whether service should be instructed to skip
             sending response payloads. When not specified explicitly here, the default value will be determined from
             client-level options.
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The patch operations failed or the item with
             given id does not exist.
         :returns: A CosmosDict representing the item after the patch operations went through. The dict will be empty if
@@ -975,6 +1001,8 @@ class ContainerProxy:
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], None], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The item wasn't deleted successfully.
@@ -1230,6 +1258,8 @@ class ContainerProxy:
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :rtype: None
         """
@@ -1281,6 +1311,8 @@ class ContainerProxy:
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A CosmosList representing the items after the batch operations went through.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The batch failed to execute.
