@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import os
-from typing import Dict
+from typing import Dict, Union
 
 from typing_extensions import overload, override
 
@@ -67,7 +67,7 @@ class CompletenessEvaluator(PromptyEvaluatorBase):
     # and due to the fact that non-overloaded syntax now causes various parsing issues that
     # we don't want to deal with.
     @overload  # type: ignore
-    def __call__(self, *, response: str, ground_truth: str) -> Dict[str, float]:
+    def __call__(self, *, response: str, ground_truth: str, threshold: float = 3) -> Dict[str, Union[str, bool, float]]:
         """
         Evaluate completeness.
 
@@ -75,8 +75,10 @@ class CompletenessEvaluator(PromptyEvaluatorBase):
         :paramtype response: str
         :keyword ground_truth: The ground truth to be evaluated.
         :paramtype ground_truth: str
+        :keyword threshold: Threshold to calculate if response is complete
+        :paramtype threshold: float 
         :return: The completeness score.
-        :rtype: Dict[str, float]
+        :rtype: Dict[str, Union[str, bool, float]]
         """
 
     @override
@@ -93,6 +95,19 @@ class CompletenessEvaluator(PromptyEvaluatorBase):
         :keyword ground_truth: The ground truth to be evaluated.
         :paramtype ground_truth: str
         :return: The completeness score.
-        :rtype: Dict[str, float]
+        :rtype: Dict[str, Union[str, bool, float]]
         """
-        return super().__call__(*args, **kwargs)
+        completeness_result = super().__call__(*args, **kwargs)
+        if not isinstance(completeness_result, dict) or not "response_completeness" in completeness_result:
+            raise Exception("Completeness Result is invalid") # this might not be needed
+        threshold = kwargs.get("threshold", 3.0)
+        response_complete_score = completeness_result.get("score")
+        explanation = completeness_result.get("explanation")
+
+        is_response_complete = response_complete_score >= threshold
+
+        return {
+            "is_response_complete": is_response_complete,
+            "response_complete_score": response_complete_score,
+            "explanation": explanation
+        }
