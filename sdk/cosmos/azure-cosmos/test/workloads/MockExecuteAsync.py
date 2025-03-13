@@ -15,7 +15,7 @@ class MockExecuteServiceRequestException(object):
 
     async def __call__(self, func, *args, **kwargs):
         # after 10 minutes, we will start to throw exceptions and ends after 30 minutes
-        if time.time() - self.start_time >= 600 and time.time() <= self.start_time + 1800:
+        if time.time() - self.start_time >= 600 and time.time() <= self.start_time + 1800 and args:
             if args[1].endpoint_override:
                 if args[1].endpoint_override == COSMOS_URI:
                     raise_exception()

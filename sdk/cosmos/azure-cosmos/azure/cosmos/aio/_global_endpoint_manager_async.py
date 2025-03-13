@@ -107,6 +107,8 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                 self.refresh_task = None
             except (Exception, CancelledError) as exception: #pylint: disable=broad-exception-caught
                 logger.exception("Health check task failed: %s", exception)
+        logger.info("Refresh current time: %s", self.location_cache.current_time_millis())
+        logger.info("Last refresh time: %s", self.last_refresh_time)
         if self.location_cache.current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms:
             self.refresh_needed = True
         if self.refresh_needed:
@@ -163,7 +165,8 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                     success_count += 1
                     self.location_cache.mark_endpoint_available(endpoint)
                     logger.info("Endpoint %s is available", endpoint)
-                except (exceptions.CosmosHttpResponseError, AzureError):
+                except (exceptions.CosmosHttpResponseError, AzureError) as e:
+                    logger.info("Exception in health check for endpoint %s: %s", endpoint, e)
                     self.mark_endpoint_unavailable_for_read(endpoint, False)
                     self.mark_endpoint_unavailable_for_write(endpoint, False)
         self.location_cache.update_location_cache()

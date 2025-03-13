@@ -63,6 +63,7 @@ def run_workload(client_id, client_logger):
                 time.sleep(1)
                 query_items(cont, 2)
             except Exception as e:
+                logger.info("Exception in application layer")
                 client_logger.error(e)
 
 

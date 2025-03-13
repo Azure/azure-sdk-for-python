@@ -83,6 +83,7 @@ async def run_workload(client_id, client_logger):
                     time.sleep(1)
                     await query_items_concurrently(cont, 2)
                 except Exception as e:
+                    logger.info("Exception in application layer")
                     client_logger.error(e)
 
 
