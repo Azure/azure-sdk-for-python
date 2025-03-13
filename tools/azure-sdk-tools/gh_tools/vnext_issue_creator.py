@@ -85,6 +85,7 @@ def get_build_info(build_link: str, check_type: CHECK_TYPE) -> str:
             add = True
         if add:
             response_two.append(record)
+    return response_two
         # if record['id'] == job_id:
         #     return record
             # try:
@@ -99,7 +100,7 @@ def get_build_info(build_link: str, check_type: CHECK_TYPE) -> str:
             # except:
             #     return "0"
 
-    return "0"
+    # return "0"
     
 
 
