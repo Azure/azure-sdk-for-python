@@ -13,7 +13,7 @@ from ci_tools.environment_exclusions import is_check_enabled
 from ci_tools.functions import get_total_coverage
 
 logging.basicConfig(level=logging.INFO)
-coveragerc_file = os.path.join(os.path.dirname(__file__), "tox.ini")
+coveragerc_file = os.path.join(os.path.dirname(__file__), "..", "..", ".coveragerc")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
