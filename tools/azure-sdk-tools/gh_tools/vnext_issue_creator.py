@@ -85,11 +85,11 @@ def get_build_info(build_link: str, check_type: CHECK_TYPE, service_directory: s
 
         if response_json['records'][-1]['log']:
             log_id = response_json['records'][-1]['log']['id'] + 1
-            logs_link = f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds/{build_id}&view=logs&j={job_id}&t={next_id}"
+            logs_link = f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds/{build_id}/logs/{log_id}"
             # Get the build info from the build link
             logs_output = requests.get(logs_link, headers=AUTH_HEADERS)
-            build_output = json.loads(logs_output.text)
-            return build_output
+            # build_output = json.loads(logs_output.text)
+            return logs_output
             # build_output = build_output.split(f"next-pylint: commands[3]> python /mnt/vss/_work/1/s/eng/tox/run_pylint.py -t /mnt/vss/_work/1/s/sdk/{service_directory}/{package_name} --next=True")[1]
             # build_output = build_output.split(f"ERROR:root:{package_name} exited with linting error")
 
