@@ -79,16 +79,14 @@ def get_build_info(build_link: str, check_type: CHECK_TYPE) -> str:
     # return response_json
     response_two = []
     add = False
-    # Iterate through the timeline records to find the log ID
-    for record in response_json['records']:
-        if record['Name'] == "Run Pylint Next":
-            add = True
-        if add:
-            if record['parentId'] == job_id:
-                if record['log']:
-                    log_id = record['log']['id'] + 1 # prep env log
-            
-                    return f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds/{build_id}/logs/{log_id}?api-version=6.0"
+    
+    try:
+
+        if response_json['records'][-1]['log']:
+            log_id = response_json['records'][-1]['log']['id'] + 1
+            return f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds/{build_id}/logs/{log_id}?api-version=6.0"
+    except:
+        return "Error getting build info"
         # if record['id'] == job_id:
         #     return record
             # try:
