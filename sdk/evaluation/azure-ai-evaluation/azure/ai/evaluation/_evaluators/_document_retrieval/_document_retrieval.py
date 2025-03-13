@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+import json
 import math
 from itertools import starmap
 from azure.ai.evaluation._evaluators._common import EvaluatorBase
@@ -13,15 +14,6 @@ DocumentLabel = TypedDict(
     {
         "document_id": str,
         "label": float
-    }
-)
-
-
-DocumentRetrievalEvaluationData = TypedDict(
-    'DocumentRetrievalEvaluationData',
-    {
-        "retrieved_documents_labels": List[DocumentLabel],
-        "groundtruth_documents_labels": List[DocumentLabel]
     }
 )
 
@@ -41,19 +33,15 @@ DocumentRetrievalMetrics = TypedDict(
     }
 )
 
+
 class DocumentRetrievalEvaluator:
     """
     Calculate document retrieval metrics, such as NDCG, XDCG, Fidelity and Top K Relevance.
     """
-    def __init__(
-        self,
-        ndcg_score_linear: bool = True,
-        xdcg_discount_factor: float = 0.6
-    ):
+    def __init__(self):
         super().__init__()
         self.k = 3
-        self.ndcg_score_linear = ndcg_score_linear  # TODO: pick an NDCG implementation to avoid setting this value
-        self.xdcg_discount_factor = xdcg_discount_factor  # TODO: should we expose this, or just pick a recommended value?
+        self.xdcg_discount_factor = 0.6 
 
     def __compute_holes(
         self,
@@ -62,7 +50,6 @@ class DocumentRetrievalEvaluator:
     ) -> int:
         return len(set(actual_docs).difference(set(labeled_docs)))
     
-
     def __compute_ndcg(
         self,
         result_docs_groundtruth_labels: List[float],
@@ -71,15 +58,10 @@ class DocumentRetrievalEvaluator:
         # Set the scoring function
         def calculate_dcg(relevance: float, rank: int):
             return ((math.pow(2, relevance) - 1) / (math.log2(rank + 1)))
-        
-        def calculate_dcg_linear(relevance: float, rank: int):
-            return (relevance / (math.log2(rank + 1)))
-        
-        score_fn = calculate_dcg_linear if self.ndcg_score_linear else calculate_dcg
 
         ranks = list(range(1, self.k + 1))
-        dcg = sum(starmap(score_fn, zip(result_docs_groundtruth_labels, ranks)))
-        idcg = sum(starmap(score_fn, zip(ideal_docs_groundtruth_labels, ranks)))
+        dcg = sum(starmap(calculate_dcg, zip(result_docs_groundtruth_labels, ranks)))
+        idcg = sum(starmap(calculate_dcg, zip(ideal_docs_groundtruth_labels, ranks)))
         ndcg = dcg / float(idcg)
 
         return ndcg
@@ -106,16 +88,16 @@ class DocumentRetrievalEvaluator:
         ideal_docs_groundtruth_labels: List[float],
     ) -> float:
         def get_rating(label: float) -> str:
-            if label >= 4:
+            if label >= 3:
                 return "perfect"
             
-            elif label >= 3:
+            elif label >= 2.5:
                 return "excellent"
             
             elif label >= 2:
                 return "good"
             
-            elif label >= 1:
+            elif label >= 1.5:
                 return "fair"
             
             else:
@@ -138,14 +120,15 @@ class DocumentRetrievalEvaluator:
         weighted_sum_by_rating_results = calculate_weighted_sum_by_rating(result_docs_groundtruth_labels)
         weighted_sum_by_rating_index = calculate_weighted_sum_by_rating(ideal_docs_groundtruth_labels)
 
+        if weighted_sum_by_rating_index == 0:
+            return math.nan
+
         return weighted_sum_by_rating_results / float(weighted_sum_by_rating_index)
     
-    def __call__(self, *, evaluation_data: dict) -> DocumentRetrievalMetrics:
+    def __call__(self, *, groundtruth_documents_labels: str, retrieved_documents_labels: str) -> DocumentRetrievalMetrics:
         # input validation
-        DocumentRetrievalEvaluationData(**evaluation_data)
-
-        qrels = evaluation_data["groundtruth_documents_labels"]
-        results = evaluation_data["retrieved_documents_labels"]
+        qrels = [DocumentLabel(x) for x in json.loads(groundtruth_documents_labels)]
+        results = [DocumentLabel(x) for x in json.loads(retrieved_documents_labels)]
 
         if len(qrels) > 1000 or len(results) > 1000:
             raise ValueError("The results and ground-truth sets should contain no more than 1000 items.")
@@ -172,10 +155,6 @@ class DocumentRetrievalEvaluator:
         qrels_lookup = {x["document_id"]: x["label"] for x in qrels}
         results_lookup = {x["document_id"]: x["label"] for x in results}
 
-        # calculate the proportion of result docs with no ground truth label (holes)
-        holes = self.__compute_holes(list(results_lookup.keys()), list(qrels_lookup.keys()))
-        ratioholes = holes / len(results)
-
         # sort each input set by label to get the ranking
         qrels_sorted_by_rank = sorted(qrels_lookup.items(), key=lambda x: x[1], reverse=True)
         results_sorted_by_rank = sorted(results_lookup.items(), key=lambda x: x[1], reverse=True)
@@ -183,6 +162,13 @@ class DocumentRetrievalEvaluator:
         # find ground truth labels for the results set and ideal set
         result_docs_groundtruth_labels = [qrels_lookup[doc_id] if doc_id in qrels_lookup else 0 for (doc_id, _) in results_sorted_by_rank]
         ideal_docs_groundtruth_labels = [label for (_, label) in qrels_sorted_by_rank]
+
+        # calculate the proportion of result docs with no ground truth label (holes)
+        holes = self.__compute_holes(
+            [x[0] for x in results_sorted_by_rank],
+            [x[0] for x in qrels_sorted_by_rank]
+        )
+        ratioholes = holes / float(len(results))
 
         # if none of the retrieved docs are labeled, report holes only
         if not any(result_docs_groundtruth_labels):
