@@ -25,6 +25,7 @@ from ._evaluators._retrieval import RetrievalEvaluator
 from ._evaluators._rouge import RougeScoreEvaluator, RougeType
 from ._evaluators._similarity import SimilarityEvaluator
 from ._evaluators._xpia import IndirectAttackEvaluator
+from ._converters._ai_services import AIAgentConverter, convert_from_file
 from ._model_configurations import (
     AzureAIProject,
     AzureOpenAIModelConfiguration,
@@ -64,5 +65,7 @@ __all__ = [
     "EvaluatorConfig",
     "Conversation",
     "Message",
-    "EvaluationResult"
+    "EvaluationResult",
+    "AIAgentConverter",
+    "convert_from_file",
 ]

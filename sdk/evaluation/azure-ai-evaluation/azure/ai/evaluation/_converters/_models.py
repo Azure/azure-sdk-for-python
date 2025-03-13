@@ -94,8 +94,6 @@ class AssistantMessage(Message):
 class ToolDefinition(BaseModel):
     """Represents a tool definition that will be used in the agent.
 
-    :param id: The unique identifier of the tool.
-    :type id: str
     :param name: The name of the tool.
     :type name: str
     :param description: A description of the tool.
@@ -104,7 +102,6 @@ class ToolDefinition(BaseModel):
     :type parameters: dict
     """
 
-    id: str
     name: str
     description: Optional[str] = None
     parameters: dict

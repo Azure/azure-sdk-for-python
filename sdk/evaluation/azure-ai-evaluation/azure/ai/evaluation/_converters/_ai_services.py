@@ -6,60 +6,16 @@ from azure.ai.projects.models import ThreadRun, RunStep, RunStepToolCallDetails,
 from typing import List
 
 # Constants.
-from _models import _USER, _AGENT, _TOOL_CALLS, _FUNCTION
+from _models import _USER, _AGENT, _TOOL,  _TOOL_CALL, _TOOL_CALLS, _FUNCTION
 
 # Message instances.
-from _models import Message, SystemMessage, UserMessage, ToolMessage, AssistantMessage, ToolCall
+from _models import Message, SystemMessage, UserMessage, AssistantMessage, ToolCall
 
 # Intermediate definitions to hold results.
 from _models import ToolDefinition, ConvertedResult
 
 # Utilities.
 from _models import break_tool_call_into_messages, convert_message
-
-
-def convert_from_file(filename: str, run_id: str) -> dict:
-    """
-    Converts the agent run from a JSON file to a format suitable for the OpenAI API, the JSON file being a thread.
-
-    :param filename: The path to the JSON file.
-    :type filename: str
-    :param run_id: The ID of the run.
-    :type run_id: str
-    :return: The converted data in dictionary format.
-    :rtype: dict
-    """
-    with open(filename, 'r') as file:
-        data = json.load(file)
-
-    messages = data.get("messages", [])
-    converted_messages: List[Message] = [convert_message(msg) for msg in messages]
-    tools = data.get("tools", [])
-
-    # Create the tool definitions
-    tool_definitions = [
-        ToolDefinition(
-            id=tool["id"],
-            name=tool["name"],
-            description=tool.get("description"),
-            parameters=tool["parameters"]
-        ) for tool in tools
-    ]
-
-    # # Separate messages into query and response
-    query_messages = [what for what in converted_messages if what.run_id != run_id]
-    response_messages = [what for what in converted_messages if what.run_id == run_id]
-
-    # Convert messages to the appropriate Message subclasses
-
-    # Create the final result
-    final_result = ConvertedResult(
-        query=query_messages,
-        response=response_messages,
-        tool_definitions=tool_definitions
-    )
-
-    return json.loads(final_result.to_json())
 
 
 class AIAgentConverter:
@@ -87,7 +43,7 @@ class AIAgentConverter:
         )
         return messages.data
 
-    def convert(self, thread_id: str, run_id: str) -> dict:
+    def convert(self, thread_id: str, run_id: str) -> str:
         """
         Converts the agent run to a format suitable for the OpenAI API.
 
@@ -96,7 +52,7 @@ class AIAgentConverter:
         :param run_id: The ID of the run.
         :type run_id: str
         :return: The converted data in dictionary format.
-        :rtype: dict
+        :rtype: str
         """
         # Make the API call once and reuse the result.
         thread_run: ThreadRun = self.project_client.agents.get_run(thread_id=thread_id, run_id=run_id)
@@ -191,7 +147,6 @@ class AIAgentConverter:
 
                 final_tools.append(
                     ToolDefinition(
-                        id=tool_function.name,
                         name=tool_function.name,
                         description=tool_function.description,
                         parameters=parameters,
@@ -216,4 +171,79 @@ class AIAgentConverter:
             tool_definitions=final_tools,
         )
 
-        return json.loads(final_result.to_json())
+        return final_result.to_json()
+
+def convert_from_file(filename: str, run_id: str) -> str:
+    """
+    Converts the agent run from a JSON file to a format suitable for the OpenAI API, the JSON file being a thread.
+
+    :param filename: The path to the JSON file.
+    :type filename: str
+    :param run_id: The ID of the run.
+    :type run_id: str
+    :return: The converted data in dictionary format.
+    :param already_sorted: Whether the messages are already sorted in chronological order.
+    :type already_sorted: bool
+    :rtype: str
+    """
+    with open(filename, 'r') as file:
+        data = json.load(file)
+
+    # We need to type our messages to the correct type, so we can sliced and dice the way we like it.
+    messages = data.get("messages", [])
+    converted_messages: List[Message] = []
+
+    # Accumulate the messages in the correct order, but only up to the run_id.
+    in_my_current_run = False
+    for message in messages:
+        converted_message = convert_message(message)
+        # We would not be interested in tool call messages in the query, unless it's the current run id.
+        if converted_message.run_id != run_id:
+            # Anything with tool, we can throw out.
+            if converted_message.role == _TOOL:
+                continue
+
+            # We also don't want anything that is an assistant calling a tool.
+            if converted_message.role == _AGENT:
+                if isinstance(converted_message.content, list):
+                    if len(converted_message.content) > 0:
+                        if "type" in converted_message.content[0]:
+                            if converted_message.content[0]["type"] == _TOOL_CALL:
+                                continue
+
+        # Since this is the conversation of the entire thread and we are interested in a given run, we need to
+        # filter out the messages that came after the run.
+        if converted_message.run_id is not None:
+            if converted_message.run_id == run_id:
+                in_my_current_run = True
+
+        # Then, if we think that we are currently in our run and we have a message that is not from our run,
+        # it means that we have left our run.
+        if in_my_current_run and converted_message.run_id != run_id:
+            break
+
+        # We're good to add it.
+        converted_messages.append(converted_message)
+
+    # Create the tool definitions.
+    tools = data.get("tools", [])
+    tool_definitions = [
+        ToolDefinition(
+            name=tool["name"],
+            description=tool.get("description"),
+            parameters=tool["parameters"]
+        ) for tool in tools
+    ]
+
+    # # Separate messages into query and response
+    query_messages = [what for what in converted_messages if what.run_id != run_id]
+    response_messages = [what for what in converted_messages if what.run_id == run_id]
+
+    # Create the final result
+    final_result = ConvertedResult(
+        query=query_messages,
+        response=response_messages,
+        tool_definitions=tool_definitions
+    )
+
+    return final_result.to_json()
