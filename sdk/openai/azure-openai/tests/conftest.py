@@ -21,7 +21,7 @@ from devtools_testutils import get_credential
 
 # for pytest.parametrize
 GA = "2024-10-21"
-PREVIEW = "2025-01-01-preview"
+PREVIEW = "2025-02-01-preview"
 LATEST = PREVIEW
 
 AZURE = "azure"
@@ -188,7 +188,7 @@ def build_kwargs(args, api_type):
             return {"model": ENV_AZURE_OPENAI_DALLE_NAME}
         elif api_type == "openai":
             return {"model": ENV_OPENAI_DALLE_MODEL}
-    if test_feature.startswith("test_assistants"):
+    if test_feature.startswith("test_assistants") or test_feature.startswith("test_vector_stores"):
         if api_type in ["asst_azure"]:
             return {"model": ENV_AZURE_OPENAI_CHAT_COMPLETIONS_GPT4_NAME}
         elif api_type == "gpt_4_openai":
