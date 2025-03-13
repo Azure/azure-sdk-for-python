@@ -25,7 +25,7 @@ class MockExecuteServiceRequestException(object):
 
 def raise_exception():
     if MOCK_EXECUTE_STATUS_CODE == 1:
-        exception = ServiceResponseError("mock exception")
+        exception = ServiceRequestError("mock exception")
         exception.exc_type = Exception
         raise exception
     else:
