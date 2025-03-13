@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, List
+from typing import IO, TYPE_CHECKING, Any, List, Optional, Union, overload
 from urllib.parse import urlparse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -13,7 +13,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._models import SipTrunk, SipTrunkRoute
-from .._generated.models import SipConfiguration, SipTrunkInternal, SipTrunkRouteInternal
+from .._generated.models import ExpandEnum, RoutesForNumber, SipConfiguration, SipTrunkInternal, SipTrunkRouteInternal
 from .._generated.aio._client import SIPRoutingService
 from ..._shared.auth_policy_utils import get_authentication_policy
 from ..._shared.utils import parse_connection_str
@@ -59,7 +59,7 @@ class SipRoutingClient(object):
         self._authentication_policy = get_authentication_policy(endpoint, credential, is_async=True)
 
         self._rest_service = SIPRoutingService(
-            self._endpoint, authentication_policy=self._authentication_policy, sdk_moniker=SDK_MONIKER, **kwargs
+            self._endpoint, credential= credential, authentication_policy=self._authentication_policy, sdk_moniker=SDK_MONIKER, **kwargs
         )
 
     @classmethod
@@ -83,12 +83,15 @@ class SipRoutingClient(object):
     async def get_trunk(
         self,
         trunk_fqdn,  # type: str
+        expand: Optional[Union[str, ExpandEnum]] = None,
         **kwargs  # type: Any
     ):  # type: (...) -> SipTrunk
         """Retrieve a single SIP trunk.
 
         :param trunk_fqdn: FQDN of the desired SIP trunk.
         :type trunk_fqdn: str
+        :param expand: Option to retrieve detailed configuration, default value is None..
+        :type expand: str or ~azure.communication.phonenumbers.siprouting.models.ExpandEnum
         :returns: SIP trunk with specified trunk_fqdn. If it doesn't exist, throws KeyError.
         :rtype: ~azure.communication.siprouting.models.SipTrunk
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError, KeyError
@@ -96,7 +99,7 @@ class SipRoutingClient(object):
         if trunk_fqdn is None:
             raise ValueError("Parameter 'trunk_fqdn' must not be None.")
 
-        config = await self._rest_service.sip_routing.get(**kwargs)
+        config = await self._rest_service.sip_routing.get(expand = expand, **kwargs)
 
         trunk = config.trunks[trunk_fqdn]
         return SipTrunk(fqdn=trunk_fqdn, sip_signaling_port=trunk.sip_signaling_port)
@@ -141,10 +144,14 @@ class SipRoutingClient(object):
 
     @distributed_trace
     def list_trunks(
-        self, **kwargs  # type: Any
+        self,
+        expand: Optional[Union[str, ExpandEnum]] = None,
+        **kwargs  # type: Any
     ):  # type: (...) -> AsyncItemPaged[SipTrunk]
         """Retrieves list of currently configured SIP trunks.
 
+        :keyword expand: Sip configuration expand. Optional. "trunks/health" Default value is None.
+        :paramtype expand: str or ~azure.communication.phonenumbers.siprouting.
         :returns: Current SIP trunks configuration.
         :rtype: AsyncItemPaged[~azure.communication.siprouting.models.SipTrunk]
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -156,7 +163,7 @@ class SipRoutingClient(object):
 
         # pylint: disable=unused-argument
         async def get_next(nextLink=None):
-            return await self._rest_service.sip_routing.get(**kwargs)
+            return await self._rest_service.sip_routing.get(expand=expand, **kwargs)
 
         return AsyncItemPaged(get_next, extract_data)
 
@@ -237,6 +244,27 @@ class SipRoutingClient(object):
             for x in routes
         ]
         await self._rest_service.sip_routing.update(body=SipConfiguration(routes=routes_internal), **kwargs)
+
+    @distributed_trace_async
+    async def test_routes_with_number_async(
+       self,
+        sip_configuration: SipConfiguration,
+        target_phone_number: str,
+        **kwargs: Any
+    ): # type: (...) -> RoutesForNumber
+        """Gets the list of routes matching the target phone number, ordered by priority.
+
+        Gets the list of routes matching the target phone number, ordered by priority.
+
+        :param sip_configuration: Sip configuration object to test with targetPhoneNumber.
+        :type sip_configuration: ~azure.communication.phonenumbers.siprouting.models.SipConfiguration
+        :param target_phone_number: Phone number to test routing patterns against. Required.
+        :type target_phone_number: str
+        :return: List of routes matching the target number, provided in the same order of priority as in SipConfiguration.
+        :rtype: ~azure.communication.phonenumbers.siprouting.models.RoutesForNumber
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        return await self._rest_service.sip_routing.test_routes_with_number(sip_configuration=sip_configuration,target_phone_number=target_phone_number, **kwargs)
 
     async def _list_trunks_(self, **kwargs):
         config = await self._rest_service.sip_routing.get(**kwargs)
