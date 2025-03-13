@@ -44,6 +44,7 @@ try:
     from ._converters._ai_services import AIAgentConverter
     _patch_all = ["AIAgentConverter"]
 except ImportError:
+    print("Could not import AIAgentConverter. Please install the dependency with `pip install azure-ai-projects`.")
     _patch_all = []
 
 __all__ = [
