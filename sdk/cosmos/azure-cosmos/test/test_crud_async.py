@@ -25,6 +25,7 @@ import test_config
 from azure.cosmos.aio import CosmosClient, _retry_utility_async, DatabaseProxy
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes
 from azure.cosmos.partition_key import PartitionKey
+from azure.identity.aio import DefaultAzureCredential
 
 
 class TimeoutTransport(AsyncioRequestsTransport):
@@ -82,7 +83,8 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
                 "tests.")
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(self.host, self.masterKey)
+        credentials = DefaultAzureCredential()
+        self.client = CosmosClient(self.host, credentials)
         self.database_for_test = self.client.get_database_client(self.configs.TEST_DATABASE_ID)
 
     async def asyncTearDown(self):
