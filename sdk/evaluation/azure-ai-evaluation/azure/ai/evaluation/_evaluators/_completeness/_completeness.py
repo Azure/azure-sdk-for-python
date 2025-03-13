@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import os
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Optional
 
 from typing_extensions import overload, override
 
@@ -64,10 +64,11 @@ class CompletenessEvaluator(PromptyEvaluatorBase):
 
     @overload
     def __call__(
-        self,
-        *,
-        response: str,
-        ground_truth: str
+            self,
+            *,
+            response: str,
+            ground_truth: str,
+            threshold: Optional[float] = 3,
     ) -> Dict[str, Union[str, float]]:
         """Evaluate completeness in given response
 
@@ -79,9 +80,9 @@ class CompletenessEvaluator(PromptyEvaluatorBase):
 
     @overload
     def __call__(
-        self,
-        *,
-        conversation: Conversation,
+            self,
+            *,
+            conversation: Conversation,
     ) -> Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]:
         """Evaluate completeness for a conversation
 
@@ -93,31 +94,11 @@ class CompletenessEvaluator(PromptyEvaluatorBase):
         :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
         """
 
-    # Ignoring a mypy error about having only 1 overload function.
-    # We want to use the overload style for all evals, even single-inputs. This is both to make
-    # refactoring to multi-input styles easier, stylistic consistency consistency across evals,
-    # and due to the fact that non-overloaded syntax now causes various parsing issues that
-    # we don't want to deal with.
-    # @overload  # type: ignore
-    # def __call__(self, *, response: str, ground_truth: str, threshold: float = 3) -> Dict[str, Union[str, bool, float]]:
-    #     """
-    #     Evaluate completeness.
-    #
-    #     :keyword response: The response to be evaluated.
-    #     :paramtype response: str
-    #     :keyword ground_truth: The ground truth to be evaluated.
-    #     :paramtype ground_truth: str
-    #     :keyword threshold: Threshold to calculate if response is complete
-    #     :paramtype threshold: float
-    #     :return: The completeness score.
-    #     :rtype: Dict[str, Union[str, bool, float]]
-    #     """
-
     @override
     def __call__(  # pylint: disable=docstring-missing-param
-        self,
-        *args,
-        **kwargs,
+            self,
+            *args,
+            **kwargs,
     ):
         """
         Evaluate Completeness.
@@ -129,18 +110,20 @@ class CompletenessEvaluator(PromptyEvaluatorBase):
         :return: The completeness score.
         :rtype: Dict[str, Union[str, bool, float]]
         """
-        # completeness_result = super().__call__(*args, **kwargs)
-        # if not isinstance(completeness_result, dict) or not "response_completeness" in completeness_result:
-        #     raise Exception("Completeness Result is invalid")
-        # threshold = kwargs.get("threshold", 3.0)
-        # response_complete_score = completeness_result.get("score")
-        # explanation = completeness_result.get("explanation")
-        #
-        # is_response_complete = response_complete_score >= threshold
-        #
-        # return {
-        #     "is_response_complete": is_response_complete,
-        #     "response_complete_score": response_complete_score,
-        #     "explanation": explanation
-        # }
-        return super().__call__(*args, **kwargs)
+        if kwargs.get("threshold", None) is None:
+            kwargs["threshold"] = 3
+
+        completeness_result = super().__call__(*args, **kwargs)
+        if not isinstance(completeness_result, dict) or "completeness" not in completeness_result:
+            raise Exception("Completeness Result is invalid")
+        threshold = kwargs.get("threshold", 3.0)
+        response_completeness_score = completeness_result.get("completeness")
+        explanation = completeness_result.get("completeness_reason")
+
+        is_response_complete = response_completeness_score >= threshold
+
+        return {
+            "is_response_complete": is_response_complete,
+            "response_completeness_score": response_completeness_score,
+            "explanation": explanation
+        }
