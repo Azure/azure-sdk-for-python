@@ -27,7 +27,6 @@ import threading
 from typing import Tuple
 
 from azure.core.exceptions import AzureError
-from tox.session.cmd.run.common import logger
 
 from . import _constants as constants
 from . import exceptions
