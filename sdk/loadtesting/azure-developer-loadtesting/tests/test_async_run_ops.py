@@ -17,6 +17,8 @@ from devtools_testutils.aio import recorded_by_proxy_async
 
 DISPLAY_NAME = "TestingResourcePyTest"
 NON_EXISTING_RESOURCE = "nonexistingresource"
+
+
 class TestRunOps(LoadtestingAsyncTest):
 
     async def setup_loadtest(self, endpoint, test_id):
@@ -37,7 +39,7 @@ class TestRunOps(LoadtestingAsyncTest):
                 "passFailCriteria": {"passFailMetrics": {}},
                 "keyvaultReferenceIdentityType": "SystemAssigned",
                 "keyvaultReferenceIdentityId": None,
-            }
+            },
         )
 
         validation_poller = await admin_client.begin_upload_test_file(
@@ -56,7 +58,7 @@ class TestRunOps(LoadtestingAsyncTest):
             {
                 "testId": test_id,
                 "displayName": "My New Load Test Run from PyTest",
-            }
+            },
         )
         await run_poller.result()
 
@@ -74,7 +76,7 @@ class TestRunOps(LoadtestingAsyncTest):
             {
                 "testId": loadtesting_test_id,
                 "displayName": "My New Load Test Run from PyTest",
-            }
+            },
         )
 
         result = await run_poller.result()
@@ -111,7 +113,6 @@ class TestRunOps(LoadtestingAsyncTest):
         with pytest.raises(ResourceNotFoundError):
             await run_client.delete_test_run(NON_EXISTING_RESOURCE)
 
-
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy_async
     async def test_get_test_run_file(self, loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id):
@@ -130,7 +131,6 @@ class TestRunOps(LoadtestingAsyncTest):
         with pytest.raises(HttpResponseError):
             await run_client.get_test_run_file(loadtesting_test_run_id, NON_EXISTING_RESOURCE)
 
-
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy_async
     async def test_list_test_runs(self, loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id):
@@ -142,7 +142,6 @@ class TestRunOps(LoadtestingAsyncTest):
 
         result = run_client.list_test_runs()
         assert result is not None
-
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy_async
@@ -162,7 +161,7 @@ class TestRunOps(LoadtestingAsyncTest):
             {
                 "testId": "new-load-test-from-pytest-aio-abc",
                 "displayName": "My New Load Test Run from PyTest",
-            }
+            },
         )
 
         result = await run_client.stop_test_run("my-new-test-run-from-pytest-aio-abc")
@@ -182,21 +181,24 @@ class TestRunOps(LoadtestingAsyncTest):
         metric_namespaces = await run_client.get_metric_namespaces(loadtesting_test_run_id)
         assert metric_namespaces is not None
 
-        metric_definitions = await run_client.get_metric_definitions(loadtesting_test_run_id,
-                            metric_namespace=metric_namespaces["value"][0]["name"])
+        metric_definitions = await run_client.get_metric_definitions(
+            loadtesting_test_run_id, metric_namespace=metric_namespaces["value"][0]["name"]
+        )
         assert metric_definitions is not None
 
         metrics = run_client.list_metrics(
             test_run_id=loadtesting_test_run_id,
             metric_name=metric_definitions["value"][0]["name"],
             metric_namespace=metric_namespaces["value"][0]["name"],
-            time_interval=test_run_response["startDateTime"] + "/" + test_run_response["endDateTime"]
+            time_interval=test_run_response["startDateTime"] + "/" + test_run_response["endDateTime"],
         )
         assert metrics is not None
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy_async
-    async def test_create_or_update_app_component(self, loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id, loadtesting_resource_id):
+    async def test_create_or_update_app_component(
+        self, loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id, loadtesting_resource_id
+    ):
         set_bodiless_matcher()
 
         await self.setup_test_run(loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id)
@@ -206,17 +208,15 @@ class TestRunOps(LoadtestingAsyncTest):
         result = await run_client.create_or_update_app_components(
             loadtesting_test_run_id,
             {
-                "components":
-                    {
-                        loadtesting_resource_id:
-                            {
-                                "resourceId": loadtesting_resource_id,
-                                "resourceName": "App-Service-Sample-Demo",
-                                "resourceType": "Microsoft.Web/sites",
-                                "kind": "web"
-                            }
+                "components": {
+                    loadtesting_resource_id: {
+                        "resourceId": loadtesting_resource_id,
+                        "resourceName": "App-Service-Sample-Demo",
+                        "resourceType": "Microsoft.Web/sites",
+                        "kind": "web",
                     }
-            }
+                }
+            },
         )
         assert result is not None
 
@@ -224,22 +224,22 @@ class TestRunOps(LoadtestingAsyncTest):
             await run_client.create_or_update_app_components(
                 NON_EXISTING_RESOURCE,
                 {
-                    "components":
-                        {
-                            loadtesting_resource_id:
-                                {
-                                    "resourceId": loadtesting_resource_id,
-                                    "resourceName": "App-Service-Sample-Demo",
-                                    "resourceType": "Microsoft.Web/sites",
-                                    "kind": "web"
-                                }
+                    "components": {
+                        loadtesting_resource_id: {
+                            "resourceId": loadtesting_resource_id,
+                            "resourceName": "App-Service-Sample-Demo",
+                            "resourceType": "Microsoft.Web/sites",
+                            "kind": "web",
                         }
-                }
+                    }
+                },
             )
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy_async
-    async def test_get_app_component(self, loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id, loadtesting_resource_id):
+    async def test_get_app_component(
+        self, loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id, loadtesting_resource_id
+    ):
         set_bodiless_matcher()
         await self.setup_test_run(loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id)
 
@@ -250,7 +250,9 @@ class TestRunOps(LoadtestingAsyncTest):
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy_async
-    async def test_create_or_update_server_metrics_config(self, loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id, loadtesting_resource_id):
+    async def test_create_or_update_server_metrics_config(
+        self, loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id, loadtesting_resource_id
+    ):
         set_bodiless_matcher()
         await self.setup_test_run(loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id)
 
@@ -267,16 +269,18 @@ class TestRunOps(LoadtestingAsyncTest):
                         "name": "requests/duration",
                         "aggregation": "Average",
                         "unit": None,
-                        "resourceType": "microsoft.insights/components"
+                        "resourceType": "microsoft.insights/components",
                     }
                 }
-            }
+            },
         )
         assert result is not None
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy_async
-    async def test_get_server_metrics_config(self, loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id, loadtesting_resource_id):
+    async def test_get_server_metrics_config(
+        self, loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id, loadtesting_resource_id
+    ):
         set_bodiless_matcher()
         await self.setup_test_run(loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id)
 
