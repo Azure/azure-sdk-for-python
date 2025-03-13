@@ -12,13 +12,13 @@ FILE: network_activity_logging.py
 DESCRIPTION:
     This example shows how to enable logging to console, using the storage
     library as an example. This sample expects that the
-    `AZURE_STORAGE_CONNECTION_STRING` environment variable is set.
+    `STORAGE_CONNECTION_STRING` environment variable is set.
     It SHOULD NOT be hardcoded in any code derived from this sample.
 
 USAGE: python network_activity_logging.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 
 EXAMPLE OUTPUT:
 Request with logging enabled and log level set to DEBUG.
@@ -39,9 +39,9 @@ from azure.storage.queue import QueueServiceClient
 
 # Retrieve connection string from environment variables
 # and construct a blob service client.
-connection_string = os.environ.get('AZURE_STORAGE_CONNECTION_STRING', None)
+connection_string = os.environ.get('STORAGE_CONNECTION_STRING', None)
 if not connection_string:
-    print('AZURE_STORAGE_CONNECTION_STRING required.')
+    print('STORAGE_CONNECTION_STRING required.')
     sys.exit(1)
 service_client = QueueServiceClient.from_connection_string(connection_string)
 
@@ -63,6 +63,6 @@ for queue in queues:
     messages = queue_client.peek_messages(max_messages=20, logging_enable=True)
     for message in messages:
         try:
-            print('  Message: {!r}'.format(base64.b64decode(message.content)))
-        except binascii.Error:
+            print(' Message: {!r}'.format(base64.b64decode(message.content)))
+        except (binascii.Error, ValueError) as e:
             print('  Message: {}'.format(message.content))

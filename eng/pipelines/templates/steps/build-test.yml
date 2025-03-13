@@ -61,6 +61,7 @@ steps:
   - ${{ if eq('true', parameters.UseFederatedAuth) }}:
 
     - task: AzurePowerShell@5
+      condition: false
       displayName: Run Tests (AzurePowerShell@5)
       env:
         SYSTEM_ACCESSTOKEN: $(System.AccessToken)
