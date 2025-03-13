@@ -282,20 +282,31 @@ def _setup_additional_azure_sdk_instrumentations(configurations: Dict[str, Confi
         _logger.debug("Instrumentation skipped for library azure_sdk")
         return
 
-    try:
-        from azure.ai.inference.tracing import AIInferenceInstrumentor  # pylint: disable=import-error,no-name-in-module
-    except Exception as ex:  # pylint: disable=broad-except
-        _logger.debug(
-            "Failed to import AIInferenceInstrumentor from azure-ai-inference",
-            exc_info=ex,
-        )
-        return
+    instrumentors = [
+        ("azure.ai.inference.tracing", "AIInferenceInstrumentor"),
+        ("azure.ai.projects.telemetry.agents", "AIAgentsInstrumentor")
+    ]
 
-    try:
-        AIInferenceInstrumentor().instrument()
-    except Exception as ex:  # pylint: disable=broad-except
-        _logger.warning(
-            "Exception occurred when instrumenting: %s.",
-            "azure-ai-inference",
-            exc_info=ex,
-        )
+    for module_path, class_name in instrumentors:
+        instrumentor_imported = False
+        try:
+            module = __import__(module_path, fromlist=[class_name])
+            instrumentor_imported = True
+        except Exception as ex:  # pylint: disable=broad-except
+            _logger.debug(
+                "Failed to import %s from %s",
+                class_name,
+                module_path,
+                exc_info=ex,
+            )
+
+        if instrumentor_imported:
+            try:
+                instrumentor_class = getattr(module, class_name)
+                instrumentor_class().instrument()
+            except Exception as ex:  # pylint: disable=broad-except
+                _logger.warning(
+                    "Exception occurred when instrumenting using: %s.",
+                    class_name,
+                    exc_info=ex,
+                )
