@@ -10,7 +10,7 @@ import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 import test_config
 from azure.cosmos import _retry_utility, PartitionKey
-from azure.cosmos._location_cache import RegionalEndpoint
+from azure.cosmos._location_cache import RegionalRoutingContext, EndpointOperationType
 
 COLLECTION = "created_collection"
 @pytest.fixture(scope="class")
@@ -79,8 +79,8 @@ class TestTimeoutRetryPolicy:
         created_document = setup[COLLECTION].create_item(body=document_definition)
         self.original_execute_function = _retry_utility.ExecuteFunction
         try:
-            # should retry once and then succeed
-            mf = self.MockExecuteFunction(self.original_execute_function, 5, error_code)
+            # should retry once and then fail
+            mf = self.MockExecuteFunction(self.original_execute_function, 2, error_code)
             _retry_utility.ExecuteFunction = mf
             setup[COLLECTION].read_item(item=created_document['id'],
                                               partition_key=created_document['pk'])
@@ -124,15 +124,15 @@ class TestTimeoutRetryPolicy:
         self.original_execute_function = _retry_utility.ExecuteFunction
         original_location_cache = mock_client.client_connection._global_endpoint_manager.location_cache
         fake_endpoint = "other-region"
-        regional_endpoint = RegionalEndpoint(self.host, self.host)
-        regional_endpoint_2 = RegionalEndpoint(fake_endpoint, fake_endpoint)
         region_1 = "East US"
         region_2 = "West US"
-        original_location_cache.available_read_locations = [region_1, region_2]
-        original_location_cache.available_read_regional_endpoints_by_locations = {region_1: regional_endpoint,
-                                                                                  region_2: regional_endpoint_2
+        regional_routing_context = RegionalRoutingContext(self.host, self.host)
+        regional_routing_context_2 = RegionalRoutingContext(fake_endpoint, fake_endpoint)
+        original_location_cache.account_read_locations = [region_1, region_2]
+        original_location_cache.account_read_regional_routing_contexts_by_location = {region_1: regional_routing_context,
+                                                                                  region_2: regional_routing_context_2
                                                                                   }
-        original_location_cache.read_regional_endpoints = [regional_endpoint, regional_endpoint_2]
+        original_location_cache.read_regional_routing_contexts = [regional_routing_context, regional_routing_context_2]
         try:
             # should retry once and then succeed
             mf = self.MockExecuteFunctionCrossRegion(self.original_execute_function, error_code, fake_endpoint)

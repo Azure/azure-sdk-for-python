@@ -282,7 +282,7 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                     if retry_settings['connect'] > 0:
                         retry_active = self.increment(retry_settings, response=request, error=err)
                         if retry_active:
-                            self.sleep(retry_settings, request.context.transport)
+                            await self.sleep(retry_settings, request.context.transport)
                             continue
                 raise err
             except ServiceResponseError as err:

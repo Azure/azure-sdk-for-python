@@ -1763,7 +1763,9 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
                 with self.assertRaises(Exception):
                     databaseForTest = client.get_database_client(self.configs.TEST_DATABASE_ID)
                     container = databaseForTest.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
-                    await container.create_item(body={'id': str(uuid.uuid4()), 'name': 'sample'})
+                    item = {'id': str(uuid.uuid4()), 'name': 'sample'}
+                    await container.create_item(body=item)
+                    await container.read_item(item=item['id'], partition_key=item['id'])
                     print('Async initialization')
 
     async def test_client_request_timeout_when_connection_retry_configuration_specified_async(self):
@@ -1778,7 +1780,9 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
             with self.assertRaises(AzureError):
                 databaseForTest = client.get_database_client(self.configs.TEST_DATABASE_ID)
                 container = databaseForTest.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
-                await container.create_item(body={'id': str(uuid.uuid4()), 'name': 'sample'})
+                item = {'id': str(uuid.uuid4()), 'name': 'sample'}
+                await container.create_item(body=item)
+                await container.read_item(item=item['id'], partition_key=item['id'])
                 print('Async Initialization')
 
     async def test_query_iterable_functionality_async(self):

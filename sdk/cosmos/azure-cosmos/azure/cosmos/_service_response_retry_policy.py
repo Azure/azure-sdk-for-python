@@ -15,7 +15,7 @@ class ServiceResponseRetryPolicy(object):
     def __init__(self, connection_policy, global_endpoint_manager, *args):
         self.args = args
         self.global_endpoint_manager = global_endpoint_manager
-        self.total_retries = len(self.global_endpoint_manager.location_cache.read_regional_endpoints)
+        self.total_retries = len(self.global_endpoint_manager.location_cache.read_regional_routing_contexts)
         self.failover_retry_count = 0
         self.connection_policy = connection_policy
         self.request = args[0] if args else None
