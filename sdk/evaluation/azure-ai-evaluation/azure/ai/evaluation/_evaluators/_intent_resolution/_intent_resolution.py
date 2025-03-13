@@ -50,7 +50,6 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     def __init__(self, model_config):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
-        print("Initializing IntentResolutionEvaluator2")
         super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY)
 
     @overload
@@ -117,7 +116,6 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 target=ErrorTarget.CONVERSATION,
             )
         llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
-        #print(f"Raw llm output: {llm_output}")
         score = math.nan
         if llm_output:
             parsed_llm_output = {}
