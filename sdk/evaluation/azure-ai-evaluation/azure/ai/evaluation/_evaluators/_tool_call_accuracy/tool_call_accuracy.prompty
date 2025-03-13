@@ -35,8 +35,8 @@ user:
   Consider the following factors in your evaluation:
 
   1. Relevance: How well does the proposed tool call align with the current topic and flow of the conversation?
-  2. Parameter Appropriateness: Are the parameters used in the TOOL CALL matches the TOOL DEFINITION and relevant to the latest user query?
-  3. Parameter Value Correctness: Are the parameters values used in the TOOL CALL present in CONVERSATION and relevant to the latest user query?
+  2. Parameter Appropriateness: Do the parameters used in the TOOL CALL match the TOOL DEFINITION and are the parameters relevant to the latest user's query?
+  3. Parameter Value Correctness: Are the parameters values used in the TOOL CALL present or inferred by CONVERSATION and relevant to the latest user's query?
   4. Potential Value: Is the information this tool call might provide likely to be useful in advancing the conversation or addressing the user expressed or implied needs?
   5. Context Appropriateness: Does the tool call make sense at this point in the conversation, given what has been discussed so far?
 

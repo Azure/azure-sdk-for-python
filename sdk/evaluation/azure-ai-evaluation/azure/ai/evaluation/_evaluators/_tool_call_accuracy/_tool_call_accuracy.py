@@ -77,8 +77,8 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         self,
         *,
         query: Union[str, List["ThreadMessage"]], # Chat history upto the message that has the tool call being evaluated. Not including the message that has tool call. -- chat history
-        tool_definitions: List["ToolDefinition"], # Definition of tool whose call is being evaluated
-        tool_calls: List["ToolCall"] = None,
+        tool_definitions: Union["ToolDefinition", List["ToolDefinition"]], # Definition of tool whose call is being evaluated
+        tool_calls: Union["ToolCall", List["ToolCall"]]  = None,
         response: Union[str, List["ThreadMessage"]] = None
     ) -> Dict[str, Union[str, float]]:
         """
@@ -180,10 +180,10 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                     tool_definition = tool_definition
                 else:
                     raise EvaluationException(
-                        message="Tool definition now found",
+                        message="Tool definition not found",
                         blame=ErrorBlame.USER_ERROR,
                         category=ErrorCategory.INVALID_VALUE,
-                        target=ErrorTarget.CONVERSATION,
+                        target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
                     )
                 eval_inputs.append({"messages": query, "tool_call": tool_call, "tool_definition": tool_definition})
 
@@ -259,16 +259,22 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         **kwargs,
     ):
         """
-        Evaluate fluency. Accepts either a response for a single evaluation,
-        or a conversation for a multi-turn evaluation. If the conversation has more than one turn,
-        the evaluator will aggregate the results of each turn.
+        Evaluate tool call accuracy. Accepts a query, tool definitions, and tool calls for evaluation.
 
-        :keyword response: The response to be evaluated. Mutually exclusive with the "conversation" parameter.
-        :paramtype response: Optional[str]
-        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
-            key "messages". Conversation turns are expected to be dictionaries with keys "content" and "role".
-        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
-        :return: The fluency score.
-        :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
+        :keyword query: Query or Chat history up to the message that has the tool call being evaluated.
+        :paramtype query: Union[str, List[ThreadMessage]]
+        :keyword tool_definitions: List of tool definitions whose calls are being evaluated.
+        :paramtype tool_definitions: List[ToolDefinition]
+        :keyword tool_calls: Optional List of tool calls to evaluate. If not provided response should be provided and should have
+            tool call(s) in it.
+        :paramtype tool_calls: List[ToolCall]
+        :keyword response: Optional response to be evaluated alongside the tool calls.
+            If provided all tool calls in response will be evaluated when tool_calls parameter is not provided.
+            If provided and tool_calls parameter is provided, only the tool calls in tool_calls parameter will be evaluated.
+                If response has extra tool calls they will not be evaluated, response will be used to extract any tool calls that are needed for evaluating a certain tool call.
+            Recommended to provide it when there are tool calls that depend on output of a previous tool call.
+        :paramtype response: Union[str, List[ThreadMessage]]
+        :return: The tool selection evaluation results.
+        :rtype: Dict[str, Union[str, float]]
         """
         return super().__call__(*args, **kwargs)
