@@ -63,9 +63,9 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase):
     @override
     def __call__(self, *args, **kwargs) -> Dict[str, Union[bool, float, str]]:
         task_adherence_result = super().__call__(*args, **kwargs)
-        
-        if not isinstance(task_adherence_result, dict) or not "response_completeness" in task_adherence_result:
-            raise Exception("task adherence Result is invalid") # this might not be needed
+
+        if not isinstance(task_adherence_result, dict) or not "task_adherence" in task_adherence_result:
+            raise Exception("task adherence Result is invalid") 
         threshold = kwargs.get("threshold", 3.0)
         task_adherence_score = task_adherence_result.get("score")
         explanation = task_adherence_result.get("explanation")

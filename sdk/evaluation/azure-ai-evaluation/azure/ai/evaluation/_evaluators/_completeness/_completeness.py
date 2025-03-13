@@ -99,7 +99,7 @@ class CompletenessEvaluator(PromptyEvaluatorBase):
         """
         completeness_result = super().__call__(*args, **kwargs)
         if not isinstance(completeness_result, dict) or not "response_completeness" in completeness_result:
-            raise Exception("Completeness Result is invalid") # this might not be needed
+            raise Exception("Completeness Result is invalid") 
         threshold = kwargs.get("threshold", 3.0)
         response_complete_score = completeness_result.get("score")
         explanation = completeness_result.get("explanation")
