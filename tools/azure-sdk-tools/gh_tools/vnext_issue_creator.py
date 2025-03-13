@@ -60,7 +60,7 @@ def get_build_link(check_type: CHECK_TYPE) -> str:
         f"https://dev.azure.com/azure-sdk/internal/_build/results?buildId={build_id}&view=logs&j={job_id}&t={next_id}"
     )
 
-def get_build_info(build_link: str, check_type: CHECK_TYPE) -> str:
+def get_build_info(build_link: str, check_type: CHECK_TYPE, service_directory: str, package_name: str) -> str:
     """Get the build info from the build link."""
     build_id = os.getenv("BUILD_BUILDID")
     job_id = os.getenv("SYSTEM_JOBID")
@@ -84,24 +84,18 @@ def get_build_info(build_link: str, check_type: CHECK_TYPE) -> str:
 
         if response_json['records'][-1]['log']:
             log_id = response_json['records'][-1]['log']['id'] + 1
-            return f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds/{build_id}/logs/{log_id}?api-version=6.0"
+            logs_link = f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds/{build_id}/logs/{log_id}?api-version=6.0"
+            # Get the build info from the build link
+            build_output = requests.get(logs_link)
+            build_output = build_output.text
+            build_output = build_output.split(f"next-pylint: commands[3]> python /mnt/vss/_work/1/s/eng/tox/run_pylint.py -t /mnt/vss/_work/1/s/sdk/{service_directory}/{package_name} --next=True")[1]
+            build_output = build_output.split(f"ERROR:root:{package_name} exited with linting error")
+
+            return build_output
+
     except:
         return "Error getting build info"
-        # if record['id'] == job_id:
-        #     return record
-            # try:
-            #     if record['log']:
-            #         log_id = record['log']['id']
-            #         logs_link = f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds/{build_id}/logs/{log_id}?api-version=6.0"
 
-            #         # Get the build info from the build link
-            #         build_output = requests.get(logs_link)
-            #         build_output = build_output.text
-            #         return build_output
-            # except:
-            #     return "0"
-
-    # return "0"
     
 
 
@@ -194,7 +188,7 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE) -> None:
 
     version = get_version_running(check_type)
     build_link = get_build_link(check_type)
-    build_info = get_build_info(build_link, check_type)
+    build_info = get_build_info(build_link, check_type, service_directory, package_name)
     merge_date = get_date_for_version_bump(today)
     error_type = "linting" if check_type == "pylint" else "docstring" if check_type == "sphinx" else "typing"
     guide_link = (
