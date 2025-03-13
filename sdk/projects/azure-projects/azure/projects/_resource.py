@@ -316,6 +316,7 @@ class Resource:  # pylint: disable=too-many-instance-attributes
     def _merge_properties(
         self, current_properties: Dict[str, Any], new_properties: Dict[str, Any], **kwargs
     ) -> Dict[str, Any]:
+        # TODO: Try creating a separate merge_resource and merge_properties
         for key, value in new_properties.items():
             if key in current_properties:
                 if key in self._properties_to_merge:
@@ -410,7 +411,7 @@ class Resource:  # pylint: disable=too-many-instance-attributes
     ) -> Dict[Union[str, Parameter], Any]:
         # TODO: Better design here? We need to gather Parameters both
         # with and without resolving ComponentFields.
-        # TODO We also need to resolve reource references to a ResourceSymbol.id.
+        # TODO We also need to resolve resource references to a ResourceSymbol.id.
         from ._component import ComponentField
 
         new_props: Dict[Union[str, Parameter], Any] = {}

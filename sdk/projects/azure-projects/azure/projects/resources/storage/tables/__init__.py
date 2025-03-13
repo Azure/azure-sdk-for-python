@@ -58,7 +58,7 @@ ClientType = TypeVar("ClientType", default="TableServiceClient")
 class TableStorage(_ClientResource, Generic[TableServiceResourceType]):
     DEFAULTS: "TableServiceResource" = _DEFAULT_TABLE_SERVICE  # type: ignore[assignment]
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_TABLE_SERVICE_EXTENSIONS
-    properties: TableServiceResourceType
+    properties: TableServiceResourceType  # type: ignore[reportIncompatibleVariableOverride]
     parent: StorageAccount  # type: ignore[reportIncompatibleVariableOverride]
 
     def __init__(
@@ -161,7 +161,7 @@ class TableStorage(_ClientResource, Generic[TableServiceResourceType]):
         /,
         *,
         transport: Any = None,
-        credential: Any = None,
+        credential: Optional[Union["SupportsTokenInfo", "AsyncSupportsTokenInfo"]] = None,
         api_version: Optional[str] = None,
         audience: Optional[str] = None,
         config_store: Optional[Mapping[str, Any]] = None,
@@ -174,7 +174,7 @@ class TableStorage(_ClientResource, Generic[TableServiceResourceType]):
         /,
         *,
         transport: Any = None,
-        credential: Any = None,
+        credential: Optional[Union["SupportsTokenInfo", "AsyncSupportsTokenInfo"]] = None,
         api_version: Optional[str] = None,
         audience: Optional[str] = None,
         config_store: Optional[Mapping[str, Any]] = None,
@@ -188,7 +188,7 @@ class TableStorage(_ClientResource, Generic[TableServiceResourceType]):
         /,
         *,
         transport: Any = None,
-        credential: Any = None,
+        credential: Optional[Union["SupportsTokenInfo", "AsyncSupportsTokenInfo"]] = None,
         api_version: Optional[str] = None,
         audience: Optional[str] = None,
         config_store: Optional[Mapping[str, Any]] = None,
@@ -203,7 +203,7 @@ class TableStorage(_ClientResource, Generic[TableServiceResourceType]):
         /,
         *,
         transport: Any = None,
-        credential: Any = None,
+        credential: Optional[Union["SupportsTokenInfo", "AsyncSupportsTokenInfo"]] = None,
         api_version: Optional[str] = None,
         audience: Optional[str] = None,
         config_store: Optional[Mapping[str, Any]] = None,

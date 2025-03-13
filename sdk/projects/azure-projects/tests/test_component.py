@@ -62,6 +62,7 @@ def test_component_infra_inheritance():
         InfraD()
 
 
+# TODO: Test linked infra with different RG, identity, config
 def test_component_infra_linked():
     class InfraA(AzureInfrastructure):
         storage: BlobStorage = field()
@@ -183,10 +184,10 @@ def test_component_infra_basic():
     infra = Infra()
     assert infra.test == BlobStorage(account="test")
     assert infra.test.parent == StorageAccount(name="test")
-    infra.test = BlobStorage.reference(account="existing")
-    assert infra.test == BlobStorage(account="existing")
-    infra.test = "a string"
-    assert infra.test == "a string"
+    with pytest.raises(AttributeError):
+        infra.test = BlobStorage.reference(account="existing")
+    with pytest.raises(AttributeError):
+        infra.test = "a string"
 
     infra = Infra(test=BlobStorage(account="foo"))
     assert infra.test == BlobStorage(account="foo")
@@ -229,9 +230,6 @@ def test_component_infra_basic():
     assert infra.test == BlobContainer(name="data", account="data")
     assert infra.test.parent == BlobStorage(account="data")
     assert infra.test.parent.parent == StorageAccount(name="data")
-    infra.test = BlobStorage(account="foo")
-    assert infra.test == BlobStorage(account="foo")
-    assert infra.test.parent == StorageAccount(name="foo")
 
 
 def test_component_infra_hybrid():

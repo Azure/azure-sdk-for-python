@@ -338,12 +338,9 @@ def test_appconfig_app():
     assert isinstance(app.config, AzureAppConfigurationClient)
     assert app.config._impl._config.endpoint == "https://test.azconfig.io"
 
-    override_client = AzureAppConfigurationClient(
-        "https://foobar.azconfig.io", credential=DefaultAzureCredential()
-    )
+    override_client = AzureAppConfigurationClient("https://foobar.azconfig.io", credential=DefaultAzureCredential())
     app = TestApp(config=override_client)
     assert app.config._impl._config.endpoint == "https://foobar.azconfig.io"
-
 
     class TestApp(AzureApp):
         client: AzureAppConfigurationClient = field(default=r, api_version="v1.0")
@@ -373,7 +370,9 @@ def test_appconfig_app():
     assert app.client._impl._config.api_version == "v1.0"
 
     def client_builder(**kwargs):
-        return AzureAppConfigurationClient("https://different.azconfig.io", credential=DefaultAzureCredential(), **kwargs)
+        return AzureAppConfigurationClient(
+            "https://different.azconfig.io", credential=DefaultAzureCredential(), **kwargs
+        )
 
     class TestApp(AzureApp):
         client: AzureAppConfigurationClient = field(factory=client_builder, api_version="v3.0")

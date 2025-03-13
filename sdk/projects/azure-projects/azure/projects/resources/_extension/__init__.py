@@ -163,7 +163,7 @@ def add_extensions(fields: "FieldsType", parameters: Dict[str, Parameter]):
                     )
                 )
             # TODO: We shouldn't do this - not sure if we need to find a way to surface the resource
-            # symbols or if we can just safetly remove it.
+            # symbols or if we can just safely remove it.
             field.extensions["managed_identity_roles"] = role_symbols  # type: ignore[typeddict-item]  # TODO
         if parameters.get("principalId"):
             roles = field.extensions.get("user_roles", [])
@@ -184,5 +184,5 @@ def add_extensions(fields: "FieldsType", parameters: Dict[str, Parameter]):
                     )
                 )
             # TODO: We shouldn't do this - not sure if we need to find a way to surface the resource
-            # symbols or if we can just safetly remove it.
+            # symbols or if we can just safely remove it.
             field.extensions["user_roles"] = role_symbols  # type: ignore[typeddict-item]  # TODO
