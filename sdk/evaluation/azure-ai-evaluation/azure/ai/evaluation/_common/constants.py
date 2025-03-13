@@ -6,7 +6,7 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-PROMPT_BASED_REASON_EVALUATORS = ["coherence", "relevance", "retrieval", "groundedness", "fluency"]
+PROMPT_BASED_REASON_EVALUATORS = ["coherence", "relevance", "retrieval", "groundedness", "fluency", "tool_call_accuracy"]
 
 
 class CommonConstants:
