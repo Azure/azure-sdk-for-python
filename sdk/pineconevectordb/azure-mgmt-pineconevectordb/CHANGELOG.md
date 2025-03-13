@@ -4,8 +4,10 @@
 
 ### Features Added
 
-  - Method `MarketplaceDetails.__init__` has a new overload `def __init__(self: None, offer_details: _models.OfferDetails, subscription_id: Optional[str])`
-  - Method `UserDetails.__init__` has a new overload `def __init__(self: None, first_name: Optional[str], last_name: Optional[str], email_address: Optional[str], upn: Optional[str], phone_number: Optional[str])`
+  - Parameter `subscription_id` of model `MarketplaceDetails` is now optional
+  - Parameter `first_name` of model `UserDetails` is now optional
+  - Parameter `last_name` of model `UserDetails` is now optional
+  - Parameter `email_address` of model `UserDetails` is now optional
 
 ## 1.0.0b1 (2025-02-06)
 
