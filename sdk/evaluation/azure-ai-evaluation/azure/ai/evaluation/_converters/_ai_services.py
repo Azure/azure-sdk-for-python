@@ -6,7 +6,7 @@ from azure.ai.projects.models import ThreadRun, RunStep, RunStepToolCallDetails,
 from typing import List
 
 # Constants.
-from ._models import _USER, _AGENT, _TOOL,  _TOOL_CALL, _TOOL_CALLS, _FUNCTION
+from ._models import _USER, _AGENT, _TOOL, _TOOL_CALL, _TOOL_CALLS, _FUNCTION
 
 # Message instances.
 from ._models import Message, SystemMessage, UserMessage, AssistantMessage, ToolCall
@@ -173,6 +173,7 @@ class AIAgentConverter:
 
         return final_result.to_json()
 
+
 def convert_from_file(filename: str, run_id: str) -> str:
     """
     Converts the agent run from a JSON file to a format suitable for the OpenAI API, the JSON file being a thread.
@@ -186,7 +187,7 @@ def convert_from_file(filename: str, run_id: str) -> str:
     :type already_sorted: bool
     :rtype: str
     """
-    with open(filename, 'r') as file:
+    with open(filename, "r") as file:
         data = json.load(file)
 
     # We need to type our messages to the correct type, so we can sliced and dice the way we like it.
@@ -228,11 +229,8 @@ def convert_from_file(filename: str, run_id: str) -> str:
     # Create the tool definitions.
     tools = data.get("tools", [])
     tool_definitions = [
-        ToolDefinition(
-            name=tool["name"],
-            description=tool.get("description"),
-            parameters=tool["parameters"]
-        ) for tool in tools
+        ToolDefinition(name=tool["name"], description=tool.get("description"), parameters=tool["parameters"])
+        for tool in tools
     ]
 
     # # Separate messages into query and response
@@ -240,10 +238,6 @@ def convert_from_file(filename: str, run_id: str) -> str:
     response_messages = [what for what in converted_messages if what.run_id == run_id]
 
     # Create the final result
-    final_result = ConvertedResult(
-        query=query_messages,
-        response=response_messages,
-        tool_definitions=tool_definitions
-    )
+    final_result = ConvertedResult(query=query_messages, response=response_messages, tool_definitions=tool_definitions)
 
     return final_result.to_json()
