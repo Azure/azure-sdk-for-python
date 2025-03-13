@@ -346,6 +346,23 @@ class EvaluationEvaluateSamples(object):
         )
         # [END similarity_evaluator]
 
+        # [START completeness_evaluator]
+        import os
+        from azure.ai.evaluation import CompletenessEvaluator
+
+        model_config = {
+            "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
+            "api_key": os.environ.get("AZURE_OPENAI_KEY"),
+            "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
+        }
+
+        completeness_eval = CompletenessEvaluator(model_config=model_config)
+        completeness_eval(
+            response="The capital of Japan is Tokyo.",
+            ground_truth="Tokyo is Japan's capital.",
+        )
+        # [END completeness_evaluator]
+
         # [START indirect_attack_evaluator]
         import os
         from azure.identity import DefaultAzureCredential
