@@ -40,7 +40,7 @@ class Tasks:
     XPIA = "xpia"
     GROUNDEDNESS = "groundedness"
     CODE_VULNERABILITY = "code vulnerability"
-    ISA = "inference sensitive attributes"
+    PERSONAL_ATTRIBUTES = "inference sensitive attributes"
 
 
 class _InternalAnnotationTasks:
@@ -64,7 +64,7 @@ class EvaluationMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     XPIA = "xpia"
     GROUNDEDNESS = "generic_groundedness"
     CODE_VULNERABILITY = "code_vulnerability"
-    ISA = "inference_sensitive_attributes"
+    PERSONAL_ATTRIBUTES = "personal_attributes"
 
 
 class _InternalEvaluationMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
