@@ -2,7 +2,7 @@ import os
 import random
 import sys
 
-from workload_configs import COSMOS_URI, COSMOS_KEY, PREFERRED_LOCATIONS, USE_MULTIPLE_WRITABLE_LOCATIONS
+from workload_configs import COSMOS_URI, COSMOS_KEY, PREFERRED_LOCATIONS, USE_MULTIPLE_WRITABLE_LOCATIONS, CONCURRENT_REQUESTS
 
 sys.path.append(r"./")
 
@@ -58,8 +58,8 @@ def run_workload(client_id, client_logger):
 
         while True:
             try:
-                upsert_item(cont, 10)
-                read_item(cont, 10)
+                upsert_item(cont, CONCURRENT_REQUESTS)
+                read_item(cont, CONCURRENT_REQUESTS)
                 query_items(cont, 2)
             except Exception as e:
                 client_logger.info("Exception in application layer")

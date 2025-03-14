@@ -5,7 +5,7 @@ import sys
 import aiohttp
 
 from azure.cosmos import documents
-from workload_configs import COSMOS_URI, COSMOS_KEY, PREFERRED_LOCATIONS, USE_MULTIPLE_WRITABLE_LOCATIONS
+from workload_configs import COSMOS_URI, COSMOS_KEY, PREFERRED_LOCATIONS, USE_MULTIPLE_WRITABLE_LOCATIONS, CONCURRENT_REQUESTS
 
 sys.path.append(r"./")
 
@@ -49,7 +49,7 @@ async def run_workload(client_id, client_logger):
 
             while True:
                 try:
-                    await upsert_item_concurrently(cont, 10)
+                    await upsert_item_concurrently(cont, CONCURRENT_REQUESTS)
                 except Exception as e:
                     client_logger.info("Exception in application layer")
                     client_logger.error(e)
