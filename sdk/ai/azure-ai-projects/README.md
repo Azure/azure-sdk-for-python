@@ -480,7 +480,7 @@ with project_client:
 
 <!-- END SNIPPET -->
 
-If the agent have found the relevant information in the index, the reference
+If the agent has found the relevant information in the index, the reference
 and annotation will be provided in the message response. In the example above, we replace
 the reference placeholder by the actual reference and url. Please note, that to
 get sensible result, the index needs to have fields "title" and "url".
