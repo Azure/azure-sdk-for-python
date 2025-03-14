@@ -75,7 +75,7 @@ def multimodal_input_selector():
     return selector
 
 
-@pytest.mark.usefixtures("recording_injection", "recorded_test")
+# @pytest.mark.usefixtures("recording_injection", "recorded_test")
 class TestMassEvaluate:
     """
     Testing file for testing evaluators within the actual `evaluate` wrapper function. Tests are done
@@ -116,6 +116,7 @@ class TestMassEvaluate:
 
         row_result_df = pd.DataFrame(result["rows"])
         metrics = result["metrics"]
+        import pdb; pdb.set_trace()
         # assert len(row_result_df.keys()) == 63
         assert len(row_result_df["inputs.query"]) == 3
         assert len(row_result_df["inputs.context"]) == 3
@@ -244,8 +245,7 @@ class TestMassEvaluate:
 
         row_result_df = pd.DataFrame(result["rows"])
         metrics = result["metrics"]
-
-        assert len(row_result_df.keys()) >= 32
+        assert len(row_result_df.keys()) >= 43
         assert len(row_result_df["inputs.conversation"]) >= 2
         assert len(row_result_df["outputs.grounded.groundedness"]) >= 2
         assert len(row_result_df["outputs.grounded.gpt_groundedness"]) >= 2
@@ -279,7 +279,7 @@ class TestMassEvaluate:
         assert len(row_result_df["outputs.retrieval.gpt_retrieval"]) >= 2
         assert len(row_result_df["outputs.retrieval.evaluation_per_turn"]) >= 2
 
-        # assert len(metrics.keys()) == 21
+        assert len(metrics.keys()) == 32
         assert metrics["coherence.coherence"] >= 0
         assert metrics["coherence.gpt_coherence"] >= 0
         assert metrics["fluency.fluency"] >= 0
@@ -355,6 +355,7 @@ class TestMassEvaluate:
         #     assert len(row_result_df.keys()) >= 23
         # else:
         assert len(row_result_df.keys()) >= 22
+        import pdb; pdb.set_trace()
         assert "outputs.protected_material.artwork_label" in row_result_df.columns.to_list()
         assert "outputs.protected_material.artwork_reason" in row_result_df.columns.to_list()
         assert "outputs.protected_material.fictional_characters_label" in row_result_df.columns.to_list()
@@ -402,6 +403,7 @@ class TestMassEvaluate:
 
         row_result_df = pd.DataFrame(result["rows"])
         metrics = result["metrics"]
+        import pdb; pdb.set_trace()
         assert len(row_result_df.keys()) == 6
         assert len(row_result_df["inputs.query"]) == 2
         assert len(row_result_df["inputs.response"]) == 2
@@ -483,6 +485,7 @@ class TestMassEvaluate:
 
         row_result_df = pd.DataFrame(result["rows"])
         metrics = result["metrics"]
+        import pdb; pdb.set_trace()
         assert len(row_result_df.keys()) == 6
         assert len(row_result_df["inputs.query"]) == 2
         assert len(row_result_df["inputs.response"]) == 2
