@@ -94,7 +94,7 @@ def get_build_info(build_link: str, check_type: CHECK_TYPE, service_directory: s
                 logging.info(f"Log output text: {log_output.text}")
                 logging.info(f"Log output status code: {log_output.status_code}")
                 logging.info(f"Log output headers: {log_output.headers}")
-                compressed_data = io.BytesIO(response.content)
+                compressed_data = io.BytesIO(log_output.content)
                 decompressed_file = gzip.GzipFile(fileobj=compressed_data)
                 text = decompressed_file.read().decode('utf-8')  # or appropriate encoding
                 return text
