@@ -16,14 +16,6 @@ logger = logging.getLogger(__name__)
 
 T_EvalValue = TypeVar("T_EvalValue")
 
-try:
-    from azure.ai.projects.models import ToolDefinition, ThreadMessage, RunStepToolCall
-except Exception as ex:
-    logger.warning("Please install azure-ai-projects sdk to use this evaluator. ")
-
-
-
-
 class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """The Tool Call Accuracy evaluator assesses how accurately an AI uses tools by examining:
         - Relevance to the conversation
@@ -60,7 +52,8 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
 
     _PROMPTY_FILE = "tool_call_accuracy.prompty"
-    _RESULT_KEY = "tool_call_accuracy"
+    _RESULT_KEY = "tool_call_accurate"
+    _AGGREGATE_RESULT_KEY = "tool_call_accuracy"
 
     id = "id"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
@@ -76,27 +69,27 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     def __call__(
         self,
         *,
-        query: Union[str, List["ThreadMessage"]], # Chat history upto the message that has the tool call being evaluated. Not including the message that has tool call. -- chat history
-        tool_definitions: Union["ToolDefinition", List["ToolDefinition"]], # Definition of tool whose call is being evaluated
-        tool_calls: Union["ToolCall", List["ToolCall"]]  = None,
-        response: Union[str, List["ThreadMessage"]] = None
+        query: Union[str, List["Message"]], # Chat history upto the message that has the tool call being evaluated. Not including the message that has tool call. -- chat history
+        tool_definitions: Union["FunctionToolDefinition", List["FunctionToolDefinition"]], # Definition of tool whose call is being evaluated
+        tool_calls: Union["FunctionToolCall", List["FunctionToolCall"]]  = None,
+        response: Union[str, List["Message"]] = None
     ) -> Dict[str, Union[str, float]]:
         """
         Evaluate tool call accuracy. Accepts a query, tool definitions, and tool calls for evaluation.
 
         :keyword query: Query or Chat history up to the message that has the tool call being evaluated.
-        :paramtype query: Union[str, List[ThreadMessage]]
+        :paramtype query: Union[str, List[Message]]
         :keyword tool_definitions: List of tool definitions whose calls are being evaluated.
-        :paramtype tool_definitions: List[ToolDefinition]
+        :paramtype tool_definitions: Union[FunctionToolDefinition, List[FunctionToolDefinition]]
         :keyword tool_calls: Optional List of tool calls to evaluate. If not provided response should be provided and should have
             tool call(s) in it.
-        :paramtype tool_calls: List[ToolCall]
+        :paramtype tool_calls: Union[FunctionToolCall, List[FunctionToolCall]]
         :keyword response: Optional response to be evaluated alongside the tool calls.
             If provided all tool calls in response will be evaluated when tool_calls parameter is not provided.
             If provided and tool_calls parameter is provided, only the tool calls in tool_calls parameter will be evaluated.
                 If response has extra tool calls they will not be evaluated, response will be used to extract any tool calls that are needed for evaluating a certain tool call.
             Recommended to provide it when there are tool calls that depend on output of a previous tool call.
-        :paramtype response: Union[str, List[ThreadMessage]]
+        :paramtype response: Union[str, List[Message]]
         :return: The tool selection evaluation results.
         :rtype: Dict[str, Union[str, float]]
         """
@@ -185,7 +178,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                         category=ErrorCategory.INVALID_VALUE,
                         target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
                     )
-                eval_inputs.append({"messages": query, "tool_call": tool_call, "tool_definition": tool_definition})
+                eval_inputs.append({"query": query, "tool_call": tool_call, "tool_definition": tool_definition})
 
         return eval_inputs
 
@@ -204,18 +197,30 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         score = math.nan
         if llm_output:
-            # Parse out score and reason from evaluators known to possess them.
-            if self._result_key in PROMPT_BASED_REASON_EVALUATORS:
-                score, reason = parse_quality_evaluator_reason_score(llm_output, score_range="[0-1]")
-                return {
-                    self._result_key: float(score),
-                    f"{self._result_key}_reason": reason,
-                }
-            match = re.search(r"\d", llm_output)
-            if match:
-                score = float(match.group())
-            return {self._result_key: float(score)}
+            score, reason = parse_quality_evaluator_reason_score(llm_output, score_range="[0-1]")
+            return {
+                self._result_key: bool(float(score)),
+                f"{self._result_key}_reason": reason,
+                "tool_call_id" : eval_input.get("tool_call").get("tool_call").get("id"),
+            }
         return {self._result_key: float(score)}
+
+    async def _real_call(self, **kwargs):
+        """The asynchronous call where real end-to-end evaluation logic is performed.
+
+        :keyword kwargs: The inputs to evaluate.
+        :type kwargs: Dict
+        :return: The evaluation result.
+        :rtype: Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]
+        """
+        # Convert inputs into list of evaluable inputs.
+        eval_input_list = self._convert_kwargs_to_eval_input(**kwargs)
+        per_turn_results = []
+        # Evaluate all inputs.
+        for eval_input in eval_input_list:
+            per_turn_results.append(await self._do_eval(eval_input))
+
+        return self._aggregate_results(per_turn_results=per_turn_results)
 
     def _aggregate_results(self, per_turn_results):
         """Aggregate the evaluation results of each conversation turn into a single result.
@@ -238,18 +243,22 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         # Go over each turn, and rotate the results into a
         # metric: List[values] format for the evals_per_turn dictionary.
-        for turn in per_turn_results:
-            for metric, value in turn.items():
-                if metric not in evaluation_per_turn:
-                    evaluation_per_turn[metric] = []
-                evaluation_per_turn[metric].append(value)
 
-        # Find and average all numeric values
-        for metric, values in evaluation_per_turn.items():
-            if all(isinstance(value, (int, float)) for value in values):
-                aggregated[metric] = self._conversation_aggregation_function(cast(List[Union[int, float]], values))
-        # Slap the per-turn results back in.
-        aggregated["evaluation_per_tool_call"] = evaluation_per_turn
+        score = sum([1 if per_turn_result.get(self._result_key) else 0 for per_turn_result in per_turn_results])/len(per_turn_results)
+        aggregated[self._AGGREGATE_RESULT_KEY] = score
+
+        # for turn in per_turn_results:
+        #     for metric, value in turn.items():
+        #         if metric not in evaluation_per_turn:
+        #             evaluation_per_turn[metric] = []
+        #         evaluation_per_turn[metric].append(value)
+        #
+        # # Find and average all numeric values
+        # for metric, values in evaluation_per_turn.items():
+        #     if all(isinstance(value, (int, float)) for value in values):
+        #         aggregated[metric] = self._conversation_aggregation_function(cast(List[Union[int, float]], values))
+        # # Slap the per-turn results back in.
+        aggregated["per_tool_call_details"] = per_turn_results
         return aggregated
 
     @override
