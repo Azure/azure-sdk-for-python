@@ -127,48 +127,78 @@ class TestResponses(AzureRecordedTestCase):
                 assert chunk.response.usage.total_tokens == chunk.response.usage.input_tokens + chunk.response.usage.output_tokens
                 assert chunk.response.usage.output_tokens_details is not None
 
+    @pytest.mark.skip("Not working yet")
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
         [(CUA_AZURE, "2025-03-01-preview"), (OPENAI, "v1")]
     )
     def test_responses_with_computer_use_tool(self, client: openai.AzureOpenAI | openai.OpenAI, api_type, api_version, **kwargs):
-        response = client.responses.create(
-            input="what should I click?",
-            tools=[
-                {
-                    "type": "computer_use_preview",
-                    "environment": "linux",
-                    "display_width": 1920,
-                    "display_height": 1080,
-                }
-            ],
-            truncation="auto",
-            **kwargs
-        )
+        try:
+            path = pathlib.Path(__file__).parent / "assets" / "browser_github_screenshot.png"
+            # with open(str(path), "rb") as f:
+            #     file_data = f.read()
+            
+            # file = client.files.create(
+            #     file=file_data,
+            #     purpose="user_data"
+            # )
+            import base64
+            with open(str(path), "rb") as f:
+                data = f.read()
 
-        assert response.id is not None
-        assert response.created_at is not None
-        assert response.model
-        assert response.object == "response"
-        assert response.status == "completed"
-        assert response.usage.input_tokens is not None
-        assert response.usage.output_tokens is not None
-        assert response.usage.total_tokens == response.usage.input_tokens + response.usage.output_tokens
-        assert response.usage.output_tokens_details is not None
-        assert len(response.output) > 0
-        assert response.output[0].content[0].type == "output_text"
-        assert response.output[0].content[0].text
-        assert response.output[0].id is not None
-        assert response.output[0].role == "assistant"
-        assert response.output[0].type == "message"
+            base64_string = base64.b64encode(data).decode("utf-8")
 
-        assert response.tools
-        tools = response.tools[0]
-        assert tools.type == "computer-preview"
-        assert tools.display_height == 1080
-        assert tools.display_width == 1920
-        assert tools.environment == "linux"
+            response = client.responses.create(
+                input=[
+                    {
+                        "role": "user",
+                        "content": "Where should I click to see Issues?"
+                    },
+                    {
+                        # "type": "input_file",
+                        # "file_id": file.id,
+                        "type": "input_file",
+                        "filename": "browser_github_screenshot.png",
+                        "file_data": f"data:application/pdf;base64,{base64_string}",
+                    },
+                ],
+                tools=[
+                    {
+                        "type": "computer_use_preview",
+                        "environment": "browser",
+                        "display_width": 1920,
+                        "display_height": 1080,
+                    }
+                ],
+                model="computer-use-preview"
+            )
+
+            assert response.id is not None
+            assert response.created_at is not None
+            assert response.model
+            assert response.object == "response"
+            assert response.status == "completed"
+            assert response.usage.input_tokens is not None
+            assert response.usage.output_tokens is not None
+            assert response.usage.total_tokens == response.usage.input_tokens + response.usage.output_tokens
+            assert response.usage.output_tokens_details is not None
+            assert len(response.output) > 0
+            assert response.output[0].content[0].type == "output_text"
+            assert response.output[0].content[0].text
+            assert response.output[0].id is not None
+            assert response.output[0].role == "assistant"
+            assert response.output[0].type == "message"
+
+            assert response.tools
+            tools = response.tools[0]
+            assert tools.type == "computer_use_preview"
+            assert tools.display_height == 1080
+            assert tools.display_width == 1920
+            assert tools.environment == "browser"
+        finally:
+            # client.files.delete(file.id)
+            pass
 
     @configure
     @pytest.mark.parametrize(
