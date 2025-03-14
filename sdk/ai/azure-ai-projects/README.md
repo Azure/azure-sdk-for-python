@@ -465,7 +465,7 @@ for conn in conn_list:
 print(conn_id)
 
 # Initialize agent AI search tool and add the search index connection id
-ai_search = AzureAISearchTool(index_connection_id=conn_id, index_name="myindexname")
+ai_search = AzureAISearchTool(index_connection_id=conn_id, index_name="sample_index")
 
 # Create agent with AI search tool and process assistant run
 with project_client:
@@ -476,6 +476,34 @@ with project_client:
         tools=ai_search.definitions,
         tool_resources=ai_search.resources,
     )
+```
+
+<!-- END SNIPPET -->
+
+If the agent has found the relevant information in the index, the reference
+and annotation will be provided in the message response. In the example above, we replace
+the reference placeholder by the actual reference and url. Please note, that to
+get sensible result, the index needs to have fields "title" and "url".
+
+<!-- SNIPPET:sample_agents_azure_ai_search.populate_references_agent_with_azure_ai_search_tool -->
+
+```python
+# Fetch and log all messages
+messages = project_client.agents.list_messages(thread_id=thread.id, order=ListSortOrder.ASCENDING)
+for message in messages.data:
+    if message.role == MessageRole.AGENT and message.url_citation_annotations:
+        placeholder_annotations = {
+            annotation.text: f" [see {annotation.url_citation.title}] ({annotation.url_citation.url})"
+            for annotation in message.url_citation_annotations
+        }
+        for message_text in message.text_messages:
+            message_str = message_text.text.value
+            for k, v in placeholder_annotations.items():
+                message_str = message_str.replace(k, v)
+            print(f"{message.role}: {message_str}")
+    else:
+        for message_text in message.text_messages:
+            print(f"{message.role}: {message_text.text.value}")
 ```
 
 <!-- END SNIPPET -->
