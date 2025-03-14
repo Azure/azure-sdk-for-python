@@ -21,8 +21,12 @@ import sys
 
 
 # set up
-SOURCE_FILE = 'SampleSource.txt'
-DEST_FILE = 'BlockDestination.txt'
+SOURCE_FILE = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            "SampleSource.txt")
+DEST_FILE = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            "BlockDestination.txt")
 
 
 class BlobSamples(object):

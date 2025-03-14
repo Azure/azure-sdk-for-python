@@ -30,7 +30,9 @@ import random
 from azure.storage.filedatalake.aio import (
     DataLakeServiceClient,
 )
-SOURCE_FILE = 'SampleSource.txt'
+SOURCE_FILE = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            "SampleSource.txt")
 
 async def upload_download_sample(filesystem_client):
     # create a file before writing content to it

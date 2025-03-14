@@ -23,8 +23,12 @@ USAGE:
 import os
 import sys
 
-SOURCE_FILE = './SampleSource.txt'
-DEST_FILE = './SampleDestination.txt'
+SOURCE_FILE = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            "SampleSource.txt")
+DEST_FILE = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            "SampleDestination.txt")
 
 
 class HelloWorldSamples(object):
