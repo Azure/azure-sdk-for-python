@@ -111,10 +111,6 @@ static_resources:
                 route:
                   cluster: openai-canary-test
                   timeout: 5s
-                  retry_policy:
-                    retry_on: "connect-failure,refused-stream,reset"
-                    per_try_timeout: 300s
-                    num_retries: 3
             - name: local_openai-canary-test-eastus2euap
               domains:
               - openai-canary-test-eastus2euap.documents.azure.com
@@ -126,10 +122,6 @@ static_resources:
                 route:
                   cluster: openai-canary-test-eastus2euap
                   timeout: 5s
-                  retry_policy:
-                    retry_on: "connect-failure,refused-stream,reset"
-                    per_try_timeout: 300s
-                    num_retries: 3            
             - name: local_openai-canary-test-centraluseuap
               domains:
               - openai-canary-test-centraluseuap.documents.azure.com
@@ -141,10 +133,6 @@ static_resources:
                 route:
                   cluster: openai-canary-test-centraluseuap
                   timeout: 300s
-                  retry_policy:
-                    retry_on: "connect-failure,refused-stream,reset"
-                    per_try_timeout: 300s
-                    num_retries: 3                    
           http_filters:
           - name: envoy.filters.http.router
             typed_config:
