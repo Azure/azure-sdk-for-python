@@ -122,7 +122,7 @@ async def main():
     sample = QueueAuthSamplesAsync()
     await sample.authentication_by_connection_string_async()
     await sample.authentication_by_shared_key_async()
-    # await sample.authentication_by_oauth_async()
+    await sample.authentication_by_oauth_async()
     await sample.authentication_by_shared_access_signature_async()
 
 if __name__ == '__main__':

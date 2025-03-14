@@ -140,4 +140,4 @@ if __name__ == '__main__':
     sample.auth_connection_string()
     sample.auth_shared_access_signature()
     sample.auth_blob_url()
-    # sample.auth_default_azure_credential()
+    sample.auth_default_azure_credential()

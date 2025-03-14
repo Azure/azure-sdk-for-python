@@ -155,12 +155,7 @@ IGNORED_SAMPLES = {
     ],
     "azure-storage-blob": [
         "blob_samples_proxy_configuration.py",
-        "blob_samples_client_side_encryption_keyvault.py"
     ],
-    "azure-storage-file-datalake": [
-        "datalake_samples_service.py",
-        "datalake_samples_service_async.py",
-    ]
 }
 
 def run_check_call_with_timeout(

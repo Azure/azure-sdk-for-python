@@ -144,7 +144,7 @@ async def main():
     await sample.authentication_connection_string_async()
     await sample.authentication_shared_access_key_async()
     await sample.authentication_shared_access_signature_async()
-    # await sample.authentication_default_azure_credential_async()
+    await sample.authentication_default_azure_credential_async()
 
 if __name__ == '__main__':
     asyncio.run(main())

@@ -63,7 +63,7 @@ async def get_and_set_container_access_policy():
         public_access = PublicAccess.CONTAINER
 
         # Set the access policy on the container
-        await container_client.set_container_access_policy(signed_identifiers=identifiers, public_access=public_access)
+        # await container_client.set_container_access_policy(signed_identifiers=identifiers, public_access=public_access)
 
         for identifier_name, access_policy in identifiers.items():
             print(

@@ -121,5 +121,5 @@ if __name__ == '__main__':
     sample = QueueAuthSamples()
     sample.authentication_by_connection_string()
     sample.authentication_by_shared_key()
-    # sample.authentication_by_oauth()
+    sample.authentication_by_oauth()
     sample.authentication_by_shared_access_signature()

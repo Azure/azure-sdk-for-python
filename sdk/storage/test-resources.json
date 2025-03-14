@@ -102,7 +102,6 @@
             },
             "kind": "StorageV2",
             "properties": {
-              "allowBlobPublicAccess": true,
                 "networkAcls": {
                     "bypass": "AzureServices",
                     "virtualNetworkRules": [],
@@ -201,7 +200,6 @@
             },
             "kind": "StorageV2",
             "properties": {
-              "allowBlobPublicAccess": true,
                 "networkAcls": {
                     "bypass": "AzureServices",
                     "virtualNetworkRules": [],
@@ -234,7 +232,6 @@
           },
           "kind": "StorageV2",
           "properties": {
-            "allowBlobPublicAccess": true,
             "networkAcls": {
               "bypass": "AzureServices",
               "virtualNetworkRules": [],
@@ -299,7 +296,6 @@
             },
             "kind": "StorageV2",
             "properties": {
-              "allowBlobPublicAccess": true,
                 "networkAcls": {
                     "bypass": "AzureServices",
                     "virtualNetworkRules": [],
@@ -332,7 +328,6 @@
           },
           "kind": "StorageV2",
           "properties": {
-            "allowBlobPublicAccess": true,
             "networkAcls": {
               "bypass": "AzureServices",
               "virtualNetworkRules": [],
@@ -376,7 +371,6 @@
             },
             "kind": "StorageV2",
             "properties": {
-              "allowBlobPublicAccess": true,
                 "isHnsEnabled": true,
                 "networkAcls": {
                     "bypass": "AzureServices",
@@ -434,7 +428,6 @@
           },
           "kind": "StorageV2",
           "properties": {
-            "allowBlobPublicAccess": true,
             "isHnsEnabled": true,
             "networkAcls": {
               "bypass": "AzureServices",
@@ -486,7 +479,6 @@
             },
             "kind": "FileStorage",
             "properties": {
-              "allowBlobPublicAccess": true,
                 "networkAcls": {
                     "bypass": "AzureServices",
                     "virtualNetworkRules": [],
