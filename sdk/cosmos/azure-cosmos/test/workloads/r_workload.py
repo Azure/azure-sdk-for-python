@@ -3,7 +3,6 @@ import random
 import sys
 
 from azure.cosmos import documents
-from MockExecuteAsync import mock_execute_func
 from workload_configs import COSMOS_URI, COSMOS_KEY, PREFERRED_LOCATIONS, USE_MULTIPLE_WRITABLE_LOCATIONS
 
 sys.path.append(r"./")
