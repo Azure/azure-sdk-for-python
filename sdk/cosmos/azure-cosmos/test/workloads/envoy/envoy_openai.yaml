@@ -110,8 +110,6 @@ static_resources:
               - openai-canary-test.documents.azure.com-
               - openai-canary-test.documents.azure.com:443
               routes:
-              - match:
-                  prefix: "/"
                 route:
                   cluster: openai-canary-test
                   timeout: 5s
@@ -125,8 +123,6 @@ static_resources:
               - openai-canary-test-eastus2euap.documents.azure.com-
               - openai-canary-test-eastus2euap.documents.azure.com:443
               routes:
-              - match:
-                  prefix: "/"
                 route:
                   cluster: openai-canary-test-eastus2euap
                   timeout: 5s
@@ -140,8 +136,6 @@ static_resources:
               - openai-canary-test-centraluseuap.documents.azure.com-
               - openai-canary-test-centraluseuap.documents.azure.com:443
               routes:
-              - match:
-                  prefix: "/"
                 route:
                   cluster: openai-canary-test-centraluseuap
                   timeout: 300s
