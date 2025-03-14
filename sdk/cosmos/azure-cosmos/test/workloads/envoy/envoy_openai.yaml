@@ -97,10 +97,6 @@ static_resources:
           proxy_status_config:
             set_recommended_response_code: true
             use_node_id: true
-          common_http_protocol_options:
-            max_connection_duration: 900s
-          drain_timeout: 330s
-          stream_idle_timeout: 30s
           route_config:
             name: local_route
             virtual_hosts:
@@ -167,6 +163,7 @@ static_resources:
         - endpoint:
             address:
               socket_address:
+                protocol: TCP
                 address: openai-canary-test-eastus2euap.documents.azure.com
                 port_value: 443
     transport_socket:
@@ -189,6 +186,7 @@ static_resources:
         - endpoint:
             address:
               socket_address:
+                protocol: TCP
                 address: openai-canary-test.documents.azure.com
                 port_value: 443
     transport_socket:
@@ -211,6 +209,7 @@ static_resources:
         - endpoint:
             address:
               socket_address:
+                protocol: TCP
                 address: openai-canary-test-centraluseuap.documents.azure.com
                 port_value: 443
     transport_socket:
