@@ -74,8 +74,8 @@ async def run_workload(client_id, client_logger):
 
             while True:
                 try:
-                    await upsert_item_concurrently(cont, 5)
-                    await read_item_concurrently(cont, 5)
+                    await upsert_item_concurrently(cont, 10)
+                    await read_item_concurrently(cont, 10)
                     await query_items_concurrently(cont, 2)
                 except Exception as e:
                     client_logger.info("Exception in application layer")
