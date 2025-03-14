@@ -116,8 +116,7 @@ class TestMassEvaluate:
 
         row_result_df = pd.DataFrame(result["rows"])
         metrics = result["metrics"]
-        import pdb; pdb.set_trace()
-        # assert len(row_result_df.keys()) == 63
+        assert len(row_result_df.keys()) == 110
         assert len(row_result_df["inputs.query"]) == 3
         assert len(row_result_df["inputs.context"]) == 3
         assert len(row_result_df["inputs.response"]) == 3
@@ -182,7 +181,7 @@ class TestMassEvaluate:
         assert len(row_result_df["outputs.qa.similarity"]) == 3
         assert len(row_result_df["outputs.qa.gpt_similarity"]) == 3
 
-        # assert len(metrics.keys()) == 39
+        assert len(metrics.keys()) == 62
         assert metrics["f1_score.f1_score"] >= 0
         assert metrics["gleu.gleu_score"] >= 0
         assert metrics["bleu.bleu_score"] >= 0
@@ -350,37 +349,43 @@ class TestMassEvaluate:
         assert result is not None
         assert result["rows"] is not None
 
-        # if multi_modal_input_type == "imageurls_with_target":
-        #     # imageurls_with_target has 1 extra column: outputs.conversation due to the target mapping
-        #     assert len(row_result_df.keys()) >= 23
-        # else:
-        assert len(row_result_df.keys()) >= 22
-        import pdb; pdb.set_trace()
-        assert "outputs.protected_material.artwork_label" in row_result_df.columns.to_list()
-        assert "outputs.protected_material.artwork_reason" in row_result_df.columns.to_list()
-        assert "outputs.protected_material.fictional_characters_label" in row_result_df.columns.to_list()
-        assert "outputs.protected_material.fictional_characters_reason" in row_result_df.columns.to_list()
-        assert "outputs.protected_material.logos_and_brands_label" in row_result_df.columns.to_list()
-        assert "outputs.protected_material.logos_and_brands_reason" in row_result_df.columns.to_list()
+        if multi_modal_input_type == "imageurls_with_target":
+            # imageurls_with_target has 1 extra column: outputs.conversation due to the target mapping
+            assert len(row_result_df.keys()) >= 33
+        else:
+            assert len(row_result_df.keys()) == 32
+        known_keys = [
+            'outputs.content_safety.hate_unfairness',
+            'outputs.content_safety.hate_unfairness_score',
+            'outputs.content_safety.hate_unfairness_reason',
+            'outputs.content_safety.hate_unfairness_result',
+            'outputs.content_safety.self_harm',
+            'outputs.content_safety.self_harm_score',
+            'outputs.content_safety.self_harm_reason',
+            'outputs.content_safety.self_harm_result',
+            'outputs.content_safety.sexual',
+            'outputs.content_safety.sexual_score',
+            'outputs.content_safety.sexual_reason',
+            'outputs.content_safety.sexual_result',
+            'outputs.content_safety.violence',
+            'outputs.content_safety.violence_score',
+            'outputs.content_safety.violence_reason',
+            'outputs.content_safety.violence_result',
+            'outputs.protected_material.fictional_characters_label',
+            'outputs.protected_material.fictional_characters_reason',
+            'outputs.protected_material.logos_and_brands_label',
+            'outputs.protected_material.logos_and_brands_reason',
+            'outputs.protected_material.artwork_label',
+            'outputs.protected_material.artwork_reason',
+            'outputs.sexual.sexual',
+            'outputs.sexual.sexual_score',
+            'outputs.sexual.sexual_reason',
+            'outputs.sexual.sexual_result'
+        ]
+        for key in known_keys:
+            assert key in row_result_df.keys()
 
-        assert "outputs.content_safety.sexual" in row_result_df.columns.to_list()
-        assert "outputs.content_safety.violence" in row_result_df.columns.to_list()
-        assert "outputs.content_safety.self_harm" in row_result_df.columns.to_list()
-        assert "outputs.content_safety.hate_unfairness" in row_result_df.columns.to_list()
-        assert "outputs.content_safety.sexual_score" in row_result_df.columns.to_list()
-        assert "outputs.content_safety.violence_score" in row_result_df.columns.to_list()
-        assert "outputs.content_safety.self_harm_score" in row_result_df.columns.to_list()
-        assert "outputs.content_safety.hate_unfairness_score" in row_result_df.columns.to_list()
-        assert "outputs.content_safety.sexual_reason" in row_result_df.columns.to_list()
-        assert "outputs.content_safety.violence_reason" in row_result_df.columns.to_list()
-        assert "outputs.content_safety.self_harm_reason" in row_result_df.columns.to_list()
-        assert "outputs.content_safety.hate_unfairness_reason" in row_result_df.columns.to_list()
-
-        assert "outputs.sexual.sexual_score" in row_result_df.columns.to_list()
-        assert "outputs.sexual.sexual_reason" in row_result_df.columns.to_list()
-        assert "outputs.sexual.sexual" in row_result_df.columns.to_list()
-
-        # assert len(metrics) == 8
+        assert len(metrics) == 13
         assert 0 <= metrics.get("content_safety.sexual_defect_rate") <= 1
         assert 0 <= metrics.get("content_safety.violence_defect_rate") <= 1
         assert 0 <= metrics.get("content_safety.self_harm_defect_rate") <= 1
@@ -403,7 +408,7 @@ class TestMassEvaluate:
 
         row_result_df = pd.DataFrame(result["rows"])
         metrics = result["metrics"]
-        import pdb; pdb.set_trace()
+        # todo: change this once binary results are added to the evaluator
         assert len(row_result_df.keys()) == 6
         assert len(row_result_df["inputs.query"]) == 2
         assert len(row_result_df["inputs.response"]) == 2
@@ -485,7 +490,7 @@ class TestMassEvaluate:
 
         row_result_df = pd.DataFrame(result["rows"])
         metrics = result["metrics"]
-        import pdb; pdb.set_trace()
+        # todo: change this once binary results are added to the evaluator
         assert len(row_result_df.keys()) == 6
         assert len(row_result_df["inputs.query"]) == 2
         assert len(row_result_df["inputs.response"]) == 2
