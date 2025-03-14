@@ -88,6 +88,7 @@ tracer = trace.get_tracer(__name__)
 
 with tracer.start_as_current_span(scenario):
     with project_client:
+        project_client.telemetry.enable()
         # Create an agent and run stream with event handler
         agent = project_client.agents.create_agent(
             model=os.environ["MODEL_DEPLOYMENT_NAME"], name="my-assistant", instructions="You are a helpful assistant"
@@ -103,7 +104,7 @@ with tracer.start_as_current_span(scenario):
         print(f"Created message, message ID {message.id}")
 
         with project_client.agents.create_stream(
-            thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
+            thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler()
         ) as stream:
             stream.until_done()
 
