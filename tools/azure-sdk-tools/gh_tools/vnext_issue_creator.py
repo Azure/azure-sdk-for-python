@@ -88,22 +88,10 @@ def get_build_info(build_link: str, check_type: CHECK_TYPE, service_directory: s
             if "Run Pylint Next" in task["name"]:
                 log_link = task['log']['url'] + "?api-version=7.1"
                 # Get the log file from the build link
-                logging.info(f"Log link: {log_link}")
                 log_output = requests.get(log_link, headers=AUTH_HEADERS)
-                logging.info(f"Log output: {log_output}")
-                logging.info(f"Log output text: {log_output.text}")
-                logging.info(f"Log output status code: {log_output.status_code}")
-                logging.info(f"Log output headers: {log_output.headers}")
-                logging.info(f"Log output content type: {log_output.content}")
                 build_output = log_output.content.decode("utf-8")
-                # logging.info(f"Log output content type: {json.loads(log_output.text)}")
-                
-                # build_output = json.loads(logs_output.text)
-                # return [log_output.text, json.loads(log_output.text)]
-                build_output = build_output.split(f"next-pylint: commands[3]> python /mnt/vss/_work/1/s/eng/tox/run_pylint.py -t /mnt/vss/_work/1/s/sdk/{service_directory}/{package_name} --next=True")[1]
-                build_output = build_output.split(f"ERROR:root:{package_name} exited with linting error")
-
-                return build_output
+                new_output = (build_output.split(f"next-pylint: commands[3]> python /mnt/vss/_work/1/s/eng/tox/run_pylint.py -t /mnt/vss/_work/1/s/sdk/{service_directory}/{package_name} --next=True")[1]).split(f"ERROR:root:{package_name} exited with linting error")[0]
+                return new_output
 
     except Exception as e:
         logging.error(f"Exception occurred while getting build info: {e}")
@@ -222,8 +210,8 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE) -> None:
             f"\n**Service directory:** sdk/{service_directory}/{package_name}"
             f"\n**{check_type.capitalize()} version:** {version}"
             f"\n**{check_type.capitalize()} errors:** [Link to build ({today.strftime('%Y-%m-%d')})]({build_link})"
-            f"\n<details>"
-            f"\n**{check_type.capitalize()} errors:** {build_info}"
+            f"\n\n<details>"
+            f"\n\n{build_info}"
             f"</details>"
             f"\n"
             f"\n**How to fix:**"
