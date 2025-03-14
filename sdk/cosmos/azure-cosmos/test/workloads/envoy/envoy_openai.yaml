@@ -107,6 +107,8 @@ static_resources:
             - name: local_openai-canary-test
               domains:
               - openai-canary-test.documents.azure.com
+              - openai-canary-test.documents.azure.com-
+              - openai-canary-test.documents.azure.com:443
               routes:
               - match:
                   prefix: "/"
@@ -120,6 +122,8 @@ static_resources:
             - name: local_openai-canary-test-eastus2euap
               domains:
               - openai-canary-test-eastus2euap.documents.azure.com
+              - openai-canary-test-eastus2euap.documents.azure.com-
+              - openai-canary-test-eastus2euap.documents.azure.com:443
               routes:
               - match:
                   prefix: "/"
@@ -133,6 +137,8 @@ static_resources:
             - name: local_openai-canary-test-centraluseuap
               domains:
               - openai-canary-test-centraluseuap.documents.azure.com
+              - openai-canary-test-centraluseuap.documents.azure.com-
+              - openai-canary-test-centraluseuap.documents.azure.com:443
               routes:
               - match:
                   prefix: "/"

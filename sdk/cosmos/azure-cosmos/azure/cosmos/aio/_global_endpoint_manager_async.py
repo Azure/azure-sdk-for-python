@@ -188,7 +188,8 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         # specified (by creating a locational endpoint) and keeping eating the exception
         # until we get the database account and return None at the end, if we are not able
         # to get that info from any endpoints
-        except (exceptions.CosmosHttpResponseError, AzureError):
+        except (exceptions.CosmosHttpResponseError, AzureError) as e:
+            logger.info("Exception in health check for endpoint %s: %s", self.DefaultEndpoint, e)
             self.mark_endpoint_unavailable_for_read(self.DefaultEndpoint, False)
             self.mark_endpoint_unavailable_for_write(self.DefaultEndpoint, False)
             for location_name in self.PreferredLocations:
