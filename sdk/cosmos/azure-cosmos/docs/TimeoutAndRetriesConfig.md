@@ -73,8 +73,9 @@ client = CosmosClient(URL, credential=KEY, retry_total = 7, retry_connect=5, ret
 Additionally, in the above example the throttle retry total will be 7, and throttle max backoff will be 20 seconds.
 
 
-To configure throttle and connection retries separately, both sets of parameters would need to be passed in as shown in the example below.  In this example, the connection retry backoff max time is 35 seconds, while setting the throttle backoff max to 25 seconds.
-Additionally, the total throttle retry attempts is 5, while the connection retry attempts is 10.
+To configure throttle and connection retries separately, both sets of parameters would need to be passed in as shown in the example below.
+In this example, the connection retry backoff max time is 35 seconds, while setting the throttle backoff max to 25 seconds.
+Additionally, the total throttle retry attempts is 5, while the total connection retry attempts is 10.
 
 ```python
 from azure.cosmos import CosmosClient
@@ -87,7 +88,7 @@ client = CosmosClient(URL, credential=KEY,
                         retry_backoff_max=35,
                         retry_throttle_backoff_max=25,
                         retry_throttle_total=5,
-                        retry_total=10))
+                        retry_total=10)
 ```
 
 More information on the SDK's default retry behaviors can be found in our error codes and retries [document](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/ErrorCodesAndRetries.md).
