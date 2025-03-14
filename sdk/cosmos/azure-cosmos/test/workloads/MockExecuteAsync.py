@@ -15,7 +15,7 @@ class MockExecuteServiceRequestException(object):
 
     async def __call__(self, func, *args, **kwargs):
         # after 10 minutes, we will start to throw exceptions and ends after 30 minutes
-        if time.time() - self.start_time >= 600 and time.time() <= self.start_time + 1800 and args:
+        if time.time() - self.start_time >= 30 and time.time() <= self.start_time + 1800 and args:
             if args[1].endpoint_override:
                 if args[1].endpoint_override == MOCK_ENDPOINT:
                     raise_exception(args)
@@ -29,7 +29,7 @@ def raise_exception(args):
         exception.exc_type = Exception
         raise exception
     else:
-        args[1] = "https://httpstat.us/502"
+        args[1].endpoint_override = "https://httpstat.us/502"
 
 
 class FakeResponse:
