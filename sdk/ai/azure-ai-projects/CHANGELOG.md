@@ -1,5 +1,17 @@
 # Release History
 
+## 1.0.0b8 (Unreleased)
+
+### Features added
+
+### Sample updates
+
+### Bugs Fixed
+
+* Fix for a bug in agent tracing causing event handler return values to not be returned when tracing is enabled.
+
+### Breaking Changes
+
 ## 1.0.0b7 (2025-03-06)
 
 ### Features added
