@@ -346,7 +346,7 @@ We can upload file to Azure as it is shown in the example, or use the existing A
 
 ```python
 # We will upload the local file to Azure and will use it for vector store creation.
-_, asset_uri = project_client.upload_file(r"C:\Users\nirovins\Downloads\Mtb_example.pdf")
+_, asset_uri = project_client.upload_file("./product_info_1.md")
 
 # Create a vector store with no file and wait for it to be processed
 ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
@@ -500,7 +500,7 @@ for message in messages.data:
             message_str = message_text.text.value
             for k, v in placeholder_annotations.items():
                 message_str = message_str.replace(k, v)
-            print(f"{message.role}: {message_text}")
+            print(f"{message.role}: {message_str}")
     else:
         for message_text in message.text_messages:
             print(f"{message.role}: {message_text.text.value}")

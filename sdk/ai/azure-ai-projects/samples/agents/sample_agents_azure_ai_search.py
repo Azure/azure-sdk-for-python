@@ -122,7 +122,7 @@ with project_client:
                 message_str = message_text.text.value
                 for k, v in placeholder_annotations.items():
                     message_str = message_str.replace(k, v)
-                print(f"{message.role}: {message_text}")
+                print(f"{message.role}: {message_str}")
         else:
             for message_text in message.text_messages:
                 print(f"{message.role}: {message_text.text.value}")
