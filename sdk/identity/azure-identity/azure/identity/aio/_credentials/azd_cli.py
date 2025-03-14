@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import asyncio
+import asyncio  # pylint: disable=C4763
 import logging
 import os
 import shutil
