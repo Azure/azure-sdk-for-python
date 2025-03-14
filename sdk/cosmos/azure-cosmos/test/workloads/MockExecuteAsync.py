@@ -5,7 +5,7 @@ from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 from azure.cosmos import exceptions
 from azure.cosmos.aio import _retry_utility_async
 
-from workload_configs import COSMOS_URI, MOCK_EXECUTE_STATUS_CODE
+from workload_configs import MOCK_ENDPOINT, MOCK_EXECUTE_STATUS_CODE
 
 
 class MockExecuteServiceRequestException(object):
@@ -17,22 +17,20 @@ class MockExecuteServiceRequestException(object):
         # after 10 minutes, we will start to throw exceptions and ends after 30 minutes
         if time.time() - self.start_time >= 600 and time.time() <= self.start_time + 1800 and args:
             if args[1].endpoint_override:
-                if args[1].endpoint_override == COSMOS_URI:
-                    raise_exception()
-            elif args[1].location_endpoint_to_route == COSMOS_URI:
-                raise_exception()
+                if args[1].endpoint_override == MOCK_ENDPOINT:
+                    raise_exception(args)
+            elif args[1].location_endpoint_to_route == MOCK_ENDPOINT:
+                raise_exception(args)
         return await self.original_func(func, *args, **kwargs)
 
-def raise_exception():
+def raise_exception(args):
     if MOCK_EXECUTE_STATUS_CODE == 1:
         exception = ServiceRequestError("mock exception")
         exception.exc_type = Exception
         raise exception
     else:
-        raise exceptions.CosmosHttpResponseError(
-            status_code=MOCK_EXECUTE_STATUS_CODE,
-            message="Some Exception",
-            response=FakeResponse({}))
+        args[1] = "https://httpstatusdogs.com/502-bad-gateway"
+
 
 class FakeResponse:
     def __init__(self, headers):
