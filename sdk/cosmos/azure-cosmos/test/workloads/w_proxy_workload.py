@@ -37,6 +37,9 @@ async def run_workload(client_id, client_logger):
     async with aiohttp.ClientSession(trust_env=True) as proxied_aio_http_session:
 
         connectionPolicy = documents.ConnectionPolicy()
+        connectionPolicy.ProxyConfiguration = documents.ProxyConfiguration()
+        connectionPolicy.ProxyConfiguration.Host = 'http://0.0.0.0'
+        connectionPolicy.ProxyConfiguration.Port = 5100
         connectionPolicy.UseMultipleWriteLocations = USE_MULTIPLE_WRITABLE_LOCATIONS
         transport = AioHttpTransport(session=proxied_aio_http_session, session_owner=False)
         async with AsyncClient(COSMOS_URI, COSMOS_KEY, preferred_locations=PREFERRED_LOCATIONS,

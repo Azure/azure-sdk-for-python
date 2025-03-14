@@ -61,6 +61,9 @@ async def run_workload(client_id, client_logger):
 
     connectionPolicy = documents.ConnectionPolicy()
     connectionPolicy.UseMultipleWriteLocations = USE_MULTIPLE_WRITABLE_LOCATIONS
+    connectionPolicy.ProxyConfiguration = documents.ProxyConfiguration()
+    connectionPolicy.ProxyConfiguration.Host = 'http://0.0.0.0'
+    connectionPolicy.ProxyConfiguration.Port = 5100
     async with aiohttp.ClientSession(trust_env=True) as proxied_aio_http_session:
 
         transport = AioHttpTransport(session=proxied_aio_http_session, session_owner=False)
