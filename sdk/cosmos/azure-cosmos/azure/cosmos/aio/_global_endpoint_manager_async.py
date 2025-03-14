@@ -101,23 +101,16 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         self.location_cache.update_location_cache()
 
     async def refresh_endpoint_list(self, database_account, **kwargs):
-        logger.info("Refresh endpoint list called")
         if self.refresh_task and self.refresh_task.done():
             try:
-                logger.info("Waiting for refresh task to finish")
                 await self.refresh_task
-                logger.info("Refresh task finished")
                 self.refresh_task = None
             except (Exception, CancelledError) as exception: #pylint: disable=broad-exception-caught
                 logger.exception("Health check task failed: %s", exception)
-        logger.info("Refresh current time: %s", self.location_cache.current_time_millis())
-        logger.info("Last refresh time: %s", self.last_refresh_time)
         if self.location_cache.current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms:
             self.refresh_needed = True
         if self.refresh_needed:
-            logger.info("Refresh needed")
             async with self.refresh_lock:
-                logger.info("Refresh locked")
                 # if refresh is not needed or refresh is already taking place, return
                 if not self.refresh_needed:
                     return
@@ -125,7 +118,6 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                     await self._refresh_endpoint_list_private(database_account, **kwargs)
                 except Exception as e:
                     raise e
-                logger.info("Refresh unlocked")
 
     async def _refresh_endpoint_list_private(self, database_account=None, **kwargs):
         if database_account and not self.startup:
@@ -168,7 +160,6 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                     await self.client._GetDatabaseAccountCheck(endpoint, **kwargs)
                     success_count += 1
                     self.location_cache.mark_endpoint_available(endpoint)
-                    logger.info("Endpoint %s is available", endpoint)
                 except (exceptions.CosmosHttpResponseError, AzureError) as e:
                     logger.info("Exception in health check for endpoint %s: %s", endpoint, e)
                     self.mark_endpoint_unavailable_for_read(endpoint, False)

@@ -245,8 +245,6 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                         logger.info("Primary: %s, Alternate: %s",
                                     write_regional_routing_context.get_primary(),
                                     write_regional_routing_context.get_alternate())
-                        logger.info("Can use multiple write locations: %s",
-                                     self.can_use_multiple_write_locations())
                         return write_regional_routing_context.get_alternate()
                     return write_regional_routing_context.get_primary()
             # if endpoint discovery is off for reads it should use passed in endpoint
