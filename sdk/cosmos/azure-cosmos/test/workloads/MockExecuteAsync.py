@@ -29,7 +29,7 @@ def raise_exception(args):
         exception.exc_type = Exception
         raise exception
     else:
-        args[1] = "https://httpstatusdogs.com/502-bad-gateway"
+        args[1] = "https://httpstat.us/502"
 
 
 class FakeResponse:

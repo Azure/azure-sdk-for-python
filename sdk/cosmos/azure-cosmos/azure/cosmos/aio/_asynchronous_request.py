@@ -82,7 +82,7 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
 
 
     ## ONLY FOR TESTING PURPOSES ##
-    if request.url != "https://httpstatusdogs.com/502-bad-gateway" :
+    if request.url != "https://httpstat.us/502/" :
         parse_result = urlparse(request.url)
 
         # The requests library now expects header values to be strings only starting 2.11,
