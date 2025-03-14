@@ -553,9 +553,7 @@ class TestChatCompletionsClientAsync(ModelClientTestBase):
 
         # Construct the full path to the image file
         script_dir = os.path.dirname(os.path.abspath(__file__))
-        audio_url = (
-            "https://github.com/Azure/azure-sdk-for-python/raw/refs/heads/main/sdk/ai/azure-ai-inference/samples/hello_how_are_you.mp3"
-        )
+        audio_url = "https://github.com/Azure/azure-sdk-for-python/raw/refs/heads/main/sdk/ai/azure-ai-inference/samples/hello_how_are_you.mp3"
 
         response = await client.complete(
             messages=[

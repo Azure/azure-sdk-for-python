@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -57,9 +58,7 @@ def sample_chat_completions_with_audio_url():
         print("No specific model target will not be set.")
         model_deployment = None
 
-    audio_url = (
-        "https://github.com/Azure/azure-sdk-for-python/raw/refs/heads/main/sdk/ai/azure-ai-inference/samples/hello_how_are_you.mp3"
-    )
+    audio_url = "https://github.com/Azure/azure-sdk-for-python/raw/refs/heads/main/sdk/ai/azure-ai-inference/samples/hello_how_are_you.mp3"
 
     client = ChatCompletionsClient(
         endpoint=endpoint,
