@@ -161,15 +161,28 @@ static_resources:
                     per_try_timeout: 300s
                     num_retries: 3        
           http_filters:
+          - name: envoy.filters.http.fault
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.fault.v3.HTTPFault
+              abort:
+                http_status: 502
+                percentage:
+                  numerator: 0
+                  denominator: HUNDRED
+              headers:
+                name: ":authority"
+                string_match:
+                  contains: "-eastus2euap.documents.azure.com"
           - name: envoy.filters.http.router
             typed_config:
               "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
+
   clusters:
   - name: openai-canary-test-eastus2euap
     type: STRICT_DNS
     lb_policy: LEAST_REQUEST
     dns_lookup_family: V4_ONLY
-    connect_timeout: 0.005s
+    connect_timeout: 5s
     load_assignment:
       cluster_name: openai-canary-test-eastus2euap
       endpoints:

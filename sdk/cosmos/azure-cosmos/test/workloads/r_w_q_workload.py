@@ -55,7 +55,6 @@ async def perform_query(container):
 
 
 async def run_workload(client_id, client_logger):
-    mock_execute_func()
     connectionPolicy = documents.ConnectionPolicy()
     connectionPolicy.UseMultipleWriteLocations = USE_MULTIPLE_WRITABLE_LOCATIONS
     async with AsyncClient(COSMOS_URI, COSMOS_KEY,

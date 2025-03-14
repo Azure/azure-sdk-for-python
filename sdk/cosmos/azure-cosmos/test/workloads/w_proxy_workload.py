@@ -35,7 +35,6 @@ async def upsert_item_concurrently(container, num_upserts):
 
 
 async def run_workload(client_id, client_logger):
-    mock_execute_func()
     async with aiohttp.ClientSession(trust_env=True) as proxied_aio_http_session:
 
         connectionPolicy = documents.ConnectionPolicy()
