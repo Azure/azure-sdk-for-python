@@ -346,7 +346,7 @@ We can upload file to Azure as it is shown in the example, or use the existing A
 
 ```python
 # We will upload the local file to Azure and will use it for vector store creation.
-_, asset_uri = project_client.upload_file("./product_info_1.md")
+_, asset_uri = project_client.upload_file(r"C:\Users\nirovins\Downloads\Mtb_example.pdf")
 
 # Create a vector store with no file and wait for it to be processed
 ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
@@ -465,7 +465,7 @@ for conn in conn_list:
 print(conn_id)
 
 # Initialize agent AI search tool and add the search index connection id
-ai_search = AzureAISearchTool(index_connection_id=conn_id, index_name="myindexname")
+ai_search = AzureAISearchTool(index_connection_id=conn_id, index_name="sample_index")
 
 # Create agent with AI search tool and process assistant run
 with project_client:
@@ -488,6 +488,22 @@ get sensible result, the index needs to have fields "title" and "url".
 <!-- SNIPPET:sample_agents_azure_ai_search.populate_references_agent_with_azure_ai_search_tool -->
 
 ```python
+# Fetch and log all messages
+messages = project_client.agents.list_messages(thread_id=thread.id, order=ListSortOrder.ASCENDING)
+for message in messages.data:
+    if message.role == MessageRole.AGENT and message.url_citation_annotations:
+        placeholder_annotations = {
+            annotation.text: f" [see {annotation.url_citation.title}] ({annotation.url_citation.url})"
+            for annotation in message.url_citation_annotations
+        }
+        for message_text in message.text_messages:
+            message_str = message_text.text.value
+            for k, v in placeholder_annotations.items():
+                message_str = message_str.replace(k, v)
+            print(f"{message.role}: {message_text}")
+    else:
+        for message_text in message.text_messages:
+            print(f"{message.role}: {message_text.text.value}")
 ```
 
 <!-- END SNIPPET -->

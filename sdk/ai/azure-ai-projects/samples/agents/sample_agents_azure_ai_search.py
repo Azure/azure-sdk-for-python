@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from azure.ai.projects.models._enums import MessageRole
+
 
 """
 DESCRIPTION:
@@ -35,7 +35,7 @@ USAGE:
 import os
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models import AzureAISearchTool, ConnectionType
+from azure.ai.projects.models import AzureAISearchTool, ConnectionType, ListSortOrder, MessageRole
 
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(),
@@ -111,15 +111,17 @@ with project_client:
 
     # [START populate_references_agent_with_azure_ai_search_tool]
     # Fetch and log all messages
-    messages = project_client.agents.list_messages(thread_id=thread.id)
-    for message in reversed(messages.data):
+    messages = project_client.agents.list_messages(thread_id=thread.id, order=ListSortOrder.ASCENDING)
+    for message in messages.data:
         if message.role == MessageRole.AGENT and message.url_citation_annotations:
             placeholder_annotations = {
                 annotation.text: f" [see {annotation.url_citation.title}] ({annotation.url_citation.url})"
-                for annotation in message.url_citation_annotations}
+                for annotation in message.url_citation_annotations
+            }
             for message_text in message.text_messages:
+                message_str = message_text.text.value
                 for k, v in placeholder_annotations.items():
-                    message_text = message_text.text.value.replace(k, v)
+                    message_str = message_str.replace(k, v)
                 print(f"{message.role}: {message_text}")
         else:
             for message_text in message.text_messages:
