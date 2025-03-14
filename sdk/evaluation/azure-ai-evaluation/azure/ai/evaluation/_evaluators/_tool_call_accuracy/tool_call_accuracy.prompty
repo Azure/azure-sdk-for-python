@@ -43,10 +43,16 @@ user:
 
 # Ratings
 ## [Tool Call Accuracy: 0] (Irrelevant)
-**Definition:** The tool call is not relevant and will not help resolve the user's need and TOOL CALL include information that is not presented in the CONVERSATION or TOOL CALL has parameters that is not present in TOOL DEFINITION.
+**Definition:**
+ 1. The TOOL CALL is not relevant and will not help resolve the user's need.
+ 2. TOOL CALL include parameters values that are not present or inferred from CONVERSATION.
+ 3. TOOL CALL has parameters that is not present in TOOL DEFINITION.
 
 ## [Tool Call Accuracy: 1] (Relevant)
-**Definition:** The tool call is directly relevant and very likely to help resolve the user's need including TOOL CALL have the correct parameters and values of the parameters are extracted from CONVERSATION.
+**Definition:**
+ 1. The TOOL CALL is directly relevant and very likely to help resolve the user's need.
+ 2. TOOL CALL include parameters values that are present or inferred from CONVERSATION.
+ 3. TOOL CALL has parameters that is present in TOOL DEFINITION.
 
 # Data
 CONVERSATION : {{query}}
