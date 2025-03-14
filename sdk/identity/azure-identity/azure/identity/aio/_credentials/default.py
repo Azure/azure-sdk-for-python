@@ -149,6 +149,13 @@ class DefaultAzureCredential(ChainedTokenCredential):
                         **kwargs
                     )
                 )
+            else:
+                unset_variables = [v for v in EnvironmentVariables.WORKLOAD_IDENTITY_VARS if not os.environ.get(v)]
+                _LOGGER.info(
+                    "WorkloadIdentityCredential unavailable. Not all required environment variables are set: %s",
+                    ", ".join(unset_variables),
+                )
+
         if not exclude_managed_identity_credential:
             credentials.append(
                 ManagedIdentityCredential(
