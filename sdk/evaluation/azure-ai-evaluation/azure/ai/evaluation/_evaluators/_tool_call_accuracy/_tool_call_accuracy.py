@@ -197,7 +197,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         score = math.nan
         if llm_output:
-            score, reason = parse_quality_evaluator_reason_score(llm_output, score_range="[0-1]")
+            score, reason = parse_quality_evaluator_reason_score(llm_output, valid_score_range="[0-1]")
             return {
                 self._result_key: bool(float(score)),
                 f"{self._result_key}_reason": reason,

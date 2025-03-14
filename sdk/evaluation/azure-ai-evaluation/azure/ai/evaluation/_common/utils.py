@@ -275,7 +275,7 @@ def _validate_typed_dict(o: object, t: Type[T_TypedDict]) -> T_TypedDict:
     return cast(T_TypedDict, o)
 
 
-def parse_quality_evaluator_reason_score(llm_output: str, score_range: str = "[1-5]") -> Tuple[float, str]:
+def parse_quality_evaluator_reason_score(llm_output: str, valid_score_range: str = "[1-5]") -> Tuple[float, str]:
     """Parse the output of prompt-based quality evaluators that return a score and reason.
 
     Current supported evaluators:
@@ -294,7 +294,7 @@ def parse_quality_evaluator_reason_score(llm_output: str, score_range: str = "[1
     reason = ""
     if llm_output:
         try:
-            score_pattern = rf"<S2>\D*?({score_range}).*?</S2>"
+            score_pattern = rf"<S2>\D*?({valid_score_range}).*?</S2>"
             reason_pattern = r"<S1>(.*?)</S1>"
             score_match = re.findall(score_pattern, llm_output, re.DOTALL)
             reason_match = re.findall(reason_pattern, llm_output, re.DOTALL)
