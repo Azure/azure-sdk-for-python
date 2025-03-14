@@ -15,7 +15,11 @@ import re
 import calendar
 import typing
 import pathlib
+import requests
+import json
 from typing_extensions import Literal
+from ci_tools.variables import in_ci
+from azure.identity import DefaultAzureCredential
 from github import Github, Auth
 
 from ci_tools.variables import discover_repo_root
@@ -55,6 +59,45 @@ def get_build_link(check_type: CHECK_TYPE) -> str:
     return (
         f"https://dev.azure.com/azure-sdk/internal/_build/results?buildId={build_id}&view=logs&j={job_id}&t={next_id}"
     )
+
+def get_build_info(build_link: str, check_type: CHECK_TYPE, service_directory: str, package_name: str) -> str:
+    """Get the build info from the build link."""
+    build_id = os.getenv("BUILD_BUILDID")
+    job_id = os.getenv("SYSTEM_JOBID")
+    timeline_link =f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds/{build_id}/timeline?api-version=6.0"
+
+    if not in_ci():
+        DEVOPS_RESOURCE_UUID = "499b84ac-1321-427f-aa17-267ca6975798"
+        token = DefaultAzureCredential().get_token(f"{DEVOPS_RESOURCE_UUID}/.default").token
+    else:
+        token = os.environ["SYSTEM_ACCESSTOKEN"]
+    AUTH_HEADERS = {"Authorization": f"Bearer {token}"}
+
+    # Make the API request
+    response = requests.get(timeline_link, headers=AUTH_HEADERS)
+    logging.info(f"Response: {response.text}")
+    response_json = json.loads(response.text)
+    # return response_json
+    response_two = []
+    add = False
+    next_id = "b33d1587-3539-5735-af43-e3e62f02ca4b"
+    import gzip
+    import io
+    try:
+        for task in response_json["records"]:
+            if "Run Pylint Next" in task["name"]:
+                log_link = task['log']['url'] + "?api-version=7.1"
+                # Get the log file from the build link
+                log_output = requests.get(log_link, headers=AUTH_HEADERS)
+                build_output = log_output.content.decode("utf-8")
+                new_output = (build_output.split(f"next-pylint: commands[3]> python /mnt/vss/_work/1/s/eng/tox/run_pylint.py -t /mnt/vss/_work/1/s/sdk/{service_directory}/{package_name} --next=True")[1]).split(f"ERROR:root:{package_name} exited with linting error")[0]
+                return new_output
+
+    except Exception as e:
+        logging.error(f"Exception occurred while getting build info: {e}")
+        return "Error getting build info"
+
+    
 
 
 def get_merge_dates(year: str) -> typing.List[datetime.datetime]:
@@ -146,6 +189,7 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE) -> None:
 
     version = get_version_running(check_type)
     build_link = get_build_link(check_type)
+    build_info = get_build_info(build_link, check_type, service_directory, package_name)
     merge_date = get_date_for_version_bump(today)
     error_type = "linting" if check_type == "pylint" else "docstring" if check_type == "sphinx" else "typing"
     guide_link = (
@@ -157,18 +201,44 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE) -> None:
     )
 
     title = f"{package_name} needs {error_type} updates for {check_type} version {version}"
-    template = (
-        f"**ACTION NEEDED:** This version of {check_type} will be merged on **{merge_date}**. "
-        f"The build will begin to fail for this library if errors are not fixed."
-        f"\n\n**Library name:** {package_name}"
-        f"\n**{check_type.capitalize()} version:** {version}"
-        f"\n**{check_type.capitalize()} errors:** [Link to build ({today.strftime('%Y-%m-%d')})]({build_link})"
-        f"\n**How to fix:** Run the `next-{check_type}` tox command at the library package-level and resolve "
-        f"the {error_type} errors.\n"
-        f'1) `../{package_name}>pip install "tox<5"`\n'
-        f"2) `../{package_name}>tox run -e next-{check_type} -c ../../../eng/tox/tox.ini --root .`\n\n"
-        f"See the {guide_link} for more information."
-    )
+
+    if check_type == "pylint":
+        template = (
+            f"**ACTION NEEDED:** This version of {check_type} will be merged on **{merge_date}**. "
+            f"The build will begin to fail for this library if errors are not fixed."
+            f"\n\n**Library name:** {package_name}"
+            f"\n**Service directory:** sdk/{service_directory}/{package_name}"
+            f"\n**{check_type.capitalize()} version:** {version}"
+            f"\n**{check_type.capitalize()} errors:** [Link to build ({today.strftime('%Y-%m-%d')})]({build_link})"
+            f"\n\n<details>"
+            f"\n\n{build_info}"
+            f"</details>"
+            f"\n"
+            f"\n**How to fix:**"
+            f"\n\n**Note:** if you are a bot, fix the {check_type} errors listed above under the `details` tab. If you are a human follow the steps below:"
+            f"\nRun the `next-{check_type}` tox command at the library package-level and resolve "
+            f"the {error_type} errors.\n"
+            f'1) `../{package_name}>pip install "tox<5"`\n'
+            f"2) `../{package_name}>tox run -e next-{check_type} -c ../../../eng/tox/tox.ini --root .`\n\n"
+            f"See the {guide_link} for more information."
+            f"\n\n**To Verify Changes:**"
+            f"\nRun the `next-{check_type}` tox command at the library package-level"
+            f"\n1) `../{package_name}>pip install 'tox<5'`\n"
+            f"2) `../{package_name}>tox run -e {check_type} -c ../../../eng/tox/tox.ini --root .`\n"
+        )
+    else:
+        template = (
+            f"**ACTION NEEDED:** This version of {check_type} will be merged on **{merge_date}**. "
+            f"The build will begin to fail for this library if errors are not fixed."
+            f"\n\n**Library name:** {package_name}"
+            f"\n**{check_type.capitalize()} version:** {version}"
+            f"\n**{check_type.capitalize()} errors:** [Link to build ({today.strftime('%Y-%m-%d')})]({build_link})"
+            f"\n**How to fix:** Run the `next-{check_type}` tox command at the library package-level and resolve "
+            f"the {error_type} errors.\n"
+            f'1) `../{package_name}>pip install "tox<5"`\n'
+            f"2) `../{package_name}>tox run -e next-{check_type} -c ../../../eng/tox/tox.ini --root .`\n\n"
+            f"See the {guide_link} for more information."
+        )
 
     # create an issue for the library failing the vnext check
     if not vnext_issue:

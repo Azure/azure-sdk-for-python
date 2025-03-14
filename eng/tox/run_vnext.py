@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 # --------------------------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -72,12 +71,12 @@ if __name__ == "__main__":
         logging.error(
             "{} exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(pkg_details.name, e.returncode)
         )
-        # if args.next and in_ci():
-        #     from gh_tools.vnext_issue_creator import create_vnext_issue
-        #     create_vnext_issue(pkg_dir, "pylint")
+        if args.next and in_ci():
+            from gh_tools.vnext_issue_creator import create_vnext_issue
+            create_vnext_issue(pkg_dir, "pylint")
 
         exit(1)
 
-    # if args.next and in_ci():
-    #     from gh_tools.vnext_issue_creator import close_vnext_issue
-    #     close_vnext_issue(pkg_details.name, "pylint")
+    if args.next and in_ci():
+        from gh_tools.vnext_issue_creator import close_vnext_issue
+        close_vnext_issue(pkg_details.name, "pylint")
