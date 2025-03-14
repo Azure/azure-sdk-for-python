@@ -75,6 +75,7 @@ def get_build_info(build_link: str, check_type: CHECK_TYPE, service_directory: s
 
     # Make the API request
     response = requests.get(timeline_link, headers=AUTH_HEADERS)
+    logging.info(f"Response: {response.text}")
     response_json = json.loads(response.text)
     # return response_json
     response_two = []
@@ -86,7 +87,13 @@ def get_build_info(build_link: str, check_type: CHECK_TYPE, service_directory: s
             if "Run Pylint Next" in task["name"]:
                 log_link = task['log']['url'] + "?api-version=7.1"
                 # Get the log file from the build link
+                logging.info(f"Log link: {log_link}")
                 log_output = requests.get(log_link, headers=AUTH_HEADERS)
+                logging.info(f"Log output: {log_output}")
+                logging.info(f"Log output text: {log_output.text}")
+                logging.info(f"Log output status code: {log_output.status_code}")
+                logging.info(f"Log output headers: {log_output.headers}")
+                logging.info(f"Log output content type: {json.loads(log_output.text)}")
                 
                 # build_output = json.loads(logs_output.text)
                 return [log_output.text, json.loads(log_output.text)]
@@ -95,7 +102,8 @@ def get_build_info(build_link: str, check_type: CHECK_TYPE, service_directory: s
 
                 return build_output
 
-    except:
+    except Exception as e:
+        logging.error(f"Exception occurred while getting build info: {e}")
         return "Error getting build info"
 
     
