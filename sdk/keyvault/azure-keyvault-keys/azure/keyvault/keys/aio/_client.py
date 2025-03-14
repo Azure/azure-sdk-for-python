@@ -993,6 +993,26 @@ class KeyClient(AsyncKeyVaultClientBase):
         result = await self._client.update_key_rotation_policy(key_name=key_name, key_rotation_policy=new_policy)
         return KeyRotationPolicy._from_generated(result)
 
+    @distributed_trace_async
+    async def get_key_attestation(self, name: str, version: Optional[str] = None, **kwargs: Any) -> KeyVaultKey:
+        """Get a key and its attestation blob.
+        
+        This method is applicable to any key stored in Azure Key Vault Managed HSM. This operation requires the keys/get
+        permission.
+
+        :param str name: The name of the key.
+        :param version: (optional) A specific version of the key to get. If not specified, gets the latest version
+            of the key.
+        :type version: str or None
+
+        :return: The key attestation.
+        :rtype: ~azure.keyvault.keys.KeyAttestation
+
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        bundle = await self._client.get_key_attestation(key_name=name, key_version=version or "", **kwargs)
+        return KeyVaultKey._from_key_bundle(bundle)
+
     async def __aenter__(self) -> "KeyClient":
         await self._client.__aenter__()
         return self

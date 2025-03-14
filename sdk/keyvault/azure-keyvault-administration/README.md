@@ -125,6 +125,18 @@ A `KeyVaultAccessControlClient` manages role definitions and role assignments.
 ### KeyVaultBackupClient
 A `KeyVaultBackupClient` performs full key backups, full key restores, and selective key restores.
 
+### Pre-Backup Operation
+A pre-backup operation represents a long-running operation that checks if it is possible to perform a full key backup.
+
+### Backup Operation
+A backup operation represents a long-running operation for a full key backup.
+
+### Pre-Restore Operation
+A pre-restore operation represents a long-running operation that checks if it is possible to perform a full key restore from a backup.
+
+### Restore Operation
+A restore operation represents a long-running operation for both a full key and selective key restore.
+
 ### KeyVaultSettingsClient
 
 A `KeyVaultSettingsClient` manages Managed HSM account settings.
@@ -137,7 +149,9 @@ This section contains code snippets covering common tasks:
     * [List all role assignments](#list-all-role-assignments)
     * [Create, get, and delete a role assignment](#create-get-and-delete-a-role-assignment)
 * Backup and restore
+    * [Run a pre-backup check](#run-a-pre-backup-check-for-a-collection-of-keys)
     * [Perform a full key backup](#perform-a-full-key-backup)
+    * [Run a pre-restore check](#run-a-pre-restore-check-for-a-collection-of-keys)
     * [Perform a full key restore](#perform-a-full-key-restore)
     * [Perform a selective key restore](#perform-a-selective-key-restore)
 
@@ -272,7 +286,7 @@ client.delete_role_assignment(scope=scope, name=role_assignment.name)
 
 <!-- END SNIPPET -->
 
-### Perform a full key backup
+### Run a pre-backup check for a collection of keys
 The `KeyVaultBackupClient` can be used to back up your entire collection of keys. The backing store for full key
 backups is a blob storage container using either Managed Identity (which is preferred) or Shared Access Signature (SAS)
 authentication.
@@ -280,9 +294,29 @@ authentication.
 If using Managed Identity, first make sure your user-assigned managed identity has the correct access to your Storage
 account and Managed HSM per [the service's guidance][managed_identity_backup_setup].
 
+You can first check if an entire collection of keys can be backed up by using `KeyVaultBackupClient.begin_pre_backup`.
+
 For more details on creating a SAS token using a `BlobServiceClient` from [`azure-storage-blob`][storage_blob], refer
 to the library's [credential documentation][sas_docs]. Alternatively, it is possible to
 [generate a SAS token in Storage Explorer][storage_explorer].
+
+```python
+CONTAINER_URL = os.environ["CONTAINER_URL"]
+
+check_result: KeyVaultBackupOperation = client.begin_pre_backup(CONTAINER_URL, use_managed_identity=True).result()
+
+if check_result.error:
+    print(f"Reason the backup cannot be performed: {check_result.error}")
+else:
+    print("A full key backup can be successfully performed.")
+```
+
+Note that the `begin_pre_backup` method returns a poller. Calling `result()` on this poller returns a
+`KeyVaultBackupOperation` -- this object will  have a string `error` attribute if the check failed, and otherwise the
+check will have succeeded.
+
+### Perform a full key backup
+To actually perform the key backup, you can use `KeyVaultBackupClient.begin_backup`.
 
 <!-- SNIPPET:backup_restore_operations.begin_backup -->
 
@@ -299,7 +333,7 @@ Note that the `begin_backup` method returns a poller. Calling `result()` on this
 `KeyVaultBackupResult` containing information about the backup. Calling `wait()` on the poller will instead block until
 the operation is complete without returning an object.
 
-### Perform a full key restore
+### Run a pre-restore check for a collection of keys
 The `KeyVaultBackupClient` can be used to restore your entire collection of keys from a backup. The data source for a
 full key restore is a storage blob accessed using either Managed Identity (which is preferred) or Shared Access
 Signature (SAS) authentication. You will also need the URL of the backup (`KeyVaultBackupResult.folder_url`) from the
@@ -308,9 +342,30 @@ Signature (SAS) authentication. You will also need the URL of the backup (`KeyVa
 If using Managed Identity, first make sure your user-assigned managed identity has the correct access to your Storage
 account and Managed HSM per [the service's guidance][managed_identity_backup_setup].
 
+You can first check if an entire collection of keys can be restored from a backup by using
+`KeyVaultBackupClient.begin_pre_restore`.
+
 For more details on creating a SAS token using a `BlobServiceClient` from [`azure-storage-blob`][storage_blob], refer
 to the library's [credential documentation][sas_docs]. Alternatively, it is possible to
 [generate a SAS token in Storage Explorer][storage_explorer].
+
+```python
+check_result: KeyVaultRestoreOperation = client.begin_pre_restore(
+    backup_result.folder_url, use_managed_identity=True
+).result()
+
+if check_result.error:
+    print(f"Reason the backup cannot be performed: {check_result.error}")
+else:
+    print("A full key restore can be successfully performed.")
+```
+
+Note that the `begin_pre_restore` method returns a poller. Calling `result()` on this poller returns a
+`KeyVaultRestoreOperation` -- this object will have a string `error` attribute if the check failed, and otherwise the
+`error` will be None if the check succeeded.
+
+### Perform a full key restore
+To actually restore your entire collection of keys, you can use `KeyVaultBackupClient.begin_restore`.
 
 <!-- SNIPPET:backup_restore_operations.begin_restore -->
 

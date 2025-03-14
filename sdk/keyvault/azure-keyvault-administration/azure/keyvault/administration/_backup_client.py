@@ -5,7 +5,7 @@
 import base64
 import functools
 import pickle
-from typing import Any, Optional, overload
+from typing import Any, Callable, Optional, overload
 from urllib.parse import urlparse
 
 from typing_extensions import Literal
@@ -13,7 +13,8 @@ from typing_extensions import Literal
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
-from ._models import KeyVaultBackupResult
+from ._generated.models import PreBackupOperationParameters, PreRestoreOperationParameters, SASTokenParameter
+from ._models import KeyVaultBackupOperation, KeyVaultBackupResult, KeyVaultRestoreOperation
 from ._internal import KeyVaultClientBase, parse_folder_url
 from ._internal.polling import KeyVaultBackupClientPolling, KeyVaultBackupClientPollingMethod
 
@@ -39,6 +40,23 @@ class KeyVaultBackupClient(KeyVaultClientBase):
     :keyword bool verify_challenge_resource: Whether to verify the authentication challenge resource matches the Key
         Vault or Managed HSM domain. Defaults to True.
     """
+
+    def _use_continuation_token(self, continuation_token: str, status_method: Callable) -> str:
+        status_url = base64.b64decode(continuation_token.encode()).decode("ascii")
+        try:
+            job_id = _parse_status_url(status_url)
+        except Exception as ex:  # pylint: disable=broad-except
+            raise ValueError(
+                "The provided continuation_token is malformed. A valid token can be obtained from the "
+                + "operation poller's continuation_token() method"
+            ) from ex
+
+        pipeline_response = status_method(
+            job_id=job_id, cls=lambda pipeline_response, _, __: pipeline_response
+        )
+        if "azure-asyncoperation" not in pipeline_response.http_response.headers:
+            pipeline_response.http_response.headers["azure-asyncoperation"] = status_url
+        return base64.b64encode(pickle.dumps(pipeline_response)).decode("ascii")
 
     @overload
     def begin_backup(
@@ -94,7 +112,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         """
         polling_interval = kwargs.pop("_polling_interval", 5)
         continuation_token = kwargs.pop("continuation_token", None)
-        use_managed_identity = kwargs.pop("use_managed_identity", None)
+        use_managed_identity = kwargs.pop("use_managed_identity", False)
         # `sas_token` was formerly a required positional parameter
         try:
             sas_token: Optional[str] = args[0]
@@ -106,21 +124,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
 
         status_response = None
         if continuation_token:
-            status_url = base64.b64decode(continuation_token.encode()).decode("ascii")
-            try:
-                job_id = _parse_status_url(status_url)
-            except Exception as ex:  # pylint: disable=broad-except
-                raise ValueError(
-                    "The provided continuation_token is malformed. A valid token can be obtained from the "
-                    + "operation poller's continuation_token() method"
-                ) from ex
-
-            pipeline_response = self._client.full_backup_status(
-                job_id=job_id, cls=lambda pipeline_response, _, __: pipeline_response
-            )
-            if "azure-asyncoperation" not in pipeline_response.http_response.headers:
-                pipeline_response.http_response.headers["azure-asyncoperation"] = status_url
-            status_response = base64.b64encode(pickle.dumps(pipeline_response)).decode("ascii")
+            status_response = self._use_continuation_token(continuation_token, self._client.full_backup_status)
 
         return self._client.begin_full_backup(
             azure_storage_blob_container_uri=sas_parameter,
@@ -197,33 +201,19 @@ class KeyVaultBackupClient(KeyVaultClientBase):
                 :caption: Restore a single key
                 :dedent: 8
         """
-        status_response = None
         polling_interval = kwargs.pop("_polling_interval", 5)
         continuation_token = kwargs.pop("continuation_token", None)
         key_name = kwargs.pop("key_name", None)
-        use_managed_identity = kwargs.pop("use_managed_identity", None)
+        use_managed_identity = kwargs.pop("use_managed_identity", False)
         # `sas_token` was formerly a required positional parameter
         try:
             sas_token: Optional[str] = args[0]
         except IndexError:
             sas_token = kwargs.pop("sas_token", None)
 
+        status_response = None
         if continuation_token:
-            status_url = base64.b64decode(continuation_token.encode()).decode("ascii")
-            try:
-                job_id = _parse_status_url(status_url)
-            except Exception as ex:  # pylint: disable=broad-except
-                raise ValueError(
-                    "The provided continuation_token is malformed. A valid token can be obtained from the "
-                    + "operation poller's continuation_token() method"
-                ) from ex
-
-            pipeline_response = self._client.restore_status(
-                job_id=job_id, cls=lambda pipeline_response, _, __: pipeline_response
-            )
-            if "azure-asyncoperation" not in pipeline_response.http_response.headers:
-                pipeline_response.http_response.headers["azure-asyncoperation"] = status_url
-            status_response = base64.b64encode(pickle.dumps(pipeline_response)).decode("ascii")
+            status_response = self._use_continuation_token(continuation_token, self._client.restore_status)
 
         container_url, folder_name = parse_folder_url(folder_url)
         sas_parameter = self._models.SASTokenParameter(
@@ -249,6 +239,152 @@ class KeyVaultBackupClient(KeyVaultClientBase):
             cls=lambda *_: None,  # poller.result() returns None
             continuation_token=status_response,
             polling=polling,
+            **kwargs,
+        )
+
+    @overload
+    def begin_pre_backup(
+        self,
+        blob_storage_url: str,
+        *,
+        use_managed_identity: Literal[True],
+        continuation_token: Optional[str] = None,
+        **kwargs: Any,
+    ) -> LROPoller[KeyVaultBackupOperation]:
+        ...
+
+    @overload
+    def begin_pre_backup(
+        self,
+        blob_storage_url: str,
+        *,
+        sas_token: str,
+        continuation_token: Optional[str] = None,
+        **kwargs: Any,
+    ) -> LROPoller[KeyVaultBackupOperation]:
+        ...
+
+    @distributed_trace
+    def begin_pre_backup(  # pylint: disable=docstring-keyword-should-match-keyword-only
+        self, blob_storage_url: str, **kwargs: Any
+    ) -> LROPoller[KeyVaultBackupOperation]:
+        """Initiates a pre-backup check of whether a full Key Vault backup can be performed.
+
+        A :class:`KeyVaultBackupOperation` instance will be returned by the poller's `result()` method. If the
+        pre-backup check is successful, the object will have a string `folder_url` attribute, pointing to the blob
+        storage container where the backup will be stored. If the check fails, the object will have a string `error`
+        attribute.
+
+        :param str blob_storage_url: URL of the blob storage container in which the backup will be stored, for example
+            https://<account>.blob.core.windows.net/backup.
+
+        :keyword str sas_token: Optional Shared Access Signature (SAS) token to authorize access to the blob. Required
+            unless `use_managed_identity` is set to True.
+        :keyword use_managed_identity: Indicates which authentication method should be used. If set to True, Managed HSM
+            will use the configured user-assigned managed identity to authenticate with Azure Storage. Otherwise, a SAS
+            token has to be specified.
+        :paramtype use_managed_identity: bool
+        :keyword str continuation_token: A continuation token to restart polling from a saved state.
+
+        :returns: An :class:`~azure.core.polling.LROPoller` instance. Call `result()` on this object to wait for the
+            operation to complete and get a :class:`KeyVaultBackupOperation`. If the pre-backup check is successful, the
+            object will have a string `folder_url` attribute, pointing to the blob storage container where the backup
+            will be stored. If the check fails, the object will have a string `error` attribute.
+        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.administration.KeyVaultBackupOperation]
+        """
+        polling_interval: int = kwargs.pop("_polling_interval", 5)
+        continuation_token: Optional[str] = kwargs.pop("continuation_token", None)
+        use_managed_identity: bool = kwargs.pop("use_managed_identity", False)
+        sas_token: Optional[str] = kwargs.pop("sas_token", None)
+
+        parameters: PreBackupOperationParameters = PreBackupOperationParameters(
+            storage_resource_uri=blob_storage_url, token=sas_token, use_managed_identity=use_managed_identity
+        )
+        status_response: Optional[str] = None
+        if continuation_token:
+            status_response = self._use_continuation_token(continuation_token, self._client.full_backup_status)
+
+        return self._client.begin_pre_full_backup(
+            pre_backup_operation_parameters=parameters,
+            cls=KeyVaultBackupOperation._from_generated,  # pylint: disable=protected-access
+            polling=KeyVaultBackupClientPollingMethod(
+                lro_algorithms=[KeyVaultBackupClientPolling()], timeout=polling_interval, **kwargs
+            ),
+            continuation_token=status_response,
+            **kwargs,
+        )
+
+    @overload
+    def begin_pre_restore(
+        self,
+        folder_url: str,
+        *,
+        use_managed_identity: Literal[True],
+        continuation_token: Optional[str] = None,
+        **kwargs: Any,
+    ) -> LROPoller[KeyVaultRestoreOperation]:
+        ...
+
+    @overload
+    def begin_pre_restore(
+        self,
+        folder_url: str,
+        *,
+        sas_token: str,
+        continuation_token: Optional[str] = None,
+        **kwargs: Any,
+    ) -> LROPoller[KeyVaultRestoreOperation]:
+        ...
+
+    @distributed_trace
+    def begin_pre_restore(  # pylint: disable=docstring-keyword-should-match-keyword-only
+        self, folder_url: str, **kwargs: Any
+    ) -> LROPoller[KeyVaultRestoreOperation]:
+        """Initiates a pre-restore check of whether a full Key Vault restore can be performed.
+
+        A :class:`KeyVaultRestoreOperation` instance will be returned by the poller's `result()` method. If the
+        pre-restore check fails, the object will have a string `error` attribute.
+
+        :param str folder_url: URL of the blob holding the backup. This would be the `folder_url` of a
+            :class:`KeyVaultBackupResult` returned by :func:`begin_backup`, for example
+            https://<account>.blob.core.windows.net/backup/mhsm-account-2020090117323313
+
+        :keyword str sas_token: Optional Shared Access Signature (SAS) token to authorize access to the blob. Required
+            unless `use_managed_identity` is set to True.
+        :keyword use_managed_identity: Indicates which authentication method should be used. If set to True, Managed HSM
+            will use the configured user-assigned managed identity to authenticate with Azure Storage. Otherwise, a SAS
+            token has to be specified.
+        :paramtype use_managed_identity: bool
+        :keyword str continuation_token: A continuation token to restart polling from a saved state.
+
+        :returns: An :class:`~azure.core.polling.LROPoller` instance. Call `result()` on this object to wait for the
+            operation to complete and get a :class:`KeyVaultRestoreOperation`. If the pre-restore check fails, the
+            object will have a string `error` attribute.
+        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.administration.KeyVaultRestoreOperation]
+        """
+        polling_interval: int = kwargs.pop("_polling_interval", 5)
+        continuation_token: Optional[str] = kwargs.pop("continuation_token", None)
+        use_managed_identity: bool = kwargs.pop("use_managed_identity", False)
+        sas_token: Optional[str] = kwargs.pop("sas_token", None)
+
+        container_url, folder_name = parse_folder_url(folder_url)
+        sas_parameter: SASTokenParameter = SASTokenParameter(
+            storage_resource_uri=container_url, token=sas_token, use_managed_identity=use_managed_identity
+        )
+        parameters: PreRestoreOperationParameters = PreRestoreOperationParameters(
+            folder_to_restore=folder_name, sas_token_parameters=sas_parameter
+        )
+        status_response: Optional[str] = None
+        if continuation_token:
+            status_response = self._use_continuation_token(continuation_token, self._client.restore_status)
+
+        return self._client.begin_pre_full_restore_operation(
+            pre_restore_operation_parameters=parameters,
+            cls=KeyVaultRestoreOperation._from_generated,  # pylint: disable=protected-access
+            polling=KeyVaultBackupClientPollingMethod(
+                lro_algorithms=[KeyVaultBackupClientPolling()], timeout=polling_interval, **kwargs
+            ),
+            continuation_token=status_response,
             **kwargs,
         )
 

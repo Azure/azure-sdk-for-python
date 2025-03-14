@@ -7,6 +7,7 @@ from ._shared.client_base import ApiVersion
 from ._models import (
     DeletedKey,
     JsonWebKey,
+    KeyAttestation,
     KeyProperties,
     KeyReleasePolicy,
     KeyRotationLifetimeAction,
@@ -21,6 +22,7 @@ __all__ = [
     "ApiVersion",
     "KeyClient",
     "JsonWebKey",
+    "KeyAttestation",
     "KeyVaultKey",
     "KeyVaultKeyIdentifier",
     "KeyCurveName",
