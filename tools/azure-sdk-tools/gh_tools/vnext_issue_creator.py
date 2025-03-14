@@ -81,7 +81,8 @@ def get_build_info(build_link: str, check_type: CHECK_TYPE, service_directory: s
     response_two = []
     add = False
     next_id = "b33d1587-3539-5735-af43-e3e62f02ca4b"
-    
+    import gzip
+    import io
     try:
         for task in response_json["records"]:
             if "Run Pylint Next" in task["name"]:
@@ -93,7 +94,11 @@ def get_build_info(build_link: str, check_type: CHECK_TYPE, service_directory: s
                 logging.info(f"Log output text: {log_output.text}")
                 logging.info(f"Log output status code: {log_output.status_code}")
                 logging.info(f"Log output headers: {log_output.headers}")
-                logging.info(f"Log output content type: {json.loads(log_output.text)}")
+                compressed_data = io.BytesIO(response.content)
+                decompressed_file = gzip.GzipFile(fileobj=compressed_data)
+                text = decompressed_file.read().decode('utf-8')  # or appropriate encoding
+                return text
+                # logging.info(f"Log output content type: {json.loads(log_output.text)}")
                 
                 # build_output = json.loads(logs_output.text)
                 return [log_output.text, json.loads(log_output.text)]
