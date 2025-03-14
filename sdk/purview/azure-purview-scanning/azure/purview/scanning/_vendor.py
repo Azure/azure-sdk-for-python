@@ -25,3 +25,4 @@ def _format_url_section(template, **kwargs):
                 c for c in formatted_components if "{}".format(key.args[0]) not in c
             ]
             template = "/".join(components)
+    return ""  # Return empty string if no components remain
