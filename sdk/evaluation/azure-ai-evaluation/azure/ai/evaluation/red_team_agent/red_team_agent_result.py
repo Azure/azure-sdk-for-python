@@ -47,7 +47,7 @@ class AttackObjectiveSource(TypedDict):
     custom_attack_seed_prompts: str
     policy_document: str
 
-class RedTeamingSimulationParameters(TypedDict):
+class RedTeamingParameters(TypedDict):
     """TypedDict representation of parameters used in a red team evaluation with the updated structure.
     
     This class defines the structure for capturing metadata about an evaluation run, including:
