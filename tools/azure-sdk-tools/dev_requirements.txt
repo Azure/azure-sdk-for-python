@@ -1,1 +1,1 @@
-azure-identity
+-e .[ghtools]
