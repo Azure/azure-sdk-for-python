@@ -1,7 +1,6 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
 """Mock implementation of AttackObjective for testing."""
 
 from typing import Any, Dict, List, Optional
