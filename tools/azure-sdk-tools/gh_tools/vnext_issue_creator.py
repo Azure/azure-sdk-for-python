@@ -95,14 +95,11 @@ def get_build_info(build_link: str, check_type: CHECK_TYPE, service_directory: s
                 logging.info(f"Log output status code: {log_output.status_code}")
                 logging.info(f"Log output headers: {log_output.headers}")
                 logging.info(f"Log output content type: {log_output.content}")
-                compressed_data = io.BytesIO(log_output.content)
-                decompressed_file = gzip.GzipFile(fileobj=compressed_data)
-                text = decompressed_file.read().decode('utf-8')  # or appropriate encoding
-                return text
+                build_output = log_output.content.decode("utf-8")
                 # logging.info(f"Log output content type: {json.loads(log_output.text)}")
                 
                 # build_output = json.loads(logs_output.text)
-                return [log_output.text, json.loads(log_output.text)]
+                # return [log_output.text, json.loads(log_output.text)]
                 build_output = build_output.split(f"next-pylint: commands[3]> python /mnt/vss/_work/1/s/eng/tox/run_pylint.py -t /mnt/vss/_work/1/s/sdk/{service_directory}/{package_name} --next=True")[1]
                 build_output = build_output.split(f"ERROR:root:{package_name} exited with linting error")
 
