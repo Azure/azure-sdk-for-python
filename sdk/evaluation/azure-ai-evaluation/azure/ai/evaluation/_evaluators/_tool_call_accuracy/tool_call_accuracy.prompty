@@ -13,7 +13,7 @@ model:
       type: text
 
 inputs:
-  messages:
+  query:
     type: List
   tool_call:
     type: Dict
@@ -49,7 +49,7 @@ user:
 **Definition:** The tool call is directly relevant and very likely to help resolve the user's need including TOOL CALL have the correct parameters and values of the parameters are extracted from CONVERSATION.
 
 # Data
-CONVERSATION : {{messages}}
+CONVERSATION : {{query}}
 TOOL CALL: {{tool_call}}
 TOOL DEFINITION: {{tool_definition}}
 
