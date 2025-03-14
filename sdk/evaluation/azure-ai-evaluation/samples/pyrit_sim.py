@@ -5,11 +5,10 @@ cd azure-sdk-for-python/sdk/evaluation/azure-ai-evaluation
 pip install -e ".[pyrit]"
 """
 
-from typing import Dict, List, Optional
-from azure.ai.evaluation._safety_evaluation import RedTeamAgent, AttackStrategy, AttackObjectiveGenerator, RiskCategory
+from typing import Dict, Optional
+from azure.ai.evaluation.red_team_agent import RedTeamAgent, AttackStrategy, AttackObjectiveGenerator, RiskCategory
 import os
 from azure.identity import DefaultAzureCredential
-from azure.ai.evaluation.simulator import AdversarialScenario
 from pyrit.prompt_target import OpenAIChatTarget
 from pyrit.common import initialize_pyrit, DUCK_DB
 

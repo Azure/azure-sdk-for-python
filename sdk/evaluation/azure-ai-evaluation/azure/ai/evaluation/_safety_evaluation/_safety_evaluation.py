@@ -18,7 +18,6 @@ from azure.ai.evaluation._model_configurations import AzureAIProject, Evaluation
 from azure.ai.evaluation.simulator import Simulator, AdversarialSimulator, AdversarialScenario, AdversarialScenarioJailbreak, IndirectAttackSimulator, DirectAttackSimulator
 from azure.ai.evaluation.simulator._utils import JsonLineList
 from azure.ai.evaluation._common.utils import validate_azure_ai_project
-from pyrit.prompt_target import PromptChatTarget #TODO: Remove this once eval logic for red team agent is moved to red team agent
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from azure.core.credentials import TokenCredential
 import json
@@ -460,7 +459,7 @@ class _SafetyEvaluation:
     def _validate_inputs(
             self,
             evaluators: List[_SafetyEvaluator],
-            target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration, PromptChatTarget], #TODO: Remove this once eval logic for red team agent is moved to red team agent
+            target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
             num_turns: int = 1,
             scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]] = None,
             source_text: Optional[str] = None,
@@ -478,10 +477,10 @@ class _SafetyEvaluation:
         :param source_text: The source text to use as grounding document in the evaluation.
         :type source_text: Optional[str]
         ''' 
-        if not callable(target) and not isinstance(target, PromptChatTarget): #TODO: Remove this once eval logic for red team agent is moved to red team agent
+        if not callable(target):
             self._validate_model_config(target)
         #TODO: Remove self._check_target_is_callback(target)) once eval logic for red team agent is moved to red team agent
-        elif not isinstance(target, PromptChatTarget) and not (self._check_target_returns_str(target) or self._check_target_is_callback(target)): 
+        elif self._check_target_returns_str(target): 
             self.logger.error(f"Target function {target} does not return a string.")
             msg = f"Target function {target} does not return a string."
             raise EvaluationException(
@@ -574,7 +573,7 @@ class _SafetyEvaluation:
     
     async def __call__(
             self,
-            target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration, PromptChatTarget],
+            target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
             evaluators: List[_SafetyEvaluator] = [],
             evaluation_name: Optional[str] = None,
             num_turns : int = 1,

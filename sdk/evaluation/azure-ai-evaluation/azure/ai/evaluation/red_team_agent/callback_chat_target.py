@@ -1,7 +1,6 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
 import logging
 from typing import Any, Callable, Dict, List, Optional
 
@@ -24,7 +23,7 @@ class CallbackChatTarget(PromptChatTarget):
         """
         Initializes an instance of the CallbackChatTarget class.
 
-        It is intended to be used with PYRIT where users define a callback function
+        It is intended to be used with PyRIT where users define a callback function
         that handles sending a prompt to a target and receiving a response.
         The CallbackChatTarget class is a wrapper around the callback function that allows it to be used
         as a target in the PyRIT framework.
