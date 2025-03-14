@@ -127,9 +127,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
         self._token = self._credential.get_token_info(*scopes, options=options)
         self._update_headers(request.http_request.headers, self._token.token)
 
-    def send(
-        self, request: PipelineRequest[HTTPRequestType], *, auth_flows: Optional[list[dict[str, str]]] = None
-    ) -> PipelineResponse[HTTPRequestType, HTTPResponseType]:
+    def send(self, request: PipelineRequest[HTTPRequestType]) -> PipelineResponse[HTTPRequestType, HTTPResponseType]:
         """Authorize request with a bearer token and send it to the next policy
 
         :param request: The pipeline request object
