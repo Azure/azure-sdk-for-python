@@ -74,7 +74,7 @@ class TestOpentelemetryWrapper:
                     assert child.span_instance is trace.get_current_span()
                     assert child.span_instance.parent is wrapped_span.span_instance.context
 
-    @pytest.mark.parametrize("outer_span_kind", [SpanKind.INTERNAL, SpanKind.CLIENT])
+    @pytest.mark.parametrize("outer_span_kind", [SpanKind.INTERNAL, SpanKind.CLIENT, SpanKind.PRODUCER])
     def test_nested_span_suppression(self, tracing_helper, outer_span_kind):
         with tracing_helper.tracer.start_as_current_span("Root"):
             with OpenTelemetrySpan(name="outer-span", kind=outer_span_kind) as outer_span:
@@ -211,7 +211,8 @@ class TestOpentelemetryWrapper:
             assert isinstance(span2.span_instance, trace.Span)
         span1.finish()
 
-    def test_suppress_http_auto_instrumentation(self, tracing_helper):
+    @pytest.mark.parametrize("outer_span_kind", [SpanKind.INTERNAL, SpanKind.CLIENT, SpanKind.PRODUCER])
+    def test_suppress_http_auto_instrumentation(self, tracing_helper, outer_span_kind):
         # Enable auto-instrumentation for requests.
         RequestsInstrumentor().instrument()
         from requests import Response
@@ -220,7 +221,7 @@ class TestOpentelemetryWrapper:
             response = Response()
             response.status_code = 200
             mock_request.return_value = response
-            with OpenTelemetrySpan(name="outer-span", kind=SpanKind.CLIENT):
+            with OpenTelemetrySpan(name="outer-span", kind=outer_span_kind):
                 with OpenTelemetrySpan(name="client-span", kind=SpanKind.INTERNAL):
                     # INTERNAL and non-Azure SDK HTTP spans are suppressed.
                     requests.get("https://www.foo.bar/first")
