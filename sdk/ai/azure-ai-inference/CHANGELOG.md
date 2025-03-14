@@ -4,9 +4,20 @@
 
 ### Features Added
 
+* Added support for Chat Completions with audio url input. This change introduces a split between 
+audio files which are passed as base64 encoded data (previously supported) and files which are passed
+by url reference (new). See new sample `sample_chat_completions_with_audio_url.py`.
+
 ### Bugs Fixed
 
 ### Breaking Changes
+
+* `AudioContentItem` has been renamed to `AudioDataContentItem`
+
+### Other Noteable Changes
+
+* `FunctionDefinition.parameters` has been clarified in typing to be of type `Dict[str, Any]`.
+This is not a change in functionality, just a clarification of what was already expected.
 
 ## 1.0.0b9 (2025-02-14)
 

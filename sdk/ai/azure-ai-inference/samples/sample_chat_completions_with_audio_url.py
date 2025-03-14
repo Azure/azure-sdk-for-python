@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -5,8 +6,8 @@
 """
 DESCRIPTION:
     This sample demonstrates how to get a chat completions response from
-    the service using a synchronous client. The sample shows how to load
-    audio data from a file and include it in the input chat messages.
+    the service using a synchronous client. The sample shows how to use a
+    url pointer to an audio file in the input chat messages.
     This sample will only work on AI models that support audio input.
     Only these AI models accept the array form of `content` in the
     `UserMessage`, as shown here.
@@ -30,16 +31,15 @@ USAGE:
 """
 
 
-def sample_chat_completions_with_audio_data():
+def sample_chat_completions_with_audio_url():
     import os
     from azure.ai.inference import ChatCompletionsClient
     from azure.ai.inference.models import (
         SystemMessage,
         UserMessage,
         TextContentItem,
-        AudioDataContentItem,
-        InputAudio,
-        AudioContentFormat,
+        AudioUrlContentItem,
+        InputAudioUrl,
     )
     from azure.core.credentials import AzureKeyCredential
 
@@ -58,6 +58,8 @@ def sample_chat_completions_with_audio_data():
         print("No specific model target will not be set.")
         model_deployment = None
 
+    audio_url = "https://github.com/Azure/azure-sdk-for-python/raw/refs/heads/main/sdk/ai/azure-ai-inference/samples/hello_how_are_you.mp3"
+
     client = ChatCompletionsClient(
         endpoint=endpoint,
         credential=AzureKeyCredential(key),
@@ -69,11 +71,7 @@ def sample_chat_completions_with_audio_data():
             UserMessage(
                 [
                     TextContentItem(text="Please translate this audio snippet to spanish."),
-                    AudioDataContentItem(
-                        input_audio=InputAudio.load(
-                            audio_file="hello_how_are_you.mp3", audio_format=AudioContentFormat.MP3
-                        )
-                    ),
+                    AudioUrlContentItem(audio_url=InputAudioUrl(url=audio_url)),
                 ],
             ),
         ],
@@ -84,4 +82,4 @@ def sample_chat_completions_with_audio_data():
 
 
 if __name__ == "__main__":
-    sample_chat_completions_with_audio_data()
+    sample_chat_completions_with_audio_url()
