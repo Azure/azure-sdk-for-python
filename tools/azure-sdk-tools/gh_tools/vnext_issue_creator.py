@@ -221,7 +221,7 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE) -> None:
             f'1) `../{package_name}>pip install "tox<5"`\n'
             f"2) `../{package_name}>tox run -e next-{check_type} -c ../../../eng/tox/tox.ini --root .`\n\n"
             f"See the {guide_link} for more information."
-            f"\n**To Verify Changes:**"
+            f"\n\n**To Verify Changes:**"
             f"\nRun the `next-{check_type}` tox command at the library package-level"
             f"\n1) `../{package_name}>pip install 'tox<5'`\n"
             f"2) `../{package_name}>tox run -e {check_type} -c ../../../eng/tox/tox.ini --root .`\n"
