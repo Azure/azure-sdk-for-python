@@ -85,6 +85,7 @@ def get_build_info(build_link: str, check_type: CHECK_TYPE, service_directory: s
         for task in response_json["records"]:
             if "Run Pylint Next" in task["name"]:
                 log_link = task['log']['url']
+                return log_link
         #     logs_link = f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds/{build_id}/logs/{log_id}"
             # Get the build info from the build link
                 build_output = requests.get(log_link, headers=AUTH_HEADERS)
