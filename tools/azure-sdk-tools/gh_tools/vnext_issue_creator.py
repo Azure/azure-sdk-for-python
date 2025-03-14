@@ -87,7 +87,7 @@ def get_build_info(build_link: str, check_type: CHECK_TYPE, service_directory: s
                 log_link = task['log']['url']
                 # Get the log info from the build link
                 log_output = requests.get(log_link, headers=AUTH_HEADERS)
-                return log_output.text
+                return log_output
                 # build_output = json.loads(logs_output.text)
             #     return logs_output
                 build_output = build_output.split(f"next-pylint: commands[3]> python /mnt/vss/_work/1/s/eng/tox/run_pylint.py -t /mnt/vss/_work/1/s/sdk/{service_directory}/{package_name} --next=True")[1]
