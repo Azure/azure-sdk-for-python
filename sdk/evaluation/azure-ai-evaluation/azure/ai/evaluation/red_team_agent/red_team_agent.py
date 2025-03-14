@@ -41,7 +41,7 @@ from azure.ai.evaluation import evaluate
 from azure.core.credentials import TokenCredential
 
 # Redteaming imports
-from .red_team_agent_result import RedTeamAgentResult, RedTeamingScorecard, RedTeamingSimulationParameters
+from .red_team_agent_result import RedTeamAgentResult, RedTeamingScorecard, RedTeamingParameters
 from .callback_chat_target import CallbackChatTarget
 from .utils.mock_attack_objective import MockAttackObjective
 from .utils.mock_evaluate import mock_evaluate
@@ -582,7 +582,7 @@ class RedTeamAgent():
         risks_asr_list = {risk_category.value: [] for risk_category in self.risk_categories}
         converters = []
         complexity_levels = []
-        simulated_conversations = []
+        conversations = []
         attack_successes = [] # captures attack pass / fail across all risks
         
         for converter_name, eval_result in results.items():
@@ -602,7 +602,7 @@ class RedTeamAgent():
                 #     asr_list.append(r[1 if f"outputs.{risk}.{risk}_result" == ATTACK_SUCCESS else 0])
                 #     attack_successes.append(r[1 if f"outputs.{risk}.{risk}_result" == ATTACK_SUCCESS else 0])
 
-                simulated_conversations.append({
+                conversations.append({
                     "attack_success": False, #TODO change to any(attack_successes) when we have binarization
                     "attack_technique": converter_name.replace("Converter", "").replace("Prompt", ""),
                     "attack_complexity": complexity_level,
@@ -615,7 +615,7 @@ class RedTeamAgent():
                     }
                 })
         
-        simulated_conversations.sort(key=lambda x: x["attack_technique"])
+        conversations.sort(key=lambda x: x["attack_technique"])
 
         results_dict = {
             "converter": converters,
@@ -708,7 +708,7 @@ class RedTeamAgent():
             "detailed_joint_risk_attack_asr": detailed_joint_risk_attack_asr
         }
         
-        simulation_parameters = {
+        redteaming_parameters = {
             "attack_objective_generated_from": {
                 "application_scenario": self.application_scenario,
                 "risk_categories": [risk.value for risk in self.risk_categories],
@@ -723,12 +723,12 @@ class RedTeamAgent():
             complexity_df = results_df[results_df["complexity_level"] == complexity]
             if not complexity_df.empty:
                 complexity_converters = complexity_df["converter"].unique().tolist()
-                simulation_parameters["techniques_used"][complexity] = complexity_converters
+                redteaming_parameters["techniques_used"][complexity] = complexity_converters
 
         red_team_agent_result = RedTeamAgentResult(
             redteaming_scorecard=cast(RedTeamingScorecard, scorecard),
-            redteaming_simulation_parameters=cast(RedTeamingSimulationParameters, simulation_parameters),
-            redteaming_simulation_data=simulated_conversations,
+            redteaming_parameters=cast(RedTeamingParameters, redteaming_parameters),
+            redteaming_data=conversations,
             studio_url=self.ai_studio_url or None
         )
         

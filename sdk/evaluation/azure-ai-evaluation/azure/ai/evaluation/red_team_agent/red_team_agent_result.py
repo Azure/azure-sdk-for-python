@@ -87,10 +87,10 @@ class RedTeamAgentResult(TypedDict):
 
     This class defines the structure for capturing the results of a red team evaluation, including:
     - redteaming_scorecard: Scorecard containing summary and detailed ASR information
-    - redteaming_simulation_parameters: Parameters containing metadata about the evaluation run
-    - redteaming_simulation_data: List of SimulatedConversation objects representing the conversations in the evaluation
+    - redteaming_parameters: Parameters containing metadata about the evaluation run
+    - redteaming_data: List of Conversation objects representing the conversations in the evaluation
     """
     redteaming_scorecard: RedTeamingScorecard
-    redteaming_simulation_parameters: RedTeamingSimulationParameters
-    redteaming_simulation_data: List[SimulatedConversation]
+    redteaming_parameters: RedTeamingParameters
+    redteaming_data: List[Conversation]
     studio_url: Optional[str]
