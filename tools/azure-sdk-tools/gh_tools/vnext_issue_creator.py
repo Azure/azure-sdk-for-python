@@ -84,12 +84,12 @@ def get_build_info(build_link: str, check_type: CHECK_TYPE, service_directory: s
     try:
         for task in response_json["records"]:
             if "Run Pylint Next" in task["name"]:
-                log_link = task['log']['url']
-                # Get the log info from the build link
+                log_link = task['log']['url'] + "?api-version=7.1"
+                # Get the log file from the build link
                 log_output = requests.get(log_link, headers=AUTH_HEADERS)
-                return log_output
+                
                 # build_output = json.loads(logs_output.text)
-            #     return logs_output
+                return [log_output.text, json.loads(log_output.text)]
                 build_output = build_output.split(f"next-pylint: commands[3]> python /mnt/vss/_work/1/s/eng/tox/run_pylint.py -t /mnt/vss/_work/1/s/sdk/{service_directory}/{package_name} --next=True")[1]
                 build_output = build_output.split(f"ERROR:root:{package_name} exited with linting error")
 
