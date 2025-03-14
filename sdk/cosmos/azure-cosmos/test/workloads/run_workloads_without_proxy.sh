@@ -1,0 +1,20 @@
+#!/bin/bash
+python3 r_w_q_workload.py &
+python3 r-w-q-workload-1.py &
+python3 r-w-q-workload-2.py &
+python3 r_workload.py &
+python3 r-workload-1.py &
+python3 r-workload-2.py &
+python3 r-workload-3.py &
+python3 r-workload-4.py &
+python3 r-workload-5.py &
+python3 r-workload-6.py &
+python3 w_workload.py &
+python3 w-workload-1.py &
+python3 w-workload-2.py &
+python3 w-workload-3.py &
+python3 w-workload-4.py &
+python3 w-workload-5.py &
+python3 w-workload-6.py &
+python3 r_w_q_workload_sync.py &
+python3 r-w-q-workload-sync-1.py &
