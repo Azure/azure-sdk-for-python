@@ -110,7 +110,7 @@ class TestComputedPropertiesQueryAsync(unittest.IsolatedAsyncioTestCase):
             await created_collection.create_item(body=item)
 
         await self.computedPropertiesTestCases(created_collection)
-        await self.created_db.delete_container(created_collection.id)
+        self.created_db.delete_container(created_collection.id)
 
 
     async def test_replace_with_same_computed_properties_async(self):
@@ -131,7 +131,7 @@ class TestComputedPropertiesQueryAsync(unittest.IsolatedAsyncioTestCase):
         )
 
         await self.computedPropertiesTestCases(replaced_collection)
-        await self.created_db.delete_container(created_collection.id)
+        self.created_db.delete_container(created_collection.id)
 
     async def test_replace_without_computed_properties_async(self):
         created_collection = await self.created_db.create_container(
@@ -150,7 +150,7 @@ class TestComputedPropertiesQueryAsync(unittest.IsolatedAsyncioTestCase):
         )
 
         await self.computedPropertiesTestCases(replaced_collection)
-        await self.created_db.delete_container(created_collection.id)
+        self.created_db.delete_container(created_collection.id)
 
     async def test_replace_with_new_computed_properties_async(self):
         created_collection = await self.created_db.create_container(
@@ -203,7 +203,7 @@ class TestComputedPropertiesQueryAsync(unittest.IsolatedAsyncioTestCase):
                          replaced_collection.query_items(query='Select * from c Where c.cp_str_len = 9',
                                                          partition_key="test")]
         self.assertEqual(len(queried_items), 0)
-        await self.created_db.delete_container(created_collection.id)
+        self.created_db.delete_container(created_collection.id)
 
     async def test_replace_with_incorrect_computed_properties_async(self):
         created_collection = await self.created_db.create_container(
@@ -258,7 +258,7 @@ class TestComputedPropertiesQueryAsync(unittest.IsolatedAsyncioTestCase):
         # If keyError is not raised the test will fail
         with pytest.raises(KeyError):
             computed_properties = container["computedProperties"]
-        await self.created_db.delete_container(created_collection.id)
+        self.created_db.delete_container(created_collection.id)
 
 if __name__ == '__main__':
     unittest.main()
