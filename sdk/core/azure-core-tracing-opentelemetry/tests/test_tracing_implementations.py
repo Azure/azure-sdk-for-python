@@ -91,6 +91,17 @@ class TestOpentelemetryWrapper:
         spans_names_list = [span.name for span in tracing_helper.exporter.get_finished_spans()]
         assert spans_names_list == ["outer-span", "Root"]
 
+    @pytest.mark.parametrize("outer_span_kind", [SpanKind.SERVER, SpanKind.CONSUMER])
+    def test_no_nested_span_suppression_under_server(self, tracing_helper, outer_span_kind):
+        with OpenTelemetrySpan(name="outer-span", kind=outer_span_kind) as outer_span:
+            assert outer_span.span_instance.kind == span_kind_to_otel_kind(outer_span_kind)
+
+            with outer_span.span(name="inner-span", kind=SpanKind.INTERNAL) as inner_span:
+                assert isinstance(inner_span.span_instance, trace.Span)
+
+            assert len(tracing_helper.exporter.get_finished_spans()) == 1
+        assert len(tracing_helper.exporter.get_finished_spans()) == 2
+
     def test_nested_span_suppression_with_multiple_outer_spans(self, tracing_helper):
         with tracing_helper.tracer.start_as_current_span("Root") as root:
             with OpenTelemetrySpan(name="outer-span-1", kind=SpanKind.INTERNAL) as outer_span_1:
@@ -232,6 +243,20 @@ class TestOpentelemetryWrapper:
             requests.post("https://www.foo.bar/second")
             requests.get("https://www.foo.bar/third")
             assert len(tracing_helper.exporter.get_finished_spans()) == 3
+
+    @pytest.mark.parametrize("span_kind", [SpanKind.SERVER, SpanKind.CONSUMER])
+    def test_dont_suppress_http_auto_instrumentation_under_server(self, tracing_helper, span_kind):
+        # Enable auto-instrumentation for requests.
+        RequestsInstrumentor().instrument()
+        from requests import Response
+
+        with mock.patch("requests.adapters.HTTPAdapter.send") as mock_request:
+            response = Response()
+            response.status_code = 200
+            mock_request.return_value = response
+            with OpenTelemetrySpan(name="span", kind=span_kind):
+                requests.get("https://www.foo.bar/first")
+                assert len(tracing_helper.exporter.get_finished_spans()) == 1
 
     def test_start_finish(self, tracing_helper):
         with tracing_helper.tracer.start_as_current_span("Root") as parent:
