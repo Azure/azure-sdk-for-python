@@ -66,7 +66,7 @@ class RiskAssessment(TypedDict):
     self_harm: Dict[str, str]
     hate_unfair: Dict[str, str]
 
-class SimulatedConversation(TypedDict):
+class Conversation(TypedDict):
     """TypedDict representation of a simulated conversation in a red team evaluation.
     
     This class defines the structure for capturing information about a simulated conversation, including:
