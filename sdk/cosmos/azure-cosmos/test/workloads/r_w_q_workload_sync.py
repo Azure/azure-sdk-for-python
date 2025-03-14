@@ -60,7 +60,6 @@ def run_workload(client_id, client_logger):
             try:
                 upsert_item(cont, 5)
                 read_item(cont, 5)
-                time.sleep(.2)
                 query_items(cont, 2)
             except Exception as e:
                 client_logger.info("Exception in application layer")
