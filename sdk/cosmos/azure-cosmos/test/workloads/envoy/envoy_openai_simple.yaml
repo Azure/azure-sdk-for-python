@@ -30,15 +30,14 @@ static_resources:
                   prefix: "/"
                 route:
                   host_rewrite_literal: openai-canary-test.documents.azure.com
-                  cluster: service_envoyproxy_io
+                  cluster: openai-canary-test
 
   clusters:
-  - name: service_envoyproxy_io
+  - name: openai-canary-test
     type: LOGICAL_DNS
-    # Comment out the following line to test on v6 networks
     dns_lookup_family: V4_ONLY
     load_assignment:
-      cluster_name: service_envoyproxy_io
+      cluster_name: openai-canary-test
       endpoints:
       - lb_endpoints:
         - endpoint:
