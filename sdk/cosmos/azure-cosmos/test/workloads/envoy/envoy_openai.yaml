@@ -103,10 +103,6 @@ static_resources:
           stream_idle_timeout: 30s
           route_config:
             name: local_route
-            response_headers_to_add:
-              - header:
-                  key: "via"
-                  value: "%ENVIRONMENT(POD_NAME)%"
             virtual_hosts:
             - name: local_openai-canary-test
               domains:
