@@ -248,6 +248,11 @@ class AIAgentConverter:
         # Each visible message in the conversation is a message from the user or the assistant, we collect
         # both the text and timestamp, so we can recreate the chronological order.
         for single_turn in AIAgentConverter.__filter_messages_up_to_run_id(chronological_conversation, run_id):
+            # This shouldn't really happen, ever. What's the point of a message without content? But to avoid a nasty
+            # crash on one of the historical messages, let's check for it and bail out from this iteration.
+            if len(single_turn.content) < 1:
+                continue
+
             # Build the content of the text message.
             content = {
                 "type": "text",
