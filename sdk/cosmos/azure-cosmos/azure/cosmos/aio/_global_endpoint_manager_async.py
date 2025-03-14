@@ -198,7 +198,8 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                     self._database_account_cache = database_account
                     self.location_cache.mark_endpoint_available(locational_endpoint)
                     return database_account, locational_endpoint
-                except (exceptions.CosmosHttpResponseError, AzureError):
+                except (exceptions.CosmosHttpResponseError, AzureError) as e:
+                    logger.info("Exception in health check for endpoint %s: %s", locational_endpoint, e)
                     self.mark_endpoint_unavailable_for_read(locational_endpoint, False)
                     self.mark_endpoint_unavailable_for_write(locational_endpoint, False)
             raise
