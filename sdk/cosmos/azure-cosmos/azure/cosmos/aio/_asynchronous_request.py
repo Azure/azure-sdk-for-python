@@ -80,11 +80,14 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
     if not request.url.startswith(base_url):
         request.url = _replace_url_prefix(request.url, base_url)
 
-    parse_result = urlparse(request.url)
 
-    # The requests library now expects header values to be strings only starting 2.11,
-    # and will raise an error on validation if they are not, so casting all header values to strings.
-    request.headers.update({header: str(value) for header, value in request.headers.items()})
+    ## ONLY FOR TESTING PURPOSES ##
+    if request.url != "https://httpstatusdogs.com/502-bad-gateway" :
+        parse_result = urlparse(request.url)
+
+        # The requests library now expects header values to be strings only starting 2.11,
+        # and will raise an error on validation if they are not, so casting all header values to strings.
+        request.headers.update({header: str(value) for header, value in request.headers.items()})
 
     # We are disabling the SSL verification for local emulator(localhost/127.0.0.1) or if the user
     # has explicitly specified to disable SSL verification.
