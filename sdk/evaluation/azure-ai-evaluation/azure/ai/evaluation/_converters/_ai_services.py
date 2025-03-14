@@ -223,7 +223,7 @@ class AIAgentConverter:
         # Combine the lists, placing messages with None createdAt at the beginning
         return none_created_at + sorted_messages
 
-    def convert(self, thread_id: str, run_id: str) -> dict:
+    def convert(self, thread_id: str, run_id: str, exclude_tool_calls_previous_runs: bool = False) -> dict:
         """
         Converts the agent run to a format suitable for the OpenAI API.
 
@@ -231,6 +231,8 @@ class AIAgentConverter:
         :type thread_id: str
         :param run_id: The ID of the run.
         :type run_id: str
+        :param exclude_tool_calls_previous_runs: Whether to exclude tool calls from previous runs in the conversion.
+        :type exclude_tool_calls_previous_runs: bool
         :return: The converted data in dictionary format.
         :rtype: dict
         """
@@ -272,6 +274,22 @@ class AIAgentConverter:
         for tool_call in self.__list_tool_calls_chronological(thread_id, run_id):
             # We need to add the tool call and the result as two separate messages.
             final_messages.extend(break_tool_call_into_messages(tool_call, run_id))
+
+        # We also request to add all the tool calls and results of the previous runs into the chat history. This is
+        # a bit of an expensive operation, but the requirement is to support this functionality, even at the penalty
+        # in latency in performance. New agents api is to include these details cheaply through a single API call in
+        # list_messages, but until that is available, we need to do this. User can also opt-out of this functionality
+        # by setting the exclude_tool_calls_previous_runs flag to True.
+        if not exclude_tool_calls_previous_runs:
+            all_run_ids = self.__list_run_ids_chronological(thread_id)
+            for run_id in all_run_ids:
+                # We don't want to add the tool calls and results of the current run.
+                if run_id == thread_run.id:
+                    continue
+
+                # We need to add the tool call and the result as two separate messages.
+                for tool_call in self.__list_tool_calls_chronological(thread_id, run_id):
+                    final_messages.extend(break_tool_call_into_messages(tool_call, run_id))
 
         # All of our final messages have to be in chronological order. We use a secondary sorting key,
         # since the tool_result and assistant events would come with the same timestamp, so we need to
@@ -316,7 +334,9 @@ class AIAgentConverter:
         return run_ids
 
     @staticmethod
-    def convert_from_conversation(conversation: dict, run_id: str) -> dict:
+    def convert_from_conversation(
+        conversation: dict, run_id: str, exclude_tool_calls_previous_runs: bool = False
+    ) -> dict:
         """
         Converts the agent run from a conversation dictionary object (a loaded thread) to a format suitable for the OpenAI API.
 
@@ -345,6 +365,8 @@ class AIAgentConverter:
         :type conversation: dict
         :param run_id: The ID of the run.
         :type run_id: str
+        :param exclude_tool_calls_previous_runs: Whether to exclude tool calls from previous runs in the conversion.
+        :type exclude_tool_calls_previous_runs: bool
         :return: The converted data in dictionary format serialized as string.
         :rtype: dict
         """
@@ -355,16 +377,19 @@ class AIAgentConverter:
         # Accumulate the messages in the correct order, but only up to the run_id.
         final_messages: List[Message] = []
         for converted_message in AIAgentConverter.__filter_messages_up_to_run_id(converted_messages, run_id):
-            # We would not be interested in tool call messages in the query, unless it's the current run id.
-            if converted_message.run_id != run_id:
-                # Anything with tool, we can throw out, since we don't care about the tooling of possibly other agents
-                # that came before the run we're interested in.
-                if converted_message.role == _TOOL:
-                    continue
+            # By default, we want to add all the messages, even if we are on the 10th run of the thread, we want to know
+            # what the assistant said, what the assistant called, and what the result was.
+            if exclude_tool_calls_previous_runs:
+                # We would not be interested in tool call messages in the query, unless it's the current run id.
+                if converted_message.run_id != run_id:
+                    # Anything with tool, we can throw out, since we don't care about the tooling of possibly other agents
+                    # that came before the run we're interested in.
+                    if converted_message.role == _TOOL:
+                        continue
 
-                # We also don't want anything that is an assistant calling a tool.
-                if AIAgentConverter.__is_agent_tool_call(converted_message):
-                    continue
+                    # We also don't want anything that is an assistant calling a tool.
+                    if AIAgentConverter.__is_agent_tool_call(converted_message):
+                        continue
 
             # We're good to add it.
             final_messages.append(converted_message)
