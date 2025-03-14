@@ -167,12 +167,12 @@ static_resources:
               abort:
                 http_status: 502
                 percentage:
-                  numerator: 0
+                  numerator: 100
                   denominator: HUNDRED
               headers:
                 name: ":authority"
                 string_match:
-                  contains: "-eastus2euap.documents.azure.com"
+                  contains: "eastus2euap"
           - name: envoy.filters.http.router
             typed_config:
               "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
@@ -191,7 +191,7 @@ static_resources:
             address:
               socket_address:
                 protocol: TCP
-                address: openai-canary-test-eastus2euap.documents.documents.azure.com
+                address: openai-canary-test-eastus2euap.documents.azure.com
                 port_value: 443
     circuit_breakers:
       thresholds:
@@ -237,7 +237,7 @@ static_resources:
             address:
               socket_address:
                 protocol: TCP
-                address: openai-canary-test.documents.documents.azure.com
+                address: openai-canary-test.documents.azure.com
                 port_value: 443
     circuit_breakers:
       thresholds:
@@ -283,7 +283,7 @@ static_resources:
             address:
               socket_address:
                 protocol: TCP
-                address: openai-canary-test-centraluseuap.documents.documents.azure.com
+                address: openai-canary-test-centraluseuap.documents.azure.com
                 port_value: 443
     circuit_breakers:
       thresholds:
