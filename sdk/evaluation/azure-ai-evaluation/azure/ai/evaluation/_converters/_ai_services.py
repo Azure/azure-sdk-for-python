@@ -1,4 +1,5 @@
 import json
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
@@ -286,15 +287,23 @@ class AIAgentConverter:
         # list_messages, but until that is available, we need to do this. User can also opt-out of this functionality
         # by setting the exclude_tool_calls_previous_runs flag to True.
         if not exclude_tool_calls_previous_runs:
+            # These are all the assistant (any number) in the thread.
             all_run_ids = self.__list_run_ids_chronological(thread_id)
-            for run_id in all_run_ids:
-                # We don't want to add the tool calls and results of the current run.
-                if run_id == thread_run.id:
-                    continue
 
-                # We need to add the tool call and the result as two separate messages.
-                for tool_call in self.__list_tool_calls_chronological(thread_id, run_id):
-                    final_messages.extend(break_tool_call_into_messages(tool_call, run_id))
+            # Helper method to fetch tool calls for a given run ID.
+            def fetch_tool_calls(local_run_id) -> List[Message]:
+                tool_calls: List[Message] = []
+                if local_run_id != thread_run.id:
+                    for chrono_tool_call in self.__list_tool_calls_chronological(thread_id, local_run_id):
+                        tool_calls.extend(break_tool_call_into_messages(chrono_tool_call, local_run_id))
+                return tool_calls
+
+            # Since each __list_tool_calls_chronological call is expensive, we can use a thread pool to speed
+            # up the process by parallelizing the AI Services API requests.
+            with ThreadPoolExecutor() as executor:
+                futures = {executor.submit(fetch_tool_calls, run_id): run_id for run_id in all_run_ids}
+                for future in as_completed(futures):
+                    final_messages.extend(future.result())
 
         # All of our final messages have to be in chronological order. We use a secondary sorting key,
         # since the tool_result and assistant events would come with the same timestamp, so we need to
