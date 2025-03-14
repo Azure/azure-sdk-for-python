@@ -282,17 +282,17 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 :dedent: 0
                 :caption: Create a database in the Cosmos DB account:
         """
-        session_token = kwargs.pop('session_token', None)
+        session_token = kwargs.get('session_token')
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and will be removed in the future.",
                 UserWarning)
-        etag = kwargs.pop('etag', None)
+        etag = kwargs.get('etag')
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and will be removed in the future.",
                 UserWarning)
-        match_condition = kwargs.pop('match_condition', None)
+        match_condition = kwargs.get('match_condition')
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and will be removed in the future.",
@@ -341,17 +341,17 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :rtype: ~azure.cosmos.DatabaseProxy
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The database read or creation failed.
         """
-        session_token = kwargs.pop('session_token', None)
+        session_token = kwargs.get('session_token')
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and will be removed in the future.",
                 UserWarning)
-        etag = kwargs.pop('etag', None)
+        etag = kwargs.get('etag')
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and will be removed in the future.",
                 UserWarning)
-        match_condition = kwargs.pop('match_condition', None)
+        match_condition = kwargs.get('match_condition')
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and will be removed in the future.",
@@ -410,7 +410,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :returns: An Iterable of database properties (dicts).
         :rtype: Iterable[Dict[str, str]]
         """
-        session_token = kwargs.pop('session_token', None)
+        session_token = kwargs.get('session_token')
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and will be removed in the future.",
@@ -463,7 +463,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 UserWarning,
             )
-        session_token = kwargs.pop('session_token', None)
+        session_token = kwargs.get('session_token')
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and will be removed in the future.",
@@ -510,17 +510,17 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the database couldn't be deleted.
         :rtype: None
         """
-        session_token = kwargs.pop('session_token', None)
+        session_token = kwargs.get('session_token')
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and will be removed in the future.",
                 UserWarning)
-        etag = kwargs.pop('etag', None)
+        etag = kwargs.get('etag')
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and will be removed in the future.",
                 UserWarning)
-        match_condition = kwargs.pop('match_condition', None)
+        match_condition = kwargs.get('match_condition')
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and will be removed in the future.",

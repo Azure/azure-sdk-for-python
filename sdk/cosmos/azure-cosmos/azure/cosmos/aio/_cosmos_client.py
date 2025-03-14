@@ -272,21 +272,21 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 :caption: Create a database in the Cosmos DB account:
                 :name: create_database
         """
-        session_token = kwargs.pop('session_token', None)
+        session_token = kwargs.get('session_token')
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and will be removed in the future.",
-                UserWarning)
-        etag = kwargs.pop('etag', None)
+                DeprecationWarning)
+        etag = kwargs.get('etag')
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and will be removed in the future.",
-                UserWarning)
-        match_condition = kwargs.pop('match_condition', None)
+                DeprecationWarning)
+        match_condition = kwargs.get('match_condition')
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and will be removed in the future.",
-                UserWarning)
+                DeprecationWarning)
         if initial_headers is not None:
             kwargs["initial_headers"] = initial_headers
         request_options = _build_options(kwargs)
@@ -323,21 +323,23 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :returns: A DatabaseProxy instance representing the database.
         :rtype: ~azure.cosmos.DatabaseProxy
         """
-        session_token = kwargs.pop('session_token', None)
+        session_token = kwargs.get('session_token')
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and will be removed in the future.",
-                UserWarning)
-        etag = kwargs.pop('etag', None)
+                DeprecationWarning)
+        etag = kwargs.get('etag')
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and will be removed in the future.",
-                UserWarning)
-        match_condition = kwargs.pop('match_condition', None)
+                DeprecationWarning)
+        match_condition = kwargs.get('match_condition')
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and will be removed in the future.",
-                UserWarning)
+                DeprecationWarning)
+        if initial_headers is not None:
+            kwargs["initial_headers"] = initial_headers
         try:
             database_proxy = self.get_database_client(id)
             await database_proxy.read(**kwargs)
@@ -389,7 +391,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and will be removed in the future.",
-                UserWarning)
+                DeprecationWarning)
         if initial_headers is not None:
             kwargs["initial_headers"] = initial_headers
         feed_options = _build_options(kwargs)
@@ -426,11 +428,11 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :returns: An AsyncItemPaged of database properties (dicts).
         :rtype: AsyncItemPaged[Dict[str, str]]
         """
-        session_token = kwargs.pop('session_token', None)
+        session_token = kwargs.get('session_token')
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and will be removed in the future.",
-                UserWarning)
+                DeprecationWarning)
         if initial_headers is not None:
             kwargs["initial_headers"] = initial_headers
         feed_options = _build_options(kwargs)
@@ -465,21 +467,21 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the database couldn't be deleted.
         :rtype: None
         """
-        session_token = kwargs.pop('session_token', None)
+        session_token = kwargs.get('session_token')
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and will be removed in the future.",
-                UserWarning)
-        etag = kwargs.pop('etag', None)
+                DeprecationWarning)
+        etag = kwargs.get('etag')
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and will be removed in the future.",
-                UserWarning)
-        match_condition = kwargs.pop('match_condition', None)
+                DeprecationWarning)
+        match_condition = kwargs.get('match_condition')
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and will be removed in the future.",
-                UserWarning)
+                DeprecationWarning)
 
         if initial_headers is not None:
             kwargs["initial_headers"] = initial_headers

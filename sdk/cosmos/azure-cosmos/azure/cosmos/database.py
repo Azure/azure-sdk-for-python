@@ -137,15 +137,15 @@ class DatabaseProxy(object):
         :rtype: Dict[Str, Any]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given database couldn't be retrieved.
         """
-        session_token = kwargs.pop('session_token', None)
+        session_token = kwargs.get('session_token')
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and will be removed in the future.",
-                UserWarning)
+                DeprecationWarning)
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
-                UserWarning,
+                DeprecationWarning,
             )
 
         database_link = _get_database_link(self)
@@ -225,26 +225,26 @@ class DatabaseProxy(object):
                 :dedent: 0
                 :caption: Create a container with specific settings; in this case, a custom partition key:
         """
-        session_token = kwargs.pop('session_token', None)
+        session_token = kwargs.get('session_token')
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and will be removed in the future.",
-                UserWarning)
-        etag = kwargs.pop('etag', None)
+                DeprecationWarning)
+        etag = kwargs.get('etag')
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and will be removed in the future.",
-                UserWarning)
-        match_condition = kwargs.pop('match_condition', None)
+                DeprecationWarning)
+        match_condition = kwargs.get('match_condition')
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and will be removed in the future.",
-                UserWarning)
+                DeprecationWarning)
         if populate_query_metrics is not None:
             warnings.warn(
                 "The 'populate_query_metrics' flag does not apply to this method"
                 " and will be removed in the future",
-                UserWarning,
+                DeprecationWarning,
             )
 
         definition: Dict[str, Any] = {"id": id}
@@ -333,21 +333,21 @@ class DatabaseProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container read or creation failed.
         :rtype: ~azure.cosmos.ContainerProxy
         """
-        session_token = kwargs.pop('session_token', None)
+        session_token = kwargs.get('session_token')
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and will be removed in the future.",
-                UserWarning)
-        etag = kwargs.pop('etag', None)
+                DeprecationWarning)
+        etag = kwargs.get('etag')
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and will be removed in the future.",
-                UserWarning)
-        match_condition = kwargs.pop('match_condition', None)
+                DeprecationWarning)
+        match_condition = kwargs.get('match_condition')
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and will be removed in the future.",
-                UserWarning)
+                DeprecationWarning)
 
         try:
             container_proxy = self.get_container_client(id)
@@ -382,10 +382,7 @@ class DatabaseProxy(object):
         container: Union[str, ContainerProxy, Mapping[str, Any]],
         populate_query_metrics: Optional[bool] = None,
         *,
-        session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
         """Delete a container.
@@ -403,25 +400,25 @@ class DatabaseProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the container couldn't be deleted.
         :rtype: None
         """
-        session_token = kwargs.pop('session_token', None)
+        session_token = kwargs.get('session_token')
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and will be removed in the future.",
-                UserWarning)
-        etag = kwargs.pop('etag', None)
+                DeprecationWarning)
+        etag = kwargs.get('etag')
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and will be removed in the future.",
-                UserWarning)
-        match_condition = kwargs.pop('match_condition', None)
+                DeprecationWarning)
+        match_condition = kwargs.get('match_condition')
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and will be removed in the future.",
-                UserWarning)
+                DeprecationWarning)
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
-                UserWarning,
+                DeprecationWarning,
             )
 
         if initial_headers is not None:
@@ -485,15 +482,15 @@ class DatabaseProxy(object):
                 :dedent: 0
                 :caption: List all containers in the database:
         """
-        session_token = kwargs.pop('session_token', None)
+        session_token = kwargs.get('session_token')
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and will be removed in the future.",
-                UserWarning)
+                DeprecationWarning)
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
-                UserWarning,
+                DeprecationWarning,
             )
 
         if initial_headers is not None:
@@ -532,15 +529,15 @@ class DatabaseProxy(object):
         :returns: An Iterable of container properties (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
-        session_token = kwargs.pop('session_token', None)
+        session_token = kwargs.get('session_token')
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and will be removed in the future.",
-                UserWarning)
+                DeprecationWarning)
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
-                UserWarning,
+                DeprecationWarning,
             )
 
         if initial_headers is not None:
@@ -612,25 +609,25 @@ class DatabaseProxy(object):
                 :dedent: 0
                 :caption: Reset the TTL property on a container, and display the updated properties:
         """
-        session_token = kwargs.pop('session_token', None)
+        session_token = kwargs.get('session_token')
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and will be removed in the future.",
-                UserWarning)
-        etag = kwargs.pop('etag', None)
+                DeprecationWarning)
+        etag = kwargs.get('etag')
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and will be removed in the future.",
-                UserWarning)
-        match_condition = kwargs.pop('match_condition', None)
+                DeprecationWarning)
+        match_condition = kwargs.get('match_condition')
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and will be removed in the future.",
-                UserWarning)
+                DeprecationWarning)
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
-                UserWarning,
+                DeprecationWarning,
             )
 
         if initial_headers is not None:
