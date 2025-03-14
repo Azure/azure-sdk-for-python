@@ -35,8 +35,8 @@ async def run_workload(client_id, client_logger):
                            enable_diagnostics_logging=True, logger=client_logger,
                            user_agent=str(client_id) + "-" + datetime.now().strftime(
                                "%Y%m%d-%H%M%S"), preferred_locations=PREFERRED_LOCATIONS, connection_policy=connectionPolicy) as client:
-        db = client.get_database_client("SimonDB")
-        cont = db.get_container_client("SimonContainer")
+        db = client.get_database_client("ycsb")
+        cont = db.get_container_client("usertable")
         time.sleep(1)
 
         while True:

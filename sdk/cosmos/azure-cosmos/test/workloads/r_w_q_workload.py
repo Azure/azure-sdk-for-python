@@ -32,7 +32,7 @@ async def read_item_concurrently(container, num_upserts):
     tasks = []
     for _ in range(num_upserts):
         item = get_random_item()
-        tasks.append(container.read_item(item["id"], item["pk"]))
+        tasks.append(container.read_item(item["id"], item["id"]))
     await asyncio.gather(*tasks)
 
 
@@ -48,7 +48,7 @@ async def perform_query(container):
     results = container.query_items(query="SELECT * FROM c where c.id=@id and c.pk=@pk",
                                     parameters=[{"name": "@id", "value": random_item["id"]},
                                                 {"name": "@pk", "value": random_item["pk"]}],
-                                    partition_key=random_item["pk"])
+                                    partition_key=random_item["id"])
     items = [item async for item in results]
 
 
@@ -60,8 +60,8 @@ async def run_workload(client_id, client_logger):
                            user_agent=str(client_id) + "-" + datetime.now().strftime(
                                "%Y%m%d-%H%M%S"), preferred_locations=PREFERRED_LOCATIONS,
                            connection_policy=connectionPolicy) as client:
-        db = client.get_database_client("SimonDB")
-        cont = db.get_container_client("SimonContainer")
+        db = client.get_database_client("ycsb")
+        cont = db.get_container_client("usertable")
         time.sleep(1)
 
         while True:
