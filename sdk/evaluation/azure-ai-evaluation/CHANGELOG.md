@@ -3,8 +3,12 @@
 ## 1.4.0 (Unreleased)
 
 ### Features Added
+- Binary results for QA and ContentSafety evaluators are now available. 
+    - Evaluation results will show the result and threshold for each evaluator.
+    - Set your own `threshold` for binary evaluation results. Quality evaluators will always have higher score is better for binary results. Content safety evaluators will always have lower score is better for binary results.
+    - Defaults have been added to `threshold` for maximum backward compatibility
 - New Built-in evaluator called CodeVulnerabilityEvaluator is added. 
-  - It provides a capabilities to identify the following code vulnerabilities.
+  - It provides capabilities to identify the following code vulnerabilities.
     - path-injection
     - sql-injection
     - code-injection
