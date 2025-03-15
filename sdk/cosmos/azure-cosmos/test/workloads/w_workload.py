@@ -15,6 +15,7 @@ from datetime import datetime
 
 import logging
 from logging.handlers import RotatingFileHandler
+from logging.handlers import RotatingFileHandler
 
 
 def get_random_item():

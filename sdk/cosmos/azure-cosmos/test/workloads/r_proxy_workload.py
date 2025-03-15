@@ -19,6 +19,7 @@ from datetime import datetime
 
 import logging
 from logging.handlers import RotatingFileHandler
+from logging.handlers import RotatingFileHandler
 
 # Replace with your Cosmos DB details
 os.environ["HTTP_PROXY"] = "http://0.0.0.0:5100"
