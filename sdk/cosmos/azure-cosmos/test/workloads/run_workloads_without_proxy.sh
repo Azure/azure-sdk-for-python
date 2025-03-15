@@ -16,10 +16,6 @@ python3 r-w-q-workload-13.py &
 python3 r-w-q-workload-14.py &
 python3 r-w-q-workload-15.py &
 python3 r-w-q-workload-16.py &
-python3 r-w-q-workload-17.py &
-python3 r-w-q-workload-18.py &
-python3 r-w-q-workload-19.py &
-python3 r-w-q-workload-20.py &
 python3 r_workload.py &
 python3 r-workload-1.py &
 python3 r-workload-2.py &
@@ -36,11 +32,6 @@ python3 r-workload-12.py &
 python3 r-workload-13.py &
 python3 r-workload-14.py &
 python3 r-workload-15.py &
-python3 r-workload-16.py &
-python3 r-workload-17.py &
-python3 r-workload-18.py &
-python3 r-workload-19.py &
-python3 r-workload-20.py &
 python3 w_workload.py &
 python3 w-workload-1.py &
 python3 w-workload-2.py &
@@ -58,9 +49,5 @@ python3 w-workload-13.py &
 python3 w-workload-14.py &
 python3 w-workload-15.py &
 python3 w-workload-16.py &
-python3 w-workload-17.py &
-python3 w-workload-18.py &
-python3 w-workload-19.py &
-python3 w-workload-20.py &
 python3 r_w_q_workload_sync.py &
 python3 r-w-q-workload-sync-1.py &
