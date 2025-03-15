@@ -18,7 +18,7 @@ from azure.cosmos.http_constants import StatusCodes, SubStatusCodes, HttpHeaders
 
 @pytest.mark.cosmosEmulator
 class TestSession(unittest.TestCase):
-    """Test to ensure escaping of non-ascii characters from partition key"""
+    """Tests to ensure that the session token is being sent and received correctly"""
 
     created_db: DatabaseProxy = None
     client: cosmos_client.CosmosClient = None
@@ -70,6 +70,17 @@ class TestSession(unittest.TestCase):
             status_code=StatusCodes.NOT_FOUND,
             message="Read Session not available",
             response=response)
+
+    def test_session_token_not_sent_for_writes(self):
+        self._OriginalRequest = synchronized_request._Request
+        try:
+            synchronized_request._Request = self._MockRequest
+            self.created_collection.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
+            self.assertEqual(self.last_session_token_sent, None)
+            self.created_collection.upsert_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
+            self.assertEqual(self.last_session_token_sent, None)
+        finally:
+            synchronized_request._Request = self._OriginalRequest
 
     def test_clear_session_token(self):
         created_document = self.created_collection.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})

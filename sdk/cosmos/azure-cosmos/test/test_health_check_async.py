@@ -8,10 +8,10 @@ import pytest
 import pytest_asyncio
 import test_config
 from azure.cosmos import DatabaseAccount, _location_cache
-from azure.cosmos._constants import _Constants
 
 from azure.cosmos._location_cache import RegionalRoutingContext
-from azure.cosmos.aio import CosmosClient, _global_endpoint_manager_async, _cosmos_client_connection_async
+from azure.cosmos.aio import CosmosClient, _global_endpoint_manager_async, _cosmos_client_connection_async, \
+    _retry_utility_async
 
 COLLECTION = "created_collection"
 REGION_1 = "East US"
@@ -54,6 +54,8 @@ class TestHealthCheckAsync:
     connectionPolicy = test_config.TestConfig.connectionPolicy
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
     TEST_CONTAINER_SINGLE_PARTITION_ID = test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID
+    # health check in all these tests should check the endpoints for the first two write regions and the first two read regions
+    # without checking the same endpoint twice
 
     @pytest.mark.parametrize("preferred_location, use_write_global_endpoint, use_read_global_endpoint", health_check())
     async def test_health_check_success_startup_async(self, setup, preferred_location, use_write_global_endpoint, use_read_global_endpoint):
@@ -133,7 +135,7 @@ class TestHealthCheckAsync:
         assert duration < 2, f"Test took too long: {duration} seconds"
 
     async def test_health_check_background_fail(self, setup):
-        # makes sure exceptions in the health check aren't bubbled up bubbled up but swallowed
+        # makes sure exceptions in the health check aren't bubbled up but swallowed
         #  by mocking health check with an error
         self.original_health_check = _global_endpoint_manager_async._GlobalEndpointManager._endpoints_health_check
         _global_endpoint_manager_async._GlobalEndpointManager._endpoints_health_check = self.mock_health_check_failure
@@ -146,6 +148,7 @@ class TestHealthCheckAsync:
 
     @pytest.mark.parametrize("preferred_location, use_write_global_endpoint, use_read_global_endpoint", health_check())
     async def test_health_check_success(self, setup, preferred_location, use_write_global_endpoint, use_read_global_endpoint):
+        # checks the background health check works as expected when all endpoints healthy
         self.original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
         self.original_getDatabaseAccountCheck = _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck
         self.original_preferred_locations = setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.preferred_locations
@@ -179,6 +182,7 @@ class TestHealthCheckAsync:
 
     @pytest.mark.parametrize("preferred_location, use_write_global_endpoint, use_read_global_endpoint", health_check())
     async def test_health_check_failure(self, setup, preferred_location, use_write_global_endpoint, use_read_global_endpoint):
+        # checks the background health check works as expected when all endpoints unhealthy - it should mark the endpoints unavailable
         setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint.clear()
         self.original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
         _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = (

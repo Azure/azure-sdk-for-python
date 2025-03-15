@@ -48,10 +48,12 @@ class TestHealthCheck:
     connectionPolicy = test_config.TestConfig.connectionPolicy
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
     TEST_CONTAINER_SINGLE_PARTITION_ID = test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID
+    # health check in all these tests should check the endpoints for the first two write regions and the first two read regions
+    # without checking the same endpoint twice
 
     @pytest.mark.parametrize("preferred_location, use_write_global_endpoint, use_read_global_endpoint", health_check())
     def test_health_check_success(self, setup, preferred_location, use_write_global_endpoint, use_read_global_endpoint):
-
+        # checks at startup that we perform a health check on all the necessary endpoints
         self.original_getDatabaseAccountStub = _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub
         self.original_getDatabaseAccountCheck = _cosmos_client_connection.CosmosClientConnection._GetDatabaseAccountCheck
         mock_get_database_account_check = self.MockGetDatabaseAccountCheck()
@@ -82,7 +84,7 @@ class TestHealthCheck:
 
     @pytest.mark.parametrize("preferred_location, use_write_global_endpoint, use_read_global_endpoint", health_check())
     def test_health_check_failure(self, setup, preferred_location, use_write_global_endpoint, use_read_global_endpoint):
-
+        # checks at startup that the health check will mark endpoints as unavailable if it gets an error
         self.original_getDatabaseAccountStub = _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub
         _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = (
             self.MockGetDatabaseAccount(REGIONS, use_write_global_endpoint, use_read_global_endpoint))
@@ -109,6 +111,7 @@ class TestHealthCheck:
             assert expected_regional_routing_contexts in unavailable_endpoint_info.keys()
 
     def test_health_check_timeouts_on_unavailable_endpoints(self, setup):
+        # checks that the health check changes the timeouts when the endpoints were previously unavailable
         self.original_getDatabaseAccountStub = _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub
         self.original_getDatabaseAccountCheck = _cosmos_client_connection.CosmosClientConnection._GetDatabaseAccountCheck
         mock_get_database_account_check = self.MockGetDatabaseAccountCheck(setup[COLLECTION].client_connection, True)
