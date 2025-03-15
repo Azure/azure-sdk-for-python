@@ -39,6 +39,7 @@ from azure.core.pipeline.transport import (
 from azure.core.rest import HttpResponse, HttpRequest
 from azure.core.settings import settings
 from azure.core.tracing import SpanKind
+from azure.core.tracing.common import change_context
 from azure.core.instrumentation import get_tracer
 from azure.core.tracing._models import TracingOptions
 
@@ -127,8 +128,9 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
                 for attr, value in span_attributes.items():
                     span.add_attribute(attr, value)  # type: ignore
 
-                headers = span.to_header()
-                request.http_request.headers.update(headers)
+                with change_context(span.span_instance):
+                    headers = span.to_header()
+                    request.http_request.headers.update(headers)
                 request.context[self.TRACING_CONTEXT] = span
             else:
                 # Otherwise, use the core tracing.
@@ -151,10 +153,11 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
                     attributes=span_attributes,
                 )
 
-                trace_context_headers = tracer.get_trace_context()
-                request.http_request.headers.update(trace_context_headers)
-                request.context[self.TRACING_CONTEXT] = otel_span
+                with tracer.use_span(otel_span, end_on_exit=False):
+                    trace_context_headers = tracer.get_trace_context()
+                    request.http_request.headers.update(trace_context_headers)
 
+                request.context[self.TRACING_CONTEXT] = otel_span
                 token = tracer._suppress_auto_http_instrumentation()  # pylint: disable=protected-access
                 request.context[self._SUPPRESSION_TOKEN] = token
 

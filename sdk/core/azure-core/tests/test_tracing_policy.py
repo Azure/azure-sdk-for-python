@@ -15,6 +15,7 @@ from azure.core.settings import settings
 from azure.core.tracing._models import SpanKind
 from azure.core.tracing._abstract_span import HttpSpanMixin
 import pytest
+from opentelemetry.trace import format_span_id, format_trace_id
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
 
 from utils import HTTP_RESPONSES, HTTP_REQUESTS, create_http_response, request_and_responses_product
@@ -40,7 +41,7 @@ class TestTracingPolicyPluginImplementation:
             response.status_code = 202
             response.headers[policy._RESPONSE_ID] = "some request id"
 
-            assert request.headers.get("traceparent") == "123456789"
+            assert request.headers.get("traceparent") == "00-12345-GET-01"
 
             policy.on_response(pipeline_request, PipelineResponse(request, response, PipelineContext(None)))
             time.sleep(0.001)
@@ -197,7 +198,7 @@ class TestTracingPolicyPluginImplementation:
                 response.headers[policy._RESPONSE_ID] = "some request id"
                 pipeline_response = PipelineResponse(request, response, PipelineContext(None))
 
-                assert request.headers.get("traceparent") == "123456789"
+                assert request.headers.get("traceparent") == "00-12345-GET-01"
 
                 policy.on_response(pipeline_request, pipeline_response)
 
@@ -381,6 +382,10 @@ class TestTracingPolicyNativeTracing:
         assert finished_spans[0].name == "GET"
         assert finished_spans[0].parent is root_span.get_span_context()
 
+        span_context = finished_spans[0].get_span_context()
+        assert traceparent.split("-")[1] == format_trace_id(span_context.trace_id)
+        assert traceparent.split("-")[2] == format_span_id(span_context.span_id)
+
         assert finished_spans[0].attributes.get(policy._HTTP_REQUEST_METHOD) == "GET"
         assert finished_spans[0].attributes.get(policy._URL_FULL) == "http://localhost/temp?query=query"
         assert finished_spans[0].attributes.get(policy._SERVER_ADDRESS) == "localhost"
@@ -497,6 +502,10 @@ class TestTracingPolicyNativeTracing:
         assert len(finished_spans) == 2
         assert finished_spans[0].name == "GET"
         assert finished_spans[0].parent is root_span.get_span_context()
+
+        span_context = finished_spans[0].get_span_context()
+        assert traceparent.split("-")[1] == format_trace_id(span_context.trace_id)
+        assert traceparent.split("-")[2] == format_span_id(span_context.span_id)
 
         assert finished_spans[0].attributes.get(policy._HTTP_REQUEST_METHOD) == "GET"
         assert finished_spans[0].attributes.get(policy._URL_FULL) == "http://localhost/temp?query=query"

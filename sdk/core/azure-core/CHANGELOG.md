@@ -29,6 +29,8 @@
 
 ### Bugs Fixed
 
+- Fixed an issue where the `traceparent` header was not being set correctly in the `DistributedTracingPolicy`. The `traceparent` header will now set based on the context of the HTTP client span. #40074
+
 ### Other Changes
 
 - Added `opentelemetry-api` as an optional dependency for tracing. This can be installed with `pip install azure-core[tracing]`. #39563

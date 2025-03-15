@@ -4,6 +4,7 @@
 # ------------------------------------
 from __future__ import annotations
 from contextlib import contextmanager
+from contextvars import Token
 from typing import Optional, Dict, Sequence, cast, Callable, Iterator, TYPE_CHECKING
 
 from opentelemetry import context as otel_context_module, trace
@@ -221,7 +222,7 @@ class OpenTelemetryTracer:
         return trace_context
 
     @classmethod
-    def _suppress_auto_http_instrumentation(cls) -> object:
+    def _suppress_auto_http_instrumentation(cls) -> Token:
         """Enabled automatic HTTP instrumentation suppression.
 
         Since azure-core already instruments HTTP calls, we need to suppress any automatic HTTP
@@ -229,15 +230,15 @@ class OpenTelemetryTracer:
         automatic HTTP instrumentation libraries are being used.
 
         :return: A token that can be used to detach the suppression key from the context
-        :rtype: object
+        :rtype: ~contextvars.Token
         """
         return otel_context_module.attach(otel_context_module.set_value(_SUPPRESS_HTTP_INSTRUMENTATION_KEY, True))
 
     @classmethod
-    def _detach_from_context(cls, token: object) -> None:
+    def _detach_from_context(cls, token: Token) -> None:
         """Detach a token from the context.
 
         :param token: The token to detach
-        :type token: object
+        :type token: ~contextvars.Token
         """
         otel_context_module.detach(token)
