@@ -85,7 +85,7 @@ if __name__ == "__main__":
     # Create a rotating file handler
     handler = RotatingFileHandler(
         "log-" + first_name + "-" + datetime.now().strftime("%Y%m%d-%H%M%S") + '.log',
-        maxBytes=1024 * 1024 * 1024 * 1024,  # 100 MB
+        maxBytes=1024 * 1024 * 1024 * 10,  # 10 MB
         backupCount=3
     )
     logger.setLevel(logging.DEBUG)
