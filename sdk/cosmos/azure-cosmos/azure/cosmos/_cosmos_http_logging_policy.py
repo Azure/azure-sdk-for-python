@@ -124,7 +124,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                                 resource_type=resource_type, is_request=True):
                 # self._log_client_settings()
                 # self._log_database_account_settings()
-                super().on_request(request)
+                # super().on_request(request)
                 self.__request_already_logged = True
 
     # pylint: disable=too-many-statements
@@ -181,7 +181,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                 self.__request_already_logged = True
             else:
                 self.__request_already_logged = False
-            super().on_response(request, response)
+            # super().on_response(request, response)
             if self._enable_diagnostics_logging:
                 http_response = response.http_response
                 options = response.context.options
