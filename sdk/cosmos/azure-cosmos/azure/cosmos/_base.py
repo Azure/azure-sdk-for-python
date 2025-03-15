@@ -185,7 +185,8 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     is_session_consistency = consistency_level == documents.ConsistencyLevel.Session
 
     # set session token if required
-    if is_session_consistency is True and not IsMasterResource(resource_type):
+    # skipping session token for writes because of large session token issue seen in testing
+    if is_session_consistency is True and not IsMasterResource(resource_type) and operation_type.lower() == "read":
         # if there is a token set via option, then use it to override default
         if options.get("sessionToken"):
             headers[http_constants.HttpHeaders.SessionToken] = options["sessionToken"]

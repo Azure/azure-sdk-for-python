@@ -18,7 +18,7 @@ from logging.handlers import RotatingFileHandler
 
 
 def get_random_item():
-    random_int = random.randint(1, 100000)
+    random_int = random.randint(1, 1000000)
     return {"id": "Simon-" + str(random_int), "pk": "pk-" + str(random_int)}
 
 
