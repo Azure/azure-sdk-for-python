@@ -212,7 +212,7 @@ async def test_bearer_policy_calls_sansio_methods():
     pipeline = AsyncPipeline(transport=transport, policies=[policy])
     await pipeline.run(HttpRequest("GET", "https://localhost"))
 
-    policy.on_request.assert_called_once_with(policy.request)
+    policy.on_request.assert_called_once_with(policy.request, auth_flows=None)
     policy.on_response.assert_called_once_with(policy.request, policy.response)
 
     # the policy should call on_exception when next.send() raises
@@ -275,7 +275,7 @@ def get_completed_future(result=None):
 @pytest.mark.asyncio
 async def test_async_token_credential_inheritance():
     class TestTokenCredential(AsyncTokenCredential):
-        async def get_token_info(self, *scopes, options=None):
+        async def get_token_info(self, *scopes, options={}):
             return "TOKEN"
 
     cred = TestTokenCredential()

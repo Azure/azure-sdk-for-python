@@ -139,7 +139,7 @@ def test_bearer_policy_default_context():
 
     pipeline.run(HttpRequest("GET", "https://localhost"))
 
-    credential.get_token_info.assert_called_once_with(expected_scope)
+    credential.get_token_info.assert_called_once_with(expected_scope, options={})
 
 
 def test_bearer_policy_context_unmodified_by_default():
@@ -194,7 +194,7 @@ def test_bearer_policy_cannot_complete_challenge():
 
     assert response.http_response is expected_response
     assert transport.send.call_count == 1
-    credential.get_token_info.assert_called_once_with(expected_scope)
+    credential.get_token_info.assert_called_once_with(expected_scope, options={})
 
 
 def test_bearer_policy_calls_sansio_methods():
@@ -221,7 +221,7 @@ def test_bearer_policy_calls_sansio_methods():
     pipeline = Pipeline(transport=transport, policies=[policy])
     pipeline.run(HttpRequest("GET", "https://localhost"))
 
-    policy.on_request.assert_called_once_with(policy.request)
+    policy.on_request.assert_called_once_with(policy.request, auth_flows=None)
     policy.on_response.assert_called_once_with(policy.request, policy.response)
 
     # the policy should call on_exception when next.send() raises
