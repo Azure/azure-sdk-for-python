@@ -37,6 +37,7 @@ from azure.core import MatchConditions
 from . import documents
 from . import http_constants
 from . import _runtime_constants
+from .documents import _OperationType
 from .auth import _get_authorization_header
 from .offer import ThroughputProperties
 from .partition_key import _Empty, _Undefined
@@ -185,7 +186,9 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     is_session_consistency = consistency_level == documents.ConsistencyLevel.Session
 
     # set session token if required
-    if is_session_consistency is True and not IsMasterResource(resource_type):
+    if (is_session_consistency is True and not IsMasterResource(resource_type)
+            and _OperationType.IsReadOnlyOperation(operation_type) or
+            cosmos_client_connection._global_endpoint_manager.get_use_multiple_write_locations()):
         # if there is a token set via option, then use it to override default
         if options.get("sessionToken"):
             headers[http_constants.HttpHeaders.SessionToken] = options["sessionToken"]
