@@ -65,6 +65,7 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             evaluator = IntentResolutionEvaluator(model_config)
             query = "What is the weather today?"
             response = "The weather is sunny."
+
             result = evaluator(query=query, response=response)
 
         Example with list of messages:
@@ -130,12 +131,13 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 )
             reason = llm_output.get("explanation", "")
             score = float(score)
-            score_binarized = score >= self.threshold
+            score_result = 'pass' if score >= self.threshold else 'fail'
             response_dict = {
-                            self._result_key             : score,
-                            f"{self._result_key}_label"  : score_binarized,
-                            f"{self._result_key}_reason" : reason,
-                            f"additional_details"        : llm_output
+                             f"{self._result_key}"           : score,
+                             f"{self._result_key}_result"    : score_result,
+                             f"{self._result_key}_threshold" : self.threshold,
+                             f"{self._result_key}_reason"    : reason,
+                             f"additional_details"           : llm_output
                         }
             return response_dict
         # If llm_output is not a dictionary, return NaN for the score. This should never happen
