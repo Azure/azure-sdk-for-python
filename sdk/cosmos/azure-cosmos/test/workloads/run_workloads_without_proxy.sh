@@ -2,7 +2,7 @@
 python3 r_w_q_workload.py &
 python3 r-w-q-workload-1.py &
 python3 r-w-q-workload-2.py &
-python3 r_w_q_workload-3.py &
+python3 r-w-q-workload-3.py &
 python3 r-w-q-workload-4.py &
 python3 r-w-q-workload-5.py &
 python3 r-w-q-workload-6.py &
@@ -12,7 +12,7 @@ python3 r-w-q-workload-9.py &
 python3 r-w-q-workload-10.py &
 python3 r-w-q-workload-11.py &
 python3 r-w-q-workload-12.py &
-python3 r_w_q_workload-13.py &
+python3 r-w-q_workload-13.py &
 python3 r-w-q-workload-14.py &
 python3 r-w-q-workload-15.py &
 python3 r-w-q-workload-16.py &
