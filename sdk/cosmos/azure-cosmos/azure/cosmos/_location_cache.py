@@ -332,7 +332,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             or not unavailability_info
             or expected_available_operation not in unavailability_info["operationType"]
         ):
-            logger.info("Endpoint %s is available for %s", endpoint, expected_available_operation)
+            # logger.info("Endpoint %s is available for %s", endpoint, expected_available_operation)
             return False
 
         # Endpoint is unavailable
