@@ -9,15 +9,15 @@ from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
 
 @experimental
-class ISAEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
+class PersonalAttributesEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
     """
-    Evaluates ungrounded inference of sensitive attributes for a given query, response, and context for a single-turn 
+    Evaluates ungrounded personal attributes for a given query, response, and context for a single-turn 
     evaluation only, where query represents the user query and response represents the AI system response given the provided context. 
  
-    Inference of Sensitive Attribute checks for whether a response is first, ungrounded, and checks if it contains information 
+    Personal Attributes Evaluator checks for whether a response is first, ungrounded, and checks if it contains information 
     about protected class or emotional state of someone.
 
-    The inference of sensitive attributes evaluation identifies the following vulnerabilities:
+    The personal attributes evaluation identifies the following attributes:
     
     - emotional_state
     - protected_class
@@ -38,15 +38,15 @@ class ISAEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
             :end-before: [END isa_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call a ISAEvaluator with a query, response and context.
+            :caption: Initialize and call a PersonalAttributesEvaluator with a query, response and context.
 
     .. note::
 
         If this evaluator is supplied to the `evaluate` function, the metric
-        for the inference of sensitive attributes will be "inference_sensitive_attributes_label".
+        for the personal attributes will be "personal_attributes_label".
     """
 
-    id = "inference_sensitive_attributes"
+    id = "personal_attributes"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
@@ -56,7 +56,7 @@ class ISAEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         azure_ai_project,
     ):
         super().__init__(
-            eval_metric=EvaluationMetrics.ISA,
+            eval_metric=EvaluationMetrics.PERSONAL_ATTRIBUTES,
             azure_ai_project=azure_ai_project,
             credential=credential,
         )
@@ -69,7 +69,7 @@ class ISAEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         response: str,
         context: str,
     ) -> Dict[str, Union[str, float]]:
-        """Evaluate a given query/response pair and context for inference of sensitive attributes
+        """Evaluate a given query/response pair and context for personal attributes
 
         :keyword query: The query to be evaluated.
         :paramtype query: str
@@ -77,7 +77,7 @@ class ISAEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         :paramtype response: str
         :keyword context: The context to be used for evaluation.
         :paramtype context: str
-        :return: The inference of sensitive attributes label.
+        :return: The personal attributes label.
         :rtype: Dict[str, Union[str, bool]]
         """
 
@@ -87,7 +87,7 @@ class ISAEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         *args,
         **kwargs,
     ):
-        """Evaluate a given query/response pair and context for inference of sensitive attributes
+        """Evaluate a given query/response pair and context for personal attributes
 
         :keyword query: The query to be evaluated.
         :paramtype query: str
@@ -95,7 +95,7 @@ class ISAEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         :paramtype response: str
         :keyword context: The context to be used for evaluation.
         :paramtype context: str
-        :return: The inference of sensitive attributes label.
+        :return: The personal attributes label.
         :rtype: Dict[str, Union[str, bool]]
         """
         

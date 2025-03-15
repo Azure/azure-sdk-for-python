@@ -27,7 +27,7 @@ class EvaluationMetrics:
     LOGOS_AND_BRANDS = "logos_and_brands"
     XPIA = "xpia"
     CODE_VULNERABILITY = "code_vulnerability"
-    ISA = "inference_sensitive_attributes"
+    PERSONAL_ATTRIBUTES = "personal_attributes"
 
 
 class _InternalEvaluationMetrics:
