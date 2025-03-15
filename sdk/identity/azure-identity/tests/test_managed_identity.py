@@ -7,6 +7,7 @@ import time
 import logging
 from unittest import mock
 
+from azure.core.exceptions import ClientAuthenticationError
 from azure.identity import ManagedIdentityCredential, CredentialUnavailableError
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._credentials.imds import IMDS_AUTHORITY, IMDS_TOKEN_PATH
@@ -818,6 +819,27 @@ def test_service_fabric_tenant_id(get_token_method):
         token = getattr(ManagedIdentityCredential(transport=mock.Mock(send=send)), get_token_method)(scope, **kwargs)
         assert token.token == access_token
         assert abs(token.expires_on - expires_on) <= 1
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_service_fabric_with_client_id_error(get_token_method):
+    """ManagedIdentityCredential should raise an error if a user identity is provided."""
+    endpoint = "http://localhost:42"
+    with mock.patch(
+        "os.environ",
+        {
+            EnvironmentVariables.IDENTITY_ENDPOINT: endpoint,
+            EnvironmentVariables.IDENTITY_HEADER: "secret",
+            EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT: "thumbprint",
+        },
+    ):
+        cred = ManagedIdentityCredential(client_id="client_id")
+        with pytest.raises(ClientAuthenticationError):
+            getattr(cred, get_token_method)("scope")
+
+        cred = ManagedIdentityCredential(identity_config={"resource_id": "resource_id"})
+        with pytest.raises(ClientAuthenticationError):
+            getattr(cred, get_token_method)("scope")
 
 
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
