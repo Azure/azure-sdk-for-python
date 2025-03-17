@@ -281,7 +281,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
                 AsyncLROBasePolling(
                     lro_delay,
                     path_format_arguments=path_format_arguments,
-                    lro_options={"final-state-via": "operaiton-location"},
+                    lro_options={"final-state-via": "operation-location"},
                     **kwargs
                 ),
             )
