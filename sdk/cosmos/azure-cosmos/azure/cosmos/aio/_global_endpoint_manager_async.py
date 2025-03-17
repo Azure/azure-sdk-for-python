@@ -38,7 +38,7 @@ from .._location_cache import LocationCache
 
 # pylint: disable=protected-access
 
-logger = logging.getLogger("azure.cosmos._GlobalEndpointManager")
+logger = logging.getLogger("azure.cosmos.aio_GlobalEndpointManager")
 
 class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attributes
     """
@@ -151,7 +151,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         success_count = 0
         for endpoint in endpoints:
             if endpoint not in endpoints_attempted:
-                # health check continues until 2 successes or all endpoints are checked
+                # health check continues until 4 successes or all endpoints are checked
                 if success_count >= 4:
                     break
                 endpoints_attempted.add(endpoint)
