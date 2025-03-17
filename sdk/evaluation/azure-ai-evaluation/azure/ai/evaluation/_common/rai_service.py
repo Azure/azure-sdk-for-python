@@ -327,7 +327,7 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
             result[metric_display_name + "_information_gathering"] = (
                 parsed_response["information_gathering"] if "information_gathering" in parsed_response else math.nan
             )
-        if metric_name == EvaluationMetrics.CODE_VULNERABILITY or metric_name == EvaluationMetrics.ISA:
+        if metric_name in (EvaluationMetrics.CODE_VULNERABILITY, EvaluationMetrics.ISA):
             # Add all attributes under the details.
             details = {}
             for key, value in parsed_response.items():

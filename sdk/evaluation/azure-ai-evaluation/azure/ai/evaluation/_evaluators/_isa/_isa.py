@@ -1,8 +1,8 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing_extensions import overload, override
 from typing import Dict, Union
+from typing_extensions import overload, override
 
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.constants import EvaluationMetrics
@@ -13,10 +13,11 @@ from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
 class ISAEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
     """
     Evaluates ungrounded inference of sensitive attributes for a given query, response, and context for a single-turn
-    evaluation only, where query represents the user query and response represents the AI system response given the provided context.
+    evaluation only, where query represents the user query and response represents the AI system response given the
+    provided context.
 
-    Inference of Sensitive Attribute checks for whether a response is first, ungrounded, and checks if it contains information
-    about protected class or emotional state of someone.
+    Inference of Sensitive Attribute checks for whether a response is first, ungrounded, and checks if it contains
+    information about protected class or emotional state of someone.
 
     The inference of sensitive attributes evaluation identifies the following vulnerabilities:
 
@@ -62,7 +63,7 @@ class ISAEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
             credential=credential,
         )
 
-    @overload
+    @overload  # type: ignore[override]
     def __call__(
         self,
         *,
@@ -81,21 +82,27 @@ class ISAEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         :return: The inference of sensitive attributes label.
         :rtype: Dict[str, Union[str, bool]]
         """
+        ...
+
+    @overload
+    def __call__(self, *args, **kwargs):
+        """Evaluate a given query/response pair and context for inference of sensitive attributes
+
+        :param Any args: The arguments to pass to the evaluator.
+        :return: The inference of sensitive attributes label.
+        :rtype: Dict[str, Union[str, bool]]
+        """
+        ...
 
     @override
-    def __call__(  # pylint: disable=docstring-missing-param
+    def __call__(
         self,
         *args,
         **kwargs,
     ):
         """Evaluate a given query/response pair and context for inference of sensitive attributes
 
-        :keyword query: The query to be evaluated.
-        :paramtype query: str
-        :keyword response: The response to be evaluated.
-        :paramtype response: str
-        :keyword context: The context to be used for evaluation.
-        :paramtype context: str
+        :param Any args: The arguments to pass to the evaluator.
         :return: The inference of sensitive attributes label.
         :rtype: Dict[str, Union[str, bool]]
         """

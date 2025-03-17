@@ -187,7 +187,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
             evaluator_name=self.__class__.__name__,
         )
 
-    def _get_task(self):
+    def _get_task(self):  # pylint: disable=too-many-return-statements
         """Get the annotation task for the current evaluation metric.
         The annotation task is used by the RAI service script to determine a the message format
         of the API call, and how the output is processed, among other things.

@@ -6,7 +6,7 @@ import json
 import logging
 import os
 import re
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypedDict, TypeVar, Union
+from typing import Any, Callable, Dict, List, Optional, Sequence, Set, Tuple, TypedDict, TypeVar, Union, cast
 
 import pandas as pd
 from promptflow._sdk._constants import LINE_NUMBER
@@ -168,7 +168,7 @@ def _aggregate_label_defect_metrics(df: pd.DataFrame) -> Tuple[List[str], Dict[s
     defect_rates = {}
     for col in label_df.columns:
         defect_rate_name = col.replace("_label", "_defect_rate")
-        col_with_boolean_values = pd.to_numeric(label_df[col], errors="coerce")
+        col_with_boolean_values = cast(Sequence[float], pd.to_numeric(label_df[col], errors="coerce"))
         try:
             defect_rates[defect_rate_name] = round(list_mean_nan_safe(col_with_boolean_values), 2)
         except EvaluationException:  # only exception that can be cause is all NaN values
@@ -177,13 +177,13 @@ def _aggregate_label_defect_metrics(df: pd.DataFrame) -> Tuple[List[str], Dict[s
 
     if details_cols:
         details_df = df[details_cols]
-        detail_defect_rates = {}
+        detail_defect_rates: Dict[str, float] = {}
 
         for key, value in details_df.items():
             _process_rows(value, detail_defect_rates)
 
         for key, value in detail_defect_rates.items():
-            col_with_boolean_values = pd.to_numeric(value, errors="coerce")
+            col_with_boolean_values = cast(Sequence[float], pd.to_numeric(value, errors="coerce"))
             try:
                 defect_rates[f"{details_cols}.{key}_defect_rate"] = round(
                     list_mean_nan_safe(col_with_boolean_values), 2
