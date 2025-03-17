@@ -46,13 +46,15 @@ class QAEvaluator(MultiEvaluatorBase[Union[str, float]]):
     id = "qa"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
-    def __init__(self, model_config, **kwargs):
+    def __init__(self, model_config, threshold=3, _higher_is_better=True, **kwargs):
+        self.threshold = threshold
+        self._higher_is_better = _higher_is_better
         evaluators = [
-            GroundednessEvaluator(model_config),
-            RelevanceEvaluator(model_config),
-            CoherenceEvaluator(model_config),
-            FluencyEvaluator(model_config),
-            SimilarityEvaluator(model_config),
+            GroundednessEvaluator(model_config, threshold=threshold),
+            RelevanceEvaluator(model_config, threshold=threshold),
+            CoherenceEvaluator(model_config, threshold=threshold),
+            FluencyEvaluator(model_config, threshold=threshold),
+            SimilarityEvaluator(model_config, threshold=threshold),
             F1ScoreEvaluator(),
         ]
         super().__init__(evaluators=evaluators, **kwargs)

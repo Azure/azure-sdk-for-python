@@ -507,8 +507,6 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             loop=loop,
             operation_context=operation_context,
             operation_callback_url=operation_callback_url,
-            interrupt_call_media_operation=kwargs.get("interrupt_call_media_operation", False),
-            interrupt_hold_audio=kwargs.get("interrupt_hold_audio", False),
             **kwargs,
         )
 

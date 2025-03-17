@@ -44,7 +44,7 @@ class FeatureStoreConfigurationOptions(object):
         online_store_target = f"/subscriptions/{subscription_id}/resourceGroups/{resource_group}/providers/Microsoft.Cache/Redis/{redis_cache_name}"
 
         FeatureStoreSettings(
-            compute_runtime=ComputeRuntime(spark_runtime_version="3.3.0"),
+            compute_runtime=ComputeRuntime(spark_runtime_version="3.4.0"),
             offline_store_connection_name=offline_store_target,
             online_store_connection_name=online_store_target,
         )

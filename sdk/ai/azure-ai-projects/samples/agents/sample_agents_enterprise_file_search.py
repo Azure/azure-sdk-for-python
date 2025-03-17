@@ -62,7 +62,7 @@ with project_client:
     )
     print(f"Created message, message ID: {message.id}")
 
-    run = project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+    run = project_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
     print(f"Created run, run ID: {run.id}")
 
     project_client.agents.delete_vector_store(vector_store.id)

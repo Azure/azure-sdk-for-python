@@ -11,7 +11,7 @@ from typing_extensions import ParamSpec, TypeAlias, get_overloads
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._common.utils import remove_optional_singletons
-from azure.ai.evaluation._constants import _AggregationType
+from azure.ai.evaluation._constants import _AggregationType, EVALUATION_PASS_FAIL_MAPPING
 from azure.ai.evaluation._model_configurations import Conversation
 from azure.ai.evaluation._common._experimental import experimental
 
@@ -80,6 +80,10 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
     :param conversation_aggregator_override: A function that will be used to aggregate per-turn results. If provided,
         overrides the standard aggregator implied by conversation_aggregation_type. None by default.
     :type conversation_aggregator_override: Optional[Callable[[List[float]], float]]
+    :param threshold: The threshold for the evaluation. Default is 3.
+    :type threshold: Optional[int]
+    :param _higher_is_better: If True, higher scores are better. Default is True.
+    :type _higher_is_better: Optional[bool]
     """
 
     # ~~~ METHODS THAT ALMOST ALWAYS NEED TO BE OVERRIDDEN BY CHILDREN~~~
@@ -89,16 +93,20 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
     def __init__(
         self,
         *,
+        threshold: float = 3.0,
         not_singleton_inputs: List[str] = ["conversation", "kwargs"],
         eval_last_turn: bool = False,
         conversation_aggregation_type: _AggregationType = _AggregationType.MEAN,
         conversation_aggregator_override: Optional[Callable[[List[float]], float]] = None,
+        _higher_is_better: Optional[bool] = True,
     ):
         self._not_singleton_inputs = not_singleton_inputs
         self._eval_last_turn = eval_last_turn
         self._singleton_inputs = self._derive_singleton_inputs()
         self._async_evaluator = AsyncEvaluatorBase(self._real_call)
         self._conversation_aggregation_function = GetAggregator(conversation_aggregation_type)
+        self._higher_is_better = _higher_is_better
+        self._threshold = threshold
         if conversation_aggregator_override is not None:
             # Type ignore since we already checked for None, but mypy doesn't know that.
             self._conversation_aggregation_function = conversation_aggregator_override  # type: ignore[assignment]
@@ -393,7 +401,29 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         per_turn_results = []
         # Evaluate all inputs.
         for eval_input in eval_input_list:
-            per_turn_results.append(await self._do_eval(eval_input))
+            result = await self._do_eval(eval_input)
+            # logic to determine threshold pass/fail
+            try:
+                for key in list(result.keys()):
+                    if key.endswith("_score"):
+                        score_value = result[key]
+                        base_key = key[:-6]  # Remove "_score" suffix
+                        result_key = f"{base_key}_result"
+                        threshold_key = f"{base_key}_threshold"
+                        result[threshold_key] = self._threshold
+                        if self._higher_is_better:
+                            if int(score_value) >= self._threshold:
+                                result[result_key] = EVALUATION_PASS_FAIL_MAPPING[True]
+                            else:
+                                result[result_key] = EVALUATION_PASS_FAIL_MAPPING[False]
+                        else:
+                            if int(score_value) <= self._threshold:
+                                result[result_key] = EVALUATION_PASS_FAIL_MAPPING[True]
+                            else:
+                                result[result_key] = EVALUATION_PASS_FAIL_MAPPING[False]
+            except Exception as e:
+                print(f"Error calculating binary result: {e}")
+            per_turn_results.append(result)
         # Return results as-is if only one result was produced.
 
         if len(per_turn_results) == 1:
