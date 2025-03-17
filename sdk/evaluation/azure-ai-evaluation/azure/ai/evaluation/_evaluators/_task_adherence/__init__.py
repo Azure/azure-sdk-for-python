@@ -2,6 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from ._completeness import CompletenessEvaluator
+from ._task_adherence import TaskAdherenceEvaluator
 
-__all__ = ["CompletenessEvaluator"]
+__all__ = ["TaskAdherenceEvaluator"]
