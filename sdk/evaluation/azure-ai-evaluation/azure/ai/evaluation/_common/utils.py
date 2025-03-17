@@ -286,9 +286,12 @@ def check_score_is_valid(score: Union[str, float], min_score = 1, max_score = 5)
     :return: True if the score is valid, False otherwise.
     :rtype: bool
     """
-    if isinstance(score, str):
-        return score.isdigit() and min_score <= float(score) <= max_score
-    return isinstance(score, (int, float)) and min_score <= score <= max_score
+    try:
+        numeric_score = float(score)
+    except (ValueError, TypeError):
+        return False
+
+    return min_score <= numeric_score <= max_score
 
 def parse_quality_evaluator_reason_score(llm_output: str) -> Tuple[float, str]:
     """Parse the output of prompt-based quality evaluators that return a score and reason.
