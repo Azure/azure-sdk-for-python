@@ -146,7 +146,7 @@ class CompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
 
         if isinstance(llm_output, dict):
-            completeness_score = float(llm_output.get("completeness", math.nan))
+            completeness_score = llm_output.get("completeness", math.nan)
 
             reason = llm_output.get("completeness_reason", "")
 
