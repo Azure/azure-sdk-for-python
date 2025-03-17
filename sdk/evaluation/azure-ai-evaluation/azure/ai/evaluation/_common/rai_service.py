@@ -174,7 +174,7 @@ def generate_payload(normalized_user_text: str, metric: str, annotation_task: st
     task = annotation_task
     if metric == EvaluationMetrics.PROTECTED_MATERIAL:
         include_metric = False
-    elif metric == EvaluationMetrics.ungrounded_attributes:
+    elif metric == EvaluationMetrics.UNGROUNDED_ATTRIBUTES:
         include_metric = False
     elif metric == _InternalEvaluationMetrics.ECI:
         include_metric = False
@@ -290,14 +290,14 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
         _InternalEvaluationMetrics.ECI,
         EvaluationMetrics.XPIA,
         EvaluationMetrics.CODE_VULNERABILITY,
-        EvaluationMetrics.ungrounded_attributes,
+        EvaluationMetrics.UNGROUNDED_ATTRIBUTES,
     }:
         result = {}
         if not batch_response or len(batch_response[0]) == 0:
             return {}
-        if metric_name == EvaluationMetrics.ungrounded_attributes and INFERENCE_OF_SENSITIVE_ATTRIBUTES in batch_response[0]:
+        if metric_name == EvaluationMetrics.UNGROUNDED_ATTRIBUTES and INFERENCE_OF_SENSITIVE_ATTRIBUTES in batch_response[0]:
             batch_response[0] = { 
-                EvaluationMetrics.ungrounded_attributes: batch_response[0][INFERENCE_OF_SENSITIVE_ATTRIBUTES] 
+                EvaluationMetrics.UNGROUNDED_ATTRIBUTES: batch_response[0][INFERENCE_OF_SENSITIVE_ATTRIBUTES] 
             } 
         if metric_name == EvaluationMetrics.PROTECTED_MATERIAL and metric_name not in batch_response[0]:
             pm_metric_names = {"artwork", "fictional_characters", "logos_and_brands"}
@@ -334,7 +334,7 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
             result[metric_display_name + "_information_gathering"] = (
                 parsed_response["information_gathering"] if "information_gathering" in parsed_response else math.nan
             )
-        if metric_name == EvaluationMetrics.CODE_VULNERABILITY or metric_name == EvaluationMetrics.ungrounded_attributes:
+        if metric_name == EvaluationMetrics.CODE_VULNERABILITY or metric_name == EvaluationMetrics.UNGROUNDED_ATTRIBUTES:
             # Add all attributes under the details.
             details = {}
             for key, value in parsed_response.items():

@@ -44,7 +44,7 @@ class UngroundedAttributesEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
     .. note::
 
         If this evaluator is supplied to the `evaluate` function, the metric
-        for the personal attributes will be "ungrounded_attributes_label".
+        for the ungrounded attributes will be "ungrounded_attributes_label".
     """
 
     id = "ungrounded_attributes"
@@ -57,7 +57,7 @@ class UngroundedAttributesEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         azure_ai_project,
     ):
         super().__init__(
-            eval_metric=EvaluationMetrics.ungrounded_attributes,
+            eval_metric=EvaluationMetrics.UNGROUNDED_ATTRIBUTES,
             azure_ai_project=azure_ai_project,
             credential=credential,
         )
@@ -70,7 +70,7 @@ class UngroundedAttributesEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         response: str,
         context: str,
     ) -> Dict[str, Union[str, float]]:
-        """Evaluate a given query/response pair and context for personal attributes
+        """Evaluate a given query/response pair and context for ungrounded attributes
 
         :keyword query: The query to be evaluated.
         :paramtype query: str
@@ -78,7 +78,7 @@ class UngroundedAttributesEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         :paramtype response: str
         :keyword context: The context to be used for evaluation.
         :paramtype context: str
-        :return: The personal attributes label.
+        :return: The ungrounded attributes label.
         :rtype: Dict[str, Union[str, bool]]
         """
 
@@ -88,7 +88,7 @@ class UngroundedAttributesEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         *args,
         **kwargs,
     ):
-        """Evaluate a given query/response pair and context for personal attributes
+        """Evaluate a given query/response pair and context for ungrounded attributes
 
         :keyword query: The query to be evaluated.
         :paramtype query: str
@@ -96,7 +96,7 @@ class UngroundedAttributesEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         :paramtype response: str
         :keyword context: The context to be used for evaluation.
         :paramtype context: str
-        :return: The personal attributes label.
+        :return: The ungrounded attributes label.
         :rtype: Dict[str, Union[str, bool]]
         """
         
