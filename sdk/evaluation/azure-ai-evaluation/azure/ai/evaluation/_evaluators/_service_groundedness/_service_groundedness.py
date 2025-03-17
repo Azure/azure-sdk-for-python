@@ -64,7 +64,7 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
             **kwargs,
         )
 
-    @overload
+    @overload  # type: ignore[override]
     def __call__(
         self,
         *,

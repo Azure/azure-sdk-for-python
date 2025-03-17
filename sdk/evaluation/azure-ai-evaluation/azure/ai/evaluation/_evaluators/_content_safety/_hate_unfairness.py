@@ -75,7 +75,7 @@ class HateUnfairnessEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
             conversation_aggregation_type=_AggregationType.MAX,
         )
 
-    @overload
+    @overload  # type: ignore[override]
     def __call__(
         self,
         *,

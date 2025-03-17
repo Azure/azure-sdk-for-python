@@ -69,7 +69,7 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
             credential=credential,
         )
 
-    @overload
+    @overload  # type: ignore[override]
     def __call__(
         self,
         *,
