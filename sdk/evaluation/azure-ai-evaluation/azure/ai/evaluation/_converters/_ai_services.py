@@ -44,7 +44,7 @@ class AIAgentConverter:
         """
         self.project_client = project_client
 
-    def __list_messages_chronological(self, thread_id: str):
+    def _list_messages_chronological(self, thread_id: str):
         """
         Lists messages in chronological order for a given thread.
 
@@ -69,7 +69,7 @@ class AIAgentConverter:
 
         return to_return
 
-    def __list_tool_calls_chronological(self, thread_id: str, run_id: str) -> List[ToolCall]:
+    def _list_tool_calls_chronological(self, thread_id: str, run_id: str) -> List[ToolCall]:
         """
         Lists tool calls in chronological order for a given thread and run.
 
@@ -117,7 +117,7 @@ class AIAgentConverter:
 
         return tool_calls_chronological
 
-    def __list_run_ids_chronological(self, thread_id: str) -> List[str]:
+    def _list_run_ids_chronological(self, thread_id: str) -> List[str]:
         """
         Lists run IDs in chronological order for a given thread.
 
@@ -131,7 +131,7 @@ class AIAgentConverter:
         return run_ids
 
     @staticmethod
-    def __extract_function_tool_definitions(thread_run: ThreadRun) -> List[ToolDefinition]:
+    def _extract_function_tool_definitions(thread_run: ThreadRun) -> List[ToolDefinition]:
         """
         Extracts tool definitions from a thread run.
 
@@ -160,7 +160,7 @@ class AIAgentConverter:
         return final_tools
 
     @staticmethod
-    def __break_into_query_responses(messages: List[Message], run_id: str) -> (List[Message], List[Message]):
+    def _break_into_query_responses(messages: List[Message], run_id: str) -> (List[Message], List[Message]):
         """
         Breaks a list of messages into query and response messages based on the run ID.
 
@@ -176,7 +176,7 @@ class AIAgentConverter:
         return query, responses
 
     @staticmethod
-    def __filter_messages_up_to_run_id(chronological_messages, run_id: str):
+    def _filter_messages_up_to_run_id(chronological_messages, run_id: str):
         """
         Filters messages up to a specific run ID.
 
@@ -207,7 +207,7 @@ class AIAgentConverter:
         return filtered_messages
 
     @staticmethod
-    def __is_agent_tool_call(message: Message) -> bool:
+    def _is_agent_tool_call(message: Message) -> bool:
         """
         Determines if a message is an agent tool call.
 
@@ -225,7 +225,7 @@ class AIAgentConverter:
         )
 
     @staticmethod
-    def __sort_messages(messages: List[Message]) -> List[Message]:
+    def _sort_messages(messages: List[Message]) -> List[Message]:
         """
         Sorts a list of messages, placing messages with `createdAt` set to None at the beginning.
 
@@ -263,14 +263,14 @@ class AIAgentConverter:
         thread_run: ThreadRun = self.project_client.agents.get_run(thread_id=thread_id, run_id=run_id)
 
         # Walk through the "user-facing" conversation history and start adding messages.
-        chronological_conversation = self.__list_messages_chronological(thread_id)
+        chronological_conversation = self._list_messages_chronological(thread_id)
 
         # We will collect messages in this accumulator.
         final_messages: List[Message] = []
 
         # Each visible message in the conversation is a message from the user or the assistant, we collect
         # both the text and timestamp, so we can recreate the chronological order.
-        for single_turn in AIAgentConverter.__filter_messages_up_to_run_id(chronological_conversation, run_id):
+        for single_turn in AIAgentConverter._filter_messages_up_to_run_id(chronological_conversation, run_id):
             # This shouldn't really happen, ever. What's the point of a message without content? But to avoid a nasty
             # crash on one of the historical messages, let's check for it and bail out from this iteration.
             if len(single_turn.content) < 1:
@@ -299,7 +299,7 @@ class AIAgentConverter:
                 continue
 
         # Third, add all the tool calls and results as messages.
-        for tool_call in self.__list_tool_calls_chronological(thread_id, run_id):
+        for tool_call in self._list_tool_calls_chronological(thread_id, run_id):
             # We need to add the tool call and the result as two separate messages.
             final_messages.extend(break_tool_call_into_messages(tool_call, run_id))
 
@@ -310,17 +310,17 @@ class AIAgentConverter:
         # by setting the exclude_tool_calls_previous_runs flag to True.
         if not exclude_tool_calls_previous_runs:
             # These are all the assistant (any number) in the thread.
-            all_run_ids = self.__list_run_ids_chronological(thread_id)
+            all_run_ids = self._list_run_ids_chronological(thread_id)
 
             # Helper method to fetch tool calls for a given run ID.
             def fetch_tool_calls(local_run_id) -> List[Message]:
                 tool_calls: List[Message] = []
                 if local_run_id != thread_run.id:
-                    for chrono_tool_call in self.__list_tool_calls_chronological(thread_id, local_run_id):
+                    for chrono_tool_call in self._list_tool_calls_chronological(thread_id, local_run_id):
                         tool_calls.extend(break_tool_call_into_messages(chrono_tool_call, local_run_id))
                 return tool_calls
 
-            # Since each __list_tool_calls_chronological call is expensive, we can use a thread pool to speed
+            # Since each _list_tool_calls_chronological call is expensive, we can use a thread pool to speed
             # up the process by parallelizing the AI Services API requests.
             with ThreadPoolExecutor() as executor:
                 futures = {executor.submit(fetch_tool_calls, run_id): run_id for run_id in all_run_ids}
@@ -330,7 +330,7 @@ class AIAgentConverter:
         # All of our final messages have to be in chronological order. We use a secondary sorting key,
         # since the tool_result and assistant events would come with the same timestamp, so we need to
         # sort them by role, such that the assistant's message would come after the tool result it's sending.
-        final_messages = AIAgentConverter.__sort_messages(final_messages)
+        final_messages = AIAgentConverter._sort_messages(final_messages)
 
         # Finally, we want to force the system message to be the first one in the list.
         # First, we need to create the first system message of the thread.
@@ -347,7 +347,7 @@ class AIAgentConverter:
         final_result = EvaluatorData(
             query=query,
             response=responses,
-            tool_definitions=AIAgentConverter.__extract_function_tool_definitions(thread_run),
+            tool_definitions=AIAgentConverter._extract_function_tool_definitions(thread_run),
         )
 
         return json.loads(final_result.to_json())
@@ -412,7 +412,7 @@ class AIAgentConverter:
 
         # Accumulate the messages in the correct order, but only up to the run_id.
         final_messages: List[Message] = []
-        for converted_message in AIAgentConverter.__filter_messages_up_to_run_id(converted_messages, run_id):
+        for converted_message in AIAgentConverter._filter_messages_up_to_run_id(converted_messages, run_id):
             # By default, we want to add all the messages, even if we are on the 10th run of the thread, we want to know
             # what the assistant said, what the assistant called, and what the result was.
             if exclude_tool_calls_previous_runs:
@@ -424,7 +424,7 @@ class AIAgentConverter:
                         continue
 
                     # We also don't want anything that is an assistant calling a tool.
-                    if AIAgentConverter.__is_agent_tool_call(converted_message):
+                    if AIAgentConverter._is_agent_tool_call(converted_message):
                         continue
 
             # We're good to add it.
@@ -432,7 +432,7 @@ class AIAgentConverter:
 
         # Just in case, sort them all out by putting the messages without createdAt, like SystemMessage's at the
         # top of the list, so they appear first.
-        final_messages = AIAgentConverter.__sort_messages(final_messages)
+        final_messages = AIAgentConverter._sort_messages(final_messages)
 
         # Create the tool definitions.
         tools = conversation.get("tools", [])
@@ -443,7 +443,7 @@ class AIAgentConverter:
 
         # Separate into the chat history, with all other user-assistant messages, and the assistant's response, where
         # the latter would include
-        query, responses = AIAgentConverter.__break_into_query_responses(final_messages, run_id)
+        query, responses = AIAgentConverter._break_into_query_responses(final_messages, run_id)
 
         # Create the final result
         final_result = EvaluatorData(query=query, response=responses, tool_definitions=tool_definitions)
