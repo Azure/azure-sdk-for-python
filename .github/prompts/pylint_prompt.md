@@ -1,0 +1,1 @@
+Given the following GitHub issue link that I will enter, follow the step by step instructions in the issue and fix the pylint warnings for that specific library. If you are not sure about a specific warning, please leave it as is and do not attempt to fix it.
