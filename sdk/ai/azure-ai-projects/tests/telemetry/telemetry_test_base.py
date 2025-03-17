@@ -3,6 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# cSpell:disable# cSpell:disable
 import re
 import sys
 import logging

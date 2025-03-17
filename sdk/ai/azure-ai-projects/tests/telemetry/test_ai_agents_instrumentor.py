@@ -70,18 +70,18 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
     @pytest.fixture(scope="function")
     def instrument_with_content(self):
         os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "True"})
-        self.setup()
+        self.setup_telemetry()
         yield
         self.cleanup()
 
     @pytest.fixture(scope="function")
     def instrument_without_content(self):
         os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "False"})
-        self.setup()
+        self.setup_telemetry()
         yield
         self.cleanup()
 
-    def setup(self):
+    def setup_telemetry(self):
         trace._TRACER_PROVIDER = TracerProvider()
         self.exporter = MemoryTraceExporter()
         span_processor = SimpleSpanProcessor(self.exporter)
