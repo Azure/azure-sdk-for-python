@@ -16,7 +16,7 @@ from azure.cosmos.aio import DatabaseProxy, ContainerProxy
 import azure.cosmos.aio._retry_utility_async as _retry_utility
 
 
-@pytest.mark.cosmosQuery
+@pytest.mark.cosmosEmulator
 class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
     created_database: DatabaseProxy = None
     created_collection: ContainerProxy = None
