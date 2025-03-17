@@ -80,6 +80,7 @@ class ErrorTarget(Enum):
     MODELS = "Models"
     UNKNOWN = "Unknown"
     CONVERSATION = "Conversation"
+    TOOL_CALL_ACCURACY_EVALUATOR = "ToolCallAccuracyEvaluator"
 
 
 class EvaluationException(AzureError):

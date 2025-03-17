@@ -28,6 +28,7 @@ from ._evaluators._similarity import SimilarityEvaluator
 from ._evaluators._xpia import IndirectAttackEvaluator
 from ._evaluators._code_vulnerability import CodeVulnerabilityEvaluator
 from ._evaluators._isa import ISAEvaluator
+from ._evaluators._tool_call_accuracy import ToolCallAccuracyEvaluator
 from ._model_configurations import (
     AzureAIProject,
     AzureOpenAIModelConfiguration,
@@ -71,4 +72,5 @@ __all__ = [
     "EvaluationResult",
     "CodeVulnerabilityEvaluator",
     "ISAEvaluator",
+    "ToolCallAccuracyEvaluator",
 ]

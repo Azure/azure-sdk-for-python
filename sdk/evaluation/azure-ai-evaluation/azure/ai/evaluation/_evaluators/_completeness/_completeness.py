@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 
 import os
+import logging
 from typing import Dict, List, Union, Optional
 
 from typing_extensions import overload, override
@@ -11,14 +12,24 @@ from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._model_configurations import Conversation
 
 
-class CompletenessEvaluator(PromptyEvaluatorBase):
+logger = logging.getLogger(__name__)
+
+
+class CompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
-    Evaluates the extent to which a given response contains all necessary and relevant information with respect to the provided ground truth.
+    Evaluates the extent to which a given response contains all necessary and relevant information with respect to the
+     provided ground truth.
 
-    The completeness measure assesses how thoroughly an AI model's generated response aligns with the key information, claims, and statements established in the ground truth. This evaluation considers the presence, accuracy, and relevance of the content provided. 
-    The assessment spans multiple levels, ranging from fully incomplete to fully complete, ensuring a comprehensive evaluation of the response's content quality.
+    The completeness measure assesses how thoroughly an AI model's generated response aligns with the key information,
+    claims, and statements established in the ground truth. This evaluation considers the presence, accuracy,
+    and relevance of the content provided.
 
-    Use this metric when you need to evaluate an AI model's ability to deliver comprehensive and accurate information, particularly in text generation tasks where conveying all essential details is crucial for clarity, context, and correctness.
+    The assessment spans multiple levels, ranging from fully incomplete to fully complete, ensuring a comprehensive
+    evaluation of the response's content quality.
+
+    Use this metric when you need to evaluate an AI model's ability to deliver comprehensive and accurate information,
+    particularly in text generation tasks where conveying all essential details is crucial for clarity,
+    context, and correctness.
 
     Completeness scores range from 1 to 5:
 
