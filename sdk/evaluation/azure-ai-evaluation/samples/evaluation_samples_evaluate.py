@@ -29,22 +29,23 @@ class EvaluationEvaluateSamples(object):
     def evaluation_evaluate_classes_methods(self):
         # [START evaluate_method]
         import os
-        from azure.ai.evaluation import evaluate, RelevanceEvaluator, CoherenceEvaluator
+        from azure.ai.evaluation import evaluate, RelevanceEvaluator, CoherenceEvaluator, IntentResolutionEvaluator
 
         model_config = {
             "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
             "api_key": os.environ.get("AZURE_OPENAI_KEY"),
             "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
         }
-
+        
         print(os.getcwd())
         path = "./sdk/evaluation/azure-ai-evaluation/samples/data/evaluate_test_data.jsonl"
 
         evaluate(
             data=path,
             evaluators={
-                "coherence": CoherenceEvaluator(model_config=model_config),
-                "relevance": RelevanceEvaluator(model_config=model_config),
+                "coherence"          : CoherenceEvaluator(model_config=model_config),
+                "relevance"          : RelevanceEvaluator(model_config=model_config),
+                "intent_resolution"  : IntentResolutionEvaluator(model_config=model_config),
             },
             evaluator_config={
                 "coherence": {
@@ -84,6 +85,19 @@ class EvaluationEvaluateSamples(object):
         coherence_evaluator = CoherenceEvaluator(model_config=model_config)
         coherence_evaluator(query="What is the capital of France?", response="Paris is the capital of France.")
         # [END coherence_evaluator]
+
+        # [START intent_resolution_evaluator]
+        import os
+        from azure.ai.evaluation import CoherenceEvaluator
+
+        model_config = {
+            "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
+            "api_key": os.environ.get("AZURE_OPENAI_KEY"),
+            "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
+        }
+        intent_resolution_evaluator = IntentResolutionEvaluator(model_config=model_config)
+        intent_resolution_evaluator(query="What is the opening hours of the Eiffel Tower?", response="Opening hours of the Eiffel Tower are 9:00 AM to 11:00 PM.")
+        # [END intent_resolution_evaluator]
 
         # [START content_safety_evaluator]
         import os
@@ -431,6 +445,9 @@ class EvaluationEvaluateSamples(object):
 
 
 if __name__ == "__main__":
+    from dotenv import load_dotenv
+    load_dotenv()
+
     print("Loading samples in evaluation_samples_evaluate.py")
     sample = EvaluationEvaluateSamples()
     print("Samples loaded successfully!")
