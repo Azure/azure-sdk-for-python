@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -122,7 +123,7 @@ async def main() -> None:
             print(f"Created message, message ID {message.id}")
 
             async with await project_client.agents.create_stream(
-                thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler(functions, project_client)
+                thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler(functions, project_client)
             ) as stream:
                 await stream.until_done()
 

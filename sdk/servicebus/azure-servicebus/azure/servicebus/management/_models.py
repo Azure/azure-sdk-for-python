@@ -1452,6 +1452,7 @@ class AuthorizationRule(object):
     @classmethod
     def _from_internal_entity(cls, internal_authorization_rule: InternalAuthorizationRule) -> "AuthorizationRule":
         authorization_rule = cls()
+        authorization_rule.type = internal_authorization_rule.type
         authorization_rule.claim_type = internal_authorization_rule.claim_type
         authorization_rule.claim_value = internal_authorization_rule.claim_value
         authorization_rule.rights = internal_authorization_rule.rights
@@ -1465,6 +1466,7 @@ class AuthorizationRule(object):
 
     def _to_internal_entity(self) -> InternalAuthorizationRule:
         internal_entity = InternalAuthorizationRule()
+        internal_entity.type = self.type
         internal_entity.claim_type = self.claim_type
         internal_entity.claim_value = self.claim_value
         internal_entity.rights = self.rights

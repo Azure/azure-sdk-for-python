@@ -24,9 +24,9 @@ parameters:
 # Please use `$(TargetingString)` to refer to the python packages glob string. This variable is set from resolve-package-targeting.yml.
 steps:
   - task: UsePythonVersion@0
-    displayName: 'Use Python 3.11'
+    displayName: 'Use Python 3.13'
     inputs:
-      versionSpec: '3.11'
+      versionSpec: '3.13'
 
   - pwsh: |
       if ("${{ parameters.ServiceDirectory }}" -ne "auto")
