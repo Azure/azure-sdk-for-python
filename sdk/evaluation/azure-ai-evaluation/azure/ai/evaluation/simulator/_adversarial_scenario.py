@@ -5,6 +5,7 @@
 from enum import Enum
 from azure.ai.evaluation._common._experimental import experimental
 
+
 # cspell:ignore vuln
 @experimental
 class AdversarialScenario(Enum):

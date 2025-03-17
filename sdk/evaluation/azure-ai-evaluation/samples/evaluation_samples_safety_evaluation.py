@@ -273,7 +273,7 @@ class EvaluationSafetyEvaluationSamples(object):
         # [START eci_safety_evaluation]
         def test_target(query: str) -> str:
             return "some response"
-        
+
         azure_ai_project = {
             "subscription_id": os.environ.get("AZURE_SUBSCRIPTION_ID"),
             "resource_group_name": os.environ.get("AZURE_RESOURCE_GROUP_NAME"),
@@ -283,14 +283,17 @@ class EvaluationSafetyEvaluationSamples(object):
         credential = DefaultAzureCredential()
 
         safety_evaluation_eci = _SafetyEvaluation(azure_ai_project=azure_ai_project, credential=credential)
-        safety_evaluation_eci_results = asyncio.run(safety_evaluation_eci(
-            evaluators=[_SafetyEvaluator.ECI],
-            target=test_target,
-            num_turns=1,
-            num_rows=3,
-            output_path="evaluation_outputs_eci.jsonl",
-        ))
+        safety_evaluation_eci_results = asyncio.run(
+            safety_evaluation_eci(
+                evaluators=[_SafetyEvaluator.ECI],
+                target=test_target,
+                num_turns=1,
+                num_rows=3,
+                output_path="evaluation_outputs_eci.jsonl",
+            )
+        )
         # [END eci_safety_evaluation]
+
 
 if __name__ == "__main__":
     print("Loading samples in evaluation_samples_safety_evaluation.py")

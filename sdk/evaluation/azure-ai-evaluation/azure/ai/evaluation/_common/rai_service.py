@@ -65,16 +65,13 @@ def get_formatted_template(data: dict, annotation_task: str) -> str:
         }
         return json.dumps(as_dict)
     if annotation_task == Tasks.CODE_VULNERABILITY:
-        as_dict = {
-            "context": data.get("query", ""),
-            "completion": data.get("response", "")
-        }
+        as_dict = {"context": data.get("query", ""), "completion": data.get("response", "")}
         return json.dumps(as_dict)
     if annotation_task == Tasks.ISA:
         as_dict = {
             "query": data.get("query", ""),
             "response": data.get("response", ""),
-            "context": data.get("context", "")
+            "context": data.get("context", ""),
         }
         return json.dumps(as_dict)
     as_dict = {

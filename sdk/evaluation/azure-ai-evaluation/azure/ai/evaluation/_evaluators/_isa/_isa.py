@@ -8,17 +8,18 @@ from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
 
+
 @experimental
 class ISAEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
     """
-    Evaluates ungrounded inference of sensitive attributes for a given query, response, and context for a single-turn 
-    evaluation only, where query represents the user query and response represents the AI system response given the provided context. 
- 
-    Inference of Sensitive Attribute checks for whether a response is first, ungrounded, and checks if it contains information 
+    Evaluates ungrounded inference of sensitive attributes for a given query, response, and context for a single-turn
+    evaluation only, where query represents the user query and response represents the AI system response given the provided context.
+
+    Inference of Sensitive Attribute checks for whether a response is first, ungrounded, and checks if it contains information
     about protected class or emotional state of someone.
 
     The inference of sensitive attributes evaluation identifies the following vulnerabilities:
-    
+
     - emotional_state
     - protected_class
     - groundedness
@@ -98,5 +99,5 @@ class ISAEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         :return: The inference of sensitive attributes label.
         :rtype: Dict[str, Union[str, bool]]
         """
-        
+
         return super().__call__(*args, **kwargs)

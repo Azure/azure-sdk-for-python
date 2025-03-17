@@ -35,7 +35,7 @@ from azure.ai.evaluation.simulator import (
     AdversarialScenario,
     AdversarialScenarioJailbreak,
     IndirectAttackSimulator,
-    DirectAttackSimulator ,
+    DirectAttackSimulator,
 )
 from azure.ai.evaluation.simulator._adversarial_scenario import _UnstableAdversarialScenario
 from azure.ai.evaluation.simulator._utils import JsonLineList
@@ -153,7 +153,9 @@ class _SafetyEvaluation:
         max_simulation_results: int = 3,
         conversation_turns: Optional[List[List[Union[str, Dict[str, Any]]]]] = None,
         tasks: Optional[List[str]] = None,
-        adversarial_scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak, _UnstableAdversarialScenario]] = None,
+        adversarial_scenario: Optional[
+            Union[AdversarialScenario, AdversarialScenarioJailbreak, _UnstableAdversarialScenario]
+        ] = None,
         source_text: Optional[str] = None,
         direct_attack: bool = False,
     ) -> Dict[str, str]:
@@ -287,7 +289,7 @@ class _SafetyEvaluation:
             )
             simulator = AdversarialSimulator(azure_ai_project=self.azure_ai_project, credential=self.credential)
             simulator_outputs = await simulator(
-                scenario=adversarial_scenario, #type: ignore
+                scenario=adversarial_scenario,  # type: ignore
                 max_conversation_turns=max_conversation_turns,
                 max_simulation_results=max_simulation_results,
                 conversation_turns=conversation_turns,
