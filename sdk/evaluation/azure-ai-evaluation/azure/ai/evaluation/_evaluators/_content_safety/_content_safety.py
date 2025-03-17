@@ -25,7 +25,7 @@ class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
     :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
-    :param threshold: The threshold for the content safety evaluator. Default is 0.
+    :param threshold: The threshold for the content safety evaluator. Default is 3.
     :type threshold: int
     :param kwargs: Additional arguments to pass to the evaluator.
     :type kwargs: Any
@@ -44,7 +44,7 @@ class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
     id = "content_safety"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
-    def __init__(self, credential, azure_ai_project, threshold=0, **kwargs):
+    def __init__(self, credential, azure_ai_project, threshold=3, **kwargs):
         evaluators = [
             ViolenceEvaluator(credential, azure_ai_project, threshold=threshold),
             SexualEvaluator(credential, azure_ai_project, threshold=threshold),
