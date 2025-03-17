@@ -70,6 +70,6 @@ setup(
     python_requires=">=3.8",
     extras_require={
         "opentelemetry": ["azure-core-tracing-opentelemetry"],
-        "prompts": ["pyyaml"],
+        "prompts": ["prompty", "pyyaml"],
     },
 )
