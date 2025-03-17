@@ -1,3 +1,4 @@
 azure-identity
 PyGitHub>=1.59.0
 -e ../azure-sdk-tools
+requests
