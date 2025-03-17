@@ -23,9 +23,8 @@ def get_package_wheel_path(pkg_root):
     # Check if wheel is already built and available for current package
     prebuilt_dir = os.getenv("PREBUILT_WHEEL_DIR")
     if prebuilt_dir:
-        prebuilt_package_path = find_whl(prebuilt_dir, pkg_details.name, pkg_details.version)
-    else:
-        return None
+        return os.path.join(prebuilt_dir, find_whl(prebuilt_dir, pkg_details.name, pkg_details.version))
+    return None
 
 
 if __name__ == "__main__":
@@ -55,7 +54,7 @@ if __name__ == "__main__":
         dest="out_path",
         help="Output directory to generate json token file"
     )
-    
+
     args = parser.parse_args()
 
     # Check if a wheel is already built for current package and install from wheel when available
@@ -65,8 +64,13 @@ if __name__ == "__main__":
         pkg_path = args.target_package
 
     cmds = ["apistubgen", "--pkg-path", pkg_path]
-    if args.out_path:        
-        cmds.extend(["--out-path", os.path.join(args.out_path, os.path.basename(pkg_path))])
+    if args.out_path:
+        if not os.path.isdir(pkg_path):
+            # If the package is a wheel, the out_path should be the parent directory of the wheel
+            out_path = os.path.join(args.out_path, os.path.basename(os.path.dirname(pkg_path)))
+        else:
+            out_path = os.path.join(args.out_path, os.path.basename(pkg_path))
+        cmds.extend(["--out-path", out_path, "--verbose"])
 
     logging.info("Running apistubgen {}.".format(cmds))
     check_call(cmds, cwd=args.work_dir)
