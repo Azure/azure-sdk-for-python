@@ -3,6 +3,9 @@
 ## 1.4.0 (Unreleased)
 
 ### Features Added
+- New Response Completeness Agentic Evaluator `CompletenessEvaluator` Added.
+- New Task Adherence Agentic Evaluator `TaskAdherenceEvaluator` Added.
+
 - New Built-in evaluator called CodeVulnerabilityEvaluator is added. 
   - It provides a capabilities to identify the following code vulnerabilities.
     - path-injection

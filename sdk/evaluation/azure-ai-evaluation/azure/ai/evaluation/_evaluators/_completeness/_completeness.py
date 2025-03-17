@@ -1,0 +1,129 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+
+import os
+from typing import Dict, List, Union, Optional
+
+from typing_extensions import overload, override
+
+from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._model_configurations import Conversation
+
+
+class CompletenessEvaluator(PromptyEvaluatorBase):
+    """
+    Evaluates the extent to which a given response contains all necessary and relevant information with respect to the provided ground truth.
+
+    The completeness measure assesses how thoroughly an AI model's generated response aligns with the key information, claims, and statements established in the ground truth. This evaluation considers the presence, accuracy, and relevance of the content provided. 
+    The assessment spans multiple levels, ranging from fully incomplete to fully complete, ensuring a comprehensive evaluation of the response's content quality.
+
+    Use this metric when you need to evaluate an AI model's ability to deliver comprehensive and accurate information, particularly in text generation tasks where conveying all essential details is crucial for clarity, context, and correctness.
+
+    Completeness scores range from 1 to 5:
+
+    1: Fully incomplete — Contains none of the necessary information.
+    2: Barely complete — Contains only a small portion of the required information.
+    3: Moderately complete — Covers about half of the required content.
+    4: Mostly complete — Includes most of the necessary details with minimal omissions.
+    5: Fully complete — Contains all key information without any omissions.
+
+    :param model_config: Configuration for the Azure OpenAI model.
+    :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
+        ~azure.ai.evaluation.OpenAIModelConfiguration]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+            :start-after: [START completeness_evaluator]
+            :end-before: [END completeness_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call a CompletenessEvaluator with a response and groundtruth.
+
+    .. note::
+
+        To align with our support of a diverse set of models, an output key without the `gpt_` prefix has been added.
+        To maintain backwards compatibility, the old key with the `gpt_` prefix is still be present in the output;
+        however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
+    """
+
+    # Constants must be defined within eval's directory to be save/loadable
+
+    _PROMPTY_FILE = "completeness.prompty"
+    _RESULT_KEY = "completeness"
+
+    id = "completeness"
+    """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
+
+    @override
+    def __init__(self, model_config):
+        current_dir = os.path.dirname(__file__)
+        prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
+        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY)
+
+    @overload
+    def __call__(
+            self,
+            *,
+            response: str,
+            ground_truth: str,
+            threshold: Optional[float] = 3,
+    ) -> Dict[str, Union[str, float]]:
+        """Evaluate completeness in given response
+
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
+        :return: The fluency score
+        :rtype: Dict[str, float]
+        """
+
+    @overload
+    def __call__(
+            self,
+            *,
+            conversation: Conversation,
+    ) -> Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]:
+        """Evaluate completeness for a conversation
+
+        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
+            key "messages", and potentially a global context under the key "context". Conversation turns are expected
+            to be dictionaries with keys "content", "role", and possibly "context".
+        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
+        :return: The fluency score
+        :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
+        """
+
+    @override
+    def __call__(  # pylint: disable=docstring-missing-param
+            self,
+            *args,
+            **kwargs,
+    ):
+        """
+        Evaluate Completeness.
+
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
+        :keyword ground_truth: The ground truth to be evaluated.
+        :paramtype ground_truth: str
+        :return: The completeness score.
+        :rtype: Dict[str, Union[str, bool, float]]
+        """
+        if kwargs.get("threshold", None) is None:
+            kwargs["threshold"] = 3
+
+        completeness_result = super().__call__(*args, **kwargs)
+        if not isinstance(completeness_result, dict) or "completeness" not in completeness_result:
+            raise Exception("Completeness Result is invalid")
+        threshold = kwargs.get("threshold", 3.0)
+        response_completeness_score = completeness_result.get("completeness")
+        explanation = completeness_result.get("completeness_reason")
+
+        is_response_complete = response_completeness_score >= threshold
+
+        return {
+            "is_response_complete": is_response_complete,
+            "response_completeness_score": response_completeness_score,
+            "explanation": explanation
+        }
