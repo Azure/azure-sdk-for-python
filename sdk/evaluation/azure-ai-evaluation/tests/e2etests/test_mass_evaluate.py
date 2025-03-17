@@ -398,7 +398,6 @@ class TestMassEvaluate:
         result = evaluate(
             data=code_based_data_file,
             evaluators=evaluators,
-            azure_ai_project=project_scope,
         )
 
         row_result_df = pd.DataFrame(result["rows"])

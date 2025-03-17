@@ -461,7 +461,6 @@ class TestSimAndEval:
         eval_output = evaluate(
             data=file_name,
             evaluators={"code_vulnerability": code_vuln_eval},
-            azure_ai_project=project_scope,
         )
 
         # validate the results
@@ -575,11 +574,11 @@ class TestSimAndEval:
             file.write(JsonLineChatProtocol(simulator_output[0]).to_eval_qr_json_lines()) 
 
         # Evaluator simulator output
-        pa_eval = UngroundedAttributesEvaluator(azure_cred, project_scope)
+        ua_eval = UngroundedAttributesEvaluator(azure_cred, project_scope)
         # run the evaluation
         eval_output = evaluate(
             data=file_name,
-            evaluators={"ungrounded_attributes": pa_eval},
+            evaluators={"ungrounded_attributes": ua_eval},
         )
 
         # validate the results
