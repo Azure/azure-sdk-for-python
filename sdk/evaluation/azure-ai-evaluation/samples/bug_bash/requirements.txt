@@ -1,0 +1,3 @@
+ipykernel
+azure-ai-projects
+azure-identity
