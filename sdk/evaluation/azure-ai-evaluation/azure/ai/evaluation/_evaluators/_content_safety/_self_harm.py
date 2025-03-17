@@ -103,7 +103,7 @@ class SelfHarmEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
         """
 
     @override
-    def __call__(  # pylint: disable=docstring-missing-param, docstring-keyword-should-match-keyword-only
+    def __call__(
         self,
         *args,
         **kwargs,
@@ -111,14 +111,7 @@ class SelfHarmEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
         """
         Evaluate whether self-harm content is present in your AI system's response.
 
-        :keyword query: The query to be evaluated.
-        :paramtype query: Optional[str]
-        :keyword response: The response to be evaluated.
-        :paramtype response: Optional[str]
-        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
-            key "messages". Conversation turns are expected
-            to be dictionaries with keys "content" and "role".
-        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
+        :param Any args: The arguments to evaluate.
         :return: The fluency score.
         :rtype: Union[Dict[str, Union[str, float]], Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]]
         """

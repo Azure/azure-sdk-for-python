@@ -85,7 +85,7 @@ class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
         """
 
     @override
-    def __call__(  # pylint: disable=docstring-missing-param, docstring-keyword-should-match-keyword-only
+    def __call__(
         self,
         *args,
         **kwargs,
@@ -93,14 +93,7 @@ class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
         """Evaluate a collection of content safety metrics for the given query/response pair or conversation.
         This inputs must supply either a query AND response, or a conversation, but not both.
 
-        :keyword query: The query to evaluate.
-        :paramtype query: Optional[str]
-        :keyword response: The response to evaluate.
-        :paramtype response: Optional[str]
-        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
-            key "messages", and potentially a global context under the key "context". Conversation turns are expected
-            to be dictionaries with keys "content", "role", and possibly "context".
-        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
+        :param Any args: The arguments to evaluate.
         :return: The evaluation result.
         :rtype: Union[Dict[str, Union[str, float]], Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]]
         """

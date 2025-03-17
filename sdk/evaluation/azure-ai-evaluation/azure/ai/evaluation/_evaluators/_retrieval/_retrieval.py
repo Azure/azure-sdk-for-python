@@ -78,6 +78,7 @@ class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :return: The scores for Chat scenario.
         :rtype: Dict[str, Union[str, float]]
         """
+        ...
 
     @overload
     def __call__(
@@ -93,21 +94,15 @@ class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :return: The scores for Chat scenario.
         :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
         """
+        ...
 
     @override
-    def __call__(  # pylint: disable=docstring-missing-param, docstring-keyword-should-match-keyword-only
-        self, *args, **kwargs
-    ):
+    def __call__(self, *args, **kwargs):
         """Evaluates retrieval score chat scenario. Accepts either a query and context for a single evaluation,
         or a conversation for a multi-turn evaluation. If the conversation has more than one turn,
         the evaluator will aggregate the results of each turn.
 
-        :keyword query: The query to be evaluated. Mutually exclusive with `conversation` parameter.
-        :paramtype query: Optional[str]
-        :keyword context: The context to be evaluated. Mutually exclusive with `conversation` parameter.
-        :paramtype context: Optional[str]
-        :keyword conversation: The conversation to be evaluated.
-        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
+        :param Any args: The arguments to evaluate retrieval score.
         :return: The scores for Chat scenario.
         :rtype: :rtype: Dict[str, Union[float, Dict[str, List[str, float]]]]
         """

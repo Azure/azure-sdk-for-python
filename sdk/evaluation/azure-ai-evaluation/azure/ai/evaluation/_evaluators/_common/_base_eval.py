@@ -116,6 +116,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         The actual behavior of this function shouldn't change beyond adding more inputs to the
         async_run_allowing_running_loop call.
 
+        :param Any args: (Unused) The arguments to evaluate.
         :return: The evaluation result
         :rtype: Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]
         """
@@ -274,9 +275,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
 
         return multi_modal_converter
 
-    def _convert_kwargs_to_eval_input(  # pylint: disable=docstring-keyword-should-match-keyword-only
-        self, **kwargs
-    ) -> Union[List[Dict], List[DerivedEvalInput]]:
+    def _convert_kwargs_to_eval_input(self, **kwargs) -> Union[List[Dict], List[DerivedEvalInput]]:
         """Convert an arbitrary input into a list of inputs for evaluators.
         It is assumed that evaluators generally make use of their inputs in one of two ways.
         Either they receive a collection of keyname inputs that are all single values
@@ -293,8 +292,6 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         This function must be overridden by child classes IF they need to both a conversation and
         other inputs to be passed in.
 
-        :keyword kwargs: The inputs to convert.
-        :type kwargs: Dict
         :return: A list of arbitrary values that are valid inputs for this evaluator's do_eval function.
         :rtype: List
         """
@@ -380,13 +377,9 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         aggregated["evaluation_per_turn"] = evaluation_per_turn
         return aggregated
 
-    async def _real_call(  # pylint: disable=docstring-keyword-should-match-keyword-only
-        self, **kwargs
-    ) -> Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]:
+    async def _real_call(self, **kwargs) -> Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]:
         """The asynchronous call where real end-to-end evaluation logic is performed.
 
-        :keyword kwargs: The inputs to evaluate.
-        :type kwargs: Dict
         :return: The evaluation result.
         :rtype: Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]
         """

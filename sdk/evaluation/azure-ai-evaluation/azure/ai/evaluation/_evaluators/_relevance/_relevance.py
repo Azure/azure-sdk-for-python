@@ -73,6 +73,7 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         :return: The relevance score.
         :rtype: Dict[str, float]
         """
+        ...
 
     @overload
     def __call__(
@@ -89,25 +90,15 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         :return: The relevance score.
         :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
         """
+        ...
 
     @override
-    def __call__(  # pylint: disable=docstring-missing-param, docstring-keyword-should-match-keyword-only
-        self,
-        *args,
-        **kwargs,
-    ):
+    def __call__(self, *args, **kwargs):
         """Evaluate relevance. Accepts either a query and response for a single evaluation,
         or a conversation for a multi-turn evaluation. If the conversation has more than one turn,
         the evaluator will aggregate the results of each turn.
 
-        :keyword query: The query to be evaluated. Mutually exclusive with the `conversation` parameter.
-        :paramtype query: Optional[str]
-        :keyword response: The response to be evaluated. Mutually exclusive with the `conversation` parameter.
-        :paramtype response: Optional[str]
-        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
-            key "messages", and potentially a global context under the key "context". Conversation turns are expected
-            to be dictionaries with keys "content", "role", and possibly "context".
-        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
+        :param Any args: The arguments to evaluate.
         :return: The relevance score.
         :rtype: Union[Dict[str, Union[str, float]], Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]]
         """

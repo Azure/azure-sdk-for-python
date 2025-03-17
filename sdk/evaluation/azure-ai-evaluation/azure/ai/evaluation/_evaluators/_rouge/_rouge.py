@@ -88,7 +88,7 @@ class RougeScoreEvaluator(EvaluatorBase):
             "rouge_f1_score": metrics.fmeasure,
         }
 
-    @overload  # type: ignore
+    @overload
     def __call__(self, *, ground_truth: str, response: str) -> Dict[str, float]:
         """
         Evaluate the ROUGE score between the response and the ground truth.
@@ -100,19 +100,25 @@ class RougeScoreEvaluator(EvaluatorBase):
         :return: The ROUGE score.
         :rtype: Dict[str, float]
         """
+        ...
+
+    @overload
+    def __call__(self, *args, **kwargs):
+        """
+        Evaluate the ROUGE score
+
+        :param Any args: The arguments to be evaluated.
+        :return: The ROUGE score.
+        :rtype: Dict[str, float]
+        """
+        ...
 
     @override
-    def __call__(  # pylint: disable=docstring-missing-param, docstring-keyword-should-match-keyword-only
-        self,
-        *args,
-        **kwargs,
-    ):
+    def __call__(self, *args, **kwargs):
         """
-        Evaluate route score.
-        :keyword response: The response to be evaluated.
-        :paramtype response: str
-        :keyword ground_truth: The ground truth to be compared against.
-        :paramtype ground_truth: str
+        Evaluate the ROUGE score
+
+        :param Any args: The arguments to be evaluated.
         :return: The ROUGE score.
         :rtype: Dict[str, float]
         """

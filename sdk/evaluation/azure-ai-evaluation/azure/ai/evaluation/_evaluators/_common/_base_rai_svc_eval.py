@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Dict, TypeVar, Union
+from typing import Dict, Optional, TypeVar, Union, overload
 
 from typing_extensions import override
 
@@ -17,6 +17,7 @@ from azure.ai.evaluation._exceptions import EvaluationException
 from azure.ai.evaluation._common.utils import validate_conversation
 from azure.ai.evaluation._constants import _AggregationType
 from azure.core.credentials import TokenCredential
+from azure.ai.evaluation._model_configurations import Conversation
 
 from . import EvaluatorBase
 
@@ -56,13 +57,16 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         self._azure_ai_project = validate_azure_ai_project(azure_ai_project)
         self._credential = credential
 
-    @override
-    def __call__(  # pylint: disable=docstring-missing-param,docstring-keyword-should-match-keyword-only
+    @overload
+    def __call__(
         self,
-        *args,
-        **kwargs,
+        *,
+        query: Optional[str] = None,
+        response: Optional[str] = None,
+        conversation: Optional[Conversation] = None,
     ):
-        """Evaluate either a query and response or a conversation. Must supply either a query AND response,
+        """
+        Evaluate either a query and response or a conversation. Must supply either a query AND response,
         or a conversation, but not both.
 
         :keyword query: The query to evaluate.
@@ -73,6 +77,39 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
             key "messages", and potentially a global context under the key "context". Conversation turns are expected
             to be dictionaries with keys "content", "role", and possibly "context".
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
+        :return: The evaluation score.
+        :rtype: Union[Dict[str, T], Dict[str, Union[float, Dict[str, List[T]]]]]
+        """
+        ...
+
+    @overload
+    def __call__(
+        self,
+        *args,
+        **kwargs,
+    ):
+        """
+        Evaluate either a query and response or a conversation. Must supply either a query AND response,
+        or a conversation, but not both.
+
+        :param Any args: The arguments to evaluate.
+        :return: The evaluation score.
+        :rtype: Union[Dict[str, T], Dict[str, Union[float, Dict[str, List[T]]]]]
+        """
+        return super().__call__(*args, **kwargs)
+
+    @override
+    def __call__(
+        self,
+        *args,
+        **kwargs,
+    ):
+        """
+        Evaluate either a query and response or a conversation. Must supply either a query AND response,
+        or a conversation, but not both.
+
+        :param Any args: The arguments to evaluate.
+        :return: The evaluation score.
         :rtype: Union[Dict[str, T], Dict[str, Union[float, Dict[str, List[T]]]]]
         """
         return super().__call__(*args, **kwargs)
@@ -99,8 +136,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         Evaluates content according to this evaluator's metric.
 
         :param conversation: The conversation to evaluate. The conversation should contain a "messages" key
-                             with a list of messages to evaluate. Each message should have "role" and "content"
-                             keys.
+            with a list of messages to evaluate. Each message should have "role" and "content" keys.
         :type conversation: ~azure.ai.evaluation.Conversation
         :return: The evaluation score computation based on the Content Safety metric (self.metric).
         :rtype: Dict[str, Union[float, str]]

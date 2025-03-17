@@ -118,7 +118,7 @@ class F1ScoreEvaluator(EvaluatorBase):
 
         return {"f1_score": f1_result}
 
-    @overload  # type: ignore
+    @overload
     def __call__(self, *, response: str, ground_truth: str) -> Dict[str, float]:
         """
         Evaluate F1 score.
@@ -130,20 +130,27 @@ class F1ScoreEvaluator(EvaluatorBase):
         :return: The F1 score.
         :rtype: Dict[str, float]
         """
+        ...
 
-    @override
-    def __call__(  # pylint: disable=docstring-missing-param, docstring-keyword-should-match-keyword-only
-        self,
-        *args,
-        **kwargs,
-    ):
+    @overload
+    def __call__(self, *args, **kwargs):
         """
         Evaluate F1 score.
 
-        :keyword response: The response to be evaluated.
-        :paramtype response: str
-        :keyword ground_truth: The ground truth to be evaluated.
-        :paramtype ground_truth: str
+        :param args: The arguments to pass to the evaluation function.
+        :type args: Any
+        :return: The F1 score.
+        :rtype: Dict[str, float]
+        """
+        ...
+
+    @override
+    def __call__(self, *args, **kwargs):
+        """
+        Evaluate F1 score.
+
+        :param args: The arguments to pass to the evaluation function.
+        :type args: Any
         :return: The F1 score.
         :rtype: Dict[str, float]
         """

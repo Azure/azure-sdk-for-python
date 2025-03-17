@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from typing import Dict, Union, List
+from typing import Dict, Optional, Union
 
 from typing_extensions import overload, override
 
@@ -72,7 +72,7 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         self,
         *,
         conversation: Conversation,
-    ) -> Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]:
+    ):
         """Evaluate coherence for a conversation
 
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
@@ -82,9 +82,27 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :return: The coherence score.
         :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
         """
+        ...
+
+    @overload
+    def __call__(
+        self,
+        *,
+        query: str,
+        response: Optional[str] = None,
+    ):
+        """
+        Evaluate coherence for a query and response.
+
+        :keyword str query: The query to be evaluated.
+        :keyword Optional[str] response: The response to be evaluated.
+        :return: The relevance score.
+        :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
+        """
+        ...
 
     @override
-    def __call__(  # pylint: disable=docstring-missing-param,docstring-keyword-should-match-keyword-only
+    def __call__(
         self,
         *args,
         **kwargs,
@@ -93,14 +111,7 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         or a conversation for a potentially multi-turn evaluation. If the conversation has more than one pair of
         turns, the evaluator will aggregate the results of each turn.
 
-        :keyword query: The query to be evaluated.
-        :paramtype query: str
-        :keyword response: The response to be evaluated.
-        :paramtype response: Optional[str]
-        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
-            key "messages". Conversation turns are expected
-            to be dictionaries with keys "content" and "role".
-        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
+        :param Any args: The arguments to evaluate.
         :return: The relevance score.
         :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
         """

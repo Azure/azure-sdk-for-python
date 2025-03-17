@@ -76,11 +76,7 @@ class QAEvaluator(MultiEvaluatorBase[Union[str, float]]):
         ...
 
     @overload
-    def __call__(
-        self,
-        *args,
-        **kwargs,
-    ):
+    def __call__(self, *args, **kwargs):
         """
         Evaluates question-answering scenario.
 
@@ -92,11 +88,7 @@ class QAEvaluator(MultiEvaluatorBase[Union[str, float]]):
         ...
 
     @override
-    def __call__(
-        self,
-        *args,
-        **kwargs,
-    ):
+    def __call__(self, *args, **kwargs):
         """
         Evaluates question-answering scenario.
 

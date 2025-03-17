@@ -59,12 +59,7 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY)
 
-    # Ignoring a mypy error about having only 1 overload function.
-    # We want to use the overload style for all evals, even single-inputs. This is both to make
-    # refactoring to multi-input styles easier, stylistic consistency consistency across evals,
-    # and due to the fact that non-overloaded syntax now causes various parsing issues that
-    # we don't want to deal with.
-    @overload  # type: ignore
+    @overload
     def __call__(self, *, query: str, response: str, ground_truth: str) -> Dict[str, float]:
         """
         Evaluate similarity.
@@ -78,22 +73,25 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
         :return: The similarity score.
         :rtype: Dict[str, float]
         """
+        ...
 
-    @override
-    def __call__(  # pylint: disable=docstring-missing-param, docstring-keyword-should-match-keyword-only
-        self,
-        *args,
-        **kwargs,
-    ):
+    @overload
+    def __call__(self, *args, **kwargs):
         """
         Evaluate similarity.
 
-        :keyword query: The query to be evaluated.
-        :paramtype query: str
-        :keyword response: The response to be evaluated.
-        :paramtype response: str
-        :keyword ground_truth: The ground truth to be evaluated.
-        :paramtype ground_truth: str
+        :param Any args: The arguments to pass to the call.
+        :return: The similarity score.
+        :rtype: Dict[str, float]
+        """
+        ...
+
+    @override
+    def __call__(self, *args, **kwargs):
+        """
+        Evaluate similarity.
+
+        :param Any args: The arguments to pass to the call.
         :return: The similarity score.
         :rtype: Dict[str, float]
         """

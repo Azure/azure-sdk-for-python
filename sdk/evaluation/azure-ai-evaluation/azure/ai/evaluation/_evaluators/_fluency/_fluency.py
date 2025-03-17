@@ -65,6 +65,7 @@ class FluencyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :return: The fluency score
         :rtype: Dict[str, float]
         """
+        ...
 
     @overload
     def __call__(
@@ -81,23 +82,16 @@ class FluencyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :return: The fluency score
         :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
         """
+        ...
 
     @override
-    def __call__(  # pylint: disable=docstring-missing-param, docstring-keyword-should-match-keyword-only
-        self,
-        *args,
-        **kwargs,
-    ):
+    def __call__(self, *args, **kwargs):
         """
         Evaluate fluency. Accepts either a response for a single evaluation,
         or a conversation for a multi-turn evaluation. If the conversation has more than one turn,
         the evaluator will aggregate the results of each turn.
 
-        :keyword response: The response to be evaluated. Mutually exclusive with the "conversation" parameter.
-        :paramtype response: Optional[str]
-        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
-            key "messages". Conversation turns are expected to be dictionaries with keys "content" and "role".
-        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
+        :param Any args: The arguments to evaluate fluency.
         :return: The fluency score.
         :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
         """

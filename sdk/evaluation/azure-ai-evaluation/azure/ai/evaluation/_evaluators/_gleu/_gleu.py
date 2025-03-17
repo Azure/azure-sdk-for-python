@@ -59,7 +59,7 @@ class GleuScoreEvaluator(EvaluatorBase):
             "gleu_score": score,
         }
 
-    @overload  # type: ignore
+    @overload
     def __call__(self, *, ground_truth: str, response: str):
         """
         Evaluate the GLEU score between the response and the ground truth.
@@ -71,20 +71,25 @@ class GleuScoreEvaluator(EvaluatorBase):
         :return: The GLEU score.
         :rtype: Dict[str, float]
         """
+        ...
+
+    @overload
+    def __call__(self, *args, **kwargs):
+        """
+        Evaluate the GLEU score
+
+        :param Any args: The arguments to be evaluated.
+        :return: The GLEU score.
+        :rtype: Dict[str, float]
+        """
+        ...
 
     @override
-    def __call__(  # pylint: disable=docstring-missing-param, docstring-keyword-should-match-keyword-only
-        self,
-        *args,
-        **kwargs,
-    ):
+    def __call__(self, *args, **kwargs):
         """
         Evaluate the GLEU score between the response and the ground truth.
 
-        :keyword response: The response to be evaluated.
-        :paramtype response: str
-        :keyword ground_truth: The ground truth to be compared against.
-        :paramtype ground_truth: str
+        :param Any args: The arguments to be evaluated.
         :return: The GLEU score.
         :rtype: Dict[str, float]
         """
