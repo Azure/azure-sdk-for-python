@@ -4,8 +4,8 @@ The general guidelines for SDK in this repo are defined in this website: https:/
 # Pylint
 
 ## Running Pylint
-    - When asked about how to run pylint, or given a command to run pylint, DO check [this website](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/pylint_checking.md.) and guide the user based on the information you find there. 
-    - DO use a python environment that is compatible with the code you are working on. If you are not sure, please ask the user for the python version they are using.
+- When asked about how to run pylint, or given a command to run pylint, DO check [this website](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/pylint_checking.md.) and guide the user based on the information you find there. 
+- DO use a python environment that is compatible with the code you are working on. If you are not sure, please ask the user for the python version they are using.
 
 
 ## Fixing Pylint Warnings
