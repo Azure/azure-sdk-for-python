@@ -293,7 +293,7 @@ def check_score_is_valid(score: Union[str, float], min_score = 1, max_score = 5)
 
     return min_score <= numeric_score <= max_score
 
-def parse_quality_evaluator_reason_score(llm_output: str) -> Tuple[float, str]:
+def parse_quality_evaluator_reason_score(llm_output: str, valid_score_range: str = "[1-5]") -> Tuple[float, str]:
     """Parse the output of prompt-based quality evaluators that return a score and reason.
 
     Current supported evaluators:
@@ -312,7 +312,7 @@ def parse_quality_evaluator_reason_score(llm_output: str) -> Tuple[float, str]:
     reason = ""
     if llm_output:
         try:
-            score_pattern = r"<S2>\D*?([1-5]).*?</S2>"
+            score_pattern = rf"<S2>\D*?({valid_score_range}).*?</S2>"
             reason_pattern = r"<S1>(.*?)</S1>"
             score_match = re.findall(score_pattern, llm_output, re.DOTALL)
             reason_match = re.findall(reason_pattern, llm_output, re.DOTALL)

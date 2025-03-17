@@ -399,6 +399,50 @@ class EvaluationEvaluateSamples(object):
         )
         # [END groundedness_pro_evaluator]
 
+        # [START tool_call_accuracy_evaluator]
+        import os
+        from azure.ai.evaluation import ToolCallAccuracyEvaluator
+
+        model_config = {
+            "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
+            "api_key": os.environ.get("AZURE_OPENAI_KEY"),
+            "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
+        }
+
+        tool_call_accuracy_evaluator = ToolCallAccuracyEvaluator(model_config=model_config)
+        tool_call_accuracy_evaluator(
+            query="How is the weather in New York?",
+            response="The weather in New York is sunny.",
+            tool_calls={
+                "type": "tool_call",
+                "tool_call": {
+                    "id": "call_eYtq7fMyHxDWIgeG2s26h0lJ",
+                    "type": "function",
+                    "function": {
+                        "name": "fetch_weather",
+                        "arguments": {
+                            "location": "New York"
+                        }
+                    }
+                }
+            },
+            tool_definitions={
+                "id": "fetch_weather",
+                "name": "fetch_weather",
+                "description": "Fetches the weather information for the specified location.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "location": {
+                            "type": "string",
+                            "description": "The location to fetch weather for."
+                        }
+                    }
+                }
+            }
+        )
+        # [END tool_call_accuracy_evaluator]
+
 
 if __name__ == "__main__":
     from dotenv import load_dotenv

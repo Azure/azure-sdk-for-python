@@ -464,7 +464,8 @@ class AsyncEvaluatorBase:
     # Since we want this to be relatively call-agnostic, we just account for every input that any children
     # are known to throw at this, mash them into kwargs, and then pass them into the real call.
     async def __call__(
-        self, *, query=None, response=None, tool_definitions=None, context=None, conversation=None, ground_truth=None, **kwargs
+        self, *, query=None, response=None, context=None, conversation=None, ground_truth=None,
+            tool_call=None, tool_definitions=None, messages=None, **kwargs
     ):
         if conversation is not None:
             kwargs["conversation"] = conversation
@@ -478,4 +479,11 @@ class AsyncEvaluatorBase:
             kwargs["context"] = context
         if ground_truth is not None:
             kwargs["ground_truth"] = ground_truth
+        if tool_call is not None:
+            kwargs["tool_call"] = tool_call
+        if tool_definitions is not None:
+            kwargs["tool_definitions"] = tool_definitions
+        if messages is not None:
+            kwargs["messages"] = messages
+
         return await self._real_call(**kwargs)
