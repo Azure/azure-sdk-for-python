@@ -8,6 +8,7 @@
 
 #### Bugs Fixed
 * Fixed `partition_key` filter for `query_items_change_feed` API. See [PR 39895](https://github.com/Azure/azure-sdk-for-python/pull/39895)
+* Session tokens are no longer sent for writes for accounts with single write region. See [PR 39895](https://github.com/Azure/azure-sdk-for-python/pull/39895)
 
 #### Other Changes
 

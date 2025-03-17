@@ -52,6 +52,17 @@ class TestSession(unittest.TestCase):
         return self._OriginalRequest(global_endpoint_manager, request_params, connection_policy, pipeline_client,
                                      request)
 
+    def test_session_token_not_sent_for_writes(self):
+        self._OriginalRequest = synchronized_request._Request
+        try:
+            synchronized_request._Request = self._MockRequest
+            self.created_collection.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
+            self.assertEqual(self.last_session_token_sent, None)
+            self.created_collection.upsert_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
+            self.assertEqual(self.last_session_token_sent, None)
+        finally:
+            synchronized_request._Request = self._OriginalRequest
+
     def test_session_token_not_sent_for_master_resource_ops(self):
         self._OriginalRequest = synchronized_request._Request
         synchronized_request._Request = self._MockRequest
