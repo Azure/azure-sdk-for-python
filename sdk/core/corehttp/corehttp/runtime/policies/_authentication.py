@@ -35,12 +35,13 @@ class _BearerTokenCredentialPolicyBase:
     :keyword list[dict[str, str]] auth_flows: A list of authentication flows to use for the credential.
     """
 
+    # pylint: disable=unused-argument
     def __init__(
         self,
         credential: "TokenCredential",
         *scopes: str,
         auth_flows: Optional[list[dict[str, str]]] = None,
-        **kwargs: Any,  # pylint: disable=unused-argument
+        **kwargs: Any,
     ) -> None:
         super(_BearerTokenCredentialPolicyBase, self).__init__()
         self._scopes = scopes
@@ -106,7 +107,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
         self._enforce_https(request)
 
         if self._token is None or self._need_new_token:
-            options = {"auth_flows": auth_flows} if auth_flows else {}
+            options: TokenRequestOptions = {"auth_flows": auth_flows} if auth_flows else {}
             self._token = self._credential.get_token_info(*self._scopes, options=options)
         self._update_headers(request.http_request.headers, self._token.token)
 
