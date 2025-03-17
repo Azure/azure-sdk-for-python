@@ -151,7 +151,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         success_count = 0
         for endpoint in endpoints:
             if endpoint not in endpoints_attempted:
-                # health check continues until 2 successes or all endpoints are checked
+                # health check continues until 4 successes or all endpoints are checked
                 if success_count >= 4:
                     break
                 endpoints_attempted.add(endpoint)
