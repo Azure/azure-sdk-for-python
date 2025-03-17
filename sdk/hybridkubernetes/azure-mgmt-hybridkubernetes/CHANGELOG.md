@@ -36,10 +36,6 @@
   - Added model `SecurityProfileWorkloadIdentity`
   - Added model `SystemComponent`
   - Model `ConnectedClusterOperations` added method `begin_create_or_replace`
-  - Method `ConnectedClusterOperations.list_cluster_user_credential` has a new overload `def list_cluster_user_credential(self: None, resource_group_name: str, cluster_name: str, properties: IO[bytes], content_type: str)`
-  - Method `ConnectedClusterOperations.update` has a new overload `def update(self: None, resource_group_name: str, cluster_name: str, connected_cluster_patch: IO[bytes], content_type: str)`
-  - Method `ConnectedClusterOperations.begin_create_or_replace` has a new overload `def begin_create_or_replace(self: None, resource_group_name: str, cluster_name: str, connected_cluster: ConnectedCluster, content_type: str)`
-  - Method `ConnectedClusterOperations.begin_create_or_replace` has a new overload `def begin_create_or_replace(self: None, resource_group_name: str, cluster_name: str, connected_cluster: IO[bytes], content_type: str)`
 
 ### Breaking Changes
 
