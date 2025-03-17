@@ -151,15 +151,12 @@ class CompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             completeness_score, reason = parse_quality_evaluator_reason_score(llm_output, valid_score_range="[1-5]")
 
             score_result = 'pass' if completeness_score >= self.threshold else 'fail'
-            is_response_complete = completeness_score >= self.threshold
 
-            response_dict = {
-                # "is_response_complete": is_response_complete,
+            return {
                 "response_completeness": completeness_score,
                 "response_completeness_result": score_result,
                 "response_completeness_threshold": self.threshold,
                 "response_completeness_reason": reason,
             }
-            return response_dict
-
+        
         return {self._result_key: math.nan}
