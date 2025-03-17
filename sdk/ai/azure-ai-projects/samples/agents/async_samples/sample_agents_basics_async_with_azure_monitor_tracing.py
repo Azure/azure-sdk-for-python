@@ -48,9 +48,11 @@ async def main() -> None:
             exit()
         configure_azure_monitor(connection_string=application_insights_connection_string)
 
+        # enable additional instrumentations
+        project_client.telemetry.enable()
+
         with tracer.start_as_current_span(scenario):
             async with project_client:
-                project_client.telemetry.enable()
                 agent = await project_client.agents.create_agent(
                     model=os.environ["MODEL_DEPLOYMENT_NAME"],
                     name="my-assistant",
