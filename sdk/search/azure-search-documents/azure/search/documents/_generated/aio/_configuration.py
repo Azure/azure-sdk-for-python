@@ -21,13 +21,13 @@ class SearchIndexClientConfiguration:  # pylint: disable=too-many-instance-attri
     :type endpoint: str
     :param index_name: The name of the index. Required.
     :type index_name: str
-    :keyword api_version: Api Version. Default value is "2024-11-01-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2025-03-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, index_name: str, **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2024-11-01-preview")
+        api_version: str = kwargs.pop("api_version", "2025-03-01-preview")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")

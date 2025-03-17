@@ -195,6 +195,7 @@ class TestAzureLogExporter(unittest.TestCase):
                 attributes={
                     "event_key": "event_attribute",
                     _MICROSOFT_CUSTOM_EVENT_NAME: "event_name",
+                    "client.address": "192.168.1.1",
                 },
             ),
             InstrumentationScope("test_name"),
@@ -538,6 +539,7 @@ class TestAzureLogExporter(unittest.TestCase):
         envelope = exporter._log_to_envelope(self._log_data_custom_event)
         record = self._log_data_custom_event.log_record
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Event")
+        self.assertEqual(envelope.tags["ai.location.ip"], "192.168.1.1")
         self.assertEqual(envelope.time, ns_to_iso_str(record.timestamp))
         self.assertEqual(envelope.data.base_type, "EventData")
         self.assertEqual(envelope.data.base_data.name, "event_name")

@@ -64,6 +64,19 @@ def get_formatted_template(data: dict, annotation_task: str) -> str:
             "context": data.get("context", ""),
         }
         return json.dumps(as_dict)
+    if annotation_task == Tasks.CODE_VULNERABILITY:
+        as_dict = {
+            "context": data.get("query", ""),
+            "completion": data.get("response", "")
+        }
+        return json.dumps(as_dict)
+    if annotation_task == Tasks.ISA:
+        as_dict = {
+            "query": data.get("query", ""),
+            "response": data.get("response", ""),
+            "context": data.get("context", "")
+        }
+        return json.dumps(as_dict)
     as_dict = {
         "query": html.escape(data.get("query", "")),
         "response": html.escape(data.get("response", "")),
@@ -159,6 +172,8 @@ def generate_payload(normalized_user_text: str, metric: str, annotation_task: st
     include_metric = True
     task = annotation_task
     if metric == EvaluationMetrics.PROTECTED_MATERIAL:
+        include_metric = False
+    elif metric == EvaluationMetrics.ISA:
         include_metric = False
     elif metric == _InternalEvaluationMetrics.ECI:
         include_metric = False
@@ -274,6 +289,8 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
         EvaluationMetrics.PROTECTED_MATERIAL,
         _InternalEvaluationMetrics.ECI,
         EvaluationMetrics.XPIA,
+        EvaluationMetrics.CODE_VULNERABILITY,
+        EvaluationMetrics.ISA,
     }:
         result = {}
         if not batch_response or len(batch_response[0]) == 0:
@@ -313,6 +330,13 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
             result[metric_display_name + "_information_gathering"] = (
                 parsed_response["information_gathering"] if "information_gathering" in parsed_response else math.nan
             )
+        if metric_name == EvaluationMetrics.CODE_VULNERABILITY or metric_name == EvaluationMetrics.ISA:
+            # Add all attributes under the details.
+            details = {}
+            for key, value in parsed_response.items():
+                if key not in {"label", "reasoning", "version"}:
+                    details[key.replace("-", "_")] = value
+            result[metric_display_name + "_details"] = details
         return result
     return _parse_content_harm_response(batch_response, metric_name, metric_display_name)
 
@@ -359,7 +383,14 @@ def _parse_content_harm_response(
 
         # get content harm metric_value
         if "label" in harm_response:
-            metric_value = float(harm_response["label"])
+            try:
+                # Handle "n/a" or other non-numeric values
+                if isinstance(harm_response["label"], str) and harm_response["label"].strip().lower() == "n/a":
+                    metric_value = math.nan
+                else:
+                    metric_value = float(harm_response["label"])
+            except (ValueError, TypeError):
+                metric_value = math.nan
         elif "valid" in harm_response:
             metric_value = 0 if harm_response["valid"] else math.nan
         else:
@@ -390,8 +421,7 @@ def _parse_content_harm_response(
         reason = ""
 
     harm_score = metric_value
-    if metric_value == "n/a":
-        return result
+    # We've already handled the "n/a" case by converting to math.nan
     if not math.isnan(metric_value):
         # int(math.nan) causes a value error, and math.nan is already handled
         # by get_harm_severity_level

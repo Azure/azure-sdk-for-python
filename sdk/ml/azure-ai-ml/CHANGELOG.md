@@ -1,5 +1,11 @@
 # Release History
-## 1.26.0 (unreleased)
+## 1.27.0 (unreleased)
+### Features Added
+
+### Bugs Fixed
+ - Fix for compute Instance, disableLocalAuth property should be depend on ssh public access enabled.
+
+## 1.26.0 (2025-03-11)
 
 ### Features Added
   - Adding parent job support for command job.
@@ -8,6 +14,7 @@
 ### Bugs Fixed
   - #37464 - Allowing to update a component in register with anonymousEnvironment environment.
   - #39744 - Fixing a serialization issue in RecurrencePattern schedule.
+  - #39793 - Fixing bug in AML OBO to work with KV secret client.
   - Fix environment archiving and restore
 
 ### Other Changes

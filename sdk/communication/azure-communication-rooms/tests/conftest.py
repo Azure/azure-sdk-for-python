@@ -30,6 +30,7 @@ from devtools_testutils import (
     add_header_regex_sanitizer,
     set_default_session_settings,
     remove_batch_sanitizers,
+    add_uri_regex_sanitizer,
 )
 from azure.communication.rooms._shared.utils import parse_connection_str
 
@@ -66,3 +67,7 @@ def add_sanitizers(test_proxy):
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
     #  - AZSDK3430: $..id
     remove_batch_sanitizers(["AZSDK3430"])
+
+    add_uri_regex_sanitizer(
+        regex="https://[^/]+/rooms.*?api", value="https://sanitized.communication.azure.com/rooms?api"
+    )
