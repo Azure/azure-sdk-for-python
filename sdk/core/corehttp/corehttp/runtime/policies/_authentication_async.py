@@ -69,7 +69,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
             async with self._lock:
                 # double check because another coroutine may have acquired a token while we waited to acquire the lock
                 if self._token is None or self._need_new_token:
-                    options: TokenRequestOptions = {"auth_flows": auth_flows} if auth_flows else {}
+                    options: TokenRequestOptions = {"auth_flows": auth_flows} if auth_flows else {}  # type: ignore
                     self._token = await await_result(self._credential.get_token_info, *self._scopes, options=options)
         request.http_request.headers["Authorization"] = "Bearer " + cast(AccessTokenInfo, self._token).token
 

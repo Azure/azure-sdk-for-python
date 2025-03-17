@@ -107,7 +107,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
         self._enforce_https(request)
 
         if self._token is None or self._need_new_token:
-            options: TokenRequestOptions = {"auth_flows": auth_flows} if auth_flows else {}
+            options: TokenRequestOptions = {"auth_flows": auth_flows} if auth_flows else {}  # type: ignore
             self._token = self._credential.get_token_info(*self._scopes, options=options)
         self._update_headers(request.http_request.headers, self._token.token)
 
