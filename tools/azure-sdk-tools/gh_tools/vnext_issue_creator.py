@@ -68,11 +68,12 @@ def get_build_info(build_link: str, check_type: CHECK_TYPE, service_directory: s
     token = os.environ["SYSTEM_ACCESSTOKEN"]
     AUTH_HEADERS = {"Authorization": f"Bearer {token}"}
 
-    # Make the API request
-    response = requests.get(timeline_link, headers=AUTH_HEADERS)
-    logging.info(f"Response: {response.text}")
-    response_json = json.loads(response.text)
     try:
+        # Make the API request
+        response = requests.get(timeline_link, headers=AUTH_HEADERS)
+        logging.info(f"Response: {response.text}")
+        response_json = json.loads(response.text)
+    
         for task in response_json["records"]:
             if "Run Pylint Next" in task["name"]:
                 log_link = task['log']['url'] + "?api-version=6.0"
