@@ -32,6 +32,7 @@ from azure.monitor.opentelemetry import configure_azure_monitor
 scenario = os.path.basename(__file__)
 tracer = trace.get_tracer(__name__)
 
+
 async def main() -> None:
 
     async with DefaultAzureCredential() as creds:
@@ -51,7 +52,9 @@ async def main() -> None:
             async with project_client:
                 project_client.telemetry.enable()
                 agent = await project_client.agents.create_agent(
-                    model=os.environ["MODEL_DEPLOYMENT_NAME"], name="my-assistant", instructions="You are helpful assistant"
+                    model=os.environ["MODEL_DEPLOYMENT_NAME"],
+                    name="my-assistant",
+                    instructions="You are helpful assistant",
                 )
                 print(f"Created agent, agent ID: {agent.id}")
 

@@ -51,7 +51,7 @@ tracer = trace.get_tracer(__name__)
 
 with tracer.start_as_current_span(scenario):
     with project_client:
-        #project_client.telemetry.enable()
+        # project_client.telemetry.enable()
         # [END enable_tracing]
         agent = project_client.agents.create_agent(
             model=os.environ["MODEL_DEPLOYMENT_NAME"], name="my-assistant", instructions="You are helpful assistant"

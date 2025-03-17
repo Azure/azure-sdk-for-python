@@ -342,7 +342,7 @@ class TestClientTracing(ModelClientTestBase):
             ],
         )
         processor.force_flush()
-        spans = exporter.get_spans_by_name_starts_with("chat ")
+        spans = exporter.get_spans_by_name_starts_with("chat")
         assert len(spans) == 1
         expected_events = [
             {
@@ -397,14 +397,12 @@ class TestClientTracing(ModelClientTestBase):
         )
         response_content = ""
         for update in response:
-            if update.choices:
+            if update.choices and update.choices[0].delta.content:
                 response_content = response_content + update.choices[0].delta.content
         client.close()
 
         processor.force_flush()
-        spans = exporter.get_spans_by_name_starts_with("chat ")
-        if len(spans) == 0:
-            spans = exporter.get_spans_by_name("chat")
+        spans = exporter.get_spans_by_name_starts_with("chat")
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
@@ -456,7 +454,7 @@ class TestClientTracing(ModelClientTestBase):
         )
         response_content = ""
         for update in response:
-            if update.choices:
+            if update.choices and update.choices[0].delta.content:
                 response_content = response_content + update.choices[0].delta.content
         client.close()
 
@@ -580,9 +578,7 @@ class TestClientTracing(ModelClientTestBase):
                 # With the additional tools information on hand, get another response from the model
                 response = client.complete(messages=messages, tools=[weather_description])
         processor.force_flush()
-        spans = exporter.get_spans_by_name_starts_with("chat ")
-        if len(spans) == 0:
-            spans = exporter.get_spans_by_name("chat")
+        spans = exporter.get_spans_by_name_starts_with("chat")
         assert len(spans) == 2
         expected_attributes = [
             ("gen_ai.operation.name", "chat"),

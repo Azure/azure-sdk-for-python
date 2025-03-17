@@ -518,7 +518,9 @@ class _AIAgentsInstrumentorPreview:
                     body = {"content": tool_output["output"], "id": tool_output["tool_call_id"]}
                 else:
                     body = {"content": "", "id": tool_output["tool_call_id"]}
-                span.span_instance.add_event("gen_ai.tool.message", {"gen_ai.event.content": json.dumps(body, ensure_ascii=False)})
+                span.span_instance.add_event(
+                    "gen_ai.tool.message", {"gen_ai.event.content": json.dumps(body, ensure_ascii=False)}
+                )
             return True
 
         return False
@@ -1330,33 +1332,33 @@ class _AIAgentsInstrumentorPreview:
             class_function_name = function.__qualname__
 
             if class_function_name.startswith("AgentsOperations.create_agent"):
-                kwargs.setdefault('merge_span', True)
+                kwargs.setdefault("merge_span", True)
                 return self.trace_create_agent(function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.create_thread"):
-                kwargs.setdefault('merge_span', True)
+                kwargs.setdefault("merge_span", True)
                 return self.trace_create_thread(function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.create_message"):
-                kwargs.setdefault('merge_span', True)
+                kwargs.setdefault("merge_span", True)
                 return self.trace_create_message(function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.create_run"):
-                kwargs.setdefault('merge_span', True)
+                kwargs.setdefault("merge_span", True)
                 return self.trace_create_run(OperationName.START_THREAD_RUN, function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.create_and_process_run"):
-                kwargs.setdefault('merge_span', True)
+                kwargs.setdefault("merge_span", True)
                 return self.trace_create_run(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.submit_tool_outputs_to_run"):
-                kwargs.setdefault('merge_span', True)
+                kwargs.setdefault("merge_span", True)
                 return self.trace_submit_tool_outputs(False, function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.submit_tool_outputs_to_stream"):
-                kwargs.setdefault('merge_span', True)
+                kwargs.setdefault("merge_span", True)
                 return self.trace_submit_tool_outputs(True, function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations._handle_submit_tool_outputs"):
                 return self.trace_handle_submit_tool_outputs(function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.create_stream"):
-                kwargs.setdefault('merge_span', True)
+                kwargs.setdefault("merge_span", True)
                 return self.trace_create_stream(function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.list_messages"):
-                kwargs.setdefault('merge_span', True)
+                kwargs.setdefault("merge_span", True)
                 return self.trace_list_messages(function, *args, **kwargs)
             if class_function_name.startswith("AgentRunStream.__exit__"):
                 return self.handle_run_stream_exit(function, *args, **kwargs)
@@ -1398,33 +1400,33 @@ class _AIAgentsInstrumentorPreview:
             class_function_name = function.__qualname__
 
             if class_function_name.startswith("AgentsOperations.create_agent"):
-                kwargs.setdefault('merge_span', True)
+                kwargs.setdefault("merge_span", True)
                 return await self.trace_create_agent_async(function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.create_thread"):
-                kwargs.setdefault('merge_span', True)
+                kwargs.setdefault("merge_span", True)
                 return await self.trace_create_thread_async(function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.create_message"):
-                kwargs.setdefault('merge_span', True)
+                kwargs.setdefault("merge_span", True)
                 return await self.trace_create_message_async(function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.create_run"):
-                kwargs.setdefault('merge_span', True)
+                kwargs.setdefault("merge_span", True)
                 return await self.trace_create_run_async(OperationName.START_THREAD_RUN, function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.create_and_process_run"):
-                kwargs.setdefault('merge_span', True)
+                kwargs.setdefault("merge_span", True)
                 return await self.trace_create_run_async(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.submit_tool_outputs_to_run"):
-                kwargs.setdefault('merge_span', True)
+                kwargs.setdefault("merge_span", True)
                 return await self.trace_submit_tool_outputs_async(False, function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.submit_tool_outputs_to_stream"):
-                kwargs.setdefault('merge_span', True)
+                kwargs.setdefault("merge_span", True)
                 return await self.trace_submit_tool_outputs_async(True, function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations._handle_submit_tool_outputs"):
                 return await self.trace_handle_submit_tool_outputs_async(function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.create_stream"):
-                kwargs.setdefault('merge_span', True)
+                kwargs.setdefault("merge_span", True)
                 return await self.trace_create_stream_async(function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.list_messages"):
-                kwargs.setdefault('merge_span', True)
+                kwargs.setdefault("merge_span", True)
                 return await self.trace_list_messages_async(function, *args, **kwargs)
             if class_function_name.startswith("AsyncAgentRunStream.__aexit__"):
                 return self.handle_run_stream_exit(function, *args, **kwargs)
