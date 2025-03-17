@@ -62,6 +62,7 @@ class ErrorTarget(Enum):
     CODE_CLIENT = "CodeClient"
     RAI_CLIENT = "RAIClient"
     COHERENCE_EVALUATOR = "CoherenceEvaluator"
+    COMPLETENESS_EVALUATOR = "CompletenessEvaluator"
     CONTENT_SAFETY_CHAT_EVALUATOR = "ContentSafetyEvaluator"
     ECI_EVALUATOR = "ECIEvaluator"
     F1_EVALUATOR = "F1Evaluator"
