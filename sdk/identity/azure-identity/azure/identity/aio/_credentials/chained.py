@@ -2,13 +2,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import asyncio
 import logging
 from typing import Any, Optional, cast
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
 from azure.core.credentials_async import AsyncSupportsTokenInfo, AsyncTokenCredential, AsyncTokenProvider
-
 from .._internal import AsyncContextManager
 from ... import CredentialUnavailableError
 from ..._credentials.chained import _get_error_message
@@ -46,9 +46,8 @@ class ChainedTokenCredential(AsyncContextManager):
 
     async def close(self) -> None:
         """Close the transport sessions of all credentials in the chain."""
-        tasks = [credential.close() for credential in self.credentials]
-        for task in tasks:
-            await task
+
+        await asyncio.gather(*(credential.close() for credential in self.credentials))
 
     async def get_token(
         self,

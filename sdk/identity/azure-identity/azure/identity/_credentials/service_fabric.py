@@ -24,11 +24,11 @@ def _get_client_args(**kwargs: Any) -> Optional[Dict]:
     if not (url and secret and thumbprint):
         # Service Fabric managed identity isn't available in this environment
         return None
-    connection_verify = kwargs.pop("connection_verify", False)
+
     return dict(
         kwargs,
         base_headers={"Secret": secret},
-        connection_verify=connection_verify,
+        connection_verify=False,
         request_factory=functools.partial(_get_request, url),
     )
 
