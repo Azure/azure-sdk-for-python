@@ -395,7 +395,7 @@ class DataLakeFileClient(PathClient):
 
     @distributed_trace_async
     async def upload_data(
-        self, data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
+        self, data: Union[bytes, str, AsyncIterable[AnyStr], IO[AnyStr]],
         length: Optional[int] = None,
         overwrite: Optional[bool] = False,
         **kwargs: Any
@@ -404,7 +404,7 @@ class DataLakeFileClient(PathClient):
         Upload data to a file.
 
         :param data: Content to be uploaded to file
-        :type data: bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], or IO[AnyStr]
+        :type data: bytes, str, AsyncIterable[AnyStr], or IO[AnyStr]
         :param int length: Size of the data in bytes.
         :param bool overwrite: to overwrite an existing file or not.
         :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
