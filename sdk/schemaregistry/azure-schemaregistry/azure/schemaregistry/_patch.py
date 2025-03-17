@@ -169,10 +169,6 @@ class SchemaRegistryClient:
     def __exit__(self, *exc_details: Any) -> None:
         self._generated_client.__exit__(*exc_details)
 
-    # TODO: temp for testing apiview - needs to be removed
-    def fake(self) -> None:
-        pass
-
     def close(self) -> None:
         """This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.

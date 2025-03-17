@@ -277,6 +277,10 @@ class ConnectionRetryPolicy(RetryPolicy):
         clean_kwargs = {k: v for k, v in kwargs.items() if v is not None}
         super(ConnectionRetryPolicy, self).__init__(**clean_kwargs)
 
+    # TODO: temp for testing apiview - needs to be removed
+    def fake(self) -> None:
+        pass
+
     def send(self, request):
         """Sends the PipelineRequest object to the next policy. Uses retry settings if necessary.
         Also enforces an absolute client-side timeout that spans multiple retry attempts.

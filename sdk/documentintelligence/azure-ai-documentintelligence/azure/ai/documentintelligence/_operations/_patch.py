@@ -78,6 +78,10 @@ class AnalyzeDocumentLROPoller(LROPoller[PollingReturnType_co]):
 
         return cls(client, initial_response, deserialization_callback, polling_method)
 
+    # TODO: temp for testing apiview - needs to be removed
+    def fake(self) -> None:
+        pass
+
 
 class DocumentIntelligenceAdministrationClientOperationsMixin(
     GeneratedDIAdminClientOps
