@@ -1,78 +1,119 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
 import os
-from typing import Dict, Union, List
+import math
+from typing import Dict, Union, List, Optional
+
 from typing_extensions import overload, override
 
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._model_configurations import Conversation, Message
+from ..._common.utils import check_score_is_valid
 
-class Content:
-    def __init__(self, type: str, value: str):
-        self.type = type
-        self.value = value
+class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
+    """
+    Evaluates task adherence for a given query and response within a QA scenario.
+    
+    The task adherence evaluator assesses how well the response follows the assigned task and instructions.
 
-class FunctionToolCall:
-    def __init__(self, tool_name: str, type: str, parameters: dict, function_name: str, output: str):
-        self.tool_name = tool_name
-        self.type = type
-        self.parameters = parameters
-        self.function_name = function_name
-        self.output = output
+    :param model_config: Configuration for the Azure OpenAI model.
+    :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
+        ~azure.ai.evaluation.OpenAIModelConfiguration]
+    """
 
-class FileSearchToolCall:
-    def __init__(self, tool_name: str, type: str, results: List[str]):
-        self.tool_name = tool_name
-        self.type = type
-        self.results = results
+    _PROMPTY_FILE = "task_adherence.prompty"
+    _RESULT_KEY = "task_adherence"
+    _OPTIONAL_PARAMS = ["conversation_history", "tool_definitions"]
 
-class Message:
-    def __init__(self, type: str, content: Union[str, List[Content]], tool_calls: Union[List[FunctionToolCall], List[FileSearchToolCall]] = []):
-        self.type = type
-        self.content = content
-        self.tool_calls = tool_calls
+    MIN_TASK_ADHERENCE_SCORE = 1
+    MAX_TASK_ADHERENCE_SCORE = 5
 
-class Tool:
-    def __init__(self, name: str, description: str):
-        self.name = name
-        self.description = description
-
-class TaskAdherenceEvaluator(PromptyEvaluatorBase):
-
-    _PROMPTY_FILE = "taskadherence.prompty"
-    _RESULT_KEY = "taskadherence"
-
-    id = "taskadherence"
+    id = None
+    """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config):
+    def __init__(self, model_config, threshold=MAX_TASK_ADHERENCE_SCORE):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
+        self.threshold = threshold
         super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY)
 
     @overload
     def __call__(
-        self, 
-        *, 
+        self,
+        *,
         instructions: str,
         query: Union[str, List[Message]],
         response: Union[str, List[Message]],
-        conversation_history: List[Message],
-        tool_definitions: List[Tool],
-        threshold: float
-    ) -> Dict[str, Union[bool, float, str]]:
-        ...
+        conversation_history: Optional[List[Message]] = None,
+        tool_definitions: Optional[List[Message]] = None,
+    ) -> Dict[str, Union[str, float]]:
+        """Evaluate task adherence for a given query, response, and optional context.
+        The evaluation considers instructions, query, response, conversation history, and tool definitions.
+
+        :keyword instructions: The task instructions for evaluation.
+        :paramtype instructions: str
+        :keyword query: The query being evaluated, either a string or a list of messages.
+        :paramtype query: Union[str, List[Message]]
+        :keyword response: The response being evaluated.
+        :paramtype response: Union[str, List[Message]]
+        :keyword conversation_history: Previous interactions in the conversation.
+        :paramtype conversation_history: Optional[List[Message]]
+        :keyword tool_definitions: The tool definitions known to the agent.
+        :paramtype tool_definitions: Optional[List[Message]]
+        :return: A dictionary with the task adherence evaluation results.
+        :rtype: Dict[str, Union[str, float]]
+        """
 
     @override
-    def __call__(self, *args, **kwargs) -> Dict[str, Union[bool, float, str]]:
-        task_adherence_result = super().__call__(*args, **kwargs)
+    def __call__(self, *args, **kwargs):
+        """
+        Invokes the instance using the overloaded __call__ signature.
+        
+        For detailed parameter types and return value documentation, see the overloaded __call__ definition.
+        """
+        return super().__call__(*args, **kwargs)
 
-        if not isinstance(task_adherence_result, dict) or not "task_adherence" in task_adherence_result:
-            raise Exception("task adherence Result is invalid") 
-        threshold = kwargs.get("threshold", 3.0)
-        task_adherence_score = task_adherence_result.get("score")
-        explanation = task_adherence_result.get("explanation")
-        is_task_adherent = task_adherence_score >= threshold
+    @override
+    async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[float, str]]:
+        """Perform task adherence evaluation.
 
-        return {
-            "is_task_adherent": is_task_adherent,
-            "task_adherence_score": task_adherence_score,
-            "explanation": explanation
-        }
+        :param eval_input: The input to the evaluator.
+        :type eval_input: Dict
+        :return: The evaluation result.
+        :rtype: Dict
+        """
+        if "query" not in eval_input or "response" not in eval_input or "instructions" not in eval_input:
+            raise EvaluationException(
+                message="Instructions, query, and response must be provided for task adherence evaluation.",
+                internal_message="Missing required evaluation input.",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.MISSING_FIELD,
+                target=ErrorTarget.TASK_ADHERENCE_EVALUATOR,
+            )
+        llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
+        
+        if isinstance(llm_output, dict):
+            score = llm_output.get("score", math.nan)
+            if not check_score_is_valid(score, TaskAdherenceEvaluator.MIN_TASK_ADHERENCE_SCORE, TaskAdherenceEvaluator.MAX_TASK_ADHERENCE_SCORE):
+                raise EvaluationException(
+                    message=f"Invalid score value: {score}. Expected a number in range [{TaskAdherenceEvaluator.MIN_TASK_ADHERENCE_SCORE}, {TaskAdherenceEvaluator.MAX_TASK_ADHERENCE_SCORE}].",
+                    internal_message="Invalid score value.",
+                    category=ErrorCategory.FAILED_EXECUTION,
+                    blame=ErrorBlame.SYSTEM_ERROR,
+                )
+            explanation = llm_output.get("explanation", "")
+            score = float(score)
+            score_result = 'pass' if score >= self.threshold else 'fail'
+            response_dict = {
+                f"{self._result_key}": score,
+                f"{self._result_key}_result": score_result,
+                f"{self._result_key}_threshold": self.threshold,
+                f"{self._result_key}_reason": explanation,
+                f"additional_details": llm_output,
+            }
+            return response_dict
+        
+        return {self._result_key: math.nan}
