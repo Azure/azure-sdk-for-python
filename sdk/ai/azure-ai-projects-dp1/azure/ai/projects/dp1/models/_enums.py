@@ -60,6 +60,10 @@ class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """CosmosDB"""
     API_KEY = "ApiKey"
     """Generic connection that uses API Key authentication"""
+    APPLICATION_INSIGHTS = "AppInsights"
+    """Application Insights"""
+    CUSTOM = "CustomKeys"
+    """Custom Keys"""
 
 
 class CredentialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -965,12 +965,10 @@ class Connection(_model_base.Model):
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
 
-    :ivar id: Fully qualified resource identifier. Required.
-    :vartype id: str
     :ivar name: The name of the resource. Required.
     :vartype name: str
     :ivar type: Category of the connection. Required. Known values are: "AzureOpenAI", "AzureBlob",
-     "CognitiveSearch", "CosmosDB", and "ApiKey".
+     "CognitiveSearch", "CosmosDB", "ApiKey", "AppInsights", and "CustomKeys".
     :vartype type: str or ~azure.ai.projects.dp1.models.ConnectionType
     :ivar target: The connection URL to be used for this service. Required.
     :vartype target: str
@@ -978,13 +976,11 @@ class Connection(_model_base.Model):
     :vartype properties: dict[str, str]
     """
 
-    id: str = rest_field(visibility=["read"])
-    """Fully qualified resource identifier. Required."""
     name: str = rest_field(visibility=["read"])
     """The name of the resource. Required."""
     type: Union[str, "_models.ConnectionType"] = rest_field(visibility=["read"])
     """Category of the connection. Required. Known values are: \"AzureOpenAI\", \"AzureBlob\",
-     \"CognitiveSearch\", \"CosmosDB\", and \"ApiKey\"."""
+     \"CognitiveSearch\", \"CosmosDB\", \"ApiKey\", \"AppInsights\", and \"CustomKeys\"."""
     target: str = rest_field(visibility=["read"])
     """The connection URL to be used for this service. Required."""
     properties: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1153,44 +1149,36 @@ class Deployment(_model_base.Model):
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
 
-    :ivar deployment_name: Name of the deployment for the model. Required.
-    :vartype deployment_name: str
-    :ivar model_name: Publisher-specific name of the model. Required.
+    :ivar name: Name of the deployment. Required.
+    :vartype name: str
+    :ivar model_name: Publisher-specific name of the deployed model. Required.
     :vartype model_name: str
-    :ivar model_version: Publisher-specific version of the model. Required.
+    :ivar model_version: Publisher-specific version of the deployed model. Required.
     :vartype model_version: str
-    :ivar publisher: Name of the model publisher. Required.
-    :vartype publisher: str
-    :ivar capabilities: Capabilities of model. Required.
+    :ivar model_publisher: Name of the deployed model's publisher. Required.
+    :vartype model_publisher: str
+    :ivar capabilities: Capabilities of deployed model. Required.
     :vartype capabilities: dict[str, str]
-    :ivar rai_policy_name: RAI policy enabled for model. Required.
-    :vartype rai_policy_name: str
     :ivar sku: Sku of the model deployment. Required.
     :vartype sku: ~azure.ai.projects.dp1.models.Sku
-    :ivar connection_name: Name of the connection the model comes from.
+    :ivar connection_name: Name of the connection the deployment comes from.
     :vartype connection_name: str
-    :ivar system_data: System data of the resource. Required.
-    :vartype system_data: ~azure.ai.projects.dp1.models.SystemData
     """
 
-    deployment_name: str = rest_field(name="deploymentName", visibility=["read"])
-    """Name of the deployment for the model. Required."""
+    name: str = rest_field(visibility=["read"])
+    """Name of the deployment. Required."""
     model_name: str = rest_field(name="modelName", visibility=["read"])
-    """Publisher-specific name of the model. Required."""
+    """Publisher-specific name of the deployed model. Required."""
     model_version: str = rest_field(name="modelVersion", visibility=["read"])
-    """Publisher-specific version of the model. Required."""
-    publisher: str = rest_field(visibility=["read"])
-    """Name of the model publisher. Required."""
+    """Publisher-specific version of the deployed model. Required."""
+    model_publisher: str = rest_field(name="modelPublisher", visibility=["read"])
+    """Name of the deployed model's publisher. Required."""
     capabilities: Dict[str, str] = rest_field(visibility=["read"])
-    """Capabilities of model. Required."""
-    rai_policy_name: str = rest_field(name="raiPolicyName", visibility=["read"])
-    """RAI policy enabled for model. Required."""
+    """Capabilities of deployed model. Required."""
     sku: "_models.Sku" = rest_field(visibility=["read"])
     """Sku of the model deployment. Required."""
     connection_name: Optional[str] = rest_field(name="connectionName", visibility=["read"])
-    """Name of the connection the model comes from."""
-    system_data: "_models.SystemData" = rest_field(name="systemData", visibility=["read"])
-    """System data of the resource. Required."""
+    """Name of the connection the deployment comes from."""
 
 
 class EmbeddingConfiguration(_model_base.Model):
@@ -1263,7 +1251,7 @@ class Evaluation(_model_base.Model):
     :vartype evaluators: dict[str, ~azure.ai.projects.dp1.models.EvaluatorConfiguration]
     """
 
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    id: str = rest_field(visibility=["read"])
     """Identifier of the evaluation. Required."""
     data: "_models.InputData" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Data for evaluation. Required."""
@@ -1293,7 +1281,6 @@ class Evaluation(_model_base.Model):
     def __init__(
         self,
         *,
-        id: str,  # pylint: disable=redefined-builtin
         data: "_models.InputData",
         evaluators: Dict[str, "_models.EvaluatorConfiguration"],
         display_name: Optional[str] = None,

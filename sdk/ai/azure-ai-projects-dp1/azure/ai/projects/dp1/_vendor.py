@@ -8,39 +8,7 @@
 import json
 from typing import Any, Dict, IO, List, Mapping, Optional, Tuple, Union
 
-from azure.core import MatchConditions
-
 from ._model_base import Model, SdkJSONEncoder
-
-
-def quote_etag(etag: Optional[str]) -> Optional[str]:
-    if not etag or etag == "*":
-        return etag
-    if etag.startswith("W/"):
-        return etag
-    if etag.startswith('"') and etag.endswith('"'):
-        return etag
-    if etag.startswith("'") and etag.endswith("'"):
-        return etag
-    return '"' + etag + '"'
-
-
-def prep_if_match(etag: Optional[str], match_condition: Optional[MatchConditions]) -> Optional[str]:
-    if match_condition == MatchConditions.IfNotModified:
-        if_match = quote_etag(etag) if etag else None
-        return if_match
-    if match_condition == MatchConditions.IfPresent:
-        return "*"
-    return None
-
-
-def prep_if_none_match(etag: Optional[str], match_condition: Optional[MatchConditions]) -> Optional[str]:
-    if match_condition == MatchConditions.IfModified:
-        if_none_match = quote_etag(etag) if etag else None
-        return if_none_match
-    if match_condition == MatchConditions.IfMissing:
-        return "*"
-    return None
 
 
 # file-like tuple could be `(filename, IO (or bytes))` or `(filename, IO (or bytes), content_type)`
