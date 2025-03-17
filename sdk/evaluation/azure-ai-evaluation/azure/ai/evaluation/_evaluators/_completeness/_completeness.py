@@ -154,7 +154,7 @@ class CompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             is_response_complete = completeness_score >= self.threshold
 
             response_dict = {
-                "is_response_complete": is_response_complete,
+                # "is_response_complete": is_response_complete,
                 "response_completeness": completeness_score,
                 "response_completeness_result": score_result,
                 "response_completeness_threshold": self.threshold,
