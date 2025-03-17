@@ -75,7 +75,7 @@ def multimodal_input_selector():
     return selector
 
 
-# @pytest.mark.usefixtures("recording_injection", "recorded_test")
+@pytest.mark.usefixtures("recording_injection", "recorded_test")
 class TestMassEvaluate:
     """
     Testing file for testing evaluators within the actual `evaluate` wrapper function. Tests are done
