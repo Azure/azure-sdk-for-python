@@ -132,6 +132,11 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             reason = llm_output.get("explanation", "")
             score = float(score)
             score_result = 'pass' if score >= self.threshold else 'fail'
+
+            #remove fields 'explanation' and 'resolution_score' from llm_output as they are already included in the response_dict
+            if 'explanation' in llm_output: llm_output.pop("explanation")
+            if 'resolution_score' in llm_output: llm_output.pop("resolution_score")
+
             response_dict = {
                              f"{self._result_key}"           : score,
                              f"{self._result_key}_result"    : score_result,
