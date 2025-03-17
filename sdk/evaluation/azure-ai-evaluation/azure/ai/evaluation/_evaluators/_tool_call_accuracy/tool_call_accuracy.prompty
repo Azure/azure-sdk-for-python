@@ -1,0 +1,71 @@
+---
+name: Tool Call Accuracy
+description: Evaluates Tool Call Accuracy for tool used by agent
+model:
+  api: chat
+  parameters:
+    temperature: 0.0
+    max_tokens: 800
+    top_p: 1.0
+    presence_penalty: 0
+    frequency_penalty: 0
+    response_format:
+      type: text
+
+inputs:
+  query:
+    type: List
+  tool_call:
+    type: Dict
+  tool_definition:
+    type: Dict
+
+---
+system:
+# Instruction
+## Goal
+### Your are an expert in evaluating the accuracy of a tool call considering relevance and potential usefulness including syntactic and semantic correctness of a proposed tool call from an intelligent system based on provided definition and data. Your goal will involve answering the questions below using the information provided.
+- **Definition**: You are given a definition of the communication trait that is being evaluated to help guide your Score.
+- **Data**: Your input data include CONVERSATION , TOOL CALL and TOOL DEFINITION.
+- **Tasks**: To complete your evaluation you will be asked to evaluate the Data in different ways.
+
+user:
+# Definition
+**Tool Call Accuracy** refers to the relevance and potential usefulness of a TOOL CALL in the context of an ongoing CONVERSATION and EXTRACTION of RIGHT PARAMETER VALUES from the CONVERSATION.It assesses how likely the TOOL CALL is to contribute meaningfully to the CONVERSATION and help address the user's needs. Focus on evaluating the potential value of the TOOL CALL within the specific context of the given CONVERSATION, without making assumptions beyond the provided information.
+  Consider the following factors in your evaluation:
+
+  1. Relevance: How well does the proposed tool call align with the current topic and flow of the conversation?
+  2. Parameter Appropriateness: Do the parameters used in the TOOL CALL match the TOOL DEFINITION and are the parameters relevant to the latest user's query?
+  3. Parameter Value Correctness: Are the parameters values used in the TOOL CALL present or inferred by CONVERSATION and relevant to the latest user's query?
+  4. Potential Value: Is the information this tool call might provide likely to be useful in advancing the conversation or addressing the user expressed or implied needs?
+  5. Context Appropriateness: Does the tool call make sense at this point in the conversation, given what has been discussed so far?
+
+
+# Ratings
+## [Tool Call Accuracy: 0] (Irrelevant)
+**Definition:**
+ 1. The TOOL CALL is not relevant and will not help resolve the user's need.
+ 2. TOOL CALL include parameters values that are not present or inferred from CONVERSATION.
+ 3. TOOL CALL has parameters that is not present in TOOL DEFINITION.
+
+## [Tool Call Accuracy: 1] (Relevant)
+**Definition:**
+ 1. The TOOL CALL is directly relevant and very likely to help resolve the user's need.
+ 2. TOOL CALL include parameters values that are present or inferred from CONVERSATION.
+ 3. TOOL CALL has parameters that is present in TOOL DEFINITION.
+
+# Data
+CONVERSATION : {{query}}
+TOOL CALL: {{tool_call}}
+TOOL DEFINITION: {{tool_definition}}
+
+
+# Tasks
+## Please provide your assessment Score for the previous CONVERSATION , TOOL CALL and TOOL DEFINITION based on the Definitions above. Your output should include the following information:
+- **ThoughtChain**: To improve the reasoning process, think step by step and include a step-by-step explanation of your thought process as you analyze the data based on the definitions. Keep it brief and start your ThoughtChain with "Let's think step by step:".
+- **Explanation**: a very short explanation of why you think the input Data should get that Score.
+- **Score**: based on your previous analysis, provide your Score. The Score you give MUST be a integer score (i.e., "0", "1") based on the levels of the definitions.
+
+
+## Please provide your answers between the tags: <S0>your chain of thoughts</S0>, <S1>your explanation</S1>, <S2>your Score</S2>.
+# Output
