@@ -15,7 +15,7 @@ import sys
 
 from ci_tools.environment_exclusions import is_check_enabled
 from ci_tools.parsing import ParsedSetup
-from ci_tools.variables import in_ci, in_analyze_weekly
+from ci_tools.variables import in_ci
 
 logging.getLogger().setLevel(logging.INFO)
 
