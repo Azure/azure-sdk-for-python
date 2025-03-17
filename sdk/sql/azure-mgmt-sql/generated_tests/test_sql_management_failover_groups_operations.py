@@ -20,11 +20,11 @@ class TestSqlManagementFailoverGroupsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_server(self, resource_group):
+    def test_failover_groups_list_by_server(self, resource_group):
         response = self.client.failover_groups.list_by_server(
             resource_group_name=resource_group.name,
             server_name="str",
-            api_version="2023-05-01-preview",
+            api_version="2024-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,12 +32,12 @@ class TestSqlManagementFailoverGroupsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_failover_groups_get(self, resource_group):
         response = self.client.failover_groups.get(
             resource_group_name=resource_group.name,
             server_name="str",
             failover_group_name="str",
-            api_version="2023-05-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestSqlManagementFailoverGroupsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_failover_groups_begin_create_or_update(self, resource_group):
         response = self.client.failover_groups.begin_create_or_update(
             resource_group_name=resource_group.name,
             server_name="str",
@@ -64,7 +64,7 @@ class TestSqlManagementFailoverGroupsOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2023-05-01-preview",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -72,12 +72,12 @@ class TestSqlManagementFailoverGroupsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_failover_groups_begin_delete(self, resource_group):
         response = self.client.failover_groups.begin_delete(
             resource_group_name=resource_group.name,
             server_name="str",
             failover_group_name="str",
-            api_version="2023-05-01-preview",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -85,7 +85,7 @@ class TestSqlManagementFailoverGroupsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update(self, resource_group):
+    def test_failover_groups_begin_update(self, resource_group):
         response = self.client.failover_groups.begin_update(
             resource_group_name=resource_group.name,
             server_name="str",
@@ -98,7 +98,7 @@ class TestSqlManagementFailoverGroupsOperations(AzureMgmtRecordedTestCase):
                 "secondaryType": "str",
                 "tags": {"str": "str"},
             },
-            api_version="2023-05-01-preview",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -106,12 +106,12 @@ class TestSqlManagementFailoverGroupsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_failover(self, resource_group):
+    def test_failover_groups_begin_failover(self, resource_group):
         response = self.client.failover_groups.begin_failover(
             resource_group_name=resource_group.name,
             server_name="str",
             failover_group_name="str",
-            api_version="2023-05-01-preview",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -119,12 +119,12 @@ class TestSqlManagementFailoverGroupsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_force_failover_allow_data_loss(self, resource_group):
+    def test_failover_groups_begin_force_failover_allow_data_loss(self, resource_group):
         response = self.client.failover_groups.begin_force_failover_allow_data_loss(
             resource_group_name=resource_group.name,
             server_name="str",
             failover_group_name="str",
-            api_version="2023-05-01-preview",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -132,12 +132,12 @@ class TestSqlManagementFailoverGroupsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_try_planned_before_forced_failover(self, resource_group):
+    def test_failover_groups_begin_try_planned_before_forced_failover(self, resource_group):
         response = self.client.failover_groups.begin_try_planned_before_forced_failover(
             resource_group_name=resource_group.name,
             server_name="str",
             failover_group_name="str",
-            api_version="2023-05-01-preview",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

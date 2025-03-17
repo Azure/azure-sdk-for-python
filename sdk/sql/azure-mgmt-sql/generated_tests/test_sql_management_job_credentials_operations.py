@@ -20,12 +20,12 @@ class TestSqlManagementJobCredentialsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_agent(self, resource_group):
+    def test_job_credentials_list_by_agent(self, resource_group):
         response = self.client.job_credentials.list_by_agent(
             resource_group_name=resource_group.name,
             server_name="str",
             job_agent_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,13 +33,13 @@ class TestSqlManagementJobCredentialsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_job_credentials_get(self, resource_group):
         response = self.client.job_credentials.get(
             resource_group_name=resource_group.name,
             server_name="str",
             job_agent_name="str",
             credential_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -47,14 +47,14 @@ class TestSqlManagementJobCredentialsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_job_credentials_create_or_update(self, resource_group):
         response = self.client.job_credentials.create_or_update(
             resource_group_name=resource_group.name,
             server_name="str",
             job_agent_name="str",
             credential_name="str",
             parameters={"id": "str", "name": "str", "password": "str", "type": "str", "username": "str"},
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -62,13 +62,13 @@ class TestSqlManagementJobCredentialsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_job_credentials_delete(self, resource_group):
         response = self.client.job_credentials.delete(
             resource_group_name=resource_group.name,
             server_name="str",
             job_agent_name="str",
             credential_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself

@@ -15,7 +15,7 @@ from azure.mgmt.sql import SqlManagementClient
     pip install azure-identity
     pip install azure-mgmt-sql
 # USAGE
-    python elastic_pool_database_activity_list.py
+    python import_new_database_with_managed_identity.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -27,18 +27,24 @@ from azure.mgmt.sql import SqlManagementClient
 def main():
     client = SqlManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="9d4e2ad0-e20b-4464-9219-353bded52513",
+        subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.elastic_pool_database_activities.list_by_elastic_pool(
-        resource_group_name="sqlcrudtest-4673",
-        server_name="sqlcrudtest-603",
-        elastic_pool_name="7537",
-    )
-    for item in response:
-        print(item)
+    response = client.servers.begin_import_database(
+        resource_group_name="Default-SQL-SouthEastAsia",
+        server_name="testsvr",
+        parameters={
+            "administratorLogin": "/subscriptions/00000000-1111-2222-3333-444444444444/resourcegroups/rgName/providers/Microsoft.ManagedIdentity/userAssignedIdentities/identityName",
+            "authenticationType": "ManagedIdentity",
+            "databaseName": "testdb",
+            "storageKey": "/subscriptions/00000000-1111-2222-3333-444444444444/resourcegroups/rgName/providers/Microsoft.ManagedIdentity/userAssignedIdentities/identityName",
+            "storageKeyType": "ManagedIdentity",
+            "storageUri": "https://test.blob.core.windows.net/test.bacpac",
+        },
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/stable/2014-04-01-legacy/examples/ElasticPoolDatabaseActivityList.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2024-05-01-preview/examples/ImportNewDatabaseWithManagedIdentity.json
 if __name__ == "__main__":
     main()

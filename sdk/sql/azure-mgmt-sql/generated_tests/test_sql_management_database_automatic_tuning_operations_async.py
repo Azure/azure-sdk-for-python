@@ -21,12 +21,12 @@ class TestSqlManagementDatabaseAutomaticTuningOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_database_automatic_tuning_get(self, resource_group):
         response = await self.client.database_automatic_tuning.get(
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestSqlManagementDatabaseAutomaticTuningOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update(self, resource_group):
+    async def test_database_automatic_tuning_update(self, resource_group):
         response = await self.client.database_automatic_tuning.update(
             resource_group_name=resource_group.name,
             server_name="str",
@@ -47,7 +47,7 @@ class TestSqlManagementDatabaseAutomaticTuningOperationsAsync(AzureMgmtRecordedT
                 "options": {"str": {"actualState": "str", "desiredState": "str", "reasonCode": 0, "reasonDesc": "str"}},
                 "type": "str",
             },
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself

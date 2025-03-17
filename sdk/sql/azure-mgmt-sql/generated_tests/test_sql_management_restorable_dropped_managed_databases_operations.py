@@ -20,11 +20,11 @@ class TestSqlManagementRestorableDroppedManagedDatabasesOperations(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_instance(self, resource_group):
+    def test_restorable_dropped_managed_databases_list_by_instance(self, resource_group):
         response = self.client.restorable_dropped_managed_databases.list_by_instance(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
-            api_version="2021-05-01-preview",
+            api_version="2024-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,12 +32,12 @@ class TestSqlManagementRestorableDroppedManagedDatabasesOperations(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_restorable_dropped_managed_databases_get(self, resource_group):
         response = self.client.restorable_dropped_managed_databases.get(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             restorable_dropped_database_id="str",
-            api_version="2021-05-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself

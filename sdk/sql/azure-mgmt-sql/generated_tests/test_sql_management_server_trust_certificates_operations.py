@@ -20,11 +20,11 @@ class TestSqlManagementServerTrustCertificatesOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_instance(self, resource_group):
+    def test_server_trust_certificates_list_by_instance(self, resource_group):
         response = self.client.server_trust_certificates.list_by_instance(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
-            api_version="2021-11-01-preview",
+            api_version="2024-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,12 +32,12 @@ class TestSqlManagementServerTrustCertificatesOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_server_trust_certificates_get(self, resource_group):
         response = self.client.server_trust_certificates.get(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             certificate_name="str",
-            api_version="2021-11-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestSqlManagementServerTrustCertificatesOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_server_trust_certificates_begin_create_or_update(self, resource_group):
         response = self.client.server_trust_certificates.begin_create_or_update(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
@@ -58,7 +58,7 @@ class TestSqlManagementServerTrustCertificatesOperations(AzureMgmtRecordedTestCa
                 "thumbprint": "str",
                 "type": "str",
             },
-            api_version="2021-11-01-preview",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -66,12 +66,12 @@ class TestSqlManagementServerTrustCertificatesOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_server_trust_certificates_begin_delete(self, resource_group):
         response = self.client.server_trust_certificates.begin_delete(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             certificate_name="str",
-            api_version="2021-11-01-preview",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

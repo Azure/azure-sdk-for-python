@@ -21,13 +21,37 @@ class TestSqlManagementLongTermRetentionManagedInstanceBackupsOperationsAsync(Az
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_long_term_retention_managed_instance_backups_list_by_location(self, resource_group):
+        response = self.client.long_term_retention_managed_instance_backups.list_by_location(
+            location_name="str",
+            api_version="2024-05-01-preview",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_long_term_retention_managed_instance_backups_list_by_database(self, resource_group):
+        response = self.client.long_term_retention_managed_instance_backups.list_by_database(
+            location_name="str",
+            managed_instance_name="str",
+            database_name="str",
+            api_version="2024-05-01-preview",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_long_term_retention_managed_instance_backups_get(self, resource_group):
         response = await self.client.long_term_retention_managed_instance_backups.get(
             location_name="str",
             managed_instance_name="str",
             database_name="str",
             backup_name="str",
-            api_version="2021-05-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -35,14 +59,14 @@ class TestSqlManagementLongTermRetentionManagedInstanceBackupsOperationsAsync(Az
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_long_term_retention_managed_instance_backups_begin_delete(self, resource_group):
         response = await (
             await self.client.long_term_retention_managed_instance_backups.begin_delete(
                 location_name="str",
                 managed_instance_name="str",
                 database_name="str",
                 backup_name="str",
-                api_version="2021-05-01-preview",
+                api_version="2024-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -51,24 +75,11 @@ class TestSqlManagementLongTermRetentionManagedInstanceBackupsOperationsAsync(Az
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_database(self, resource_group):
-        response = self.client.long_term_retention_managed_instance_backups.list_by_database(
-            location_name="str",
-            managed_instance_name="str",
-            database_name="str",
-            api_version="2021-05-01-preview",
-        )
-        result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_list_by_instance(self, resource_group):
+    async def test_long_term_retention_managed_instance_backups_list_by_instance(self, resource_group):
         response = self.client.long_term_retention_managed_instance_backups.list_by_instance(
             location_name="str",
             managed_instance_name="str",
-            api_version="2021-05-01-preview",
+            api_version="2024-05-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -76,10 +87,11 @@ class TestSqlManagementLongTermRetentionManagedInstanceBackupsOperationsAsync(Az
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_location(self, resource_group):
-        response = self.client.long_term_retention_managed_instance_backups.list_by_location(
+    async def test_long_term_retention_managed_instance_backups_list_by_resource_group_location(self, resource_group):
+        response = self.client.long_term_retention_managed_instance_backups.list_by_resource_group_location(
+            resource_group_name=resource_group.name,
             location_name="str",
-            api_version="2021-05-01-preview",
+            api_version="2024-05-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -87,14 +99,28 @@ class TestSqlManagementLongTermRetentionManagedInstanceBackupsOperationsAsync(Az
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_by_resource_group(self, resource_group):
+    async def test_long_term_retention_managed_instance_backups_list_by_resource_group_database(self, resource_group):
+        response = self.client.long_term_retention_managed_instance_backups.list_by_resource_group_database(
+            resource_group_name=resource_group.name,
+            location_name="str",
+            managed_instance_name="str",
+            database_name="str",
+            api_version="2024-05-01-preview",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_long_term_retention_managed_instance_backups_get_by_resource_group(self, resource_group):
         response = await self.client.long_term_retention_managed_instance_backups.get_by_resource_group(
             resource_group_name=resource_group.name,
             location_name="str",
             managed_instance_name="str",
             database_name="str",
             backup_name="str",
-            api_version="2021-05-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -102,7 +128,7 @@ class TestSqlManagementLongTermRetentionManagedInstanceBackupsOperationsAsync(Az
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete_by_resource_group(self, resource_group):
+    async def test_long_term_retention_managed_instance_backups_begin_delete_by_resource_group(self, resource_group):
         response = await (
             await self.client.long_term_retention_managed_instance_backups.begin_delete_by_resource_group(
                 resource_group_name=resource_group.name,
@@ -110,7 +136,7 @@ class TestSqlManagementLongTermRetentionManagedInstanceBackupsOperationsAsync(Az
                 managed_instance_name="str",
                 database_name="str",
                 backup_name="str",
-                api_version="2021-05-01-preview",
+                api_version="2024-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -119,38 +145,12 @@ class TestSqlManagementLongTermRetentionManagedInstanceBackupsOperationsAsync(Az
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group_database(self, resource_group):
-        response = self.client.long_term_retention_managed_instance_backups.list_by_resource_group_database(
-            resource_group_name=resource_group.name,
-            location_name="str",
-            managed_instance_name="str",
-            database_name="str",
-            api_version="2021-05-01-preview",
-        )
-        result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_list_by_resource_group_instance(self, resource_group):
+    async def test_long_term_retention_managed_instance_backups_list_by_resource_group_instance(self, resource_group):
         response = self.client.long_term_retention_managed_instance_backups.list_by_resource_group_instance(
             resource_group_name=resource_group.name,
             location_name="str",
             managed_instance_name="str",
-            api_version="2021-05-01-preview",
-        )
-        result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_list_by_resource_group_location(self, resource_group):
-        response = self.client.long_term_retention_managed_instance_backups.list_by_resource_group_location(
-            resource_group_name=resource_group.name,
-            location_name="str",
-            api_version="2021-05-01-preview",
+            api_version="2024-05-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

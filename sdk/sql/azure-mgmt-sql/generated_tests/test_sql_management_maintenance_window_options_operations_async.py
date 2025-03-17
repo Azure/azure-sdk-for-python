@@ -21,13 +21,13 @@ class TestSqlManagementMaintenanceWindowOptionsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_maintenance_window_options_get(self, resource_group):
         response = await self.client.maintenance_window_options.get(
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
             maintenance_window_options_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself

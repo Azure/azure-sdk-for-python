@@ -20,12 +20,12 @@ class TestSqlManagementDatabaseOperationsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_database(self, resource_group):
+    def test_database_operations_list_by_database(self, resource_group):
         response = self.client.database_operations.list_by_database(
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            api_version="2022-11-01-preview",
+            api_version="2024-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,13 +33,13 @@ class TestSqlManagementDatabaseOperationsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_cancel(self, resource_group):
+    def test_database_operations_cancel(self, resource_group):
         response = self.client.database_operations.cancel(
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
             operation_id="str",
-            api_version="2022-11-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself

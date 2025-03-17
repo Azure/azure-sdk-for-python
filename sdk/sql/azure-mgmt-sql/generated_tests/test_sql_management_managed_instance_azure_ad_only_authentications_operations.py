@@ -20,12 +20,24 @@ class TestSqlManagementManagedInstanceAzureADOnlyAuthenticationsOperations(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_managed_instance_azure_ad_only_authentications_list_by_instance(self, resource_group):
+        response = self.client.managed_instance_azure_ad_only_authentications.list_by_instance(
+            resource_group_name=resource_group.name,
+            managed_instance_name="str",
+            api_version="2024-05-01-preview",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_managed_instance_azure_ad_only_authentications_get(self, resource_group):
         response = self.client.managed_instance_azure_ad_only_authentications.get(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             authentication_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -33,13 +45,13 @@ class TestSqlManagementManagedInstanceAzureADOnlyAuthenticationsOperations(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_managed_instance_azure_ad_only_authentications_begin_create_or_update(self, resource_group):
         response = self.client.managed_instance_azure_ad_only_authentications.begin_create_or_update(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             authentication_name="str",
             parameters={"azureADOnlyAuthentication": bool, "id": "str", "name": "str", "type": "str"},
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -47,25 +59,13 @@ class TestSqlManagementManagedInstanceAzureADOnlyAuthenticationsOperations(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_managed_instance_azure_ad_only_authentications_begin_delete(self, resource_group):
         response = self.client.managed_instance_azure_ad_only_authentications.begin_delete(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             authentication_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_list_by_instance(self, resource_group):
-        response = self.client.managed_instance_azure_ad_only_authentications.list_by_instance(
-            resource_group_name=resource_group.name,
-            managed_instance_name="str",
-            api_version="2020-11-01-preview",
-        )
-        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

@@ -21,14 +21,14 @@ class TestSqlManagementDatabaseEncryptionProtectorsOperationsAsync(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_revalidate(self, resource_group):
+    async def test_database_encryption_protectors_begin_revalidate(self, resource_group):
         response = await (
             await self.client.database_encryption_protectors.begin_revalidate(
                 resource_group_name=resource_group.name,
                 server_name="str",
                 database_name="str",
                 encryption_protector_name="str",
-                api_version="2022-08-01-preview",
+                api_version="2024-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -37,14 +37,14 @@ class TestSqlManagementDatabaseEncryptionProtectorsOperationsAsync(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_revert(self, resource_group):
+    async def test_database_encryption_protectors_begin_revert(self, resource_group):
         response = await (
             await self.client.database_encryption_protectors.begin_revert(
                 resource_group_name=resource_group.name,
                 server_name="str",
                 database_name="str",
                 encryption_protector_name="str",
-                api_version="2022-08-01-preview",
+                api_version="2024-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

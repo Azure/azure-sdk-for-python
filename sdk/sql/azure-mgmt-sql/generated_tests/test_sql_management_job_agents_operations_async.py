@@ -21,11 +21,11 @@ class TestSqlManagementJobAgentsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_server(self, resource_group):
+    async def test_job_agents_list_by_server(self, resource_group):
         response = self.client.job_agents.list_by_server(
             resource_group_name=resource_group.name,
             server_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -33,12 +33,12 @@ class TestSqlManagementJobAgentsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_job_agents_get(self, resource_group):
         response = await self.client.job_agents.get(
             resource_group_name=resource_group.name,
             server_name="str",
             job_agent_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestSqlManagementJobAgentsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_job_agents_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.job_agents.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -56,13 +56,18 @@ class TestSqlManagementJobAgentsOperationsAsync(AzureMgmtRecordedTestCase):
                     "location": "str",
                     "databaseId": "str",
                     "id": "str",
+                    "identity": {
+                        "type": "str",
+                        "tenantId": "str",
+                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                    },
                     "name": "str",
                     "sku": {"name": "str", "capacity": 0, "family": "str", "size": "str", "tier": "str"},
                     "state": "str",
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2020-11-01-preview",
+                api_version="2024-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -71,13 +76,13 @@ class TestSqlManagementJobAgentsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_job_agents_begin_delete(self, resource_group):
         response = await (
             await self.client.job_agents.begin_delete(
                 resource_group_name=resource_group.name,
                 server_name="str",
                 job_agent_name="str",
-                api_version="2020-11-01-preview",
+                api_version="2024-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -86,14 +91,22 @@ class TestSqlManagementJobAgentsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_job_agents_begin_update(self, resource_group):
         response = await (
             await self.client.job_agents.begin_update(
                 resource_group_name=resource_group.name,
                 server_name="str",
                 job_agent_name="str",
-                parameters={"tags": {"str": "str"}},
-                api_version="2020-11-01-preview",
+                parameters={
+                    "identity": {
+                        "type": "str",
+                        "tenantId": "str",
+                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                    },
+                    "sku": {"name": "str", "capacity": 0, "family": "str", "size": "str", "tier": "str"},
+                    "tags": {"str": "str"},
+                },
+                api_version="2024-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
