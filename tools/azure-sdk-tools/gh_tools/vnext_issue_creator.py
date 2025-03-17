@@ -63,30 +63,19 @@ def get_build_link(check_type: CHECK_TYPE) -> str:
 def get_build_info(build_link: str, check_type: CHECK_TYPE, service_directory: str, package_name: str) -> str:
     """Get the build info from the build link."""
     build_id = os.getenv("BUILD_BUILDID")
-    job_id = os.getenv("SYSTEM_JOBID")
     timeline_link =f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds/{build_id}/timeline?api-version=6.0"
 
-    if not in_ci():
-        DEVOPS_RESOURCE_UUID = "499b84ac-1321-427f-aa17-267ca6975798"
-        token = DefaultAzureCredential().get_token(f"{DEVOPS_RESOURCE_UUID}/.default").token
-    else:
-        token = os.environ["SYSTEM_ACCESSTOKEN"]
+    token = os.environ["SYSTEM_ACCESSTOKEN"]
     AUTH_HEADERS = {"Authorization": f"Bearer {token}"}
 
     # Make the API request
     response = requests.get(timeline_link, headers=AUTH_HEADERS)
     logging.info(f"Response: {response.text}")
     response_json = json.loads(response.text)
-    # return response_json
-    response_two = []
-    add = False
-    next_id = "b33d1587-3539-5735-af43-e3e62f02ca4b"
-    import gzip
-    import io
     try:
         for task in response_json["records"]:
             if "Run Pylint Next" in task["name"]:
-                log_link = task['log']['url'] + "?api-version=7.1"
+                log_link = task['log']['url'] + "?api-version=6.0"
                 # Get the log file from the build link
                 log_output = requests.get(log_link, headers=AUTH_HEADERS)
                 build_output = log_output.content.decode("utf-8")
