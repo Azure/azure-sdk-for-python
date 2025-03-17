@@ -834,7 +834,7 @@ class CallAutomationClient:
             kwargs.pop("group_call_id", None),
             kwargs.pop("room_id", None),
             args
-        ) if args else None
+        )
         external_storage = build_external_storage(kwargs.pop("recording_storage", None))
         call_connection_id = kwargs.pop("call_connection_id", None)
         start_recording_request = StartCallRecordingRequest(
