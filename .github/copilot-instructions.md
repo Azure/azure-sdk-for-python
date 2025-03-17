@@ -18,7 +18,7 @@ Before prompting the user to run any command, please prompt the user to create a
 
 - DO NOT solve a pylint warning if you are not 100% confident about the answer. If you think your approach might not be the best, stop trying to fix the warning and leave it as is.
 - DO NOT create a new file when solving a pylint error, all solutions must remain in the current file.
-- DO NOT make up or create modules or imports that do not exist to solve a pylint warning.
+- DO NOT import a module or modules that do not exist to solve a pylint warning.
 - DO NOT add new dependencies or imports to the project to solve a pylint warning.
 - DO NOT make larger changes where a smaller change would fix the issue.
 - DO NOT change the code style or formatting of the code unless it is necessary to fix a pylint warning.
