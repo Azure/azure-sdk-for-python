@@ -10,6 +10,7 @@ from typing_extensions import overload, override
 
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._common.utils import parse_quality_evaluator_reason_score
 from azure.ai.evaluation._model_configurations import Conversation, Message
 
 
@@ -145,10 +146,9 @@ class CompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
 
-        if isinstance(llm_output, dict):
-            completeness_score = llm_output.get("completeness", math.nan)
-
-            reason = llm_output.get("completeness_reason", "")
+        completeness_score = math.nan
+        if llm_output:
+            completeness_score, reason = parse_quality_evaluator_reason_score(llm_output, valid_score_range="[1-5]")
 
             score_result = 'pass' if completeness_score >= self.threshold else 'fail'
             is_response_complete = completeness_score >= self.threshold
