@@ -62,9 +62,9 @@ class MockGlobalEndpointManager:
         return self._WriteEndpoint
 
     def _GetDatabaseAccount(self, **kwargs):
-        return documents.DatabaseAccount()
+        return documents.DatabaseAccount(), ""
 
-    def force_refresh(self, database_account):
+    def force_refresh_on_startup(self, database_account):
         return
 
     def get_write_endpoint(self):

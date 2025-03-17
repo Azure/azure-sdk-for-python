@@ -10,7 +10,7 @@ import pytest_asyncio
 import azure.cosmos.exceptions as exceptions
 import test_config
 from azure.cosmos import PartitionKey
-from azure.cosmos._location_cache import RegionalEndpoint
+from azure.cosmos._location_cache import RegionalRoutingContext, EndpointOperationType
 from azure.cosmos.aio import CosmosClient, _retry_utility_async
 
 COLLECTION = "created_collection"
@@ -81,7 +81,7 @@ class TestTimeoutRetryPolicyAsync:
         self.original_execute_function = _retry_utility_async.ExecuteFunctionAsync
         try:
             # should retry once and then succeed
-            mf = self.MockExecuteFunction(self.original_execute_function, 5, error_code)
+            mf = self.MockExecuteFunction(self.original_execute_function, 2, error_code)
             _retry_utility_async.ExecuteFunctionAsync = mf
             await setup[COLLECTION].read_item(item=created_document['id'],
                                               partition_key=created_document['pk'])
@@ -105,15 +105,15 @@ class TestTimeoutRetryPolicyAsync:
         self.original_execute_function = _retry_utility_async.ExecuteFunctionAsync
         original_location_cache = mock_client.client_connection._global_endpoint_manager.location_cache
         fake_endpoint = "other-region"
-        regional_endpoint = RegionalEndpoint(self.host, self.host)
-        regional_endpoint_2 = RegionalEndpoint(fake_endpoint, fake_endpoint)
+        regional_routing_context = RegionalRoutingContext(self.host, self.host)
+        regional_routing_context_2 = RegionalRoutingContext(fake_endpoint, fake_endpoint)
         region_1 = "East US"
         region_2 = "West US"
-        original_location_cache.available_read_locations = [region_1, region_2]
-        original_location_cache.available_read_regional_endpoints_by_locations = {region_1: regional_endpoint,
-                                                                                  region_2: regional_endpoint_2
+        original_location_cache.account_read_locations = [region_1, region_2]
+        original_location_cache.account_read_regional_routing_contexts_by_location = {region_1: regional_routing_context,
+                                                                                  region_2: regional_routing_context_2
                                                                                   }
-        original_location_cache.read_regional_endpoints = [regional_endpoint, regional_endpoint_2]
+        original_location_cache.read_regional_routing_contexts = [regional_routing_context, regional_routing_context_2]
         try:
             # should retry once and then succeed
             mf = self.MockExecuteFunctionCrossRegion(self.original_execute_function, error_code, fake_endpoint)
@@ -121,6 +121,7 @@ class TestTimeoutRetryPolicyAsync:
             await container.read_item(item=created_document['id'], partition_key=created_document['pk'])
         finally:
             _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
+            await mock_client.close()
 
     @pytest.mark.parametrize("error_code", error_codes())
     async def test_timeout_failover_retry_policy_for_write_failure_async(self, setup, error_code):
@@ -141,9 +142,6 @@ class TestTimeoutRetryPolicyAsync:
                 assert err.status_code == error_code
         finally:
             _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
-
-
-
 
     class MockExecuteFunction(object):
         def __init__(self, org_func, num_exceptions, status_code):
