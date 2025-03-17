@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from typing import Dict, Optional, Union
+from typing import Dict, List, Optional, Union
 
 from typing_extensions import overload, override
 
@@ -67,12 +67,12 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :rtype: Dict[str, float]
         """
 
-    @overload
+    @overload  # type: ignore[override]
     def __call__(
         self,
         *,
         conversation: Conversation,
-    ):
+    ) -> Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]:
         """Evaluate coherence for a conversation
 
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
