@@ -42,6 +42,7 @@ USER_TEXT_TEMPLATE_DICT: Dict[str, Template] = {
     "DEFAULT": Template("<Human>{$query}</><System>{$response}</>"),
 }
 
+INFERENCE_OF_SENSITIVE_ATTRIBUTES = "inference_sensitive_attributes"
 
 def get_formatted_template(data: dict, annotation_task: str) -> str:
     """Given the task and input data, produce a formatted string that will serve as the main
@@ -70,7 +71,7 @@ def get_formatted_template(data: dict, annotation_task: str) -> str:
             "completion": data.get("response", "")
         }
         return json.dumps(as_dict)
-    if annotation_task == Tasks.ISA:
+    if annotation_task == Tasks.UNGROUNDED_ATTRIBUTES:
         as_dict = {
             "query": data.get("query", ""),
             "response": data.get("response", ""),
@@ -173,7 +174,7 @@ def generate_payload(normalized_user_text: str, metric: str, annotation_task: st
     task = annotation_task
     if metric == EvaluationMetrics.PROTECTED_MATERIAL:
         include_metric = False
-    elif metric == EvaluationMetrics.ISA:
+    elif metric == EvaluationMetrics.UNGROUNDED_ATTRIBUTES:
         include_metric = False
     elif metric == _InternalEvaluationMetrics.ECI:
         include_metric = False
@@ -266,7 +267,6 @@ async def fetch_result(operation_id: str, rai_svc_url: str, credential: TokenCre
         sleep_time = RAIService.SLEEP_TIME**request_count
         await asyncio.sleep(sleep_time)
 
-
 def parse_response(  # pylint: disable=too-many-branches,too-many-statements
     batch_response: List[Dict], metric_name: str, metric_display_name: Optional[str] = None
 ) -> Dict[str, Union[str, float]]:
@@ -290,11 +290,15 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
         _InternalEvaluationMetrics.ECI,
         EvaluationMetrics.XPIA,
         EvaluationMetrics.CODE_VULNERABILITY,
-        EvaluationMetrics.ISA,
+        EvaluationMetrics.UNGROUNDED_ATTRIBUTES,
     }:
         result = {}
         if not batch_response or len(batch_response[0]) == 0:
             return {}
+        if metric_name == EvaluationMetrics.UNGROUNDED_ATTRIBUTES and INFERENCE_OF_SENSITIVE_ATTRIBUTES in batch_response[0]:
+            batch_response[0] = { 
+                EvaluationMetrics.UNGROUNDED_ATTRIBUTES: batch_response[0][INFERENCE_OF_SENSITIVE_ATTRIBUTES] 
+            } 
         if metric_name == EvaluationMetrics.PROTECTED_MATERIAL and metric_name not in batch_response[0]:
             pm_metric_names = {"artwork", "fictional_characters", "logos_and_brands"}
             for pm_metric_name in pm_metric_names:
@@ -330,7 +334,7 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
             result[metric_display_name + "_information_gathering"] = (
                 parsed_response["information_gathering"] if "information_gathering" in parsed_response else math.nan
             )
-        if metric_name == EvaluationMetrics.CODE_VULNERABILITY or metric_name == EvaluationMetrics.ISA:
+        if metric_name == EvaluationMetrics.CODE_VULNERABILITY or metric_name == EvaluationMetrics.UNGROUNDED_ATTRIBUTES:
             # Add all attributes under the details.
             details = {}
             for key, value in parsed_response.items():

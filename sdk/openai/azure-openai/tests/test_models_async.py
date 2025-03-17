@@ -14,6 +14,7 @@ from conftest import configure_async, ASST_AZURE, OPENAI, AZURE, PREVIEW, GA
 @pytest.mark.live_test_only
 class TestModelsAsync(AzureRecordedTestCase):
 
+    @pytest.mark.skip("InternalServerError, opened issue")
     @configure_async
     @pytest.mark.asyncio
     @pytest.mark.parametrize(

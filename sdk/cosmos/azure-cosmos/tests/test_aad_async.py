@@ -86,7 +86,7 @@ class CosmosEmulatorCredential(object):
 
 
 @pytest.mark.cosmosEmulator
-class TestAADAsync(unittest.TestCase):
+class TestAADAsync(unittest.IsolatedAsyncioTestCase):
     client: CosmosClient = None
     database: DatabaseProxy = None
     container: ContainerProxy = None
@@ -96,18 +96,29 @@ class TestAADAsync(unittest.TestCase):
     credential = CosmosEmulatorCredential() if configs.is_emulator else configs.credential_async
 
     @classmethod
-    async def setUpClass(cls):
-        cls.client = CosmosClient(cls.host, cls.credential)
-        cls.database = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
-        cls.container = cls.database.get_container_client(cls.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
+    def setUpClass(cls):
+        if (cls.credential == '[YOUR_KEY_HERE]' or
+                cls.host == '[YOUR_ENDPOINT_HERE]'):
+            raise Exception(
+                "You must specify your Azure Cosmos account values for "
+                "'masterKey' and 'host' at the top of this class to run the "
+                "tests.")
+
+    async def asyncSetUp(self):
+        self.client = CosmosClient(self.host, self.credential)
+        self.database = self.client.get_database_client(self.configs.TEST_DATABASE_ID)
+        self.container = self.database.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
+
+    async def asyncTearDown(self):
+        await self.client.close()
 
     async def test_aad_credentials_async(self):
         # Do any R/W data operations with your authorized AAD client
 
-        print("Container info: " + str(self.container.read()))
+        print("Container info: " + str(await self.container.read()))
         await self.container.create_item(get_test_item(0))
         print("Point read result: " + str(await self.container.read_item(item='Item_0', partition_key='pk')))
-        query_results = list(await self.container.query_items(query='select * from c', partition_key='pk'))
+        query_results = [item async for item in self.container.query_items(query='select * from c', partition_key='pk')]
         assert len(query_results) == 1
         print("Query result: " + str(query_results[0]))
         await self.container.delete_item(item='Item_0', partition_key='pk')
