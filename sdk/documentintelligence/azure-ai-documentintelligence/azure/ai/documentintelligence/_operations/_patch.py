@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -13,7 +14,7 @@ from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, Mapp
 
 from azure.core.pipeline import PipelineResponse
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
-from azure.core.polling.base_polling import LROBasePolling
+from azure.core.polling.base_polling import LROBasePolling, OperationResourcePolling
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
@@ -39,6 +40,17 @@ def _parse_operation_id(operation_location_header):
     regex = "[^:]+://[^/]+/documentintelligence/.+/([^?/]+)"
     return re.match(regex, operation_location_header).group(1)
 
+
+class DocumentModelAdministrationPolling(OperationResourcePolling):
+    """Polling method overrides for administration endpoints."""
+
+    def get_final_get_url(self, pipeline_response: Any) -> None:
+        """If a final GET is needed, returns the URL.
+
+        :param any pipeline_response: The pipeline response to get the final url.
+        :rtype: None
+        """
+        return None
 
 class AnalyzeDocumentLROPoller(LROPoller[PollingReturnType_co]):
     @property
@@ -283,7 +295,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
                 "str", response.headers.get("Operation-Location")
             )
 
-            deserialized = _deserialize(_models.DocumentModelDetails, response.json())
+            deserialized = _deserialize(_models.DocumentModelDetails, response.json()["result"])
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
@@ -294,7 +306,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
 
         if polling is True:
             polling_method: PollingMethod = cast(
-                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, lro_algorithms=[DocumentModelAdministrationPolling()], **kwargs)
             )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())

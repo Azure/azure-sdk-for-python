@@ -76,6 +76,19 @@ class TestClient(AzureRecordedTestCase):
 
     @configure
     @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
+    def test_deployment_with_nondeployment_api(self, client, api_type, api_version, **kwargs):
+
+        client = openai.AzureOpenAI(
+            azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
+            azure_deployment=ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME,
+            azure_ad_token_provider=get_bearer_token_provider(get_credential(), "https://cognitiveservices.azure.com/.default"),
+            api_version=LATEST,
+        )
+        model = client.models.retrieve(**kwargs)
+        assert model
+
+    @configure
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
     def test_chat_completion_base_url(self, client, api_type, api_version, **kwargs):
 
         client = openai.AzureOpenAI(
