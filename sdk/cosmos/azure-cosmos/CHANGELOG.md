@@ -7,9 +7,11 @@
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed bug preventing health check in some scenarios. See [PR 39647](https://github.com/Azure/azure-sdk-for-python/pull/39647)
 * Fixed `partition_key` filter for `query_items_change_feed` API. See [PR 39895](https://github.com/Azure/azure-sdk-for-python/pull/39895)
 
 #### Other Changes
+* Moved endpoint health check to the background for async APIs. See [PR 39647](https://github.com/Azure/azure-sdk-for-python/pull/39647)
 
 ### 4.10.0b1 (2025-02-13)
 
