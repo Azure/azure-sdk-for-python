@@ -16,7 +16,7 @@ from azure.ai.evaluation import (
     ContentSafetyEvaluator,
     ProtectedMaterialEvaluator,
     CodeVulnerabilityEvaluator,
-    PersonalAttributesEvaluator,
+    UngroundedAttributesEvaluator,
     evaluate,
 )
 from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
@@ -461,6 +461,7 @@ class TestSimAndEval:
         eval_output = evaluate(
             data=file_name,
             evaluators={"code_vulnerability": code_vuln_eval},
+            azure_ai_project=project_scope,
         )
 
         # validate the results
@@ -493,7 +494,7 @@ class TestSimAndEval:
         os.remove(file_name)
     
     @pytest.mark.azuretest
-    def test_personal_attributes_sim_and_eval(self, project_scope, azure_cred):
+    def test_ungrounded_attributes_sim_and_eval(self, project_scope, azure_cred):
         azure_ai_project = {
             "subscription_id": project_scope["subscription_id"],
             "resource_group_name": project_scope["resource_group_name"],
@@ -554,7 +555,7 @@ class TestSimAndEval:
         
         simulator_output = asyncio.run(
             simulator(
-                scenario=AdversarialScenario.ADVERSARIAL_PERSONAL_ATTRIBUTES,
+                scenario=AdversarialScenario.ADVERSARIAL_UNGROUNDED_ATTRIBUTES,
                 max_conversation_turns=1,
                 max_simulation_results=1,
                 target=callback,
@@ -567,18 +568,18 @@ class TestSimAndEval:
         assert simulator_output[0]["messages"][1]["context"] is not None
         
         # Write simulator output to file
-        file_name = "eval_personal_attributes_test.jsonl"
+        file_name = "eval_ungrounded_attributes_test.jsonl"
         
         # Write the output to the file
         with open(file_name, "w") as file:
             file.write(JsonLineChatProtocol(simulator_output[0]).to_eval_qr_json_lines()) 
 
         # Evaluator simulator output
-        pa_eval = PersonalAttributesEvaluator(azure_cred, project_scope)
+        pa_eval = UngroundedAttributesEvaluator(azure_cred, project_scope)
         # run the evaluation
         eval_output = evaluate(
             data=file_name,
-            evaluators={"personal_attributes": pa_eval},
+            evaluators={"ungrounded_attributes": pa_eval},
         )
 
         # validate the results
@@ -592,28 +593,28 @@ class TestSimAndEval:
         assert "inputs.query" in row_result_df.columns.to_list()
         assert "inputs.response" in row_result_df.columns.to_list()
         assert "inputs.context" in row_result_df.columns.to_list()
-        assert "outputs.personal_attributes.personal_attributes_label" in row_result_df.columns.to_list()
-        assert "outputs.personal_attributes.personal_attributes_reason" in row_result_df.columns.to_list()
-        assert "outputs.personal_attributes.personal_attributes_details" in row_result_df.columns.to_list()
+        assert "outputs.ungrounded_attributes.ungrounded_attributes_label" in row_result_df.columns.to_list()
+        assert "outputs.ungrounded_attributes.ungrounded_attributes_reason" in row_result_df.columns.to_list()
+        assert "outputs.ungrounded_attributes.ungrounded_attributes_details" in row_result_df.columns.to_list()
 
         assert eval_output["rows"][0]["inputs.query"] == simulator_output[0]["messages"][0]["content"]
         assert eval_output["rows"][0]["inputs.context"] == simulator_output[0]["messages"][1]["context"]
         assert eval_output["rows"][0]["inputs.response"] == simulator_output[0]["messages"][1]["content"]
         
-        assert eval_output["rows"][0]["outputs.personal_attributes.personal_attributes_label"] in [True, False]
-        assert eval_output["rows"][0]["outputs.personal_attributes.personal_attributes_details"]["groundedness"] in [True, False]
-        assert eval_output["rows"][0]["outputs.personal_attributes.personal_attributes_details"]["emotional_state"] in [True, False]
-        assert eval_output["rows"][0]["outputs.personal_attributes.personal_attributes_details"]["protected_class"] in [True, False]
+        assert eval_output["rows"][0]["outputs.ungrounded_attributes.ungrounded_attributes_label"] in [True, False]
+        assert eval_output["rows"][0]["outputs.ungrounded_attributes.ungrounded_attributes_details"]["groundedness"] in [True, False]
+        assert eval_output["rows"][0]["outputs.ungrounded_attributes.ungrounded_attributes_details"]["emotional_state"] in [True, False]
+        assert eval_output["rows"][0]["outputs.ungrounded_attributes.ungrounded_attributes_details"]["protected_class"] in [True, False]
         
         # verifying metrics
         metrics = eval_output["metrics"]
         assert metrics is not None
-        assert "personal_attributes.personal_attributes_defect_rate" in metrics.keys()
-        assert metrics["personal_attributes.personal_attributes_defect_rate"] is not None
-        assert metrics.get("personal_attributes.personal_attributes_defect_rate") >= 0.0
-        assert metrics.get("personal_attributes.personal_attributes_details.emotional_state_defect_rate") >= 0.0
-        assert metrics.get("personal_attributes.personal_attributes_details.protected_class_defect_rate") >= 0.0
-        assert metrics.get("personal_attributes.personal_attributes_details.groundedness_defect_rate") >= 0.0
+        assert "ungrounded_attributes.ungrounded_attributes_defect_rate" in metrics.keys()
+        assert metrics["ungrounded_attributes.ungrounded_attributes_defect_rate"] is not None
+        assert metrics.get("ungrounded_attributes.ungrounded_attributes_defect_rate") >= 0.0
+        assert metrics.get("ungrounded_attributes.ungrounded_attributes_details.emotional_state_defect_rate") >= 0.0
+        assert metrics.get("ungrounded_attributes.ungrounded_attributes_details.protected_class_defect_rate") >= 0.0
+        assert metrics.get("ungrounded_attributes.ungrounded_attributes_details.groundedness_defect_rate") >= 0.0
         
         # Cleanup file
         os.remove(file_name)

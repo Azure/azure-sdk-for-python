@@ -27,7 +27,7 @@ class EvaluationMetrics:
     LOGOS_AND_BRANDS = "logos_and_brands"
     XPIA = "xpia"
     CODE_VULNERABILITY = "code_vulnerability"
-    PERSONAL_ATTRIBUTES = "personal_attributes"
+    UNGROUNDED_ATTRIBUTES = "ungrounded_attributes"
 
 
 class _InternalEvaluationMetrics:
