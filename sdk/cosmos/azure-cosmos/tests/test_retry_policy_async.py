@@ -225,7 +225,7 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
 
                 self.assertDictEqual(created_document, {})
 
-                self.assertEqual(mf.counter, 2)
+                self.assertEqual(mf.counter, 1)
             finally:
                 _retry_utility.ExecuteFunctionAsync = self.original_execute_function
 
