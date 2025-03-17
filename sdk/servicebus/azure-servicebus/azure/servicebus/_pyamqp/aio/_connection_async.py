@@ -93,6 +93,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         **kwargs: Any,
     ):  # pylint:disable=too-many-statements
         parsed_url = urlparse(endpoint)
+        self._shutdown = False
 
         if parsed_url.hostname is None:
             raise ValueError(f"Invalid endpoint: {endpoint}")
@@ -183,6 +184,9 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         self._error: Optional[AMQPConnectionError] = None
         self._outgoing_endpoints: Dict[int, Session] = {}
         self._incoming_endpoints: Dict[int, Session] = {}
+
+        self._keep_alive_interval = kwargs.pop("keep_alive_interval", None)
+        self._keep_alive_task = None
 
     async def __aenter__(self) -> "Connection":
         await self.open()
@@ -819,6 +823,19 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         self._outgoing_endpoints[assigned_channel] = session
         return session
 
+    async def _send_empty_frame(self):
+        if self._can_write():
+            await self._outgoing_empty()
+        await self._schedule_keep_alive()
+
+    async def _schedule_keep_alive(self):
+        if self._keep_alive_interval > 0 and not self._shutdown:
+            self._keep_alive_task = asyncio.create_task(self._keep_alive())
+
+    async def _keep_alive(self):
+        await asyncio.sleep(self._keep_alive_interval)
+        await self._send_empty_frame()
+
     async def open(self, wait: bool = False) -> None:
         """Send an Open frame to start the connection.
 
@@ -838,6 +855,9 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             await self._wait_for_response(wait, ConnectionState.OPENED)
         elif not self._allow_pipelined_open:
             raise ValueError("Connection has been configured to not allow piplined-open. Please set 'wait' parameter.")
+        self._shutdown = False
+        if self._keep_alive_interval:
+            await self._schedule_keep_alive()
 
     async def close(self, error: Optional[AMQPError] = None, wait: bool = False) -> None:
         """Close the connection and disconnect the transport.
@@ -871,6 +891,10 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             else:
                 await self._set_state(ConnectionState.CLOSE_SENT)
             await self._wait_for_response(wait, ConnectionState.END)
+            self._shutdown = True
+            if self._keep_alive_task:
+                self._keep_alive_task.cancel()
+                self._keep_alive_task = None
         except Exception as exc:  # pylint:disable=broad-except
             # If error happened during closing, ignore the error and set state to END
             _LOGGER.info("An error occurred when closing the connection: %r", exc, extra=self._network_trace_params)
