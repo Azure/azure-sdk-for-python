@@ -25,6 +25,7 @@ from azure.ai.evaluation._evaluators import (
     _xpia,
     _coherence,
 )
+from azure.ai.evaluation._evaluators._eci._eci import ECIEvaluator
 from azure.ai.evaluation._evaluate import _evaluate
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._model_configurations import AzureAIProject, EvaluationResult
@@ -34,8 +35,9 @@ from azure.ai.evaluation.simulator import (
     AdversarialScenario,
     AdversarialScenarioJailbreak,
     IndirectAttackSimulator,
-    DirectAttackSimulator,
+    DirectAttackSimulator ,
 )
+from azure.ai.evaluation.simulator._adversarial_scenario import _UnstableAdversarialScenario
 from azure.ai.evaluation.simulator._utils import JsonLineList
 from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
@@ -75,6 +77,7 @@ class _SafetyEvaluator(Enum):
     COHERENCE = "coherence"
     INDIRECT_ATTACK = "indirect_attack"
     DIRECT_ATTACK = "direct_attack"
+    ECI = "eci"
 
 
 @experimental
@@ -150,7 +153,7 @@ class _SafetyEvaluation:
         max_simulation_results: int = 3,
         conversation_turns: Optional[List[List[Union[str, Dict[str, Any]]]]] = None,
         tasks: Optional[List[str]] = None,
-        adversarial_scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]] = None,
+        adversarial_scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak, _UnstableAdversarialScenario]] = None,
         source_text: Optional[str] = None,
         direct_attack: bool = False,
     ) -> Dict[str, str]:
@@ -243,7 +246,7 @@ class _SafetyEvaluation:
             )
 
         # if DirectAttack, run DirectAttackSimulator
-        elif direct_attack:
+        elif direct_attack and isinstance(adversarial_scenario, AdversarialScenario):
             self.logger.info(
                 f"Running DirectAttackSimulator with inputs: adversarial_scenario={adversarial_scenario}, "
                 f"max_conversation_turns={max_conversation_turns}, max_simulation_results={max_simulation_results}"
@@ -284,7 +287,7 @@ class _SafetyEvaluation:
             )
             simulator = AdversarialSimulator(azure_ai_project=self.azure_ai_project, credential=self.credential)
             simulator_outputs = await simulator(
-                scenario=adversarial_scenario,
+                scenario=adversarial_scenario, #type: ignore
                 max_conversation_turns=max_conversation_turns,
                 max_simulation_results=max_simulation_results,
                 conversation_turns=conversation_turns,
@@ -357,7 +360,7 @@ class _SafetyEvaluation:
         evaluators: List[_SafetyEvaluator],
         num_turns: int = 3,
         scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]] = None,
-    ) -> Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]]:
+    ) -> Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak, _UnstableAdversarialScenario]]:
         """
         Returns the Simulation scenario based on the provided list of SafetyEvaluator.
 
@@ -381,6 +384,8 @@ class _SafetyEvaluation:
                     if num_turns > 1
                     else AdversarialScenario.ADVERSARIAL_QA
                 )
+            if evaluator == _SafetyEvaluator.ECI:
+                return _UnstableAdversarialScenario.ECI
             if evaluator in [
                 _SafetyEvaluator.GROUNDEDNESS,
                 _SafetyEvaluator.RELEVANCE,
@@ -459,6 +464,10 @@ class _SafetyEvaluation:
                 )
             elif evaluator == _SafetyEvaluator.DIRECT_ATTACK:
                 evaluators_dict["content_safety"] = _content_safety.ContentSafetyEvaluator(
+                    azure_ai_project=self.azure_ai_project, credential=self.credential
+                )
+            elif evaluator == _SafetyEvaluator.ECI:
+                evaluators_dict["eci"] = ECIEvaluator(
                     azure_ai_project=self.azure_ai_project, credential=self.credential
                 )
             else:
