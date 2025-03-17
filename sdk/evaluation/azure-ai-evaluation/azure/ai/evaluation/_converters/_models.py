@@ -23,7 +23,9 @@ _TOOL_CALLS = "tool_calls"
 
 
 class Message(BaseModel):
-    """Represents a message in a conversation with agents, assistants, and tools.
+    """Represents a message in a conversation with agents, assistants, and tools. We need to export these structures
+    to JSON for evaluators and we have custom fields such as createdAt, run_id, and tool_call_id, so we cannot use
+    the standard pydantic models provided by OpenAI.
 
     :param createdAt: The timestamp when the message was created.
     :type createdAt: datetime.datetime
@@ -124,7 +126,7 @@ class ToolCall:
         self.details = details
 
 
-class ConvertedResult(BaseModel):
+class EvaluatorData(BaseModel):
     """Represents the result of a conversion.
 
     :param query: A list of messages representing the system message, chat history, and user query.
@@ -162,6 +164,14 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
     # We will use this as our accumulator.
     messages: List[Message] = []
 
+    # As of March 17th, 2025, we only support custom functions due to built-in code interpreters and bing grounding
+    # tooling not reporting their function calls in the same way. Code interpreters don't include the tool call at
+    # all in most of the cases, and bing would only show the API URL, without arguments or results.
+    # Bing grounding would have "bing_grounding" in details with "requesturl" that will just be the API path with query.
+    # TODO: Work with AI Services to add converter support for BingGrounding and CodeInterpreter.
+    if not hasattr(tool_call.details, _FUNCTION):
+        return messages
+
     # This is the internals of the content object that will be included with the tool call.
     tool_call_id = tool_call.details.id
     content_tool_call = {
@@ -177,7 +187,7 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
     }
 
     # We format it into an assistant message, where the content is a singleton list of the content object.
-    # I think it should be a tool message, since this is the call, but the given schema treats this message as
+    # It should be a tool message, since this is the call, but the given schema treats this message as
     # assistant's action of calling the tool.
     messages.append(AssistantMessage(run_id=run_id, content=[to_dict(content_tool_call)], createdAt=tool_call.created))
 

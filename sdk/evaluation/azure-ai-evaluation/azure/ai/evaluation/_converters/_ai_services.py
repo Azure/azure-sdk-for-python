@@ -19,11 +19,13 @@ from ._models import _USER, _AGENT, _TOOL, _TOOL_CALL, _TOOL_CALLS, _FUNCTION
 from ._models import Message, SystemMessage, UserMessage, AssistantMessage, ToolCall
 
 # Intermediate definitions to hold results.
-from ._models import ToolDefinition, ConvertedResult
+from ._models import ToolDefinition, EvaluatorData
 
 # Utilities.
 from ._models import break_tool_call_into_messages, convert_message
 
+# Maximum items to fetch in a single AI Services API call (imposed by the service).
+_AI_SERVICES_API_MAX_LIMIT = 100
 
 class AIAgentConverter:
     """
@@ -51,10 +53,21 @@ class AIAgentConverter:
         :return: A list of messages in chronological order.
         :rtype: List[Message]
         """
-        messages = self.project_client.agents.list_messages(
-            thread_id=thread_id, limit=100, order=ListSortOrder.ASCENDING
-        )
-        return messages.data
+        to_return = []
+
+        has_more = True
+        after = None
+        while has_more:
+            messages = self.project_client.agents.list_messages(
+                thread_id=thread_id, limit=_AI_SERVICES_API_MAX_LIMIT, order=ListSortOrder.ASCENDING, after=after
+            )
+            has_more = messages.has_more
+            after = messages.last_id
+            if messages.data:
+                # We need to add the messages to the accumulator.
+                to_return.extend(messages.data)
+
+        return to_return
 
     def __list_tool_calls_chronological(self, thread_id: str, run_id: str) -> List[ToolCall]:
         """
@@ -69,9 +82,18 @@ class AIAgentConverter:
         """
         # This is the other API request that we need to make to AI service, such that we can get the details about
         # the tool calls and results. Since the list is given in reverse chronological order, we need to reverse it.
-        run_steps_chronological: List[RunStep] = self.project_client.agents.list_run_steps(
-            thread_id=thread_id, run_id=run_id, limit=100, order=ListSortOrder.ASCENDING
-        ).data
+        run_steps_chronological: List[RunStep] = []
+        has_more = True
+        after = None
+        while has_more:
+            run_steps = self.project_client.agents.list_run_steps(
+                thread_id=thread_id, run_id=run_id, limit=_AI_SERVICES_API_MAX_LIMIT, order=ListSortOrder.ASCENDING, after=after
+            )
+            has_more = run_steps.has_more
+            after = run_steps.last_id
+            if run_steps.data:
+                # We need to add the run steps to the accumulator.
+                run_steps_chronological.extend(run_steps.data)
 
         # Let's accumulate the function calls in chronological order. Function calls
         tool_calls_chronological: List[ToolCall] = []
@@ -109,7 +131,7 @@ class AIAgentConverter:
         return run_ids
 
     @staticmethod
-    def __extract_tool_definitions(thread_run: ThreadRun) -> List[ToolDefinition]:
+    def __extract_function_tool_definitions(thread_run: ThreadRun) -> List[ToolDefinition]:
         """
         Extracts tool definitions from a thread run.
 
@@ -322,10 +344,10 @@ class AIAgentConverter:
         responses: List[Message] = [what for what in final_messages if what.run_id == run_id]
 
         # Collect it into the final result and dump it to JSON.
-        final_result = ConvertedResult(
+        final_result = EvaluatorData(
             query=query,
             response=responses,
-            tool_definitions=AIAgentConverter.__extract_tool_definitions(thread_run),
+            tool_definitions=AIAgentConverter.__extract_function_tool_definitions(thread_run),
         )
 
         return json.loads(final_result.to_json())
@@ -424,7 +446,7 @@ class AIAgentConverter:
         query, responses = AIAgentConverter.__break_into_query_responses(final_messages, run_id)
 
         # Create the final result
-        final_result = ConvertedResult(query=query, response=responses, tool_definitions=tool_definitions)
+        final_result = EvaluatorData(query=query, response=responses, tool_definitions=tool_definitions)
 
         return json.loads(final_result.to_json())
 
