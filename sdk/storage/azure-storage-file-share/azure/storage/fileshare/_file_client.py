@@ -725,13 +725,13 @@ class ShareFileClient(StorageAccountHostsMixin):
             NFS only. The owning group of the file.
         :keyword str file_mode:
             NFS only. The file mode of the file.
-        :keyword mode_copy_mode:
+        :keyword file_mode_copy_mode:
             NFS only. Applicable only when the copy source is a File. Determines the copy behavior
             of the mode bits of the file. Possible values are:
 
             source - The mode on the destination file is copied from the source file.
             override - The mode on the destination file is determined via the file_mode keyword.
-        :paramtype mode_copy_mode: Literal['source', 'override']
+        :paramtype file_mode_copy_mode: Literal['source', 'override']
         :keyword owner_copy_mode:
             NFS only. Applicable only when the copy source is a File. Determines the copy behavior
             of the owner and group of the file. Possible values are:
@@ -763,7 +763,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         owner = kwargs.pop('owner', None)
         group = kwargs.pop('group', None)
         file_mode = kwargs.pop('file_mode', None)
-        file_mode_copy_mode = kwargs.pop('mode_copy_mode', None)
+        file_mode_copy_mode = kwargs.pop('file_mode_copy_mode', None)
         file_owner_copy_mode = kwargs.pop('owner_copy_mode', None)
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
@@ -1701,14 +1701,14 @@ class ShareFileClient(StorageAccountHostsMixin):
         }
 
     @distributed_trace
-    def create_hard_link(
+    def create_hardlink(
         self, target: str,
         *,
         lease: Optional[Union[ShareLeaseClient, str]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
-        """NFS only. Create a hard link to the file specified by path.
+        """NFS only. Creates a hard link to the file specified by path.
 
         :param str target:
             Specifies the path of the target file to which the link will be created, up to 2 KiB in length.

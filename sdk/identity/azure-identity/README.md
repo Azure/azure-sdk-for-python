@@ -269,7 +269,6 @@ Not all credentials require this configuration. Credentials that authenticate th
 |[`DeviceCodeCredential`][device_code_cred_ref]| Interactively authenticates a user on devices with limited UI. | [Device code authentication](https://learn.microsoft.com/entra/identity-platform/v2-oauth2-device-code)|
 |[`InteractiveBrowserCredential`][interactive_cred_ref]| Interactively authenticates a user with the default system browser. | [OAuth2 authentication code](https://learn.microsoft.com/entra/identity-platform/v2-oauth2-auth-code-flow)| `InteractiveBrowserCredential` doesn't support GitHub Codespaces. As a workaround, use [`DeviceCodeCredential`][device_code_cred_ref].
 |[`OnBehalfOfCredential`][obo_cred_ref]| Propagates the delegated user identity and permissions through the request chain. | [On-behalf-of authentication](https://learn.microsoft.com/entra/identity-platform/v2-oauth2-on-behalf-of-flow)|
-|[`UsernamePasswordCredential`][userpass_cred_ref]| **Deprecated** - Authenticates a user with a username and password (doesn't support multifactor authentication). | [Username + password authentication](https://learn.microsoft.com/entra/identity-platform/v2-oauth-ropc)|
 
 ### Authenticate via development tools
 
@@ -303,16 +302,6 @@ variables:
 |`AZURE_CLIENT_CERTIFICATE_PASSWORD`|password of the certificate file, if any|
 |`AZURE_CLIENT_SEND_CERTIFICATE_CHAIN`|If `True`, the credential sends the public certificate chain in the x5c header of each token request's JWT. This is required for Subject Name/Issuer (SNI) authentication. Defaults to False. There's a [known limitation](https://github.com/Azure/azure-sdk-for-python/issues/13349) that async SNI authentication isn't supported.|
 
-### Username and password
-
-> **Warning**: Username and password authentication doesn't support multifactor authentication (MFA) and is **deprecated**. For more details, see [Planning for mandatory MFA](https://aka.ms/azsdk/identity/mfa).
-
-|Variable name|Value
-|-|-
-|`AZURE_CLIENT_ID`|ID of a Microsoft Entra application
-|`AZURE_USERNAME`|a username (usually an email address)
-|`AZURE_PASSWORD`|that user's password
-
 Configuration is attempted in the preceding order. For example, if values for a client secret and certificate are both present, the client secret is used.
 
 ## Continuous Access Evaluation
@@ -322,6 +311,7 @@ As of version 1.14.0, accessing resources protected by [Continuous Access Evalua
 ## Token caching
 
 Token caching is a feature provided by the Azure Identity library that allows apps to:
+
 - Cache tokens in memory (default) or on disk (opt-in).
 - Improve resilience and performance.
 - Reduce the number of requests made to Microsoft Entra ID to obtain access tokens.
@@ -389,7 +379,6 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 [azure_core_transport_doc]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#transport
 [azure_identity_broker]: https://pypi.org/project/azure-identity-broker
 [azure_identity_broker_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity-broker
-[azure_eventhub]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub
 [azure_keyvault_secrets]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-secrets
 [azure_storage_blob]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-blob
 [b2c]: https://learn.microsoft.com/azure/active-directory-b2c/overview
@@ -413,8 +402,5 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 [token_cred_ref]: https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential?view=azure-python
 [supports_token_info_ref]: https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.supportstokeninfo?view=azure-python
 [troubleshooting_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/TROUBLESHOOTING.md
-[userpass_cred_ref]: https://aka.ms/azsdk/python/identity/usernamepasswordcredential
 [vscode_cred_ref]: https://aka.ms/azsdk/python/identity/vscodecredential
 [workload_id_cred_ref]: https://aka.ms/azsdk/python/identity/workloadidentitycredential
-
-
