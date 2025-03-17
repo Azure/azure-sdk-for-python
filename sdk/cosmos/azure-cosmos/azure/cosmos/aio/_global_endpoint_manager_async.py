@@ -38,7 +38,7 @@ from .._location_cache import LocationCache
 
 # pylint: disable=protected-access
 
-logger = logging.getLogger("azure.cosmos._GlobalEndpointManager")
+logger = logging.getLogger("azure.cosmos.aio_GlobalEndpointManager")
 
 class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attributes
     """

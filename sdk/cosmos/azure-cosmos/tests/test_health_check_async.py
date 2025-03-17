@@ -1,3 +1,6 @@
+# The MIT License (MIT)
+# Copyright (c) Microsoft Corporation. All rights reserved.
+
 import asyncio
 import time
 import unittest
@@ -10,8 +13,7 @@ import test_config
 from azure.cosmos import DatabaseAccount, _location_cache
 
 from azure.cosmos._location_cache import RegionalRoutingContext
-from azure.cosmos.aio import CosmosClient, _global_endpoint_manager_async, _cosmos_client_connection_async, \
-    _retry_utility_async
+from azure.cosmos.aio import CosmosClient, _global_endpoint_manager_async, _cosmos_client_connection_async
 
 COLLECTION = "created_collection"
 REGION_1 = "East US"
