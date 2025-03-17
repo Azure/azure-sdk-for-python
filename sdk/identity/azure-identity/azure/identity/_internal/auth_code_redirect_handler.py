@@ -37,11 +37,13 @@ class AuthCodeRedirectServer(HTTPServer):
 
     query_params = {}  # type: Mapping[str, Any]
 
-    def __init__(self, hostname: str, port: int, timeout: int) -> None:
+    def __init__(self, hostname, port, timeout):
+        # type: (str, int, int) -> None
         HTTPServer.__init__(self, (hostname, port), AuthCodeRedirectHandler)
         self.timeout = timeout
 
-    def wait_for_redirect(self) -> Mapping[str, Any]:
+    def wait_for_redirect(self):
+        # type: () -> Mapping[str, Any]
         while not self.query_params:
             try:
                 self.handle_request()
