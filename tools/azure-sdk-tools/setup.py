@@ -59,6 +59,6 @@ setup(
         "build": ["six", "setuptools", "pyparsing", "certifi", "cibuildwheel", "pkginfo", "build"],
         "conda": ["beautifulsoup4"],
         "systemperf": ["aiohttp>=3.0", "requests>=2.0", "tornado==6.0.3", "httpx>=0.21", "azure-core"],
-        "ghtools": ["GitPython", "PyGithub>=1.59.0", "requests>=2.0"],
+        "ghtools": ["GitPython", "PyGithub>=1.59.0", "requests>=2.0", "azure-identity"],
     },
 )
