@@ -1,10 +1,6 @@
 ## Release History
 
-### 4.10.0b2 (Unreleased)
-
-#### Features Added
-
-#### Breaking Changes
+### 4.10.0b2 (2025-04-08)
 
 #### Bugs Fixed
 * Fixed bug preventing health check in some scenarios. See [PR 39647](https://github.com/Azure/azure-sdk-for-python/pull/39647)
