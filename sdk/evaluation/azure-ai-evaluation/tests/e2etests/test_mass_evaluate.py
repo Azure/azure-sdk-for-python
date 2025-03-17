@@ -402,7 +402,7 @@ class TestMassEvaluate:
 
         row_result_df = pd.DataFrame(result["rows"])
         metrics = result["metrics"]
-        assert len(row_result_df.keys()) == 6
+        assert len(row_result_df.keys()) == 5
         assert len(row_result_df["inputs.query"]) == 2
         assert len(row_result_df["inputs.response"]) == 2
         assert len(row_result_df["outputs.code_vulnerability.code_vulnerability_label"]) == 2
