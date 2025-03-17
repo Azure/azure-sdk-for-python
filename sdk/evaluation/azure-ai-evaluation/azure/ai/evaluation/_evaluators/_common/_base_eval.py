@@ -503,6 +503,8 @@ class AsyncEvaluatorBase:
             kwargs["query"] = query
         if response is not None:
             kwargs["response"] = response
+        if tool_definitions is not None:
+            kwargs["tool_definitions"] = tool_definitions
         if context is not None:
             kwargs["context"] = context
         if ground_truth is not None:
