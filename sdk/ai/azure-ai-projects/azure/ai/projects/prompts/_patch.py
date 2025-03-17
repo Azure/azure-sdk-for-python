@@ -57,7 +57,7 @@ class PromptTemplate:
         :rtype: PromptTemplate
         """
         prompt_template = remove_leading_empty_space(prompt_template)
-        prompty = headless(api="chat", content=prompt_template)
+        prompty = headless(api=api, content=prompt_template)
         prompty.template.type = "mustache"  # For Azure, default to mustache instead of Jinja2
         prompty.template.parser = "prompty"
         return cls(

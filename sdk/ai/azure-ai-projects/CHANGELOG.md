@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 * Fix for a bug in agent tracing causing event handler return values to not be returned when tracing is enabled.
+* Add Prompty support from AI Foundry Inference SDK into AI Foundry Projects SDK
 
 ### Breaking Changes
 
