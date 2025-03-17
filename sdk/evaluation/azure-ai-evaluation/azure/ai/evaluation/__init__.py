@@ -20,6 +20,7 @@ from ._evaluators._service_groundedness import GroundednessProEvaluator
 from ._evaluators._meteor import MeteorScoreEvaluator
 from ._evaluators._protected_material import ProtectedMaterialEvaluator
 from ._evaluators._qa import QAEvaluator
+from ._evaluators._completeness import CompletenessEvaluator
 from ._evaluators._relevance import RelevanceEvaluator
 from ._evaluators._retrieval import RetrievalEvaluator
 from ._evaluators._rouge import RougeScoreEvaluator, RougeType
@@ -45,6 +46,7 @@ __all__ = [
     "FluencyEvaluator",
     "GroundednessEvaluator",
     "GroundednessProEvaluator",
+    "CompletenessEvaluator",
     "RelevanceEvaluator",
     "SimilarityEvaluator",
     "QAEvaluator",
