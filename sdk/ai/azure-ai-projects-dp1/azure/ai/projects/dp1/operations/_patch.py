@@ -75,7 +75,7 @@ class DatasetOperations(DatasetOperationsGenerated):
 
         dataset_version = self._outer_instance.datasets.create_or_update(
             name=name,
-            version=dataset_version, 
+            version=version, 
             dataset_version=DatasetVersion(
                 # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.blobclient?view=azure-python#azure-storage-blob-blobclient-url
                 # Per above doc the ".url" contains SAS token... should this be stripped away?
