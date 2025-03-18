@@ -20,6 +20,8 @@ from azure.core.exceptions import ClientAuthenticationError
 from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
 from azure.core.tracing import SpanKind, AbstractSpan
 from azure.core import __version__ as core_version
+from azure.core import PipelineClient
+from azure.core.tracing.decorator import distributed_trace
 
 
 @pytest.mark.skipif(int(core_version.split(".")[1]) < 30, reason="Test requires an azure-core with runtime-checkable")
@@ -126,6 +128,46 @@ class TestOpentelemetryWrapper:
         assert len(tracing_helper.exporter.get_finished_spans()) == 3
         spans_names_list = [span.name for span in tracing_helper.exporter.get_finished_spans()]
         assert spans_names_list == ["outer-span-1", "outer-span-2", "Root"]
+
+    def test_suppress_http_auto_instrumentation_policy(self, tracing_helper):
+        from azure.core.rest import HttpRequest
+        from azure.core.pipeline.transport import RequestsTransport
+        from azure.core.pipeline.policies import DistributedTracingPolicy
+        from azure.core.settings import settings
+
+        settings.tracing_implementation = "opentelemetry"
+
+        class FooClient:
+            def __init__(self, endpoint: str):
+                policies = [DistributedTracingPolicy()]
+                self._client = PipelineClient(endpoint, policies=policies, transport=RequestsTransport())
+
+            @distributed_trace
+            def foo(self):
+                request = HttpRequest("GET", "https://foo.bar")
+                response = self._client.send_request(request)
+                return response
+
+        requests_instrumentor = RequestsInstrumentor()
+        requests_instrumentor.instrument()
+
+        from requests import Response
+
+        with mock.patch("requests.adapters.HTTPAdapter.send") as mock_request:
+            response = Response()
+            response.status_code = 200
+            response.raw = mock.MagicMock()
+            mock_request.return_value = response
+
+            client = FooClient("https://foo.bar")
+            client.foo()
+
+            finished_spans = tracing_helper.exporter.get_finished_spans()
+            # One span for the method and one span for the HTTP request.
+            assert len(finished_spans) == 2
+
+        requests_instrumentor.uninstrument()
+        settings.tracing_implementation = None
 
     def test_nested_span_suppression_with_nested_client(self, tracing_helper):
         with tracing_helper.tracer.start_as_current_span("Root"):

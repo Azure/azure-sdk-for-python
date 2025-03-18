@@ -58,11 +58,12 @@ class _SuppressionContextManager(ContextManager):
     def __enter__(self) -> Any:
         ctx = context.get_current()
         if not isinstance(self._span.span_instance, NonRecordingSpan):
-            if self._span.kind in (SpanKind.INTERNAL, SpanKind.CLIENT):
-                # Suppress INTERNAL spans within this context.
+            if self._span.kind in (SpanKind.INTERNAL, SpanKind.CLIENT, SpanKind.PRODUCER):
+                # This is a client call that's reported for SDK service method.
+                # We're going to suppress all nested spans reported in the context of this call.
+                # We're not suppressing anything in the scope of SERVER or CONSUMER spans because
+                # those wrap user code which may do HTTP requests and call other SDKs.
                 ctx = context.set_value(_SUPPRESSED_SPAN_FLAG, True, ctx)
-
-            if self._span.kind == SpanKind.CLIENT:
                 # Since core already instruments HTTP calls, we need to suppress any automatic HTTP instrumentation
                 # provided by other libraries to prevent duplicate spans. This has no effect if no automatic HTTP
                 # instrumentation libraries are being used.
