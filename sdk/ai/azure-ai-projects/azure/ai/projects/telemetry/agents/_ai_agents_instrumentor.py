@@ -392,7 +392,6 @@ class _AIAgentsInstrumentorPreview:
         return status.value if hasattr(status, "value") else status
 
     def _add_tool_assistant_message_event(self, span, step: RunStep) -> None:
-        # do we want a new event for it ?
         tool_calls = [
             {
                 "id": t.id,
@@ -421,27 +420,31 @@ class _AIAgentsInstrumentorPreview:
             attributes[GEN_AI_EVENT_CONTENT] = json.dumps({"tool_calls": tool_calls_non_recording})
         span.span_instance.add_event(name="gen_ai.assistant.message", attributes=attributes)
 
-    def _add_tool_assistant_message_event_from_thread_run(self, span, run: ThreadRun) -> None:
-        # do we want a new event for it ?
-        tool_calls = [
-            {
+    def _add_tool_event_from_thread_run(self, span, run: ThreadRun) -> None:
+        tool_calls = []
+
+        for t in run.required_action.submit_tool_outputs.tool_calls: # type: ignore
+            try:
+                parsed_arguments = json.loads(t.function.arguments)
+            except json.JSONDecodeError:
+                parsed_arguments = {}
+
+            tool_call = {
                 "id": t.id,
                 "type": t.type,
                 "function": (
-                    {"name": t.function.name, "arguments": json.loads(t.function.arguments)}
+                    {"name": t.function.name, "arguments": parsed_arguments}
                     if isinstance(t, RequiredFunctionToolCall)
                     else None
                 ),
             }
-            for t in run.required_action.submit_tool_outputs.tool_calls
-        ]
+            tool_calls.append(tool_call)
 
         attributes = self._create_event_attributes(
             thread_id=run.thread_id,
             agent_id=run.agent_id,
             thread_run_id=run.id,
             message_status=run.status,
-            usage=run.usage,
         )
 
         if _trace_agents_content:
@@ -1693,19 +1696,21 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
         if message.status in {"completed", "incomplete"}:
             self.last_message = message
 
-        return retval
+        return retval # type: ignore
 
     def on_thread_run(self, run: "ThreadRun") -> None:  # type: ignore[func-returns-value]
         retval = None
 
         if run.status == "requires_action" and isinstance(run.required_action, SubmitToolOutputsAction):
-            self.instrumentor._add_tool_assistant_message_event_from_thread_run(self.span, run)
+            self.instrumentor._add_tool_event_from_thread_run( # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
+                self.span, run
+            )
 
         if self.inner_handler:
             retval = self.inner_handler.on_thread_run(run)  # type: ignore
         self.last_run = run
 
-        return retval
+        return retval # type: ignore
 
     def on_run_step(self, step: "RunStep") -> None:  # type: ignore[func-returns-value]
         retval = None
@@ -1717,7 +1722,7 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
             self.instrumentor.add_thread_message_event(self.span, cast(ThreadMessage, self.last_message), step.usage)
             self.last_message = None
 
-        return retval
+        return retval # type: ignore
 
     def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
@@ -1782,19 +1787,21 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
         if message.status in {"completed", "incomplete"}:
             self.last_message = message
 
-        return retval
+        return retval # type: ignore
 
     async def on_thread_run(self, run: "ThreadRun") -> None:  # type: ignore[func-returns-value]
         retval = None
 
         if run.status == "requires_action" and isinstance(run.required_action, SubmitToolOutputsAction):
-            self.instrumentor._add_tool_assistant_message_event_from_thread_run(self.span, run)
+            self.instrumentor._add_tool_event_from_thread_run( # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
+                self.span, run
+            )
 
         if self.inner_handler:
             retval = await self.inner_handler.on_thread_run(run)  # type: ignore
         self.last_run = run
 
-        return retval
+        return retval # type: ignore
 
     async def on_run_step(self, step: "RunStep") -> None:  # type: ignore[func-returns-value]
         retval = None
@@ -1806,7 +1813,7 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
             self.instrumentor.add_thread_message_event(self.span, cast(ThreadMessage, self.last_message), step.usage)
             self.last_message = None
 
-        return retval
+        return retval # type: ignore
 
     async def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
