@@ -8,7 +8,7 @@ pathlib2==2.3.7.post1
 doc-warden==0.7.2
 beautifulsoup4==4.13.3
 pkginfo==1.12.1.2
-pip==20.3.3
+pip==24.0
 typing-extensions==4.12.2
 pyproject-api==1.9.0
 cibuildwheel==2.23.1
