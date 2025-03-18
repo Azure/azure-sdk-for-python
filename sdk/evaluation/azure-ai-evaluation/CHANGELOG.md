@@ -43,6 +43,7 @@
 
 ### Bugs Fixed
 - Fixed error in `GroundednessProEvaluator` when handling non-numeric values like "n/a" returned from the service.
+- Uploading local evaluation results from `evaluate` with the name run name will no longer result in each online run sharing (and bashing) result files.
 
 ### Other Changes
 
