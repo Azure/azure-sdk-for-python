@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# cspell:ignore fstring
 # pylint: disable=logging-fstring-interpolation
 
 import inspect

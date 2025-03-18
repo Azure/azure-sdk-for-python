@@ -1,6 +1,9 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
+# cspell:ignore Liskov
+
 import asyncio
 import copy
 import json
