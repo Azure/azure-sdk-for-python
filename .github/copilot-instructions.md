@@ -25,3 +25,4 @@ DO prompt the user to create a virtual environment with `<path_to_python_install
 - DO NOT add new dependencies or imports to the project to solve a pylint warning.
 - DO NOT make larger changes where a smaller change would fix the issue.
 - DO NOT change the code style or formatting of the code unless it is necessary to fix a pylint warning.
+- DO NOT delete code or files unless it is necessary to fix a warning.
