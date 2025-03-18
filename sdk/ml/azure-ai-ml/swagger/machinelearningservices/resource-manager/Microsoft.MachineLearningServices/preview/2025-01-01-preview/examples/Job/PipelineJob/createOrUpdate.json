@@ -1,0 +1,168 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "test-rg",
+    "workspaceName": "my-aml-workspace",
+    "id": "string",
+    "api-version": "2025-01-01-preview",
+    "body": {
+      "properties": {
+        "description": "string",
+        "tags": {
+          "string": "string"
+        },
+        "properties": {
+          "string": "string"
+        },
+        "displayName": "string",
+        "experimentName": "string",
+        "services": {
+          "string": {
+            "jobServiceType": "string",
+            "port": 1,
+            "endpoint": "string",
+            "properties": {
+              "string": "string"
+            }
+          }
+        },
+        "computeId": "string",
+        "jobType": "Pipeline",
+        "settings": {},
+        "inputs": {
+          "string": {
+            "description": "string",
+            "jobInputType": "literal",
+            "value": "string"
+          }
+        },
+        "outputs": {
+          "string": {
+            "description": "string",
+            "jobOutputType": "uri_file",
+            "mode": "Upload",
+            "uri": "string"
+          }
+        }
+      }
+    }
+  },
+  "responses": {
+    "200": {
+      "headers": {},
+      "body": {
+        "id": "string",
+        "name": "string",
+        "type": "string",
+        "properties": {
+          "description": "string",
+          "tags": {
+            "string": "string"
+          },
+          "properties": {
+            "string": "string"
+          },
+          "displayName": "string",
+          "status": "NotStarted",
+          "experimentName": "string",
+          "services": {
+            "string": {
+              "jobServiceType": "string",
+              "port": 1,
+              "endpoint": "string",
+              "status": "string",
+              "errorMessage": "string",
+              "properties": {
+                "string": "string"
+              }
+            }
+          },
+          "computeId": "string",
+          "jobType": "Pipeline",
+          "settings": {},
+          "inputs": {
+            "string": {
+              "description": "string",
+              "jobInputType": "literal",
+              "value": "string"
+            }
+          },
+          "outputs": {
+            "string": {
+              "description": "string",
+              "jobOutputType": "uri_file",
+              "mode": "Upload",
+              "uri": "string"
+            }
+          }
+        },
+        "systemData": {
+          "createdAt": "2020-01-01T12:34:56.999Z",
+          "createdBy": "string",
+          "createdByType": "User",
+          "lastModifiedAt": "2020-01-01T12:34:56.999Z",
+          "lastModifiedBy": "string",
+          "lastModifiedByType": "User"
+        }
+      }
+    },
+    "201": {
+      "headers": {},
+      "body": {
+        "id": "string",
+        "name": "string",
+        "type": "string",
+        "properties": {
+          "description": "string",
+          "tags": {
+            "string": "string"
+          },
+          "properties": {
+            "string": "string"
+          },
+          "displayName": "string",
+          "status": "NotStarted",
+          "experimentName": "string",
+          "services": {
+            "string": {
+              "jobServiceType": "string",
+              "port": 1,
+              "endpoint": "string",
+              "status": "string",
+              "errorMessage": "string",
+              "properties": {
+                "string": "string"
+              }
+            }
+          },
+          "computeId": "string",
+          "jobType": "Pipeline",
+          "settings": {},
+          "inputs": {
+            "string": {
+              "description": "string",
+              "jobInputType": "literal",
+              "value": "string"
+            }
+          },
+          "outputs": {
+            "string": {
+              "description": "string",
+              "jobOutputType": "uri_file",
+              "mode": "Upload",
+              "uri": "string"
+            }
+          }
+        },
+        "systemData": {
+          "createdAt": "2020-01-01T12:34:56.999Z",
+          "createdBy": "string",
+          "createdByType": "User",
+          "lastModifiedAt": "2020-01-01T12:34:56.999Z",
+          "lastModifiedBy": "string",
+          "lastModifiedByType": "User"
+        }
+      }
+    }
+  }
+}

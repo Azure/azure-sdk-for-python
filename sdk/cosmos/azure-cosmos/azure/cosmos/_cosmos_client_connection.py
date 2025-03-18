@@ -234,8 +234,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Routing map provider
         self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(self)
 
-        database_account = self._global_endpoint_manager._GetDatabaseAccount(**kwargs)
-        self._global_endpoint_manager.force_refresh(database_account)
+        database_account, _ = self._global_endpoint_manager._GetDatabaseAccount(**kwargs)
+        self._global_endpoint_manager.force_refresh_on_startup(database_account)
 
         # Use database_account if no consistency passed in to verify consistency level to be used
         self.session: Optional[_session.Session] = None
@@ -1031,14 +1031,14 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self,
         collection_link: str,
         feed_options: Optional[Mapping[str, Any]] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], Dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """Reads all documents in a collection.
         :param str collection_link: The link to the document collection.
         :param dict feed_options: The additional options for the operation.
         :param response_hook: A callable invoked with the response metadata.
-        :type response_hook: Callable[[Dict[str, str], Dict[str, Any]]
+        :type response_hook: Callable[[Mapping[str, Any], Dict[str, Any]]
         :return: Query Iterable of Documents.
         :rtype: query_iterable.QueryIterable
         """
@@ -1053,7 +1053,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         query: Optional[Union[str, Dict[str, Any]]],
         options: Optional[Mapping[str, Any]] = None,
         partition_key: Optional[PartitionKeyType] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], Dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """Queries documents in a collection.
@@ -1065,7 +1065,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param partition_key: Partition key for the query(default value None)
         :type: partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
         :param response_hook: A callable invoked with the response metadata.
-        :type response_hook: Callable[[Dict[str, str], Dict[str, Any]]
+        :type response_hook: Callable[[Mapping[str, Any], Dict[str, Any]], None]
 
         :return:
             Query Iterable of Documents.
@@ -3005,7 +3005,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         query: Optional[Union[str, Dict[str, Any]]],
         options: Optional[Mapping[str, Any]] = None,
         partition_key_range_id: Optional[str] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], Dict[str, Any]], None]] = None,
         is_query_plan: bool = False,
         **kwargs: Any
     ) -> Tuple[List[Dict[str, Any]], CaseInsensitiveDict]:
@@ -3021,7 +3021,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The request options for the request.
         :param str partition_key_range_id:
             Specifies partition key range id.
-        :param function response_hook:
+        :param response_hook: A callable invoked with the response metadata.
+        :type response_hook: Callable[[Mapping[str, Any], Dict[str, Any]], None]
         :param bool is_query_plan:
             Specifies if the call is to fetch query plan
         :returns: A list of the queried resources.

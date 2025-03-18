@@ -42,11 +42,11 @@
 # Service team
 ####
 
-# ServiceOwners: @luigiw @needuv @achauhan-scc @kingernupur @paulshealy1 @singankit
+# ServiceOwners: @luigiw @needuv @paulshealy1 @singankit
 # ServiceLabel: %AI
 
 # PRLabel: %AI
-/sdk/ai/                                                             @luigiw @needuv @achauhan-scc @kingernupur @paulshealy1 @singankit @dargilco @jhakulin @jayesh-tanna
+/sdk/ai/                                                             @luigiw @needuv @paulshealy1 @singankit @dargilco @jhakulin
 
 # ServiceOwners: @luigiw @needuv @singankit
 # ServiceLabel: %Evaluation
@@ -122,7 +122,7 @@
 
 # ServiceLabel: %Communication - Phone Numbers
 # PRLabel: %Communication - Phone Numbers
-/sdk/communication/azure-communication-phonenumbers/                 @miguhern @whisper6284 @danielav7
+/sdk/communication/azure-communication-phonenumbers/                 @Arazan @whisper6284 @danielortega-msft @sofiar-msft
 
 # ServiceLabel: %Communication - Rooms
 # PRLabel: %Communication - Rooms
@@ -172,6 +172,8 @@
 
 # AzureSdkOwners: @mccoyp
 # ServiceLabel: %KeyVault
+# ServiceOwners:                                                     @cheathamb36 @chen-karen @lgonsoulin
+
 # PRLabel: %KeyVault
 /sdk/keyvault/                                                       @mccoyp
 

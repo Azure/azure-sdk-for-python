@@ -1,0 +1,22 @@
+{
+  "parameters": {
+    "subscriptionId": "34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
+    "resourceGroupName": "testrg123",
+    "workspaceName": "workspaces123",
+    "computeName": "compute123",
+    "api-version": "2025-01-01-preview",
+    "dataMounts": [
+      {
+        "source": "azureml://subscriptions/some-sub/resourcegroups/some-rg/workspaces/some-ws/data/some-data-asset-name/versions/some-data-asset-version",
+        "sourceType": "URI",
+        "mountName": "hello",
+        "mountAction": "Mount",
+        "mountMode": "ReadOnly",
+        "mountPath": "/some/random/path/on/host"
+      }
+    ]
+  },
+  "responses": {
+    "200": {}
+  }
+}

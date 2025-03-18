@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed an issue where the package version in operation user agent strings was always set to "unknown" instead of the actual package version. ([#39866](https://github.com/Azure/azure-sdk-for-python/pull/39866))
+
 ### Other Changes
 
 ## 1.4.1 (2025-01-14)

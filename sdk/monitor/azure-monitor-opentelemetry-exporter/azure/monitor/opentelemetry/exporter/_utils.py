@@ -23,9 +23,9 @@ from azure.monitor.opentelemetry.exporter._version import VERSION as ext_version
 from azure.monitor.opentelemetry.exporter._constants import (
     _AKS_ARM_NAMESPACE_ID,
     _DEFAULT_AAD_SCOPE,
-    _PYTHON_ENABLE_OPENTELEMETRY,
     _INSTRUMENTATIONS_BIT_MAP,
     _FUNCTIONS_WORKER_RUNTIME,
+    _PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY,
     _WEBSITE_SITE_NAME,
 )
 
@@ -73,7 +73,7 @@ def _is_attach_enabled():
     if _is_on_app_service():
         return isdir("/agents/python/")
     if _is_on_functions():
-        return environ.get(_PYTHON_ENABLE_OPENTELEMETRY) == "true"
+        return environ.get(_PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY) == "true"
     return False
 
 
@@ -254,6 +254,12 @@ def _populate_part_a_fields(resource: Resource):
             tags[ContextTagKeys.AI_APPLICATION_VER] = app_version  # type: ignore
 
     return tags
+
+
+def _is_synthetic_source(properties: Attributes) -> bool:
+    # TODO: Use semconv symbol when released in upstream
+    synthetic_type = properties.get("user_agent.synthetic.type")  # type: ignore
+    return synthetic_type in ("bot", "test")
 
 
 # pylint: disable=W0622

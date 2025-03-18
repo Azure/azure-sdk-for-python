@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
@@ -69,7 +70,7 @@ with project_client:
     # [END create_agent_and_message_with_code_interpreter_file_attachment]
     print(f"Created message, message ID: {message.id}")
 
-    run = project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+    run = project_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
     print(f"Run finished with status: {run.status}")
 
     if run.status == "failed":

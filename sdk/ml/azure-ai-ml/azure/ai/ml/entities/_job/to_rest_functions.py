@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any
 
 from azure.ai.ml._restclient.v2023_08_01_preview.models import JobBase as JobBaseData
+from azure.ai.ml._restclient.v2025_01_01_preview.models import JobBase as JobBaseData202501
 from azure.ai.ml.constants._common import DEFAULT_EXPERIMENT_NAME
 from azure.ai.ml.entities._builders.command import Command
 from azure.ai.ml.entities._builders.pipeline import Pipeline
@@ -47,7 +48,7 @@ def _(job: Job) -> JobBaseData:
 
 
 @to_rest_job_object.register(Command)
-def _(command: Command) -> JobBaseData:
+def _(command: Command) -> JobBaseData202501:
     rest_job = command._to_job()._to_rest_object()
     generate_defaults(command, rest_job)
     return rest_job

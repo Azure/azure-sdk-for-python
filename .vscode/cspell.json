@@ -314,6 +314,7 @@
     "logz",
     "LPCWSTR",
     "Lucene",
+    "Mazuel",
     "mbps",
     "mday",
     "mibps",
@@ -329,6 +330,7 @@
     "msrest",
     "msrestazure",
     "MSSQL",
+    "MSRC",
     "mutex",
     "myacr",
     "mydirectory",
@@ -353,6 +355,7 @@
     "onmicrosoft",
     "openai",
     "OPENAI",
+    "otel",
     "otlp",
     "OTLP",
     "owasp",
@@ -1397,6 +1400,7 @@
         "upia",
         "xpia",
         "expirable",
+        "ralphe"
       ]
     },
     {

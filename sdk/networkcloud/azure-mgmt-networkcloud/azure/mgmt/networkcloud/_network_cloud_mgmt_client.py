@@ -42,11 +42,10 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class NetworkCloudMgmtClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class NetworkCloudMgmtClient:  # pylint: disable=too-many-instance-attributes
     """The Network Cloud APIs provide management of the Azure Operator Nexus compute resources such as
     on-premises clusters, hardware resources, and workload infrastructure resources.
 
@@ -100,8 +99,8 @@ class NetworkCloudMgmtClient:  # pylint: disable=client-accepts-api-version-keyw
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2024-06-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2024-07-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
