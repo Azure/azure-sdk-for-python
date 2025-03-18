@@ -12,7 +12,7 @@ beautifulsoup4==4.13.3
 pkginfo==1.12.1.2
 pip==24.0
 typing-extensions==4.12.2
-pyproject-api==1.9.0
+pyproject-api==1.8.0
 cibuildwheel==2.16.5
 importlib-metadata==8.6.1
 
