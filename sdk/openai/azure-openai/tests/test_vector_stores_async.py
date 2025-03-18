@@ -83,6 +83,27 @@ class TestVectorStoresAsync(AzureRecordedTestCase):
             assert vector_store_file_2.id == vector_store_file.id
             assert vector_store_file.vector_store_id == vector_store.id
 
+            vector_store_file_updated = await client_async.vector_stores.files.update(
+                file_id=vector_store_file.id,
+                vector_store_id=vector_store.id,
+                attributes={"Q": "A"}
+            )
+            assert vector_store_file_updated.attributes == {"Q": "A"}
+
+            file_content = await client_async.vector_stores.files.content(
+                vector_store_id=vector_store.id,
+                file_id=vector_store_file.id
+            )
+            assert file_content
+
+            search_response = await client_async.vector_stores.search(
+                vector_store_id=vector_store.id,
+                query="vacation days",
+            )
+            assert len(search_response.data) > 0
+            async for s in search_response:
+                assert s
+
         finally:
             os.remove(path)
             deleted_vector_store_file = await client_async.vector_stores.files.delete(

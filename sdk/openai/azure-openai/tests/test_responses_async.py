@@ -5,9 +5,11 @@
 
 from __future__ import annotations
 
+import base64
 import uuid
 import pathlib
 import os
+import json
 
 import pytest
 import openai
@@ -20,15 +22,36 @@ from conftest import (
     PREVIEW,
 )
 
+def assert_required(response: openai.types.responses.Response):
+    assert response.id is not None
+    assert response.created_at is not None
+    assert response.model
+    assert response.object == "response"
+    assert response.status in ["completed", "incomplete", "failed", "in_progress"]
+    assert response.usage.input_tokens is not None
+    assert response.usage.output_tokens is not None
+    assert response.usage.total_tokens == response.usage.input_tokens + response.usage.output_tokens
+    assert response.usage.output_tokens_details is not None
+    assert len(response.output) > 0
+    assert response.output[0].content[0].type == "output_text"
+    assert response.output[0].content[0].text
+    assert response.output[0].id is not None
+    assert response.output[0].role == "assistant"
+    assert response.output[0].type == "message"
+    assert response.parallel_tool_calls is not None
+    assert response.text.format.type is not None
+    # assert response.tool_choice is not None  TODO
+    assert response.tools is not None
+
 
 @pytest.mark.live_test_only
-class TestResponses(AzureRecordedTestCase):
+class TestResponsesAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(CUA_AZURE, "2025-03-01-preview"), (OPENAI, "v1")]
+        [(CUA_AZURE, PREVIEW), (OPENAI, "v1")]
     )
     async def test_responses(self, client_async: openai.AsyncAzureOpenAI | openai.AsyncOpenAI, api_type, api_version, **kwargs):
         response = await client_async.responses.create(
@@ -36,26 +59,12 @@ class TestResponses(AzureRecordedTestCase):
             **kwargs,
         )
 
-        assert response.id is not None
-        assert response.created_at is not None
-        assert response.model
-        assert response.object == "response"
-        assert response.status == "completed"
-        assert response.usage.input_tokens is not None
-        assert response.usage.output_tokens is not None
-        assert response.usage.total_tokens == response.usage.input_tokens + response.usage.output_tokens
-        assert response.usage.output_tokens_details is not None
-        assert len(response.output) > 0
-        assert response.output[0].content[0].type == "output_text"
-        assert response.output[0].content[0].text
-        assert response.output[0].id is not None
-        assert response.output[0].role == "assistant"
-        assert response.output[0].type == "message"
+        assert_required(response)
 
         retrieved_response = await client_async.responses.retrieve(response.id)
         assert retrieved_response.id == response.id
 
-        input_items = client_async.responses.input_items.list(response.id)
+        input_items = await client_async.responses.input_items.list(response.id)
         assert len(input_items.data) > 0
         data = input_items.data[0]
         assert data.content[0].type == "input_text"
@@ -64,11 +73,13 @@ class TestResponses(AzureRecordedTestCase):
         assert data.role == "user"
         assert data.type == "message"
 
+        await client_async.responses.delete(response.id)
+
     @configure_async
     @pytest.mark.asyncio
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(CUA_AZURE, "2025-03-01-preview"), (OPENAI, "v1")]
+        [(CUA_AZURE, PREVIEW), (OPENAI, "v1")]
     )
     async def test_responses_streaming(self, client_async: openai.AsyncAzureOpenAI | openai.AsyncOpenAI, api_type, api_version, **kwargs):
         stream = await client_async.responses.create(
@@ -132,21 +143,37 @@ class TestResponses(AzureRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(CUA_AZURE, "2025-03-01-preview"), (OPENAI, "v1")]
+        [(CUA_AZURE, PREVIEW), (OPENAI, "v1")]
     )
     async def test_responses_with_computer_use_tool(self, client_async: openai.AsyncAzureOpenAI | openai.AsyncOpenAI, api_type, api_version, **kwargs):
+
+        path = pathlib.Path(__file__).parent / "assets" / "browser_github_screenshot.png"
+        with open(str(path), "rb") as f:
+            data = f.read()
+
+        base64_string = base64.b64encode(data).decode("utf-8")
+
         response = await client_async.responses.create(
-            input="what should I click?",
+            input=[
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "input_text", "text": "Where should I click to see Issues?"},
+                        {"type": "input_image", "image_url": f"data:image/png;base64,{base64_string}"}
+                    ]
+                }
+            ],
             tools=[
                 {
                     "type": "computer_use_preview",
-                    "environment": "linux",
+                    "environment": "browser",
                     "display_width": 1920,
                     "display_height": 1080,
                 }
             ],
+            model="computer-use-preview",
             truncation="auto",
-            **kwargs
+            include=["computer_call_output.output.image_url"]
         )
 
         assert response.id is not None
@@ -154,6 +181,8 @@ class TestResponses(AzureRecordedTestCase):
         assert response.model
         assert response.object == "response"
         assert response.status == "completed"
+        assert response.truncation == "auto"
+        assert response.output_text is not None
         assert response.usage.input_tokens is not None
         assert response.usage.output_tokens is not None
         assert response.usage.total_tokens == response.usage.input_tokens + response.usage.output_tokens
@@ -167,16 +196,16 @@ class TestResponses(AzureRecordedTestCase):
 
         assert response.tools
         tools = response.tools[0]
-        assert tools.type == "computer-preview"
+        assert tools.type == "computer_use_preview"
         assert tools.display_height == 1080
         assert tools.display_width == 1920
-        assert tools.environment == "linux"
+        assert tools.environment == "browser"
 
     @configure_async
     @pytest.mark.asyncio
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(CUA_AZURE, "2025-03-01-preview"), (OPENAI, "v1")]
+        [(CUA_AZURE, PREVIEW), (OPENAI, "v1")]
     )
     async def test_responses_with_file_search_tool(self, client_async: openai.AsyncAzureOpenAI | openai.AsyncOpenAI, api_type, api_version, **kwargs):
         try:
@@ -199,6 +228,7 @@ class TestResponses(AzureRecordedTestCase):
                 tools=[{
                     "type": "file_search",
                     "vector_store_ids": [vector_store.id]}],
+                include=["file_search_call.results"],
                 **kwargs
             )
 
@@ -216,6 +246,10 @@ class TestResponses(AzureRecordedTestCase):
             assert response.output[0].type == "file_search_call"
             assert response.output[0].status == "completed"
             assert response.output[0].queries
+            assert response.output[0].results
+            assert response.output[0].results[0].file_id is not None
+            assert response.output[0].results[0].score is not None
+            assert response.output[0].results[0].text is not None
             assert response.output[0].id is not None
             assert response.output[1].id is not None
             assert response.output[1].role == "assistant"
@@ -223,7 +257,7 @@ class TestResponses(AzureRecordedTestCase):
             assert response.output[1].content[0].type == "output_text"
             assert response.output[1].content[0].text
             assert response.output[1].content[0].annotations
-            assert response.output[1].content[0].annotations[0].type == "file_citations"
+            assert response.output[1].content[0].annotations[0].type == "file_citation"
             assert response.output[1].content[0].annotations[0].index is not None
             assert response.output[1].content[0].annotations[0].file_id is not None
             assert response.text.format.type == "text"
@@ -231,6 +265,7 @@ class TestResponses(AzureRecordedTestCase):
             tools = response.tools[0]
             assert tools.type == "file_search"
             assert tools.vector_store_ids == [vector_store.id]
+            assert tools.ranking_options
 
         finally:
             os.remove(path)
@@ -243,7 +278,7 @@ class TestResponses(AzureRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(CUA_AZURE, "2025-03-01-preview"), (OPENAI, "v1")]
+        [(CUA_AZURE, PREVIEW), (OPENAI, "v1")]
     )
     async def test_responses_with_function_tool(self, client_async: openai.AsyncAzureOpenAI | openai.AsyncOpenAI, api_type, api_version, **kwargs):
         messages = [{"role": "user", "content": "What is the weather like in seattle today? search for weather data."}]
@@ -273,6 +308,7 @@ class TestResponses(AzureRecordedTestCase):
             input=messages,
             tools=tools,
             model="gpt-4o-mini",
+            # tool_choice={"type": "function", "name": "weather_search"}  # TODO
         )
         assert response.id is not None
         assert response.created_at is not None
@@ -290,6 +326,8 @@ class TestResponses(AzureRecordedTestCase):
         assert response.output[0].name == "weather_search"
         assert response.output[0].type == "function_call"
 
+        # assert response.tool_choice.name == "weather_search"  TODO
+        # assert response.tool_choice.type == "function"
         assert response.tools
         tools_response = response.tools[0]
         assert tools_response.type == "function"
@@ -310,48 +348,101 @@ class TestResponses(AzureRecordedTestCase):
         assert "Seattle" in response_2.output_text
         assert "80" in response_2.output_text
 
-    @pytest.mark.skip("Not working yet")
     @configure_async
     @pytest.mark.asyncio
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(CUA_AZURE, "2025-03-01-preview"), (OPENAI, "v1")]
+        [(CUA_AZURE, PREVIEW), (OPENAI, "v1")]
+    )
+    async def test_responses_with_parallel_tool_calls(self, client_async: openai.AsyncAzureOpenAI | openai.AsyncOpenAI, api_type, api_version, **kwargs):
+        messages = [
+            {"role": "system", "content": "Don't make assumptions about what values to plug into tools. Ask for clarification if a user request is ambiguous."},
+            {"role": "user", "content": "What's the weather like today in Seattle and Los Angeles?"}
+        ]
+        tools = [
+            {
+                "type": "function",
+                "name": "weather_search",
+                "description": "Search for weather data",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "location": {
+                            "type": "string",
+                            "description": "The location to search for weather data.",
+                        },
+                        "date": {
+                            "type": "string",
+                            "description": "The date to search for weather data.",
+                        },
+                    },
+                    "required": ["location"],
+                },
+
+            }
+        ]
+        response = await client_async.responses.create(
+            input=messages,
+            tools=tools,
+            model="gpt-4o-mini",
+            parallel_tool_calls=False,
+        )
+        assert response.parallel_tool_calls is False
+        assert len(response.output) == 1
+        assert response.id is not None
+        assert response.created_at is not None
+        assert response.model
+        assert response.object == "response"
+        assert response.status == "completed"
+        assert response.usage.input_tokens is not None
+        assert response.usage.output_tokens is not None
+        assert response.usage.total_tokens == response.usage.input_tokens + response.usage.output_tokens
+        assert response.usage.output_tokens_details is not None
+        assert len(response.output) > 0
+        assert response.output[0].call_id is not None
+        assert response.output[0].id is not None
+        assert response.output[0].name == "weather_search"
+        assert response.output[0].type == "function_call"
+
+        assert response.tools
+        tools_response = response.tools[0]
+        assert tools_response.type == "function"
+        assert tools_response.name == "weather_search"
+        assert tools_response.description == "Search for weather data"
+        assert tools_response.parameters is not None
+
+
+    @pytest.mark.skip("Not working for Azure yet")
+    @configure_async
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(OPENAI, "v1")]
     )
     async def test_responses_with_web_search_tool(self, client_async: openai.AsyncAzureOpenAI | openai.AsyncOpenAI, api_type, api_version, **kwargs):
         response = await client_async.responses.create(
             input="What is the weather like in seattle today? search for weather data.",
             tools=[
                 {
-                    "type": "web_search",
+                    "type": "web_search_preview",
+                    "search_context_size": "medium"
+
                 }
             ],
             model="gpt-4o-mini",
         )
+        assert_required(response)
 
-    @pytest.mark.skip("Not working yet")
-    @configure_async
-    @pytest.mark.asyncio
-    @pytest.mark.parametrize(
-        "api_type, api_version",
-        [(CUA_AZURE, "2025-03-01-preview"), (OPENAI, "v1")]
-    )
-    async def test_responses_with_tool_choice(self, client_async: openai.AsyncAzureOpenAI | openai.AsyncOpenAI, api_type, api_version, **kwargs):
-        response = await client_async.responses.create(
-            model="computer-use-preview",
-            input="Search for recent weather data",
-            tools=[{"type": "web_search"}],
-            tool_choice={"type": "web_search"}
-        )
-        
-        assert response.tool_choice is not None
-        assert response.tool_choice.type == "web_search"
-        assert response.tools is not None
+        assert response.tools
+        tools_response = response.tools[0]
+        assert tools_response.type == "'web_search_preview'"
+        assert tools_response.search_context_size == "medium"
 
     @configure_async
     @pytest.mark.asyncio
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(CUA_AZURE, "2025-03-01-preview"), (OPENAI, "v1")]
+        [(CUA_AZURE, PREVIEW), (OPENAI, "v1")]
     )
     async def test_responses_metadata(self, client_async: openai.AsyncAzureOpenAI | openai.AsyncOpenAI, api_type, api_version, **kwargs):
         metadata = {"session_id": "test-123", "user_id": "user-456"}
@@ -360,14 +451,60 @@ class TestResponses(AzureRecordedTestCase):
             metadata=metadata,
             **kwargs,
         )
-        
+        assert_required(response)
         assert response.metadata == metadata
 
     @configure_async
     @pytest.mark.asyncio
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(CUA_AZURE, "2025-03-01-preview"), (OPENAI, "v1")]
+        [(CUA_AZURE, PREVIEW), (OPENAI, "v1")]
+    )
+    async def test_responses_temperature(self, client_async: openai.AsyncAzureOpenAI | openai.AsyncOpenAI, api_type, api_version, **kwargs):
+        response = await client_async.responses.create(
+            input="hello there!",
+            temperature=0.1,
+            **kwargs,
+        )
+        assert_required(response)
+        assert response.temperature == 0.1
+
+    @configure_async
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(CUA_AZURE, PREVIEW), (OPENAI, "v1")]
+    )
+    async def test_responses_top_p(self, client_async: openai.AsyncAzureOpenAI | openai.AsyncOpenAI, api_type, api_version, **kwargs):
+        response = await client_async.responses.create(
+            input="hello there!",
+            top_p=0.1,
+            **kwargs,
+        )
+        assert_required(response)
+        assert response.top_p == 0.1
+
+    @configure_async
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(CUA_AZURE, PREVIEW), (OPENAI, "v1")]
+    )
+    async def test_responses_user(self, client_async: openai.AsyncAzureOpenAI | openai.AsyncOpenAI, api_type, api_version, **kwargs):
+        user = str(uuid.uuid4())
+        response = await client_async.responses.create(
+            input="hello there!",
+            user=user,
+            **kwargs,
+        )
+        assert_required(response)
+        assert response.user == user
+
+    @configure_async
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(CUA_AZURE, PREVIEW), (OPENAI, "v1")]
     )
     async def test_responses_previous_response_id(self, client_async: openai.AsyncAzureOpenAI | openai.AsyncOpenAI, api_type, api_version, **kwargs):
         initial_response = await client_async.responses.create(
@@ -381,18 +518,178 @@ class TestResponses(AzureRecordedTestCase):
             input=[{"role": "user", "content": "explain why this is funny."}],
         )
         assert response.previous_response_id == initial_response.id
-        assert response.id is not None
-        assert response.created_at is not None
-        assert response.model
-        assert response.object == "response"
-        assert response.status == "completed"
-        assert response.usage.input_tokens is not None
-        assert response.usage.output_tokens is not None
-        assert response.usage.total_tokens == response.usage.input_tokens + response.usage.output_tokens
-        assert response.usage.output_tokens_details is not None
-        assert len(response.output) > 0
-        assert response.output[0].content[0].type == "output_text"
-        assert response.output[0].content[0].text
-        assert response.output[0].id is not None
-        assert response.output[0].role == "assistant"
-        assert response.output[0].type == "message"
+        assert_required(response)
+
+    @configure_async
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(CUA_AZURE, PREVIEW), (OPENAI, "v1")]
+    )
+    async def test_responses_store(self, client_async: openai.AsyncAzureOpenAI | openai.AsyncOpenAI, api_type, api_version, **kwargs):
+
+        response = await client_async.responses.create(
+            model="gpt-4o-mini",
+            input=[{"role": "user", "content": "write me an original happy birthday song"}],
+            store=True
+        )
+
+        assert_required(response)
+
+    @configure_async
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(CUA_AZURE, PREVIEW), (OPENAI, "v1")]
+    )
+    async def test_responses_instructions(self, client_async: openai.AsyncAzureOpenAI | openai.AsyncOpenAI, api_type, api_version, **kwargs):
+
+        response = await client_async.responses.create(
+            model="gpt-4o-mini",
+            input=[{"role": "user", "content": "write me an original happy birthday song"}],
+            instructions="Do as the user says, but always use Spanish for your response."
+        )
+
+        assert response.instructions == "Do as the user says, but always use Spanish for your response."
+        assert_required(response)
+
+    @configure_async
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(CUA_AZURE, PREVIEW), (OPENAI, "v1")]
+    )
+    async def test_responses_max_output_tokens(self, client_async: openai.AsyncAzureOpenAI | openai.AsyncOpenAI, api_type, api_version, **kwargs):
+
+        response = await client_async.responses.create(
+            model="gpt-4o-mini",
+            input=[{"role": "user", "content": "write me an original happy birthday song. keep it short."}],
+            max_output_tokens=20
+        )
+
+        assert_required(response)
+        assert response.usage.output_tokens <= 20
+
+    @configure_async
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(CUA_AZURE, PREVIEW), (OPENAI, "v1")]
+    )
+    async def test_responses_input_url(self, client_async: openai.AsyncAzureOpenAI | openai.AsyncOpenAI, api_type, api_version, **kwargs):
+
+        response = await client_async.responses.create(
+            model="gpt-4o-mini",
+            input=[
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "input_text", "text": "what's in this image?"},
+                        {"type": "input_image", "image_url": "https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/images/handwritten-note.jpg"}
+                    ]
+                }
+            ],
+            include=["message.input_image.image_url"]
+
+        )
+
+        assert_required(response)
+
+    @configure_async
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(CUA_AZURE, PREVIEW), (OPENAI, "v1")]
+    )
+    async def test_responses_input_file(self, client_async: openai.AsyncAzureOpenAI | openai.AsyncOpenAI, api_type, api_version, **kwargs):
+
+        try:
+            hello_pdf = pathlib.Path(__file__).parent / "assets" / "hello_world.pdf"
+            file = await client_async.files.create(
+                file=open(str(hello_pdf), "rb"),
+                purpose="assistants"  # should be user_data
+            )
+
+            response = await client_async.responses.create(
+                model="gpt-4o-mini",
+                input=[
+                    {
+                        "role": "user",
+                        "content": [
+                            {"type": "input_text", "text": "what's in this file?"},
+                            {"type": "input_file", "file_id": file.id}
+                        ]
+                    }
+                ],
+
+            )
+
+            assert_required(response)
+        finally:
+            await client_async.files.delete(file.id)
+
+    @configure_async
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(CUA_AZURE, PREVIEW), (OPENAI, "v1")]
+    )
+    async def test_responses_structured_outputs(self, client_async: openai.AsyncAzureOpenAI | openai.AsyncOpenAI, api_type, api_version, **kwargs):
+
+        response = await client_async.responses.create(
+            model="gpt-4o-mini",
+            input=[
+                {"role": "system", "content": "Extract the event information."},
+                {"role": "user", "content": "Alice and Bob are going to a science fair on Friday."}
+            ],
+            text={
+                "format": {
+                    "type": "json_schema",
+                    "name": "calendar_event",
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string"
+                            },
+                            "date": {
+                                "type": "string"
+                            },
+                            "participants": {
+                                "type": "array", 
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                        },
+                        "required": ["name", "date", "participants"],
+                        "additionalProperties": False
+                    },
+                    "strict": True
+                }
+            }
+        )
+        assert_required(response)
+        event = json.loads(response.output_text)
+        assert event
+        assert event["name"].lower() == "science fair"
+        assert event["date"].lower() == "friday"
+        assert [p.lower() for p in event["participants"]] == ["alice", "bob"]
+        assert response.text.format.type == "json_schema"
+        assert response.text.format.name == "calendar_event"
+
+    @configure_async
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(CUA_AZURE, PREVIEW), (OPENAI, "v1")]
+    )
+    async def test_responses_json_object_outputs(self, client_async: openai.AsyncAzureOpenAI | openai.AsyncOpenAI, api_type, api_version, **kwargs):
+        messages = [
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": "Who won the world series in 2020? Return in json with answer as the key."}
+        ]
+
+        response = await client_async.responses.create(input=messages, text={"format": {"type": "json_object"}}, **kwargs)
+        assert_required(response)
+        assert json.loads(response.output_text)
