@@ -1,15 +1,17 @@
 from .__openai_patcher import TestProxyConfig, TestProxyHttpxClientBase  # isort: split
 
+import re
 import os
 import json
 import multiprocessing
 import time
 from datetime import datetime, timedelta
 import jwt
+from copy import deepcopy
 from logging import Logger
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, Final, Literal, Optional
+from typing import Any, Dict, Final, Generator, Mapping, Literal, Optional
 from unittest.mock import patch
 
 import pytest
@@ -21,7 +23,6 @@ from devtools_testutils import (
     is_live,
     remove_batch_sanitizers,
     add_remove_header_sanitizer,
-    Sanitizer,
 )
 from devtools_testutils.config import PROXY_URL
 from devtools_testutils.fake_credentials import FakeTokenCredential
@@ -84,7 +85,7 @@ def add_sanitizers(
     test_proxy,
     mock_model_config: AzureOpenAIModelConfiguration,
     mock_project_scope: Dict[str, str],
-    connection_file: Optional[Dict[str, Any]],
+    connection_file: Dict[str, Any],
 ) -> None:
     def azureopenai_connection_sanitizer():
         """Sanitize the openai deployment name."""
@@ -148,11 +149,11 @@ def add_sanitizers(
     def live_connection_file_values():
         """Sanitize the live values from connections.json"""
 
-        if connection_file is None:
+        if not connection_file:
             return
 
-        project_scope = connection_file["azure_ai_project_scope"]["value"]
-        model_config = connection_file["azure_openai_model_config"]["value"]
+        project_scope = connection_file[KEY_AZURE_PROJECT_SCOPE]["value"]
+        model_config = connection_file[KEY_AZURE_MODEL_CONFIG]["value"]
 
         add_general_regex_sanitizer(regex=project_scope["subscription_id"], value=SanitizedValues.SUBSCRIPTION_ID)
         add_general_regex_sanitizer(
@@ -169,7 +170,7 @@ def add_sanitizers(
             replacement='"root_run_id": "azure_ai_evaluation_evaluators_common_base_eval_asyncevaluatorbase_SANITIZED"',
         )
 
-    def evalutation_run_sanitizer() -> None:
+    def evaluatation_run_sanitizer() -> None:
         # By default, the test proxy will sanitize all "key" values in a JSON body to "Sanitized". Unfortunately,
         # when retrieving the datastore secrets, the key that comes back needs to be a valid Base64 encoded string.
         # So we disable this default rule, and add a replacement rule to santize to MA== (which is "0")
@@ -196,9 +197,15 @@ def add_sanitizers(
         add_body_key_sanitizer(json_path="$..userTenantId", value=ZERO_GUID)
         add_body_key_sanitizer(json_path="$..upn", value="Sanitized")
 
-        # removes some stainless headers since they are causing some unnecessary mismatches in recordings
-        stainless_headers = ["x-stainless-retry-count", "x-stainless-read-timeout"]
-        add_remove_header_sanitizer(headers=",".join(stainless_headers))
+        # removes some headers since they are causing some unnecessary mismatches in recordings
+        headers_to_ignore = [
+            "ms-azure-ai-promptflow",
+            "ms-azure-ai-promptflow-called-from",
+            "x-ms-useragent",
+            "x-stainless-retry-count",
+            "x-stainless-read-timeout",
+        ]
+        add_remove_header_sanitizer(headers=",".join(headers_to_ignore))
 
     azure_workspace_triad_sanitizer()
     azureopenai_connection_sanitizer()
@@ -206,11 +213,11 @@ def add_sanitizers(
     azure_ai_generative_sanitizer()
     live_connection_file_values()
     promptflow_root_run_id_sanitizer()
-    evalutation_run_sanitizer()
+    evaluatation_run_sanitizer()
 
 
 @pytest.fixture
-def redirect_asyncio_requests_traffic():
+def redirect_asyncio_requests_traffic() -> Generator[None, Any, None]:
     """Redirects requests sent through AsyncioRequestsTransport to the test proxy.
 
     .. note::
@@ -296,31 +303,26 @@ def recorded_test(recorded_test, redirect_openai_requests, redirect_asyncio_requ
 
 
 @pytest.fixture(scope="session")
-def connection_file() -> Optional[Dict[str, Any]]:
+def connection_file() -> Dict[str, Any]:
     if not CONNECTION_FILE.exists():
-        return None
+        return {}
 
     with open(CONNECTION_FILE) as f:
         return json.load(f)
 
 
-@pytest.fixture(scope="session")
-def dev_connections(
-    mock_project_scope: dict,
-    mock_model_config: AzureOpenAIModelConfiguration,
-    connection_file: Optional[Dict[str, Any]],
+def get_config(
+    connection_file: Mapping[str, Any], key: str, defaults: Optional[Dict[str, Any]] = None
 ) -> Dict[str, Any]:
-    if not is_live():
-        return {
-            "azure_ai_project_scope": {"value": mock_project_scope},
-            "azure_openai_model_config": {
-                "value": mock_model_config,
-            },
-        }
+    if is_live():
+        assert key in connection_file, f"Connection '{key}' not found in dev connections."
 
-    assert connection_file is not None, f"Connections file was not found at {CONNECTION_FILE}"
+    config = deepcopy(connection_file.get(key, {}).get("value", {}))
 
-    return connection_file
+    for k, v in (defaults or {}).items():
+        config.setdefault(k, v)
+
+    return config
 
 
 @pytest.fixture(scope="session")
@@ -343,24 +345,28 @@ def mock_project_scope() -> Dict[str, str]:
     }
 
 
-@pytest.fixture
-def model_config(dev_connections: Dict[str, Any]) -> AzureOpenAIModelConfiguration:
-    conn_name = "azure_openai_model_config"
+KEY_AZURE_MODEL_CONFIG = "azure_openai_model_config"
+KEY_OPENAI_MODEL_CONFIG = "openai_model_config"
+KEY_AZURE_PROJECT_SCOPE = "azure_ai_project_scope"
 
-    if conn_name not in dev_connections:
-        raise ValueError(f"Connection '{conn_name}' not found in dev connections.")
 
-    model_config = AzureOpenAIModelConfiguration(**dev_connections[conn_name]["value"])
+@pytest.fixture(scope="session")
+def model_config(
+    connection_file: Dict[str, Any], mock_model_config: AzureOpenAIModelConfiguration
+) -> AzureOpenAIModelConfiguration:
+    if not is_live():
+        return mock_model_config
 
+    config = get_config(connection_file, KEY_AZURE_MODEL_CONFIG)
+    model_config = AzureOpenAIModelConfiguration(**config)
     AzureOpenAIModelConfiguration.__repr__ = lambda self: "<sensitive data redacted>"
 
     return model_config
 
 
 @pytest.fixture
-def non_azure_openai_model_config(dev_connections: Dict[str, Any]) -> OpenAIModelConfiguration:
+def non_azure_openai_model_config(connection_file: Mapping[str, Any]) -> OpenAIModelConfiguration:
     """Requires the following in your local connections.json file. If not present, ask around the team.
-
 
         "openai_model_config": {
             "value": {
@@ -371,26 +377,25 @@ def non_azure_openai_model_config(dev_connections: Dict[str, Any]) -> OpenAIMode
         }
     }
     """
-    conn_name = "openai_model_config"
-
-    if conn_name not in dev_connections:
-        raise ValueError(f"Connection '{conn_name}' not found in dev connections.")
-
-    model_config = OpenAIModelConfiguration(**dev_connections[conn_name]["value"])
-
+    config = get_config(
+        connection_file,
+        KEY_OPENAI_MODEL_CONFIG,
+        {
+            "api_key": "openai-api-key",
+            "model": "gpt-35-turbo",
+            "base_url": "https://api.openai.com/v1",
+        },
+    )
+    model_config = OpenAIModelConfiguration(**config)
     OpenAIModelConfiguration.__repr__ = lambda self: "<sensitive data redacted>"
 
     return model_config
 
 
 @pytest.fixture
-def project_scope(request, dev_connections: Dict[str, Any]) -> dict:
-    conn_name = "azure_ai_project_scope"
-
-    if conn_name not in dev_connections:
-        raise ValueError(f"Connection '{conn_name}' not found in dev connections.")
-
-    return dev_connections[conn_name]["value"]
+def project_scope(connection_file: Mapping[str, Any], mock_project_scope: Dict[str, Any]) -> Dict[str, Any]:
+    config = get_config(connection_file, KEY_AZURE_PROJECT_SCOPE) if is_live() else mock_project_scope
+    return config
 
 
 @pytest.fixture
@@ -494,20 +499,8 @@ def _mock_create_spawned_fork_process_manager(*args, **kwargs):
     return create_spawned_fork_process_manager(*args, **kwargs)
 
 
-def package_scope_in_live_mode() -> Literal["package", "function"]:
-    """Determine the scope of some expected sharing fixtures.
-    We have many tests against flows and runs, and it's very time consuming to create a new flow/run
-    for each test. So we expect to leverage pytest fixture concept to share flows/runs across tests.
-    However, we also have replay tests, which require function scope fixture as it will locate the
-    recording YAML based on the test function info.
-    Use this function to determine the scope of the fixtures dynamically. For those fixtures that
-    will request dynamic scope fixture(s), they also need to be dynamic scope.
-    """
-    # package-scope should be enough for Azure tests
-    return "package" if is_live() else "function"
-
-
-def get_cred() -> TokenCredential:
+@pytest.fixture
+def azure_cred() -> TokenCredential:
     from azure.identity import AzureCliCredential, DefaultAzureCredential
 
     """get credential for azure tests"""
@@ -528,38 +521,31 @@ def get_cred() -> TokenCredential:
 
 
 @pytest.fixture
-def azure_cred() -> TokenCredential:
-    return get_cred()
-
-
-@pytest.fixture(scope=package_scope_in_live_mode())
-def user_object_id() -> str:
+def user_object_id(azure_cred: TokenCredential) -> str:
     if not is_live():
         return SanitizedValues.USER_OBJECT_ID
-    credential = get_cred()
-    access_token = credential.get_token("https://management.azure.com/.default")
+    access_token = azure_cred.get_token("https://management.azure.com/.default")
     decoded_token = jwt.decode(access_token.token, options={"verify_signature": False})
     return decoded_token["oid"]
 
 
-@pytest.fixture(scope=package_scope_in_live_mode())
-def tenant_id() -> str:
+@pytest.fixture
+def tenant_id(azure_cred: TokenCredential) -> str:
     if not is_live():
         return SanitizedValues.TENANT_ID
-    credential = get_cred()
-    access_token = credential.get_token("https://management.azure.com/.default")
+    access_token = azure_cred.get_token("https://management.azure.com/.default")
     decoded_token = jwt.decode(access_token.token, options={"verify_signature": False})
     return decoded_token["tid"]
 
 
 @pytest.fixture()
-def mock_token(scope=package_scope_in_live_mode()):
+def mock_token():
     expiration_time = time.time() + 3600  # 1 hour in the future
     return jwt.encode({"exp": expiration_time}, "secret", algorithm="HS256")
 
 
 @pytest.fixture()
-def mock_expired_token(scope=package_scope_in_live_mode()):
+def mock_expired_token():
     expiration_time = time.time() - 3600  # 1 hour in the past
     return jwt.encode({"exp": expiration_time}, "secret", algorithm="HS256")
 
