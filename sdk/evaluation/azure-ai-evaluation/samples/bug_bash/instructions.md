@@ -22,7 +22,7 @@ git clone -b prp/agent_evaluators https://github.com/Azure/azure-sdk-for-python
     ```
 2. Install the required packages by running the following command:
     ```bash
-   # TODO : Add pip install command.
+   pip install -r requirements.txt
     ```
 3. To run the examples from the notebook, please install the kernel in your environment:
    ```bash
