@@ -36,20 +36,25 @@ project_client = AIProjectClient.from_connection_string(
     conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
 
-conn_id = "your-connection-id"
+# [START create_agent_with_fabric_tool]
+fabric_connection = project_client.connections.get(connection_name=os.environ["FABRIC_CONNECTION_NAME"])
+conn_id = fabric_connection.id
+
+print(conn_id)
 
 # Initialize agent fabric tool and add the connection id
 fabric = FabricTool(connection_id=conn_id)
 
-# Create agent with the fabric tool and process assistant run
+# Create agent with the bing tool and process assistant run
 with project_client:
     agent = project_client.agents.create_agent(
-        model="gpt-4o",
+        model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-assistant",
         instructions="You are a helpful assistant",
         tools=fabric.definitions,
         headers={"x-ms-enable-preview": "true"},
     )
+    # [END create_agent_with_fabric_tool]
     print(f"Created agent, ID: {agent.id}")
 
     # Create thread for communication
