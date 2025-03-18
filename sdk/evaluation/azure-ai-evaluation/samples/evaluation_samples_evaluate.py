@@ -360,6 +360,51 @@ class EvaluationEvaluateSamples(object):
         )
         # [END similarity_evaluator]
 
+        # [START completeness_evaluator]
+        import os
+        from azure.ai.evaluation import CompletenessEvaluator
+
+        model_config = {
+            "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
+            "api_key": os.environ.get("AZURE_OPENAI_KEY"),
+            "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
+        }
+
+        completeness_eval = CompletenessEvaluator(model_config=model_config)
+        completeness_eval(
+            response="The capital of Japan is Tokyo.",
+            ground_truth="Tokyo is Japan's capital.",
+        )
+        # [END completeness_evaluator]
+
+        # [START task_adherence_evaluator]
+        import os
+        from azure.ai.evaluation import TaskAdherenceEvaluator
+
+        model_config = {
+            "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
+            "api_key": os.environ.get("AZURE_OPENAI_KEY"),
+            "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
+        }
+
+        task_adherence_evaluator = TaskAdherenceEvaluator(model_config=model_config)
+
+        query = [{'role': 'system', 'content': 'You are a helpful customer service agent.'}, 
+         {'role': 'user', 'content': [{'type': 'text', 'text': 'What is the status of my order #123?'}]}]
+
+        response = [{'role': 'assistant', 'content': [{'type': 'tool_call', 'tool_call': {'id': 'tool_001', 'type': 'function', 'function': {'name': 'get_order', 'arguments': {'order_id': '123'}}}}]}, 
+            {'role': 'tool', 'tool_call_id': 'tool_001', 'content': [{'type': 'tool_result', 'tool_result': '{ "order": { "id": "123", "status": "shipped" } }'}]}, 
+            {'role': 'assistant', 'content': [{'type': 'text', 'text': 'Your order #123 has been shipped.'}]}]
+
+        tool_definitions = [{'name': 'get_order', 'description': 'Get order details.', 'parameters': {'type': 'object', 'properties': {'order_id': {'type': 'string'}}}}]
+
+        task_adherence_evaluator(
+            query=query,
+            response=response,
+            tool_definitions=tool_definitions
+        )
+        # [END task_adherence_evaluator]
+
         # [START indirect_attack_evaluator]
         import os
         from azure.identity import DefaultAzureCredential

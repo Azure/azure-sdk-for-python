@@ -21,6 +21,8 @@ from ._evaluators._intent_resolution import IntentResolutionEvaluator
 from ._evaluators._meteor import MeteorScoreEvaluator
 from ._evaluators._protected_material import ProtectedMaterialEvaluator
 from ._evaluators._qa import QAEvaluator
+from ._evaluators._completeness import CompletenessEvaluator
+from ._evaluators._task_adherence import TaskAdherenceEvaluator
 from ._evaluators._relevance import RelevanceEvaluator
 from ._evaluators._retrieval import RetrievalEvaluator
 from ._evaluators._rouge import RougeScoreEvaluator, RougeType
@@ -57,6 +59,8 @@ __all__ = [
     "FluencyEvaluator",
     "GroundednessEvaluator",
     "GroundednessProEvaluator",
+    "CompletenessEvaluator",
+    "TaskAdherenceEvaluator",
     "IntentResolutionEvaluator",
     "RelevanceEvaluator",
     "SimilarityEvaluator",
