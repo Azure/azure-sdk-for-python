@@ -43,9 +43,6 @@ from azure.storage.blob import BlobServiceClient
 # Environment variable keys which must be set to run this sample
 STORAGE_URL = 'STORAGE_ACCOUNT_BLOB_URL'
 KEYVAULT_URL = 'KEYVAULT_URL'
-CLIENT_ID = 'ACTIVE_DIRECTORY_APPLICATION_ID'
-CLIENT_SECRET = 'ACTIVE_DIRECTORY_APPLICATION_SECRET'
-TENANT_ID = 'ACTIVE_DIRECTORY_TENANT_ID'
 
 def get_env_var(key):
     try:
@@ -101,8 +98,8 @@ encoded_key = base64.urlsafe_b64encode(key).decode('utf-8')
 secret_client.set_secret(name="symmetric-key", value=encoded_key)
 # The secret is url-safe base64 encoded bytes, content type 'application/octet-stream'
 secret = secret_client.get_secret('symmetric-key')
-key_bytes = base64.urlsafe_b64decode(secret.value)
-kvk = KeyVaultKey(key_id=secret.id, key_ops=['unwrapKey', 'wrapKey'], k=key_bytes, kty=KeyType.oct)
+key_bytes = base64.urlsafe_b64decode(secret.value) # type: ignore
+kvk = KeyVaultKey(key_id=secret.id, key_ops=['unwrapKey', 'wrapKey'], k=key_bytes, kty=KeyType.oct) # type: ignore
 kek = KeyWrapper(kvk, credential)
 
 storage_client = BlobServiceClient(storage_url, credential=credential)
