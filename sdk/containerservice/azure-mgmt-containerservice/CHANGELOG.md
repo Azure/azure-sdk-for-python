@@ -1,5 +1,19 @@
 # Release History
 
+## 34.2.0 (2025-03-18)
+
+### Features Added
+
+  - Added operation group ContainerServiceOperations
+  - Added operation group LoadBalancersOperations
+  - Added operation group ManagedClusterSnapshotsOperations
+  - Added operation group OperationStatusResultOperations
+  - Model AgentPool has a new parameter gpu_profile
+  - Model ManagedCluster has a new parameter bootstrap_profile
+  - Model ManagedClusterAgentPoolProfile has a new parameter gpu_profile
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter gpu_profile
+  - Model ManagedClusterSecurityProfile has a new parameter custom_ca_trust_certificates
+
 ## 34.1.0 (2025-02-19)
 
 ### Features Added
