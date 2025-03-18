@@ -21,7 +21,7 @@
 
 """Represents a request object.
 """
-from typing import Optional, Mapping, Any, List
+from typing import Optional, Mapping, Any
 
 
 class RequestObject(object):
@@ -34,7 +34,7 @@ class RequestObject(object):
         self.location_index_to_route: Optional[int] = None
         self.location_endpoint_to_route: Optional[str] = None
         self.last_routed_location_endpoint_within_region: Optional[str] = None
-        self.excluded_locations: List[str] = []
+        self.excluded_locations = None
 
     def route_to_location_with_preferred_location_flag(  # pylint: disable=name-too-long
         self,
@@ -56,13 +56,22 @@ class RequestObject(object):
         self.location_endpoint_to_route = None
 
     def _can_set_excluded_location(self, options: Mapping[str, Any]) -> bool:
+        # If resource types for requests are one of the followings, excluded locations cannot be set
         if self.resource_type.lower() in ['offers', 'conflicts']:
             return False
 
-        return (options is not None
-                and 'excludedLocations' in options
-                and options['excludedLocations'] is not None)
+        # If 'excludedLocations' wasn't in the options, excluded locations cannot be set
+        if (options is None
+            or 'excludedLocations' not in options):
+            return False
+
+        # The 'excludedLocations' cannot be None
+        if options['excludedLocations'] is None:
+            raise ValueError("Excluded locations cannot be None. "
+                             "If you want to remove all excluded locations, try passing an empty list.")
+
+        return True
 
     def set_excluded_location_from_options(self, options: Mapping[str, Any]) -> None:
         if self._can_set_excluded_location(options):
-            self.excluded_locations = list(options['excludedLocations'])
+            self.excluded_locations = options['excludedLocations']

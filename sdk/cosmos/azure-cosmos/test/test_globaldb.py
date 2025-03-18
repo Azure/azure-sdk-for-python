@@ -11,7 +11,7 @@ from urllib.parse import urlparse
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
 from azure.cosmos import documents, exceptions, DatabaseProxy, ContainerProxy, \
-    _synchronized_request, _endpoint_discovery_retry_policy, PartitionKey, _location_cache
+    _synchronized_request, _endpoint_discovery_retry_policy, PartitionKey, ConnectionRetryPolicy, _location_cache
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes, ResourceType
 from azure.core.exceptions import ServiceRequestError
 

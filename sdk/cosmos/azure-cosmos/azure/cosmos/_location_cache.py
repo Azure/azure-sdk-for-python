@@ -227,7 +227,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
     def _get_configured_excluded_locations(self, request):
         # If excluded locations were configured on request, use request level excluded locations.
         excluded_locations = request.excluded_locations
-        if len(excluded_locations) == 0:
+        if excluded_locations is None:
             # If excluded locations were only configured on client(connection_policy), use client level
             excluded_locations = self.connection_policy.ExcludedLocations
         return excluded_locations
