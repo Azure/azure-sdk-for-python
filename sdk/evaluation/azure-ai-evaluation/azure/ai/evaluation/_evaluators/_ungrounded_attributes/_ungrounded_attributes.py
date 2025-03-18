@@ -10,16 +10,16 @@ from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
 
 
 @experimental
-class ISAEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
+class UngroundedAttributesEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
     """
-    Evaluates ungrounded inference of sensitive attributes for a given query, response, and context for a single-turn
-    evaluation only, where query represents the user query and response represents the AI system response given the
-    provided context.
+    Evaluates ungrounded inference of human attributes for a given query, response, and context for a single-turn evaluation only, 
+    where query represents the user query and response represents the AI system response given the provided context. 
+ 
+    Ungrounded Attributes checks for whether a response is first, ungrounded, and checks if it contains information about protected class or 
+    emotional state of a person.
 
-    Inference of Sensitive Attribute checks for whether a response is first, ungrounded, and checks if it contains
-    information about protected class or emotional state of someone.
 
-    The inference of sensitive attributes evaluation identifies the following vulnerabilities:
+    It identifies the following attributes:
 
     - emotional_state
     - protected_class
@@ -36,19 +36,19 @@ class ISAEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/evaluation_samples_evaluate.py
-            :start-after: [START isa_evaluator]
-            :end-before: [END isa_evaluator]
+            :start-after: [START ungrounded_attributes_evaluator]
+            :end-before: [END ungrounded_attributes_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call a ISAEvaluator with a query, response and context.
+            :caption: Initialize and call a UngroundedAttributesEvaluator with a query, response and context.
 
     .. note::
 
         If this evaluator is supplied to the `evaluate` function, the metric
-        for the inference of sensitive attributes will be "inference_sensitive_attributes_label".
+        for the ungrounded attributes will be "ungrounded_attributes_label".
     """
 
-    id = "inference_sensitive_attributes"
+    id = "ungrounded_attributes"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
@@ -58,7 +58,7 @@ class ISAEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         azure_ai_project,
     ):
         super().__init__(
-            eval_metric=EvaluationMetrics.ISA,
+            eval_metric=EvaluationMetrics.UNGROUNDED_ATTRIBUTES,
             azure_ai_project=azure_ai_project,
             credential=credential,
         )
@@ -71,7 +71,7 @@ class ISAEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         response: str,
         context: str,
     ) -> Dict[str, Union[str, float]]:
-        """Evaluate a given query/response pair and context for inference of sensitive attributes
+        """Evaluate a given query/response pair and context for ungrounded attributes
 
         :keyword query: The query to be evaluated.
         :paramtype query: str
@@ -79,7 +79,7 @@ class ISAEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         :paramtype response: str
         :keyword context: The context to be used for evaluation.
         :paramtype context: str
-        :return: The inference of sensitive attributes label.
+        :return: The ungrounded attributes label.
         :rtype: Dict[str, Union[str, bool]]
         """
         ...
@@ -89,7 +89,7 @@ class ISAEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         """Evaluate a given query/response pair and context for inference of sensitive attributes
 
         :param Any args: The arguments to pass to the evaluator.
-        :return: The inference of sensitive attributes label.
+        :return: The ungrounded attributes label.
         :rtype: Dict[str, Union[str, bool]]
         """
         ...
@@ -100,10 +100,10 @@ class ISAEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         *args,
         **kwargs,
     ):
-        """Evaluate a given query/response pair and context for inference of sensitive attributes
+        """Evaluate a given query/response pair and context for ungrounded attributes
 
         :param Any args: The arguments to pass to the evaluator.
-        :return: The inference of sensitive attributes label.
+        :return: The ungrounded attributes label.
         :rtype: Dict[str, Union[str, bool]]
         """
 

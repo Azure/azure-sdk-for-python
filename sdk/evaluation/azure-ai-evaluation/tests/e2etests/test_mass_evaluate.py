@@ -28,7 +28,7 @@ from azure.ai.evaluation import (
     RetrievalEvaluator,
     SexualEvaluator,
     CodeVulnerabilityEvaluator,
-    ISAEvaluator,
+    UngroundedAttributesEvaluator,
     RougeType,
     evaluate,
 )
@@ -398,11 +398,14 @@ class TestMassEvaluate:
         }
 
         # run the evaluation
-        result = evaluate(data=code_based_data_file, evaluators=evaluators)
+        result = evaluate(
+            data=code_based_data_file,
+            evaluators=evaluators,
+        )
 
         row_result_df = pd.DataFrame(result["rows"])
         metrics = result["metrics"]
-        assert len(row_result_df.keys()) == 6
+        assert len(row_result_df.keys()) == 5
         assert len(row_result_df["inputs.query"]) == 2
         assert len(row_result_df["inputs.response"]) == 2
         assert len(row_result_df["outputs.code_vulnerability.code_vulnerability_label"]) == 2
@@ -566,7 +569,7 @@ class TestMassEvaluate:
 
     def test_evaluate_chat_inputs(self, azure_cred, project_scope, chat_based_data_file):
         evaluators = {
-            "inference_sensitive_attributes": ISAEvaluator(azure_cred, project_scope),
+            "ungrounded_attributes": UngroundedAttributesEvaluator(azure_cred, project_scope),
         }
 
         # run the evaluation
@@ -581,21 +584,12 @@ class TestMassEvaluate:
         assert len(row_result_df["inputs.query"]) == 2
         assert len(row_result_df["inputs.response"]) == 2
         assert len(row_result_df["inputs.context"]) == 2
-        assert len(row_result_df["outputs.inference_sensitive_attributes.inference_sensitive_attributes_label"]) == 2
-        assert len(row_result_df["outputs.inference_sensitive_attributes.inference_sensitive_attributes_reason"]) == 2
-        assert len(row_result_df["outputs.inference_sensitive_attributes.inference_sensitive_attributes_details"]) == 2
+        assert len(row_result_df["outputs.ungrounded_attributes.ungrounded_attributes_label"]) == 2
+        assert len(row_result_df["outputs.ungrounded_attributes.ungrounded_attributes_reason"]) == 2
+        assert len(row_result_df["outputs.ungrounded_attributes.ungrounded_attributes_details"]) == 2
 
         assert len(metrics.keys()) == 4
-        assert metrics["inference_sensitive_attributes.inference_sensitive_attributes_defect_rate"] >= 0
-        assert (
-            metrics["inference_sensitive_attributes.inference_sensitive_attributes_details.emotional_state_defect_rate"]
-            >= 0
-        )
-        assert (
-            metrics["inference_sensitive_attributes.inference_sensitive_attributes_details.protected_class_defect_rate"]
-            >= 0
-        )
-        assert (
-            metrics["inference_sensitive_attributes.inference_sensitive_attributes_details.groundedness_defect_rate"]
-            >= 0
-        )
+        assert metrics["ungrounded_attributes.ungrounded_attributes_defect_rate"] >= 0
+        assert metrics["ungrounded_attributes.ungrounded_attributes_details.emotional_state_defect_rate"] >= 0
+        assert metrics["ungrounded_attributes.ungrounded_attributes_details.protected_class_defect_rate"] >= 0
+        assert metrics["ungrounded_attributes.ungrounded_attributes_details.groundedness_defect_rate"] >= 0
