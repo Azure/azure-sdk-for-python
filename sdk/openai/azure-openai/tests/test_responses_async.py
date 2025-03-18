@@ -62,6 +62,7 @@ class TestResponsesAsync(AzureRecordedTestCase):
         assert_required(response)
 
         retrieved_response = await client_async.responses.retrieve(response.id)
+        assert_required(response)
         assert retrieved_response.id == response.id
 
         input_items = await client_async.responses.input_items.list(response.id)
@@ -627,6 +628,39 @@ class TestResponsesAsync(AzureRecordedTestCase):
             assert_required(response)
         finally:
             await client_async.files.delete(file.id)
+
+    @configure_async
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(CUA_AZURE, PREVIEW), (OPENAI, "v1")]
+    )
+    async def test_responses_input_file_base64(self, client_async: openai.AsyncAzureOpenAI | openai.AsyncOpenAI, api_type, api_version, **kwargs):
+        hello_pdf = pathlib.Path(__file__).parent / "assets" / "hello_world.pdf"
+        with open(str(hello_pdf), "rb") as f:
+            data = f.read()
+
+        base64_string = base64.b64encode(data).decode("utf-8")
+
+        response = await client_async.responses.create(
+            model="gpt-4o-mini",
+            input=[
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "input_text", "text": "what's in this file?"},
+                        {
+                            "type": "input_file",
+                            "filename": "hello_world.pdf",
+                            "file_data": f"data:application/pdf;base64,{base64_string}",
+                        }
+                    ]
+                }
+            ],
+
+        )
+
+        assert_required(response)
 
     @configure_async
     @pytest.mark.asyncio

@@ -63,6 +63,7 @@ class TestResponses(AzureRecordedTestCase):
 
         retrieved_response = client.responses.retrieve(response.id)
         assert retrieved_response.id == response.id
+        assert_required(response)
 
         input_items = client.responses.input_items.list(response.id)
         assert len(input_items.data) > 0
@@ -611,6 +612,39 @@ class TestResponses(AzureRecordedTestCase):
             assert_required(response)
         finally:
             client.files.delete(file.id)
+
+    @configure
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(CUA_AZURE, PREVIEW), (OPENAI, "v1")]
+    )
+    def test_responses_input_file_base64(self, client: openai.AzureOpenAI | openai.OpenAI, api_type, api_version, **kwargs):
+        hello_pdf = pathlib.Path(__file__).parent / "assets" / "hello_world.pdf"
+        with open(str(hello_pdf), "rb") as f:
+            data = f.read()
+
+        base64_string = base64.b64encode(data).decode("utf-8")
+
+        response = client.responses.create(
+            model="gpt-4o-mini",
+            input=[
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "input_text", "text": "what's in this file?"},
+                        {
+                            "type": "input_file",
+                            "filename": "hello_world.pdf",
+                            "file_data": f"data:application/pdf;base64,{base64_string}",
+                        }
+                    ]
+                }
+            ],
+
+        )
+
+        assert_required(response)
+
 
     @configure
     @pytest.mark.parametrize(
