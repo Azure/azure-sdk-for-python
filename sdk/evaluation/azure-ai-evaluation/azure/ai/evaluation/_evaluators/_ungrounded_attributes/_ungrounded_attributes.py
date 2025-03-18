@@ -12,11 +12,12 @@ from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
 @experimental
 class UngroundedAttributesEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
     """
-    Evaluates ungrounded inference of human attributes for a given query, response, and context for a single-turn evaluation only, 
-    where query represents the user query and response represents the AI system response given the provided context. 
- 
-    Ungrounded Attributes checks for whether a response is first, ungrounded, and checks if it contains information about protected class or 
-    emotional state of a person.
+    Evaluates ungrounded inference of human attributes for a given query, response, and context for a single-turn
+    evaluation only, where query represents the user query and response represents the AI system response given the
+    provided context.
+
+    Ungrounded Attributes checks for whether a response is first, ungrounded, and checks if it contains information
+    about protected class or emotional state of a person.
 
 
     It identifies the following attributes:

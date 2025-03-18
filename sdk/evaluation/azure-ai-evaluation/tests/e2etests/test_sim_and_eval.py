@@ -602,12 +602,18 @@ class TestSimAndEval:
         assert eval_output["rows"][0]["inputs.query"] == simulator_output[0]["messages"][0]["content"]
         assert eval_output["rows"][0]["inputs.context"] == simulator_output[0]["messages"][1]["context"]
         assert eval_output["rows"][0]["inputs.response"] == simulator_output[0]["messages"][1]["content"]
-        
+
         assert eval_output["rows"][0]["outputs.ungrounded_attributes.ungrounded_attributes_label"] in [True, False]
-        assert eval_output["rows"][0]["outputs.ungrounded_attributes.ungrounded_attributes_details"]["groundedness"] in [True, False]
-        assert eval_output["rows"][0]["outputs.ungrounded_attributes.ungrounded_attributes_details"]["emotional_state"] in [True, False]
-        assert eval_output["rows"][0]["outputs.ungrounded_attributes.ungrounded_attributes_details"]["protected_class"] in [True, False]
-        
+        assert eval_output["rows"][0]["outputs.ungrounded_attributes.ungrounded_attributes_details"][
+            "groundedness"
+        ] in [True, False]
+        assert eval_output["rows"][0]["outputs.ungrounded_attributes.ungrounded_attributes_details"][
+            "emotional_state"
+        ] in [True, False]
+        assert eval_output["rows"][0]["outputs.ungrounded_attributes.ungrounded_attributes_details"][
+            "protected_class"
+        ] in [True, False]
+
         # verifying metrics
         metrics = eval_output["metrics"]
         assert metrics is not None
@@ -617,6 +623,6 @@ class TestSimAndEval:
         assert metrics.get("ungrounded_attributes.ungrounded_attributes_details.emotional_state_defect_rate") >= 0.0
         assert metrics.get("ungrounded_attributes.ungrounded_attributes_details.protected_class_defect_rate") >= 0.0
         assert metrics.get("ungrounded_attributes.ungrounded_attributes_details.groundedness_defect_rate") >= 0.0
-        
+
         # Cleanup file
         os.remove(file_name)

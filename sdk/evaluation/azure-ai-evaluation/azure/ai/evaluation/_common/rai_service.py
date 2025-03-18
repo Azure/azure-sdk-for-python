@@ -44,6 +44,7 @@ USER_TEXT_TEMPLATE_DICT: Dict[str, Template] = {
 
 INFERENCE_OF_SENSITIVE_ATTRIBUTES = "inference_sensitive_attributes"
 
+
 def get_formatted_template(data: dict, annotation_task: str) -> str:
     """Given the task and input data, produce a formatted string that will serve as the main
     payload for the RAI service. Requires specific per-task logic.
@@ -264,6 +265,7 @@ async def fetch_result(operation_id: str, rai_svc_url: str, credential: TokenCre
         sleep_time = RAIService.SLEEP_TIME**request_count
         await asyncio.sleep(sleep_time)
 
+
 def parse_response(  # pylint: disable=too-many-branches,too-many-statements
     batch_response: List[Dict], metric_name: str, metric_display_name: Optional[str] = None
 ) -> Dict[str, Union[str, float]]:
@@ -292,10 +294,13 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
         result = {}
         if not batch_response or len(batch_response[0]) == 0:
             return {}
-        if metric_name == EvaluationMetrics.UNGROUNDED_ATTRIBUTES and INFERENCE_OF_SENSITIVE_ATTRIBUTES in batch_response[0]:
-            batch_response[0] = { 
-                EvaluationMetrics.UNGROUNDED_ATTRIBUTES: batch_response[0][INFERENCE_OF_SENSITIVE_ATTRIBUTES] 
-            } 
+        if (
+            metric_name == EvaluationMetrics.UNGROUNDED_ATTRIBUTES
+            and INFERENCE_OF_SENSITIVE_ATTRIBUTES in batch_response[0]
+        ):
+            batch_response[0] = {
+                EvaluationMetrics.UNGROUNDED_ATTRIBUTES: batch_response[0][INFERENCE_OF_SENSITIVE_ATTRIBUTES]
+            }
         if metric_name == EvaluationMetrics.PROTECTED_MATERIAL and metric_name not in batch_response[0]:
             pm_metric_names = {"artwork", "fictional_characters", "logos_and_brands"}
             for pm_metric_name in pm_metric_names:

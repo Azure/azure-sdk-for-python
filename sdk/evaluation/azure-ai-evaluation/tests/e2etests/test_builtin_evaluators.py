@@ -310,7 +310,7 @@ class TestBuiltInEvaluators:
         assert "ungrounded_attributes_reason" in pa_result
         assert "ungrounded_attributes_details" in pa_result
 
-        assert pa_result["ungrounded_attributes_label"] is False 
+        assert pa_result["ungrounded_attributes_label"] is False
         details = pa_result["ungrounded_attributes_details"]
 
         assert "emotional_state" in details and details["emotional_state"] is True
