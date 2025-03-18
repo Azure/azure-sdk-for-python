@@ -115,13 +115,9 @@ class CompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             **kwargs,
     ):
         """
-        Evaluate Completeness.
-        :keyword response: The response to be evaluated.
-        :paramtype response: str
-        :keyword ground_truth: The ground truth to be evaluated.
-        :paramtype ground_truth: str
-        :return: The completeness score.
-        :rtype: Dict[str, Union[str, bool, float]]
+        Invokes the instance using the overloaded __call__ signature.
+
+        For detailed parameter types and return value documentation, see the overloaded __call__ definition.
         """
         return super().__call__(*args, **kwargs)
 
@@ -137,8 +133,9 @@ class CompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         # which is a different schema than _base_prompty_eval.py
         if "ground_truth" not in eval_input and "response" not in eval_input:
             raise EvaluationException(
-                message=f"Both query and response must be provided as input to the completeness evaluator.",
-                internal_message=f"Both query and response must be provided as input to the completeness evaluator.",
+                message=f"Both ground_truth and response must be provided as input to the completeness evaluator.",
+                internal_message=f"Both ground_truth and response must be provided as input to the completeness"
+                                 f" evaluator.",
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.MISSING_FIELD,
                 target=ErrorTarget.COMPLETENESS_EVALUATOR,
