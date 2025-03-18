@@ -14,11 +14,13 @@ model:
 
 inputs:
   query:
-    type: string, list
+    type: string
   response:
-    type: string, list
+    type: string
   tool_definitions:
-    type: list
+    type: string
+    optional: true
+    default: "[]"
 
 ---
 system:

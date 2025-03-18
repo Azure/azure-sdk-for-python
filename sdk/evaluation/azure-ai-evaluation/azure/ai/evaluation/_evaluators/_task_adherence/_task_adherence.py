@@ -64,17 +64,33 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         *,
         query: Union[str, List[Message]],
         response: Union[str, List[Message]],
-        tool_definitions: Optional[List[Message]] = None,
+        tool_definitions: Optional[Union[str, List[Message]]] = None,
     ) -> Dict[str, Union[str, float]]:
-        """Evaluate task adherence for a given query, response, and optional context.
-        The evaluation considers instructions, query, response, conversation history, and tool definitions.
+        """Evaluate task adherence for a given query, response, and optional tool defintions.
+        The query and response can be either a string or a list of messages.
+
+        
+        Example with string inputs and no tools:
+            evaluator = TaskAdherenceEvaluator(model_config)
+            query = "What is the weather today?"
+            response = "The weather is sunny."
+
+            result = evaluator(query=query, response=response)
+
+        Example with list of messages:
+            evaluator = TaskAdherenceEvaluator(model_config)
+            query = [{'role': 'system', 'content': 'You are a friendly and helpful customer service agent.'}, {'createdAt': 1700000060, 'role': 'user', 'content': [{'type': 'text', 'text': 'Hi, I need help with the last 2 orders on my account #888. Could you please update me on their status?'}]}]
+            response = [{'createdAt': 1700000070, 'run_id': '0', 'role': 'assistant', 'content': [{'type': 'text', 'text': 'Hello! Let me quickly look up your account details.'}]}, {'createdAt': 1700000075, 'run_id': '0', 'role': 'assistant', 'content': [{'type': 'tool_call', 'tool_call': {'id': 'tool_call_20250310_001', 'type': 'function', 'function': {'name': 'get_orders', 'arguments': {'account_number': '888'}}}}]}, {'createdAt': 1700000080, 'run_id': '0', 'tool_call_id': 'tool_call_20250310_001', 'role': 'tool', 'content': [{'type': 'tool_result', 'tool_result': '[{ "order_id": "123" }, { "order_id": "124" }]'}]}, {'createdAt': 1700000085, 'run_id': '0', 'role': 'assistant', 'content': [{'type': 'text', 'text': 'Thanks for your patience. I see two orders on your account. Let me fetch the details for both.'}]}, {'createdAt': 1700000090, 'run_id': '0', 'role': 'assistant', 'content': [{'type': 'tool_call', 'tool_call': {'id': 'tool_call_20250310_002', 'type': 'function', 'function': {'name': 'get_order', 'arguments': {'order_id': '123'}}}}, {'type': 'tool_call', 'tool_call': {'id': 'tool_call_20250310_003', 'type': 'function', 'function': {'name': 'get_order', 'arguments': {'order_id': '124'}}}}]}, {'createdAt': 1700000095, 'run_id': '0', 'tool_call_id': 'tool_call_20250310_002', 'role': 'tool', 'content': [{'type': 'tool_result', 'tool_result': '{ "order": { "id": "123", "status": "shipped", "delivery_date": "2025-03-15" } }'}]}, {'createdAt': 1700000100, 'run_id': '0', 'tool_call_id': 'tool_call_20250310_003', 'role': 'tool', 'content': [{'type': 'tool_result', 'tool_result': '{ "order": { "id": "124", "status": "delayed", "expected_delivery": "2025-03-20" } }'}]}, {'createdAt': 1700000105, 'run_id': '0', 'role': 'assistant', 'content': [{'type': 'text', 'text': 'The order with ID 123 has been shipped and is expected to be delivered on March 15, 2025. However, the order with ID 124 is delayed and should now arrive by March 20, 2025. Is there anything else I can help you with?'}]}]
+            tool_definitions = [{'name': 'get_orders', 'description': 'Get the list of orders for a given account number.', 'parameters': {'type': 'object', 'properties': {'account_number': {'type': 'string', 'description': 'The account number to get the orders for.'}}}}, {'name': 'get_order', 'description': 'Get the details of a specific order.', 'parameters': {'type': 'object', 'properties': {'order_id': {'type': 'string', 'description': 'The order ID to get the details for.'}}}}, {'name': 'initiate_return', 'description': 'Initiate the return process for an order.', 'parameters': {'type': 'object', 'properties': {'order_id': {'type': 'string', 'description': 'The order ID for the return process.'}}}}, {'name': 'update_shipping_address', 'description': 'Update the shipping address for a given account.', 'parameters': {'type': 'object', 'properties': {'account_number': {'type': 'string', 'description': 'The account number to update.'}, 'new_address': {'type': 'string', 'description': 'The new shipping address.'}}}}]
+
+            result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
         :keyword query: The query being evaluated, either a string or a list of messages.
         :paramtype query: Union[str, List[Message]]
-        :keyword response: The response being evaluated.
+        :keyword response: The response being evaluated, either a string or a list of messages (full agent response potentially including tool calls)
         :paramtype response: Union[str, List[Message]]
-        :keyword tool_definitions: The tool definitions known to the agent.
-        :paramtype tool_definitions: Optional[List[Message]]
+        :keyword tool_definitions: An optional list of messages containing the tool definitions the agent is aware of.
+        :paramtype tool_definitions: Optional[Union[str, List[Message]]]
         :return: A dictionary with the task adherence evaluation results.
         :rtype: Dict[str, Union[str, bool, float]]
         """
@@ -86,13 +102,9 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             **kwargs,
     ):
         """
-        Evaluate Task Adherence.
-        :keyword response: The response to be evaluated.
-        :paramtype response: str
-        :keyword query: The query to be evaluated.
-        :paramtype query: str
-        :return: The adherence score.
-        :rtype: Dict[str, Union[str, bool, float]]
+        Invokes the instance using the overloaded __call__ signature.
+
+        For detailed parameter types and return value documentation, see the overloaded __call__ definition.
         """
         return super().__call__(*args, **kwargs)
 
