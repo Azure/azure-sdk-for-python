@@ -1,6 +1,6 @@
 # Release History
 
-## 1.20.1 (Unreleased)
+## 1.21.1 (Unreleased)
 
 ### Features Added
 
@@ -10,6 +10,11 @@
 
 ### Other Changes
 
+## 1.21.0 (2025-03-11)
+
+### Other Changes
+
+- Updated the asynchronous `CertificateCredential` to use the PS256 algorithm with PSS padding for certificate authentication in non-ADFS tenants. ([#39761](https://github.com/Azure/azure-sdk-for-python/pull/39761))
 - Deprecated `UsernamePasswordCredential`, as it doesn't support multifactor authentication (MFA). MFA will soon be enforced on all Microsoft Entra tenants. For more details, see [Planning for mandatory MFA](https://aka.ms/mfaforazure). ([#39785](https://github.com/Azure/azure-sdk-for-python/pull/39785))
 
 ## 1.20.0 (2025-02-11)
