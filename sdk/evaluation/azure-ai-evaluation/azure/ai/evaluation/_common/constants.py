@@ -39,6 +39,8 @@ class Tasks:
     PROTECTED_MATERIAL = "protected material"
     XPIA = "xpia"
     GROUNDEDNESS = "groundedness"
+    CODE_VULNERABILITY = "code vulnerability"
+    UNGROUNDED_ATTRIBUTES = "inference sensitive attributes"
 
 
 class _InternalAnnotationTasks:
@@ -61,6 +63,8 @@ class EvaluationMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PROTECTED_MATERIAL = "protected_material"
     XPIA = "xpia"
     GROUNDEDNESS = "generic_groundedness"
+    CODE_VULNERABILITY = "code_vulnerability"
+    UNGROUNDED_ATTRIBUTES = "ungrounded_attributes"
 
 
 class _InternalEvaluationMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):

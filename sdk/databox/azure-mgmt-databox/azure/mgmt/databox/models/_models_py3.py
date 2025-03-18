@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -16,10 +16,9 @@ from .. import _serialization
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
@@ -711,7 +710,7 @@ class CopyLogDetails(_serialization.Model):
         self.copy_log_details_type: Optional[str] = None
 
 
-class CopyProgress(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class CopyProgress(_serialization.Model):
     """Copy progress.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -946,6 +945,11 @@ class CreateOrderLimitForSubscriptionValidationRequest(ValidationInputRequest): 
     :ivar device_type: Device type to be used for the job. Required. Known values are: "DataBox",
      "DataBoxDisk", "DataBoxHeavy", and "DataBoxCustomerDisk".
     :vartype device_type: str or ~azure.mgmt.databox.models.SkuName
+    :ivar model: The customer friendly name of the combination of version and capacity of the
+     device. This field is necessary only at the time of ordering the newer generation device i.e.
+     AzureDataBox120 and AzureDataBox525 as of Feb/2025. Known values are: "DataBox", "DataBoxDisk",
+     "DataBoxHeavy", "DataBoxCustomerDisk", "AzureDataBox120", and "AzureDataBox525".
+    :vartype model: str or ~azure.mgmt.databox.models.ModelName
     """
 
     _validation = {
@@ -956,17 +960,30 @@ class CreateOrderLimitForSubscriptionValidationRequest(ValidationInputRequest): 
     _attribute_map = {
         "validation_type": {"key": "validationType", "type": "str"},
         "device_type": {"key": "deviceType", "type": "str"},
+        "model": {"key": "model", "type": "str"},
     }
 
-    def __init__(self, *, device_type: Union[str, "_models.SkuName"], **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        device_type: Union[str, "_models.SkuName"],
+        model: Optional[Union[str, "_models.ModelName"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword device_type: Device type to be used for the job. Required. Known values are:
          "DataBox", "DataBoxDisk", "DataBoxHeavy", and "DataBoxCustomerDisk".
         :paramtype device_type: str or ~azure.mgmt.databox.models.SkuName
+        :keyword model: The customer friendly name of the combination of version and capacity of the
+         device. This field is necessary only at the time of ordering the newer generation device i.e.
+         AzureDataBox120 and AzureDataBox525 as of Feb/2025. Known values are: "DataBox", "DataBoxDisk",
+         "DataBoxHeavy", "DataBoxCustomerDisk", "AzureDataBox120", and "AzureDataBox525".
+        :paramtype model: str or ~azure.mgmt.databox.models.ModelName
         """
         super().__init__(**kwargs)
         self.validation_type: str = "ValidateCreateOrderLimit"
         self.device_type = device_type
+        self.model = model
 
 
 class CreateOrderLimitForSubscriptionValidationResponseProperties(
@@ -1231,7 +1248,7 @@ class DataBoxCustomerDiskCopyLogDetails(CopyLogDetails):
         self.verbose_log_link = None
 
 
-class DataBoxCustomerDiskCopyProgress(CopyProgress):  # pylint: disable=too-many-instance-attributes
+class DataBoxCustomerDiskCopyProgress(CopyProgress):
     """DataBox CustomerDisk Copy Progress.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1338,7 +1355,7 @@ class DataBoxCustomerDiskCopyProgress(CopyProgress):  # pylint: disable=too-many
         self.copy_status = None
 
 
-class JobDetails(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class JobDetails(_serialization.Model):
     """Job details.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1395,7 +1412,7 @@ class JobDetails(_serialization.Model):  # pylint: disable=too-many-instance-att
      "YTO21", "YQB20", "FRA22", "MAA01", "CPQ02", "CPQ20", "SIN20", "HKG20", "SG2", "MEL23",
      "SEL21", "OSA20", "SHA03", "BJB", "JNB22", "JNB21", "MNZ21", "SN8", "AUH20", "ZRH20", "PUS20",
      "AdHoc", "CH1", "DSM05", "DUB07", "PNQ01", "SVG20", "OSA02", "OSA22", "PAR22", "BN7", "SN6",
-     and "BJS20".
+     "BJS20", "BL24", "IDC5", "TYO23", "CPQ21", "NTG20", "DXB23", "DSM11", "OSA23", and "AMS25".
     :vartype data_center_code: str or ~azure.mgmt.databox.models.DataCenterCode
     """
 
@@ -1502,7 +1519,7 @@ class JobDetails(_serialization.Model):  # pylint: disable=too-many-instance-att
         self.data_center_code = None
 
 
-class DataBoxCustomerDiskJobDetails(JobDetails):  # pylint: disable=too-many-instance-attributes
+class DataBoxCustomerDiskJobDetails(JobDetails):
     """Customer disk job details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1556,7 +1573,7 @@ class DataBoxCustomerDiskJobDetails(JobDetails):  # pylint: disable=too-many-ins
      "YTO21", "YQB20", "FRA22", "MAA01", "CPQ02", "CPQ20", "SIN20", "HKG20", "SG2", "MEL23",
      "SEL21", "OSA20", "SHA03", "BJB", "JNB22", "JNB21", "MNZ21", "SN8", "AUH20", "ZRH20", "PUS20",
      "AdHoc", "CH1", "DSM05", "DUB07", "PNQ01", "SVG20", "OSA02", "OSA22", "PAR22", "BN7", "SN6",
-     and "BJS20".
+     "BJS20", "BL24", "IDC5", "TYO23", "CPQ21", "NTG20", "DXB23", "DSM11", "OSA23", and "AMS25".
     :vartype data_center_code: str or ~azure.mgmt.databox.models.DataCenterCode
     :ivar import_disk_details_collection: Contains the map of disk serial number to the disk
      details for import jobs.
@@ -1861,7 +1878,7 @@ class DataBoxDiskGranularCopyLogDetails(GranularCopyLogDetails):
         self.verbose_log_link = None
 
 
-class GranularCopyProgress(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class GranularCopyProgress(_serialization.Model):
     """Granular Copy progress.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1971,7 +1988,7 @@ class GranularCopyProgress(_serialization.Model):  # pylint: disable=too-many-in
         self.actions = None
 
 
-class DataBoxDiskGranularCopyProgress(GranularCopyProgress):  # pylint: disable=too-many-instance-attributes
+class DataBoxDiskGranularCopyProgress(GranularCopyProgress):
     """DataBox Disk Granular Copy Progress.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2078,7 +2095,7 @@ class DataBoxDiskGranularCopyProgress(GranularCopyProgress):  # pylint: disable=
         self.copy_status = None
 
 
-class DataBoxDiskJobDetails(JobDetails):  # pylint: disable=too-many-instance-attributes
+class DataBoxDiskJobDetails(JobDetails):
     """DataBox Disk Job Details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2132,7 +2149,7 @@ class DataBoxDiskJobDetails(JobDetails):  # pylint: disable=too-many-instance-at
      "YTO21", "YQB20", "FRA22", "MAA01", "CPQ02", "CPQ20", "SIN20", "HKG20", "SG2", "MEL23",
      "SEL21", "OSA20", "SHA03", "BJB", "JNB22", "JNB21", "MNZ21", "SN8", "AUH20", "ZRH20", "PUS20",
      "AdHoc", "CH1", "DSM05", "DUB07", "PNQ01", "SVG20", "OSA02", "OSA22", "PAR22", "BN7", "SN6",
-     and "BJS20".
+     "BJS20", "BL24", "IDC5", "TYO23", "CPQ21", "NTG20", "DXB23", "DSM11", "OSA23", and "AMS25".
     :vartype data_center_code: str or ~azure.mgmt.databox.models.DataCenterCode
     :ivar preferred_disks: User preference on what size disks are needed for the job. The map is
      from the disk size in TB to the count. Eg. {2,5} means 5 disks of 2 TB size. Key is string but
@@ -2353,7 +2370,7 @@ class DataBoxHeavyAccountCopyLogDetails(CopyLogDetails):
         self.copy_verbose_log_link = None
 
 
-class DataBoxHeavyJobDetails(JobDetails):  # pylint: disable=too-many-instance-attributes
+class DataBoxHeavyJobDetails(JobDetails):
     """Databox Heavy Device Job Details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2407,7 +2424,7 @@ class DataBoxHeavyJobDetails(JobDetails):  # pylint: disable=too-many-instance-a
      "YTO21", "YQB20", "FRA22", "MAA01", "CPQ02", "CPQ20", "SIN20", "HKG20", "SG2", "MEL23",
      "SEL21", "OSA20", "SHA03", "BJB", "JNB22", "JNB21", "MNZ21", "SN8", "AUH20", "ZRH20", "PUS20",
      "AdHoc", "CH1", "DSM05", "DUB07", "PNQ01", "SVG20", "OSA02", "OSA22", "PAR22", "BN7", "SN6",
-     and "BJS20".
+     "BJS20", "BL24", "IDC5", "TYO23", "CPQ21", "NTG20", "DXB23", "DSM11", "OSA23", and "AMS25".
     :vartype data_center_code: str or ~azure.mgmt.databox.models.DataCenterCode
     :ivar copy_progress: Copy progress per account.
     :vartype copy_progress: list[~azure.mgmt.databox.models.CopyProgress]
@@ -2601,7 +2618,7 @@ class DataBoxHeavySecret(_serialization.Model):
         self.account_credential_details = None
 
 
-class DataBoxJobDetails(JobDetails):  # pylint: disable=too-many-instance-attributes
+class DataBoxJobDetails(JobDetails):
     """Databox Job Details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2655,7 +2672,7 @@ class DataBoxJobDetails(JobDetails):  # pylint: disable=too-many-instance-attrib
      "YTO21", "YQB20", "FRA22", "MAA01", "CPQ02", "CPQ20", "SIN20", "HKG20", "SG2", "MEL23",
      "SEL21", "OSA20", "SHA03", "BJB", "JNB22", "JNB21", "MNZ21", "SN8", "AUH20", "ZRH20", "PUS20",
      "AdHoc", "CH1", "DSM05", "DUB07", "PNQ01", "SVG20", "OSA02", "OSA22", "PAR22", "BN7", "SN6",
-     and "BJS20".
+     "BJS20", "BL24", "IDC5", "TYO23", "CPQ21", "NTG20", "DXB23", "DSM11", "OSA23", and "AMS25".
     :vartype data_center_code: str or ~azure.mgmt.databox.models.DataCenterCode
     :ivar copy_progress: Copy progress per storage account.
     :vartype copy_progress: list[~azure.mgmt.databox.models.CopyProgress]
@@ -2825,6 +2842,11 @@ class ScheduleAvailabilityRequest(_serialization.Model):
     :vartype sku_name: str or ~azure.mgmt.databox.models.SkuName
     :ivar country: Country in which storage location should be supported.
     :vartype country: str
+    :ivar model: The customer friendly name of the combination of version and capacity of the
+     device. This field is necessary only at the time of ordering the newer generation device i.e.
+     AzureDataBox120 and AzureDataBox525 as of Feb/2025. Known values are: "DataBox", "DataBoxDisk",
+     "DataBoxHeavy", "DataBoxCustomerDisk", "AzureDataBox120", and "AzureDataBox525".
+    :vartype model: str or ~azure.mgmt.databox.models.ModelName
     """
 
     _validation = {
@@ -2836,6 +2858,7 @@ class ScheduleAvailabilityRequest(_serialization.Model):
         "storage_location": {"key": "storageLocation", "type": "str"},
         "sku_name": {"key": "skuName", "type": "str"},
         "country": {"key": "country", "type": "str"},
+        "model": {"key": "model", "type": "str"},
     }
 
     _subtype_map = {
@@ -2846,7 +2869,14 @@ class ScheduleAvailabilityRequest(_serialization.Model):
         }
     }
 
-    def __init__(self, *, storage_location: str, country: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        storage_location: str,
+        country: Optional[str] = None,
+        model: Optional[Union[str, "_models.ModelName"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword storage_location: Location for data transfer. For locations check:
          https://management.azure.com/subscriptions/SUBSCRIPTIONID/locations?api-version=2018-01-01.
@@ -2854,11 +2884,17 @@ class ScheduleAvailabilityRequest(_serialization.Model):
         :paramtype storage_location: str
         :keyword country: Country in which storage location should be supported.
         :paramtype country: str
+        :keyword model: The customer friendly name of the combination of version and capacity of the
+         device. This field is necessary only at the time of ordering the newer generation device i.e.
+         AzureDataBox120 and AzureDataBox525 as of Feb/2025. Known values are: "DataBox", "DataBoxDisk",
+         "DataBoxHeavy", "DataBoxCustomerDisk", "AzureDataBox120", and "AzureDataBox525".
+        :paramtype model: str or ~azure.mgmt.databox.models.ModelName
         """
         super().__init__(**kwargs)
         self.storage_location = storage_location
         self.sku_name: Optional[str] = None
         self.country = country
+        self.model = model
 
 
 class DataBoxScheduleAvailabilityRequest(ScheduleAvailabilityRequest):
@@ -2875,6 +2911,11 @@ class DataBoxScheduleAvailabilityRequest(ScheduleAvailabilityRequest):
     :vartype sku_name: str or ~azure.mgmt.databox.models.SkuName
     :ivar country: Country in which storage location should be supported.
     :vartype country: str
+    :ivar model: The customer friendly name of the combination of version and capacity of the
+     device. This field is necessary only at the time of ordering the newer generation device i.e.
+     AzureDataBox120 and AzureDataBox525 as of Feb/2025. Known values are: "DataBox", "DataBoxDisk",
+     "DataBoxHeavy", "DataBoxCustomerDisk", "AzureDataBox120", and "AzureDataBox525".
+    :vartype model: str or ~azure.mgmt.databox.models.ModelName
     """
 
     _validation = {
@@ -2886,9 +2927,17 @@ class DataBoxScheduleAvailabilityRequest(ScheduleAvailabilityRequest):
         "storage_location": {"key": "storageLocation", "type": "str"},
         "sku_name": {"key": "skuName", "type": "str"},
         "country": {"key": "country", "type": "str"},
+        "model": {"key": "model", "type": "str"},
     }
 
-    def __init__(self, *, storage_location: str, country: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        storage_location: str,
+        country: Optional[str] = None,
+        model: Optional[Union[str, "_models.ModelName"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword storage_location: Location for data transfer. For locations check:
          https://management.azure.com/subscriptions/SUBSCRIPTIONID/locations?api-version=2018-01-01.
@@ -2896,8 +2945,13 @@ class DataBoxScheduleAvailabilityRequest(ScheduleAvailabilityRequest):
         :paramtype storage_location: str
         :keyword country: Country in which storage location should be supported.
         :paramtype country: str
+        :keyword model: The customer friendly name of the combination of version and capacity of the
+         device. This field is necessary only at the time of ordering the newer generation device i.e.
+         AzureDataBox120 and AzureDataBox525 as of Feb/2025. Known values are: "DataBox", "DataBoxDisk",
+         "DataBoxHeavy", "DataBoxCustomerDisk", "AzureDataBox120", and "AzureDataBox525".
+        :paramtype model: str or ~azure.mgmt.databox.models.ModelName
         """
-        super().__init__(storage_location=storage_location, country=country, **kwargs)
+        super().__init__(storage_location=storage_location, country=country, model=model, **kwargs)
         self.sku_name: str = "DataBox"
 
 
@@ -3030,7 +3084,7 @@ class DatacenterAddressInstructionResponse(DatacenterAddressResponse):
         self.communication_instruction = None
 
 
-class DatacenterAddressLocationResponse(DatacenterAddressResponse):  # pylint: disable=too-many-instance-attributes
+class DatacenterAddressLocationResponse(DatacenterAddressResponse):
     """Datacenter address for given storage location.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3141,6 +3195,11 @@ class DatacenterAddressRequest(_serialization.Model):
     :ivar sku_name: Sku Name for which the data center address requested. Required. Known values
      are: "DataBox", "DataBoxDisk", "DataBoxHeavy", and "DataBoxCustomerDisk".
     :vartype sku_name: str or ~azure.mgmt.databox.models.SkuName
+    :ivar model: The customer friendly name of the combination of version and capacity of the
+     device. This field is necessary only at the time of ordering the newer generation device i.e.
+     AzureDataBox120 and AzureDataBox525 as of Feb/2025. Known values are: "DataBox", "DataBoxDisk",
+     "DataBoxHeavy", "DataBoxCustomerDisk", "AzureDataBox120", and "AzureDataBox525".
+    :vartype model: str or ~azure.mgmt.databox.models.ModelName
     """
 
     _validation = {
@@ -3151,9 +3210,17 @@ class DatacenterAddressRequest(_serialization.Model):
     _attribute_map = {
         "storage_location": {"key": "storageLocation", "type": "str"},
         "sku_name": {"key": "skuName", "type": "str"},
+        "model": {"key": "model", "type": "str"},
     }
 
-    def __init__(self, *, storage_location: str, sku_name: Union[str, "_models.SkuName"], **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        storage_location: str,
+        sku_name: Union[str, "_models.SkuName"],
+        model: Optional[Union[str, "_models.ModelName"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword storage_location: Storage location. For locations check:
          https://management.azure.com/subscriptions/SUBSCRIPTIONID/locations?api-version=2018-01-01.
@@ -3162,10 +3229,16 @@ class DatacenterAddressRequest(_serialization.Model):
         :keyword sku_name: Sku Name for which the data center address requested. Required. Known values
          are: "DataBox", "DataBoxDisk", "DataBoxHeavy", and "DataBoxCustomerDisk".
         :paramtype sku_name: str or ~azure.mgmt.databox.models.SkuName
+        :keyword model: The customer friendly name of the combination of version and capacity of the
+         device. This field is necessary only at the time of ordering the newer generation device i.e.
+         AzureDataBox120 and AzureDataBox525 as of Feb/2025. Known values are: "DataBox", "DataBoxDisk",
+         "DataBoxHeavy", "DataBoxCustomerDisk", "AzureDataBox120", and "AzureDataBox525".
+        :paramtype model: str or ~azure.mgmt.databox.models.ModelName
         """
         super().__init__(**kwargs)
         self.storage_location = storage_location
         self.sku_name = sku_name
+        self.model = model
 
 
 class DataExportDetails(_serialization.Model):
@@ -3303,6 +3376,11 @@ class DataTransferDetailsValidationRequest(ValidationInputRequest):
     :ivar transfer_type: Type of the transfer. Required. Known values are: "ImportToAzure" and
      "ExportFromAzure".
     :vartype transfer_type: str or ~azure.mgmt.databox.models.TransferType
+    :ivar model: The customer friendly name of the combination of version and capacity of the
+     device. This field is necessary only at the time of ordering the newer generation device i.e.
+     AzureDataBox120 and AzureDataBox525 as of Feb/2025. Known values are: "DataBox", "DataBoxDisk",
+     "DataBoxHeavy", "DataBoxCustomerDisk", "AzureDataBox120", and "AzureDataBox525".
+    :vartype model: str or ~azure.mgmt.databox.models.ModelName
     """
 
     _validation = {
@@ -3317,6 +3395,7 @@ class DataTransferDetailsValidationRequest(ValidationInputRequest):
         "data_import_details": {"key": "dataImportDetails", "type": "[DataImportDetails]"},
         "device_type": {"key": "deviceType", "type": "str"},
         "transfer_type": {"key": "transferType", "type": "str"},
+        "model": {"key": "model", "type": "str"},
     }
 
     def __init__(
@@ -3326,6 +3405,7 @@ class DataTransferDetailsValidationRequest(ValidationInputRequest):
         transfer_type: Union[str, "_models.TransferType"],
         data_export_details: Optional[List["_models.DataExportDetails"]] = None,
         data_import_details: Optional[List["_models.DataImportDetails"]] = None,
+        model: Optional[Union[str, "_models.ModelName"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3340,6 +3420,11 @@ class DataTransferDetailsValidationRequest(ValidationInputRequest):
         :keyword transfer_type: Type of the transfer. Required. Known values are: "ImportToAzure" and
          "ExportFromAzure".
         :paramtype transfer_type: str or ~azure.mgmt.databox.models.TransferType
+        :keyword model: The customer friendly name of the combination of version and capacity of the
+         device. This field is necessary only at the time of ordering the newer generation device i.e.
+         AzureDataBox120 and AzureDataBox525 as of Feb/2025. Known values are: "DataBox", "DataBoxDisk",
+         "DataBoxHeavy", "DataBoxCustomerDisk", "AzureDataBox120", and "AzureDataBox525".
+        :paramtype model: str or ~azure.mgmt.databox.models.ModelName
         """
         super().__init__(**kwargs)
         self.validation_type: str = "ValidateDataTransferDetails"
@@ -3347,6 +3432,7 @@ class DataTransferDetailsValidationRequest(ValidationInputRequest):
         self.data_import_details = data_import_details
         self.device_type = device_type
         self.transfer_type = transfer_type
+        self.model = model
 
 
 class DataTransferDetailsValidationResponseProperties(ValidationInputResponse):  # pylint: disable=name-too-long
@@ -3451,6 +3537,94 @@ class Details(_serialization.Model):
         self.message = message
 
 
+class DeviceCapabilityDetails(_serialization.Model):
+    """Device capability details for a given sku for a given region.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar hardware_encryption: Hardware encryption support for a given sku for a given region.
+     Known values are: "Enabled" and "Disabled".
+    :vartype hardware_encryption: str or ~azure.mgmt.databox.models.HardwareEncryption
+    """
+
+    _validation = {
+        "hardware_encryption": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "hardware_encryption": {"key": "hardwareEncryption", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.hardware_encryption = None
+
+
+class DeviceCapabilityRequest(_serialization.Model):
+    """Request body to get the device capabilities for given sku.
+
+    :ivar sku_name: Type of the device. Known values are: "DataBox", "DataBoxDisk", "DataBoxHeavy",
+     and "DataBoxCustomerDisk".
+    :vartype sku_name: str or ~azure.mgmt.databox.models.SkuName
+    :ivar model: The customer friendly name of the combination of version and capacity of the
+     device. This field is necessary only at the time of ordering the newer generation device i.e.
+     AzureDataBox120 and AzureDataBox525 as of Feb/2025. Known values are: "DataBox", "DataBoxDisk",
+     "DataBoxHeavy", "DataBoxCustomerDisk", "AzureDataBox120", and "AzureDataBox525".
+    :vartype model: str or ~azure.mgmt.databox.models.ModelName
+    """
+
+    _attribute_map = {
+        "sku_name": {"key": "skuName", "type": "str"},
+        "model": {"key": "model", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        sku_name: Optional[Union[str, "_models.SkuName"]] = None,
+        model: Optional[Union[str, "_models.ModelName"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword sku_name: Type of the device. Known values are: "DataBox", "DataBoxDisk",
+         "DataBoxHeavy", and "DataBoxCustomerDisk".
+        :paramtype sku_name: str or ~azure.mgmt.databox.models.SkuName
+        :keyword model: The customer friendly name of the combination of version and capacity of the
+         device. This field is necessary only at the time of ordering the newer generation device i.e.
+         AzureDataBox120 and AzureDataBox525 as of Feb/2025. Known values are: "DataBox", "DataBoxDisk",
+         "DataBoxHeavy", "DataBoxCustomerDisk", "AzureDataBox120", and "AzureDataBox525".
+        :paramtype model: str or ~azure.mgmt.databox.models.ModelName
+        """
+        super().__init__(**kwargs)
+        self.sku_name = sku_name
+        self.model = model
+
+
+class DeviceCapabilityResponse(_serialization.Model):
+    """Device capabilities for given sku in a region.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar device_capability_details: List of device capabilities available for a given region and a
+     given sku.
+    :vartype device_capability_details: list[~azure.mgmt.databox.models.DeviceCapabilityDetails]
+    """
+
+    _validation = {
+        "device_capability_details": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "device_capability_details": {"key": "deviceCapabilityDetails", "type": "[DeviceCapabilityDetails]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.device_capability_details = None
+
+
 class DeviceErasureDetails(_serialization.Model):
     """Device erasure details with erasure completion status and erasureordestructionlog sas key.
 
@@ -3498,6 +3672,11 @@ class DiskScheduleAvailabilityRequest(ScheduleAvailabilityRequest):
     :vartype sku_name: str or ~azure.mgmt.databox.models.SkuName
     :ivar country: Country in which storage location should be supported.
     :vartype country: str
+    :ivar model: The customer friendly name of the combination of version and capacity of the
+     device. This field is necessary only at the time of ordering the newer generation device i.e.
+     AzureDataBox120 and AzureDataBox525 as of Feb/2025. Known values are: "DataBox", "DataBoxDisk",
+     "DataBoxHeavy", "DataBoxCustomerDisk", "AzureDataBox120", and "AzureDataBox525".
+    :vartype model: str or ~azure.mgmt.databox.models.ModelName
     :ivar expected_data_size_in_tera_bytes: The expected size of the data, which needs to be
      transferred in this job, in terabytes. Required.
     :vartype expected_data_size_in_tera_bytes: int
@@ -3513,6 +3692,7 @@ class DiskScheduleAvailabilityRequest(ScheduleAvailabilityRequest):
         "storage_location": {"key": "storageLocation", "type": "str"},
         "sku_name": {"key": "skuName", "type": "str"},
         "country": {"key": "country", "type": "str"},
+        "model": {"key": "model", "type": "str"},
         "expected_data_size_in_tera_bytes": {"key": "expectedDataSizeInTeraBytes", "type": "int"},
     }
 
@@ -3522,6 +3702,7 @@ class DiskScheduleAvailabilityRequest(ScheduleAvailabilityRequest):
         storage_location: str,
         expected_data_size_in_tera_bytes: int,
         country: Optional[str] = None,
+        model: Optional[Union[str, "_models.ModelName"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3531,11 +3712,16 @@ class DiskScheduleAvailabilityRequest(ScheduleAvailabilityRequest):
         :paramtype storage_location: str
         :keyword country: Country in which storage location should be supported.
         :paramtype country: str
+        :keyword model: The customer friendly name of the combination of version and capacity of the
+         device. This field is necessary only at the time of ordering the newer generation device i.e.
+         AzureDataBox120 and AzureDataBox525 as of Feb/2025. Known values are: "DataBox", "DataBoxDisk",
+         "DataBoxHeavy", "DataBoxCustomerDisk", "AzureDataBox120", and "AzureDataBox525".
+        :paramtype model: str or ~azure.mgmt.databox.models.ModelName
         :keyword expected_data_size_in_tera_bytes: The expected size of the data, which needs to be
          transferred in this job, in terabytes. Required.
         :paramtype expected_data_size_in_tera_bytes: int
         """
-        super().__init__(storage_location=storage_location, country=country, **kwargs)
+        super().__init__(storage_location=storage_location, country=country, model=model, **kwargs)
         self.sku_name: str = "DataBoxDisk"
         self.expected_data_size_in_tera_bytes = expected_data_size_in_tera_bytes
 
@@ -3745,6 +3931,11 @@ class HeavyScheduleAvailabilityRequest(ScheduleAvailabilityRequest):
     :vartype sku_name: str or ~azure.mgmt.databox.models.SkuName
     :ivar country: Country in which storage location should be supported.
     :vartype country: str
+    :ivar model: The customer friendly name of the combination of version and capacity of the
+     device. This field is necessary only at the time of ordering the newer generation device i.e.
+     AzureDataBox120 and AzureDataBox525 as of Feb/2025. Known values are: "DataBox", "DataBoxDisk",
+     "DataBoxHeavy", "DataBoxCustomerDisk", "AzureDataBox120", and "AzureDataBox525".
+    :vartype model: str or ~azure.mgmt.databox.models.ModelName
     """
 
     _validation = {
@@ -3756,9 +3947,17 @@ class HeavyScheduleAvailabilityRequest(ScheduleAvailabilityRequest):
         "storage_location": {"key": "storageLocation", "type": "str"},
         "sku_name": {"key": "skuName", "type": "str"},
         "country": {"key": "country", "type": "str"},
+        "model": {"key": "model", "type": "str"},
     }
 
-    def __init__(self, *, storage_location: str, country: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        storage_location: str,
+        country: Optional[str] = None,
+        model: Optional[Union[str, "_models.ModelName"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword storage_location: Location for data transfer. For locations check:
          https://management.azure.com/subscriptions/SUBSCRIPTIONID/locations?api-version=2018-01-01.
@@ -3766,8 +3965,13 @@ class HeavyScheduleAvailabilityRequest(ScheduleAvailabilityRequest):
         :paramtype storage_location: str
         :keyword country: Country in which storage location should be supported.
         :paramtype country: str
+        :keyword model: The customer friendly name of the combination of version and capacity of the
+         device. This field is necessary only at the time of ordering the newer generation device i.e.
+         AzureDataBox120 and AzureDataBox525 as of Feb/2025. Known values are: "DataBox", "DataBoxDisk",
+         "DataBoxHeavy", "DataBoxCustomerDisk", "AzureDataBox120", and "AzureDataBox525".
+        :paramtype model: str or ~azure.mgmt.databox.models.ModelName
         """
-        super().__init__(storage_location=storage_location, country=country, **kwargs)
+        super().__init__(storage_location=storage_location, country=country, model=model, **kwargs)
         self.sku_name: str = "DataBoxHeavy"
 
 
@@ -3851,6 +4055,50 @@ class ImportDiskDetails(_serialization.Model):
         self.backup_manifest_cloud_path = None
 
 
+class JobDelayDetails(_serialization.Model):
+    """Job Delay Notification details.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar status: Status of notification. Known values are: "Active" and "Resolved".
+    :vartype status: str or ~azure.mgmt.databox.models.DelayNotificationStatus
+    :ivar error_code: Delay Error code. Known values are: "InternalIssueDelay",
+     "ActiveOrderLimitBreachedDelay", "HighDemandDelay", and "LargeNumberOfFilesDelay".
+    :vartype error_code: str or ~azure.mgmt.databox.models.PortalDelayErrorCode
+    :ivar description: Description of the delay.
+    :vartype description: str
+    :ivar start_time: Timestamp when the delay notification was created.
+    :vartype start_time: ~datetime.datetime
+    :ivar resolution_time: Timestamp when the delay notification was resolved.
+    :vartype resolution_time: ~datetime.datetime
+    """
+
+    _validation = {
+        "status": {"readonly": True},
+        "error_code": {"readonly": True},
+        "description": {"readonly": True},
+        "start_time": {"readonly": True},
+        "resolution_time": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "status": {"key": "status", "type": "str"},
+        "error_code": {"key": "errorCode", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "resolution_time": {"key": "resolutionTime", "type": "iso-8601"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.status = None
+        self.error_code = None
+        self.description = None
+        self.start_time = None
+        self.resolution_time = None
+
+
 class JobDeliveryInfo(_serialization.Model):
     """Additional delivery info.
 
@@ -3932,7 +4180,7 @@ class Resource(_serialization.Model):
         self.identity = identity
 
 
-class JobResource(Resource):  # pylint: disable=too-many-instance-attributes
+class JobResource(Resource):
     """Job Resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3985,6 +4233,13 @@ class JobResource(Resource):  # pylint: disable=too-many-instance-attributes
      "ReadyToDispatchFromAzureDC", "ReadyToReceiveAtAzureDC", "Created", "ShippedToAzureDC",
      "AwaitingShipmentDetails", "PreparingToShipFromAzureDC", and "ShippedToCustomer".
     :vartype status: str or ~azure.mgmt.databox.models.StageName
+    :ivar delayed_stage: Name of the stage where delay might be present. Known values are:
+     "DeviceOrdered", "DevicePrepared", "Dispatched", "Delivered", "PickedUp", "AtAzureDC",
+     "DataCopy", "Completed", "CompletedWithErrors", "Cancelled", "Failed_IssueReportedAtCustomer",
+     "Failed_IssueDetectedAtAzureDC", "Aborted", "CompletedWithWarnings",
+     "ReadyToDispatchFromAzureDC", "ReadyToReceiveAtAzureDC", "Created", "ShippedToAzureDC",
+     "AwaitingShipmentDetails", "PreparingToShipFromAzureDC", and "ShippedToCustomer".
+    :vartype delayed_stage: str or ~azure.mgmt.databox.models.StageName
     :ivar start_time: Time at which the job was started in UTC ISO 8601 format.
     :vartype start_time: ~datetime.datetime
     :ivar error: Top level error for the job.
@@ -3999,6 +4254,8 @@ class JobResource(Resource):  # pylint: disable=too-many-instance-attributes
     :vartype delivery_info: ~azure.mgmt.databox.models.JobDeliveryInfo
     :ivar is_cancellable_without_fee: Flag to indicate cancellation of scheduled job.
     :vartype is_cancellable_without_fee: bool
+    :ivar all_devices_lost: Flag to indicate if all devices associated with the job are lost.
+    :vartype all_devices_lost: bool
     """
 
     _validation = {
@@ -4016,10 +4273,12 @@ class JobResource(Resource):  # pylint: disable=too-many-instance-attributes
         "reverse_transport_preference_update": {"readonly": True},
         "is_prepare_to_ship_enabled": {"readonly": True},
         "status": {"readonly": True},
+        "delayed_stage": {"readonly": True},
         "start_time": {"readonly": True},
         "error": {"readonly": True},
         "cancellation_reason": {"readonly": True},
         "is_cancellable_without_fee": {"readonly": True},
+        "all_devices_lost": {"readonly": True},
     }
 
     _attribute_map = {
@@ -4039,6 +4298,7 @@ class JobResource(Resource):  # pylint: disable=too-many-instance-attributes
         "reverse_transport_preference_update": {"key": "properties.reverseTransportPreferenceUpdate", "type": "str"},
         "is_prepare_to_ship_enabled": {"key": "properties.isPrepareToShipEnabled", "type": "bool"},
         "status": {"key": "properties.status", "type": "str"},
+        "delayed_stage": {"key": "properties.delayedStage", "type": "str"},
         "start_time": {"key": "properties.startTime", "type": "iso-8601"},
         "error": {"key": "properties.error", "type": "CloudError"},
         "details": {"key": "properties.details", "type": "JobDetails"},
@@ -4046,9 +4306,10 @@ class JobResource(Resource):  # pylint: disable=too-many-instance-attributes
         "delivery_type": {"key": "properties.deliveryType", "type": "str"},
         "delivery_info": {"key": "properties.deliveryInfo", "type": "JobDeliveryInfo"},
         "is_cancellable_without_fee": {"key": "properties.isCancellableWithoutFee", "type": "bool"},
+        "all_devices_lost": {"key": "properties.allDevicesLost", "type": "bool"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         location: str,
@@ -4097,6 +4358,7 @@ class JobResource(Resource):  # pylint: disable=too-many-instance-attributes
         self.reverse_transport_preference_update = None
         self.is_prepare_to_ship_enabled = None
         self.status = None
+        self.delayed_stage = None
         self.start_time = None
         self.error = None
         self.details = details
@@ -4104,6 +4366,7 @@ class JobResource(Resource):  # pylint: disable=too-many-instance-attributes
         self.delivery_type = delivery_type
         self.delivery_info = delivery_info
         self.is_cancellable_without_fee = None
+        self.all_devices_lost = None
 
 
 class JobResourceList(_serialization.Model):
@@ -4199,6 +4462,8 @@ class JobStages(_serialization.Model):
     :vartype stage_time: ~datetime.datetime
     :ivar job_stage_details: Job Stage Details.
     :vartype job_stage_details: JSON
+    :ivar delay_information: Delay information for the job stages.
+    :vartype delay_information: list[~azure.mgmt.databox.models.JobDelayDetails]
     """
 
     _validation = {
@@ -4207,6 +4472,7 @@ class JobStages(_serialization.Model):
         "stage_status": {"readonly": True},
         "stage_time": {"readonly": True},
         "job_stage_details": {"readonly": True},
+        "delay_information": {"readonly": True},
     }
 
     _attribute_map = {
@@ -4215,6 +4481,7 @@ class JobStages(_serialization.Model):
         "stage_status": {"key": "stageStatus", "type": "str"},
         "stage_time": {"key": "stageTime", "type": "iso-8601"},
         "job_stage_details": {"key": "jobStageDetails", "type": "object"},
+        "delay_information": {"key": "delayInformation", "type": "[JobDelayDetails]"},
     }
 
     def __init__(self, **kwargs: Any) -> None:
@@ -4225,6 +4492,7 @@ class JobStages(_serialization.Model):
         self.stage_status = None
         self.stage_time = None
         self.job_stage_details = None
+        self.delay_information = None
 
 
 class KeyEncryptionKey(_serialization.Model):
@@ -4783,6 +5051,11 @@ class PreferencesValidationRequest(ValidationInputRequest):
     :ivar device_type: Device type to be used for the job. Required. Known values are: "DataBox",
      "DataBoxDisk", "DataBoxHeavy", and "DataBoxCustomerDisk".
     :vartype device_type: str or ~azure.mgmt.databox.models.SkuName
+    :ivar model: The customer friendly name of the combination of version and capacity of the
+     device. This field is necessary only at the time of ordering the newer generation device i.e.
+     AzureDataBox120 and AzureDataBox525 as of Feb/2025. Known values are: "DataBox", "DataBoxDisk",
+     "DataBoxHeavy", "DataBoxCustomerDisk", "AzureDataBox120", and "AzureDataBox525".
+    :vartype model: str or ~azure.mgmt.databox.models.ModelName
     """
 
     _validation = {
@@ -4794,6 +5067,7 @@ class PreferencesValidationRequest(ValidationInputRequest):
         "validation_type": {"key": "validationType", "type": "str"},
         "preference": {"key": "preference", "type": "Preferences"},
         "device_type": {"key": "deviceType", "type": "str"},
+        "model": {"key": "model", "type": "str"},
     }
 
     def __init__(
@@ -4801,6 +5075,7 @@ class PreferencesValidationRequest(ValidationInputRequest):
         *,
         device_type: Union[str, "_models.SkuName"],
         preference: Optional["_models.Preferences"] = None,
+        model: Optional[Union[str, "_models.ModelName"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4809,11 +5084,17 @@ class PreferencesValidationRequest(ValidationInputRequest):
         :keyword device_type: Device type to be used for the job. Required. Known values are:
          "DataBox", "DataBoxDisk", "DataBoxHeavy", and "DataBoxCustomerDisk".
         :paramtype device_type: str or ~azure.mgmt.databox.models.SkuName
+        :keyword model: The customer friendly name of the combination of version and capacity of the
+         device. This field is necessary only at the time of ordering the newer generation device i.e.
+         AzureDataBox120 and AzureDataBox525 as of Feb/2025. Known values are: "DataBox", "DataBoxDisk",
+         "DataBoxHeavy", "DataBoxCustomerDisk", "AzureDataBox120", and "AzureDataBox525".
+        :paramtype model: str or ~azure.mgmt.databox.models.ModelName
         """
         super().__init__(**kwargs)
         self.validation_type: str = "ValidatePreferences"
         self.preference = preference
         self.device_type = device_type
+        self.model = model
 
 
 class PreferencesValidationResponseProperties(ValidationInputResponse):
@@ -4865,6 +5146,8 @@ class RegionConfigurationRequest(_serialization.Model):
      ~azure.mgmt.databox.models.TransportAvailabilityRequest
     :ivar datacenter_address_request: Request body to get the datacenter address for given sku.
     :vartype datacenter_address_request: ~azure.mgmt.databox.models.DatacenterAddressRequest
+    :ivar device_capability_request: Request body to get the device capabilities for a given sku.
+    :vartype device_capability_request: ~azure.mgmt.databox.models.DeviceCapabilityRequest
     """
 
     _attribute_map = {
@@ -4874,6 +5157,7 @@ class RegionConfigurationRequest(_serialization.Model):
             "type": "TransportAvailabilityRequest",
         },
         "datacenter_address_request": {"key": "datacenterAddressRequest", "type": "DatacenterAddressRequest"},
+        "device_capability_request": {"key": "deviceCapabilityRequest", "type": "DeviceCapabilityRequest"},
     }
 
     def __init__(
@@ -4882,6 +5166,7 @@ class RegionConfigurationRequest(_serialization.Model):
         schedule_availability_request: Optional["_models.ScheduleAvailabilityRequest"] = None,
         transport_availability_request: Optional["_models.TransportAvailabilityRequest"] = None,
         datacenter_address_request: Optional["_models.DatacenterAddressRequest"] = None,
+        device_capability_request: Optional["_models.DeviceCapabilityRequest"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4895,11 +5180,15 @@ class RegionConfigurationRequest(_serialization.Model):
          ~azure.mgmt.databox.models.TransportAvailabilityRequest
         :keyword datacenter_address_request: Request body to get the datacenter address for given sku.
         :paramtype datacenter_address_request: ~azure.mgmt.databox.models.DatacenterAddressRequest
+        :keyword device_capability_request: Request body to get the device capabilities for a given
+         sku.
+        :paramtype device_capability_request: ~azure.mgmt.databox.models.DeviceCapabilityRequest
         """
         super().__init__(**kwargs)
         self.schedule_availability_request = schedule_availability_request
         self.transport_availability_request = transport_availability_request
         self.datacenter_address_request = datacenter_address_request
+        self.device_capability_request = device_capability_request
 
 
 class RegionConfigurationResponse(_serialization.Model):
@@ -4915,12 +5204,15 @@ class RegionConfigurationResponse(_serialization.Model):
      ~azure.mgmt.databox.models.TransportAvailabilityResponse
     :ivar datacenter_address_response: Datacenter address for given sku in a region.
     :vartype datacenter_address_response: ~azure.mgmt.databox.models.DatacenterAddressResponse
+    :ivar device_capability_response: Device capabilities available for a given sku in a region.
+    :vartype device_capability_response: ~azure.mgmt.databox.models.DeviceCapabilityResponse
     """
 
     _validation = {
         "schedule_availability_response": {"readonly": True},
         "transport_availability_response": {"readonly": True},
         "datacenter_address_response": {"readonly": True},
+        "device_capability_response": {"readonly": True},
     }
 
     _attribute_map = {
@@ -4933,6 +5225,7 @@ class RegionConfigurationResponse(_serialization.Model):
             "type": "TransportAvailabilityResponse",
         },
         "datacenter_address_response": {"key": "datacenterAddressResponse", "type": "DatacenterAddressResponse"},
+        "device_capability_response": {"key": "deviceCapabilityResponse", "type": "DeviceCapabilityResponse"},
     }
 
     def __init__(self, **kwargs: Any) -> None:
@@ -4941,6 +5234,7 @@ class RegionConfigurationResponse(_serialization.Model):
         self.schedule_availability_response = None
         self.transport_availability_response = None
         self.datacenter_address_response = None
+        self.device_capability_response = None
 
 
 class ResourceIdentity(_serialization.Model):
@@ -5176,7 +5470,7 @@ class ShipmentPickUpResponse(_serialization.Model):
         self.ready_by_time = None
 
 
-class ShippingAddress(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class ShippingAddress(_serialization.Model):
     """Shipping address where customer wishes to receive the device.
 
     All required parameters must be populated in order to send to server.
@@ -5300,6 +5594,11 @@ class Sku(_serialization.Model):
     :vartype display_name: str
     :ivar family: The sku family.
     :vartype family: str
+    :ivar model: The customer friendly name of the combination of version and capacity of the
+     device. This field is necessary only at the time of ordering the newer generation device i.e.
+     AzureDataBox120 and AzureDataBox525 as of Feb/2025. Known values are: "DataBox", "DataBoxDisk",
+     "DataBoxHeavy", "DataBoxCustomerDisk", "AzureDataBox120", and "AzureDataBox525".
+    :vartype model: str or ~azure.mgmt.databox.models.ModelName
     """
 
     _validation = {
@@ -5310,6 +5609,7 @@ class Sku(_serialization.Model):
         "name": {"key": "name", "type": "str"},
         "display_name": {"key": "displayName", "type": "str"},
         "family": {"key": "family", "type": "str"},
+        "model": {"key": "model", "type": "str"},
     }
 
     def __init__(
@@ -5318,6 +5618,7 @@ class Sku(_serialization.Model):
         name: Union[str, "_models.SkuName"],
         display_name: Optional[str] = None,
         family: Optional[str] = None,
+        model: Optional[Union[str, "_models.ModelName"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5328,11 +5629,17 @@ class Sku(_serialization.Model):
         :paramtype display_name: str
         :keyword family: The sku family.
         :paramtype family: str
+        :keyword model: The customer friendly name of the combination of version and capacity of the
+         device. This field is necessary only at the time of ordering the newer generation device i.e.
+         AzureDataBox120 and AzureDataBox525 as of Feb/2025. Known values are: "DataBox", "DataBoxDisk",
+         "DataBoxHeavy", "DataBoxCustomerDisk", "AzureDataBox120", and "AzureDataBox525".
+        :paramtype model: str or ~azure.mgmt.databox.models.ModelName
         """
         super().__init__(**kwargs)
         self.name = name
         self.display_name = display_name
         self.family = family
+        self.model = model
 
 
 class SkuAvailabilityValidationRequest(ValidationInputRequest):
@@ -5357,6 +5664,11 @@ class SkuAvailabilityValidationRequest(ValidationInputRequest):
      https://management.azure.com/subscriptions/SUBSCRIPTIONID/locations?api-version=2018-01-01.
      Required.
     :vartype location: str
+    :ivar model: The customer friendly name of the combination of version and capacity of the
+     device. This field is necessary only at the time of ordering the newer generation device i.e.
+     AzureDataBox120 and AzureDataBox525 as of Feb/2025. Known values are: "DataBox", "DataBoxDisk",
+     "DataBoxHeavy", "DataBoxCustomerDisk", "AzureDataBox120", and "AzureDataBox525".
+    :vartype model: str or ~azure.mgmt.databox.models.ModelName
     """
 
     _validation = {
@@ -5373,6 +5685,7 @@ class SkuAvailabilityValidationRequest(ValidationInputRequest):
         "transfer_type": {"key": "transferType", "type": "str"},
         "country": {"key": "country", "type": "str"},
         "location": {"key": "location", "type": "str"},
+        "model": {"key": "model", "type": "str"},
     }
 
     def __init__(
@@ -5382,6 +5695,7 @@ class SkuAvailabilityValidationRequest(ValidationInputRequest):
         transfer_type: Union[str, "_models.TransferType"],
         country: str,
         location: str,
+        model: Optional[Union[str, "_models.ModelName"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5398,6 +5712,11 @@ class SkuAvailabilityValidationRequest(ValidationInputRequest):
          https://management.azure.com/subscriptions/SUBSCRIPTIONID/locations?api-version=2018-01-01.
          Required.
         :paramtype location: str
+        :keyword model: The customer friendly name of the combination of version and capacity of the
+         device. This field is necessary only at the time of ordering the newer generation device i.e.
+         AzureDataBox120 and AzureDataBox525 as of Feb/2025. Known values are: "DataBox", "DataBoxDisk",
+         "DataBoxHeavy", "DataBoxCustomerDisk", "AzureDataBox120", and "AzureDataBox525".
+        :paramtype model: str or ~azure.mgmt.databox.models.ModelName
         """
         super().__init__(**kwargs)
         self.validation_type: str = "ValidateSkuAvailability"
@@ -5405,6 +5724,7 @@ class SkuAvailabilityValidationRequest(ValidationInputRequest):
         self.transfer_type = transfer_type
         self.country = country
         self.location = location
+        self.model = model
 
 
 class SkuAvailabilityValidationResponseProperties(ValidationInputResponse):  # pylint: disable=name-too-long
@@ -5453,16 +5773,20 @@ class SkuCapacity(_serialization.Model):
     :vartype usable: str
     :ivar maximum: Maximum capacity in TB.
     :vartype maximum: str
+    :ivar individual_sku_usable: Maximum capacity per device in TB.
+    :vartype individual_sku_usable: str
     """
 
     _validation = {
         "usable": {"readonly": True},
         "maximum": {"readonly": True},
+        "individual_sku_usable": {"readonly": True},
     }
 
     _attribute_map = {
         "usable": {"key": "usable", "type": "str"},
         "maximum": {"key": "maximum", "type": "str"},
+        "individual_sku_usable": {"key": "individualSkuUsable", "type": "str"},
     }
 
     def __init__(self, **kwargs: Any) -> None:
@@ -5470,6 +5794,7 @@ class SkuCapacity(_serialization.Model):
         super().__init__(**kwargs)
         self.usable = None
         self.maximum = None
+        self.individual_sku_usable = None
 
 
 class SkuCost(_serialization.Model):
@@ -5975,20 +6300,38 @@ class TransportAvailabilityRequest(_serialization.Model):
     :ivar sku_name: Type of the device. Known values are: "DataBox", "DataBoxDisk", "DataBoxHeavy",
      and "DataBoxCustomerDisk".
     :vartype sku_name: str or ~azure.mgmt.databox.models.SkuName
+    :ivar model: The customer friendly name of the combination of version and capacity of the
+     device. This field is necessary only at the time of ordering the newer generation device i.e.
+     AzureDataBox120 and AzureDataBox525 as of Feb/2025. Known values are: "DataBox", "DataBoxDisk",
+     "DataBoxHeavy", "DataBoxCustomerDisk", "AzureDataBox120", and "AzureDataBox525".
+    :vartype model: str or ~azure.mgmt.databox.models.ModelName
     """
 
     _attribute_map = {
         "sku_name": {"key": "skuName", "type": "str"},
+        "model": {"key": "model", "type": "str"},
     }
 
-    def __init__(self, *, sku_name: Optional[Union[str, "_models.SkuName"]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        sku_name: Optional[Union[str, "_models.SkuName"]] = None,
+        model: Optional[Union[str, "_models.ModelName"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword sku_name: Type of the device. Known values are: "DataBox", "DataBoxDisk",
          "DataBoxHeavy", and "DataBoxCustomerDisk".
         :paramtype sku_name: str or ~azure.mgmt.databox.models.SkuName
+        :keyword model: The customer friendly name of the combination of version and capacity of the
+         device. This field is necessary only at the time of ordering the newer generation device i.e.
+         AzureDataBox120 and AzureDataBox525 as of Feb/2025. Known values are: "DataBox", "DataBoxDisk",
+         "DataBoxHeavy", "DataBoxCustomerDisk", "AzureDataBox120", and "AzureDataBox525".
+        :paramtype model: str or ~azure.mgmt.databox.models.ModelName
         """
         super().__init__(**kwargs)
         self.sku_name = sku_name
+        self.model = model
 
 
 class TransportAvailabilityResponse(_serialization.Model):
@@ -6241,6 +6584,11 @@ class ValidateAddress(ValidationInputRequest):
     :vartype device_type: str or ~azure.mgmt.databox.models.SkuName
     :ivar transport_preferences: Preferences related to the shipment logistics of the sku.
     :vartype transport_preferences: ~azure.mgmt.databox.models.TransportPreferences
+    :ivar model: The customer friendly name of the combination of version and capacity of the
+     device. This field is necessary only at the time of ordering the newer generation device i.e.
+     AzureDataBox120 and AzureDataBox525 as of Feb/2025. Known values are: "DataBox", "DataBoxDisk",
+     "DataBoxHeavy", "DataBoxCustomerDisk", "AzureDataBox120", and "AzureDataBox525".
+    :vartype model: str or ~azure.mgmt.databox.models.ModelName
     """
 
     _validation = {
@@ -6254,6 +6602,7 @@ class ValidateAddress(ValidationInputRequest):
         "shipping_address": {"key": "shippingAddress", "type": "ShippingAddress"},
         "device_type": {"key": "deviceType", "type": "str"},
         "transport_preferences": {"key": "transportPreferences", "type": "TransportPreferences"},
+        "model": {"key": "model", "type": "str"},
     }
 
     def __init__(
@@ -6262,6 +6611,7 @@ class ValidateAddress(ValidationInputRequest):
         shipping_address: "_models.ShippingAddress",
         device_type: Union[str, "_models.SkuName"],
         transport_preferences: Optional["_models.TransportPreferences"] = None,
+        model: Optional[Union[str, "_models.ModelName"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6272,12 +6622,18 @@ class ValidateAddress(ValidationInputRequest):
         :paramtype device_type: str or ~azure.mgmt.databox.models.SkuName
         :keyword transport_preferences: Preferences related to the shipment logistics of the sku.
         :paramtype transport_preferences: ~azure.mgmt.databox.models.TransportPreferences
+        :keyword model: The customer friendly name of the combination of version and capacity of the
+         device. This field is necessary only at the time of ordering the newer generation device i.e.
+         AzureDataBox120 and AzureDataBox525 as of Feb/2025. Known values are: "DataBox", "DataBoxDisk",
+         "DataBoxHeavy", "DataBoxCustomerDisk", "AzureDataBox120", and "AzureDataBox525".
+        :paramtype model: str or ~azure.mgmt.databox.models.ModelName
         """
         super().__init__(**kwargs)
         self.validation_type: str = "ValidateAddress"
         self.shipping_address = shipping_address
         self.device_type = device_type
         self.transport_preferences = transport_preferences
+        self.model = model
 
 
 class ValidationResponse(_serialization.Model):
