@@ -9,10 +9,10 @@ import logging
 from typing import Callable, Dict, Literal, Optional, Union, cast
 
 import pandas as pd
-from azure.ai.evaluation._legacy._flows import FlexFlow as flex_flow
-from azure.ai.evaluation._legacy._flows import AsyncPrompty as prompty_sdk
-from azure.ai.evaluation._legacy._flows import Flow as dag_flow
-from azure.ai.evaluation._legacy.client import PFClient
+from azure.ai.evaluation.legacy._adapters._flows import FlexFlow as flex_flow
+from azure.ai.evaluation.legacy._adapters._flows import AsyncPrompty as prompty_sdk
+from azure.ai.evaluation.legacy._adapters._flows import Flow as dag_flow
+from azure.ai.evaluation.legacy._adapters.client import PFClient
 from typing_extensions import ParamSpec
 
 from azure.ai.evaluation._model_configurations import AzureAIProject, EvaluationResult

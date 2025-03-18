@@ -5,7 +5,7 @@ import os
 from typing import Dict, List, Optional, Union
 
 from typing_extensions import overload, override
-from azure.ai.evaluation._legacy._flows import AsyncPrompty
+from azure.ai.evaluation.legacy._adapters._flows import AsyncPrompty
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._model_configurations import Conversation

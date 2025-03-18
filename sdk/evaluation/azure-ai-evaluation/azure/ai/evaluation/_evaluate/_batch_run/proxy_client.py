@@ -13,10 +13,10 @@ from collections import OrderedDict
 from concurrent.futures import Future
 from typing import Any, Callable, Dict, Optional, Union, cast
 
-from azure.ai.evaluation._legacy.entities import Run
-from azure.ai.evaluation._legacy._configuration import Configuration
-from azure.ai.evaluation._legacy.client import PFClient
-from azure.ai.evaluation._legacy.tracing import ThreadPoolExecutorWithContext
+from azure.ai.evaluation.legacy._adapters.entities import Run
+from azure.ai.evaluation.legacy._adapters._configuration import Configuration
+from azure.ai.evaluation.legacy._adapters.client import PFClient
+from azure.ai.evaluation.legacy._adapters.tracing import ThreadPoolExecutorWithContext
 import pandas as pd
 
 from azure.ai.evaluation._evaluate._batch_run.batch_clients import BatchClientRun, HasAsyncCallable

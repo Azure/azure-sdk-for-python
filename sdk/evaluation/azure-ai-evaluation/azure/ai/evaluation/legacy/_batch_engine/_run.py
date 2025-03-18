@@ -7,9 +7,9 @@ from datetime import datetime, timedelta, timezone
 from enum import Enum
 from typing import Any, Callable, Mapping, Optional, Sequence
 
-from .._utils import normalize_identifier_name
-from .._result import BatchResult
-from .._status import BatchStatus
+from ._utils import normalize_identifier_name
+from ._result import BatchResult
+from ._status import BatchStatus
 
 
 class RunStatus(Enum):

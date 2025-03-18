@@ -5,7 +5,7 @@
 from dataclasses import dataclass
 from logging import Logger
 
-from .._constants import PF_BATCH_TIMEOUT_SEC_DEFAULT
+from ..._constants import PF_BATCH_TIMEOUT_SEC_DEFAULT
 
 
 @dataclass

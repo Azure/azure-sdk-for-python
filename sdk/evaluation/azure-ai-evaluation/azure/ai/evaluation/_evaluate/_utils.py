@@ -12,7 +12,7 @@ import uuid
 import base64
 
 import pandas as pd
-from azure.ai.evaluation._legacy.entities import Run
+from azure.ai.evaluation.legacy._adapters.entities import Run
 
 from azure.ai.evaluation._constants import (
     DEFAULT_EVALUATION_RESULTS_FILE_NAME,
@@ -46,7 +46,7 @@ def is_none(value) -> bool:
 def extract_workspace_triad_from_trace_provider(  # pylint: disable=name-too-long
     trace_provider: str,
 ) -> AzureMLWorkspace:
-    from azure.ai.evaluation._legacy.utils import get_workspace_triad_from_local
+    from azure.ai.evaluation.legacy._adapters.utils import get_workspace_triad_from_local
 
     match = re.match(AZURE_WORKSPACE_REGEX_FORMAT, trace_provider)
     if not match or len(match.groups()) != 5:

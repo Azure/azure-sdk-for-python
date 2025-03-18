@@ -8,7 +8,7 @@ from typing import IO, Any, Dict, Optional, Union, cast
 from ruamel.yaml import YAML, YAMLError
 
 from azure.ai.evaluation._constants import DefaultOpenEncoding
-from azure.ai.evaluation.prompty._exceptions import MissingRequiredInputError
+from azure.ai.evaluation.legacy.prompty._exceptions import MissingRequiredInputError
 
 
 def load_yaml(source: Optional[Union[str, PathLike, IO]]) -> Dict:

@@ -32,15 +32,12 @@ from openai import AsyncStream
 from openai.types.chat import ChatCompletion, ChatCompletionChunk
 
 from azure.ai.evaluation._constants import DefaultOpenEncoding
-from azure.ai.evaluation.prompty._exceptions import (
+from azure.ai.evaluation.legacy.prompty._exceptions import (
     InvalidInputError,
     JinjaTemplateError,
     PromptyException,
 )
-
-# from azure.ai.evaluation.prompty._image import Base64Image, FileImage, ImageBase, InjectedImage, LazyUrlImage
-# from azure.ai.evaluation.prompty._image import InjectedImage
-from azure.ai.evaluation.prompty._yaml_utils import load_yaml
+from azure.ai.evaluation.legacy.prompty._yaml_utils import load_yaml
 
 
 # region: Resolving references

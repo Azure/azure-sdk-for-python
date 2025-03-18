@@ -8,7 +8,7 @@ import logging
 import os
 from typing import Any, Dict, Optional
 
-from .._openai_injector import inject_openai_api
+from ._openai_injector import inject_openai_api
 
 
 def start_trace(

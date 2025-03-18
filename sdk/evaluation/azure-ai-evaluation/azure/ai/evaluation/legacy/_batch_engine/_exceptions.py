@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from .._exceptions import ErrorCategory, ErrorBlame, ErrorTarget, EvaluationException
+from ..._exceptions import ErrorCategory, ErrorBlame, ErrorTarget, EvaluationException
 
 
 class BatchEngineError(EvaluationException):

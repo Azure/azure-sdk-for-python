@@ -2,17 +2,18 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+import logging
+import pandas as pd
+import sys
 from collections import defaultdict
 from concurrent.futures import Future, ThreadPoolExecutor
-import logging
-import sys
-import pandas as pd
 from os import PathLike
-from typing import Any, Callable, Dict, Final, List, Mapping, Optional, Sequence, Set, Union, cast
+from typing import Any, Callable, Dict, Final, List, Mapping, Optional, Sequence, Union, cast
 
 from .batch_clients import BatchClientRun, HasAsyncCallable
-from ..._batch_engine.deprecated._run_submitter import BatchEngineConfig, RunSubmitter
-from ..._batch_engine.deprecated._run import Run
+from ...legacy._batch_engine._run_submitter import RunSubmitter
+from ...legacy._batch_engine._config import BatchEngineConfig
+from ...legacy._batch_engine._run import Run
 
 
 LOGGER = logging.getLogger(__name__)

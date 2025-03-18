@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 from os import PathLike
-from typing import Any, Callable, Dict, Final, Mapping, Optional, Union
+from typing import Any, Callable, Dict, Optional, Union
 from typing_extensions import TypeAlias
 
 import pandas as pd

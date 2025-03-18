@@ -6,11 +6,11 @@
 # - promptflow-core/promptflow/_core/log_manager.py
 # - promptflow-core/promptflow/_utils/logger_utils.py
 
-import logging
 import os
-from re import Pattern
+import logging
 import re
 import sys
+from re import Pattern
 from contextvars import ContextVar
 from datetime import datetime, timezone
 from dataclasses import dataclass

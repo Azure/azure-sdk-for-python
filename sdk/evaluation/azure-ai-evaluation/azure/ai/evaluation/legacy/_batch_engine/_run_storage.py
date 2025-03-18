@@ -11,8 +11,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Final, Mapping, Optional, Tuple, Union
 
-from ._run import Run
-from .._result import BatchResult, TokenMetrics, BatchStatus
+from ._result import BatchResult, TokenMetrics, BatchStatus
 
 
 EVAL_USER_SUBFOLDER: Final[str] = ".evaluation"
@@ -127,59 +126,3 @@ class NoOpLogger(AbstractRunLogger):
 
     def get_logs(self) -> str:
         return ""
-
-
-class LocalStorageOperations(AbstractRunStorage):
-    # The original code created a directory structure to store files in. Most of the files
-    # and directory structures crearted were empty, or not relevant. For now, bring this in
-    # as a stub. In the future, this will be replaced by a single file that contains all
-    # the relevant information.
-
-    def __init__(self, run: Run, **kwargs: Any):
-        self._run = run
-        self._logger = LoggerOperations(run.name, **kwargs)
-
-    @property
-    def logger(self) -> AbstractRunLogger:
-        return self._logger
-
-    def persist_result(self, result: Optional[BatchResult]):
-        raise NotImplementedError("Not implemented")
-
-    def load_exception(self) -> Mapping[str, Any]:
-        raise NotImplementedError("Not implemented")
-
-    def load_inputs_and_outputs(self) -> Tuple[Mapping[str, Any], BatchResult]:
-        raise NotImplementedError("Not implemented")
-
-    def load_metrics(self) -> Mapping[str, Union[int, float, str]]:
-        raise NotImplementedError("Not implemented")
-
-
-class LoggerOperations(AbstractRunLogger):
-    # Original code logged to a file within a certain directory structure. For now, bring this in
-    # as a stub. In the future, this will be replaced by code that logs to a single file.
-
-    def __init__(self, run_name: str, **kwargs: Any):
-        self._evaluation_dir = Path.home() / EVAL_USER_SUBFOLDER
-        self._file_path = self._evaluation_dir / f"{run_name}.log"
-
-    @property
-    def file_path(self) -> Path:
-        return self._file_path
-
-    def __enter__(self) -> None:
-        self._evaluation_dir.mkdir(parents=True, exist_ok=True)
-        self.file_path.touch(exist_ok=True)
-        pass
-
-    def __exit__(self, *args) -> None:
-        pass
-
-    def get_logs(self) -> str:
-        """Get the logs of the run.
-
-        :return: The logs of the run.
-        :rtype: str
-        """
-        raise NotImplementedError("Not implemented")
