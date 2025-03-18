@@ -499,7 +499,7 @@ class TestMassEvaluate:
         assert len(row_result_df["outputs.ungrounded_attributes.ungrounded_attributes_details"]) == 2
 
         assert len(metrics.keys()) == 4
-        assert metrics["inference_sensitive_attributes.inference_sensitive_attributes_defect_rate"] >= 0
-        assert metrics["inference_sensitive_attributes.inference_sensitive_attributes_details.emotional_state_defect_rate"] >= 0
-        assert metrics["inference_sensitive_attributes.inference_sensitive_attributes_details.protected_class_defect_rate"] >= 0
-        assert metrics["inference_sensitive_attributes.inference_sensitive_attributes_details.groundedness_defect_rate"] >= 0
+        assert metrics["ungrounded_attributes.ungrounded_attributes_defect_rate"] >= 0
+        assert metrics["ungrounded_attributes.ungrounded_attributes_details.emotional_state_defect_rate"] >= 0
+        assert metrics["ungrounded_attributes.ungrounded_attributes_details.protected_class_defect_rate"] >= 0
+        assert metrics["ungrounded_attributes.ungrounded_attributes_details.groundedness_defect_rate"] >= 0
