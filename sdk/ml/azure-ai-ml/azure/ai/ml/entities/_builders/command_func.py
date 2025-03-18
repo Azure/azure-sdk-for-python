@@ -145,7 +145,7 @@ def command(
     instance_count: Optional[int] = None,
     instance_type: Optional[str] = None,
     locations: Optional[List[str]] = None,
-    docker_args: Optional[str] = None,
+    docker_args: Optional[Union[str, List[str]]] = None,
     shm_size: Optional[str] = None,
     timeout: Optional[int] = None,
     code: Optional[Union[str, os.PathLike]] = None,
@@ -156,6 +156,7 @@ def command(
     ] = None,
     job_tier: Optional[str] = None,
     priority: Optional[str] = None,
+    parent_job_name: Optional[str] = None,
     **kwargs: Any,
 ) -> Command:
     """Creates a Command object which can be used inside a dsl.pipeline function or used as a standalone Command job.
@@ -199,7 +200,7 @@ def command(
     :keyword docker_args: Extra arguments to pass to the Docker run command. This would override any
         parameters that have already been set by the system, or in this section. This parameter is only
         supported for Azure ML compute types. Defaults to None.
-    :paramtype docker_args: Optional[str]
+    :paramtype docker_args: Optional[Union[str,List[str]]]
     :keyword shm_size: The size of the Docker container's shared memory block. This should be in the
         format of (number)(unit) where the number has to be greater than 0 and the unit can be one of
         b(bytes), k(kilobytes), m(megabytes), or g(gigabytes).
@@ -229,6 +230,8 @@ def command(
     :keyword priority: The priority of the job on the compute. Accepted values are "low", "medium", and "high".
         Defaults to "medium".
     :paramtype priority: Optional[str]
+    :keyword parent_job_name: parent job id for command job
+    :paramtype parent_job_name: Optional[str]
     :return: A Command object.
     :rtype: ~azure.ai.ml.entities.Command
 
@@ -283,6 +286,7 @@ def command(
         environment=environment,
         environment_variables=environment_variables,
         services=services,
+        parent_job_name=parent_job_name,
         **kwargs,
     )
 

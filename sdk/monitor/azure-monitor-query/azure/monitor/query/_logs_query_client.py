@@ -22,6 +22,7 @@ from ._helpers import (
 )
 from ._models import LogsBatchQuery, LogsQueryResult, LogsQueryPartialResult
 from ._exceptions import LogsQueryError
+from ._version import SDK_MONIKER
 
 JSON = MutableMapping[str, Any]
 
@@ -67,6 +68,7 @@ class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-key
         audience = kwargs.pop("audience", f"{parsed_endpoint.scheme}://{parsed_endpoint.netloc}")
         self._endpoint = endpoint
         auth_policy = kwargs.pop("authentication_policy", None)
+        kwargs.setdefault("sdk_moniker", SDK_MONIKER)
         self._client = MonitorQueryClient(
             credential=credential,
             authentication_policy=auth_policy or get_authentication_policy(credential, audience),
@@ -132,9 +134,7 @@ class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-key
 
         generated_response: JSON = {}
         try:
-            generated_response = self._query_op.execute(
-                workspace_id=workspace_id, body=body, prefer=prefer, **kwargs
-            )
+            generated_response = self._query_op.execute(workspace_id=workspace_id, body=body, prefer=prefer, **kwargs)
         except HttpResponseError as err:
             process_error(err, LogsQueryError)
 

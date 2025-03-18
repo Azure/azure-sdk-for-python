@@ -67,7 +67,7 @@ with project_client:
 
     # Create and process agent run in thread with tools
     # [START create_and_process_run]
-    run = project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+    run = project_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
     # [END create_and_process_run]
     print(f"Run finished with status: {run.status}")
 
