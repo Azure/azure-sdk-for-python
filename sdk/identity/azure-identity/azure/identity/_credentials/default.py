@@ -239,7 +239,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         :keyword options: A dictionary of options for the token request. Unknown options will be ignored. Optional.
         :paramtype options: ~azure.core.credentials.TokenRequestOptions
 
-        :rtype: AccessTokenInfo
+        :rtype: ~azure.core.credentials.AccessTokenInfo
         :return: An AccessTokenInfo instance containing information about the token.
 
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The exception has a

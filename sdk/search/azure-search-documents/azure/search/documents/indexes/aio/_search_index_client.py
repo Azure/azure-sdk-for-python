@@ -28,6 +28,7 @@ from ..models import (
     SearchAlias,
     AnalyzeResult,
     AnalyzeTextOptions,
+    IndexStatisticsSummary,
 )
 
 
@@ -338,7 +339,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         result = await self._client.synonym_maps.list(**kwargs)
         assert result.synonym_maps is not None  # Hint for mypy
         # pylint:disable=protected-access
-        return [SynonymMap._from_generated(x) for x in result.synonym_maps]
+        return [cast(SynonymMap, SynonymMap._from_generated(x)) for x in result.synonym_maps]
 
     @distributed_trace_async
     async def get_synonym_map_names(self, **kwargs: Any) -> List[str]:
@@ -479,6 +480,18 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.get_service_statistics(**kwargs)
         return result.as_dict()
+
+    @distributed_trace
+    def list_index_stats_summary(self, **kwargs: Any) -> AsyncItemPaged[IndexStatisticsSummary]:
+        """Get index level statistics for a search service.
+
+        :return: Index statistics result.
+        :rtype: ~azure.core.paging.AsyncItemPaged[~azure.search.documents.indexes.models.IndexStatisticsSummary]
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        # pylint:disable=protected-access
+        result = self._client.get_index_stats_summary(**kwargs)
+        return cast(AsyncItemPaged[IndexStatisticsSummary], result)
 
     @distributed_trace
     def list_aliases(self, *, select: Optional[List[str]] = None, **kwargs) -> AsyncItemPaged[SearchAlias]:

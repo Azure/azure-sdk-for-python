@@ -121,5 +121,3 @@ The global documentation for authenticating Python apps on Azure is available [h
 [client_secret_cred]: https://aka.ms/azsdk/python/identity/docs#azure.identity.ClientSecretCredential
 [get_client_from_cli_profile]: https://learn.microsoft.com/python/api/azure-common/azure.common.client_factory?view=azure-python#get-client-from-cli-profile-client-class----kwargs-
 [json]: https://docs.python.org/3/library/json.html#json.load
-
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fidentity%2Fazure-identity%2Fmigration_guide.png)

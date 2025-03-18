@@ -1,0 +1,16 @@
+{
+  "parameters": {
+    "subscriptionId": "34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
+    "resourceGroupName": "testrg123",
+    "workspaceName": "workspaces123",
+    "computeName": "compute123",
+    "api-version": "2025-01-01-preview"
+  },
+  "responses": {
+    "202": {
+      "headers": {
+        "Location": "example_location"
+      }
+    }
+  }
+}

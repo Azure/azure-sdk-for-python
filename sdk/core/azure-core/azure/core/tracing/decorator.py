@@ -24,20 +24,26 @@
 #
 # --------------------------------------------------------------------------
 """The decorator to apply if you want the given function traced."""
-
+from contextvars import ContextVar
 import functools
 
 from typing import Callable, Any, TypeVar, overload, Optional, Mapping, TYPE_CHECKING
 from typing_extensions import ParamSpec
-from .common import change_context, get_function_and_class_name
-from . import SpanKind as _SpanKind
+from .common import change_context
 from ..settings import settings
+from ..instrumentation import get_tracer as _get_tracer
+from ._models import SpanKind as _SpanKind
 
 if TYPE_CHECKING:
-    from azure.core.tracing import SpanKind
+    from azure.core.tracing import TracingOptions, SpanKind
+
 
 P = ParamSpec("P")
 T = TypeVar("T")
+
+
+# This context variable is used to determine if we are already in the span context of a decorated function.
+_in_span_context = ContextVar("in_span_context", default=False)
 
 
 @overload
@@ -97,23 +103,70 @@ def distributed_trace(
             merge_span = kwargs.pop("merge_span", False)
             passed_in_parent = kwargs.pop("parent_span", None)
 
-            # Assume this will be popped in DistributedTracingPolicy.
-            func_tracing_attributes = kwargs.pop("tracing_attributes", tracing_attributes)
+            # If we are already in the span context of a decorated function, don't trace.
+            if _in_span_context.get():
+                return func(*args, **kwargs)
 
-            span_impl_type = settings.tracing_implementation()
-            if span_impl_type is None:
+            # This will be popped in the pipeline or transport runner.
+            tracing_options: TracingOptions = kwargs.get("tracing_options", {})
+            tracing_enabled = settings.tracing_enabled()
+
+            # User can explicitly disable tracing for this request.
+            user_enabled = tracing_options.get("enabled")
+
+            # If tracing is disabled globally and user didn't explicitly enable it, don't trace.
+            if user_enabled is False or (not tracing_enabled and user_enabled is None):
                 return func(*args, **kwargs)
 
             # Merge span is parameter is set, but only if no explicit parent are passed
             if merge_span and not passed_in_parent:
                 return func(*args, **kwargs)
 
-            with change_context(passed_in_parent):
-                name = name_of_span or get_function_and_class_name(func, *args)
-                with span_impl_type(name=name, kind=kind) as span:
-                    for key, value in func_tracing_attributes.items():
-                        span.add_attribute(key, value)
+            # Assume this will be popped in DistributedTracingPolicy.
+            func_tracing_attributes = kwargs.get("tracing_attributes", tracing_attributes)
+            span_attributes = {**func_tracing_attributes, **tracing_options.get("attributes", {})}
+
+            span_impl_type = settings.tracing_implementation()
+
+            name = name_of_span or func.__qualname__
+            if span_impl_type:
+                # Plugin path
+                with change_context(passed_in_parent):
+                    with span_impl_type(name=name, kind=kind) as span:
+                        for key, value in span_attributes.items():
+                            span.add_attribute(key, value)  # type: ignore
+                        return func(*args, **kwargs)
+            else:
+                # Native path
+                config = {}
+                if args and hasattr(args[0], "_instrumentation_config"):
+                    config = args[0]._instrumentation_config  # pylint: disable=protected-access
+                method_tracer = _get_tracer(
+                    library_name=config.get("library_name"),
+                    library_version=config.get("library_version"),
+                    schema_url=config.get("schema_url"),
+                    attributes=config.get("attributes"),
+                )
+                if not method_tracer:
                     return func(*args, **kwargs)
+
+                span_suppression_token = _in_span_context.set(True)
+                try:
+                    with method_tracer.start_as_current_span(
+                        name=name,
+                        kind=kind,
+                        attributes=span_attributes,
+                    ) as span:
+                        try:
+                            return func(*args, **kwargs)
+                        except Exception as err:  # pylint: disable=broad-except
+                            ex_type = type(err)
+                            module = ex_type.__module__ if ex_type.__module__ != "builtins" else ""
+                            error_type = f"{module}.{ex_type.__qualname__}" if module else ex_type.__qualname__
+                            span.set_attribute("error.type", error_type)
+                            raise
+                finally:
+                    _in_span_context.reset(span_suppression_token)
 
         return wrapper_use_tracer
 

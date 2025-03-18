@@ -386,7 +386,7 @@ class TestEvaluate:
             {"query": "${data.query"},
             {"query": "data.query", "response": "target.response"},
             {"query": "${data.query}", "response": "${target.response.one}"},
-        ]
+        ],
     )
     def test_evaluate_invalid_column_mapping(self, mock_model_config, evaluate_test_data_jsonl_file, column_mapping):
         # Invalid source reference
@@ -398,12 +398,12 @@ class TestEvaluate:
                     "g": {
                         "column_mapping": column_mapping,
                     }
-                }
+                },
             )
 
         assert (
-                "Unexpected references detected in 'column_mapping'. Ensure only ${target.} and ${data.} are used."
-                in exc_info.value.args[0]
+            "Unexpected references detected in 'column_mapping'. Ensure only ${target.} and ${data.} are used."
+            in exc_info.value.args[0]
         )
 
     def test_renaming_column(self):

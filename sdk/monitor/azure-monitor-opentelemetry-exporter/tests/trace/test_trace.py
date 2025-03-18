@@ -272,7 +272,10 @@ class TestAzureTraceExporter(unittest.TestCase):
             name="test",
             context=context,
             resource=resource,
-            attributes={"enduser.id": "testId"},
+            attributes={
+                "enduser.id": "testId",
+                "user_agent.synthetic.type": "bot",
+            },
             parent=context,
         )
         test_span.start()
@@ -304,6 +307,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_INTERNAL_NODE_NAME), "testServiceInstanceId")
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_ID), "{:032x}".format(context.trace_id))
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_USER_ID), "testId")
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_SYNTHETIC_SOURCE), "True")
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_PARENT_ID), "{:016x}".format(context.span_id))
 
     def test_span_to_envelope_partA_default(self):
@@ -998,6 +1002,14 @@ class TestAzureTraceExporter(unittest.TestCase):
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.source, "Test_name//testdest")
 
+        span._attributes = {
+            "az.namespace": "Microsoft.EventHub",
+            "server.address": "Test_name",
+            "messaging.destination.name": "/testdest",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.source, "Test_name//testdest")
+
     def test_span_envelope_server_http(self):
         exporter = self._exporter
         start_time = 1575494316027613500
@@ -1033,11 +1045,11 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.duration, "0.00:00:01.001")
         self.assertEqual(envelope.data.base_data.response_code, "200")
         self.assertTrue(envelope.data.base_data.success)
+        self.assertEqual(envelope.data.base_data.url, "https://www.wikipedia.org/wiki/Rabbit")
 
         self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit")
         self.assertEqual(envelope.tags["ai.user.userAgent"], "agent")
         self.assertEqual(envelope.tags[ContextTagKeys.AI_LOCATION_IP], "client_ip")
-        self.assertEqual(envelope.data.base_data.url, "https://www.wikipedia.org/wiki/Rabbit")
         self.assertEqual(len(envelope.data.base_data.properties), 0)
 
         # success

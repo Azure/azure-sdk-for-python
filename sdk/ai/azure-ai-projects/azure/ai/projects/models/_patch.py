@@ -62,6 +62,7 @@ from ._models import (
     MessageImageFileContent,
     MessageTextContent,
     MessageTextFileCitationAnnotation,
+    MessageTextUrlCitationAnnotation,
     MessageTextFilePathAnnotation,
     MicrosoftFabricToolDefinition,
     OpenApiAuthDetails,
@@ -508,6 +509,22 @@ class ThreadMessage(ThreadMessageGenerated):
             if isinstance(annotation, MessageTextFilePathAnnotation)
         ]
 
+    @property
+    def url_citation_annotations(self) -> List[MessageTextUrlCitationAnnotation]:
+        """Returns all URL citation annotations from text message annotations in the messages.
+
+        :rtype: List[MessageTextUrlCitationAnnotation]
+        """
+        if not self.content:
+            return []
+        return [
+            annotation
+            for content in self.content
+            if isinstance(content, MessageTextContent)
+            for annotation in content.text.annotations
+            if isinstance(annotation, MessageTextUrlCitationAnnotation)
+        ]
+
 
 class MessageAttachment(MessageAttachmentGenerated):
     @overload
@@ -778,11 +795,23 @@ class AzureAISearchTool(Tool[AzureAISearchToolDefinition]):
 
 class OpenApiTool(Tool[OpenApiToolDefinition]):
     """
-    A tool that retrieves information using an OpenAPI spec.
+    A tool that retrieves information using OpenAPI specs.
+    Initialized with an initial API definition (name, description, spec, auth),
+    this class also supports adding and removing additional API definitions dynamically.
     """
 
     def __init__(self, name: str, description: str, spec: Any, auth: OpenApiAuthDetails):
-        self._definitions = [
+        """
+        Constructor initializes the tool with a primary API definition.
+
+        :param name: The name of the API.
+        :param description: The API description.
+        :param spec: The API specification.
+        :param auth: Authentication details for the API.
+        :type auth: OpenApiAuthDetails
+        """
+        self._default_auth = auth
+        self._definitions: List[OpenApiToolDefinition] = [
             OpenApiToolDefinition(
                 openapi=OpenApiFunctionDefinition(name=name, description=description, spec=spec, auth=auth)
             )
@@ -791,12 +820,55 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
     @property
     def definitions(self) -> List[OpenApiToolDefinition]:
         """
-        Get the OpenApi tool definitions.
+        Get the list of all API definitions for the tool.
 
-        :return: A list of tool definitions.
+        :return: A list of OpenAPI tool definitions.
         :rtype: List[ToolDefinition]
         """
         return self._definitions
+
+    def add_definition(self, name: str, description: str, spec: Any, auth: Optional[OpenApiAuthDetails] = None) -> None:
+        """
+        Adds a new API definition dynamically.
+        Raises a ValueError if a definition with the same name already exists.
+
+        :param name: The name of the API.
+        :type name: str
+        :param description: The description of the API.
+        :type description: str
+        :param spec: The API specification.
+        :type spec: Any
+        :param auth: Optional authentication details for this particular API definition.
+                     If not provided, the tool's default authentication details will be used.
+        :type auth: Optional[OpenApiAuthDetails]
+        :raises ValueError: If a definition with the same name exists.
+        """
+        # Check if a definition with the same name exists.
+        if any(definition.openapi.name == name for definition in self._definitions):
+            raise ValueError(f"Definition '{name}' already exists and cannot be added again.")
+
+        # Use provided auth if specified, otherwise use default
+        auth_to_use = auth if auth is not None else self._default_auth
+
+        new_definition = OpenApiToolDefinition(
+            openapi=OpenApiFunctionDefinition(name=name, description=description, spec=spec, auth=auth_to_use)
+        )
+        self._definitions.append(new_definition)
+
+    def remove_definition(self, name: str) -> None:
+        """
+        Removes an API definition based on its name.
+
+        :param name: The name of the API definition to remove.
+        :type name: str
+        :raises ValueError: If the definition with the specified name does not exist.
+        """
+        for definition in self._definitions:
+            if definition.openapi.name == name:
+                self._definitions.remove(definition)
+                logging.info("Definition '%s' removed. Total definitions: %d.", name, len(self._definitions))
+                return
+        raise ValueError(f"Definition with the name '{name}' does not exist.")
 
     @property
     def resources(self) -> ToolResources:
@@ -808,11 +880,12 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
         """
         return ToolResources()
 
-    def execute(self, tool_call: Any):
+    def execute(self, tool_call: Any) -> None:
         """
         OpenApiTool does not execute client-side.
 
         :param Any tool_call: The tool call to execute.
+        :type tool_call: Any
         """
 
 
@@ -1273,7 +1346,7 @@ class BaseAsyncAgentEventHandler(AsyncIterator[T]):
         self.submit_tool_outputs: Optional[Callable[[ThreadRun, "BaseAsyncAgentEventHandler[T]"], Awaitable[None]]] = (
             None
         )
-        self.buffer: Optional[str] = None
+        self.buffer: Optional[bytes] = None
 
     def initialize(
         self,
@@ -1286,29 +1359,29 @@ class BaseAsyncAgentEventHandler(AsyncIterator[T]):
         self.submit_tool_outputs = submit_tool_outputs
 
     async def __anext__(self) -> T:
-        self.buffer = "" if self.buffer is None else self.buffer
+        self.buffer = b"" if self.buffer is None else self.buffer
         if self.response_iterator is None:
             raise ValueError("The response handler was not initialized.")
 
-        if not "\n\n" in self.buffer:
+        if not b"\n\n" in self.buffer:
             async for chunk in self.response_iterator:
-                self.buffer += chunk.decode("utf-8")
-                if "\n\n" in self.buffer:
+                self.buffer += chunk
+                if b"\n\n" in self.buffer:
                     break
 
-        if self.buffer == "":
+        if self.buffer == b"":
             raise StopAsyncIteration()
 
-        event_str = ""
-        if "\n\n" in self.buffer:
-            event_end_index = self.buffer.index("\n\n")
-            event_str = self.buffer[:event_end_index]
+        event_bytes = b""
+        if b"\n\n" in self.buffer:
+            event_end_index = self.buffer.index(b"\n\n")
+            event_bytes = self.buffer[:event_end_index]
             self.buffer = self.buffer[event_end_index:].lstrip()
         else:
-            event_str = self.buffer
-            self.buffer = ""
+            event_bytes = self.buffer
+            self.buffer = b""
 
-        return await self._process_event(event_str)
+        return await self._process_event(event_bytes.decode("utf-8"))
 
     async def _process_event(self, event_data_str: str) -> T:
         raise NotImplementedError("This method needs to be implemented.")
@@ -1330,7 +1403,7 @@ class BaseAgentEventHandler(Iterator[T]):
     def __init__(self) -> None:
         self.response_iterator: Optional[Iterator[bytes]] = None
         self.submit_tool_outputs: Optional[Callable[[ThreadRun, "BaseAgentEventHandler[T]"], None]] = None
-        self.buffer: Optional[str] = None
+        self.buffer: Optional[bytes] = None
 
     def initialize(
         self,
@@ -1343,29 +1416,29 @@ class BaseAgentEventHandler(Iterator[T]):
         self.submit_tool_outputs = submit_tool_outputs
 
     def __next__(self) -> T:
-        self.buffer = "" if self.buffer is None else self.buffer
+        self.buffer = b"" if self.buffer is None else self.buffer
         if self.response_iterator is None:
             raise ValueError("The response handler was not initialized.")
 
-        if not "\n\n" in self.buffer:
+        if not b"\n\n" in self.buffer:
             for chunk in self.response_iterator:
-                self.buffer += chunk.decode("utf-8")
-                if "\n\n" in self.buffer:
+                self.buffer += chunk
+                if b"\n\n" in self.buffer:
                     break
 
-        if self.buffer == "":
+        if self.buffer == b"":
             raise StopIteration()
 
-        event_str = ""
-        if "\n\n" in self.buffer:
-            event_end_index = self.buffer.index("\n\n")
-            event_str = self.buffer[:event_end_index]
+        event_bytes = b""
+        if b"\n\n" in self.buffer:
+            event_end_index = self.buffer.index(b"\n\n")
+            event_bytes = self.buffer[:event_end_index]
             self.buffer = self.buffer[event_end_index:].lstrip()
         else:
-            event_str = self.buffer
-            self.buffer = ""
+            event_bytes = self.buffer
+            self.buffer = b""
 
-        return self._process_event(event_str)
+        return self._process_event(event_bytes.decode("utf-8"))
 
     def _process_event(self, event_data_str: str) -> T:
         raise NotImplementedError("This method needs to be implemented.")

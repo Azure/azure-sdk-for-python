@@ -1,0 +1,94 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "test-rg",
+    "workspaceName": "my-aml-workspace",
+    "api-version": "2025-01-01-preview",
+    "$skipToken": "string",
+    "jobType": "string",
+    "tag": "string",
+    "listViewType": "All"
+  },
+  "responses": {
+    "200": {
+      "headers": {},
+      "body": {
+        "value": [
+          {
+            "id": "string",
+            "name": "string",
+            "type": "string",
+            "properties": {
+              "description": "string",
+              "tags": {
+                "string": "string"
+              },
+              "properties": {
+                "string": "string"
+              },
+              "displayName": "string",
+              "status": "Created",
+              "experimentName": "string",
+              "computeId": "string",
+              "isArchived": false,
+              "identity": {
+                "identityType": "AMLToken"
+              },
+              "fineTuningDetails": {
+                "taskType": "TextCompletion",
+                "modelProvider": "Custom",
+                "model": {
+                  "jobInputType": "mlflow_model",
+                  "uri": "azureml://registries/azureml-meta/models/Llama-2-7b/versions/11",
+                  "mode": "ReadOnlyMount",
+                  "description": null
+                },
+                "trainingData": {
+                  "jobInputType": "uri_file",
+                  "uri": "azureml://datastores/workspaceblobstore/paths/UI/2023-06-06_175927_UTC/small_train.jsonl",
+                  "mode": "ReadOnlyMount",
+                  "description": null
+                }
+              },
+              "resources": {
+                "instanceTypes": [
+                  "Standard_NC6"
+                ]
+              },
+              "queueSettings": {
+                "jobTier": "Standard"
+              },
+              "componentId": "string",
+              "notificationSetting": {
+                "emails": [
+                  "string"
+                ],
+                "emailOn": [
+                  "JobFailed"
+                ]
+              },
+              "jobType": "FineTuning",
+              "outputs": {
+                "string": {
+                  "description": "string",
+                  "uri": "string",
+                  "mode": "ReadWriteMount",
+                  "jobOutputType": "mlflow_model"
+                }
+              }
+            },
+            "systemData": {
+              "createdAt": "2020-01-01T12:34:56.999+00:22",
+              "createdBy": "string",
+              "createdByType": "Application",
+              "lastModifiedAt": "2020-01-01T12:34:56.999+00:22",
+              "lastModifiedBy": "string",
+              "lastModifiedByType": "ManagedIdentity"
+            }
+          }
+        ],
+        "nextLink": "string"
+      }
+    }
+  }
+}
