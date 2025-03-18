@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -449,11 +449,11 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_agent(self, assistant_id: str, **kwargs: Any) -> _models.Agent:
+    async def get_agent(self, agent_id: str, **kwargs: Any) -> _models.Agent:
         """Retrieves an existing agent.
 
-        :param assistant_id: Identifier of the agent. Required.
-        :type assistant_id: str
+        :param agent_id: Identifier of the agent. Required.
+        :type agent_id: str
         :return: Agent. The Agent is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -472,7 +472,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[_models.Agent] = kwargs.pop("cls", None)
 
         _request = build_agents_get_agent_request(
-            assistant_id=assistant_id,
+            agent_id=agent_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -516,7 +516,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     @overload
     async def update_agent(
         self,
-        assistant_id: str,
+        agent_id: str,
         *,
         content_type: str = "application/json",
         model: Optional[str] = None,
@@ -533,8 +533,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.Agent:
         """Modifies an existing agent.
 
-        :param assistant_id: The ID of the agent to modify. Required.
-        :type assistant_id: str
+        :param agent_id: The ID of the agent to modify. Required.
+        :type agent_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -584,12 +584,12 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def update_agent(
-        self, assistant_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, agent_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Agent:
         """Modifies an existing agent.
 
-        :param assistant_id: The ID of the agent to modify. Required.
-        :type assistant_id: str
+        :param agent_id: The ID of the agent to modify. Required.
+        :type agent_id: str
         :param body: Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -602,12 +602,12 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def update_agent(
-        self, assistant_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, agent_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Agent:
         """Modifies an existing agent.
 
-        :param assistant_id: The ID of the agent to modify. Required.
-        :type assistant_id: str
+        :param agent_id: The ID of the agent to modify. Required.
+        :type agent_id: str
         :param body: Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -621,7 +621,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace_async
     async def update_agent(
         self,
-        assistant_id: str,
+        agent_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         model: Optional[str] = None,
@@ -638,8 +638,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.Agent:
         """Modifies an existing agent.
 
-        :param assistant_id: The ID of the agent to modify. Required.
-        :type assistant_id: str
+        :param agent_id: The ID of the agent to modify. Required.
+        :type agent_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
         :keyword model: The ID of the model to use. Default value is None.
@@ -721,7 +721,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_agents_update_agent_request(
-            assistant_id=assistant_id,
+            agent_id=agent_id,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -765,11 +765,11 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete_agent(self, assistant_id: str, **kwargs: Any) -> _models.AgentDeletionStatus:
+    async def delete_agent(self, agent_id: str, **kwargs: Any) -> _models.AgentDeletionStatus:
         """Deletes an agent.
 
-        :param assistant_id: Identifier of the agent. Required.
-        :type assistant_id: str
+        :param agent_id: Identifier of the agent. Required.
+        :type agent_id: str
         :return: AgentDeletionStatus. The AgentDeletionStatus is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentDeletionStatus
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -788,7 +788,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[_models.AgentDeletionStatus] = kwargs.pop("cls", None)
 
         _request = build_agents_delete_agent_request(
-            assistant_id=assistant_id,
+            agent_id=agent_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -1825,7 +1825,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         self,
         thread_id: str,
         *,
-        assistant_id: str,
+        agent_id: str,
         include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
         content_type: str = "application/json",
         model: Optional[str] = None,
@@ -1849,8 +1849,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
-        :keyword assistant_id: The ID of the agent that should run the thread. Required.
-        :paramtype assistant_id: str
+        :keyword agent_id: The ID of the agent that should run the thread. Required.
+        :paramtype agent_id: str
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
@@ -1997,7 +1997,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         thread_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        assistant_id: str = _Unset,
+        agent_id: str = _Unset,
         include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
         model: Optional[str] = None,
         instructions: Optional[str] = None,
@@ -2022,8 +2022,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type thread_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword assistant_id: The ID of the agent that should run the thread. Required.
-        :paramtype assistant_id: str
+        :keyword agent_id: The ID of the agent that should run the thread. Required.
+        :paramtype agent_id: str
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
@@ -2117,12 +2117,12 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[_models.ThreadRun] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            if assistant_id is _Unset:
-                raise TypeError("missing required argument: assistant_id")
+            if agent_id is _Unset:
+                raise TypeError("missing required argument: agent_id")
             body = {
                 "additional_instructions": additional_instructions,
                 "additional_messages": additional_messages,
-                "assistant_id": assistant_id,
+                "assistant_id": agent_id,
                 "instructions": instructions,
                 "max_completion_tokens": max_completion_tokens,
                 "max_prompt_tokens": max_prompt_tokens,
@@ -2767,7 +2767,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     async def create_thread_and_run(
         self,
         *,
-        assistant_id: str,
+        agent_id: str,
         content_type: str = "application/json",
         thread: Optional[_models.AgentThreadCreationOptions] = None,
         model: Optional[str] = None,
@@ -2788,8 +2788,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.ThreadRun:
         """Creates a new agent thread and immediately starts a run using that new thread.
 
-        :keyword assistant_id: The ID of the agent for which the thread should be created. Required.
-        :paramtype assistant_id: str
+        :keyword agent_id: The ID of the agent for which the thread should be created. Required.
+        :paramtype agent_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2903,7 +2903,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        assistant_id: str = _Unset,
+        agent_id: str = _Unset,
         thread: Optional[_models.AgentThreadCreationOptions] = None,
         model: Optional[str] = None,
         instructions: Optional[str] = None,
@@ -2925,8 +2925,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword assistant_id: The ID of the agent for which the thread should be created. Required.
-        :paramtype assistant_id: str
+        :keyword agent_id: The ID of the agent for which the thread should be created. Required.
+        :paramtype agent_id: str
         :keyword thread: The details used to create the new thread. If no thread is provided, an empty
          one will be created. Default value is None.
         :paramtype thread: ~azure.ai.projects.models.AgentThreadCreationOptions
@@ -3014,10 +3014,10 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[_models.ThreadRun] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            if assistant_id is _Unset:
-                raise TypeError("missing required argument: assistant_id")
+            if agent_id is _Unset:
+                raise TypeError("missing required argument: agent_id")
             body = {
-                "assistant_id": assistant_id,
+                "assistant_id": agent_id,
                 "instructions": instructions,
                 "max_completion_tokens": max_completion_tokens,
                 "max_prompt_tokens": max_prompt_tokens,
@@ -5144,7 +5144,8 @@ class ConnectionsOperations:
         """List the details of all the connections (not including their credentials).
 
         :keyword category: Category of the workspace connection. Known values are: "AzureOpenAI",
-         "Serverless", "AzureBlob", "AIServices", and "CognitiveSearch". Default value is None.
+         "Serverless", "AzureBlob", "AIServices", "CognitiveSearch", and "API Key". Default value is
+         None.
         :paramtype category: str or ~azure.ai.projects.models.ConnectionType
         :keyword include_all: Indicates whether to list datastores. Service default: do not list
          datastores. Default value is None.
@@ -5404,7 +5405,6 @@ class TelemetryOperations:
     async def _get_app_insights(
         self, app_insights_resource_url: str, **kwargs: Any
     ) -> _models._models.GetAppInsightsResponse:
-        # pylint: disable=line-too-long
         """Gets the properties of the specified Application Insights resource.
 
         :param app_insights_resource_url: The AppInsights Azure resource Url. It should have the

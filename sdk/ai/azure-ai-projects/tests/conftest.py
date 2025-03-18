@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -39,6 +40,9 @@ class SanitizedValues:
     TENANT_ID = "00000000-0000-0000-0000-000000000000"
     USER_OBJECT_ID = "00000000-0000-0000-0000-000000000000"
     API_KEY = "00000000000000000000000000000000000000000000000000000000000000000000"
+    VECTOR_STORE_NAME = "vs_000000000000000000000000"
+    # cSpell:disable-next-line
+    FILE_BATCH = "vsfb_00000000000000000000000000000000"
 
 
 @pytest.fixture(scope="session")
@@ -57,6 +61,14 @@ def mock_dataset_name():
     }
 
 
+@pytest.fixture(scope="session")
+def mock_vector_store_name():
+    return {
+        "vector_store_name": f"{SanitizedValues.VECTOR_STORE_NAME}",
+        "file_batches": f"{SanitizedValues.FILE_BATCH}",
+    }
+
+
 # autouse=True will trigger this fixture on each pytest run, even if it's not explicitly used by a test method
 @pytest.fixture(scope="session", autouse=True)
 def start_proxy(test_proxy):
@@ -64,7 +76,7 @@ def start_proxy(test_proxy):
 
 
 @pytest.fixture(scope="session", autouse=True)
-def add_sanitizers(test_proxy, mock_project_scope, mock_dataset_name):
+def add_sanitizers(test_proxy, mock_project_scope, mock_dataset_name, mock_vector_store_name):
 
     def azure_workspace_triad_sanitizer():
         """Sanitize subscription, resource group, and workspace."""
@@ -107,10 +119,35 @@ def add_sanitizers(test_proxy, mock_project_scope, mock_dataset_name):
         regex=r"/data/([-\w\._\(\)]+)", value=mock_dataset_name["dataset_name"], group_for_replace="1"
     )
 
+    add_general_regex_sanitizer(
+        regex=r"/vector_stores/([-\w\._\(\)]+)",
+        value=mock_vector_store_name["vector_store_name"],
+        group_for_replace="1",
+    )
+
+    add_general_regex_sanitizer(
+        regex=r"/file_batches/([-\w\._\(\)]+)/", value=mock_vector_store_name["file_batches"], group_for_replace="1"
+    )
+
     # Sanitize Application Insights connection string from service response (/tests/telemetry)
     add_body_key_sanitizer(
         json_path="properties.ConnectionString",
         value="InstrumentationKey=00000000-0000-0000-0000-000000000000;IngestionEndpoint=https://region.applicationinsights.azure.com/;LiveEndpoint=https://region.livediagnostics.monitor.azure.com/;ApplicationId=00000000-0000-0000-0000-000000000000",
+    )
+
+    add_body_key_sanitizer(
+        json_path="data_sources[*].uri",
+        value="azureml://subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/00000/workspaces/00000/datastores/workspaceblobstore/paths/LocalUpload/00000000000/product_info_1.md",
+    )
+
+    add_body_key_sanitizer(
+        json_path="configuration.data_sources[*].uri",
+        value="azureml://subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/00000/workspaces/00000/datastores/workspaceblobstore/paths/LocalUpload/00000000000/product_info_1.md",
+    )
+
+    add_body_key_sanitizer(
+        json_path="data_source.uri",
+        value="azureml://subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/00000/workspaces/00000/datastores/workspaceblobstore/paths/LocalUpload/00000000000/product_info_1.md",
     )
 
     # Sanitize API key from service response (/tests/connections)
