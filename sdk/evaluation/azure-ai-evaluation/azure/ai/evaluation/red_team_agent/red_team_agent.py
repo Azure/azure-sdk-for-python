@@ -982,7 +982,7 @@ class RedTeamAgent():
                     strategy=strategy_name
                 )
             # Use the baseline's objectives as the default list
-            all_prompts_list = list(strategy_objectives[AttackStrategy.Baseline]) if AttackStrategy.Baseline in strategy_objectives else []
+            all_prompts_list = list(strategy_objectives[AttackStrategy.Baseline.value]) if AttackStrategy.Baseline.value in strategy_objectives.keys() else []
 
             self.logger.info(f"Configuring PyRIT based on attack strategy: {attack_strategy}")
 
