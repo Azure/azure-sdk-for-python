@@ -18,7 +18,7 @@ importlib-metadata==8.5.0
 
 # requirements leveraged for testing
 pytest==8.3.5
-pytest-cov==6.0.0
+pytest-cov==5.0.0
 coverage==7.7.0
 
 # locking packages defined as deps from azure-sdk-tools
