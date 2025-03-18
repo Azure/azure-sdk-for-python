@@ -42,10 +42,6 @@ class CompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             :language: python
             :dedent: 8
             :caption: Initialize and call a CompletenessEvaluator with a response and groundtruth.
-    .. note::
-        To align with our support of a diverse set of models, an output key without the `gpt_` prefix has been added.
-        To maintain backwards compatibility, the old key with the `gpt_` prefix is still be present in the output;
-        however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
     """
 
     # Constants must be defined within eval's directory to be save/loadable
@@ -143,17 +139,17 @@ class CompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
 
-        completeness_score = math.nan
+        score = math.nan
         if llm_output:
-            completeness_score, reason = parse_quality_evaluator_reason_score(llm_output, valid_score_range="[1-5]")
+            score, reason = parse_quality_evaluator_reason_score(llm_output, valid_score_range="[1-5]")
 
-            score_result = 'pass' if completeness_score >= self.threshold else 'fail'
+            score_result = 'pass' if score >= self.threshold else 'fail'
 
             return {
-                "response_completeness": completeness_score,
-                "response_completeness_result": score_result,
-                "response_completeness_threshold": self.threshold,
-                "response_completeness_reason": reason,
+                f"{self._result_key}": score,
+                f"{self._result_key}_result": score_result,
+                f"{self._result_key}_threshold": self.threshold,
+                f"{self._result_key}_reason": reason,
             }
         
         return {self._result_key: math.nan}

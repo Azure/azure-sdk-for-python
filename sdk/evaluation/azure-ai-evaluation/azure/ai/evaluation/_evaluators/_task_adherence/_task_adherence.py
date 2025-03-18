@@ -20,11 +20,11 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         - Proper use of provided tool definitions
 
     Scoring is based on five levels:
-    1. Fully Inadherent – Response completely ignores instructions.
-    2. Barely Adherent – Partial alignment with critical gaps.
-    3. Moderately Adherent – Meets core requirements but lacks precision.
-    4. Mostly Adherent – Clear and accurate with minor issues.
-    5. Fully Adherent – Flawless adherence to instructions.
+    1. Fully Inadherent - Response completely ignores instructions.
+    2. Barely Adherent - Partial alignment with critical gaps.
+    3. Moderately Adherent - Meets core requirements but lacks precision.
+    4. Mostly Adherent - Clear and accurate with minor issues.
+    5. Fully Adherent - Flawless adherence to instructions.
 
     The evaluation includes a step-by-step reasoning process, a brief explanation, and a final integer score.
 
