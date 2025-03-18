@@ -20,10 +20,12 @@ from azure.ai.projects.models import (
     MessageAttachment,
     MessageDeltaChunk,
     MessageIncompleteDetails,
+    RequiredFunctionToolCall,
     RunStep,
     RunStepDeltaChunk,
     RunStepFunctionToolCall,
     RunStepToolCallDetails,
+    SubmitToolOutputsAction,
     ThreadMessage,
     ThreadRun,
     ToolDefinition,
@@ -390,7 +392,6 @@ class _AIAgentsInstrumentorPreview:
         return status.value if hasattr(status, "value") else status
 
     def _add_tool_assistant_message_event(self, span, step: RunStep) -> None:
-        # do we want a new event for it ?
         tool_calls = [
             {
                 "id": t.id,
@@ -410,6 +411,40 @@ class _AIAgentsInstrumentorPreview:
             thread_run_id=step.run_id,
             message_status=step.status,
             usage=step.usage,
+        )
+
+        if _trace_agents_content:
+            attributes[GEN_AI_EVENT_CONTENT] = json.dumps({"tool_calls": tool_calls})
+        else:
+            tool_calls_non_recording = self._remove_function_call_names_and_arguments(tool_calls=tool_calls)
+            attributes[GEN_AI_EVENT_CONTENT] = json.dumps({"tool_calls": tool_calls_non_recording})
+        span.span_instance.add_event(name="gen_ai.assistant.message", attributes=attributes)
+
+    def _add_tool_event_from_thread_run(self, span, run: ThreadRun) -> None:
+        tool_calls = []
+
+        for t in run.required_action.submit_tool_outputs.tool_calls: # type: ignore
+            try:
+                parsed_arguments = json.loads(t.function.arguments)
+            except json.JSONDecodeError:
+                parsed_arguments = {}
+
+            tool_call = {
+                "id": t.id,
+                "type": t.type,
+                "function": (
+                    {"name": t.function.name, "arguments": parsed_arguments}
+                    if isinstance(t, RequiredFunctionToolCall)
+                    else None
+                ),
+            }
+            tool_calls.append(tool_call)
+
+        attributes = self._create_event_attributes(
+            thread_id=run.thread_id,
+            agent_id=run.agent_id,
+            thread_run_id=run.id,
+            message_status=run.status,
         )
 
         if _trace_agents_content:
@@ -1654,32 +1689,40 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
             return self.inner_handler.on_message_delta(delta)  # type: ignore
 
     def on_thread_message(self, message: "ThreadMessage") -> None:  # type: ignore[func-returns-value]
+        retval = None
         if self.inner_handler:
-            return self.inner_handler.on_thread_message(message)  # type: ignore
+            retval = self.inner_handler.on_thread_message(message)  # type: ignore
 
         if message.status in {"completed", "incomplete"}:
             self.last_message = message
 
+        return retval # type: ignore
+
     def on_thread_run(self, run: "ThreadRun") -> None:  # type: ignore[func-returns-value]
+        retval = None
+
+        if run.status == "requires_action" and isinstance(run.required_action, SubmitToolOutputsAction):
+            self.instrumentor._add_tool_event_from_thread_run( # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
+                self.span, run
+            )
+
         if self.inner_handler:
-            return self.inner_handler.on_thread_run(run)  # type: ignore
+            retval = self.inner_handler.on_thread_run(run)  # type: ignore
         self.last_run = run
 
-    def on_run_step(self, step: "RunStep") -> None:  # type: ignore[func-returns-value]
-        if self.inner_handler:
-            return self.inner_handler.on_run_step(step)  # type: ignore
+        return retval # type: ignore
 
-        if step.status == RunStepStatus.IN_PROGRESS:
-            return
+    def on_run_step(self, step: "RunStep") -> None:  # type: ignore[func-returns-value]
+        retval = None
+        if self.inner_handler:
+            retval = self.inner_handler.on_run_step(step)  # type: ignore
 
         # todo - report errors for failure statuses here and in run ?
-        if step.type == "tool_calls" and isinstance(step.step_details, RunStepToolCallDetails):
-            self.instrumentor._add_tool_assistant_message_event(  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
-                self.span, step
-            )
-        elif step.type == "message_creation" and step.status == RunStepStatus.COMPLETED:
+        if step.type == "message_creation" and step.status == RunStepStatus.COMPLETED:
             self.instrumentor.add_thread_message_event(self.span, cast(ThreadMessage, self.last_message), step.usage)
             self.last_message = None
+
+        return retval # type: ignore
 
     def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
@@ -1737,32 +1780,40 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
             return await self.inner_handler.on_message_delta(delta)  # type: ignore
 
     async def on_thread_message(self, message: "ThreadMessage") -> None:  # type: ignore[func-returns-value]
+        retval = None
         if self.inner_handler:
-            return await self.inner_handler.on_thread_message(message)  # type: ignore
+            retval = await self.inner_handler.on_thread_message(message)  # type: ignore
 
         if message.status in {"completed", "incomplete"}:
             self.last_message = message
 
+        return retval # type: ignore
+
     async def on_thread_run(self, run: "ThreadRun") -> None:  # type: ignore[func-returns-value]
+        retval = None
+
+        if run.status == "requires_action" and isinstance(run.required_action, SubmitToolOutputsAction):
+            self.instrumentor._add_tool_event_from_thread_run( # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
+                self.span, run
+            )
+
         if self.inner_handler:
-            return await self.inner_handler.on_thread_run(run)  # type: ignore
+            retval = await self.inner_handler.on_thread_run(run)  # type: ignore
         self.last_run = run
 
-    async def on_run_step(self, step: "RunStep") -> None:  # type: ignore[func-returns-value]
-        if self.inner_handler:
-            return await self.inner_handler.on_run_step(step)  # type: ignore
+        return retval # type: ignore
 
-        if step.status == RunStepStatus.IN_PROGRESS:
-            return
+    async def on_run_step(self, step: "RunStep") -> None:  # type: ignore[func-returns-value]
+        retval = None
+        if self.inner_handler:
+            retval = await self.inner_handler.on_run_step(step)  # type: ignore
 
         # todo - report errors for failure statuses here and in run ?
-        if step.type == "tool_calls" and isinstance(step.step_details, RunStepToolCallDetails):
-            self.instrumentor._add_tool_assistant_message_event(  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
-                self.span, step
-            )
-        elif step.type == "message_creation" and step.status == RunStepStatus.COMPLETED:
+        if step.type == "message_creation" and step.status == RunStepStatus.COMPLETED:
             self.instrumentor.add_thread_message_event(self.span, cast(ThreadMessage, self.last_message), step.usage)
             self.last_message = None
+
+        return retval # type: ignore
 
     async def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
