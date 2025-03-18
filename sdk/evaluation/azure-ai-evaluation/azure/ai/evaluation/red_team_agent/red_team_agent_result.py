@@ -98,11 +98,11 @@ class Conversation(TypedDict):
     - conversation: List of messages exchanged in the conversation
     - risk_assessment: Dictionary containing content safety assessment for the conversation
     """
-    attack_success: bool
+    attack_success: Optional[bool]
     attack_technique: str
     attack_complexity: str
     conversation: List[Dict[str, str]]
-    risk_assessment: RiskAssessment
+    risk_assessment: Optional[RiskAssessment]
 
 class RedTeamAgentResult(TypedDict):
     """TypedDict representation of a Red Team Agent evaluation result with the updated structure.
