@@ -108,11 +108,7 @@ def build_call_locator(
                 "Please provide either 'group_call_id' or 'server_call_id' or 'room_id'."
             )
         request = CallLocator(room_id=room_id, kind="roomCallLocator")
-    if request is None:
-        raise ValueError("Call locator required."
-                        "Please provide either 'group_call_id' or 'server_call_id' or 'room_id'.")
     return request
-
 
 def process_repeatability_first_sent(keywords: Dict[str, Any]) -> None:
     if "headers" in keywords:
