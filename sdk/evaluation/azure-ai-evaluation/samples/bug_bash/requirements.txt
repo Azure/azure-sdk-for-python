@@ -1,0 +1,4 @@
+ipykernel
+azure-ai-projects
+azure-identity
+git+https://github.com/Azure/azure-sdk-for-python.git@prp/agent_evaluators#egg=azure-ai-evaluation&subdirectory=sdk/evaluation/azure-ai-evaluation
