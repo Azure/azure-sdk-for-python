@@ -256,6 +256,12 @@ def _populate_part_a_fields(resource: Resource):
     return tags
 
 
+def _is_synthetic_source(properties: Attributes) -> bool:
+    # TODO: Use semconv symbol when released in upstream
+    synthetic_type = properties.get("user_agent.synthetic.type")  # type: ignore
+    return synthetic_type in ("bot", "test")
+
+
 # pylint: disable=W0622
 def _filter_custom_properties(properties: Attributes, filter=None) -> Dict[str, str]:
     truncated_properties: Dict[str, str] = {}

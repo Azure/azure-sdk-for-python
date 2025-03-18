@@ -321,7 +321,7 @@ class RedTeamAgent():
             if isinstance(objectives_response, dict):
                 self.logger.info(f"Response keys: {objectives_response.keys()}")
                 if "objectives" in objectives_response:
-                    self.logger.info(f"Found {len(objectives_response['objectives'])} objectives in response")
+                    self.logger.info(f"Found {len(objectives_response['objectives'])} objectives in response") # type: ignore
             elif isinstance(objectives_response, list):
                 self.logger.info(f"Received list with {len(objectives_response)} objectives")
             else:
@@ -336,7 +336,6 @@ class RedTeamAgent():
                             message = objective["messages"][0]
                             if isinstance(message, dict) and "content" in message:
                                 message["content"] = f"{random.choice(jailbreak_prefixes)} {message['content']}"
-                
         except Exception as e:
             self.logger.error(f"Error calling get_attack_objectives: {str(e)}")
             self.logger.error(f"Exception type: {type(e)}")
@@ -388,6 +387,7 @@ class RedTeamAgent():
                     self.logger.info(f"Matched category: {cat} for objective {obj_id}")
             
             if matched_categories:
+                content = obj.get("messages", [{}])[0].get("content", "") # type: ignore
                 if content:
                     obj_data = {
                         "id": obj_id,
@@ -651,18 +651,12 @@ class RedTeamAgent():
             converters.append(converter_name)
             complexity_level = CONVERTER_NAME_COMPLEXITY_MAP.get(converter_name, "easy")
             complexity_levels.append(complexity_level)
-
-            for risk, asr_list in risks_asr_list.items():
-                #TODO: comment out once we have binarization
-                asr_list.append(eval_result["metrics"].get(f"{risk}.{risk}_defect_rate", math.nan))
-                attack_successes.append(eval_result["metrics"].get(f"{risk}.{risk}_defect_rate", math.nan))
             
             rows = eval_result["rows"]
             for r in rows:
-                # TODO: uncomment this when we have binarization
-                # for risk, asr_list in risks_asr_list.items():
-                #     asr_list.append(r[1 if f"outputs.{risk}.{risk}_result" == ATTACK_SUCCESS else 0])
-                #     attack_successes.append(r[1 if f"outputs.{risk}.{risk}_result" == ATTACK_SUCCESS else 0])
+                for risk, asr_list in risks_asr_list.items():
+                    asr_list.append(r[1 if f"outputs.{risk}.{risk}_result" == ATTACK_SUCCESS else 0])
+                    attack_successes.append(r[1 if f"outputs.{risk}.{risk}_result" == ATTACK_SUCCESS else 0])
 
                 conversations.append({
                     "attack_success": False, #TODO change to any(attack_successes) when we have binarization
@@ -688,9 +682,16 @@ class RedTeamAgent():
         results_df = pd.DataFrame.from_dict(results_dict)
         harms_cols = risks_asr_list.keys()
         risk_category_summary = {f"{risk}_asr": round(list_mean_nan_safe(asr_list) * 100, 2) for risk, asr_list in risks_asr_list.items()}
-
+        risk_category_totals = {f"{risk}_total": len(asr_list) for risk, asr_list in risks_asr_list.items()}
+        risk_category_attack_successes = {f"{risk}_attack_successes": sum(asr_list) for risk, asr_list in risks_asr_list.items()}
+        
+        # Update risk_category_summary to include totals and attack successes
+        risk_category_summary.update(risk_category_totals)
+        risk_category_summary.update(risk_category_attack_successes)
         risk_category_summary.update({
             "overall_asr": round(list_mean_nan_safe(attack_successes) * 100, 2),
+            "overall_total": len(attack_successes),
+            "overall_attack_successes": sum(attack_successes)
         })
         
         baseline_asr_list = []
@@ -713,13 +714,30 @@ class RedTeamAgent():
 
         attack_technique_summary_dict = {
             "baseline_asr": round(list_mean_nan_safe(baseline_asr_list) * 100, 2),
+            "baseline_total": len(baseline_asr_list),
+            "baseline_attack_successes": sum(baseline_asr_list)
         }
+        
         if len(easy_complexity_asr_list) > 0:
             attack_technique_summary_dict["easy_complexity_asr"] = round(list_mean_nan_safe(easy_complexity_asr_list) * 100, 2)
+            attack_technique_summary_dict["easy_complexity_total"] = len(easy_complexity_asr_list)
+            attack_technique_summary_dict["easy_complexity_attack_successes"] = sum(easy_complexity_asr_list)
+            
         if len(moderate_complexity_asr_list) > 0:
             attack_technique_summary_dict["moderate_complexity_asr"] = round(list_mean_nan_safe(moderate_complexity_asr_list) * 100, 2)
+            attack_technique_summary_dict["moderate_complexity_total"] = len(moderate_complexity_asr_list)
+            attack_technique_summary_dict["moderate_complexity_attack_successes"] = sum(moderate_complexity_asr_list)
+            
         if len(difficult_complexity_asr_list) > 0:
             attack_technique_summary_dict["difficult_complexity_asr"] = round(list_mean_nan_safe(difficult_complexity_asr_list) * 100, 2)
+            attack_technique_summary_dict["difficult_complexity_total"] = len(difficult_complexity_asr_list)
+            attack_technique_summary_dict["difficult_complexity_attack_successes"] = sum(difficult_complexity_asr_list)
+        
+        # Add overall metrics across all complexity levels
+        all_complexity_asr_list = baseline_asr_list + easy_complexity_asr_list + moderate_complexity_asr_list + difficult_complexity_asr_list
+        attack_technique_summary_dict["overall_asr"] = round(list_mean_nan_safe(all_complexity_asr_list) * 100, 2)
+        attack_technique_summary_dict["overall_total"] = len(all_complexity_asr_list)
+        attack_technique_summary_dict["overall_attack_successes"] = sum(all_complexity_asr_list)
         
         attack_technique_summary = [attack_technique_summary_dict]
         
@@ -839,7 +857,7 @@ class RedTeamAgent():
         evaluation_name: Optional[str] = None,
         data_only: bool = False,
         output_path: Optional[Union[str, os.PathLike]] = None
-    ) -> Union[Dict[str, EvaluationResult], Dict[str, str], Dict[str, Union[str, os.PathLike]]]:
+    ) -> Union[Dict[str, EvaluationResult], Dict[str, List[str]]]:
         """Call the evaluate method if not data_only.
 
         :param evaluation_name: Optional name for the evaluation.
@@ -851,16 +869,18 @@ class RedTeamAgent():
         :param output_path: Path for output results.
         :type output_path: Optional[Union[str, os.PathLike]]
         :return: Evaluation results or data paths.
-        :rtype: Union[Dict[str, EvaluationResult], Dict[str, str], Dict[str, Union[str, os.PathLike]]]
+        :rtype: Union[Dict[str, EvaluationResult], Dict[str, List[str]]]
         """
         self.logger.info(f"Evaluate called with data_path={data_path}, output_path={output_path}")
-        
-        # For data_only=True, just return paths
-        if data_only:
-            return {Path(data_path).stem.replace(DATA_EXT, ""): data_path}
-        
+
         # Extract converter name from file path
         converter_name = Path(data_path).stem.split("_")[1].replace(DATA_EXT, "")
+        
+        # For data_only=True, return converter name and data
+        if data_only:
+            with Path(data_path).open("r") as f:
+                json_lines = f.readlines()
+            return {converter_name: json_lines}
 
         risk_to_evaluator = self._risk_evaluator_map()
         evaluators_dict = {risk.value: risk_to_evaluator[risk](azure_ai_project = self.azure_ai_project, credential=self.credential) for risk in self.risk_categories}
@@ -873,8 +893,6 @@ class RedTeamAgent():
             evaluators=evaluators_dict,
             output_path=output_path if output_path else f"{output_prefix}{converter_name}{RESULTS_EXT}",
         )
-        # risk = self.risk_categories[0].value
-        # evaluate_outputs = mock_evaluate(risk_category=risk)
         
         return {converter_name: evaluate_outputs}
     
@@ -889,7 +907,7 @@ class RedTeamAgent():
             evaluation_name: Optional[str] = None,
             data_only: bool = False, 
             output_path: Optional[Union[str, os.PathLike]] = None,
-        ) -> Union[Dict[str, EvaluationResult], Dict[str, str], Dict[str, Union[str,os.PathLike]]]:
+        ) ->  Union[Dict[str, EvaluationResult], Dict[str, List[str]]]:
         orchestrator = await call_orchestrator(self.chat_target, all_prompts, converter)
         data_path = self._write_pyrit_outputs_to_file(orchestrator, converter)
         eval_result = await self._evaluate(

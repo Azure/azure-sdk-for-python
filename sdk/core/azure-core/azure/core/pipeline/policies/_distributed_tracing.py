@@ -27,7 +27,7 @@
 import logging
 import sys
 import urllib.parse
-from typing import TYPE_CHECKING, Optional, Tuple, TypeVar, Union, Any, Type
+from typing import TYPE_CHECKING, Optional, Tuple, TypeVar, Union, Any, Type, Mapping, Dict
 from types import TracebackType
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
@@ -39,11 +39,11 @@ from azure.core.pipeline.transport import (
 from azure.core.rest import HttpResponse, HttpRequest
 from azure.core.settings import settings
 from azure.core.tracing import SpanKind
+from azure.core.instrumentation import get_tracer
+from azure.core.tracing._models import TracingOptions
 
 if TYPE_CHECKING:
-    from azure.core.tracing._abstract_span import (
-        AbstractSpan,
-    )
+    from opentelemetry.trace import Span
 
 HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
@@ -61,10 +61,7 @@ def _default_network_span_namer(http_request: HTTPRequestType) -> str:
     :returns: The string to use as network span name
     :rtype: str
     """
-    path = urllib.parse.urlparse(http_request.url).path
-    if not path:
-        path = "/"
-    return path
+    return http_request.method
 
 
 class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
@@ -74,37 +71,93 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
     :type network_span_namer: callable[[~azure.core.pipeline.transport.HttpRequest], str]
     :keyword tracing_attributes: Attributes to set on all created spans
     :type tracing_attributes: dict[str, str]
+    :keyword instrumentation_config: Configuration for the instrumentation providers
+    :type instrumentation_config: dict[str, Any]
     """
 
     TRACING_CONTEXT = "TRACING_CONTEXT"
-    _REQUEST_ID = "x-ms-client-request-id"
-    _RESPONSE_ID = "x-ms-request-id"
-    _HTTP_RESEND_COUNT = "http.request.resend_count"
+    _SUPPRESSION_TOKEN = "SUPPRESSION_TOKEN"
 
-    def __init__(self, **kwargs: Any):
+    # Current stable HTTP semantic conventions
+    _HTTP_RESEND_COUNT = "http.request.resend_count"
+    _USER_AGENT_ORIGINAL = "user_agent.original"
+    _HTTP_REQUEST_METHOD = "http.request.method"
+    _URL_FULL = "url.full"
+    _HTTP_RESPONSE_STATUS_CODE = "http.response.status_code"
+    _SERVER_ADDRESS = "server.address"
+    _SERVER_PORT = "server.port"
+    _ERROR_TYPE = "error.type"
+
+    # Azure attributes
+    _REQUEST_ID = "x-ms-client-request-id"
+    _REQUEST_ID_ATTR = "az.client_request_id"
+    _RESPONSE_ID = "x-ms-request-id"
+    _RESPONSE_ID_ATTR = "az.service_request_id"
+
+    def __init__(self, *, instrumentation_config: Optional[Mapping[str, Any]] = None, **kwargs: Any):
         self._network_span_namer = kwargs.get("network_span_namer", _default_network_span_namer)
         self._tracing_attributes = kwargs.get("tracing_attributes", {})
+        self._instrumentation_config = instrumentation_config
 
     def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
         ctxt = request.context.options
         try:
-            span_impl_type = settings.tracing_implementation()
-            if span_impl_type is None:
+            tracing_options: TracingOptions = ctxt.pop("tracing_options", {})
+            tracing_enabled = settings.tracing_enabled()
+
+            # User can explicitly disable tracing for this request.
+            user_enabled = tracing_options.get("enabled")
+            if user_enabled is False:
                 return
 
+            # If tracing is disabled globally and user didn't explicitly enable it, don't trace.
+            if not tracing_enabled and user_enabled is None:
+                return
+
+            span_impl_type = settings.tracing_implementation()
             namer = ctxt.pop("network_span_namer", self._network_span_namer)
             tracing_attributes = ctxt.pop("tracing_attributes", self._tracing_attributes)
             span_name = namer(request.http_request)
 
-            span = span_impl_type(name=span_name, kind=SpanKind.CLIENT)
-            for attr, value in tracing_attributes.items():
-                span.add_attribute(attr, value)
-            span.start()
+            span_attributes = {**tracing_attributes, **tracing_options.get("attributes", {})}
 
-            headers = span.to_header()
-            request.http_request.headers.update(headers)
+            if span_impl_type:
+                # If the plugin is enabled, prioritize it over the core tracing.
+                span = span_impl_type(name=span_name, kind=SpanKind.CLIENT)
+                for attr, value in span_attributes.items():
+                    span.add_attribute(attr, value)  # type: ignore
 
-            request.context[self.TRACING_CONTEXT] = span
+                headers = span.to_header()
+                request.http_request.headers.update(headers)
+                request.context[self.TRACING_CONTEXT] = span
+            else:
+                # Otherwise, use the core tracing.
+                config = self._instrumentation_config or {}
+                tracer = get_tracer(
+                    library_name=config.get("library_name"),
+                    library_version=config.get("library_version"),
+                    attributes=config.get("attributes"),
+                )
+                if not tracer:
+                    _LOGGER.warning(
+                        "Tracing is enabled, but not able to get an OpenTelemetry tracer. "
+                        "Please ensure that `opentelemetry-api` is installed."
+                    )
+                    return
+
+                otel_span = tracer.start_span(
+                    name=span_name,
+                    kind=SpanKind.CLIENT,
+                    attributes=span_attributes,
+                )
+
+                trace_context_headers = tracer.get_trace_context()
+                request.http_request.headers.update(trace_context_headers)
+                request.context[self.TRACING_CONTEXT] = otel_span
+
+                token = tracer._suppress_auto_http_instrumentation()  # pylint: disable=protected-access
+                request.context[self._SUPPRESSION_TOKEN] = token
+
         except Exception as err:  # pylint: disable=broad-except
             _LOGGER.warning("Unable to start network span: %s", err)
 
@@ -126,21 +179,52 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
         if self.TRACING_CONTEXT not in request.context:
             return
 
-        span: "AbstractSpan" = request.context[self.TRACING_CONTEXT]
+        span = request.context[self.TRACING_CONTEXT]
+        if not span:
+            return
+
         http_request: Union[HttpRequest, LegacyHttpRequest] = request.http_request
-        if span is not None:
-            span.set_http_attributes(http_request, response=response)
-            if request.context.get("retry_count"):
-                span.add_attribute(self._HTTP_RESEND_COUNT, request.context["retry_count"])
-            request_id = http_request.headers.get(self._REQUEST_ID)
-            if request_id is not None:
-                span.add_attribute(self._REQUEST_ID, request_id)
-            if response and self._RESPONSE_ID in response.headers:
-                span.add_attribute(self._RESPONSE_ID, response.headers[self._RESPONSE_ID])
+
+        attributes: Dict[str, Any] = {}
+        if request.context.get("retry_count"):
+            attributes[self._HTTP_RESEND_COUNT] = request.context["retry_count"]
+        if http_request.headers.get(self._REQUEST_ID):
+            attributes[self._REQUEST_ID_ATTR] = http_request.headers[self._REQUEST_ID]
+        if response and self._RESPONSE_ID in response.headers:
+            attributes[self._RESPONSE_ID_ATTR] = response.headers[self._RESPONSE_ID]
+
+        # We'll determine if the span is from a plugin or the core tracing library based on the presence of the
+        # `set_http_attributes` method.
+        if hasattr(span, "set_http_attributes"):
+            # Plugin-based tracing
+            span.set_http_attributes(request=http_request, response=response)
+            for key, value in attributes.items():
+                span.add_attribute(key, value)
             if exc_info:
                 span.__exit__(*exc_info)
             else:
                 span.finish()
+        else:
+            # Native tracing
+            self._set_http_client_span_attributes(span, request=http_request, response=response)
+            span.set_attributes(attributes)
+            if exc_info:
+                # If there was an exception, set the error.type attribute.
+                exception_type = exc_info[0]
+                if exception_type:
+                    module = exception_type.__module__ if exception_type.__module__ != "builtins" else ""
+                    error_type = f"{module}.{exception_type.__qualname__}" if module else exception_type.__qualname__
+                    span.set_attribute(self._ERROR_TYPE, error_type)
+
+                span.__exit__(*exc_info)
+            else:
+                span.end()
+
+        suppression_token = request.context.get(self._SUPPRESSION_TOKEN)
+        if suppression_token:
+            tracer = get_tracer()
+            if tracer:
+                tracer._detach_from_context(suppression_token)  # pylint: disable=protected-access
 
     def on_response(
         self,
@@ -151,3 +235,39 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
 
     def on_exception(self, request: PipelineRequest[HTTPRequestType]) -> None:
         self.end_span(request, exc_info=sys.exc_info())
+
+    def _set_http_client_span_attributes(
+        self,
+        span: "Span",
+        request: Union[HttpRequest, LegacyHttpRequest],
+        response: Optional[HTTPResponseType] = None,
+    ) -> None:
+        """Add attributes to an HTTP client span.
+
+        :param span: The span to add attributes to.
+        :type span: ~opentelemetry.trace.Span
+        :param request: The request made
+        :type request: ~azure.core.rest.HttpRequest
+        :param response: The response received from the server. Is None if no response received.
+        :type response: ~azure.core.rest.HTTPResponse or ~azure.core.pipeline.transport.HttpResponse
+        """
+        attributes: Dict[str, Any] = {
+            self._HTTP_REQUEST_METHOD: request.method,
+            self._URL_FULL: request.url,
+        }
+
+        parsed_url = urllib.parse.urlparse(request.url)
+        if parsed_url.hostname:
+            attributes[self._SERVER_ADDRESS] = parsed_url.hostname
+        if parsed_url.port:
+            attributes[self._SERVER_PORT] = parsed_url.port
+
+        user_agent = request.headers.get("User-Agent")
+        if user_agent:
+            attributes[self._USER_AGENT_ORIGINAL] = user_agent
+        if response and response.status_code:
+            attributes[self._HTTP_RESPONSE_STATUS_CODE] = response.status_code
+            if response.status_code >= 400:
+                attributes[self._ERROR_TYPE] = str(response.status_code)
+
+        span.set_attributes(attributes)
