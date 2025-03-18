@@ -27,14 +27,28 @@ class DatasetOperations(DatasetOperationsGenerated):
     def __init__(self, outer_instance):
         self._outer_instance = outer_instance
 
-    def create_or_update_with_upload(
+    def create_and_upload(
         self,
         *,
         name: str,
         version: Optional[str] = None,
         file: str,
         connection_name: Optional[str] = None, # TODO: Use me.
-        **kwargs) -> DatasetVersion:
+    ) -> DatasetVersion:
+        """Upload file to an internal blob storage, and create a dataset that references this file.
+
+        :param name: The name of the dataset. Required.
+        :type name: str
+        :param version: The version identifier for the dataset. Optional.
+        :type version: str or None
+        :param file: The file name (including optional path) to be uploaded. Required.
+        :type file: str
+        :param connection_name: The name of the AI Project Connection to be used. Optional.
+        :type connection_name: str or None
+        :return: The created dataset version.
+        :rtype: ~azure.ai.projects.dp1.models.DatasetVersion
+        :raises ~azure.core.exceptions.HttpResponseError: If an error occurs during the HTTP request.
+        """
 
         pending_upload_response: PendingUploadResponse = self._outer_instance.datasets.create_or_get_start_pending_upload(
             name=name,
