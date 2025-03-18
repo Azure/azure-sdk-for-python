@@ -20,6 +20,7 @@ from typing import (
     Union,
 )
 from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
+    ConfigurationSetting,
     FeatureFlagConfigurationSetting,
     SecretReferenceConfigurationSetting,
 )
@@ -376,15 +377,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                                 self._selects, self._refresh_on, headers=headers, **kwargs
                             )
                         )
-                        configuration_settings_processed = {}
-                        for config in configuration_settings:
-                            key = self._process_key_name(config)
-                            value = await self._process_key_value(config)
-                            configuration_settings_processed[key] = value
-                        if self._feature_flag_enabled:
-                            configuration_settings_processed[FEATURE_MANAGEMENT_KEY] = self._dict[
-                                FEATURE_MANAGEMENT_KEY
-                            ]
+                        configuration_settings_processed = await self._process_configurations(configuration_settings)
                         if need_refresh:
                             self._dict = configuration_settings_processed
                     if self._feature_flag_refresh_enabled:
@@ -446,12 +439,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 configuration_settings, sentinel_keys = await client.load_configuration_settings(
                     self._selects, self._refresh_on, headers=headers, **kwargs
                 )
-                configuration_settings_processed = {}
-                for config in configuration_settings:
-                    key = self._process_key_name(config)
-                    value = await self._process_key_value(config)
-                    configuration_settings_processed[key] = value
-
+                configuration_settings_processed = await self._process_configurations(configuration_settings)
                 if self._feature_flag_enabled:
                     feature_flags, feature_flag_sentinel_keys, used_filters = await client.load_feature_flags(
                         self._feature_flag_selectors, self._feature_flag_refresh_enabled, headers=headers, **kwargs
@@ -491,6 +479,19 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 self._replica_client_manager.backoff(client)
                 is_failover_request = True
         raise exception
+
+    async def _process_configurations(self, configuration_settings: List[ConfigurationSetting]) -> Dict[str, Any]:
+        configuration_settings_processed = {}
+        for config in configuration_settings:
+            if isinstance(config, FeatureFlagConfigurationSetting):
+                # Feature flags are not processed like other settings
+                continue
+            key = self._process_key_name(config)
+            value = await self._process_key_value(config)
+            configuration_settings_processed[key] = value
+        if self._feature_flag_enabled and FEATURE_MANAGEMENT_KEY in self._dict:
+            configuration_settings_processed[FEATURE_MANAGEMENT_KEY] = self._dict[FEATURE_MANAGEMENT_KEY]
+        return configuration_settings_processed
 
     async def _process_key_value(self, config):
         if isinstance(config, SecretReferenceConfigurationSetting):
