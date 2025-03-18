@@ -29,7 +29,7 @@ class AdversarialScenario(Enum):
     ADVERSARIAL_CONTENT_GEN_GROUNDED = "adv_content_gen_grounded"
     ADVERSARIAL_CONTENT_PROTECTED_MATERIAL = "adv_content_protected_material"
     ADVERSARIAL_CODE_VULNERABILITY = "adv_code_vuln"
-    ADVERSARIAL_ISA = "adv_isa"
+    ADVERSARIAL_UNGROUNDED_ATTRIBUTES = "adv_isa"
 
 
 @experimental

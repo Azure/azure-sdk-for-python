@@ -4,13 +4,10 @@
 import unittest
 import uuid
 from datetime import datetime, timedelta, timezone
-from time import sleep
 
 import pytest
-from _pytest.outcomes import fail
 
 import azure.cosmos.cosmos_client as cosmos_client
-import azure.cosmos.exceptions as exceptions
 import test_config
 from azure.cosmos.partition_key import PartitionKey
 from azure.cosmos._change_feed.change_feed_state import ChangeFeedStateV2

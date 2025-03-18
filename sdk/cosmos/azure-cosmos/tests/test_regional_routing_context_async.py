@@ -6,18 +6,19 @@ import uuid
 import pytest
 
 import test_config
-from azure.cosmos import (CosmosClient, DatabaseAccount, _global_endpoint_manager)
-from azure.cosmos._location_cache import RegionalEndpoint
+from azure.cosmos import DatabaseAccount
+from azure.cosmos._location_cache import RegionalRoutingContext
+from azure.cosmos.aio import CosmosClient, _global_endpoint_manager_async
 
 
 @pytest.mark.cosmosEmulator
-class TestRegionalEndpoints(unittest.TestCase):
+class TestRegionalRoutingContextAsync(unittest.IsolatedAsyncioTestCase):
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
     REGION1 = "West US"
     REGION2 = "East US"
     REGION3 = "West US 2"
-    REGIONAL_ENDPOINT = RegionalEndpoint(host, "something_different")
+    REGIONAL_ROUTING_CONTEXT = RegionalRoutingContext(host, "something_different")
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
     TEST_CONTAINER_ID = test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID
 
@@ -29,37 +30,43 @@ class TestRegionalEndpoints(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = CosmosClient(cls.host, cls.masterKey)
-        cls.created_database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
-        cls.created_container = cls.created_database.get_container_client(cls.TEST_CONTAINER_ID)
 
-    def test_no_swaps_on_successful_request(self):
-        original_get_database_account_stub = _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub
-        _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.MockGetDatabaseAccountStub
+    async def asyncSetUp(self):
+        self.client = CosmosClient(self.host, self.masterKey)
+        self.created_database = self.client.get_database_client(self.TEST_DATABASE_ID)
+        self.created_container = self.created_database.get_container_client(self.TEST_CONTAINER_ID)
+
+    async def asyncTearDown(self):
+        await self.client.close()
+
+    async def test_no_swaps_on_successful_request(self):
+        original_get_database_account_stub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
+        _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.MockGetDatabaseAccountStub
         mocked_client = CosmosClient(self.host, self.masterKey)
         db = mocked_client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(self.TEST_CONTAINER_ID)
         # Mock the GetDatabaseAccountStub to return the regional endpoints
 
         original_read_endpoint = (mocked_client.client_connection._global_endpoint_manager
-                                  .location_cache.get_read_regional_endpoint())
+                                  .location_cache.get_read_regional_routing_context())
         try:
-            container.create_item(body={"id": str(uuid.uuid4())})
+            await container.create_item(body={"id": str(uuid.uuid4())})
         finally:
             # Check for if there was a swap
             self.assertEqual(original_read_endpoint,
                              mocked_client.client_connection._global_endpoint_manager
-                             .location_cache.get_read_regional_endpoint())
+                             .location_cache.get_read_regional_routing_context())
             # return it
-            self.assertEqual(self.REGIONAL_ENDPOINT.get_current(),
+            self.assertEqual(self.REGIONAL_ROUTING_CONTEXT.get_primary(),
                              mocked_client.client_connection._global_endpoint_manager
-                             .location_cache.get_write_regional_endpoint())
-            _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = original_get_database_account_stub
+                             .location_cache.get_write_regional_routing_context())
+            _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = original_get_database_account_stub
+            await mocked_client.close()
 
-    def MockGetDatabaseAccountStub(self, endpoint):
+    async def MockGetDatabaseAccountStub(self, endpoint):
         read_locations = []
         read_locations.append({'databaseAccountEndpoint': endpoint, 'name': "West US"})
-        read_locations.append({'databaseAccountEndpoint': "some different endpoint", 'name': "West US"})
+        read_locations.append({'databaseAccountEndpoint': "some different endpoint", 'name': "East US"})
         write_regions = ["West US"]
         write_locations = []
         for loc in write_regions:
