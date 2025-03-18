@@ -288,7 +288,7 @@ class TestStorageFileNFSAsync(AsyncStorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy_async
-    async def test_create_and_get_symbolic_link(self, **kwargs):
+    async def test_create_and_get_symlink(self, **kwargs):
         premium_storage_file_account_name = kwargs.pop("premium_storage_file_account_name")
 
         await self._setup(premium_storage_file_account_name)
@@ -305,7 +305,7 @@ class TestStorageFileNFSAsync(AsyncStorageRecordedTestCase):
         owner, group = "345", "123"
         target = f"{directory_name}/{source_file_name}"
 
-        resp = await symbolic_link_file_client.create_symbolic_link(
+        resp = await symbolic_link_file_client.create_symlink(
             target=target,
             metadata=metadata,
             owner=owner,
@@ -322,7 +322,7 @@ class TestStorageFileNFSAsync(AsyncStorageRecordedTestCase):
         assert 'file_attributes' not in resp
         assert 'file_permission_key' not in resp
 
-        resp = await symbolic_link_file_client.get_symbolic_link()
+        resp = await symbolic_link_file_client.get_symlink()
         assert resp is not None
         assert resp['etag'] is not None
         assert resp['last_modified'] is not None
@@ -330,7 +330,7 @@ class TestStorageFileNFSAsync(AsyncStorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy_async
-    async def test_create_and_get_symbolic_link_error(self, **kwargs):
+    async def test_create_and_get_symlink_error(self, **kwargs):
         premium_storage_file_account_name = kwargs.pop("premium_storage_file_account_name")
 
         await self._setup(premium_storage_file_account_name)
@@ -345,9 +345,9 @@ class TestStorageFileNFSAsync(AsyncStorageRecordedTestCase):
         target = f"{directory_name}/{source_file_name}"
 
         with pytest.raises(ResourceNotFoundError) as e:
-            await symbolic_link_file_client.create_symbolic_link(target=target)
+            await symbolic_link_file_client.create_symlink(target=target)
         assert 'ParentNotFound' in e.value.args[0]
 
         with pytest.raises(ResourceNotFoundError) as e:
-            await symbolic_link_file_client.get_symbolic_link()
+            await symbolic_link_file_client.get_symlink()
         assert 'ParentNotFound' in e.value.args[0]

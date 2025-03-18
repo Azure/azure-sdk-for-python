@@ -276,7 +276,7 @@ class TestStorageFileNFS(StorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy
-    def test_create_and_get_symbolic_link(self, **kwargs):
+    def test_create_and_get_symlink(self, **kwargs):
         premium_storage_file_account_name = kwargs.pop("premium_storage_file_account_name")
 
         self._setup(premium_storage_file_account_name)
@@ -293,7 +293,7 @@ class TestStorageFileNFS(StorageRecordedTestCase):
         owner, group = "345", "123"
         target = f"{directory_name}/{source_file_name}"
 
-        resp = symbolic_link_file_client.create_symbolic_link(
+        resp = symbolic_link_file_client.create_symlink(
             target=target,
             metadata=metadata,
             owner=owner,
@@ -310,7 +310,7 @@ class TestStorageFileNFS(StorageRecordedTestCase):
         assert 'file_attributes' not in resp
         assert 'file_permission_key' not in resp
 
-        resp = symbolic_link_file_client.get_symbolic_link()
+        resp = symbolic_link_file_client.get_symlink()
         assert resp is not None
         assert resp['etag'] is not None
         assert resp['last_modified'] is not None
@@ -318,7 +318,7 @@ class TestStorageFileNFS(StorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy
-    def test_create_and_get_symbolic_link_error(self, **kwargs):
+    def test_create_and_get_symlink_error(self, **kwargs):
         premium_storage_file_account_name = kwargs.pop("premium_storage_file_account_name")
 
         self._setup(premium_storage_file_account_name)
@@ -333,9 +333,9 @@ class TestStorageFileNFS(StorageRecordedTestCase):
         target = f"{directory_name}/{source_file_name}"
 
         with pytest.raises(ResourceNotFoundError) as e:
-            symbolic_link_file_client.create_symbolic_link(target=target)
+            symbolic_link_file_client.create_symlink(target=target)
         assert 'ParentNotFound' in e.value.args[0]
 
         with pytest.raises(ResourceNotFoundError) as e:
-            symbolic_link_file_client.get_symbolic_link()
+            symbolic_link_file_client.get_symlink()
         assert 'ParentNotFound' in e.value.args[0]
