@@ -9,6 +9,8 @@ import warnings
 from opentelemetry import context, trace
 from opentelemetry.trace import (
     Span,
+    Status,
+    StatusCode,
     Tracer,
     NonRecordingSpan,
     SpanKind as OpenTelemetrySpanKind,
@@ -47,6 +49,40 @@ _LAST_UNSUPPRESSED_SPAN = "LAST_UNSUPPRESSED_SPAN"
 _ERROR_SPAN_ATTRIBUTE = "error.type"
 
 
+class _SuppressionContextManager(ContextManager):
+    def __init__(self, span: "OpenTelemetrySpan"):
+        self._span = span
+        self._context_token: Optional[object] = None
+        self._current_ctxt_manager: Optional[ContextManager[Span]] = None
+
+    def __enter__(self) -> Any:
+        ctx = context.get_current()
+        if not isinstance(self._span.span_instance, NonRecordingSpan):
+            if self._span.kind in (SpanKind.INTERNAL, SpanKind.CLIENT, SpanKind.PRODUCER):
+                # This is a client call that's reported for SDK service method.
+                # We're going to suppress all nested spans reported in the context of this call.
+                # We're not suppressing anything in the scope of SERVER or CONSUMER spans because
+                # those wrap user code which may do HTTP requests and call other SDKs.
+                ctx = context.set_value(_SUPPRESSED_SPAN_FLAG, True, ctx)
+                # Since core already instruments HTTP calls, we need to suppress any automatic HTTP instrumentation
+                # provided by other libraries to prevent duplicate spans. This has no effect if no automatic HTTP
+                # instrumentation libraries are being used.
+                ctx = context.set_value(_SUPPRESS_HTTP_INSTRUMENTATION_KEY, True, ctx)
+
+            # Since the span is not suppressed, let's keep a reference to it in the context so that children spans
+            # always have access to the last non-suppressed parent span.
+            ctx = context.set_value(_LAST_UNSUPPRESSED_SPAN, self._span, ctx)
+            ctx = trace.set_span_in_context(self._span._span_instance, ctx)
+            self._context_token = context.attach(ctx)
+
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        if self._context_token:
+            context.detach(self._context_token)
+            self._context_token = None
+
+
 class OpenTelemetrySpan(HttpSpanMixin, object):
     """OpenTelemetry plugin for Azure client libraries.
 
@@ -71,8 +107,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         links: Optional[List["CoreLink"]] = None,
         **kwargs: Any,
     ) -> None:
-        self._context_tokens = []
-        self._current_ctxt_manager: Optional[ContextManager[Span]] = None
+        self._current_ctxt_manager: Optional[_SuppressionContextManager] = None
 
         # TODO: Once we have additional supported versions, we should add a way to specify the version.
         self._schema_version = OpenTelemetrySchema.get_latest_version()
@@ -112,12 +147,6 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
             # Nested internal calls should be suppressed per the Azure SDK guidelines.
             self._span_instance = NonRecordingSpan(context=self.get_current_span().get_span_context())
             return
-
-        if otel_kind == OpenTelemetrySpanKind.CLIENT:
-            # Since core already instruments HTTP calls, we need to suppress any automatic HTTP instrumentation
-            # provided by other libraries to prevent duplicate spans. This has no effect if no automatic HTTP
-            # instrumentation libraries are being used.
-            self._context_tokens.append(context.attach(context.set_value(_SUPPRESS_HTTP_INSTRUMENTATION_KEY, True)))
 
         current_tracer = trace.get_tracer(
             __name__,
@@ -239,19 +268,8 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
             )
 
     def __enter__(self) -> "OpenTelemetrySpan":
-        # Start the span.
-        if not isinstance(self.span_instance, NonRecordingSpan):
-            if self.kind == SpanKind.INTERNAL:
-                # Suppress INTERNAL spans within this context.
-                self._context_tokens.append(context.attach(context.set_value(_SUPPRESSED_SPAN_FLAG, True)))
-
-            # Since the span is not suppressed, let's keep a reference to it in the context so that children spans
-            # always have access to the last non-suppressed parent span.
-            self._context_tokens.append(context.attach(context.set_value(_LAST_UNSUPPRESSED_SPAN, self)))
-
-        self._current_ctxt_manager = trace.use_span(self._span_instance, end_on_exit=True)
-        if self._current_ctxt_manager:
-            self._current_ctxt_manager.__enter__()
+        self._current_ctxt_manager = _SuppressionContextManager(self)
+        self._current_ctxt_manager.__enter__()
         return self
 
     def __exit__(self, exception_type, exception_value, traceback) -> None:
@@ -260,12 +278,20 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
             module = exception_type.__module__ if exception_type.__module__ != "builtins" else ""
             error_type = f"{module}.{exception_type.__qualname__}" if module else exception_type.__qualname__
             self.add_attribute(_ERROR_SPAN_ATTRIBUTE, error_type)
+
+            self.span_instance.set_status(
+                Status(
+                    status_code=StatusCode.ERROR,
+                    description=f"{error_type}: {exception_value}",
+                )
+            )
+
+        self.finish()
+
+        # end the context manager.
         if self._current_ctxt_manager:
             self._current_ctxt_manager.__exit__(exception_type, exception_value, traceback)
             self._current_ctxt_manager = None
-        for token in self._context_tokens:
-            context.detach(token)
-            self._context_tokens.remove(token)
 
     def start(self) -> None:
         # Spans are automatically started at their creation with OpenTelemetry.
@@ -274,9 +300,6 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
     def finish(self) -> None:
         """Set the end time for a span."""
         self.span_instance.end()
-        for token in self._context_tokens:
-            context.detach(token)
-            self._context_tokens.remove(token)
 
     def to_header(self) -> Dict[str, str]:
         """
@@ -370,7 +393,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         return trace.get_tracer(__name__, __version__)
 
     @classmethod
-    def change_context(cls, span: Span) -> ContextManager[Span]:
+    def change_context(cls, span: Union[Span, "OpenTelemetrySpan"]) -> ContextManager:
         """Change the context for the life of this context manager.
 
         :param span: The span to use as the current span
@@ -378,7 +401,11 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         :return: A context manager to use for the duration of the span
         :rtype: contextmanager
         """
-        return trace.use_span(span, end_on_exit=False)
+
+        if isinstance(span, Span):
+            return trace.use_span(span, end_on_exit=False)
+
+        return _SuppressionContextManager(span)
 
     @classmethod
     def set_current_span(cls, span: Span) -> None:  # pylint: disable=docstring-missing-return,docstring-missing-rtype
