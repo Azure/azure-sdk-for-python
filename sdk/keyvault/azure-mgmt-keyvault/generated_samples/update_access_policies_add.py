@@ -6,15 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, IO, TYPE_CHECKING, Union
-
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.keyvault import KeyVaultManagementClient
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from .. import models as _models
 """
 # PREREQUISITES
     pip install azure-identity
@@ -54,6 +49,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/keyvault/resource-manager/Microsoft.KeyVault/stable/2023-07-01/examples/updateAccessPoliciesAdd.json
+# x-ms-original-file: specification/keyvault/resource-manager/Microsoft.KeyVault/stable/2024-11-01/examples/updateAccessPoliciesAdd.json
 if __name__ == "__main__":
     main()

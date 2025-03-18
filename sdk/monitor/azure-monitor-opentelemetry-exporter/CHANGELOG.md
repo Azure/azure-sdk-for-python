@@ -4,6 +4,11 @@
 
 ### Features Added
 
+- Support `syntheticSource` from `user_agent.synthetic.type` semantic convention
+  ([#40004](https://github.com/Azure/azure-sdk-for-python/pull/40004))
+- Support `server.address` attributes when converting Azure SDK messaging spans to envelopes
+  ([#40059](https://github.com/Azure/azure-sdk-for-python/pull/40059))
+
 ### Breaking Changes
 
 ### Bugs Fixed

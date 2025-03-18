@@ -3,6 +3,7 @@
 ### Features Added
 
 ### Bugs Fixed
+ - Fix for compute Instance, disableLocalAuth property should be depend on ssh public access enabled.
 
 ## 1.26.0 (2025-03-11)
 

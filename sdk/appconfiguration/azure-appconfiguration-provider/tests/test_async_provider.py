@@ -22,6 +22,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         ) as client:
             assert client["message"] == "hi"
             assert client["my_json"]["key"] == "value"
+            assert ".appconfig.featureflag/Alpha" not in client
             assert FEATURE_MANAGEMENT_KEY in client
             assert has_feature_flag(client, "Alpha")
 

@@ -168,4 +168,8 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
             return _InternalAnnotationTasks.ECI
         if self._eval_metric == EvaluationMetrics.PROTECTED_MATERIAL:
             return Tasks.PROTECTED_MATERIAL
+        if self._eval_metric == EvaluationMetrics.CODE_VULNERABILITY:
+            return Tasks.CODE_VULNERABILITY
+        if self._eval_metric == EvaluationMetrics.UNGROUNDED_ATTRIBUTES:
+            return Tasks.UNGROUNDED_ATTRIBUTES
         return Tasks.CONTENT_HARM
