@@ -140,6 +140,12 @@ class IndexingMode:
     consistency level for the collection.
     The index is always kept up to date with the data.
     """
+    Lazy: Literal["lazy"] = "lazy"
+    """Index is updated asynchronously with respect to a create or update
+    operation. Not supported for new containers since June/2020.
+    With lazy indexing, queries are eventually consistent. The index is
+    updated when the collection is idle.
+    """
     NoIndex: Literal["none"] = "none"
     """No index is provided.
     Setting IndexingMode to "None" drops the index. Use this if you don't
