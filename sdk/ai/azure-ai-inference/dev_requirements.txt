@@ -5,4 +5,5 @@
 aiohttp
 opentelemetry-sdk
 types-pyyaml
+prompty
 pyyaml
