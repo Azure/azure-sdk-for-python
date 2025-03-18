@@ -46,23 +46,23 @@ def parse_length_from_content_range(content_range):
     # First, split in space and take the second half: '1-3/65537'
     # Next, split on slash and take the second half: '65537'
     # Finally, convert to an int: 65537
-    return int(content_range.split(' ', 1)[1].split('/', 1)[1])
+    return int(content_range.split(" ", 1)[1].split("/", 1)[1])
 
 
 def normalize_headers(headers):
     normalized = {}
     for key, value in headers.items():
-        if key.startswith('x-ms-'):
+        if key.startswith("x-ms-"):
             key = key[5:]
-        normalized[key.lower().replace('-', '_')] = get_enum_value(value)
+        normalized[key.lower().replace("-", "_")] = get_enum_value(value)
     return normalized
 
 
 def deserialize_metadata(response, obj, headers):  # pylint: disable=unused-argument
     try:
-        raw_metadata = {k: v for k, v in response.http_response.headers.items() if k.lower().startswith('x-ms-meta-')}
+        raw_metadata = {k: v for k, v in response.http_response.headers.items() if k.lower().startswith("x-ms-meta-")}
     except AttributeError:
-        raw_metadata = {k: v for k, v in response.headers.items() if k.lower().startswith('x-ms-meta-')}
+        raw_metadata = {k: v for k, v in response.headers.items() if k.lower().startswith("x-ms-meta-")}
     return {k[10:]: v for k, v in raw_metadata.items()}
 
 
@@ -82,19 +82,23 @@ def return_raw_deserialized(response, *_):
     return response.http_response.location_mode, response.context[ContentDecodePolicy.CONTEXT_NAME]
 
 
-def process_storage_error(storage_error) -> NoReturn: # type: ignore [misc] # pylint:disable=too-many-statements, too-many-branches
+def process_storage_error(storage_error) -> NoReturn:  # type: ignore [misc] # pylint:disable=too-many-statements, too-many-branches
     raise_error = HttpResponseError
     serialized = False
     if isinstance(storage_error, AzureSigningError):
-        storage_error.message = storage_error.message + \
-            '. This is likely due to an invalid shared key. Please check your shared key and try again.'
+        storage_error.message = (
+            storage_error.message
+            + ". This is likely due to an invalid shared key. Please check your shared key and try again."
+        )
     if not storage_error.response or storage_error.response.status_code in [200, 204]:
         raise storage_error
     # If it is one of those three then it has been serialized prior by the generated layer.
-    if isinstance(storage_error, (PartialBatchErrorException,
-                                  ClientAuthenticationError, ResourceNotFoundError, ResourceExistsError)):
+    if isinstance(
+        storage_error,
+        (PartialBatchErrorException, ClientAuthenticationError, ResourceNotFoundError, ResourceExistsError),
+    ):
         serialized = True
-    error_code = storage_error.response.headers.get('x-ms-error-code')
+    error_code = storage_error.response.headers.get("x-ms-error-code")
     error_message = storage_error.message
     additional_data = {}
     error_dict = {}
@@ -104,27 +108,25 @@ def process_storage_error(storage_error) -> NoReturn: # type: ignore [misc] # py
             if error_body is None or len(error_body) == 0:
                 error_body = storage_error.response.reason
         except AttributeError:
-            error_body = ''
+            error_body = ""
         # If it is an XML response
         if isinstance(error_body, Element):
-            error_dict = {
-                child.tag.lower(): child.text
-                for child in error_body
-            }
+            error_dict = {child.tag.lower(): child.text for child in error_body}
         # If it is a JSON response
         elif isinstance(error_body, dict):
-            error_dict = error_body.get('error', {})
+            error_dict = error_body.get("error", {})
         elif not error_code:
             _LOGGER.warning(
-                'Unexpected return type %s from ContentDecodePolicy.deserialize_from_http_generics.', type(error_body))
-            error_dict = {'message': str(error_body)}
+                "Unexpected return type %s from ContentDecodePolicy.deserialize_from_http_generics.", type(error_body)
+            )
+            error_dict = {"message": str(error_body)}
 
         # If we extracted from a Json or XML response
         # There is a chance error_dict is just a string
         if error_dict and isinstance(error_dict, dict):
-            error_code = error_dict.get('code')
-            error_message = error_dict.get('message')
-            additional_data = {k: v for k, v in error_dict.items() if k not in {'code', 'message'}}
+            error_code = error_dict.get("code")
+            error_message = error_dict.get("message")
+            additional_data = {k: v for k, v in error_dict.items() if k not in {"code", "message"}}
     except DecodeError:
         pass
 
@@ -132,31 +134,33 @@ def process_storage_error(storage_error) -> NoReturn: # type: ignore [misc] # py
         # This check would be unnecessary if we have already serialized the error
         if error_code and not serialized:
             error_code = StorageErrorCode(error_code)
-            if error_code in [StorageErrorCode.condition_not_met,
-                              StorageErrorCode.blob_overwritten]:
+            if error_code in [StorageErrorCode.condition_not_met, StorageErrorCode.blob_overwritten]:
                 raise_error = ResourceModifiedError
-            if error_code in [StorageErrorCode.invalid_authentication_info,
-                              StorageErrorCode.authentication_failed]:
+            if error_code in [StorageErrorCode.invalid_authentication_info, StorageErrorCode.authentication_failed]:
                 raise_error = ClientAuthenticationError
-            if error_code in [StorageErrorCode.resource_not_found,
-                              StorageErrorCode.cannot_verify_copy_source,
-                              StorageErrorCode.blob_not_found,
-                              StorageErrorCode.queue_not_found,
-                              StorageErrorCode.container_not_found,
-                              StorageErrorCode.parent_not_found,
-                              StorageErrorCode.share_not_found]:
+            if error_code in [
+                StorageErrorCode.resource_not_found,
+                StorageErrorCode.cannot_verify_copy_source,
+                StorageErrorCode.blob_not_found,
+                StorageErrorCode.queue_not_found,
+                StorageErrorCode.container_not_found,
+                StorageErrorCode.parent_not_found,
+                StorageErrorCode.share_not_found,
+            ]:
                 raise_error = ResourceNotFoundError
-            if error_code in [StorageErrorCode.account_already_exists,
-                              StorageErrorCode.account_being_created,
-                              StorageErrorCode.resource_already_exists,
-                              StorageErrorCode.resource_type_mismatch,
-                              StorageErrorCode.blob_already_exists,
-                              StorageErrorCode.queue_already_exists,
-                              StorageErrorCode.container_already_exists,
-                              StorageErrorCode.container_being_deleted,
-                              StorageErrorCode.queue_being_deleted,
-                              StorageErrorCode.share_already_exists,
-                              StorageErrorCode.share_being_deleted]:
+            if error_code in [
+                StorageErrorCode.account_already_exists,
+                StorageErrorCode.account_being_created,
+                StorageErrorCode.resource_already_exists,
+                StorageErrorCode.resource_type_mismatch,
+                StorageErrorCode.blob_already_exists,
+                StorageErrorCode.queue_already_exists,
+                StorageErrorCode.container_already_exists,
+                StorageErrorCode.container_being_deleted,
+                StorageErrorCode.queue_being_deleted,
+                StorageErrorCode.share_already_exists,
+                StorageErrorCode.share_being_deleted,
+            ]:
                 raise_error = ResourceExistsError
     except ValueError:
         # Got an unknown error code
@@ -183,7 +187,7 @@ def process_storage_error(storage_error) -> NoReturn: # type: ignore [misc] # py
     error.args = (error.message,)
     try:
         # `from None` prevents us from double printing the exception (suppresses generated layer error context)
-        exec("raise error from None")   # pylint: disable=exec-used # nosec
+        exec("raise error from None")  # pylint: disable=exec-used # nosec
     except SyntaxError as exc:
         raise error from exc
 

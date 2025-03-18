@@ -13,7 +13,7 @@ from azure.storage.queue import (
     QueueClient,
     QueueServiceClient,
     TextBase64DecodePolicy,
-    TextBase64EncodePolicy
+    TextBase64EncodePolicy,
 )
 from azure.storage.queue._message_encoding import NoDecodePolicy, NoEncodePolicy
 
@@ -22,10 +22,11 @@ from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import QueuePreparer
 
 # ------------------------------------------------------------------------------
-TEST_QUEUE_PREFIX = 'mytestqueue'
+TEST_QUEUE_PREFIX = "mytestqueue"
 
 
 # ------------------------------------------------------------------------------
+
 
 class TestStorageQueueEncoding(StorageRecordedTestCase):
     # --Helpers-----------------------------------------------------------------
@@ -66,7 +67,7 @@ class TestStorageQueueEncoding(StorageRecordedTestCase):
 
         # Arrange.
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
-        message = '<message1>'
+        message = "<message1>"
         queue = qsc.get_queue_client(self.get_resource_name(TEST_QUEUE_PREFIX))
 
         # Asserts
@@ -82,7 +83,7 @@ class TestStorageQueueEncoding(StorageRecordedTestCase):
 
         # Arrange.
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
-        message = '  mess\t age1\n'
+        message = "  mess\t age1\n"
         queue = qsc.get_queue_client(self.get_resource_name(TEST_QUEUE_PREFIX))
 
         # Asserts
@@ -97,7 +98,7 @@ class TestStorageQueueEncoding(StorageRecordedTestCase):
         # Action.
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
         queue = self._get_queue_reference(qsc)
-        message = '\u0001'
+        message = "\u0001"
 
         # Asserts
         with pytest.raises(HttpResponseError):
@@ -116,9 +117,10 @@ class TestStorageQueueEncoding(StorageRecordedTestCase):
             queue_name=self.get_resource_name(TEST_QUEUE_PREFIX),
             credential=storage_account_key,
             message_encode_policy=TextBase64EncodePolicy(),
-            message_decode_policy=TextBase64DecodePolicy())
+            message_decode_policy=TextBase64DecodePolicy(),
+        )
 
-        message = '\u0001'
+        message = "\u0001"
 
         # Asserts
         self._validate_encoding(queue, message)
@@ -136,9 +138,10 @@ class TestStorageQueueEncoding(StorageRecordedTestCase):
             queue_name=self.get_resource_name(TEST_QUEUE_PREFIX),
             credential=storage_account_key,
             message_encode_policy=BinaryBase64EncodePolicy(),
-            message_decode_policy=BinaryBase64DecodePolicy())
+            message_decode_policy=BinaryBase64DecodePolicy(),
+        )
 
-        message = b'xyz'
+        message = b"xyz"
 
         # Asserts
         self._validate_encoding(queue, message)
@@ -151,19 +154,20 @@ class TestStorageQueueEncoding(StorageRecordedTestCase):
 
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
-        queue = qsc.get_queue_client(self.get_resource_name('failqueue'))
+        queue = qsc.get_queue_client(self.get_resource_name("failqueue"))
         queue.create_queue()
-
 
         # Action.
         with pytest.raises(TypeError) as e:
-            message = b'xyz'
+            message = b"xyz"
             queue.send_message(message)
 
             # Asserts
-            assert str(e.exception.startswith(
-                'Message content must not be bytes. '
-                'Use the BinaryBase64EncodePolicy to send bytes.'))
+            assert str(
+                e.exception.startswith(
+                    "Message content must not be bytes. " "Use the BinaryBase64EncodePolicy to send bytes."
+                )
+            )
 
     @QueuePreparer()
     def test_message_text_fails(self, **kwargs):
@@ -177,15 +181,16 @@ class TestStorageQueueEncoding(StorageRecordedTestCase):
             queue_name=self.get_resource_name(TEST_QUEUE_PREFIX),
             credential=storage_account_key,
             message_encode_policy=BinaryBase64EncodePolicy(),
-            message_decode_policy=BinaryBase64DecodePolicy())
+            message_decode_policy=BinaryBase64DecodePolicy(),
+        )
 
         # Action.
         with pytest.raises(TypeError) as e:
-            message = 'xyz'
+            message = "xyz"
             queue.send_message(message)
 
         # Asserts
-        assert str(e.value).startswith('Message content must be bytes')
+        assert str(e.value).startswith("Message content must be bytes")
 
     @QueuePreparer()
     @recorded_by_proxy
@@ -200,12 +205,13 @@ class TestStorageQueueEncoding(StorageRecordedTestCase):
             queue_name=self.get_resource_name(TEST_QUEUE_PREFIX),
             credential=storage_account_key,
             message_encode_policy=None,
-            message_decode_policy=BinaryBase64DecodePolicy())
+            message_decode_policy=BinaryBase64DecodePolicy(),
+        )
         try:
             queue.create_queue()
         except ResourceExistsError:
             pass
-        message = 'xyz'
+        message = "xyz"
         queue.send_message(message)
 
         # Action.
@@ -213,7 +219,7 @@ class TestStorageQueueEncoding(StorageRecordedTestCase):
             queue.peek_messages()
 
         # Asserts
-        assert -1 != str(e.value).find('Message content is not valid base 64')
+        assert -1 != str(e.value).find("Message content is not valid base 64")
 
     def test_message_no_encoding(self):
         # Arrange
@@ -222,7 +228,8 @@ class TestStorageQueueEncoding(StorageRecordedTestCase):
             queue_name="queue",
             credential="account_key",
             message_encode_policy=None,
-            message_decode_policy=None)
+            message_decode_policy=None,
+        )
 
         # Asserts
         assert isinstance(queue._message_encode_policy, NoEncodePolicy)
@@ -230,5 +237,5 @@ class TestStorageQueueEncoding(StorageRecordedTestCase):
 
 
 # ------------------------------------------------------------------------------
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

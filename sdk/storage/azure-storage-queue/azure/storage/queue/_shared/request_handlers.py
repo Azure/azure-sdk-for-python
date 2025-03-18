@@ -6,7 +6,7 @@
 
 import logging
 import stat
-from io import (SEEK_END, SEEK_SET, UnsupportedOperation)
+from io import SEEK_END, SEEK_SET, UnsupportedOperation
 from os import fstat
 from typing import Dict, Optional
 
@@ -37,11 +37,12 @@ def serialize_iso(attr):
             raise OverflowError("Hit max or min date")
 
         date = f"{utc.tm_year:04}-{utc.tm_mon:02}-{utc.tm_mday:02}T{utc.tm_hour:02}:{utc.tm_min:02}:{utc.tm_sec:02}"
-        return date + 'Z'
+        return date + "Z"
     except (ValueError, OverflowError) as err:
         raise ValueError("Unable to serialize datetime object.") from err
     except AttributeError as err:
         raise TypeError("ISO-8601 object must be valid datetime object.") from err
+
 
 def get_length(data):
     length = None
@@ -62,7 +63,7 @@ def get_length(data):
             try:
                 mode = fstat(fileno).st_mode
                 if stat.S_ISREG(mode) or stat.S_ISLNK(mode):
-                    #st_size only meaningful if regular file or symlink, other types
+                    # st_size only meaningful if regular file or symlink, other types
                     # e.g. sockets may return misleading sizes like 0
                     return fstat(fileno).st_size
             except OSError:
@@ -84,13 +85,13 @@ def get_length(data):
 
 def read_length(data):
     try:
-        if hasattr(data, 'read'):
-            read_data = b''
+        if hasattr(data, "read"):
+            read_data = b""
             for chunk in iter(lambda: data.read(4096), b""):
                 read_data += chunk
             return len(read_data), read_data
-        if hasattr(data, '__iter__'):
-            read_data = b''
+        if hasattr(data, "__iter__"):
+            read_data = b""
             for chunk in data:
                 read_data += chunk
             return len(read_data), read_data
@@ -100,8 +101,13 @@ def read_length(data):
 
 
 def validate_and_format_range_headers(
-        start_range, end_range, start_range_required=True,
-        end_range_required=True, check_content_md5=False, align_to_page=False):
+    start_range,
+    end_range,
+    start_range_required=True,
+    end_range_required=True,
+    check_content_md5=False,
+    align_to_page=False,
+):
     # If end range is provided, start range must be provided
     if (start_range_required or end_range is not None) and start_range is None:
         raise ValueError("start_range value cannot be None.")
@@ -111,16 +117,18 @@ def validate_and_format_range_headers(
     # Page ranges must be 512 aligned
     if align_to_page:
         if start_range is not None and start_range % 512 != 0:
-            raise ValueError(f"Invalid page blob start_range: {start_range}. "
-                             "The size must be aligned to a 512-byte boundary.")
+            raise ValueError(
+                f"Invalid page blob start_range: {start_range}. " "The size must be aligned to a 512-byte boundary."
+            )
         if end_range is not None and end_range % 512 != 511:
-            raise ValueError(f"Invalid page blob end_range: {end_range}. "
-                             "The size must be aligned to a 512-byte boundary.")
+            raise ValueError(
+                f"Invalid page blob end_range: {end_range}. " "The size must be aligned to a 512-byte boundary."
+            )
 
     # Format based on whether end_range is present
     range_header = None
     if end_range is not None:
-        range_header = f'bytes={start_range}-{end_range}'
+        range_header = f"bytes={start_range}-{end_range}"
     elif start_range is not None:
         range_header = f"bytes={start_range}-"
 
@@ -131,7 +139,7 @@ def validate_and_format_range_headers(
             raise ValueError("Both start and end range required for MD5 content validation.")
         if end_range - start_range > 4 * 1024 * 1024:
             raise ValueError("Getting content MD5 for a range greater than 4MB is not supported.")
-        range_validation = 'true'
+        range_validation = "true"
 
     return range_header, range_validation
 
@@ -140,7 +148,7 @@ def add_metadata_headers(metadata: Optional[Dict[str, str]] = None) -> Dict[str,
     headers = {}
     if metadata:
         for key, value in metadata.items():
-            headers[f'x-ms-meta-{key.strip()}'] = value.strip() if value else value
+            headers[f"x-ms-meta-{key.strip()}"] = value.strip() if value else value
     return headers
 
 
@@ -163,24 +171,21 @@ def serialize_batch_body(requests, batch_id):
     """
 
     if requests is None or len(requests) == 0:
-        raise ValueError('Please provide sub-request(s) for this batch request')
+        raise ValueError("Please provide sub-request(s) for this batch request")
 
-    delimiter_bytes = (_get_batch_request_delimiter(batch_id, True, False) + _HTTP_LINE_ENDING).encode('utf-8')
-    newline_bytes = _HTTP_LINE_ENDING.encode('utf-8')
+    delimiter_bytes = (_get_batch_request_delimiter(batch_id, True, False) + _HTTP_LINE_ENDING).encode("utf-8")
+    newline_bytes = _HTTP_LINE_ENDING.encode("utf-8")
     batch_body = []
 
     content_index = 0
     for request in requests:
-        request.headers.update({
-            "Content-ID": str(content_index),
-            "Content-Length": str(0)
-        })
+        request.headers.update({"Content-ID": str(content_index), "Content-Length": str(0)})
         batch_body.append(delimiter_bytes)
         batch_body.append(_make_body_from_sub_request(request))
         batch_body.append(newline_bytes)
         content_index += 1
 
-    batch_body.append(_get_batch_request_delimiter(batch_id, True, True).encode('utf-8'))
+    batch_body.append(_get_batch_request_delimiter(batch_id, True, True).encode("utf-8"))
     # final line of body MUST have \r\n at the end, or it will not be properly read by the service
     batch_body.append(newline_bytes)
 
@@ -201,31 +206,31 @@ def _get_batch_request_delimiter(batch_id, is_prepend_dashes=False, is_append_da
     :rtype: str
     """
 
-    prepend_dashes = '--' if is_prepend_dashes else ''
-    append_dashes = '--' if is_append_dashes else ''
+    prepend_dashes = "--" if is_prepend_dashes else ""
+    append_dashes = "--" if is_append_dashes else ""
 
     return prepend_dashes + _REQUEST_DELIMITER_PREFIX + batch_id + append_dashes
 
 
 def _make_body_from_sub_request(sub_request):
     """
-     Content-Type: application/http
-     Content-ID: <sequential int ID>
-     Content-Transfer-Encoding: <value> (if present)
+    Content-Type: application/http
+    Content-ID: <sequential int ID>
+    Content-Transfer-Encoding: <value> (if present)
 
-     <verb> <path><query> HTTP/<version>
-     <header key>: <header value> (repeated as necessary)
-     Content-Length: <value>
-     (newline if content length > 0)
-     <body> (if content length > 0)
+    <verb> <path><query> HTTP/<version>
+    <header key>: <header value> (repeated as necessary)
+    Content-Length: <value>
+    (newline if content length > 0)
+    <body> (if content length > 0)
 
-     Serializes an http request.
+    Serializes an http request.
 
-     :param ~azure.core.pipeline.transport.HttpRequest sub_request:
-        Request to serialize.
-     :returns: The serialized sub-request in bytes
-     :rtype: bytes
-     """
+    :param ~azure.core.pipeline.transport.HttpRequest sub_request:
+       Request to serialize.
+    :returns: The serialized sub-request in bytes
+    :rtype: bytes
+    """
 
     # put the sub-request's headers into a list for efficient str concatenation
     sub_request_body = []
@@ -249,9 +254,9 @@ def _make_body_from_sub_request(sub_request):
 
     # append HTTP verb and path and query and HTTP version
     sub_request_body.append(sub_request.method)
-    sub_request_body.append(' ')
+    sub_request_body.append(" ")
     sub_request_body.append(sub_request.url)
-    sub_request_body.append(' ')
+    sub_request_body.append(" ")
     sub_request_body.append(_HTTP1_1_IDENTIFIER)
     sub_request_body.append(_HTTP_LINE_ENDING)
 
@@ -266,4 +271,4 @@ def _make_body_from_sub_request(sub_request):
     # append blank line
     sub_request_body.append(_HTTP_LINE_ENDING)
 
-    return ''.join(sub_request_body).encode()
+    return "".join(sub_request_body).encode()

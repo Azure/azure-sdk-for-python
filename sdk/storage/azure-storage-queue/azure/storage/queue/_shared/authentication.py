@@ -29,28 +29,267 @@ logger = logging.getLogger(__name__)
 
 
 table_lv0 = [
-    0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-    0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-    0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x71c, 0x0, 0x71f, 0x721, 0x723, 0x725,
-    0x0, 0x0, 0x0, 0x72d, 0x803, 0x0, 0x0, 0x733, 0x0, 0xd03, 0xd1a, 0xd1c, 0xd1e,
-    0xd20, 0xd22, 0xd24, 0xd26, 0xd28, 0xd2a, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-    0xe02, 0xe09, 0xe0a, 0xe1a, 0xe21, 0xe23, 0xe25, 0xe2c, 0xe32, 0xe35, 0xe36, 0xe48, 0xe51,
-    0xe70, 0xe7c, 0xe7e, 0xe89, 0xe8a, 0xe91, 0xe99, 0xe9f, 0xea2, 0xea4, 0xea6, 0xea7, 0xea9,
-    0x0, 0x0, 0x0, 0x743, 0x744, 0x748, 0xe02, 0xe09, 0xe0a, 0xe1a, 0xe21, 0xe23, 0xe25,
-    0xe2c, 0xe32, 0xe35, 0xe36, 0xe48, 0xe51, 0xe70, 0xe7c, 0xe7e, 0xe89, 0xe8a, 0xe91, 0xe99,
-    0xe9f, 0xea2, 0xea4, 0xea6, 0xea7, 0xea9, 0x0, 0x74c, 0x0, 0x750, 0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x71C,
+    0x0,
+    0x71F,
+    0x721,
+    0x723,
+    0x725,
+    0x0,
+    0x0,
+    0x0,
+    0x72D,
+    0x803,
+    0x0,
+    0x0,
+    0x733,
+    0x0,
+    0xD03,
+    0xD1A,
+    0xD1C,
+    0xD1E,
+    0xD20,
+    0xD22,
+    0xD24,
+    0xD26,
+    0xD28,
+    0xD2A,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0xE02,
+    0xE09,
+    0xE0A,
+    0xE1A,
+    0xE21,
+    0xE23,
+    0xE25,
+    0xE2C,
+    0xE32,
+    0xE35,
+    0xE36,
+    0xE48,
+    0xE51,
+    0xE70,
+    0xE7C,
+    0xE7E,
+    0xE89,
+    0xE8A,
+    0xE91,
+    0xE99,
+    0xE9F,
+    0xEA2,
+    0xEA4,
+    0xEA6,
+    0xEA7,
+    0xEA9,
+    0x0,
+    0x0,
+    0x0,
+    0x743,
+    0x744,
+    0x748,
+    0xE02,
+    0xE09,
+    0xE0A,
+    0xE1A,
+    0xE21,
+    0xE23,
+    0xE25,
+    0xE2C,
+    0xE32,
+    0xE35,
+    0xE36,
+    0xE48,
+    0xE51,
+    0xE70,
+    0xE7C,
+    0xE7E,
+    0xE89,
+    0xE8A,
+    0xE91,
+    0xE99,
+    0xE9F,
+    0xEA2,
+    0xEA4,
+    0xEA6,
+    0xEA7,
+    0xEA9,
+    0x0,
+    0x74C,
+    0x0,
+    0x750,
+    0x0,
 ]
 
 table_lv4 = [
-    0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-    0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-    0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x8012, 0x0, 0x0, 0x0, 0x0, 0x0, 0x8212, 0x0, 0x0,
-    0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-    0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-    0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-    0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-    0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x8012,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x8212,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
+    0x0,
 ]
+
 
 def compare(lhs: str, rhs: str) -> int:  # pylint:disable=too-many-return-statements
     tables = [table_lv0, table_lv4]
@@ -95,6 +334,7 @@ def _wrap_exception(ex, desired_type):
         msg = ex.args[0]
     return desired_type(msg)
 
+
 # This method attempts to emulate the sorting done by the service
 def _storage_header_sort(input_headers: List[Tuple[str, str]]) -> List[Tuple[str, str]]:
 
@@ -135,38 +375,42 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
     @staticmethod
     def _get_headers(request, headers_to_sign):
         headers = dict((name.lower(), value) for name, value in request.http_request.headers.items() if value)
-        if 'content-length' in headers and headers['content-length'] == '0':
-            del headers['content-length']
-        return '\n'.join(headers.get(x, '') for x in headers_to_sign) + '\n'
+        if "content-length" in headers and headers["content-length"] == "0":
+            del headers["content-length"]
+        return "\n".join(headers.get(x, "") for x in headers_to_sign) + "\n"
 
     @staticmethod
     def _get_verb(request):
-        return request.http_request.method + '\n'
+        return request.http_request.method + "\n"
 
     def _get_canonicalized_resource(self, request):
         uri_path = urlparse(request.http_request.url).path
         try:
-            if isinstance(request.context.transport, AioHttpTransport) or \
-                    isinstance(getattr(request.context.transport, "_transport", None), AioHttpTransport) or \
-                    isinstance(getattr(getattr(request.context.transport, "_transport", None), "_transport", None),
-                               AioHttpTransport):
+            if (
+                isinstance(request.context.transport, AioHttpTransport)
+                or isinstance(getattr(request.context.transport, "_transport", None), AioHttpTransport)
+                or isinstance(
+                    getattr(getattr(request.context.transport, "_transport", None), "_transport", None),
+                    AioHttpTransport,
+                )
+            ):
                 uri_path = URL(uri_path)
-                return '/' + self.account_name + str(uri_path)
+                return "/" + self.account_name + str(uri_path)
         except TypeError:
             pass
-        return '/' + self.account_name + uri_path
+        return "/" + self.account_name + uri_path
 
     @staticmethod
     def _get_canonicalized_headers(request):
-        string_to_sign = ''
+        string_to_sign = ""
         x_ms_headers = []
         for name, value in request.http_request.headers.items():
-            if name.startswith('x-ms-'):
+            if name.startswith("x-ms-"):
                 x_ms_headers.append((name.lower(), value))
         x_ms_headers = _storage_header_sort(x_ms_headers)
         for name, value in x_ms_headers:
             if value is not None:
-                string_to_sign += ''.join([name, ':', value, '\n'])
+                string_to_sign += "".join([name, ":", value, "\n"])
         return string_to_sign
 
     @staticmethod
@@ -174,37 +418,46 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
         sorted_queries = list(request.http_request.query.items())
         sorted_queries.sort()
 
-        string_to_sign = ''
+        string_to_sign = ""
         for name, value in sorted_queries:
             if value is not None:
-                string_to_sign += '\n' + name.lower() + ':' + unquote(value)
+                string_to_sign += "\n" + name.lower() + ":" + unquote(value)
 
         return string_to_sign
 
     def _add_authorization_header(self, request, string_to_sign):
         try:
             signature = sign_string(self.account_key, string_to_sign)
-            auth_string = 'SharedKey ' + self.account_name + ':' + signature
-            request.http_request.headers['Authorization'] = auth_string
+            auth_string = "SharedKey " + self.account_name + ":" + signature
+            request.http_request.headers["Authorization"] = auth_string
         except Exception as ex:
             # Wrap any error that occurred as signing error
             # Doing so will clarify/locate the source of problem
             raise _wrap_exception(ex, AzureSigningError) from ex
 
     def on_request(self, request):
-        string_to_sign = \
-            self._get_verb(request) + \
-            self._get_headers(
+        string_to_sign = (
+            self._get_verb(request)
+            + self._get_headers(
                 request,
                 [
-                    'content-encoding', 'content-language', 'content-length',
-                    'content-md5', 'content-type', 'date', 'if-modified-since',
-                    'if-match', 'if-none-match', 'if-unmodified-since', 'byte_range'
-                ]
-            ) + \
-            self._get_canonicalized_headers(request) + \
-            self._get_canonicalized_resource(request) + \
-            self._get_canonicalized_resource_query(request)
+                    "content-encoding",
+                    "content-language",
+                    "content-length",
+                    "content-md5",
+                    "content-type",
+                    "date",
+                    "if-modified-since",
+                    "if-match",
+                    "if-none-match",
+                    "if-unmodified-since",
+                    "byte_range",
+                ],
+            )
+            + self._get_canonicalized_headers(request)
+            + self._get_canonicalized_resource(request)
+            + self._get_canonicalized_resource_query(request)
+        )
 
         self._add_authorization_header(request, string_to_sign)
         # logger.debug("String_to_sign=%s", string_to_sign)
@@ -212,7 +465,7 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
 
 class StorageHttpChallenge(object):
     def __init__(self, challenge):
-        """ Parses an HTTP WWW-Authentication Bearer challenge from the Storage service. """
+        """Parses an HTTP WWW-Authentication Bearer challenge from the Storage service."""
         if not challenge:
             raise ValueError("Challenge cannot be empty")
 
@@ -221,7 +474,7 @@ class StorageHttpChallenge(object):
 
         # name=value pairs either comma or space separated with values possibly being
         # enclosed in quotes
-        for item in re.split('[, ]', trimmed_challenge):
+        for item in re.split("[, ]", trimmed_challenge):
             comps = item.split("=")
             if len(comps) == 2:
                 key = comps[0].strip(' "')
@@ -230,11 +483,11 @@ class StorageHttpChallenge(object):
                     self._parameters[key] = value
 
         # Extract and verify required parameters
-        self.authorization_uri = self._parameters.get('authorization_uri')
+        self.authorization_uri = self._parameters.get("authorization_uri")
         if not self.authorization_uri:
             raise ValueError("Authorization Uri not found")
 
-        self.resource_id = self._parameters.get('resource_id')
+        self.resource_id = self._parameters.get("resource_id")
         if not self.resource_id:
             raise ValueError("Resource id not found")
 
