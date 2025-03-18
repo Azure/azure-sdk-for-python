@@ -5,7 +5,7 @@
 from os import PathLike
 from typing import IO, Any, Dict, Optional, Union, cast
 
-from ruamel.yaml import YAML, YAMLError
+from ruamel.yaml import YAML, YAMLError  # cspell:ignore ruamel
 
 from azure.ai.evaluation._constants import DefaultOpenEncoding
 from azure.ai.evaluation.legacy.prompty._exceptions import MissingRequiredInputError

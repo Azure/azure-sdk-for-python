@@ -1,16 +1,17 @@
-from copy import copy, deepcopy
-import re
 from .__openai_patcher import TestProxyConfig, TestProxyHttpxClientBase  # isort: split
 
+import re
 import os
 import json
 import multiprocessing
 import time
 from datetime import datetime, timedelta
 import jwt
+from copy import deepcopy
 from logging import Logger
+from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, Final, Generator, Mapping, Optional
+from typing import Any, Dict, Final, Generator, Mapping, Literal, Optional
 from unittest.mock import patch
 
 import pytest
@@ -82,7 +83,7 @@ def add_sanitizers(
     test_proxy,
     mock_model_config: AzureOpenAIModelConfiguration,
     mock_project_scope: Dict[str, str],
-    connection_file: Optional[Dict[str, Any]],
+    connection_file: Dict[str, Any],
 ) -> None:
     def azureopenai_connection_sanitizer():
         """Sanitize the openai deployment name."""
@@ -146,11 +147,11 @@ def add_sanitizers(
     def live_connection_file_values():
         """Sanitize the live values from connections.json"""
 
-        if connection_file is None:
+        if not connection_file:
             return
 
-        project_scope = connection_file["azure_ai_project_scope"]["value"]
-        model_config = connection_file["azure_openai_model_config"]["value"]
+        project_scope = connection_file[KEY_AZURE_PROJECT_SCOPE]["value"]
+        model_config = connection_file[KEY_AZURE_MODEL_CONFIG]["value"]
 
         add_general_regex_sanitizer(regex=project_scope["subscription_id"], value=SanitizedValues.SUBSCRIPTION_ID)
         add_general_regex_sanitizer(
@@ -167,7 +168,7 @@ def add_sanitizers(
             replacement='"root_run_id": "azure_ai_evaluation_evaluators_common_base_eval_asyncevaluatorbase_SANITIZED"',
         )
 
-    def evalutation_run_sanitizer() -> None:
+    def evaluatation_run_sanitizer() -> None:
         # By default, the test proxy will sanitize all "key" values in a JSON body to "Sanitized". Unfortunately,
         # when retrieving the datastore secrets, the key that comes back needs to be a valid Base64 encoded string.
         # So we disable this default rule, and add a replacement rule to santize to MA== (which is "0")
@@ -194,9 +195,15 @@ def add_sanitizers(
         add_body_key_sanitizer(json_path="$..userTenantId", value=ZERO_GUID)
         add_body_key_sanitizer(json_path="$..upn", value="Sanitized")
 
-        # removes some stainless headers since they are causing some unnecessary mismatches in recordings
-        stainless_headers = ["x-stainless-retry-count", "x-stainless-read-timeout"]
-        add_remove_header_sanitizer(headers=",".join(stainless_headers))
+        # removes some headers since they are causing some unnecessary mismatches in recordings
+        headers_to_ignore = [
+            "ms-azure-ai-promptflow",
+            "ms-azure-ai-promptflow-called-from",
+            "x-ms-useragent",
+            "x-stainless-retry-count",
+            "x-stainless-read-timeout",
+        ]
+        add_remove_header_sanitizer(headers=",".join(headers_to_ignore))
 
     azure_workspace_triad_sanitizer()
     azureopenai_connection_sanitizer()
@@ -204,7 +211,7 @@ def add_sanitizers(
     azure_ai_generative_sanitizer()
     live_connection_file_values()
     promptflow_root_run_id_sanitizer()
-    evalutation_run_sanitizer()
+    evaluatation_run_sanitizer()
 
 
 @pytest.fixture
@@ -317,12 +324,9 @@ def get_config(
 
 
 @pytest.fixture(scope="session")
-def mock_model_config(connection_file: Mapping[str, Any]) -> AzureOpenAIModelConfiguration:
-    config = get_config(connection_file, KEY_AZURE_MODEL_CONFIG, {})
-    sanitized_endpoint = re.sub(r"([^:]+://)[^\.]+(.*)", r"\1Sanitized\2", config.get("azure_endpoint", ""))
-
+def mock_model_config() -> AzureOpenAIModelConfiguration:
     return AzureOpenAIModelConfiguration(
-        azure_endpoint=sanitized_endpoint or "https://Sanitized.cognitiveservices.azure.com",
+        azure_endpoint="https://Sanitized.cognitiveservices.azure.com",
         api_key="aoai-api-key",
         api_version="2024-08-01-preview",
         azure_deployment="aoai-deployment",

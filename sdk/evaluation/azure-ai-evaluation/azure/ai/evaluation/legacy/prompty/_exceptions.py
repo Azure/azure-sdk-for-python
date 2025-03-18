@@ -6,9 +6,9 @@ from azure.ai.evaluation._exceptions import ErrorCategory, ErrorBlame, ErrorTarg
 
 
 class PromptyException(EvaluationException):
-    """Exception class for user errors.
+    """Exception class for Prompty related errors.
 
-    This exception is used to indicate that the error was caused by user actions.
+    This exception is used to indicate that the error was caused by Prompty execution.
 
     :param message: The error message.
     :type message: str
