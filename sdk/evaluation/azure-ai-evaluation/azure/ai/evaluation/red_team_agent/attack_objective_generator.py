@@ -9,12 +9,7 @@ class RiskCategory(str, Enum):
     HateUnfairness = "hate_unfairness"
     Violence = "violence"
     Sexual = "sexual"
-    SelfHarm = "self_harm" 
-    ProtectedMaterial = "protected_material"
-    IndirectJailbreak = "indirect_jailbreak"
-    DirectJailbreak = "direct_jailbreak"
-    CodeVulnerability = "code_vulnerability"
-    InferenceSensitiveAttributes = "inference_sensitive_attributes"
+    SelfHarm = "self_harm"
 
 class AttackObjectiveGenerator:
     """Generator for creating attack objectives.

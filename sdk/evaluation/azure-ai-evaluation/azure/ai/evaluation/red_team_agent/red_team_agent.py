@@ -130,7 +130,7 @@ class RedTeamAgent():
         )
 
         # Initialize a cache for attack objectives by risk category and strategy
-        self.attack_objectives_cache = {}
+        self.attack_objectives = {}
         
         initialize_pyrit(memory_db_type=DUCK_DB)
 
@@ -303,19 +303,20 @@ class RedTeamAgent():
         
         # Create a cache key based on risk categories and strategy
         cache_key = (tuple(risk_categories), strategy)
-
-        # Fetch objectives from RAI client
+        
+        # Always fetch objectives from RAI client
         try:
             self.logger.info(f"Making API call to get_attack_objectives with:")
             self.logger.info(f"  - risk_categories={risk_categories}")
             self.logger.info(f"  - application_scenario={application_scenario}")
             self.logger.info(f"  - strategy={strategy}")
-            # setting risk_categories to [] for now
+            
             objectives_response = await self.generated_rai_client.get_attack_objectives(
                 risk_categories=risk_categories,
                 application_scenario=application_scenario or "",
                 strategy=strategy
             )
+            
             self.logger.info(f"API call successful - received response of type: {type(objectives_response)}")
             if isinstance(objectives_response, dict):
                 self.logger.info(f"Response keys: {objectives_response.keys()}")
@@ -325,6 +326,7 @@ class RedTeamAgent():
                 self.logger.info(f"Received list with {len(objectives_response)} objectives")
             else:
                 self.logger.info(f"Response is of unexpected type: {type(objectives_response)}")
+                
             if strategy == "jailbreak":
                 self.logger.info("Jailbreak strategy selected prepend jailbreak prefix")
                 jailbreak_prefixes = await self.generated_rai_client.get_jailbreak_prefixes()
@@ -353,20 +355,28 @@ class RedTeamAgent():
                 count=num_objectives
             )
 
-        # Process the response
-        filtered_objectives = []
+        # Process the response - organize by category and extract content/IDs
         objectives_by_category = {cat: [] for cat in risk_categories}
         uncategorized_objectives = []
+        objective_id_to_categories = {}  # Map objective IDs to their categories
 
         self.logger.info(f"Processing list-format response with {len(objectives_response)} items")
-        # Process list format
+        
+        # Process list format and organize by category
         for obj in objectives_response:
+            obj_id = obj.get("id", f"mock-{len(uncategorized_objectives)}")
             target_harms = obj.get("metadata", {}).get("target_harms", [])
+            content = ""
+            if "messages" in obj and len(obj["messages"]) > 0:
+                content = obj["messages"][0].get("content", "")
+            
             if not target_harms:
-                self.logger.info("No target_harms found, checking for Messages")
-                content = obj.get("messages", [{}])[0].get("content", "")
+                self.logger.info(f"No target_harms found for {obj_id}, adding to uncategorized")
                 if content:
-                    uncategorized_objectives.append(content)
+                    uncategorized_objectives.append({
+                        "id": obj_id,
+                        "content": content
+                    })
                 continue
             
             # Track which categories this objective belongs to
@@ -375,65 +385,117 @@ class RedTeamAgent():
                 cat = harm.get("risk-type", "").lower()
                 if cat in risk_categories:
                     matched_categories.append(cat)
-                    self.logger.info(f"Matched category: {cat}")
+                    self.logger.info(f"Matched category: {cat} for objective {obj_id}")
             
             if matched_categories:
-                content = obj.get("messages", [{}])[0].get("content", "")
                 if content:
-                    filtered_objectives.append(obj)
+                    obj_data = {
+                        "id": obj_id,
+                        "content": content,
+                        "categories": matched_categories  # Store categories with each objective
+                    }
+                    # Track which categories this objective belongs to
+                    objective_id_to_categories[obj_id] = matched_categories
+                    
                     for cat in matched_categories:
-                        objectives_by_category[cat].append(content)
-                        self.logger.info(f"Added objective to category {cat}: {content[:50]}...")
+                        objectives_by_category[cat].append(obj_data)
+                        self.logger.info(f"Added objective {obj_id} to category {cat}: {content[:50]}...")
+        
+        # Check if we already have selected IDs for this combination
+        # If so, use those IDs to select objectives from current response
+        if cache_key in self.attack_objectives and "selected_ids" in self.attack_objectives[cache_key]:
+            self.logger.info(f"Using previously selected IDs for {cache_key}")
+            selected_id_to_category = self.attack_objectives[cache_key]["selected_id_to_category"]
+            selected_prompts = []
             
-        # Build a balanced set of objectives
-        all_prompts = []
-        if risk_categories:
-            prompts_per_category = max(1, num_objectives // len(risk_categories))
-            self.logger.info(f"Target prompts per category: {prompts_per_category}")
-            remaining_slots = num_objectives
+            # Extract contents for objectives with matching IDs, organized by category
+            for category in risk_categories:
+                category_objectives = objectives_by_category.get(category, [])
+                # Find objectives for this category based on stored ID-to-category mapping
+                category_ids = [obj_id for obj_id, cats in selected_id_to_category.items() if category in cats]
+                matched_objectives = [obj for obj in category_objectives if obj["id"] in category_ids]
+                
+                selected_prompts.extend([obj["content"] for obj in matched_objectives])
+                
+                self.logger.info(f"Found {len(matched_objectives)} matching objectives for category {category}")
+                for obj in matched_objectives:
+                    self.logger.info(f"  - {category}: {obj['id']}: {obj['content'][:50]}...")
             
-            for cat in risk_categories:
-                cat_objectives = objectives_by_category[cat]
-                num_to_add = min(prompts_per_category, len(cat_objectives), remaining_slots)
-                
-                if len(cat_objectives) < prompts_per_category:
-                    self.logger.warning(f"⚠️ Category {cat} has fewer objectives ({len(cat_objectives)}) than desired ({prompts_per_category})")
-                
-                self.logger.info(f"Adding {num_to_add} objectives for {cat}")
-                
-                # Show which ones we're selecting
-                for i in range(num_to_add):
-                    if i < len(cat_objectives):
-                        self.logger.info(f"  [{cat}][{i}] {cat_objectives[i][:50]}...")
-                
-                all_prompts.extend(cat_objectives[:num_to_add])
-                remaining_slots -= num_to_add
+            self.logger.info(f"Returning {len(selected_prompts)} objectives based on stored IDs")
             
-            # Fill any remaining slots with uncategorized objectives
-            if remaining_slots > 0 and uncategorized_objectives:
-                num_to_add = min(remaining_slots, len(uncategorized_objectives))
-                self.logger.info(f"Adding {num_to_add} uncategorized objectives to fill remaining {remaining_slots} slots")
-                all_prompts.extend(uncategorized_objectives[:num_to_add])
-        
-        # If we couldn't fill all slots with categorized objectives, add uncategorized ones
-        if not all_prompts and uncategorized_objectives:
-            self.logger.info(f"No categorized objectives found, using {min(num_objectives, len(uncategorized_objectives))} uncategorized objectives")
-            all_prompts = uncategorized_objectives[:num_objectives]
-        
-        total_objectives = len(all_prompts)
-        self.logger.info(f"FINAL RESULTS: Retrieved a total of {total_objectives} attack objectives")
-        
-        # Show final objectives for debugging
-        self.logger.info("Final objectives:")
-        for i, obj in enumerate(all_prompts):
-            self.logger.info(f"  [{i}] {obj[:100]}...")
-        
-        # Cache the full set of objectives for future use
-        self.attack_objectives_cache[cache_key] = all_prompts
-        self.logger.info("Objectives cached for future use")
-        self.logger.info("=" * 80)
-        
-        return all_prompts
+            # Update the objectives_by_category in cache with the fresh data
+            self.attack_objectives[cache_key]["objectives_by_category"] = objectives_by_category
+            self.attack_objectives[cache_key]["objective_id_to_categories"] = objective_id_to_categories
+            self.attack_objectives[cache_key]["uncategorized"] = uncategorized_objectives
+            
+            return selected_prompts
+        else:
+            # First time seeing this combination or no selected IDs yet
+            # Select balanced objectives and store their IDs
+            self.logger.info(f"First time selecting objectives for {cache_key}")
+            selected_id_to_category = {}  # Track which category each selected ID belongs to
+            selected_prompts = []
+            
+            if risk_categories:
+                # Use the full num_objectives for each category
+                prompts_per_category = num_objectives
+                self.logger.info(f"Target prompts per category: {prompts_per_category}")
+                
+                # Select objectives for each category
+                for cat in risk_categories:
+                    cat_objectives = objectives_by_category.get(cat, [])
+                    
+                    # Randomly select objectives if we have more than we need
+                    if len(cat_objectives) > prompts_per_category:
+                        selected_cat_objectives = random.sample(cat_objectives, prompts_per_category)
+                    else:
+                        selected_cat_objectives = cat_objectives
+                    
+                    # The number to add is simply the number of selected objectives for this category
+                    num_to_add = len(selected_cat_objectives)
+                    
+                    if len(cat_objectives) < prompts_per_category:
+                        self.logger.warning(f"⚠️ Category {cat} has fewer objectives ({len(cat_objectives)}) than desired ({prompts_per_category})")
+                    
+                    self.logger.info(f"Adding {num_to_add} objectives for {cat}")
+                    
+                    # Add the selected objectives
+                    for i in range(num_to_add):
+                        if i < len(selected_cat_objectives):
+                            obj = selected_cat_objectives[i]
+                            obj_id = obj["id"]
+                            
+                            # Track which category this objective belongs to
+                            if obj_id not in selected_id_to_category:
+                                selected_id_to_category[obj_id] = []
+                            
+                            # Add this category to the ID's categories if not already present
+                            if cat not in selected_id_to_category[obj_id]:
+                                selected_id_to_category[obj_id].append(cat)
+                                
+                            self.logger.info(f"  [{cat}][{i}] ID: {obj_id}, Content: {obj['content'][:50]}...")
+                            selected_prompts.append(obj["content"])
+            
+            # Store the selected IDs, their categories, and objectives in the cache
+            self.attack_objectives[cache_key] = {
+                "objectives_by_category": objectives_by_category,
+                "objective_id_to_categories": objective_id_to_categories, # Map of all objective IDs to their categories
+                "selected_id_to_category": selected_id_to_category,  # Map of selected IDs to their categories
+                "uncategorized": uncategorized_objectives,
+                "strategy": strategy,
+                "risk_categories": risk_categories,
+                "selected_ids": set(selected_id_to_category.keys())  # For backward compatibility
+            }
+            
+            total_objectives = len(selected_prompts)
+            self.logger.info(f"FINAL RESULTS: Selected a total of {total_objectives} attack objectives")
+            
+            # Show final objectives for debugging
+            self.logger.info("Final objectives:")
+            for i, obj in enumerate(selected_prompts):
+                self.logger.info(f"  [{i}] {obj[:10]}...")
+            
+            return selected_prompts
 
     def _message_to_dict(self, message: ChatMessage):
         return {
@@ -868,6 +930,9 @@ class RedTeamAgent():
         self.risk_categories = attack_objective_generator.risk_categories
         
         self.logger.info("Using AttackObjectiveGenerator to get attack objectives")
+        # prepend AttackStrategy.Baseline to the attack strategy list
+        if AttackStrategy.Baseline not in attack_strategy:
+            attack_strategy.insert(0, AttackStrategy.Baseline)
 
         with self._start_redteam_mlflow_run(self.azure_ai_project, evaluation_name) as eval_run:
             self.ai_studio_url = _get_ai_studio_url(trace_destination=self.trace_destination, evaluation_id=eval_run.info.run_id)
@@ -898,10 +963,9 @@ class RedTeamAgent():
                     application_scenario=application_scenario,
                     strategy=strategy_name
                 )
-            
-            # Use the first strategy's objectives as the default list
-            all_prompts_list = list(strategy_objectives.values())[0] if strategy_objectives else []
-            
+            # Use the baseline's objectives as the default list
+            all_prompts_list = list(strategy_objectives[AttackStrategy.Baseline]) if AttackStrategy.Baseline in strategy_objectives else []
+
             self.logger.info(f"Configuring PyRIT based on attack strategy: {attack_strategy}")
 
             converters = self._get_converters_for_attack_strategy(attack_strategy)
@@ -926,10 +990,13 @@ class RedTeamAgent():
                     else:
                         converter_name = converter.get_identifier()["__type__"] if converter else None
                     
-                    # If we have strategy-specific objectives, use them
-                    if converter_name and converter_name in strategy_objectives:
-                        prompts_to_use = strategy_objectives[converter_name]
-                
+                    # for converters like tense, use the strategy objectives for tense instead of the convertor
+                    if converter_name == "TenseConverter":
+                        converter = None
+                        prompts_to_use = strategy_objectives.get(AttackStrategy.Tense.value, all_prompts_list)
+                    if converter_name == "JailbreakConverter":
+                        converter = None
+                        prompts_to_use = strategy_objectives.get(AttackStrategy.Jailbreak.value, all_prompts_list)
                 tasks.append(
                     self._process_attack(
                         target=target,
