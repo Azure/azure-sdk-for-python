@@ -7,7 +7,7 @@
 
 from datetime import datetime
 from typing import (
-    Any, AnyStr, AsyncIterable, cast, Dict, IO, Iterable, Optional, Union,
+    Any, AnyStr, AsyncIterable, cast, Dict, IO, Optional, Union,
     TYPE_CHECKING
 )
 from urllib.parse import quote, unquote
@@ -489,7 +489,7 @@ class DataLakeFileClient(PathClient):
 
     @distributed_trace_async
     async def append_data(
-        self, data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+        self, data: Union[bytes, str, AsyncIterable[AnyStr], IO[AnyStr]],
         offset: int,
         length: Optional[int] = None,
         **kwargs: Any
@@ -497,7 +497,7 @@ class DataLakeFileClient(PathClient):
         """Append data to the file.
 
         :param data: Content to be appended to file
-        :type data: bytes, str, Iterable[AnyStr], or IO[AnyStr]
+        :type data: bytes, str, AsyncIterable[AnyStr], or IO[AnyStr]
         :param int offset: start position of the data to be appended to.
         :param length: Size of the data in bytes.
         :type length: int or None

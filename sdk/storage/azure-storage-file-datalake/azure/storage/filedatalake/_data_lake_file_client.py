@@ -7,7 +7,7 @@
 
 from datetime import datetime
 from typing import (
-    Any, AnyStr, AsyncIterable, cast, Dict, IO, Iterable, Optional, Union,
+    Any, AnyStr, cast, Dict, IO, Iterable, Optional, Union,
     TYPE_CHECKING
 )
 from urllib.parse import quote, unquote
