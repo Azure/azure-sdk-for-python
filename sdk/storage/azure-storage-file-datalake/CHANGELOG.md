@@ -1,6 +1,6 @@
 # Release History
 
-## 12.20.0 (Unreleased)
+## 12.20.0 (2025-03-25)
 
 ### Features Added
 - Updated type hints across the entire package and enabled MyPy to run during CI. Some public types may have been adjusted if they were previously erroneous or incomplete.
