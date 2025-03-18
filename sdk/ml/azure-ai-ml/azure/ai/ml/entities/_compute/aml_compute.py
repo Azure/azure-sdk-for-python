@@ -251,7 +251,7 @@ class AmlCompute(Compute):
             ),
         )
         remote_login_public_access = "Enabled"
-        disableLocalAuth = not (self.ssh_settings)
+        disableLocalAuth = not self.ssh_settings
         if self.ssh_public_access_enabled is not None:
             remote_login_public_access = "Enabled" if self.ssh_public_access_enabled else "Disabled"
 
