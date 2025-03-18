@@ -52,7 +52,7 @@ ClientSecretCredential(
 
 #### Persist user authentication record
 
-When authenticating a user via `InteractiveBrowserCredential`, `DeviceCodeCredential`, or `UsernamePasswordCredential`, an `AuthenticationRecord` can be persisted as well. The authentication record is:
+When authenticating a user via `InteractiveBrowserCredential` or `DeviceCodeCredential`, an `AuthenticationRecord` can be persisted as well. The authentication record is:
 
 - Returned from the `authenticate` API and contains data identifying an authenticated account.
 - Needed to identify the appropriate entry in the persisted token cache to silently authenticate on subsequent executions.
@@ -68,7 +68,7 @@ record_json = record.serialize()
 
 #### Silently authenticating a user with AuthenticationRecord and TokenCachePersistenceOptions
 
-Once an app has configured an `InteractiveBrowserCredential`, `DeviceCodeCredential`, or `UsernamePasswordCredential` to persist token data and an `AuthenticationRecord`, it's possible to silently authenticate. This example demonstrates an app setting the `TokenCachePersistenceOptions` and retrieving an `AuthenticationRecord` from the local file system to create an `InteractiveBrowserCredential` capable of silent authentication:
+Once an app has configured an `InteractiveBrowserCredential` or `DeviceCodeCredential`, to persist token data and an `AuthenticationRecord`, it's possible to silently authenticate. This example demonstrates an app setting the `TokenCachePersistenceOptions` and retrieving an `AuthenticationRecord` from the local file system to create an `InteractiveBrowserCredential` capable of silent authentication:
 
 ```python
 deserialized_record = AuthenticationRecord.deserialize(record_json)
@@ -101,5 +101,4 @@ The following table indicates the state of in-memory and persistent caching in e
 | `InteractiveBrowserCredential` | Supported                                                              | Supported                     |
 | `ManagedIdentityCredential`    | Supported                                                              | Not Supported                 |
 | `OnBehalfOfCredential`         | Supported                                                              | Supported                     |
-| `UsernamePasswordCredential`   | Supported                                                              | Supported                     |
 | `WorkloadIdentityCredential`   | Supported                                                              | Not Supported                 |

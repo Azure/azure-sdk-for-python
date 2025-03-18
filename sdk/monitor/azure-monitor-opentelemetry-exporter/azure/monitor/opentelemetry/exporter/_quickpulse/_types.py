@@ -6,6 +6,11 @@ from typing import Dict, no_type_check
 
 from opentelemetry.sdk._logs import LogRecord
 from opentelemetry.sdk.trace import Event, ReadableSpan
+from opentelemetry.semconv._incubating.attributes import gen_ai_attributes
+from opentelemetry.semconv.attributes.http_attributes import (
+    HTTP_REQUEST_METHOD,
+    HTTP_RESPONSE_STATUS_CODE,
+)
 from opentelemetry.semconv.trace import SpanAttributes
 from opentelemetry.trace import SpanKind
 
@@ -54,7 +59,8 @@ class _RequestData(_TelemetryData):
         if span.attributes:
             attributes = span.attributes
             url = trace_utils._get_url_for_http_request(attributes)
-            status_code = attributes.get(SpanAttributes.HTTP_STATUS_CODE)
+            status_code = attributes.get(HTTP_RESPONSE_STATUS_CODE) or \
+                attributes.get(SpanAttributes.HTTP_STATUS_CODE)
             if status_code:
                 try:
                     status_code = int(status_code)
@@ -94,44 +100,47 @@ class _DependencyData(_TelemetryData):
         attributes = {}
         dependency_type = "InProc"
         data = ""
+        target = ""
         if span.end_time and span.start_time:
             duration_ms = (span.end_time - span.start_time) / 1e9
         if span.attributes:
             attributes = span.attributes
             target = trace_utils._get_target_for_dependency_from_peer(attributes)
-            if SpanAttributes.HTTP_METHOD in attributes:
-                dependency_type = "HTTP"
-                url = trace_utils._get_url_for_http_dependency(attributes)
-                target, _ = trace_utils._get_target_and_path_for_http_dependency(
-                    attributes,
-                    target,
-                    url,
-                )
-                data = url
-            elif SpanAttributes.DB_SYSTEM in attributes:
-                db_system = attributes[SpanAttributes.DB_SYSTEM]
-                dependency_type = db_system
-                target = trace_utils._get_target_for_db_dependency(
-                    target,
-                    db_system,
-                    attributes,
-                )
-                if SpanAttributes.DB_STATEMENT in attributes:
-                    data = attributes[SpanAttributes.DB_STATEMENT]
-                elif SpanAttributes.DB_OPERATION in attributes:
-                    data = attributes[SpanAttributes.DB_OPERATION]
-            elif SpanAttributes.MESSAGING_SYSTEM in attributes:
-                dependency_type = attributes[SpanAttributes.MESSAGING_SYSTEM]
-                target = trace_utils._get_target_for_messaging_dependency(
-                    target,
-                    attributes,
-                )
-            elif SpanAttributes.RPC_SYSTEM in attributes:
-                dependency_type = attributes[SpanAttributes.RPC_SYSTEM]
-                target = trace_utils._get_target_for_rpc_dependency(
-                    target,
-                    attributes,
-                )
+            if span.kind is SpanKind.CLIENT:
+                if HTTP_REQUEST_METHOD in attributes or SpanAttributes.HTTP_METHOD in attributes:
+                    dependency_type = "HTTP"
+                    url = trace_utils._get_url_for_http_dependency(attributes)
+                    target, _ = trace_utils._get_target_and_path_for_http_dependency(
+                        attributes,
+                        url,
+                    )
+                    data = url
+                elif SpanAttributes.DB_SYSTEM in attributes:
+                    db_system = attributes[SpanAttributes.DB_SYSTEM]
+                    dependency_type = db_system
+                    target = trace_utils._get_target_for_db_dependency(
+                        target,
+                        db_system,
+                        attributes,
+                    )
+                    if SpanAttributes.DB_STATEMENT in attributes:
+                        data = attributes[SpanAttributes.DB_STATEMENT]
+                    elif SpanAttributes.DB_OPERATION in attributes:
+                        data = attributes[SpanAttributes.DB_OPERATION]
+                elif SpanAttributes.MESSAGING_SYSTEM in attributes:
+                    dependency_type = attributes[SpanAttributes.MESSAGING_SYSTEM]
+                    target = trace_utils._get_target_for_messaging_dependency(
+                        target,
+                        attributes,
+                    )
+                elif SpanAttributes.RPC_SYSTEM in attributes:
+                    dependency_type = attributes[SpanAttributes.RPC_SYSTEM]
+                    target = trace_utils._get_target_for_rpc_dependency(
+                        target,
+                        attributes,
+                    )
+                elif gen_ai_attributes.GEN_AI_SYSTEM in span.attributes:
+                    dependency_type = attributes[gen_ai_attributes.GEN_AI_SYSTEM]
             elif span.kind is SpanKind.PRODUCER:
                 dependency_type = "Queue Message"
                 msg_system = attributes.get(SpanAttributes.MESSAGING_SYSTEM)
@@ -183,6 +192,14 @@ class _TraceData(_TelemetryData):
     @staticmethod
     @no_type_check
     def _TraceData(log_record: LogRecord):
+        return _TraceData(
+            message=str(log_record.body),
+            custom_dimensions=log_record.attributes,
+        )
+
+    @staticmethod
+    @no_type_check
+    def _from_log_record(log_record: LogRecord):
         return _TraceData(
             message=str(log_record.body),
             custom_dimensions=log_record.attributes,
