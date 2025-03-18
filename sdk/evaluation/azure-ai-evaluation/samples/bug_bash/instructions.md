@@ -36,4 +36,4 @@ Please use the following template to report bugs : [**Bug Template**](https://ms
 
 ### Sample Notebooks
 
-- [**Run Agent and Evaluate using Evaluation SDK**](./agent_evals.ipynb)
+- [**Run Agent and Evaluate using Evaluation SDK**](./agent_evaluation.ipynb)
