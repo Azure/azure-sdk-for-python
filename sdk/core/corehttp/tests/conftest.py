@@ -11,6 +11,13 @@ import subprocess
 import random
 import platform
 import urllib
+from typing import Generator
+
+from corehttp.settings import settings
+from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 
 from rest_client import MockRestClient
 
@@ -78,3 +85,25 @@ def testserver():
 @pytest.fixture
 def client(port):
     return MockRestClient(port)
+
+
+class TracingTestHelper:
+    def __init__(self, tracer, exporter):
+        self.tracer = tracer
+        self.exporter = exporter
+
+
+@pytest.fixture(scope="session", autouse=True)
+def enable_tracing():
+    provider = TracerProvider()
+    trace.set_tracer_provider(provider)
+
+
+@pytest.fixture(scope="function")
+def tracing_helper() -> Generator[TracingTestHelper, None, None]:
+    settings.tracing_enabled = True
+    span_exporter = InMemorySpanExporter()
+    processor = SimpleSpanProcessor(span_exporter)
+    trace.get_tracer_provider().add_span_processor(processor)
+    yield TracingTestHelper(trace.get_tracer(__name__), span_exporter)
+    settings.tracing_enabled = False
