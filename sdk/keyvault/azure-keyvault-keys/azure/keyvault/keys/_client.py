@@ -343,6 +343,7 @@ class KeyClient(KeyVaultClientBase):
         expires_on: Optional[datetime] = None,
         exportable: Optional[bool] = None,
         release_policy: Optional[KeyReleasePolicy] = None,
+        swathi_mode: Optional[bool] = False,
         **kwargs: Any,
     ) -> KeyVaultKey:
         """Create a new octet sequence (symmetric) key or, if ``name`` is in use, create a new version of the key.
