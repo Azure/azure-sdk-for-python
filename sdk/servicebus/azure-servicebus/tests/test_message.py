@@ -27,13 +27,13 @@ from azure.servicebus._pyamqp._message_backcompat import LegacyBatchMessage
 from azure.servicebus._transport._pyamqp_transport import PyamqpTransport
 
 from devtools_testutils import AzureMgmtRecordedTestCase
-from servicebus_preparer import (
+from .servicebus_preparer import (
     CachedServiceBusNamespacePreparer,
     ServiceBusQueuePreparer,
     CachedServiceBusResourceGroupPreparer,
 )
 
-from utilities import uamqp_transport as get_uamqp_transport, ArgPasser
+from .utilities import uamqp_transport as get_uamqp_transport, ArgPasser
 
 uamqp_transport_params, uamqp_transport_ids = get_uamqp_transport()
 

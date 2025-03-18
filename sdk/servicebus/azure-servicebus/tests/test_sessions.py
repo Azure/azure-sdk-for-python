@@ -35,7 +35,7 @@ from azure.servicebus.exceptions import (
 )
 
 from devtools_testutils import AzureMgmtRecordedTestCase, get_credential
-from servicebus_preparer import (
+from .servicebus_preparer import (
     SERVICEBUS_ENDPOINT_SUFFIX,
     CachedServiceBusNamespacePreparer,
     CachedServiceBusQueuePreparer,
@@ -44,7 +44,7 @@ from servicebus_preparer import (
     ServiceBusSubscriptionPreparer,
     CachedServiceBusResourceGroupPreparer,
 )
-from utilities import get_logger, print_message, sleep_until_expired, uamqp_transport as get_uamqp_transport, ArgPasser
+from .utilities import get_logger, print_message, sleep_until_expired, uamqp_transport as get_uamqp_transport, ArgPasser
 
 uamqp_transport_params, uamqp_transport_ids = get_uamqp_transport()
 
