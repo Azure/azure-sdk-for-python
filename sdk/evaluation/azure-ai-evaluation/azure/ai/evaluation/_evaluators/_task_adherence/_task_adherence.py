@@ -35,11 +35,11 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     .. admonition:: Example:
         .. literalinclude:: ../samples/evaluation_samples_evaluate.py
-            :start-after: [START intent_resolution_evaluator]
-            :end-before: [END intent_resolution_evaluator]
+            :start-after: [START task_adherence_evaluator]
+            :end-before: [END task_adherence_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call an IntentResolutionEvaluator with a query and response.
+            :caption: Initialize and call an TaskAdherenceEvaluator with a query and response.
     """
 
     _PROMPTY_FILE = "task_adherence.prompty"
