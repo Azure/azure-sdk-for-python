@@ -270,8 +270,8 @@ class ModelOperations(_ScopeDependentOperations):
                     # we need to send the system_metadata values in the request
                     if cont_token is None and hasattr(model_version_resource.properties, "system_metadata"):
                         result = self._begin_create_or_update_model_with_system_metadata(
-                            name=name,
-                            version=version,
+                            name=str(name),
+                            version=str(version),
                             body=model_version_resource,
                             registry_name=self._registry_name,
                             **self._scope_kwargs,
@@ -361,12 +361,12 @@ class ModelOperations(_ScopeDependentOperations):
         response_headers["Location"] = self._model_versions_operation._deserialize("str", response.headers.get("Location"))
         response_headers["Retry-After"] = self._model_versions_operation._deserialize("int", response.headers.get("Retry-After"))
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)
         def get_long_running_output(pipeline_response):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        polling = kwargs.pop("polling", True)  # type: Union[bool, azure.core.polling.PollingMethod]
+        polling = kwargs.pop("polling", True)
         if polling is True:
             lro_delay = kwargs.pop("polling_interval", self._model_versions_operation._config.polling_interval)
             polling_method = ARMPolling(lro_delay, **kwargs)
