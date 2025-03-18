@@ -2,21 +2,43 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from typing import Dict, List, Optional,  TypedDict
+import json
 
 class RiskCategorySummary(TypedDict):
     """Summary of attack success rates across risk categories."""
     overall_asr: float
+    overall_total: int
+    overall_successful_attacks: int
     hate_unfairness_asr: float
+    hate_unfairness_total: int
+    hate_unfairness_successful_attacks: int
     violence_asr: float
+    violence_total: int
+    violence_successful_attacks: int
     sexual_asr: float
+    sexual_total: int
+    sexual_successful_attacks: int
     self_harm_asr: float
+    self_harm_total: int
+    self_harm_successful_attacks: int
 
 class AttackTechniqueSummary(TypedDict):
     """Summary of attack success rates across complexity levels."""
+    overall_asr: float
+    overall_total: int
+    overall_successful_attacks: int
     baseline_asr: float
+    baseline_total: int
+    baseline_successful_attacks: int
     easy_complexity_asr: float
+    easy_complexity_total: int
+    easy_complexity_successful_attacks: int
     moderate_complexity_asr: float
+    moderate_complexity_total: int
+    moderate_complexity_successful_attacks: int
     difficult_complexity_asr: float
+    difficult_complexity_total: int
+    difficult_complexity_successful_attacks: int
 
 class JointRiskAttackSummaryItem(TypedDict):
     """Summary of attack success rates for a specific risk category across complexity levels."""
@@ -94,3 +116,16 @@ class RedTeamAgentResult(TypedDict):
     redteaming_parameters: RedTeamingParameters
     redteaming_data: List[Conversation]
     studio_url: Optional[str]
+
+class RedTeamAgentOutput():
+    def __init__(self, red_team_agent_result, simulation_results):
+        self.red_team_agent_result = red_team_agent_result
+        self.simulation_results = simulation_results
+
+    def to_json(self) -> str:
+        """Converts a RedTeamAgentResult object to a JSON-serializable dictionary."""
+        return json.dumps(self.red_team_agent_result) if self.red_team_agent_result else ""
+
+    def to_scorecard(self) -> Optional[RedTeamingScorecard]:
+        """Extracts the scorecard from a RedTeamAgentResult object."""
+        return self.red_team_agent_result.get("redteaming_scorecard", None) if self.red_team_agent_result else None
