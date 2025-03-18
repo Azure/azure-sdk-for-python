@@ -14,6 +14,7 @@ if TYPE_CHECKING:
 
 
 from ._models import (  # type: ignore
+    AOAIModelConfig,
     Agent,
     AgentDeletionStatus,
     AgentThread,
@@ -34,6 +35,7 @@ from ._models import (  # type: ignore
     Dataset,
     Evaluation,
     EvaluationSchedule,
+    EvaluationTarget,
     EvaluatorConfiguration,
     FileDeletionStatus,
     FileListResponse,
@@ -48,6 +50,7 @@ from ._models import (  # type: ignore
     IncompleteRunDetails,
     IndexResource,
     InputData,
+    MAASModelConfig,
     MessageAttachment,
     MessageContent,
     MessageDelta,
@@ -145,6 +148,7 @@ from ._models import (  # type: ignore
     SubmitToolOutputsAction,
     SubmitToolOutputsDetails,
     SystemData,
+    TargetModelConfig,
     ThreadDeletionStatus,
     ThreadMessage,
     ThreadMessageOptions,
@@ -224,6 +228,7 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "AOAIModelConfig",
     "Agent",
     "AgentDeletionStatus",
     "AgentThread",
@@ -244,6 +249,7 @@ __all__ = [
     "Dataset",
     "Evaluation",
     "EvaluationSchedule",
+    "EvaluationTarget",
     "EvaluatorConfiguration",
     "FileDeletionStatus",
     "FileListResponse",
@@ -258,6 +264,7 @@ __all__ = [
     "IncompleteRunDetails",
     "IndexResource",
     "InputData",
+    "MAASModelConfig",
     "MessageAttachment",
     "MessageContent",
     "MessageDelta",
@@ -355,6 +362,7 @@ __all__ = [
     "SubmitToolOutputsAction",
     "SubmitToolOutputsDetails",
     "SystemData",
+    "TargetModelConfig",
     "ThreadDeletionStatus",
     "ThreadMessage",
     "ThreadMessageOptions",

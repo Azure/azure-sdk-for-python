@@ -134,6 +134,8 @@ class AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Entra ID authentication (formerly known as AAD)"""
     SAS = "SAS"
     """Shared Access Signature (SAS) authentication"""
+    CUSTOM = "CustomKeys"
+    """Custom authentication"""
     NONE = "None"
     """No authentication"""
 
@@ -153,6 +155,10 @@ class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Azure AI Search"""
     API_KEY = "ApiKey"
     """Generic connection that uses API Key authentication"""
+    CUSTOM = "CustomKeys"
+    """Generic connection that uses Custom authentication"""
+    COGNITIVE_SERVICE = "CognitiveService"
+    """Cognitive Service"""
 
 
 class DoneEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
