@@ -43,7 +43,7 @@ def _get_format_for_logger(
     log_format = (
         os.environ.get("PF_LOG_FORMAT")
         or default_log_format
-        or "%(asctime)s %(process)7d %(name)-18s %(levelname)-8s %(message)s"
+        or "%(asctime)s %(thread)7d %(name)-18s %(levelname)-8s %(message)s"
     )
     datetime_format = os.environ.get("PF_LOG_DATETIME_FORMAT") or default_date_format or "%Y-%m-%d %H:%M:%S %z"
     return log_format, datetime_format
@@ -56,9 +56,9 @@ def get_logger(name: str) -> logging.Logger:
     # logger.addHandler(FileHandlerConcurrentWrapper())
     stdout_handler = logging.StreamHandler(sys.stdout)
     fmt, datefmt = _get_format_for_logger()
-    # TODO ralphe: Is this needed? We should not be logging credentials to begin with necessitating
-    #              an after the fact scrubber
-    # stdout_handler.setFormatter(CredentialScrubberFormatter(fmt=fmt, datefmt=datefmt))
+    # TODO ralphe: Do we need a credentials scrubber here like the old code had? We are not logging
+    #              logging anything that sensitive here.
+    stdout_handler.setFormatter(logging.Formatter(fmt=fmt, datefmt=datefmt))
     logger.addHandler(stdout_handler)
     return logger
 
@@ -118,33 +118,18 @@ def log_progress(
     run_start_time: datetime,
     total_count: int,
     current_count: int,
-    last_log_count: int,
     logger: logging.Logger = bulk_logger,
     formatter="Finished {count} / {total_count} lines.",
-) -> int:
-    """Log progress of the current execution. Return the last_log_count for the next iteration."""
-
-    # Calculate log_interval to determine when to log progress.
-    # If total_count is less than 100, log every 10% of total_count; otherwise, log every 10 lines.
-    log_interval = min(10, max(int(total_count / 10), 1))
-
-    # There are two situations that we will print the progress log:
-    # 1. The difference between current_count and last_log_count exceeds log_interval.
-    # 2. The current_count is evenly divisible by log_interval.
-    log_flag = (current_count - last_log_count) >= log_interval or (
-        current_count > last_log_count and current_count % log_interval == 0
-    )
-
-    if current_count > 0 and (log_flag or current_count == total_count):
-        average_execution_time = round((datetime.utcnow().timestamp() - run_start_time.timestamp()) / current_count, 2)
+) -> None:
+    if current_count > 0:
+        delta = datetime.now(timezone.utc).timestamp() - run_start_time.timestamp()
+        average_execution_time = round(delta / current_count, 2)
         estimated_execution_time = round(average_execution_time * (total_count - current_count), 2)
         logger.info(formatter.format(count=current_count, total_count=total_count))
         logger.info(
             f"Average execution time for completed lines: {average_execution_time} seconds. "
             f"Estimated time for incomplete lines: {estimated_execution_time} seconds."
         )
-        return current_count
-    return last_log_count
 
 
 def incremental_print(log: str, printed: int, fileout: Union[TextIO, Any]) -> int:

@@ -270,7 +270,6 @@ class BatchEngine:
 
         total_lines: int = len(batch_inputs)
         completed_lines: int = 0
-        last_log_count: int = 0
         while completed_lines < total_lines:
             # TODO ralphe: Fix this code so it doesn't re-order the outputs
             # wait for any task to complete
@@ -281,11 +280,11 @@ class BatchEngine:
             results.update({index: result for index, result in completed_line_results})
             # update the progress log
             completed_lines += len(completed_line_results)
-            last_log_count = log_progress(
+            log_progress(
                 run_start_time=start_time,
                 total_count=total_lines,
                 current_count=completed_lines,
-                last_log_count=last_log_count,
+                # TODO ralphe: set logger to use here
             )
 
     async def _exec_line_async(

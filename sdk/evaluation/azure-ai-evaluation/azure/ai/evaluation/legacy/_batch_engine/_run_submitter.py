@@ -207,11 +207,11 @@ class RunSubmitter:
 
     @staticmethod
     def _print_run_summary(run: Run, txtout: Union[TextIO, Any]) -> None:
-        txtout.write("======= Run Summary =======\n")
         duration = str(run.duration)
         txtout.write(
+            "======= Run Summary =======\n\n"
             f'Run name: "{run.name}"\n'
-            f'Run status: "{run.status}"\n'
+            f'Run status: "{run.status.value}"\n'
             f'Start time: "{run.created_on}"\n'
-            f'Duration: "{duration}"\n'
+            f'Duration: "{duration}"\n\n'
         )
