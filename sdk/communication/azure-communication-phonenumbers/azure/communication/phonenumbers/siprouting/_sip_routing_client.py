@@ -87,7 +87,7 @@ class SipRoutingClient(object):
 
         :param trunk_fqdn: FQDN of the desired SIP trunk.
         :type trunk_fqdn: str
-        :param expand: Option to retrieve detailed configuration, default value is None..
+        :param expand: Option to retrieve detailed configuration, default value is None.
         :type expand: str or ~azure.communication.phonenumbers.siprouting.models.ExpandEnum
         :returns: SIP trunk with specified trunk_fqdn. If it doesn't exist, throws KeyError.
         :rtype: ~azure.communication.siprouting.models.SipTrunk
@@ -147,8 +147,8 @@ class SipRoutingClient(object):
     ):  # type: (...) -> ItemPaged[SipTrunk]
         """Retrieves the currently configured SIP trunks.
         
-        :keyword expand: Sip configuration expand. Optional. "trunks/health" Default value is None.
-        :paramtype expand: str or ~azure.communication.phonenumbers.siprouting.
+        :param expand: Option to retrieve detailed configuration, default value is None..
+        :type expand: str or ~azure.communication.phonenumbers.siprouting.models.ExpandEnum
         :returns: Current SIP trunks configuration.
         :rtype: ItemPaged[~azure.communication.siprouting.models.SipTrunk]
         :raises: ~azure.core.exceptions.HttpResponseError
