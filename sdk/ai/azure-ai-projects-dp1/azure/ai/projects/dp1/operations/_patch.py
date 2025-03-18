@@ -27,7 +27,7 @@ class DatasetOperations(DatasetOperationsGenerated):
     def __init__(self, outer_instance):
         self._outer_instance = outer_instance
 
-    def create_dataset(
+    def create_or_update_with_upload(
         self,
         *,
         name: str,
