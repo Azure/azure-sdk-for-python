@@ -35,3 +35,5 @@ git clone -b prp/agent_evaluators https://github.com/Azure/azure-sdk-for-python
 Please use the following template to report bugs : [**Bug Template**](https://msdata.visualstudio.com/3adb301f-9ede-41f2-933b-fcd1a486ff7f/_workitems/create/Bug?templateId=9079923c-1e6d-4341-be65-a0665e17f0d7&ownerId=8d25f9a6-0175-4ac6-8d4e-c1e2702a635c)
 
 ### Sample Notebooks
+
+- [**Run Agent and Evaluate using Evaluation SDK**](./agent_evals.ipynb)
