@@ -261,7 +261,6 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
             if non_bocking_timeout != prev:
                 sock.settimeout(prev)
 
-
     def _init_socket(self, socket_settings, socket_timeout):
         self.sock.settimeout(None)  # set socket back to blocking mode
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)

@@ -274,7 +274,7 @@ class TestServiceBusSubscriptionAsync(AzureMgmtRecordedTestCase):
     @ServiceBusSubscriptionPreparer(name_prefix="servicebustest", lock_duration="PT5S")
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasserAsync()
-    async def test_subscription_receive_and_delete_with_send_and_wait(
+    async def test_subscription_receive_and_delete_with_send_and_wait_async(
         self,
         uamqp_transport,
         *,

@@ -36,7 +36,6 @@ from decimal import Decimal
 from typing_extensions import Buffer
 
 
-
 from .types import (
     TYPE,
     VALUE,

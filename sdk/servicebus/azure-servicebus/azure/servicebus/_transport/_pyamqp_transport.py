@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines, protected-access
 import functools
 import time
 import math
@@ -27,6 +27,7 @@ from .._pyamqp.error import (
     AMQPConnectionError,
     AuthenticationException,
     MessageException,
+    AMQPLinkError,
 )
 from .._pyamqp.utils import amqp_long_value, amqp_array_value, amqp_string_value, amqp_uint_value
 from .._pyamqp._encode import encode_payload
@@ -38,7 +39,12 @@ from .._pyamqp._connection import Connection, _CLOSING_STATES
 
 from ._base import AmqpTransport
 from .._common.utils import utc_from_timestamp, utc_now
-from .._common.tracing import get_receive_links, receive_trace_context_manager
+from .._common.tracing import (
+    get_receive_links,
+    receive_trace_context_manager,
+    settle_trace_context_manager,
+    get_span_link_from_message,
+)
 from .._common.constants import (
     PYAMQP_LIBRARY,
     DATETIMEOFFSET_EPOCH,
@@ -443,7 +449,9 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         connection.close()
 
     @staticmethod
-    def create_send_client(config: "Configuration", **kwargs: Any) -> "SendClient": # pylint: disable=docstring-keyword-should-match-keyword-only
+    def create_send_client(  # pylint: disable=docstring-keyword-should-match-keyword-only
+        config: "Configuration", **kwargs: Any
+    ) -> "SendClient":
         """
         Creates and returns the pyamqp SendClient.
         :param ~azure.servicebus._configuration.Configuration config: The configuration. Required.
@@ -494,9 +502,7 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         sender._open()
         try:
             if isinstance(message._message, list):  # BatchMessage
-                sender._handler.send_message(
-                    BatchMessage(*message._message), timeout=timeout
-                )
+                sender._handler.send_message(BatchMessage(*message._message), timeout=timeout)
             else:  # Message
                 sender._handler.send_message(message._message, timeout=timeout)  # pylint:disable=protected-access
         except TimeoutError as exc:
@@ -505,9 +511,7 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
             raise PyamqpTransport.create_servicebus_exception(logger, e)
 
     @staticmethod
-    def add_batch(
-        sb_message_batch: "ServiceBusMessageBatch", outgoing_sb_message: "ServiceBusMessage"
-    ) -> None:
+    def add_batch(sb_message_batch: "ServiceBusMessageBatch", outgoing_sb_message: "ServiceBusMessage") -> None:
         """
         Add ServiceBusMessage to the data body of the BatchMessage.
         :param ~azure.servicebus.ServiceBusMessageBatch sb_message_batch: ServiceBusMessageBatch to add data to.
@@ -532,7 +536,9 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         return source
 
     @staticmethod
-    def create_receive_client(receiver: "ServiceBusReceiver", **kwargs: "Any") -> "ReceiveClient": # pylint: disable=docstring-keyword-should-match-keyword-only
+    def create_receive_client(  # pylint: disable=docstring-keyword-should-match-keyword-only
+        receiver: "ServiceBusReceiver", **kwargs: "Any"
+    ) -> "ReceiveClient":
         """
         Creates and returns the receive client.
         :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver.
@@ -659,6 +665,10 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         try:
             receiver._receive_context.set()
             receiver._open()
+            if receiver._handler._link.current_link_credit <= 0:
+                receiver._amqp_transport.reset_link_credit(
+                    receiver._handler, link_credit=receiver._handler._link_credit
+                )
             if not receiver._message_iter or wait_time:
                 receiver._message_iter = receiver._handler.receive_messages_iter(timeout=wait_time)
             pyamqp_message = next(cast(Iterator["Message"], receiver._message_iter))
@@ -742,14 +752,15 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         return time.time()
 
     @staticmethod
-    def reset_link_credit(handler: "ReceiveClient", link_credit: int) -> None:
+    def reset_link_credit(handler: "ReceiveClient", link_credit: int, *, drain: bool = False) -> None:
         """
         Resets the link credit on the link.
         :param ReceiveClient handler: Client with link to reset link credit.
-        :param int link_credit: Link credit needed.
+        :param int link_credit: Total link credit wanted.
+        :keyword bool drain: Whether to drain the link.
         :rtype: None
         """
-        handler._link.flow(link_credit=link_credit)  # pylint: disable=protected-access
+        handler._link.flow(link_credit=link_credit, drain=drain)  # pylint: disable=protected-access
 
     @staticmethod
     def settle_message_via_receiver_link(
@@ -761,6 +772,8 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
     ) -> None:
         # pylint: disable=protected-access
         try:
+            if handler._link._is_closed:
+                raise ServiceBusConnectionError(message="Link is closed.")
             if settle_operation == MESSAGE_COMPLETE:
                 return handler.settle_messages(message._delivery_id, message._delivery_tag, "accepted")
             if settle_operation == MESSAGE_ABANDON:
@@ -796,8 +809,22 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         except AttributeError as ae:
             raise RuntimeError("handler is not initialized and cannot complete the message") from ae
 
+        except AMQPLinkError as le:
+            # Remove all Dispositions sent because we have lost the link sent on
+            message._receiver._handler._link._remove_pending_deliveries()
+            if (
+                le.condition == ErrorCondition.InternalError
+                and isinstance(le.description, str)
+                and le.description.startswith("Delivery tag")
+            ):
+                raise RuntimeError("Link error occurred during settle operation.") from le
+
+            raise PyamqpTransport.create_servicebus_exception(logging.getLogger(__name__), le)
+
+            # raise ServiceBusConnectionError(message="Link error occurred during settle operation.") from le
+
         except AMQPConnectionError as e:
-            raise RuntimeError("Connection lost during settle operation.") from e
+            raise ServiceBusConnectionError(message="Connection lost during settle operation.") from e
 
         except AMQPException as ae:
             if ae.condition == ErrorCondition.IllegalState:
@@ -808,7 +835,7 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         raise ValueError(f"Unsupported settle operation type: {settle_operation}")
 
     @staticmethod
-    def parse_received_message( # pylint:disable=docstring-keyword-should-match-keyword-only
+    def parse_received_message(  # pylint:disable=docstring-keyword-should-match-keyword-only
         message: "Message", message_type: Type["ServiceBusReceivedMessage"], **kwargs: Any
     ) -> List["ServiceBusReceivedMessage"]:
         """
@@ -839,7 +866,7 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         return message.value
 
     @staticmethod
-    def create_token_auth( # pylint: disable=docstring-keyword-should-match-keyword-only
+    def create_token_auth(  # pylint: disable=docstring-keyword-should-match-keyword-only
         auth_uri: str, get_token: Callable[..., AccessToken], token_type: bytes, config: "Configuration", **kwargs: Any
     ) -> "JWTTokenAuth":
         """
@@ -1020,3 +1047,85 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
             exception = ServiceBusError(message=f"Handler failed: {exception}.", error=exception)
 
         return exception
+
+    @staticmethod
+    def receive_loop(
+        receiver: "ServiceBusReceiver",
+        amqp_receive_client: "ReceiveClient",
+        max_message_count: int,
+        batch: List["Message"],
+        abs_timeout,
+        timeout,
+        **kwargs: Any,
+    ) -> List["ServiceBusReceivedMessage"]:
+        receive_drain_timeout = 2  # 200 ms
+        first_message_received = expired = False
+        receiving = True
+        sent_drain = False
+        time_sent = time.time()
+        # If we have sent a drain, but have not yet received the drain response, we should continue to receive
+        while receiving and not expired and len(batch) < max_message_count:
+            while receiving and amqp_receive_client._received_messages.qsize() < max_message_count:
+                if abs_timeout and receiver._amqp_transport.get_current_time(amqp_receive_client) > abs_timeout:
+                    # If we reach our expired point, send Drain=True and wait for receiving flow to stop.
+                    if not sent_drain:
+                        _LOGGER.debug("Sending drain=True to stop receiving.")
+                        link_credit_needed = max_message_count - len(batch)
+                        receiver._amqp_transport.reset_link_credit(amqp_receive_client, link_credit_needed, drain=True)
+                        sent_drain = True
+                        time_sent = time.time()
+                        break
+
+                    # If we have sent a drain and we havent received messages in X time
+                    # or gotten back the responding flow, lets close the link
+                    if (not receiver._handler._link._received_drain_response and sent_drain) and (
+                        time.time() - time_sent > receive_drain_timeout
+                    ):
+                        expired = True
+                        _LOGGER.debug("Closing link after not receiving drain response in time.")
+                        receiver._handler._link.detach(
+                            close=True, error="Have not received back drain response in time"
+                        )
+                        break
+
+                    # if you have received the drain -> break out of the loop
+                    if receiver._handler._link._received_drain_response:
+                        expired = True
+                        break
+
+                before = amqp_receive_client._received_messages.qsize()
+                receiving = amqp_receive_client.do_work()
+                received = amqp_receive_client._received_messages.qsize() - before
+                if not first_message_received and amqp_receive_client._received_messages.qsize() > 0 and received > 0:
+                    # first message(s) received, continue receiving for some time
+                    first_message_received = True
+                    abs_timeout = (
+                        receiver._amqp_transport.get_current_time(amqp_receive_client)
+                        + receiver._further_pull_receive_timeout
+                    )
+            while not amqp_receive_client._received_messages.empty() and len(batch) < max_message_count:
+                batch.append(amqp_receive_client._received_messages.get())
+                amqp_receive_client._received_messages.task_done()
+
+        return [receiver._build_received_message(message) for message in batch]
+
+    @staticmethod
+    def _settle_message_with_retry(
+        receiver,
+        message,
+        settle_operation,
+        dead_letter_reason=None,
+        dead_letter_error_description=None,
+    ):
+        link = get_span_link_from_message(message)
+        trace_links = [link] if link else []
+        with settle_trace_context_manager(receiver, settle_operation, links=trace_links):
+            receiver._do_retryable_operation(
+                receiver._settle_message,
+                timeout=None,
+                message=message,
+                settle_operation=settle_operation,
+                dead_letter_reason=dead_letter_reason,
+                dead_letter_error_description=dead_letter_error_description,
+            )
+            message._settled = True
