@@ -10,7 +10,7 @@ protobuf==3.17.3; python_version == '2.7'
 pyproject-api<1.6
 
 # locking packages defined as deps from azure-sdk-tools
-Jinja2==3.1.2
+Jinja2==3.1.4
 json-delta==2.0
 readme_renderer==42.0;
 python-dotenv==1.0.1

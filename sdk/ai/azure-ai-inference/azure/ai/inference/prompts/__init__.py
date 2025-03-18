@@ -4,5 +4,4 @@
 # ------------------------------------
 # pylint: disable=unused-import
 from ._patch import patch_sdk as _patch_sdk, PromptTemplate
-
 _patch_sdk()

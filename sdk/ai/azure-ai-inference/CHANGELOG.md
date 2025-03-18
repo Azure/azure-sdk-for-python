@@ -7,6 +7,7 @@
 * Added support for Chat Completions with audio url input. This change introduces a split between 
 audio files which are passed as base64 encoded data (previously supported) and files which are passed
 by url reference (new). See new sample `sample_chat_completions_with_audio_url.py`.
+* Migrate to use Prompty repo
 
 ### Bugs Fixed
 

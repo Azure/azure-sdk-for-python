@@ -13,10 +13,6 @@ import traceback
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 from typing_extensions import Self
-from ._core import Prompty
-from ._mustache import render
-from ._parsers import invoke_parser
-from ._prompty_utils import load, prepare
 from ._utils import remove_leading_empty_space
 
 
@@ -32,6 +28,8 @@ class PromptTemplate:
         :return: The PromptTemplate object.
         :rtype: PromptTemplate
         """
+        _check_prompty()
+
         if not file_path:
             raise ValueError("Please provide file_path")
 
@@ -42,7 +40,9 @@ class PromptTemplate:
         caller = Path(stack[-2].filename)
         abs_file_path = Path(caller.parent / Path(file_path)).resolve().absolute()
 
-        prompty = load(str(abs_file_path))
+        import prompty
+        prompty = prompty.load(str(abs_file_path))
+        prompty.template.type = "mustache"  # For Azure, default to mustache instead of Jinja2
         return cls(prompty=prompty)
 
     @classmethod
@@ -58,18 +58,24 @@ class PromptTemplate:
         :return: The PromptTemplate object.
         :rtype: PromptTemplate
         """
+        _check_prompty()
+
+        import prompty
+        prompt_template = remove_leading_empty_space(prompt_template)
+        headless_prompty = prompty.headless(api=api, content=prompt_template)
+        headless_prompty.template.type = "mustache"  # For Azure, default to mustache instead of Jinja2
+        headless_prompty.template.parser = "prompty"
         return cls(
             api=api,
-            prompt_template=prompt_template,
             model_name=model_name,
-            prompty=None,
+            prompty=headless_prompty,
         )
 
     def __init__(
         self,
         *,
         api: str = "chat",
-        prompty: Optional[Prompty] = None,
+        prompty,
         prompt_template: Optional[str] = None,
         model_name: Optional[str] = None,
     ) -> None:
@@ -105,15 +111,21 @@ class PromptTemplate:
             data = kwargs
 
         if self.prompty is not None:
-            parsed = prepare(self.prompty, data)
-            return parsed
-        elif "prompt_template" in self._config:
-            prompt_template = remove_leading_empty_space(self._config["prompt_template"])
-            system_prompt_str = render(prompt_template, data)
-            parsed = invoke_parser(None, system_prompt_str)
+            import prompty
+            parsed = prompty.prepare(self.prompty, data)
             return parsed
         else:
             raise ValueError("Please provide valid prompt template")
+
+
+def _check_prompty():
+    try:
+        import prompty  # pylint: disable=unused-import
+    except ImportError:
+        raise ImportError(
+            "The 'prompty' package is required to use the 'azure.ai.inference.prompts' module. "
+            "Please install it by running 'pip install prompty'."
+        )
 
 
 def patch_sdk():
