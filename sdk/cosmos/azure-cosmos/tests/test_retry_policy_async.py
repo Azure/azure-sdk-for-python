@@ -242,7 +242,8 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
                                'key': 'value'}
         async with CosmosClient(self.host, self.masterKey) as client:
             database = client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
-            container = database.get_container_client(test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID)
+            container = await database.create_container_if_not_exists(test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID,
+                                                                      partition_key=PartitionKey("/pk"))
 
             try:
                 self.original_execute_function = _retry_utility.ExecuteFunctionAsync
