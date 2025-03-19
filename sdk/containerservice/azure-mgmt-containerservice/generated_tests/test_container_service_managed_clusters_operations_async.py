@@ -24,7 +24,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
     async def test_managed_clusters_list_kubernetes_versions(self, resource_group):
         response = await self.client.managed_clusters.list_kubernetes_versions(
             location="str",
-            api_version="2024-10-01",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
     @recorded_by_proxy_async
     async def test_managed_clusters_list(self, resource_group):
         response = self.client.managed_clusters.list(
-            api_version="2024-10-01",
+            api_version="2025-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
     async def test_managed_clusters_list_by_resource_group(self, resource_group):
         response = self.client.managed_clusters.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-10-01",
+            api_version="2025-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -57,7 +57,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
         response = await self.client.managed_clusters.get_upgrade_profile(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2024-10-01",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -70,7 +70,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
             resource_group_name=resource_group.name,
             resource_name="str",
             role_name="str",
-            api_version="2024-10-01",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -82,7 +82,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
         response = await self.client.managed_clusters.list_cluster_admin_credentials(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2024-10-01",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -94,7 +94,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
         response = await self.client.managed_clusters.list_cluster_user_credentials(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2024-10-01",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -106,7 +106,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
         response = await self.client.managed_clusters.list_cluster_monitoring_user_credentials(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2024-10-01",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -118,7 +118,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
         response = await self.client.managed_clusters.get(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2024-10-01",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -164,6 +164,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                             "enableNodePublicIP": bool,
                             "enableUltraSSD": bool,
                             "gpuInstanceProfile": "str",
+                            "gpuProfile": {"driver": "str"},
                             "hostGroupID": "str",
                             "kubeletConfig": {
                                 "allowedUnsafeSysctls": ["str"],
@@ -292,6 +293,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                         }
                     },
                     "azurePortalFQDN": "str",
+                    "bootstrapProfile": {"artifactSource": "Direct", "containerRegistryId": "str"},
                     "currentKubernetesVersion": "str",
                     "disableLocalAccounts": bool,
                     "diskEncryptionSetID": "str",
@@ -417,6 +419,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                             "keyVaultNetworkAccess": "Public",
                             "keyVaultResourceId": "str",
                         },
+                        "customCATrustCertificates": [bytes("bytes", encoding="utf-8")],
                         "defender": {"logAnalyticsWorkspaceResourceId": "str", "securityMonitoring": {"enabled": bool}},
                         "imageCleaner": {"enabled": bool, "intervalHours": 0},
                         "workloadIdentity": {"enabled": bool},
@@ -472,7 +475,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                         "verticalPodAutoscaler": {"enabled": False},
                     },
                 },
-                api_version="2024-10-01",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -487,7 +490,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                 resource_group_name=resource_group.name,
                 resource_name="str",
                 parameters={"tags": {"str": "str"}},
-                api_version="2024-10-01",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -501,7 +504,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
             await self.client.managed_clusters.begin_delete(
                 resource_group_name=resource_group.name,
                 resource_name="str",
-                api_version="2024-10-01",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -516,7 +519,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                 resource_group_name=resource_group.name,
                 resource_name="str",
                 parameters={"clientId": "str", "secret": "str"},
-                api_version="2024-10-01",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -539,7 +542,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                     "serverAppSecret": "str",
                     "tenantID": "str",
                 },
-                api_version="2024-10-01",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -553,7 +556,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
             await self.client.managed_clusters.begin_rotate_cluster_certificates(
                 resource_group_name=resource_group.name,
                 resource_name="str",
-                api_version="2024-10-01",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -567,7 +570,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
             await self.client.managed_clusters.begin_abort_latest_operation(
                 resource_group_name=resource_group.name,
                 resource_name="str",
-                api_version="2024-10-01",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -581,7 +584,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
             await self.client.managed_clusters.begin_rotate_service_account_signing_keys(
                 resource_group_name=resource_group.name,
                 resource_name="str",
-                api_version="2024-10-01",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -595,7 +598,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
             await self.client.managed_clusters.begin_stop(
                 resource_group_name=resource_group.name,
                 resource_name="str",
-                api_version="2024-10-01",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -609,7 +612,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
             await self.client.managed_clusters.begin_start(
                 resource_group_name=resource_group.name,
                 resource_name="str",
-                api_version="2024-10-01",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -624,7 +627,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                 resource_group_name=resource_group.name,
                 resource_name="str",
                 request_payload={"command": "str", "clusterToken": "str", "context": "str"},
-                api_version="2024-10-01",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -638,7 +641,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
             resource_group_name=resource_group.name,
             resource_name="str",
             command_id="str",
-            api_version="2024-10-01",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -650,7 +653,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
         response = self.client.managed_clusters.list_outbound_network_dependencies_endpoints(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2024-10-01",
+            api_version="2025-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -661,7 +664,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
     async def test_managed_clusters_list_mesh_revision_profiles(self, resource_group):
         response = self.client.managed_clusters.list_mesh_revision_profiles(
             location="str",
-            api_version="2024-10-01",
+            api_version="2025-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -673,7 +676,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
         response = await self.client.managed_clusters.get_mesh_revision_profile(
             location="str",
             mode="str",
-            api_version="2024-10-01",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -685,7 +688,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
         response = self.client.managed_clusters.list_mesh_upgrade_profiles(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2024-10-01",
+            api_version="2025-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -698,7 +701,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
             resource_group_name=resource_group.name,
             resource_name="str",
             mode="str",
-            api_version="2024-10-01",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
