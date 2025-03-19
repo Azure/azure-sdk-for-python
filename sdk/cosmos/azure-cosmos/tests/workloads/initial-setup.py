@@ -2,7 +2,7 @@ import os
 import sys
 
 from azure.cosmos import PartitionKey
-from workload_configs import COSMOS_URI, COSMOS_KEY, PREFERRED_LOCATIONS
+from workload_configs import COSMOS_URI, COSMOS_KEY, PREFERRED_LOCATIONS, COSMOS_CONTAINER, COSMOS_DATABASE
 
 sys.path.append(r"./")
 
@@ -26,8 +26,8 @@ async def run_workload(client_id: str):
     async with AsyncClient(COSMOS_URI, COSMOS_KEY, preferred_locations=PREFERRED_LOCATIONS,
                            enable_diagnostics_logging=True, logger=logger,
                            user_agent=str(client_id) + "-" + datetime.now().strftime("%Y%m%d-%H%M%S")) as client:
-        db = await client.create_database_if_not_exists("ycsb")
-        cont = await db.create_container_if_not_exists("usertable", PartitionKey("/id"))
+        db = await client.create_database_if_not_exists(COSMOS_DATABASE)
+        cont = await db.create_container_if_not_exists(COSMOS_CONTAINER, PartitionKey("/id"))
         time.sleep(1)
 
         try:
