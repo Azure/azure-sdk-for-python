@@ -4,7 +4,7 @@
 
 # Spell checking is not case sensitive
 # Keep word lists in alphabetical order so the file is easier to manage
-version: '0.2'
+version: "0.2"
 words:
   - dicretorytestfs
   - mynewfilesystemsasync
@@ -16,3 +16,6 @@ words:
   - aasync
   - basync
   - mycontainerdirectory
+  - recursiveasync
+  - asyncdownload
+  - download
