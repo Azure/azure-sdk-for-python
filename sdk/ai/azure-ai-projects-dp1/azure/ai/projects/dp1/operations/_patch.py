@@ -69,9 +69,10 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         # https://learn.microsoft.com/azure/storage/blobs/storage-blob-upload-python
 
         # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.containerclient?view=azure-python#azure-storage-blob-containerclient-from-container-url
-        container_client: ContainerClient = ContainerClient.from_container_url(
+        return ContainerClient.from_container_url(
             container_url=pending_upload_response.blob_reference_for_consumption.blob_uri, # Of the form: "https://<account>.blob.core.windows.net/<container>?<sasToken>"
         )
+
 
     def create_and_upload_folder(
         self,
@@ -107,11 +108,11 @@ class DatasetsOperations(DatasetsOperationsGenerated):
                 for file_name in files:
                     file_path = os.path.join(root, file_name)
                     blob_name = os.path.relpath(file_path, folder)  # Blob name relative to the folder
-                    logger.debug("[%s] Start uploading file %s as blob %s.",inspect.currentframe().f_code.co_name, file_name, blob_name)
+                    logger.debug("[%s] Start uploading file `%s` as blob `%s`.",inspect.currentframe().f_code.co_name, file_name, blob_name)
                     with open(file_path, "rb") as data:
                         # See https://learn.microsoft.com/en-us/python/api/azure-storage-blob/azure.storage.blob.containerclient?view=azure-python#azure-storage-blob-containerclient-upload-blob                    
                         container_client.upload_blob(name=blob_name, data=data, **kwargs)
-                    print(f"[%s] Done uploaded.", inspect.currentframe().f_code.co_name)
+                    logger.debug("[%s] Done uploaded.", inspect.currentframe().f_code.co_name)
 
             dataset_version = self.create_or_update(
                 name=name,
@@ -158,7 +159,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
             with open(file=file, mode="rb") as data:
 
                 blob_name = Path(file).name  # Extract the file name from the path.
-                logger.debug("[%s] Start uploading file %s as blob %s.", inspect.currentframe().f_code.co_name, file, blob_name)
+                logger.debug("[%s] Start uploading file `%s` as blob `%s`.", inspect.currentframe().f_code.co_name, file, blob_name)
 
                 # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.containerclient?view=azure-python#azure-storage-blob-containerclient-upload-blob
                 with container_client.upload_blob(
