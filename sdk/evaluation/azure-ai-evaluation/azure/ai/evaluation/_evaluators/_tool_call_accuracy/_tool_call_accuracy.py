@@ -55,13 +55,17 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     _RESULT_KEY = "tool_call_accurate"
     _AGGREGATE_RESULT_KEY = "tool_call_accuracy"
 
+    MAX_TOOL_CALL_ACCURACY_SCORE = 1.0
+    MIN_TOOL_CALL_ACCURACY_SCORE = 0.0
+
     id = "id"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config):
+    def __init__(self, model_config, threshold=MAX_TOOL_CALL_ACCURACY_SCORE):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
+        self.threshold = threshold
         super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY)
 
     # Types are the closet from Agent 1.0 I could find since Agent 2.0 python classes does not exist
@@ -246,6 +250,8 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         score = sum([1 if per_turn_result.get(self._result_key) else 0 for per_turn_result in per_turn_results])/len(per_turn_results)
         aggregated[self._AGGREGATE_RESULT_KEY] = score
+        aggregated[f'{self._AGGREGATE_RESULT_KEY}_result'] = 'pass' if score >= self.threshold else 'fail'
+        aggregated[f'{self._AGGREGATE_RESULT_KEY}_threshold'] = self.threshold
 
         # for turn in per_turn_results:
         #     for metric, value in turn.items():
