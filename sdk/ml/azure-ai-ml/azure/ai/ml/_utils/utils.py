@@ -1069,6 +1069,7 @@ def _is_internal_components_enabled():
     return os.getenv(AZUREML_INTERNAL_COMPONENTS_ENV_VAR) in ["True", "true", True]
 
 
+# pylint: disable=W0101
 def try_enable_internal_components(*, force=False) -> bool:
     """Try to enable internal components for the current process. This is the only function outside _internal that
     references _internal.

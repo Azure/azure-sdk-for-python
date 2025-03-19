@@ -377,16 +377,7 @@ class _MyMutableMapping(MutableMapping[str, typing.Any]):  # pylint: disable=uns
         except KeyError:
             return default
 
-    @typing.overload
-    def pop(self, key: str) -> typing.Any: ...
-
-    @typing.overload
-    def pop(self, key: str, default: _T) -> _T: ...
-
-    @typing.overload
-    def pop(self, key: str, default: typing.Any) -> typing.Any: ...
-
-    def pop(self, key: str, default: typing.Any = _UNSET) -> typing.Any:
+    def pop(self, key: str, default: typing.Any = _UNSET) -> typing.Any:  # type: ignore
         if default is _UNSET:
             return self._data.pop(key)
         return self._data.pop(key, default)
@@ -397,14 +388,14 @@ class _MyMutableMapping(MutableMapping[str, typing.Any]):  # pylint: disable=uns
     def clear(self) -> None:
         self._data.clear()
 
-    def update(self, *args: typing.Any, **kwargs: typing.Any) -> None:
-        self._data.update(*args, **kwargs)
+    def update(self, other=(), /, **kwargs: typing.Any) -> None:
+        self._data.update(other, **kwargs)
 
     @typing.overload
     def setdefault(self, key: str, default: None = None) -> None: ...
 
     @typing.overload
-    def setdefault(self, key: str, default: typing.Any) -> typing.Any: ...
+    def setdefault(self, key: str, default: typing.Any = _UNSET) -> typing.Any: ...
 
     def setdefault(self, key: str, default: typing.Any = _UNSET) -> typing.Any:
         if default is _UNSET:
@@ -513,12 +504,7 @@ class Model(_MyMutableMapping):
         attr_to_rest_field: typing.Dict[str, _RestField] = {  # map attribute name to rest_field property
             k: v for mro_class in mros for k, v in mro_class.__dict__.items() if k[0] != "_" and hasattr(v, "_type")
         }
-        annotations = {
-            k: v
-            for mro_class in mros
-            if hasattr(mro_class, "__annotations__")
-            for k, v in mro_class.__annotations__.items()
-        }
+        annotations = {k: v for mro_class in mros for k, v in getattr(mro_class, "__annotations__", {}).items()}
         for attr, rf in attr_to_rest_field.items():
             rf._module = cls.__module__
             if not rf._type:
@@ -547,7 +533,7 @@ class Model(_MyMutableMapping):
             return cls(data)
         discriminator = cls._get_discriminator(exist_discriminators)
         exist_discriminators.append(discriminator)
-        mapped_cls = cls.__mapping__.get(data.get(discriminator), cls)  # pyright: ignore
+        mapped_cls = getattr(cls, "__mapping__", {}).get(data.get(discriminator), cls)  # pyright: ignore
         if mapped_cls == cls:
             return cls(data)
         return mapped_cls._deserialize(data, exist_discriminators)  # pylint: disable=protected-access

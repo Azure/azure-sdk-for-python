@@ -26,6 +26,7 @@ from .entities import (
     TargetSelector,
 )
 
+# pylint: disable=W0101
 # enable internal components if users has imported this module directly
 enable_internal_components_in_pipeline()
 
