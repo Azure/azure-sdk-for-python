@@ -228,6 +228,8 @@ class RegistryRegionDetails:
                 for config in rest_configs
             ],
         )
+        
+        # pylint: disable=W0101
         # configs should be mono-typed. Either they're all system created
         # or all user created.
         if system_created_count == num_configs:
@@ -270,3 +272,4 @@ class RegistryRegionDetails:
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
             log_and_raise_error(err)
+            return None
