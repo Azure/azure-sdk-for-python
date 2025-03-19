@@ -3,12 +3,12 @@
 DO prompt the user to create a virtual environment with `<path_to_python_installation>/python.exe -m venv <environment_name>` and activate it, before running any commands.
 
 # General Repository Guidelines
-- DO check this [website](https://azure.github.io/azure-sdk/python_design.html), and link pages there if possible when asked about guidelines, or guidance on how to write SDKs. The general guidelines for SDK in this repo are defined there.
+- DO check this [website](https://azure.github.io/azure-sdk/python_design.html), and link to pages found there, if possible, when asked about guidelines, or guidance on how to write SDKs. The general guidelines for SDK in this repo are defined there.
 
 # Pylint
 
 ## Running Pylint
-- When asked about how to run pylint, or given a command to run pylint, DO check [this website](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/pylint_checking.md.) and guide the user based on the information you find there. 
+- When asked how to run pylint, or given a command to run pylint, DO check [this website](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/pylint_checking.md.) and guide the user based on the information you find there. 
 - DO use a python 3.8 environment that is compatible with the code you are working on. If you are not sure, please ask the user for the python version they are using. 
 
 
