@@ -15,7 +15,7 @@ DO prompt the user to create a virtual environment with `<path_to_python_install
 ## Fixing Pylint Warnings
 
 ### Dos and Don'ts
-- DO use the table in https://github.com/Azure/azure-sdk-tools/blob/cb2e8c2638a2e80e3b9039d7031b72ad32452668/tools/pylint-extensions/azure-pylint-guidelines-checker/README.md and the code examples as a guide on how to fix each rule. 
+- DO use the table in https://github.com/Azure/azure-sdk-tools/blob/main/tools/pylint-extensions/azure-pylint-guidelines-checker/README.md and the code examples as a guide on how to fix each rule. 
 - DO refer to the pylint documentation: https://pylint.readthedocs.io/en/stable/user_guide/checkers/features.html.
 
 
