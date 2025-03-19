@@ -40,3 +40,4 @@ Please use the following template to report bugs : [**Bug Template**](https://ms
 ### Sample Notebooks
 
 - [**Run Agent and Evaluate using Evaluation SDK**](./agent_evaluation.ipynb)
+- [**Response Completeness Evaluator**](./response_completeness.ipynb)
