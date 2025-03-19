@@ -5,8 +5,8 @@ import sys
 import aiohttp
 
 from azure.cosmos import documents
+from workload_configs import COSMOS_KEY, PREFERRED_LOCATIONS, CONCURRENT_REQUESTS, COSMOS_PROXY_URI
 from workload_configs import USE_MULTIPLE_WRITABLE_LOCATIONS
-from workload_configs import COSMOS_URI, COSMOS_KEY, PREFERRED_LOCATIONS, CONCURRENT_REQUESTS
 
 sys.path.append(r"./")
 
@@ -19,10 +19,7 @@ from datetime import datetime
 
 import logging
 from logging.handlers import RotatingFileHandler
-from logging.handlers import RotatingFileHandler
 
-# Replace with your Cosmos DB details
-os.environ["HTTP_PROXY"] = "http://0.0.0.0:5100"
 
 def get_random_item():
     random_int = random.randint(1, 10000)
@@ -56,13 +53,10 @@ async def perform_query(container):
 async def run_workload(client_id, client_logger):
     async with aiohttp.ClientSession(trust_env=True) as proxied_aio_http_session:
         connectionPolicy = documents.ConnectionPolicy()
-        connectionPolicy.ProxyConfiguration = documents.ProxyConfiguration()
-        connectionPolicy.ProxyConfiguration.Host = 'http://0.0.0.0'
-        connectionPolicy.ProxyConfiguration.Port = 5100
         connectionPolicy.UseMultipleWriteLocations = USE_MULTIPLE_WRITABLE_LOCATIONS
 
         transport = AioHttpTransport(session=proxied_aio_http_session, session_owner=False)
-        async with AsyncClient(COSMOS_URI, COSMOS_KEY, preferred_locations=PREFERRED_LOCATIONS,
+        async with AsyncClient(COSMOS_PROXY_URI, COSMOS_KEY, preferred_locations=PREFERRED_LOCATIONS,
                                enable_diagnostics_logging=True, logger=client_logger, transport=transport,
                                user_agent=str(client_id) + "-" + datetime.now().strftime(
                                    "%Y%m%d-%H%M%S"), connection_policy=connectionPolicy) as client:
@@ -86,7 +80,7 @@ if __name__ == "__main__":
     # Create a rotating file handler
     handler = RotatingFileHandler(
         "log-" + first_name + "-" + datetime.now().strftime("%Y%m%d-%H%M%S") + '.log',
-        maxBytes=1024 * 1024 * 10, # 10 mb
+        maxBytes=1024 * 1024 * 10,  # 10 mb
         backupCount=3
     )
     logger.setLevel(logging.DEBUG)

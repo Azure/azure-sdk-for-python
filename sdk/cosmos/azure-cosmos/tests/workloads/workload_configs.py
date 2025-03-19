@@ -1,6 +1,7 @@
 
 # Replace with your Cosmos DB details
 PREFERRED_LOCATIONS = []
+COSMOS_PROXY_URI = ""
 COSMOS_URI = ""
 COSMOS_KEY = ""
 USE_MULTIPLE_WRITABLE_LOCATIONS = False
