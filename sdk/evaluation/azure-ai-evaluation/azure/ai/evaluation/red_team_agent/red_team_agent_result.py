@@ -118,9 +118,9 @@ class RedTeamAgentResult(TypedDict):
     studio_url: Optional[str]
 
 class RedTeamAgentOutput():
-    def __init__(self, red_team_agent_result, simulation_results):
+    def __init__(self, red_team_agent_result: Optional[RedTeamAgentResult] = None, redteaming_data: Optional[List[Conversation]] = None):
         self.red_team_agent_result = red_team_agent_result
-        self.simulation_results = simulation_results
+        self.redteaming_data = redteaming_data
 
     def to_json(self) -> str:
         """Converts a RedTeamAgentResult object to a JSON-serializable dictionary."""
@@ -129,3 +129,30 @@ class RedTeamAgentOutput():
     def to_scorecard(self) -> Optional[RedTeamingScorecard]:
         """Extracts the scorecard from a RedTeamAgentResult object."""
         return self.red_team_agent_result.get("redteaming_scorecard", None) if self.red_team_agent_result else None
+    
+    def get_data(self) -> str:
+        """
+        Extracts the conversation data and formats it as a str of query-response pairs.
+        
+        :returns: A str containing query-response pairs from the conversations.
+        :rtype: str
+        """
+        
+        result = ""
+        
+        if not self.redteaming_data:
+            return result
+            
+        for conversation in self.redteaming_data:
+            messages = conversation.get("conversation", [])
+            for i in range(0, len(messages) - 1, 2):
+                if i + 1 < len(messages):
+                    user_msg = messages[i]
+                    assistant_msg = messages[i + 1]
+                    if user_msg.get("role") == "user" and assistant_msg.get("role") == "assistant":
+                        result+=json.dumps({
+                            "query": user_msg.get("content", ""),
+                            "response": assistant_msg.get("content", ""),
+                        })
+                        
+        return result
