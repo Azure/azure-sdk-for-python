@@ -241,4 +241,4 @@ class OpenTelemetryTracer:
         :param token: The token to detach
         :type token: ~contextvars.Token
         """
-        otel_context_module.detach(token)  # type: ignore
+        otel_context_module.detach(token)
