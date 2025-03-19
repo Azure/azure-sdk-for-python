@@ -41,3 +41,4 @@ Please use the following template to report bugs : [**Bug Template**](https://ms
 
 - [**Run Agent and Evaluate using Evaluation SDK**](./agent_evaluation.ipynb)
 - [**Tool Call Accuracy Evaluator**](./tool_call_accuracy.ipynb)
+- [**Reponse Completeness**](./response_completeness.ipynb)
