@@ -57,7 +57,7 @@ async def main() -> None:
             print(f"Created message, ID: {message.id}")
 
             # Create and run assistant task
-            run = await project_client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+            run = await project_client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
             print(f"Created run, ID: {run.id}")
 
             # Polling loop for run status
