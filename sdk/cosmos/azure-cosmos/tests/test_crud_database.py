@@ -49,7 +49,7 @@ class TimeoutTransport(RequestsTransport):
 
 
 @pytest.mark.cosmosLong
-class TestCRUDOperations(unittest.TestCase):
+class TestCRUDDatabaseOperations(unittest.TestCase):
     """Python CRUD Tests.
     """
 
