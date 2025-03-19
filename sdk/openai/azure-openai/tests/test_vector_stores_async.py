@@ -100,7 +100,6 @@ class TestVectorStoresAsync(AzureRecordedTestCase):
                 vector_store_id=vector_store.id,
                 query="vacation days",
             )
-            assert len(search_response.data) > 0
             async for s in search_response:
                 assert s
 

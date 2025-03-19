@@ -34,7 +34,6 @@ DALLE_AZURE = "dalle_azure"
 GPT_4_AZURE = "gpt_4_azure"
 GPT_4_OPENAI = "gpt_4_openai"
 ASST_AZURE = "asst_azure"
-CUA_AZURE = "cua_azure"
 
 # Environment variable keys
 ENV_AZURE_OPENAI_ENDPOINT = "AZ_OPENAI_ENDPOINT"
@@ -51,7 +50,8 @@ ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME = "gpt-35-turbo"
 ENV_AZURE_OPENAI_EMBEDDINGS_NAME = "text-embedding-ada-002"
 ENV_AZURE_OPENAI_AUDIO_NAME = "whisper"
 ENV_AZURE_OPENAI_DALLE_NAME = "dall-e-3"
-ENV_AZURE_OPENAI_CHAT_COMPLETIONS_GPT4_NAME = "gpt-4o"
+ENV_AZURE_OPENAI_CHAT_COMPLETIONS_GPT4_NAME = "gpt-4o-mini"
+ENV_AZURE_OPENAI_REALTIME_NAME = "gpt-4o-mini-realtime-preview-1217"
 ENV_AZURE_OPENAI_TTS_NAME = "tts"
 
 ENV_OPENAI_KEY = "OPENAI_KEY"
@@ -60,7 +60,8 @@ ENV_OPENAI_CHAT_COMPLETIONS_MODEL = "gpt-3.5-turbo"
 ENV_OPENAI_EMBEDDINGS_MODEL = "text-embedding-ada-002"
 ENV_OPENAI_AUDIO_MODEL = "whisper-1"
 ENV_OPENAI_DALLE_MODEL = "dall-e-3"
-ENV_OPENAI_CHAT_COMPLETIONS_GPT4_MODEL = "gpt-4o-2024-08-06"
+ENV_OPENAI_CHAT_COMPLETIONS_GPT4_MODEL = "gpt-4o-mini-2024-07-18"
+ENV_OPENAI_REALTIME_NAME = "gpt-4o-mini-realtime-preview-2024-10-01"
 ENV_OPENAI_TTS_MODEL = "tts-1"
 
 
@@ -101,12 +102,6 @@ def client(api_type, api_version):
             azure_ad_token_provider=get_bearer_token_provider(get_credential(), "https://cognitiveservices.azure.com/.default"),
             api_version=api_version,
         )
-    elif api_type == "cua_azure":
-        client = openai.AzureOpenAI(
-            azure_endpoint=os.getenv(ENV_AZURE_OPENAI_SOUTHINDIA_ENDPOINT),
-            azure_ad_token_provider=get_bearer_token_provider(get_credential(), "https://cognitiveservices.azure.com/.default"),
-            api_version=api_version,
-        )
     return client
 
 
@@ -143,12 +138,6 @@ def client_async(api_type, api_version):
             azure_ad_token_provider=get_bearer_token_provider_async(get_credential(is_async=True), "https://cognitiveservices.azure.com/.default"),
             api_version=api_version,
         )
-    elif api_type == "cua_azure":
-        client = openai.AsyncAzureOpenAI(
-            azure_endpoint=os.getenv(ENV_AZURE_OPENAI_SOUTHINDIA_ENDPOINT),
-            azure_ad_token_provider=get_bearer_token_provider_async(get_credential(is_async=True), "https://cognitiveservices.azure.com/.default"),
-            api_version=api_version,
-        )
     return client
 
 
@@ -163,8 +152,10 @@ def build_kwargs(args, api_type):
             return {"model": ENV_OPENAI_TTS_MODEL}
         elif api_type in ["tts_azure"]:
             return {"model": ENV_AZURE_OPENAI_TTS_NAME}
-    if test_feature.startswith("test_chat_completions") \
-        or test_feature.startswith(("test_client", "test_models")):
+    if test_feature.startswith(
+        ("test_client", "test_models", "test_chat_completions",
+         "test_assistants", "test_responses", "test_vector_stores")
+    ):
         if api_type in ["azure", "azure_key", "asst_azure"]:
             return {"model": ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME}
         elif api_type == "openai":
@@ -188,21 +179,11 @@ def build_kwargs(args, api_type):
             return {"model": ENV_AZURE_OPENAI_DALLE_NAME}
         elif api_type == "openai":
             return {"model": ENV_OPENAI_DALLE_MODEL}
-    if test_feature.startswith("test_assistants") or test_feature.startswith("test_vector_stores"):
-        if api_type in ["asst_azure"]:
-            return {"model": ENV_AZURE_OPENAI_CHAT_COMPLETIONS_GPT4_NAME}
-        elif api_type == "gpt_4_openai":
-            return {"model": ENV_OPENAI_CHAT_COMPLETIONS_GPT4_MODEL}
     if test_feature.startswith("test_realtime"):
         if api_type in ["gpt_4_azure"]:
-            return {"model": "gpt-4o-realtime-preview-1001"}
+            return {"model": ENV_AZURE_OPENAI_REALTIME_NAME}
         elif api_type == "gpt_4_openai":
-            return {"model": "gpt-4o-realtime-preview-2024-10-01"}
-    if test_feature.startswith("test_responses"):
-        if api_type in ["cua_azure"]:
-            return {"model": "gpt-4o-mini"}
-        elif api_type == "openai":
-            return {"model": "gpt-4o-mini"}
+            return {"model": ENV_OPENAI_REALTIME_NAME}
     if test_feature.startswith(("test_module_client", "test_cli")):
         return {}
     raise ValueError(f"Test feature: {test_feature} needs to have its kwargs configured.")

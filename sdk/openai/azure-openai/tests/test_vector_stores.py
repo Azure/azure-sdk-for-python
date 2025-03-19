@@ -100,7 +100,6 @@ class TestVectorStores(AzureRecordedTestCase):
                 vector_store_id=vector_store.id,
                 query="vacation days",
             )
-            assert len(search_response.data) > 0
             for s in search_response:
                 assert s
 

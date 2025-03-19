@@ -16,8 +16,8 @@ import openai
 
 from devtools_testutils import AzureRecordedTestCase
 from conftest import (
-    CUA_AZURE,
-    OPENAI,
+    GPT_4_AZURE,
+    GPT_4_OPENAI,
     configure,
     PREVIEW,
 )
@@ -51,7 +51,7 @@ class TestResponses(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(CUA_AZURE, PREVIEW), (OPENAI, "v1")]
+        [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")]
     )
     def test_responses(self, client: openai.AzureOpenAI | openai.OpenAI, api_type, api_version, **kwargs):
         response = client.responses.create(
@@ -79,7 +79,7 @@ class TestResponses(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(CUA_AZURE, PREVIEW), (OPENAI, "v1")]
+        [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")]
     )
     def test_responses_streaming(self, client: openai.AzureOpenAI | openai.OpenAI, api_type, api_version, **kwargs):
         stream = client.responses.create(
@@ -142,7 +142,7 @@ class TestResponses(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(CUA_AZURE, PREVIEW), (OPENAI, "v1")]
+        [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")]
     )
     def test_responses_with_computer_use_tool(self, client: openai.AzureOpenAI | openai.OpenAI, api_type, api_version, **kwargs):
 
@@ -203,7 +203,7 @@ class TestResponses(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(CUA_AZURE, PREVIEW), (OPENAI, "v1")]
+        [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")]
     )
     def test_responses_with_file_search_tool(self, client: openai.AzureOpenAI | openai.OpenAI, api_type, api_version, **kwargs):
         try:
@@ -275,7 +275,7 @@ class TestResponses(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(CUA_AZURE, PREVIEW), (OPENAI, "v1")]
+        [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")]
     )
     def test_responses_with_function_tool(self, client: openai.AzureOpenAI | openai.OpenAI, api_type, api_version, **kwargs):
         messages = [{"role": "user", "content": "What is the weather like in seattle today? search for weather data."}]
@@ -304,8 +304,8 @@ class TestResponses(AzureRecordedTestCase):
         response = client.responses.create(
             input=messages,
             tools=tools,
-            model="gpt-4o-mini",
             # tool_choice={"type": "function", "name": "weather_search"}  # TODO
+            **kwargs
         )
         assert response.id is not None
         assert response.created_at is not None
@@ -340,7 +340,7 @@ class TestResponses(AzureRecordedTestCase):
         response_2 = client.responses.create(
             input=messages,
             tools=tools,
-            model="gpt-4o-mini"
+            **kwargs,
         )
         assert "Seattle" in response_2.output_text
         assert "80" in response_2.output_text
@@ -348,7 +348,7 @@ class TestResponses(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(CUA_AZURE, PREVIEW), (OPENAI, "v1")]
+        [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")]
     )
     def test_responses_with_parallel_tool_calls(self, client: openai.AzureOpenAI | openai.OpenAI, api_type, api_version, **kwargs):
         messages = [
@@ -380,8 +380,8 @@ class TestResponses(AzureRecordedTestCase):
         response = client.responses.create(
             input=messages,
             tools=tools,
-            model="gpt-4o-mini",
             parallel_tool_calls=False,
+            **kwargs,
         )
         assert response.parallel_tool_calls is False
         assert len(response.output) == 1
@@ -412,7 +412,7 @@ class TestResponses(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(OPENAI, "v1")]
+        [(GPT_4_OPENAI, "v1")]
     )
     def test_responses_with_web_search_tool(self, client: openai.AzureOpenAI | openai.OpenAI, api_type, api_version, **kwargs):
         response = client.responses.create(
@@ -424,7 +424,7 @@ class TestResponses(AzureRecordedTestCase):
 
                 }
             ],
-            model="gpt-4o-mini",
+            **kwargs,
         )
         assert_required(response)
 
@@ -436,7 +436,7 @@ class TestResponses(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(CUA_AZURE, PREVIEW), (OPENAI, "v1")]
+        [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")]
     )
     def test_responses_metadata(self, client: openai.AzureOpenAI | openai.OpenAI, api_type, api_version, **kwargs):
         metadata = {"session_id": "test-123", "user_id": "user-456"}
@@ -451,7 +451,7 @@ class TestResponses(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(CUA_AZURE, PREVIEW), (OPENAI, "v1")]
+        [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")]
     )
     def test_responses_temperature(self, client: openai.AzureOpenAI | openai.OpenAI, api_type, api_version, **kwargs):
         response = client.responses.create(
@@ -465,7 +465,7 @@ class TestResponses(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(CUA_AZURE, PREVIEW), (OPENAI, "v1")]
+        [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")]
     )
     def test_responses_top_p(self, client: openai.AzureOpenAI | openai.OpenAI, api_type, api_version, **kwargs):
         response = client.responses.create(
@@ -479,7 +479,7 @@ class TestResponses(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(CUA_AZURE, PREVIEW), (OPENAI, "v1")]
+        [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")]
     )
     def test_responses_user(self, client: openai.AzureOpenAI | openai.OpenAI, api_type, api_version, **kwargs):
         user = str(uuid.uuid4())
@@ -494,18 +494,18 @@ class TestResponses(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(CUA_AZURE, PREVIEW), (OPENAI, "v1")]
+        [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")]
     )
     def test_responses_previous_response_id(self, client: openai.AzureOpenAI | openai.OpenAI, api_type, api_version, **kwargs):
         initial_response = client.responses.create(
-            model="gpt-4o-mini",
             input="tell me a joke",
+            **kwargs,
         )
 
         response = client.responses.create(
-            model="gpt-4o-mini",
             previous_response_id=initial_response.id,
             input=[{"role": "user", "content": "explain why this is funny."}],
+            **kwargs,
         )
         assert response.previous_response_id == initial_response.id
         assert_required(response)
@@ -513,14 +513,14 @@ class TestResponses(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(CUA_AZURE, PREVIEW), (OPENAI, "v1")]
+        [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")]
     )
     def test_responses_store(self, client: openai.AzureOpenAI | openai.OpenAI, api_type, api_version, **kwargs):
 
         response = client.responses.create(
-            model="gpt-4o-mini",
             input=[{"role": "user", "content": "write me an original happy birthday song"}],
-            store=True
+            store=True,
+            **kwargs,
         )
 
         assert_required(response)
@@ -528,14 +528,14 @@ class TestResponses(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(CUA_AZURE, PREVIEW), (OPENAI, "v1")]
+        [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")]
     )
     def test_responses_instructions(self, client: openai.AzureOpenAI | openai.OpenAI, api_type, api_version, **kwargs):
 
         response = client.responses.create(
-            model="gpt-4o-mini",
             input=[{"role": "user", "content": "write me an original happy birthday song"}],
-            instructions="Do as the user says, but always use Spanish for your response."
+            instructions="Do as the user says, but always use Spanish for your response.",
+            **kwargs,
         )
 
         assert response.instructions == "Do as the user says, but always use Spanish for your response."
@@ -544,14 +544,14 @@ class TestResponses(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(CUA_AZURE, PREVIEW), (OPENAI, "v1")]
+        [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")]
     )
     def test_responses_max_output_tokens(self, client: openai.AzureOpenAI | openai.OpenAI, api_type, api_version, **kwargs):
 
         response = client.responses.create(
-            model="gpt-4o-mini",
             input=[{"role": "user", "content": "write me an original happy birthday song. keep it short."}],
-            max_output_tokens=20
+            max_output_tokens=20,
+            **kwargs,
         )
 
         assert_required(response)
@@ -560,12 +560,11 @@ class TestResponses(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(CUA_AZURE, PREVIEW), (OPENAI, "v1")]
+        [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")]
     )
     def test_responses_input_url(self, client: openai.AzureOpenAI | openai.OpenAI, api_type, api_version, **kwargs):
 
         response = client.responses.create(
-            model="gpt-4o-mini",
             input=[
                 {
                     "role": "user",
@@ -575,8 +574,8 @@ class TestResponses(AzureRecordedTestCase):
                     ]
                 }
             ],
-            include=["message.input_image.image_url"]
-
+            include=["message.input_image.image_url"],
+            **kwargs,
         )
 
         assert_required(response)
@@ -584,7 +583,7 @@ class TestResponses(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(CUA_AZURE, PREVIEW), (OPENAI, "v1")]
+        [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")]
     )
     def test_responses_input_file(self, client: openai.AzureOpenAI | openai.OpenAI, api_type, api_version, **kwargs):
 
@@ -596,7 +595,6 @@ class TestResponses(AzureRecordedTestCase):
             )
 
             response = client.responses.create(
-                model="gpt-4o-mini",
                 input=[
                     {
                         "role": "user",
@@ -606,7 +604,7 @@ class TestResponses(AzureRecordedTestCase):
                         ]
                     }
                 ],
-
+                **kwargs,
             )
 
             assert_required(response)
@@ -616,7 +614,7 @@ class TestResponses(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(CUA_AZURE, PREVIEW), (OPENAI, "v1")]
+        [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")]
     )
     def test_responses_input_file_base64(self, client: openai.AzureOpenAI | openai.OpenAI, api_type, api_version, **kwargs):
         hello_pdf = pathlib.Path(__file__).parent / "assets" / "hello_world.pdf"
@@ -626,7 +624,6 @@ class TestResponses(AzureRecordedTestCase):
         base64_string = base64.b64encode(data).decode("utf-8")
 
         response = client.responses.create(
-            model="gpt-4o-mini",
             input=[
                 {
                     "role": "user",
@@ -640,7 +637,7 @@ class TestResponses(AzureRecordedTestCase):
                     ]
                 }
             ],
-
+            **kwargs,
         )
 
         assert_required(response)
@@ -649,12 +646,11 @@ class TestResponses(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(CUA_AZURE, PREVIEW), (OPENAI, "v1")]
+        [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")]
     )
     def test_responses_structured_outputs(self, client: openai.AzureOpenAI | openai.OpenAI, api_type, api_version, **kwargs):
 
         response = client.responses.create(
-            model="gpt-4o-mini",
             input=[
                 {"role": "system", "content": "Extract the event information."},
                 {"role": "user", "content": "Alice and Bob are going to a science fair on Friday."}
@@ -684,7 +680,8 @@ class TestResponses(AzureRecordedTestCase):
                     },
                     "strict": True
                 }
-            }
+            },
+            **kwargs,
         )
         assert_required(response)
         event = json.loads(response.output_text)
@@ -698,7 +695,7 @@ class TestResponses(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(CUA_AZURE, PREVIEW), (OPENAI, "v1")]
+        [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")]
     )
     def test_responses_json_object_outputs(self, client: openai.AzureOpenAI | openai.OpenAI, api_type, api_version, **kwargs):
         messages = [
