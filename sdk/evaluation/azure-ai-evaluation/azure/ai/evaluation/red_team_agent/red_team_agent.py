@@ -727,6 +727,11 @@ class RedTeamAgent():
             total = len(group)
             successful_attacks = group["attack_success"].sum()
             risk_key = risk_key.lower()
+            # TODO: change this temporary fix:
+            if risk_key == "hate":
+                risk_key = "hate_unfairness"
+            if risk_key == "self":
+                risk_key = "self_harm"
             risk_category_summary.update({
                 f"{risk_key}_asr": asr,
                 f"{risk_key}_total": total,
@@ -965,7 +970,12 @@ class RedTeamAgent():
             with Path(data_path).open("r") as f:
                 json_lines = f.readlines()
             return {key: json_lines}
-
+        
+        ## TODO: remove this temporary fix
+        if risk_category_name.lower() == "self":
+            risk_category_name = "Self_harm"
+        if risk_category_name.lower() == "hate":
+            risk_category_name = "Hate_unfairness"
         # If a specific risk category is provided, only evaluate that one
         if risk_category_name:
             risk_to_evaluator = {risk_category_name: self._risk_evaluator_map()[risk_category_name]}
