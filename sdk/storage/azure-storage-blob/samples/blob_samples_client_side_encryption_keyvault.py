@@ -98,9 +98,8 @@ encoded_key = base64.urlsafe_b64encode(key).decode('utf-8')
 secret_client.set_secret(name="symmetric-key", value=encoded_key)
 # The secret is url-safe base64 encoded bytes, content type 'application/octet-stream'
 secret = secret_client.get_secret('symmetric-key')
-key_bytes: str = base64.urlsafe_b64decode(secret.value)
-key_id: str = secret.id
-kvk = KeyVaultKey(key_id=key_id, key_ops=['unwrapKey', 'wrapKey'], k=key_bytes, kty=KeyType.oct)
+key_bytes = base64.urlsafe_b64decode(str(secret.value))
+kvk = KeyVaultKey(key_id=str(secret.id), key_ops=['unwrapKey', 'wrapKey'], k=key_bytes, kty=KeyType.oct)
 kek = KeyWrapper(kvk, credential)
 
 storage_client = BlobServiceClient(storage_url, credential=credential)
