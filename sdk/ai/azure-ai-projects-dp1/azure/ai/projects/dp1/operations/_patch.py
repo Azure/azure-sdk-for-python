@@ -8,9 +8,10 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import logging
 import os
-from typing import List, Optional
+import inspect
+from typing import List, Optional, Any
 from pathlib import Path
-from azure.storage.blob import ContainerClient, BlobClient, BlobType
+from azure.storage.blob import ContainerClient
 
 from ._operations import DatasetsOperations as DatasetsOperationsGenerated
 from ..models._models import (
@@ -28,7 +29,8 @@ logger = logging.getLogger(__name__)
 
 class DatasetsOperations(DatasetsOperationsGenerated):
 
-    # Internal helper method to create a new dataset and return a ContainerClient to the dataset's blob storage.
+    # Internal helper method to create a new dataset and return a ContainerClient from azure-storage-blob package,
+    # to the dataset's blob storage.
     def _create_dataset_and_get_its_container_client(
         self,
         name: str,
@@ -44,16 +46,23 @@ class DatasetsOperations(DatasetsOperationsGenerated):
             ),
         )
 
-        if (True): # Debugging. Remove me.
-            print(pending_upload_response.pending_upload_id)
-            print(pending_upload_response.pending_upload_type) # == PendingUploadType.TEMPORARY_BLOB_REFERENCE
-            print(pending_upload_response.blob_reference_for_consumption.blob_uri) # Hosted on behalf of (HOBO) not visible to the user. If the form of: "https://<account>.blob.core.windows.net/<container>?<sasToken>"
-            print(pending_upload_response.blob_reference_for_consumption.storage_account_arm_id) # /subscriptions/<>/resourceGroups/<>/Microsoft.Storage/accounts/<>
-            print(pending_upload_response.blob_reference_for_consumption.credential.sas_token)
-            print(pending_upload_response.blob_reference_for_consumption.credential.type) # == CredentialType.SAS
+        if (logger.getEffectiveLevel() == logging.DEBUG):
+            method = inspect.currentframe().f_code.co_name
+            logger.debug("[%s] pending_upload_response.pending_upload_id = %s.", method, pending_upload_response.pending_upload_id)
+            logger.debug("[%s] pending_upload_response.pending_upload_type = %s.", method, pending_upload_response.pending_upload_type) # == PendingUploadType.TEMPORARY_BLOB_REFERENCE
+            logger.debug("[%s] pending_upload_response.blob_reference_for_consumption.blob_uri = %s.", method, pending_upload_response.blob_reference_for_consumption.blob_uri) # Hosted on behalf of (HOBO) not visible to the user. If the form of: "https://<account>.blob.core.windows.net/<container>?<sasToken>"
+            logger.debug("[%s] pending_upload_response.blob_reference_for_consumption.storage_account_arm_id = %s.", method, pending_upload_response.blob_reference_for_consumption.storage_account_arm_id) # /subscriptions/<>/resourceGroups/<>/Microsoft.Storage/accounts/<>
+            logger.debug("[%s] pending_upload_response.blob_reference_for_consumption.credential.sas_token = %s.", method, pending_upload_response.blob_reference_for_consumption.credential.sas_token)
+            logger.debug("[%s] pending_upload_response.blob_reference_for_consumption.credential.type = %s.", method, pending_upload_response.blob_reference_for_consumption.credential.type) # == CredentialType.SAS
 
+        if not pending_upload_response.blob_reference_for_consumption:
+            raise ValueError("Blob reference for consumption is not present")
+        if not pending_upload_response.blob_reference_for_consumption.credential.type:
+            raise ValueError("Credential type is not present")
         if pending_upload_response.blob_reference_for_consumption.credential.type != CredentialType.SAS:
             raise ValueError("Credential type is not SAS")
+        if not pending_upload_response.blob_reference_for_consumption.blob_uri:
+            raise ValueError("Blob URI is not present or empty")
 
         # For overview on Blob storage SDK in Python see:
         # https://learn.microsoft.com/azure/storage/blobs/storage-quickstart-blobs-python
@@ -71,9 +80,12 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         version: Optional[str] = None,
         folder: str,
         connection_name: Optional[str] = None,
+        **kwargs: Any
     ) -> DatasetVersion:
         """Upload all files in a folder and its sub folders to a blob storage, while maintaining 
         relative paths, and create a dataset that references this folder.
+        This method uses the `ContainerClient.upload_blob` method from the azure-storage-blob package
+        to upload each file. Any keyword arguments provided will be passed to the `upload_blob` method.
 
         :param name: The name of the dataset. Required.
         :type name: str
@@ -95,11 +107,11 @@ class DatasetsOperations(DatasetsOperationsGenerated):
                 for file_name in files:
                     file_path = os.path.join(root, file_name)
                     blob_name = os.path.relpath(file_path, folder)  # Blob name relative to the folder
-                    logger.debug("[create_and_upload_folder] Start uploading file %s as blob %s.", file_name, blob_name)
+                    logger.debug("[%s] Start uploading file %s as blob %s.",inspect.currentframe().f_code.co_name, file_name, blob_name)
                     with open(file_path, "rb") as data:
                         # See https://learn.microsoft.com/en-us/python/api/azure-storage-blob/azure.storage.blob.containerclient?view=azure-python#azure-storage-blob-containerclient-upload-blob                    
-                        container_client.upload_blob(name=blob_name, data=data, overwrite=True)
-                    print(f"[create_and_upload_folder] Done uploaded.")
+                        container_client.upload_blob(name=blob_name, data=data, **kwargs)
+                    print(f"[%s] Done uploaded.", inspect.currentframe().f_code.co_name)
 
             dataset_version = self.create_or_update(
                 name=name,
@@ -122,8 +134,11 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         version: Optional[str] = None,
         file: str,
         connection_name: Optional[str] = None,
+        **kwargs: Any
     ) -> DatasetVersion:
         """Upload file to a blob storage, and create a dataset that references this file.
+        This method uses the `ContainerClient.upload_blob` method from the azure-storage-blob package
+        to upload the file. Any keyword arguments provided will be passed to the `upload_blob` method.
 
         :param name: The name of the dataset. Required.
         :type name: str
@@ -143,16 +158,16 @@ class DatasetsOperations(DatasetsOperationsGenerated):
             with open(file=file, mode="rb") as data:
 
                 blob_name = Path(file).name  # Extract the file name from the path.
-                logger.debug("[create_and_upload_file] Start uploading file %s as blob %s.", file, blob_name)
+                logger.debug("[%s] Start uploading file %s as blob %s.", inspect.currentframe().f_code.co_name, file, blob_name)
 
                 # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.containerclient?view=azure-python#azure-storage-blob-containerclient-upload-blob
                 with container_client.upload_blob(
                     name=blob_name,
                     data=data,
-                    overwrite=True
+                    **kwargs
                 ) as blob_client:
 
-                    logger.debug("[create_and_upload_file] Done uploading")
+                    logger.debug("[%s] Done uploading", inspect.currentframe().f_code.co_name)
 
                     dataset_version = self.create_or_update(
                         name=name,
