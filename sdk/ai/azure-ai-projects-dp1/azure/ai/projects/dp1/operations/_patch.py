@@ -100,16 +100,17 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError: If an error occurs during the HTTP request.
         """
 
-        if not Path(file).exists():
+        path_file = Path(file)
+        if not path_file.exists():
             raise ValueError("The provided file does not exist.")
-        if Path(file).is_dir():
+        if path_file.is_dir():
             raise ValueError("The provided file is actually a folder. Use method `create_and_upload_folder` instead")
 
         with self._create_dataset_and_get_its_container_client(name=name, version=version, connection_name=connection_name) as container_client:
 
             with open(file=file, mode="rb") as data:
 
-                blob_name = Path(file).name  # Extract the file name from the path.
+                blob_name = path_file.name  # Extract the file name from the path.
                 logger.debug("[%s] Start uploading file `%s` as blob `%s`.", inspect.currentframe().f_code.co_name, file, blob_name)
 
                 # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.containerclient?view=azure-python#azure-storage-blob-containerclient-upload-blob
@@ -161,23 +162,28 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         :rtype: ~azure.ai.projects.dp1.models.DatasetVersion
         :raises ~azure.core.exceptions.HttpResponseError: If an error occurs during the HTTP request.
         """
-        if not Path(folder).exists():
+        path_folder = Path(folder)
+        if not Path(path_folder).exists():
             raise ValueError("The provided folder does not exist.")
-        if Path(folder).is_file():
+        if Path(path_folder).is_file():
             raise ValueError("The provided folder is actually a file. Use method `create_and_upload_file` instead.")
 
         with self._create_dataset_and_get_its_container_client(name=name, version=version, connection_name=connection_name) as container_client:
 
-            # Iterate through the files in the folder
-            for root, _, files in os.walk(folder):
-                for file_name in files:
-                    file_path = os.path.join(root, file_name)
-                    blob_name = os.path.relpath(file_path, folder)  # Blob name relative to the folder
-                    logger.debug("[%s] Start uploading file `%s` as blob `%s`.",inspect.currentframe().f_code.co_name, file_name, blob_name)
-                    with open(file_path, "rb") as data:
-                        # See https://learn.microsoft.com/en-us/python/api/azure-storage-blob/azure.storage.blob.containerclient?view=azure-python#azure-storage-blob-containerclient-upload-blob                    
-                        container_client.upload_blob(name=blob_name, data=data, **kwargs)
+            # Recursively traverse all files in the folder
+            files_uploaded: bool = False
+            for file_path in path_folder.rglob("*"):  # `rglob` matches all files and folders recursively
+                if file_path.is_file():  # Check if the path is a file. Skip folders.
+                    blob_name = file_path.relative_to(path_folder)  # Blob name relative to the folder
+                    logger.debug("[%s] Start uploading file `%s` as blob `%s`.",inspect.currentframe().f_code.co_name, file_path, blob_name)
+                    with file_path.open("rb") as data:  # Open the file for reading in binary mode
+                        # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.containerclient?view=azure-python#azure-storage-blob-containerclient-upload-blob
+                        container_client.upload_blob(name=str(blob_name), data=data, **kwargs)
                     logger.debug("[%s] Done uploaded.", inspect.currentframe().f_code.co_name)
+                    files_uploaded = True
+
+            if not files_uploaded:
+                raise ValueError("The provided folder is empty.")
 
             dataset_version = self.create_or_update(
                 name=name,
