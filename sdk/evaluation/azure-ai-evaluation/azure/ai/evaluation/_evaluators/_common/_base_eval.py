@@ -405,7 +405,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
             # logic to determine threshold pass/fail
             try:
                 for key in list(result.keys()):
-                    if key.endswith("_score"):
+                    if key.endswith("_score") and "rouge" not in key:
                         score_value = result[key]
                         base_key = key[:-6]  # Remove "_score" suffix
                         result_key = f"{base_key}_result"
