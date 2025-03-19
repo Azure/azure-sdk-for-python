@@ -565,11 +565,11 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
                 "attributes": {
                     "gen_ai.system": "az.ai.agents",
                     "gen_ai.thread.id": "*",
-                    # "gen_ai.agent.id": "*", - workaround for https://github.com/Azure/azure-sdk-for-python/issues/40086
+                    "gen_ai.agent.id": "*",
                     "gen_ai.thread.run.id": "*",
-                    "gen_ai.message.status": "completed",
-                    "gen_ai.usage.input_tokens": "+",
-                    "gen_ai.usage.output_tokens": "+",
+                    "gen_ai.message.status": "requires_action",
+                    # "gen_ai.usage.input_tokens": "+", # not available at the moment
+                    # "gen_ai.usage.output_tokens": "+", # not available at the moment
                     "gen_ai.event.content": '{"tool_calls": [{"id": "*", "type": "function", "function": {"name": "fetch_weather", "arguments": {"location": "New York"}}}]}',
                 },
             },
@@ -578,7 +578,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
                 "attributes": {
                     "gen_ai.system": "az.ai.agents",
                     "gen_ai.thread.id": "*",
-                    # "gen_ai.agent.id": "*", - workaround for https://github.com/Azure/azure-sdk-for-python/issues/40086
+                    "gen_ai.agent.id": "*",
                     "gen_ai.thread.run.id": "*",
                     "gen_ai.message.id": "*",
                     "gen_ai.message.status": "completed",
@@ -785,11 +785,11 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
                 "attributes": {
                     "gen_ai.system": "az.ai.agents",
                     "gen_ai.thread.id": "*",
-                    # "gen_ai.agent.id": "*", - workaround for https://github.com/Azure/azure-sdk-for-python/issues/40086
+                    "gen_ai.agent.id": "*",
                     "gen_ai.thread.run.id": "*",
-                    "gen_ai.message.status": "completed",
-                    "gen_ai.usage.input_tokens": "+",
-                    "gen_ai.usage.output_tokens": "+",
+                    "gen_ai.message.status": "requires_action",
+                    # "gen_ai.usage.input_tokens": "+", # not available at the moment
+                    # "gen_ai.usage.output_tokens": "+", # not available at the moment
                     "gen_ai.event.content": '{"tool_calls": [{"id": "*", "type": "function"}]}',
                 },
             },
@@ -798,7 +798,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
                 "attributes": {
                     "gen_ai.system": "az.ai.agents",
                     "gen_ai.thread.id": "*",
-                    # "gen_ai.agent.id": "*", - workaround for https://github.com/Azure/azure-sdk-for-python/issues/40086
+                    "gen_ai.agent.id": "*",
                     "gen_ai.thread.run.id": "*",
                     "gen_ai.message.id": "*",
                     "gen_ai.message.status": "completed",
