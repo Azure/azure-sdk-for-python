@@ -35,7 +35,7 @@ from azure.servicebus.exceptions import (
 )
 
 from devtools_testutils import AzureMgmtRecordedTestCase, get_credential
-from .servicebus_preparer import (
+from servicebus_preparer import (
     SERVICEBUS_ENDPOINT_SUFFIX,
     CachedServiceBusNamespacePreparer,
     CachedServiceBusQueuePreparer,
@@ -44,7 +44,7 @@ from .servicebus_preparer import (
     ServiceBusSubscriptionPreparer,
     CachedServiceBusResourceGroupPreparer,
 )
-from .utilities import get_logger, print_message, sleep_until_expired, uamqp_transport as get_uamqp_transport, ArgPasser
+from utilities import get_logger, print_message, sleep_until_expired, uamqp_transport as get_uamqp_transport, ArgPasser
 
 uamqp_transport_params, uamqp_transport_ids = get_uamqp_transport()
 
@@ -810,7 +810,7 @@ class TestServiceBusSession(AzureMgmtRecordedTestCase):
                     receiver.complete_message(messages[0])
                     receiver.complete_message(messages[1])
 
-                    # This magic number is because of a 30 second lock renewal window.  Chose 31 seconds because at 30, you'll see "off by .05 seconds" flaky failures
+                    # This magic number is because of a 30 second lock renewal window.  Chose 31 seconds because at 30, you'll see "off by 05 seconds" flaky failures
                     # potentially as a side effect of network delays/sleeps/"typical distributed systems nonsense."  In a perfect world we wouldn't have a magic number/network hop but this allows
                     # a slightly more robust test in absence of that.
                     assert (receiver.session._locked_until_utc - utc_now()) <= timedelta(seconds=60)

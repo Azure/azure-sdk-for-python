@@ -18,7 +18,7 @@ from azure.servicebus.exceptions import ServiceBusError, MessageLockLostError
 from azure.servicebus._common.constants import ServiceBusSubQueue
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, get_credential
-from .servicebus_preparer import (
+from servicebus_preparer import (
     CachedServiceBusNamespacePreparer,
     CachedServiceBusTopicPreparer,
     CachedServiceBusSubscriptionPreparer,
@@ -27,7 +27,7 @@ from .servicebus_preparer import (
     CachedServiceBusResourceGroupPreparer,
     SERVICEBUS_ENDPOINT_SUFFIX,
 )
-from .utilities import get_logger, print_message, uamqp_transport as get_uamqp_transport, ArgPasser
+from utilities import get_logger, print_message, uamqp_transport as get_uamqp_transport, ArgPasser
 
 uamqp_transport_params, uamqp_transport_ids = get_uamqp_transport()
 

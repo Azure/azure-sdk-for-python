@@ -11,7 +11,7 @@ except ImportError:
 from azure.servicebus._transport._pyamqp_transport import PyamqpTransport
 from azure.servicebus._pyamqp import error as AMQPErrors
 
-from ..utilities import uamqp_transport as get_uamqp_transport
+from utilities import uamqp_transport as get_uamqp_transport
 
 uamqp_transport_params, uamqp_transport_ids = get_uamqp_transport()
 

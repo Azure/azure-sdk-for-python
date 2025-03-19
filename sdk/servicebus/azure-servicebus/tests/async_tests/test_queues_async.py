@@ -59,15 +59,15 @@ from azure.servicebus.exceptions import (
     OperationTimeoutError,
 )
 from devtools_testutils import AzureMgmtRecordedTestCase, AzureRecordedTestCase, get_credential
-from ..servicebus_preparer import (
+from servicebus_preparer import (
     SERVICEBUS_ENDPOINT_SUFFIX,
     CachedServiceBusNamespacePreparer,
     CachedServiceBusQueuePreparer,
     ServiceBusQueuePreparer,
     CachedServiceBusResourceGroupPreparer,
 )
-from .mocks_async import MockReceivedMessage, MockReceiver
-from ..utilities import (
+from mocks_async import MockReceivedMessage, MockReceiver
+from utilities import (
     get_logger,
     print_message,
     sleep_until_expired,

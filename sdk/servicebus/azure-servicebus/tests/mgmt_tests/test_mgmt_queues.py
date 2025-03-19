@@ -14,17 +14,17 @@ import base64
 
 from azure.servicebus.management import ServiceBusAdministrationClient, QueueProperties, ApiVersion, AuthorizationRule, AccessRights
 from azure.servicebus._common.utils import utc_now
-from ..utilities import get_logger
+from utilities import get_logger
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
 from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
 
 from devtools_testutils import AzureMgmtRecordedTestCase, CachedResourceGroupPreparer, recorded_by_proxy, get_credential
-from ..sb_env_loader import (
+from sb_env_loader import (
     ServiceBusPreparer,
 )
-from ..servicebus_preparer import SERVICEBUS_ENDPOINT_SUFFIX
+from servicebus_preparer import SERVICEBUS_ENDPOINT_SUFFIX
 
-from .mgmt_test_utilities import (
+from mgmt_test_utilities import (
     MgmtQueueListTestHelper,
     MgmtQueueListRuntimeInfoTestHelper,
     run_test_mgmt_list_with_parameters,
@@ -287,7 +287,7 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
         )
 
         # TODO: Why don't we have an input model (queueOptions? as superclass of QueueProperties?) and output model to not show these params?
-        # TODO: This fails with the following: E           msrest.exceptions.DeserializationError: Find several XML 'prefix:DeadLetteringOnMessageExpiration' where it was not expected .tox\whl\lib\site-packages\msrest\serialization.py:1262: DeserializationError
+        # TODO: This fails with the following: E           msrest.exceptions.DeserializationError: Find several XML 'prefix:DeadLetteringOnMessageExpiration' where it was not expected tox\whl\lib\site-packages\msrest\serialization.py:1262: DeserializationError
         mgmt_service.create_topic(topic_name)
         mgmt_service.create_queue(
             queue_name,
