@@ -21,7 +21,7 @@ from azure.batch import BatchClient as SyncBatchClient
 from typing import Iterable, Union
 
 from batch_preparers import AccountPreparer, PoolPreparer, JobPreparer
-from async_wrapper import wrap_list_result, wrap_result
+from async_wrapper import wrap_list_result, wrap_result, wrap_file_result
 from decorators import recorded_by_proxy_async, client_setup
 
 from devtools_testutils import (
@@ -751,6 +751,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             nodes = list(await wrap_list_result(client.list_nodes(batch_pool.name)))
         assert len(nodes) == 1
         node = nodes[0].id
+        assert node is not None
         task_id = "test_task"
         task_param = models.BatchTaskCreateContent(id=task_id, command_line='cmd /c "echo hello world"')
         response = await wrap_result(client.create_task(batch_job.id, task_param))
@@ -773,7 +774,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         # Test Get File from Batch Node
         file_length = 0
         with io.BytesIO() as file_handle:
-            response = await wrap_result(client.get_node_file(batch_pool.name, node, only_files[0].name))
+            response = await wrap_file_result(client.get_node_file(batch_pool.name, node, only_files[0].name))
             for data in response:
                 file_length += 1
         assert file_length == int(props.headers["Content-Length"])
@@ -797,7 +798,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         # Test Get File from Task
         file_length = 0
         with io.BytesIO() as file_handle:
-            response = await wrap_result(client.get_task_file(batch_job.id, task_id, only_files[0].name))
+            response = await wrap_file_result(client.get_task_file(batch_job.id, task_id, only_files[0].name))
             for data in response:
                 file_length += len(data)
         assert file_length == int(props.headers["Content-Length"])

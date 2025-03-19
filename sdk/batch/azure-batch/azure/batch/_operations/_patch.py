@@ -7,7 +7,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import datetime
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Iterator
 import collections
 import logging
 import threading
@@ -134,7 +134,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         if_unmodified_since: Optional[datetime.datetime] = None,
         ocp_range: Optional[str] = None,
         **kwargs: Any
-    ) -> bytes:
+    ) -> Iterator[bytes]:
         """Returns the content of the specified Compute Node file.
 
         :param pool_id: The ID of the Pool that contains the Compute Node. Required.
@@ -321,7 +321,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         if_unmodified_since: Optional[datetime.datetime] = None,
         ocp_range: Optional[str] = None,
         **kwargs: Any
-    ) -> bytes:
+    ) -> Iterator[bytes]:
         """Returns the content of the specified Task file.
 
         :param job_id: The ID of the Job that contains the Task. Required.
