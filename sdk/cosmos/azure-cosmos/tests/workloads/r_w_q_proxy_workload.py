@@ -67,8 +67,8 @@ async def run_workload(client_id, client_logger):
                                enable_diagnostics_logging=True, logger=client_logger, transport=transport,
                                user_agent=str(client_id) + "-" + datetime.now().strftime(
                                    "%Y%m%d-%H%M%S"), connection_policy=connectionPolicy) as client:
-            db = client.get_database_client(COSMOS_CONTAINER)
-            cont = db.get_container_client(COSMOS_DATABASE)
+            db = client.get_database_client(COSMOS_DATABASE)
+            cont = db.get_container_client(COSMOS_CONTAINER)
             time.sleep(1)
 
             while True:
