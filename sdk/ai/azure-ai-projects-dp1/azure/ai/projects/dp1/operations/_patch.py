@@ -46,15 +46,6 @@ class DatasetsOperations(DatasetsOperationsGenerated):
             ),
         )
 
-        if (logger.getEffectiveLevel() == logging.DEBUG):
-            method = inspect.currentframe().f_code.co_name
-            logger.debug("[%s] pending_upload_response.pending_upload_id = %s.", method, pending_upload_response.pending_upload_id)
-            logger.debug("[%s] pending_upload_response.pending_upload_type = %s.", method, pending_upload_response.pending_upload_type) # == PendingUploadType.TEMPORARY_BLOB_REFERENCE
-            logger.debug("[%s] pending_upload_response.blob_reference_for_consumption.blob_uri = %s.", method, pending_upload_response.blob_reference_for_consumption.blob_uri) # Hosted on behalf of (HOBO) not visible to the user. If the form of: "https://<account>.blob.core.windows.net/<container>?<sasToken>"
-            logger.debug("[%s] pending_upload_response.blob_reference_for_consumption.storage_account_arm_id = %s.", method, pending_upload_response.blob_reference_for_consumption.storage_account_arm_id) # /subscriptions/<>/resourceGroups/<>/Microsoft.Storage/accounts/<>
-            logger.debug("[%s] pending_upload_response.blob_reference_for_consumption.credential.sas_token = %s.", method, pending_upload_response.blob_reference_for_consumption.credential.sas_token)
-            logger.debug("[%s] pending_upload_response.blob_reference_for_consumption.credential.type = %s.", method, pending_upload_response.blob_reference_for_consumption.credential.type) # == CredentialType.SAS
-
         if not pending_upload_response.blob_reference_for_consumption:
             raise ValueError("Blob reference for consumption is not present")
         if not pending_upload_response.blob_reference_for_consumption.credential.type:
@@ -63,6 +54,15 @@ class DatasetsOperations(DatasetsOperationsGenerated):
             raise ValueError("Credential type is not SAS")
         if not pending_upload_response.blob_reference_for_consumption.blob_uri:
             raise ValueError("Blob URI is not present or empty")
+
+        if (logger.getEffectiveLevel() == logging.DEBUG):
+            method = inspect.currentframe().f_code.co_name
+            logger.debug("[%s] pending_upload_response.pending_upload_id = %s.", method, pending_upload_response.pending_upload_id)
+            logger.debug("[%s] pending_upload_response.pending_upload_type = %s.", method, pending_upload_response.pending_upload_type) # == PendingUploadType.TEMPORARY_BLOB_REFERENCE
+            logger.debug("[%s] pending_upload_response.blob_reference_for_consumption.blob_uri = %s.", method, pending_upload_response.blob_reference_for_consumption.blob_uri) # Hosted on behalf of (HOBO) not visible to the user. If the form of: "https://<account>.blob.core.windows.net/<container>?<sasToken>"
+            logger.debug("[%s] pending_upload_response.blob_reference_for_consumption.storage_account_arm_id = %s.", method, pending_upload_response.blob_reference_for_consumption.storage_account_arm_id) # /subscriptions/<>/resourceGroups/<>/Microsoft.Storage/accounts/<>
+            logger.debug("[%s] pending_upload_response.blob_reference_for_consumption.credential.sas_token = %s.", method, pending_upload_response.blob_reference_for_consumption.credential.sas_token)
+            logger.debug("[%s] pending_upload_response.blob_reference_for_consumption.credential.type = %s.", method, pending_upload_response.blob_reference_for_consumption.credential.type) # == CredentialType.SAS
 
         # For overview on Blob storage SDK in Python see:
         # https://learn.microsoft.com/azure/storage/blobs/storage-quickstart-blobs-python
@@ -100,6 +100,10 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         :rtype: ~azure.ai.projects.dp1.models.DatasetVersion
         :raises ~azure.core.exceptions.HttpResponseError: If an error occurs during the HTTP request.
         """
+        if not Path(folder).exists():
+            raise ValueError("The provided folder does not exist.")
+        if Path(folder).is_file():
+            raise ValueError("The provided folder is actually a file. Use method `create_and_upload_file` instead.")
 
         with self._create_dataset_and_get_its_container_client(name=name, version=version, connection_name=connection_name) as container_client:
 
@@ -153,6 +157,11 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         :rtype: ~azure.ai.projects.dp1.models.DatasetVersion
         :raises ~azure.core.exceptions.HttpResponseError: If an error occurs during the HTTP request.
         """
+
+        if not Path(file).exists():
+            raise ValueError("The provided file does not exist.")
+        if Path(file).is_dir():
+            raise ValueError("The provided file is actually a folder. Use method `create_and_upload_folder` instead")
 
         with self._create_dataset_and_get_its_container_client(name=name, version=version, connection_name=connection_name) as container_client:
 
