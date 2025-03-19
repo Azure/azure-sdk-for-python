@@ -23,17 +23,20 @@ from .operations import (
     DeploymentsOperations,
     EvaluationsOperations,
     IndexesOperations,
+    ServicePatternsOperations,
 )
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class AIProjectClient:
+class AIProjectClient:  # pylint: disable=too-many-instance-attributes
     """AIProjectClient.
 
     :ivar agents: AgentsOperations operations
     :vartype agents: azure.ai.projects.dp1.operations.AgentsOperations
+    :ivar service_patterns: ServicePatternsOperations operations
+    :vartype service_patterns: azure.ai.projects.dp1.operations.ServicePatternsOperations
     :ivar connections: ConnectionsOperations operations
     :vartype connections: azure.ai.projects.dp1.operations.ConnectionsOperations
     :ivar evaluations: EvaluationsOperations operations
@@ -44,8 +47,8 @@ class AIProjectClient:
     :vartype indexes: azure.ai.projects.dp1.operations.IndexesOperations
     :ivar deployments: DeploymentsOperations operations
     :vartype deployments: azure.ai.projects.dp1.operations.DeploymentsOperations
-    :param endpoint: Project endpoint in the form of: https://\\\\
-     :code:`<aiservices-id>`.services.ai.azure.com/projects/\\\\ :code:`<project-name>`. Required.
+    :param endpoint: Project endpoint in the form of:
+     https://<aiservices-id>.services.ai.azure.com/projects/<project-name>. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
@@ -81,6 +84,9 @@ class AIProjectClient:
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
         self.agents = AgentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.service_patterns = ServicePatternsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.connections = ConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.evaluations = EvaluationsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.datasets = DatasetsOperations(self._client, self._config, self._serialize, self._deserialize)

@@ -21,13 +21,13 @@ class CertificateCredential(AsyncContextManager, GetTokenMixin):
 
     :param str tenant_id: ID of the service principal's tenant. Also called its 'directory' ID.
     :param str client_id: The service principal's client ID
-    :param str certificate_path: Path to a PEM-encoded certificate file including the private key. If not provided,
-          `certificate_data` is required.
+    :param str certificate_path: Optional path to a certificate file in PEM or PKCS12 format, including the private
+        key. If not provided, **certificate_data** is required.
 
     :keyword str authority: Authority of a Microsoft Entra endpoint, for example 'login.microsoftonline.com',
           the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
           defines authorities for other clouds.
-    :keyword bytes certificate_data: The bytes of a certificate in PEM format, including the private key
+    :keyword bytes certificate_data: The bytes of a certificate in PEM or PKCS12 format, including the private key.
     :keyword password: The certificate's password. If a unicode string, it will be encoded as UTF-8. If the certificate
           requires a different encoding, pass appropriately encoded bytes instead.
     :paramtype password: str or bytes

@@ -23,7 +23,7 @@ from ._operations import (
 )
 from ... import models as _models
 from ..._model_base import _deserialize
-from ..._operations._patch import PollingReturnType_co, _parse_operation_id
+from ..._operations._patch import PollingReturnType_co, _parse_operation_id, DocumentModelAdministrationPolling
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -265,7 +265,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
                 "str", response.headers.get("Operation-Location")
             )
 
-            deserialized = _deserialize(_models.DocumentModelDetails, response.json())
+            deserialized = _deserialize(_models.DocumentModelDetails, response.json()["result"])
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
@@ -277,7 +277,12 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
         if polling is True:
             polling_method: AsyncPollingMethod = cast(
                 AsyncPollingMethod,
-                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+                AsyncLROBasePolling(
+                    lro_delay,
+                    path_format_arguments=path_format_arguments,
+                    lro_algorithms=[DocumentModelAdministrationPolling()],
+                    **kwargs
+                ),
             )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())

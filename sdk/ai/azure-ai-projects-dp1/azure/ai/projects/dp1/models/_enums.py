@@ -16,7 +16,7 @@ class AgentsApiResponseFormatMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AUTO = "auto"
     """Default value. Let the model handle the return format."""
     NONE = "none"
-    """Setting the value to ``none``\\ , will result in a 400 Bad request."""
+    """Setting the value to ``none``, will result in a 400 Bad request."""
 
 
 class AgentsApiToolChoiceOptionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -79,6 +79,8 @@ class DatasetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     URI_FILE = "uri_file"
     """URI file."""
+    URI_FOLDER = "uri_folder"
+    """URI folder."""
 
 
 class FilePurpose(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -208,7 +210,6 @@ class MessageStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class OpenApiAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Authentication type for OpenApi endpoint. Allowed types are:
 
-
     * Anonymous (no authentication required)
     * Connection (requires connection_id to endpoint, as setup in AI Foundry)
     * Managed_Identity (requires audience for identity based auth).
@@ -226,6 +227,19 @@ class PendingUploadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """No pending upload."""
     TEMPORARY_BLOB_REFERENCE = "TemporaryBlobReference"
     """Temporary Blob Reference is the only supported type."""
+
+
+class RepeatabilityResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Repeatability Result header options."""
+
+    ACCEPTED = "accepted"
+    """If the request was accepted and the server guarantees that the server state reflects a single
+    execution of the operation."""
+    REJECTED = "rejected"
+    """If the request was rejected because the combination of Repeatability-First-Sent and
+    Repeatability-Request-ID were invalid
+    or because the Repeatability-First-Sent value was outside the range of values held by the
+    server."""
 
 
 class ResponseFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
