@@ -152,7 +152,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                     if message.get("role") == "assistant":
                         tool_calls.extend([content for content in message.get("content")
                                         if content.get("type") == "tool_call" and content.get("tool_call").get("type") == "function"])
-            else:
+            if len(tool_calls) == 0:
                 raise EvaluationException(
                     message="response does not have tool calls. Either provide tool_calls or response with tool calls.",
                     blame=ErrorBlame.USER_ERROR,
