@@ -96,6 +96,25 @@ def stream_jsonl_broken_incomplete_char():
     yield from data
 
 
+def stream_jsonl_list():
+    data = [
+        b'["this", "is", "a", "first", "message"]\n',
+        b'["this", "is", "a", "second", "message"]\n',
+        b'["this", "is", "a", "third", "message"]\n',
+    ]
+    yield from data
+
+
+def stream_jsonl_string():
+    data = [
+        b'"this"\n',
+        b'"is"\n',
+        b'"a"\n',
+        b'"message"\n',
+    ]
+    yield from data
+
+
 @streams_api.route("/basic", methods=["GET"])
 def basic():
     return Response(streaming_body(), status=200)
@@ -208,3 +227,13 @@ def jsonl_escaped_broken_newline_data():
 @streams_api.route("/jsonl_broken_incomplete_char", methods=["GET"])
 def jsonl_broken_incomplete_char():
     return Response(stream_jsonl_broken_incomplete_char(), status=200, headers={"Content-Type": "application/jsonl"})
+
+
+@streams_api.route("/jsonl_list", methods=["GET"])
+def json_list():
+    return Response(stream_jsonl_list(), status=200, headers={"Content-Type": "application/jsonl"})
+
+
+@streams_api.route("/jsonl_string", methods=["GET"])
+def json_string():
+    return Response(stream_jsonl_string(), status=200, headers={"Content-Type": "application/jsonl"})

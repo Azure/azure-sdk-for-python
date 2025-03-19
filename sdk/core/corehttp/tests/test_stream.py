@@ -29,8 +29,7 @@ import json
 import pytest
 
 from corehttp.rest import HttpRequest
-from corehttp.streaming import Stream
-from corehttp.streaming.decoders import JSONLDecoder
+from corehttp.streaming import Stream, JSONLDecoder
 
 
 @pytest.fixture
@@ -160,4 +159,29 @@ def test_stream_jsonl_incomplete_char(stream):
         {"msg": "this is a first message"},
         {"msg": "𝜋this is a second message𝜋"},
         {"msg": "this is a third message"},
+    ]
+
+
+def test_stream_jsonl_list(stream):
+    jsonl_stream = stream(HttpRequest("GET", "/streams/jsonl_list"))
+    messages = []
+    for s in jsonl_stream:
+        messages.append(s)
+    assert messages == [
+        ["this", "is", "a", "first", "message"],
+        ["this", "is", "a", "second", "message"],
+        ["this", "is", "a", "third", "message"],
+    ]
+
+
+def test_stream_jsonl_string(stream):
+    jsonl_stream = stream(HttpRequest("GET", "/streams/jsonl_string"))
+    messages = []
+    for s in jsonl_stream:
+        messages.append(s)
+    assert messages == [
+        "this",
+        "is",
+        "a",
+        "message",
     ]

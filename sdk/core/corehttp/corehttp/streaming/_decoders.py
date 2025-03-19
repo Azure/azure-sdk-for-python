@@ -26,19 +26,19 @@
 
 import codecs
 import json
-from typing import Iterator, AsyncIterator, Protocol, Any, Dict
+from typing import Iterator, AsyncIterator, Protocol, Any, MutableMapping, Generic
 
 from typing_extensions import runtime_checkable, TypeVar
 
-DecodedType_co = TypeVar("DecodedType_co", covariant=True)
-JSON = TypeVar("JSON", default=Dict[str, Any])
+T_co = TypeVar("T_co", covariant=True)
+T = TypeVar("T", default=MutableMapping[str, Any])
 
 
 @runtime_checkable
-class StreamDecoder(Protocol[DecodedType_co]):
+class StreamDecoder(Protocol[T_co]):
     """Protocol for stream decoders."""
 
-    def iter_events(self, iter_bytes: Iterator[bytes]) -> Iterator[DecodedType_co]:
+    def iter_events(self, iter_bytes: Iterator[bytes]) -> Iterator[T_co]:
         """Iterate over events from a byte iterator.
 
         :param iter_bytes: An iterator of byte chunks.
@@ -50,11 +50,11 @@ class StreamDecoder(Protocol[DecodedType_co]):
 
 
 @runtime_checkable
-class AsyncStreamDecoder(Protocol[DecodedType_co]):
+class AsyncStreamDecoder(Protocol[T_co]):
     """Protocol for async stream decoders."""
 
     # Why this isn't async def: https://mypy.readthedocs.io/en/stable/more_types.html#asynchronous-iterators
-    def aiter_events(self, iter_bytes: AsyncIterator[bytes]) -> AsyncIterator[DecodedType_co]:
+    def aiter_events(self, iter_bytes: AsyncIterator[bytes]) -> AsyncIterator[T_co]:
         """Asynchronously iterate over events from a byte iterator.
 
         :param iter_bytes: An asynchronous iterator of byte chunks.
@@ -122,32 +122,32 @@ async def aiter_lines(iter_bytes: AsyncIterator[bytes]) -> AsyncIterator[str]:
             yield line
 
 
-class JSONLDecoder(StreamDecoder[JSON]):
+class JSONLDecoder(Generic[T]):
     """Decoder for JSON Lines (JSONL) format. https://jsonlines.org/"""
 
-    def iter_events(self, iter_bytes: Iterator[bytes]) -> Iterator[JSON]:
+    def iter_events(self, iter_bytes: Iterator[bytes]) -> Iterator[T]:
         """Iterate over JSONL events from a byte iterator.
 
         :param iter_bytes: An iterator of byte chunks.
         :type iter_bytes: Iterator[bytes]
-        :rtype: Iterator[JSON]
-        :return: An iterator of JSON values.
+        :rtype: Iterator[T]
+        :return: An iterator of objects.
         """
 
         yield from (json.loads(line) for line in iter_lines(iter_bytes))
 
 
-class AsyncJSONLDecoder(AsyncStreamDecoder[JSON]):
+class AsyncJSONLDecoder(Generic[T]):
     """Asynchronous decoder for JSON Lines (JSONL) format. https://jsonlines.org/"""
 
     # pylint: disable=invalid-overridden-method
-    async def aiter_events(self, iter_bytes: AsyncIterator[bytes]) -> AsyncIterator[JSON]:
+    async def aiter_events(self, iter_bytes: AsyncIterator[bytes]) -> AsyncIterator[T]:
         """Asynchronously iterate over JSONL events from a byte iterator.
 
         :param iter_bytes: An asynchronous iterator of byte chunks.
         :type iter_bytes: AsyncIterator[bytes]
-        :rtype: AsyncIterator[JSON]
-        :return: An asynchronous iterator of JSON values.
+        :rtype: AsyncIterator[T]
+        :return: An asynchronous iterator of objects.
         """
 
         async for line in aiter_lines(iter_bytes):

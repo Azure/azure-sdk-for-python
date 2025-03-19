@@ -30,7 +30,7 @@ from typing import Iterator, AsyncIterator, TypeVar, Callable, Optional, Type
 from typing_extensions import Self
 
 from ..rest import HttpResponse, AsyncHttpResponse
-from .decoders import StreamDecoder, AsyncStreamDecoder
+from ._decoders import StreamDecoder, AsyncStreamDecoder
 
 DecodedType = TypeVar("DecodedType")
 ReturnType_co = TypeVar("ReturnType_co", covariant=True)

@@ -25,6 +25,14 @@
 # --------------------------------------------------------------------------
 
 from ._stream import Stream, AsyncStream
+from ._decoders import StreamDecoder, AsyncStreamDecoder, JSONLDecoder, AsyncJSONLDecoder
 
 
-__all__ = ["Stream", "AsyncStream"]
+__all__ = [
+    "Stream",
+    "AsyncStream",
+    "StreamDecoder",
+    "AsyncStreamDecoder",
+    "JSONLDecoder",
+    "AsyncJSONLDecoder",
+]
