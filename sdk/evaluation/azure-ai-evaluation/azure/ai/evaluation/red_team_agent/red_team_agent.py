@@ -726,7 +726,7 @@ class RedTeamAgent():
             asr = round(group["attack_success"].mean() * 100, 2)
             total = len(group)
             successful_attacks = group["attack_success"].sum()
-            
+            risk_key = risk_key.lower()
             risk_category_summary.update({
                 f"{risk_key}_asr": asr,
                 f"{risk_key}_total": total,
@@ -1073,6 +1073,9 @@ class RedTeamAgent():
             
         with self._start_redteam_mlflow_run(self.azure_ai_project, evaluation_name) as eval_run:
             self.ai_studio_url = _get_ai_studio_url(trace_destination=self.trace_destination, evaluation_id=eval_run.info.run_id)
+            # todo: temp change to show the URL in int and with flight info
+            self.ai_studio_url = self.ai_studio_url.replace("ai.azure.com", "int.ai.azure.com")
+            self.ai_studio_url = f"{self.ai_studio_url}&flight=AIRedTeaming=true,EvalConvergence"
             print(f"Track your attacks in AI Foundry: {self.ai_studio_url}")
             self.logger.info(f"Started MLFlow run: {self.ai_studio_url}")
             
