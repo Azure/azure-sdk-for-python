@@ -11,6 +11,9 @@
 ### Clone the repo
 ```bash
 git clone -b prp/agent_evaluators https://github.com/Azure/azure-sdk-for-python
+
+# Navigate to bug bash folder in repo with instructions and samples
+cd azure-sdk-for-python\sdk\evaluation\azure-ai-evaluation\samples\bug_bash
 ```
 
 ### Installation Instructions:
