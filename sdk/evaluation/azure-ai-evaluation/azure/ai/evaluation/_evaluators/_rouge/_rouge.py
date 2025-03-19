@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 from enum import Enum
 
-from typing import Dict, Union
+from typing import Dict, Optional
 from typing_extensions import overload, override
 
 from azure.ai.evaluation._vendor.rouge_score import rouge_scorer
@@ -73,10 +73,23 @@ class RougeScoreEvaluator(EvaluatorBase):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, rouge_type: RougeType, threshold: Union[float, dict] = 0.5):
+    def __init__(self, rouge_type: RougeType, threshold: Optional[dict] = {}):
         self._rouge_type = rouge_type
         self._higher_is_better = True
         super().__init__()
+        default_threshold = {
+            "precision": 0.5,
+            "recall": 0.5,
+            "f1_score": 0.5,
+        }
+        if not isinstance(threshold, dict):
+            raise TypeError(
+                f"Threshold must be a dictionary, got {type(threshold)}"
+            )
+        for key in default_threshold.keys():
+            if key not in threshold:
+                threshold[key] = default_threshold[key]
+
         self._threshold = threshold
 
     def _get_binary_result(
@@ -108,13 +121,6 @@ class RougeScoreEvaluator(EvaluatorBase):
         precision_valid = not math.isnan(rouge_precision)
         recall_valid = not math.isnan(rouge_recall)
         f1_valid = not math.isnan(rouge_f1_score)
-        if isinstance(self._threshold, float):
-            self._threshold = {
-                "precision": self._threshold,
-                "recall": self._threshold,
-                "f1_score": self._threshold,
-            }
-
         if all(key in self._threshold for key in ["precision", "recall", "f1_score"]):
             if self._higher_is_better:
                 if precision_valid:
