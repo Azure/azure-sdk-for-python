@@ -240,7 +240,7 @@ class DataLakeFileClient(PathClient):
         return self._create('file', content_settings=content_settings, metadata=metadata, **kwargs)
 
     @distributed_trace
-    def delete_file(self, **kwargs: Any) -> Dict[str, Any]:  # pylint: disable=delete-operation-wrong-return-type
+    def delete_file(self, **kwargs: Any) -> None:
         """
         Marks the specified file for deletion.
 
@@ -271,8 +271,8 @@ class DataLakeFileClient(PathClient):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :returns: A dictionary of response headers.
-        :rtype: Dict[str, Any]
+        :returns: A dictionary of response headers or None.
+        :rtype: Dict[str, Any] or None
 
         .. admonition:: Example:
 
@@ -283,7 +283,7 @@ class DataLakeFileClient(PathClient):
                 :dedent: 4
                 :caption: Delete file.
         """
-        return self._delete(**kwargs)
+        return self._delete(**kwargs)  # type: ignore [return-value]
 
     @distributed_trace
     def get_file_properties(self, **kwargs: Any) -> FileProperties:

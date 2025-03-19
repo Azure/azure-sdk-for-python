@@ -256,7 +256,7 @@ class DataLakeFileClient(PathClient):
         return await self._exists(**kwargs)
 
     @distributed_trace_async
-    async def delete_file(self, **kwargs: Any) -> Dict[str, Any]:
+    async def delete_file(self, **kwargs: Any) -> None:
         """
         Marks the specified file for deletion.
 
@@ -299,7 +299,7 @@ class DataLakeFileClient(PathClient):
                 :dedent: 4
                 :caption: Delete file.
         """
-        return await self._delete(**kwargs)
+        return await self._delete(**kwargs)  # type: ignore [return-value]
 
     @distributed_trace_async
     async def get_file_properties(self, **kwargs: Any) -> FileProperties:
