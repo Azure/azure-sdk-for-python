@@ -162,6 +162,9 @@ def _parse_event(event_data_str: str) -> Tuple[str, StreamEventData]:
     if event_type.startswith("thread.run.step") and isinstance(parsed_data, dict) and "expires_at" in parsed_data:
         parsed_data["expired_at"] = parsed_data.pop("expires_at")
 
+    if isinstance(parsed_data, dict) and "assistant_id" in parsed_data:
+        parsed_data["agent_id"] = parsed_data.pop("assistant_id")
+
     # Map to the appropriate class instance
     if event_type in {
         AgentStreamEvent.THREAD_RUN_CREATED.value,
