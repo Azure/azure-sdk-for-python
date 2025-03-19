@@ -219,7 +219,7 @@ class NodeLogWriter(TextIOBase):
     def set_node_info(self, run_id: str, node_name: str, line_number: int) -> None:
         """Set node info to a context variable.
 
-        After set node info, write method will write to stringio associated with this node.
+        After set node info, write method will write to string IO associated with this node.
         """
         run_log_info = NodeInfo(run_id, node_name, line_number)
         self._context.set(run_log_info)
@@ -243,7 +243,7 @@ class NodeLogWriter(TextIOBase):
         return string_io.getvalue()
 
     def write(self, s: str) -> int:
-        """Override TextIO's write method and writes input string into a stringio
+        """Override TextIO's write method and writes input string into a string IO
 
         The written string is compliant without any credentials.
         The string is also recorded to flow/bulk logger.

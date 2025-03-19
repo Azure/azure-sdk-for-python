@@ -39,7 +39,7 @@ class RunSubmitterClient:
             raise ValueError("Column mapping must be provided")
 
         # The column mappings are index by data to indicate they come from the data
-        # input. Update the inputs so that each entry is a dictioary with a data key
+        # input. Update the inputs so that each entry is a dictionary with a data key
         # that contains the original input data.
         inputs = [{"data": input_data} for input_data in data.to_dict(orient="records")]
 
