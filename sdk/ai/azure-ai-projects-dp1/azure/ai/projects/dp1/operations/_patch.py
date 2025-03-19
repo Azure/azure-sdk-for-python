@@ -10,7 +10,7 @@ from typing import List, Optional
 from pathlib import Path
 from azure.storage.blob import ContainerClient, BlobClient, BlobType
 
-from ._operations import DatasetOperations as DatasetOperationsGenerated
+from ._operations import DatasetsOperations as DatasetsOperationsGenerated
 from ..models._models import (
     DatasetVersion,
     PendingUploadRequest,
@@ -22,10 +22,7 @@ from ..models._enums import (
     DatasetType,
 )
 
-class DatasetOperations(DatasetOperationsGenerated):
-
-    def __init__(self, outer_instance):
-        self._outer_instance = outer_instance
+class DatasetsOperations(DatasetsOperationsGenerated):
 
     def create_and_upload(
         self,
@@ -50,7 +47,7 @@ class DatasetOperations(DatasetOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError: If an error occurs during the HTTP request.
         """
 
-        pending_upload_response: PendingUploadResponse = self._outer_instance.datasets.create_or_get_start_pending_upload(
+        pending_upload_response: PendingUploadResponse = self.create_or_get_start_pending_upload(
             name=name,
             version=version,
             pending_upload_request=PendingUploadRequest(
@@ -87,7 +84,7 @@ class DatasetOperations(DatasetOperationsGenerated):
                 blob_type=BlobType.BLOCKBLOB,
             )
 
-        dataset_version = self._outer_instance.datasets.create_or_update(
+        dataset_version = self.create_or_update(
             name=name,
             version=version, 
             dataset_version=DatasetVersion(
@@ -101,7 +98,9 @@ class DatasetOperations(DatasetOperationsGenerated):
         return dataset_version
 
 
-__all__: List[str] = [DatasetOperations]  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = [
+    "DatasetsOperations"
+]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():
