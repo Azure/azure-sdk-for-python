@@ -10,7 +10,7 @@ import asyncio
 import datetime
 import collections
 import logging
-from typing import Any, List, Optional
+from typing import Any, AsyncIterator, List, Optional
 
 from azure.batch import models as _models
 from azure.core import MatchConditions
@@ -125,7 +125,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         if_unmodified_since: Optional[datetime.datetime] = None,
         ocp_range: Optional[str] = None,
         **kwargs: Any
-    ) -> bytes:
+    ) -> AsyncIterator[bytes]:
         """Returns the content of the specified Compute Node file.
 
         :param pool_id: The ID of the Pool that contains the Compute Node. Required.
@@ -312,7 +312,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         if_unmodified_since: Optional[datetime.datetime] = None,
         ocp_range: Optional[str] = None,
         **kwargs: Any
-    ) -> bytes:
+    ) -> AsyncIterator[bytes]:
         """Returns the content of the specified Task file.
 
         :param job_id: The ID of the Job that contains the Task. Required.

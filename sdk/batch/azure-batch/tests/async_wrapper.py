@@ -1,5 +1,5 @@
 import inspect
-from typing import AsyncIterable, AsyncIterator, Any, cast, Coroutine, Iterable, Iterator, TypeVar, Union
+from typing import Any, AsyncIterator, AsyncIterable, cast, Coroutine, Iterable, Iterator, TypeVar, Union
 
 T = TypeVar("T")
 
