@@ -80,11 +80,11 @@ class RougeScoreEvaluator(EvaluatorBase):
         self._threshold = threshold
 
     def _get_binary_result(
-            self, 
-            rouge_precision: float, 
-            rouge_recall: float, 
-            rouge_f1_score: float
-        ) -> Dict[str, bool]:
+            self,
+            rouge_precision: float,
+            rouge_recall: float,
+            rouge_f1_score: float,
+    ) -> Dict[str, bool]:
         """
         Get binary result based on the threshold.
 
@@ -95,7 +95,7 @@ class RougeScoreEvaluator(EvaluatorBase):
         :param rouge_f1_score: The F1 score.
         :type rouge_f1_score: float
         :return: A dictionary with binary results for precision, recall, and F1 score.
-        
+
         """
         # Initialize results with False for NaN values
         results = {
@@ -103,48 +103,35 @@ class RougeScoreEvaluator(EvaluatorBase):
             "rouge_recall_result": False,
             "rouge_f1_score_result": False,
         }
-        
+
         # Check if values are valid (not NaN) before comparison
         precision_valid = not math.isnan(rouge_precision)
         recall_valid = not math.isnan(rouge_recall)
         f1_valid = not math.isnan(rouge_f1_score)
-        
-        if isinstance(self._threshold, dict):
-            # If threshold is a dictionary, extract the value for the specified rouge type
-            if all(key in self._threshold for key in ["precision", "recall", "f1_score"]):
-                if self._higher_is_better:
-                    if precision_valid:
-                        results["rouge_precision_result"] = (rouge_precision >= self._threshold["precision"])
-                    if recall_valid:
-                        results["rouge_recall_result"] = (rouge_recall >= self._threshold["recall"])
-                    if f1_valid:
-                        results["rouge_f1_score_result"] = (rouge_f1_score >= self._threshold["f1_score"])
-                else:
-                    if precision_valid:
-                        results["rouge_precision_result"] = (rouge_precision <= self._threshold["precision"])
-                    if recall_valid:
-                        results["rouge_recall_result"] = (rouge_recall <= self._threshold["recall"])
-                    if f1_valid:
-                        results["rouge_f1_score_result"] = (rouge_f1_score <= self._threshold["f1_score"])
-            else:
-                raise ValueError("Threshold dictionary must contain 'precision', 'recall', and 'f1_score' keys.")
-        elif isinstance(self._threshold, float):
-            # If threshold is a float, use it for all metrics
+        if isinstance(self._threshold, float):
+            self._threshold = {
+                "precision": self._threshold,
+                "recall": self._threshold,
+                "f1_score": self._threshold,
+            }
+
+        if all(key in self._threshold for key in ["precision", "recall", "f1_score"]):
             if self._higher_is_better:
                 if precision_valid:
-                    results["rouge_precision_result"] = (rouge_precision >= self._threshold)
+                    results["rouge_precision_result"] = (rouge_precision >= self._threshold["precision"])
                 if recall_valid:
-                    results["rouge_recall_result"] = (rouge_recall >= self._threshold)
+                    results["rouge_recall_result"] = (rouge_recall >= self._threshold["recall"])
                 if f1_valid:
-                    results["rouge_f1_score_result"] = (rouge_f1_score >= self._threshold)
+                    results["rouge_f1_score_result"] = (rouge_f1_score >= self._threshold["f1_score"])
             else:
                 if precision_valid:
-                    results["rouge_precision_result"] = (rouge_precision <= self._threshold)
+                    results["rouge_precision_result"] = (rouge_precision <= self._threshold["precision"])
                 if recall_valid:
-                    results["rouge_recall_result"] = (rouge_recall <= self._threshold)
+                    results["rouge_recall_result"] = (rouge_recall <= self._threshold["recall"])
                 if f1_valid:
-                    results["rouge_f1_score_result"] = (rouge_f1_score <= self._threshold)
-                    
+                    results["rouge_f1_score_result"] = (rouge_f1_score <= self._threshold["f1_score"])
+        else:
+            raise ValueError("Threshold dictionary must contain 'precision', 'recall', and 'f1_score' keys.")
         return results
 
     @override
@@ -181,7 +168,9 @@ class RougeScoreEvaluator(EvaluatorBase):
             "rouge_precision_result": EVALUATION_PASS_FAIL_MAPPING[binary_results["rouge_precision_result"]],
             "rouge_recall_result": EVALUATION_PASS_FAIL_MAPPING[binary_results["rouge_recall_result"]],
             "rouge_f1_score_result": EVALUATION_PASS_FAIL_MAPPING[binary_results["rouge_f1_score_result"]],
-            "rouge_threshold": self._threshold,
+            "rouge_precision_threshold": self._threshold["precision"],
+            "rouge_recall_threshold": self._threshold["recall"],
+            "rouge_f1_score_threshold": self._threshold["f1_score"],
         }
 
     @overload  # type: ignore
