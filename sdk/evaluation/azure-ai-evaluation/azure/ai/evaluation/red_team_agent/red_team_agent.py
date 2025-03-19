@@ -1208,13 +1208,12 @@ class RedTeamAgent():
             
             # TODO: Implement aggregation of metrics across risk categories
             # TODO: Consider how to properly weight and combine metrics from different risk categories
-            
-            self.logger.info("Converting results to RedTeamAgentResult format")
-            red_team_agent_result = self._to_red_team_agent_result(cast(Dict[str, EvaluationResult], merged_results))
-            
+            red_team_agent_result = None
             if data_only: 
                 output =  RedTeamAgentOutput(redteaming_data=self._to_conversation(merged_results))
             else:
+                self.logger.info("Converting results to RedTeamAgentResult format")
+                red_team_agent_result = self._to_red_team_agent_result(cast(Dict[str, EvaluationResult], merged_results))
                 output = RedTeamAgentOutput(
                     red_team_agent_result=red_team_agent_result, 
                     redteaming_data=red_team_agent_result["redteaming_data"]
@@ -1235,13 +1234,11 @@ class RedTeamAgent():
         if output_path:
             self.logger.info(f"Writing output to {output_path}")
             _write_output(output_path, red_team_agent_result)
-            
-        self.logger.info("Generating scorecard")
-        scorecard = self._to_scorecard(red_team_agent_result)
-        print(scorecard)
+        
+        if red_team_agent_result:
+            self.logger.info("Generating scorecard")
+            scorecard = self._to_scorecard(red_team_agent_result)
+            print(scorecard)
         
         self.logger.info("Attack completed successfully")
-        return RedTeamAgentOutput(
-            red_team_agent_result=red_team_agent_result, 
-            redteaming_data=red_team_agent_result["redteaming_data"]
-        )
+        return output
