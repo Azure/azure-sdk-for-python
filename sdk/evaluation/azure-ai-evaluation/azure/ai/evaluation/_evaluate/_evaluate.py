@@ -152,12 +152,17 @@ def _aggregate_label_defect_metrics(df: pd.DataFrame) -> Tuple[List[str], Dict[s
         EvaluationMetrics.LOGOS_AND_BRANDS,
         _InternalEvaluationMetrics.ECI,
         EvaluationMetrics.XPIA,
+        EvaluationMetrics.CODE_VULNERABILITY,
+        EvaluationMetrics.UNGROUNDED_ATTRIBUTES,
     ]
     label_cols = []
+    details_cols = []
     for col in df.columns:
         metric_name = col.split(".")[1]
         if metric_name.endswith("_label") and metric_name.replace("_label", "").lower() in handled_metrics:
             label_cols.append(col)
+        if metric_name.endswith("_details") and metric_name.replace("_details", "").lower() in handled_metrics:    
+            details_cols = col
 
     label_df = df[label_cols]
     defect_rates = {}
@@ -169,8 +174,30 @@ def _aggregate_label_defect_metrics(df: pd.DataFrame) -> Tuple[List[str], Dict[s
         except EvaluationException:  # only exception that can be cause is all NaN values
             msg = f"All score evaluations are NaN/None for column {col}. No aggregation can be performed."
             LOGGER.warning(msg)
+    
+    if details_cols:
+        details_df = df[details_cols]
+        detail_defect_rates = {}
+        
+        for key, value in details_df.items():
+            _process_rows(value, detail_defect_rates)
+                    
+        for key, value in detail_defect_rates.items():
+            col_with_boolean_values = pd.to_numeric(value, errors="coerce")
+            try:
+                defect_rates[f"{details_cols}.{key}_defect_rate"] = round(list_mean_nan_safe(col_with_boolean_values), 2)
+            except EvaluationException:  # only exception that can be cause is all NaN values
+                msg = f"All score evaluations are NaN/None for column {key}. No aggregation can be performed."
+                LOGGER.warning(msg)
+                
     return label_cols, defect_rates
 
+def _process_rows(row, detail_defect_rates):
+    for key, value in row.items():
+        if key not in detail_defect_rates:
+            detail_defect_rates[key] = []
+        detail_defect_rates[key].append(value)
+    return detail_defect_rates
 
 def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Callable]) -> Dict[str, float]:
     """Aggregate metrics from the evaluation results.
@@ -486,8 +513,10 @@ def _apply_target_to_data(
     run_summary = batch_client.get_run_summary(run)
 
     if run_summary["completed_lines"] == 0:
-        msg = (f"Evaluation target failed to produce any results."
-               f" Please check the logs at {run_summary['log_path']} for more details about cause of failure.")
+        msg = (
+            f"Evaluation target failed to produce any results."
+            f" Please check the logs at {run_summary['log_path']} for more details about cause of failure."
+        )
         raise EvaluationException(
             message=msg,
             target=ErrorTarget.EVALUATE,

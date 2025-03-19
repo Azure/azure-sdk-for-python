@@ -33,11 +33,10 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class KeyVaultManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class KeyVaultManagementClient:  # pylint: disable=too-many-instance-attributes
     """The Azure management API provides a RESTful set of web services that interact with Azure Key
     Vault.
 
