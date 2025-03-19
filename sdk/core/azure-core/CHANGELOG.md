@@ -18,7 +18,6 @@
     - The `DistributedTracingPolicy` and `distributed_trace`/`distributed_trace_async` decorators now uses the OpenTelemetry tracer if it is available and native tracing is enabled.
         - SDK clients can define an `_instrumentation_config` class variable to configure the OpenTelemetry tracer used in method span creation. Possible configuration options are `library_name`, `library_version`, `schema_url`, and `attributes`.
         - `DistributedTracingPolicy` now accepts a `instrumentation_config` keyword argument to configure the OpenTelemetry tracer used in HTTP span creation.
-- Added `auth_flows` support in `BearerTokenCredentialPolicy`.
 
 ### Breaking Changes
 
