@@ -74,64 +74,6 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         )
 
 
-    def create_and_upload_folder(
-        self,
-        *,
-        name: str,
-        version: Optional[str] = None,
-        folder: str,
-        connection_name: Optional[str] = None,
-        **kwargs: Any
-    ) -> DatasetVersion:
-        """Upload all files in a folder and its sub folders to a blob storage, while maintaining 
-        relative paths, and create a dataset that references this folder.
-        This method uses the `ContainerClient.upload_blob` method from the azure-storage-blob package
-        to upload each file. Any keyword arguments provided will be passed to the `upload_blob` method.
-
-        :param name: The name of the dataset. Required.
-        :type name: str
-        :param version: The version identifier for the dataset. Optional.
-        :type version: str or None
-        :param folder: The folder name (including optional path) to be uploaded. Required.
-        :type file: str
-        :param connection_name: The name of the AI Project Connection to be used. Optional.
-        :type connection_name: str or None
-        :return: The created dataset version.
-        :rtype: ~azure.ai.projects.dp1.models.DatasetVersion
-        :raises ~azure.core.exceptions.HttpResponseError: If an error occurs during the HTTP request.
-        """
-        if not Path(folder).exists():
-            raise ValueError("The provided folder does not exist.")
-        if Path(folder).is_file():
-            raise ValueError("The provided folder is actually a file. Use method `create_and_upload_file` instead.")
-
-        with self._create_dataset_and_get_its_container_client(name=name, version=version, connection_name=connection_name) as container_client:
-
-            # Iterate through the files in the folder
-            for root, _, files in os.walk(folder):
-                for file_name in files:
-                    file_path = os.path.join(root, file_name)
-                    blob_name = os.path.relpath(file_path, folder)  # Blob name relative to the folder
-                    logger.debug("[%s] Start uploading file `%s` as blob `%s`.",inspect.currentframe().f_code.co_name, file_name, blob_name)
-                    with open(file_path, "rb") as data:
-                        # See https://learn.microsoft.com/en-us/python/api/azure-storage-blob/azure.storage.blob.containerclient?view=azure-python#azure-storage-blob-containerclient-upload-blob                    
-                        container_client.upload_blob(name=blob_name, data=data, **kwargs)
-                    logger.debug("[%s] Done uploaded.", inspect.currentframe().f_code.co_name)
-
-            dataset_version = self.create_or_update(
-                name=name,
-                version=version, 
-                dataset_version=DatasetVersion(
-                    # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.blobclient?view=azure-python#azure-storage-blob-blobclient-url
-                    # Per above doc the ".url" contains SAS token... should this be stripped away?
-                    dataset_uri=container_client.url, # "<account>.blob.windows.core.net/<container> ?"
-                    dataset_type=DatasetType.URI_FOLDER,
-                ),
-            )
-
-        return dataset_version
-
-
     def create_and_upload_file(
         self,
         *,
@@ -189,6 +131,64 @@ class DatasetsOperations(DatasetsOperationsGenerated):
                             dataset_type=DatasetType.URI_FILE,
                         ),
                     )
+
+        return dataset_version
+
+
+    def create_and_upload_folder(
+        self,
+        *,
+        name: str,
+        version: Optional[str] = None,
+        folder: str,
+        connection_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> DatasetVersion:
+        """Upload all files in a folder and its sub folders to a blob storage, while maintaining 
+        relative paths, and create a dataset that references this folder.
+        This method uses the `ContainerClient.upload_blob` method from the azure-storage-blob package
+        to upload each file. Any keyword arguments provided will be passed to the `upload_blob` method.
+
+        :param name: The name of the dataset. Required.
+        :type name: str
+        :param version: The version identifier for the dataset. Optional.
+        :type version: str or None
+        :param folder: The folder name (including optional path) to be uploaded. Required.
+        :type file: str
+        :param connection_name: The name of the AI Project Connection to be used. Optional.
+        :type connection_name: str or None
+        :return: The created dataset version.
+        :rtype: ~azure.ai.projects.dp1.models.DatasetVersion
+        :raises ~azure.core.exceptions.HttpResponseError: If an error occurs during the HTTP request.
+        """
+        if not Path(folder).exists():
+            raise ValueError("The provided folder does not exist.")
+        if Path(folder).is_file():
+            raise ValueError("The provided folder is actually a file. Use method `create_and_upload_file` instead.")
+
+        with self._create_dataset_and_get_its_container_client(name=name, version=version, connection_name=connection_name) as container_client:
+
+            # Iterate through the files in the folder
+            for root, _, files in os.walk(folder):
+                for file_name in files:
+                    file_path = os.path.join(root, file_name)
+                    blob_name = os.path.relpath(file_path, folder)  # Blob name relative to the folder
+                    logger.debug("[%s] Start uploading file `%s` as blob `%s`.",inspect.currentframe().f_code.co_name, file_name, blob_name)
+                    with open(file_path, "rb") as data:
+                        # See https://learn.microsoft.com/en-us/python/api/azure-storage-blob/azure.storage.blob.containerclient?view=azure-python#azure-storage-blob-containerclient-upload-blob                    
+                        container_client.upload_blob(name=blob_name, data=data, **kwargs)
+                    logger.debug("[%s] Done uploaded.", inspect.currentframe().f_code.co_name)
+
+            dataset_version = self.create_or_update(
+                name=name,
+                version=version, 
+                dataset_version=DatasetVersion(
+                    # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.blobclient?view=azure-python#azure-storage-blob-blobclient-url
+                    # Per above doc the ".url" contains SAS token... should this be stripped away?
+                    dataset_uri=container_client.url, # "<account>.blob.windows.core.net/<container> ?"
+                    dataset_type=DatasetType.URI_FOLDER,
+                ),
+            )
 
         return dataset_version
 
