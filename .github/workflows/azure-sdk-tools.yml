@@ -7,15 +7,12 @@ on:
     paths:
       - "tools/azure-sdk-tools/**"
 
-
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      # todo before checkin: multiplex to include running tests on py38 -> 312
       - name: Set up Python 3.11
         uses: actions/setup-python@v4
         with:
