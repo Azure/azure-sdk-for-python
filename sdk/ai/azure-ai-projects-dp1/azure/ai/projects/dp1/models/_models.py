@@ -15,6 +15,7 @@ from .. import _model_base
 from .._model_base import rest_discriminator, rest_field
 from ._enums import (
     CredentialType,
+    DatasetType,
     IndexType,
     OpenApiAuthType,
     PendingUploadType,
@@ -29,9 +30,6 @@ if TYPE_CHECKING:
 
 class Agent(_model_base.Model):
     """Represents an agent that can call the model and use tools.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar id: The identifier, which can be referenced in API endpoints. Required.
     :vartype id: str
@@ -156,9 +154,6 @@ class Agent(_model_base.Model):
 class AgentDeletionStatus(_model_base.Model):
     """The status of an agent deletion operation.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: The ID of the resource specified for deletion. Required.
     :vartype id: str
     :ivar deleted: A value indicating whether deletion was successful. Required.
@@ -232,9 +227,8 @@ class AgentsApiResponseFormat(_model_base.Model):
 class AgentsNamedToolChoice(_model_base.Model):
     """Specifies a tool the model should use. Use to force the model to call a specific tool.
 
-
-    :ivar type: the type of tool. If type is ``function``\\ , the function name must be set.
-     Required. Known values are: "function", "code_interpreter", "file_search", "bing_grounding",
+    :ivar type: the type of tool. If type is ``function``, the function name must be set. Required.
+     Known values are: "function", "code_interpreter", "file_search", "bing_grounding",
      "fabric_aiskill", "sharepoint_grounding", and "azure_ai_search".
     :vartype type: str or ~azure.ai.projects.dp1.models.AgentsNamedToolChoiceType
     :ivar function: The name of the function to call.
@@ -244,7 +238,7 @@ class AgentsNamedToolChoice(_model_base.Model):
     type: Union[str, "_models.AgentsNamedToolChoiceType"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """the type of tool. If type is ``function``\ , the function name must be set. Required. Known
+    """the type of tool. If type is ``function``, the function name must be set. Required. Known
      values are: \"function\", \"code_interpreter\", \"file_search\", \"bing_grounding\",
      \"fabric_aiskill\", \"sharepoint_grounding\", and \"azure_ai_search\"."""
     function: Optional["_models.FunctionName"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -271,9 +265,6 @@ class AgentsNamedToolChoice(_model_base.Model):
 
 class AgentThread(_model_base.Model):
     """Information about a single thread associated with an agent.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar id: The identifier, which can be referenced in API endpoints. Required.
     :vartype id: str
@@ -395,9 +386,6 @@ class Index(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureAISearchIndex, CosmosDBIndex, ManagedAzureAISearchIndex
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar index_type: Type of index. Required. Known values are: "AzureSearch",
      "CosmosDBNoSqlVectorStore", and "ManagedAzureSearch".
     :vartype index_type: str or ~azure.ai.projects.dp1.models.IndexType
@@ -405,9 +393,9 @@ class Index(_model_base.Model):
     :vartype stage: str
     :ivar id: A unique identifier for the asset, assetId probably?.
     :vartype id: str
-    :ivar name: The name of the resource.
+    :ivar name: The name of the resource. Required.
     :vartype name: str
-    :ivar version: The version of the resource.
+    :ivar version: The version of the resource. Required.
     :vartype version: str
     :ivar description: The asset description text.
     :vartype description: str
@@ -425,10 +413,10 @@ class Index(_model_base.Model):
     """Asset stage."""
     id: Optional[str] = rest_field(visibility=["read"])
     """A unique identifier for the asset, assetId probably?."""
-    name: Optional[str] = rest_field(visibility=["read"])
-    """The name of the resource."""
-    version: Optional[str] = rest_field(visibility=["read"])
-    """The version of the resource."""
+    name: str = rest_field(visibility=["read"])
+    """The name of the resource. Required."""
+    version: str = rest_field(visibility=["read"])
+    """The version of the resource. Required."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The asset description text."""
     tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -460,16 +448,13 @@ class Index(_model_base.Model):
 class AzureAISearchIndex(Index, discriminator="AzureSearch"):
     """Azure AI Search Index Definition.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar stage: Asset stage.
     :vartype stage: str
     :ivar id: A unique identifier for the asset, assetId probably?.
     :vartype id: str
-    :ivar name: The name of the resource.
+    :ivar name: The name of the resource. Required.
     :vartype name: str
-    :ivar version: The version of the resource.
+    :ivar version: The version of the resource. Required.
     :vartype version: str
     :ivar description: The asset description text.
     :vartype description: str
@@ -554,7 +539,6 @@ class ToolDefinition(_model_base.Model):
     CodeInterpreterToolDefinition, MicrosoftFabricToolDefinition, FileSearchToolDefinition,
     FunctionToolDefinition, OpenApiToolDefinition, SharepointToolDefinition
 
-
     :ivar type: The object type. Required. Default value is None.
     :vartype type: str
     """
@@ -584,7 +568,6 @@ class ToolDefinition(_model_base.Model):
 class AzureAISearchToolDefinition(ToolDefinition, discriminator="azure_ai_search"):
     """The input definition information for an Azure AI search tool as used to configure an agent.
 
-
     :ivar type: The object type, which is always 'azure_ai_search'. Required. Default value is
      "azure_ai_search".
     :vartype type: str
@@ -612,9 +595,6 @@ class AzureAISearchToolDefinition(ToolDefinition, discriminator="azure_ai_search
 
 class AzureFunctionBinding(_model_base.Model):
     """The structure for keeping storage queue name and URI.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar type: The type of binding, which is always 'storage_queue'. Required. Default value is
      "storage_queue".
@@ -652,7 +632,6 @@ class AzureFunctionBinding(_model_base.Model):
 
 class AzureFunctionDefinition(_model_base.Model):
     """The definition of Azure function.
-
 
     :ivar function: The definition of azure function and its parameters. Required.
     :vartype function: ~azure.ai.projects.dp1.models.FunctionDefinition
@@ -700,7 +679,6 @@ class AzureFunctionDefinition(_model_base.Model):
 class AzureFunctionStorageQueue(_model_base.Model):
     """The structure for keeping storage queue name and URI.
 
-
     :ivar storage_service_endpoint: URI to the Azure Storage Queue service allowing you to
      manipulate a queue. Required.
     :vartype storage_service_endpoint: str
@@ -736,7 +714,6 @@ class AzureFunctionStorageQueue(_model_base.Model):
 
 class AzureFunctionToolDefinition(ToolDefinition, discriminator="azure_function"):
     """The input definition information for a azure function tool as used to configure an agent.
-
 
     :ivar type: The object type, which is always 'azure_function'. Required. Default value is
      "azure_function".
@@ -778,9 +755,6 @@ class BaseCredential(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AadCredential, ApiKeyCredential, SasCredential
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar type: Type of credential. Possible values are: AAD, SAS, ApiKey. Required. Known values
      are: "ApiKey", "AAD", and "SAS".
     :vartype type: str or ~azure.ai.projects.dp1.models.CredentialType
@@ -812,7 +786,6 @@ class BaseCredential(_model_base.Model):
 class BingGroundingToolDefinition(ToolDefinition, discriminator="bing_grounding"):
     """The input definition information for a bing grounding search tool as used to configure an
     agent.
-
 
     :ivar type: The object type, which is always 'bing_grounding'. Required. Default value is
      "bing_grounding".
@@ -850,9 +823,9 @@ class BingGroundingToolDefinition(ToolDefinition, discriminator="bing_grounding"
 class BlobReferenceForConsumption(_model_base.Model):
     """Represents a reference to a blob for consumption.
 
-
     :ivar blob_uri: Blob URI path for client to upload data. Example:
-     https://blob.windows.core.net/Container/Path. Required.
+     `https://blob.windows.core.net/Container/Path <https://blob.windows.core.net/Container/Path>`_.
+     Required.
     :vartype blob_uri: str
     :ivar storage_account_arm_id: ARM ID of the storage account to use. Required.
     :vartype storage_account_arm_id: str
@@ -861,8 +834,8 @@ class BlobReferenceForConsumption(_model_base.Model):
     """
 
     blob_uri: str = rest_field(name="blobUri", visibility=["read", "create", "update", "delete", "query"])
-    """Blob URI path for client to upload data. Example: https://blob.windows.core.net/Container/Path.
-     Required."""
+    """Blob URI path for client to upload data. Example: `https://blob.windows.core.net/Container/Path
+     <https://blob.windows.core.net/Container/Path>`_. Required."""
     storage_account_arm_id: str = rest_field(
         name="storageAccountArmId", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -892,7 +865,6 @@ class BlobReferenceForConsumption(_model_base.Model):
 
 class CodeInterpreterToolDefinition(ToolDefinition, discriminator="code_interpreter"):
     """The input definition information for a code interpreter tool as used to configure an agent.
-
 
     :ivar type: The object type, which is always 'code_interpreter'. Required. Default value is
      "code_interpreter".
@@ -962,9 +934,6 @@ class CodeInterpreterToolResource(_model_base.Model):
 class Connection(_model_base.Model):
     """Response from the listSecrets operation.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar name: The name of the resource. Required.
     :vartype name: str
     :ivar type: Category of the connection. Required. Known values are: "AzureOpenAI", "AzureBlob",
@@ -1007,16 +976,13 @@ class Connection(_model_base.Model):
 class CosmosDBIndex(Index, discriminator="CosmosDBNoSqlVectorStore"):
     """CosmosDB Vector Store Index Definition.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar stage: Asset stage.
     :vartype stage: str
     :ivar id: A unique identifier for the asset, assetId probably?.
     :vartype id: str
-    :ivar name: The name of the resource.
+    :ivar name: The name of the resource. Required.
     :vartype name: str
-    :ivar version: The version of the resource.
+    :ivar version: The version of the resource. Required.
     :vartype version: str
     :ivar description: The asset description text.
     :vartype description: str
@@ -1076,21 +1042,25 @@ class CosmosDBIndex(Index, discriminator="CosmosDBNoSqlVectorStore"):
 class DatasetVersion(_model_base.Model):
     """DatasetVersion Definition.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    FileDatasetVersion, FolderDatasetVersion
 
     :ivar dataset_uri: [Required] Uri of the data. Example:
-     https://go.microsoft.com/fwlink/?linkid=2202330. Required.
+     `https://go.microsoft.com/fwlink/?linkid=2202330
+     <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required.
     :vartype dataset_uri: str
-    :ivar dataset_type: Data type. Required. "uri_file"
-    :vartype dataset_type: str or ~azure.ai.projects.dp1.models.DatasetType
+    :ivar type: Dataset type. Required. Known values are: "uri_file" and "uri_folder".
+    :vartype type: str or ~azure.ai.projects.dp1.models.DatasetType
+    :ivar is_reference: Indicates if dataset is reference only or managed by dataset service. If
+     true, the underlying data will be deleted when the dataset version is deleted.
+    :vartype is_reference: bool
     :ivar stage: Asset stage.
     :vartype stage: str
     :ivar id: A unique identifier for the asset, assetId probably?.
     :vartype id: str
-    :ivar name: The name of the resource.
+    :ivar name: The name of the resource. Required.
     :vartype name: str
-    :ivar version: The version of the resource.
+    :ivar version: The version of the resource. Required.
     :vartype version: str
     :ivar description: The asset description text.
     :vartype description: str
@@ -1100,20 +1070,23 @@ class DatasetVersion(_model_base.Model):
     :vartype system_data: ~azure.ai.projects.dp1.models.SystemData
     """
 
+    __mapping__: Dict[str, _model_base.Model] = {}
     dataset_uri: str = rest_field(name="datasetUri", visibility=["read", "create"])
-    """[Required] Uri of the data. Example: https://go.microsoft.com/fwlink/?linkid=2202330. Required."""
-    dataset_type: Union[str, "_models.DatasetType"] = rest_field(
-        name="datasetType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Data type. Required. \"uri_file\""""
+    """[Required] Uri of the data. Example: `https://go.microsoft.com/fwlink/?linkid=2202330
+     <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required."""
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """Dataset type. Required. Known values are: \"uri_file\" and \"uri_folder\"."""
+    is_reference: Optional[bool] = rest_field(name="isReference", visibility=["read"])
+    """Indicates if dataset is reference only or managed by dataset service. If true, the underlying
+     data will be deleted when the dataset version is deleted."""
     stage: Optional[str] = rest_field(visibility=["read", "create", "update"])
     """Asset stage."""
     id: Optional[str] = rest_field(visibility=["read"])
     """A unique identifier for the asset, assetId probably?."""
-    name: Optional[str] = rest_field(visibility=["read"])
-    """The name of the resource."""
-    version: Optional[str] = rest_field(visibility=["read"])
-    """The version of the resource."""
+    name: str = rest_field(visibility=["read"])
+    """The name of the resource. Required."""
+    version: str = rest_field(visibility=["read"])
+    """The version of the resource. Required."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The asset description text."""
     tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1126,7 +1099,7 @@ class DatasetVersion(_model_base.Model):
         self,
         *,
         dataset_uri: str,
-        dataset_type: Union[str, "_models.DatasetType"],
+        type: str,
         stage: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
@@ -1145,9 +1118,6 @@ class DatasetVersion(_model_base.Model):
 
 class Deployment(_model_base.Model):
     """Model Deployment Definition.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar name: Name of the deployment. Required.
     :vartype name: str
@@ -1183,7 +1153,6 @@ class Deployment(_model_base.Model):
 
 class EmbeddingConfiguration(_model_base.Model):
     """Embedding configuration class.
-
 
     :ivar connection_id: Connection id to embedding model.
     :vartype connection_id: str
@@ -1224,9 +1193,6 @@ class EmbeddingConfiguration(_model_base.Model):
 
 class Evaluation(_model_base.Model):
     """Evaluation Definition.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar id: Identifier of the evaluation. Required.
     :vartype id: str
@@ -1303,7 +1269,6 @@ class Evaluation(_model_base.Model):
 class EvaluatorConfiguration(_model_base.Model):
     """Evaluator Configuration.
 
-
     :ivar id: Identifier of the evaluator. Required.
     :vartype id: str
     :ivar init_params: Initialization parameters of the evaluator.
@@ -1343,11 +1308,67 @@ class EvaluatorConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class FileDatasetVersion(DatasetVersion, discriminator="uri_file"):
+    """FileDatasetVersion Definition.
+
+    :ivar dataset_uri: [Required] Uri of the data. Example:
+     `https://go.microsoft.com/fwlink/?linkid=2202330
+     <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required.
+    :vartype dataset_uri: str
+    :ivar is_reference: Indicates if dataset is reference only or managed by dataset service. If
+     true, the underlying data will be deleted when the dataset version is deleted.
+    :vartype is_reference: bool
+    :ivar stage: Asset stage.
+    :vartype stage: str
+    :ivar id: A unique identifier for the asset, assetId probably?.
+    :vartype id: str
+    :ivar name: The name of the resource. Required.
+    :vartype name: str
+    :ivar version: The version of the resource. Required.
+    :vartype version: str
+    :ivar description: The asset description text.
+    :vartype description: str
+    :ivar tags: Tag dictionary. Tags can be added, removed, and updated.
+    :vartype tags: dict[str, str]
+    :ivar system_data: System data of the resource.
+    :vartype system_data: ~azure.ai.projects.dp1.models.SystemData
+    :ivar type: Dataset type. Required. URI file.
+    :vartype type: str or ~azure.ai.projects.dp1.models.URI_FILE
+    :ivar open_ai_purpose: Indicates OpenAI Purpose. FileDatasets created with this field will be
+     compatible with OpenAI-specific features. Required.
+    :vartype open_ai_purpose: str
+    """
+
+    type: Literal[DatasetType.URI_FILE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Dataset type. Required. URI file."""
+    open_ai_purpose: str = rest_field(name="openAIPurpose", visibility=["read", "create", "update", "delete", "query"])
+    """Indicates OpenAI Purpose. FileDatasets created with this field will be compatible with
+     OpenAI-specific features. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        dataset_uri: str,
+        open_ai_purpose: str,
+        stage: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type=DatasetType.URI_FILE, **kwargs)
+
+
 class FileDeletionStatus(_model_base.Model):
     """A status response from a file deletion operation.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar id: The ID of the resource specified for deletion. Required.
     :vartype id: str
@@ -1387,9 +1408,6 @@ class FileDeletionStatus(_model_base.Model):
 class FileListResponse(_model_base.Model):
     """The response data from a file list operation.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar object: The object type, which is always 'list'. Required. Default value is "list".
     :vartype object: str
     :ivar data: The files returned for the request. Required.
@@ -1422,7 +1440,6 @@ class FileListResponse(_model_base.Model):
 
 class FileSearchRankingOptions(_model_base.Model):
     """Ranking options for file search.
-
 
     :ivar ranker: File search ranker. Required.
     :vartype ranker: str
@@ -1457,9 +1474,6 @@ class FileSearchRankingOptions(_model_base.Model):
 class FileSearchToolCallContent(_model_base.Model):
     """The file search result content object.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar type: The type of the content. Required. Default value is "text".
     :vartype type: str
     :ivar text: The text content of the file. Required.
@@ -1492,7 +1506,6 @@ class FileSearchToolCallContent(_model_base.Model):
 
 class FileSearchToolDefinition(ToolDefinition, discriminator="file_search"):
     """The input definition information for a file search tool as used to configure an agent.
-
 
     :ivar type: The object type, which is always 'file_search'. Required. Default value is
      "file_search".
@@ -1612,9 +1625,60 @@ class FileSearchToolResource(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class FolderDatasetVersion(DatasetVersion, discriminator="uri_folder"):
+    """FileDatasetVersion Definition.
+
+    :ivar dataset_uri: [Required] Uri of the data. Example:
+     `https://go.microsoft.com/fwlink/?linkid=2202330
+     <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required.
+    :vartype dataset_uri: str
+    :ivar is_reference: Indicates if dataset is reference only or managed by dataset service. If
+     true, the underlying data will be deleted when the dataset version is deleted.
+    :vartype is_reference: bool
+    :ivar stage: Asset stage.
+    :vartype stage: str
+    :ivar id: A unique identifier for the asset, assetId probably?.
+    :vartype id: str
+    :ivar name: The name of the resource. Required.
+    :vartype name: str
+    :ivar version: The version of the resource. Required.
+    :vartype version: str
+    :ivar description: The asset description text.
+    :vartype description: str
+    :ivar tags: Tag dictionary. Tags can be added, removed, and updated.
+    :vartype tags: dict[str, str]
+    :ivar system_data: System data of the resource.
+    :vartype system_data: ~azure.ai.projects.dp1.models.SystemData
+    :ivar type: Dataset type. Required. URI folder.
+    :vartype type: str or ~azure.ai.projects.dp1.models.URI_FOLDER
+    """
+
+    type: Literal[DatasetType.URI_FOLDER] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Dataset type. Required. URI folder."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        dataset_uri: str,
+        stage: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type=DatasetType.URI_FOLDER, **kwargs)
+
+
 class FunctionDefinition(_model_base.Model):
     """The input definition information for a function.
-
 
     :ivar name: The name of the function to be called. Required.
     :vartype name: str
@@ -1657,7 +1721,6 @@ class FunctionDefinition(_model_base.Model):
 class FunctionName(_model_base.Model):
     """The function name that will be used, if using the ``function`` tool.
 
-
     :ivar name: The name of the function to call. Required.
     :vartype name: str
     """
@@ -1685,7 +1748,6 @@ class FunctionName(_model_base.Model):
 
 class FunctionToolDefinition(ToolDefinition, discriminator="function"):
     """The input definition information for a function tool as used to configure an agent.
-
 
     :ivar type: The object type, which is always 'function'. Required. Default value is "function".
     :vartype type: str
@@ -1720,7 +1782,6 @@ class FunctionToolDefinition(ToolDefinition, discriminator="function"):
 class IncompleteRunDetails(_model_base.Model):
     """Details on why the run is incomplete. Will be ``null`` if the run is not incomplete.
 
-
     :ivar reason: The reason why the run is incomplete. This indicates which specific token limit
      was reached during the run. Required. Known values are: "max_completion_tokens" and
      "max_prompt_tokens".
@@ -1754,7 +1815,6 @@ class IncompleteRunDetails(_model_base.Model):
 
 class IndexResource(_model_base.Model):
     """A Index resource.
-
 
     :ivar index_connection_id: An index connection id in an IndexResource attached to this agent.
      Required.
@@ -1793,7 +1853,6 @@ class InputData(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     InputDataset
 
-
     :ivar type: Type of the data. Required. Default value is None.
     :vartype type: str
     """
@@ -1822,7 +1881,6 @@ class InputData(_model_base.Model):
 
 class InputDataset(InputData, discriminator="dataset"):
     """Dataset as source for evaluation.
-
 
     :ivar type: Required. Default value is "dataset".
     :vartype type: str
@@ -1856,16 +1914,13 @@ class InputDataset(InputData, discriminator="dataset"):
 class ManagedAzureAISearchIndex(Index, discriminator="ManagedAzureSearch"):
     """Managed Azure AI Search Index Definition.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar stage: Asset stage.
     :vartype stage: str
     :ivar id: A unique identifier for the asset, assetId probably?.
     :vartype id: str
-    :ivar name: The name of the resource.
+    :ivar name: The name of the resource. Required.
     :vartype name: str
-    :ivar version: The version of the resource.
+    :ivar version: The version of the resource. Required.
     :vartype version: str
     :ivar description: The asset description text.
     :vartype description: str
@@ -1907,7 +1962,6 @@ class ManagedAzureAISearchIndex(Index, discriminator="ManagedAzureSearch"):
 
 class MessageAttachment(_model_base.Model):
     """This describes to which tools a file has been attached.
-
 
     :ivar file_id: The ID of the file to attach to the message.
     :vartype file_id: str
@@ -1955,7 +2009,6 @@ class MessageContent(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     MessageImageFileContent, MessageTextContent
 
-
     :ivar type: The object type. Required. Default value is None.
     :vartype type: str
     """
@@ -1984,7 +2037,6 @@ class MessageContent(_model_base.Model):
 
 class MessageImageFileContent(MessageContent, discriminator="image_file"):
     """A representation of image file content in a thread message.
-
 
     :ivar type: The object type, which is always 'image_file'. Required. Default value is
      "image_file".
@@ -2021,7 +2073,6 @@ class MessageImageFileContent(MessageContent, discriminator="image_file"):
 class MessageImageFileDetails(_model_base.Model):
     """An image reference, as represented in thread message content.
 
-
     :ivar file_id: The ID for the file associated with this image. Required.
     :vartype file_id: str
     """
@@ -2049,7 +2100,6 @@ class MessageImageFileDetails(_model_base.Model):
 
 class MessageIncompleteDetails(_model_base.Model):
     """Information providing additional detail about a message entering an incomplete status.
-
 
     :ivar reason: The provided reason describing why the message was marked as incomplete.
      Required. Known values are: "content_filter", "max_tokens", "run_cancelled", "run_failed", and
@@ -2088,7 +2138,6 @@ class MessageTextAnnotation(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     MessageTextFileCitationAnnotation, MessageTextFilePathAnnotation
 
-
     :ivar type: The object type. Required. Default value is None.
     :vartype type: str
     :ivar text: The textual content associated with this text annotation item. Required.
@@ -2123,7 +2172,6 @@ class MessageTextAnnotation(_model_base.Model):
 class MessageTextContent(MessageContent, discriminator="text"):
     """A representation of a textual item of thread message content.
 
-
     :ivar type: The object type, which is always 'text'. Required. Default value is "text".
     :vartype type: str
     :ivar text: The text and associated annotations for this thread message content item. Required.
@@ -2155,7 +2203,6 @@ class MessageTextContent(MessageContent, discriminator="text"):
 
 class MessageTextDetails(_model_base.Model):
     """The text and associated annotations for a single item of agent thread message content.
-
 
     :ivar value: The text data. Required.
     :vartype value: str
@@ -2193,7 +2240,6 @@ class MessageTextFileCitationAnnotation(MessageTextAnnotation, discriminator="fi
     """A citation within the message that points to a specific quote from a specific File associated
     with the agent or the message. Generated when the agent uses the 'file_search' tool to search
     files.
-
 
     :ivar text: The textual content associated with this text annotation item. Required.
     :vartype text: str
@@ -2247,7 +2293,6 @@ class MessageTextFileCitationDetails(_model_base.Model):
     """A representation of a file-based text citation, as used in a file-based annotation of text
     thread message content.
 
-
     :ivar file_id: The ID of the file associated with this citation. Required.
     :vartype file_id: str
     :ivar quote: The specific quote cited in the associated file. Required.
@@ -2280,7 +2325,6 @@ class MessageTextFileCitationDetails(_model_base.Model):
 
 class MessageTextFilePathAnnotation(MessageTextAnnotation, discriminator="file_path"):
     """A citation within the message that points to a file located at a specific path.
-
 
     :ivar text: The textual content associated with this text annotation item. Required.
     :vartype text: str
@@ -2332,7 +2376,6 @@ class MessageTextFilePathAnnotation(MessageTextAnnotation, discriminator="file_p
 class MessageTextFilePathDetails(_model_base.Model):
     """An encapsulation of an image file ID, as used by message image content.
 
-
     :ivar file_id: The ID of the specific file that the citation is from. Required.
     :vartype file_id: str
     """
@@ -2360,7 +2403,6 @@ class MessageTextFilePathDetails(_model_base.Model):
 
 class MicrosoftFabricToolDefinition(ToolDefinition, discriminator="fabric_aiskill"):
     """The input definition information for a Microsoft Fabric tool as used to configure an agent.
-
 
     :ivar type: The object type, which is always 'fabric_aiskill'. Required. Default value is
      "fabric_aiskill".
@@ -2397,9 +2439,6 @@ class MicrosoftFabricToolDefinition(ToolDefinition, discriminator="fabric_aiskil
 
 class OpenAIFile(_model_base.Model):
     """Represents an agent that can call the model and use tools.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar object: The object type, which is always 'file'. Required. Default value is "file".
     :vartype object: str
@@ -2477,9 +2516,6 @@ class OpenAIFile(_model_base.Model):
 class OpenAIPageableListOfAgent(_model_base.Model):
     """The response data for a requested list of items.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar object: The object type, which is always list. Required. Default value is "list".
     :vartype object: str
     :ivar data: The requested list of items. Required.
@@ -2529,9 +2565,6 @@ class OpenAIPageableListOfAgent(_model_base.Model):
 
 class OpenAIPageableListOfRunStep(_model_base.Model):
     """The response data for a requested list of items.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar object: The object type, which is always list. Required. Default value is "list".
     :vartype object: str
@@ -2583,9 +2616,6 @@ class OpenAIPageableListOfRunStep(_model_base.Model):
 class OpenAIPageableListOfThreadMessage(_model_base.Model):
     """The response data for a requested list of items.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar object: The object type, which is always list. Required. Default value is "list".
     :vartype object: str
     :ivar data: The requested list of items. Required.
@@ -2635,9 +2665,6 @@ class OpenAIPageableListOfThreadMessage(_model_base.Model):
 
 class OpenAIPageableListOfThreadRun(_model_base.Model):
     """The response data for a requested list of items.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar object: The object type, which is always list. Required. Default value is "list".
     :vartype object: str
@@ -2689,9 +2716,6 @@ class OpenAIPageableListOfThreadRun(_model_base.Model):
 class OpenAIPageableListOfVectorStore(_model_base.Model):
     """The response data for a requested list of items.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar object: The object type, which is always list. Required. Default value is "list".
     :vartype object: str
     :ivar data: The requested list of items. Required.
@@ -2741,9 +2765,6 @@ class OpenAIPageableListOfVectorStore(_model_base.Model):
 
 class OpenAIPageableListOfVectorStoreFile(_model_base.Model):
     """The response data for a requested list of items.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar object: The object type, which is always list. Required. Default value is "list".
     :vartype object: str
@@ -2798,7 +2819,6 @@ class OpenApiAuthDetails(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     OpenApiAnonymousAuthDetails, OpenApiConnectionAuthDetails, OpenApiManagedAuthDetails
 
-
     :ivar type: The type of authentication, must be anonymous/connection/managed_identity.
      Required. Known values are: "anonymous", "connection", and "managed_identity".
     :vartype type: str or ~azure.ai.projects.dp1.models.OpenApiAuthType
@@ -2830,7 +2850,6 @@ class OpenApiAuthDetails(_model_base.Model):
 class OpenApiAnonymousAuthDetails(OpenApiAuthDetails, discriminator="anonymous"):
     """Security details for OpenApi anonymous authentication.
 
-
     :ivar type: The object type, which is always 'anonymous'. Required.
     :vartype type: str or ~azure.ai.projects.dp1.models.ANONYMOUS
     """
@@ -2856,7 +2875,6 @@ class OpenApiAnonymousAuthDetails(OpenApiAuthDetails, discriminator="anonymous")
 
 class OpenApiConnectionAuthDetails(OpenApiAuthDetails, discriminator="connection"):
     """Security details for OpenApi connection authentication.
-
 
     :ivar type: The object type, which is always 'connection'. Required.
     :vartype type: str or ~azure.ai.projects.dp1.models.CONNECTION
@@ -2892,7 +2910,6 @@ class OpenApiConnectionAuthDetails(OpenApiAuthDetails, discriminator="connection
 class OpenApiConnectionSecurityScheme(_model_base.Model):
     """Security scheme for OpenApi managed_identity authentication.
 
-
     :ivar connection_id: Connection id for Connection auth type. Required.
     :vartype connection_id: str
     """
@@ -2920,7 +2937,6 @@ class OpenApiConnectionSecurityScheme(_model_base.Model):
 
 class OpenApiFunctionDefinition(_model_base.Model):
     """The input definition information for an openapi function.
-
 
     :ivar name: The name of the function to be called. Required.
     :vartype name: str
@@ -2967,7 +2983,6 @@ class OpenApiFunctionDefinition(_model_base.Model):
 class OpenApiManagedAuthDetails(OpenApiAuthDetails, discriminator="managed_identity"):
     """Security details for OpenApi managed_identity authentication.
 
-
     :ivar type: The object type, which is always 'managed_identity'. Required.
     :vartype type: str or ~azure.ai.projects.dp1.models.MANAGED_IDENTITY
     :ivar security_scheme: Connection auth security details. Required.
@@ -3002,7 +3017,6 @@ class OpenApiManagedAuthDetails(OpenApiAuthDetails, discriminator="managed_ident
 class OpenApiManagedSecurityScheme(_model_base.Model):
     """Security scheme for OpenApi managed_identity authentication.
 
-
     :ivar audience: Authentication scope for managed_identity auth type. Required.
     :vartype audience: str
     """
@@ -3030,7 +3044,6 @@ class OpenApiManagedSecurityScheme(_model_base.Model):
 
 class OpenApiToolDefinition(ToolDefinition, discriminator="openapi"):
     """The input definition information for an OpenAPI tool as used to configure an agent.
-
 
     :ivar type: The object type, which is always 'openapi'. Required. Default value is "openapi".
     :vartype type: str
@@ -3066,10 +3079,11 @@ class OpenApiToolDefinition(ToolDefinition, discriminator="openapi"):
 class PendingUploadRequest(_model_base.Model):
     """Represents a request for a pending upload.
 
-    All required parameters must be populated in order to send to server.
-
     :ivar pending_upload_id: If PendingUploadId is not provided, a random GUID will be used.
     :vartype pending_upload_id: str
+    :ivar connection_name: Name of Azure blob storage connection to use for generating temporary
+     SAS token.
+    :vartype connection_name: str
     :ivar pending_upload_type: TemporaryBlobReference is the only supported type. Required.
      Temporary Blob Reference is the only supported type.
     :vartype pending_upload_type: str or ~azure.ai.projects.dp1.models.TEMPORARY_BLOB_REFERENCE
@@ -3079,6 +3093,10 @@ class PendingUploadRequest(_model_base.Model):
         name="pendingUploadId", visibility=["read", "create", "update", "delete", "query"]
     )
     """If PendingUploadId is not provided, a random GUID will be used."""
+    connection_name: Optional[str] = rest_field(
+        name="connectionName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Name of Azure blob storage connection to use for generating temporary SAS token."""
     pending_upload_type: Literal[PendingUploadType.TEMPORARY_BLOB_REFERENCE] = rest_field(
         name="pendingUploadType", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3091,6 +3109,7 @@ class PendingUploadRequest(_model_base.Model):
         *,
         pending_upload_type: Literal[PendingUploadType.TEMPORARY_BLOB_REFERENCE],
         pending_upload_id: Optional[str] = None,
+        connection_name: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -3107,12 +3126,14 @@ class PendingUploadRequest(_model_base.Model):
 class PendingUploadResponse(_model_base.Model):
     """Represents the response for a pending upload request.
 
-
     :ivar blob_reference_for_consumption: Container-level read, write, list SAS. Required.
     :vartype blob_reference_for_consumption:
      ~azure.ai.projects.dp1.models.BlobReferenceForConsumption
     :ivar pending_upload_id: ID for this upload request. Required.
     :vartype pending_upload_id: str
+    :ivar dataset_version: Version of dataset to be created if user did not specify version when
+     initially creating upload.
+    :vartype dataset_version: str
     :ivar pending_upload_type: TemporaryBlobReference is the only supported type. Required.
      Temporary Blob Reference is the only supported type.
     :vartype pending_upload_type: str or ~azure.ai.projects.dp1.models.TEMPORARY_BLOB_REFERENCE
@@ -3126,6 +3147,11 @@ class PendingUploadResponse(_model_base.Model):
         name="pendingUploadId", visibility=["read", "create", "update", "delete", "query"]
     )
     """ID for this upload request. Required."""
+    dataset_version: Optional[str] = rest_field(
+        name="datasetVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Version of dataset to be created if user did not specify version when initially creating
+     upload."""
     pending_upload_type: Literal[PendingUploadType.TEMPORARY_BLOB_REFERENCE] = rest_field(
         name="pendingUploadType", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3139,6 +3165,7 @@ class PendingUploadResponse(_model_base.Model):
         blob_reference_for_consumption: "_models.BlobReferenceForConsumption",
         pending_upload_id: str,
         pending_upload_type: Literal[PendingUploadType.TEMPORARY_BLOB_REFERENCE],
+        dataset_version: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -3157,7 +3184,6 @@ class RequiredAction(_model_base.Model):
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     SubmitToolOutputsAction
-
 
     :ivar type: The object type. Required. Default value is None.
     :vartype type: str
@@ -3190,7 +3216,6 @@ class RequiredToolCall(_model_base.Model):
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     RequiredFunctionToolCall
-
 
     :ivar type: The object type for the required tool call. Required. Default value is None.
     :vartype type: str
@@ -3227,7 +3252,6 @@ class RequiredToolCall(_model_base.Model):
 class RequiredFunctionToolCall(RequiredToolCall, discriminator="function"):
     """A representation of a requested call to a function tool, needed by the model to continue
     evaluation of a run.
-
 
     :ivar id: The ID of the tool call. This ID must be referenced when submitting tool outputs.
      Required.
@@ -3272,7 +3296,6 @@ class RequiredFunctionToolCallDetails(_model_base.Model):
     """The detailed information for a function invocation, as provided by a required action invoking a
     function tool, that includes the name of and arguments to the function.
 
-
     :ivar name: The name of the function. Required.
     :vartype name: str
     :ivar arguments: The arguments to use when invoking the named function, as provided by the
@@ -3309,7 +3332,6 @@ class RequiredFunctionToolCallDetails(_model_base.Model):
 class ResponseFormatJsonSchema(_model_base.Model):
     """A description of what the response format is for, used by the model to determine how to respond
     in the format.
-
 
     :ivar description: A description of what the response format is for, used by the model to
      determine how to respond in the format.
@@ -3351,9 +3373,6 @@ class ResponseFormatJsonSchema(_model_base.Model):
 class ResponseFormatJsonSchemaType(_model_base.Model):
     """The type of response format being defined: ``json_schema``.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar type: Type. Required. Default value is "json_schema".
     :vartype type: str
     :ivar json_schema: The JSON schema, describing response format. Required.
@@ -3388,8 +3407,7 @@ class ResponseFormatJsonSchemaType(_model_base.Model):
 
 class RunCompletionUsage(_model_base.Model):
     """Usage statistics related to the run. This value will be ``null`` if the run is not in a
-    terminal state (i.e. ``in_progress``\\ , ``queued``\\ , etc.).
-
+    terminal state (i.e. ``in_progress``, ``queued``, etc.).
 
     :ivar completion_tokens: Number of completion tokens used over the course of the run. Required.
     :vartype completion_tokens: int
@@ -3429,7 +3447,6 @@ class RunCompletionUsage(_model_base.Model):
 class RunError(_model_base.Model):
     """The details of an error as encountered by an agent thread run.
 
-
     :ivar code: The status for the error. Required.
     :vartype code: str
     :ivar message: The human-readable text associated with the error. Required.
@@ -3462,9 +3479,6 @@ class RunError(_model_base.Model):
 
 class RunStep(_model_base.Model):
     """Detailed information about a single step of an agent thread run.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar id: The identifier, which can be referenced in API endpoints. Required.
     :vartype id: str
@@ -3603,7 +3617,6 @@ class RunStepToolCall(_model_base.Model):
     RunStepMicrosoftFabricToolCall, RunStepFileSearchToolCall, RunStepFunctionToolCall,
     RunStepSharepointToolCall
 
-
     :ivar type: The object type. Required. Default value is None.
     :vartype type: str
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
@@ -3640,7 +3653,6 @@ class RunStepAzureAISearchToolCall(RunStepToolCall, discriminator="azure_ai_sear
     """A record of a call to an Azure AI Search tool, issued by the model in evaluation of a defined
     tool, that represents
     executed Azure AI search.
-
 
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
@@ -3681,7 +3693,6 @@ class RunStepBingGroundingToolCall(RunStepToolCall, discriminator="bing_groundin
     """A record of a call to a bing grounding tool, issued by the model in evaluation of a defined
     tool, that represents
     executed search with bing grounding.
-
 
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
@@ -3724,7 +3735,6 @@ class RunStepCodeInterpreterToolCallOutput(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     RunStepCodeInterpreterImageOutput, RunStepCodeInterpreterLogOutput
 
-
     :ivar type: The object type. Required. Default value is None.
     :vartype type: str
     """
@@ -3754,7 +3764,6 @@ class RunStepCodeInterpreterToolCallOutput(_model_base.Model):
 class RunStepCodeInterpreterImageOutput(RunStepCodeInterpreterToolCallOutput, discriminator="image"):
     """A representation of an image output emitted by a code interpreter tool in response to a tool
     call by the model.
-
 
     :ivar type: The object type, which is always 'image'. Required. Default value is "image".
     :vartype type: str
@@ -3790,7 +3799,6 @@ class RunStepCodeInterpreterImageOutput(RunStepCodeInterpreterToolCallOutput, di
 class RunStepCodeInterpreterImageReference(_model_base.Model):
     """An image reference emitted by a code interpreter tool in response to a tool call by the model.
 
-
     :ivar file_id: The ID of the file associated with this image. Required.
     :vartype file_id: str
     """
@@ -3819,7 +3827,6 @@ class RunStepCodeInterpreterImageReference(_model_base.Model):
 class RunStepCodeInterpreterLogOutput(RunStepCodeInterpreterToolCallOutput, discriminator="logs"):
     """A representation of a log output emitted by a code interpreter tool in response to a tool call
     by the model.
-
 
     :ivar type: The object type, which is always 'logs'. Required. Default value is "logs".
     :vartype type: str
@@ -3854,7 +3861,6 @@ class RunStepCodeInterpreterToolCall(RunStepToolCall, discriminator="code_interp
     """A record of a call to a code interpreter tool, issued by the model in evaluation of a defined
     tool, that
     represents inputs and outputs consumed and emitted by the code interpreter.
-
 
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
@@ -3896,7 +3902,6 @@ class RunStepCodeInterpreterToolCall(RunStepToolCall, discriminator="code_interp
 class RunStepCodeInterpreterToolCallDetails(_model_base.Model):
     """The detailed information about a code interpreter invocation by the model.
 
-
     :ivar input: The input provided by the model to the code interpreter tool. Required.
     :vartype input: str
     :ivar outputs: The outputs produced by the code interpreter tool back to the model in response
@@ -3933,7 +3938,6 @@ class RunStepCodeInterpreterToolCallDetails(_model_base.Model):
 
 class RunStepCompletionUsage(_model_base.Model):
     """Usage statistics related to the run step.
-
 
     :ivar completion_tokens: Number of completion tokens used over the course of the run step.
      Required.
@@ -3977,7 +3981,6 @@ class RunStepDetails(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     RunStepMessageCreationDetails, RunStepToolCallDetails
 
-
     :ivar type: The object type. Required. Known values are: "message_creation" and "tool_calls".
     :vartype type: str or ~azure.ai.projects.dp1.models.RunStepType
     """
@@ -4006,7 +4009,6 @@ class RunStepDetails(_model_base.Model):
 
 class RunStepError(_model_base.Model):
     """The error information associated with a failed run step.
-
 
     :ivar code: The error code for this error. Required. Known values are: "server_error" and
      "rate_limit_exceeded".
@@ -4047,7 +4049,6 @@ class RunStepFileSearchToolCall(RunStepToolCall, discriminator="file_search"):
     that represents
     executed file search.
 
-
     :ivar type: The object type, which is always 'file_search'. Required. Default value is
      "file_search".
     :vartype type: str
@@ -4086,7 +4087,6 @@ class RunStepFileSearchToolCall(RunStepToolCall, discriminator="file_search"):
 
 class RunStepFileSearchToolCallResult(_model_base.Model):
     """File search tool call result.
-
 
     :ivar file_id: The ID of the file that result was found in. Required.
     :vartype file_id: str
@@ -4136,7 +4136,6 @@ class RunStepFileSearchToolCallResult(_model_base.Model):
 class RunStepFileSearchToolCallResults(_model_base.Model):
     """The results of the file search.
 
-
     :ivar ranking_options: Ranking options for file search.
     :vartype ranking_options: ~azure.ai.projects.dp1.models.FileSearchRankingOptions
     :ivar results: The array of a file search results. Required.
@@ -4176,7 +4175,6 @@ class RunStepFunctionToolCall(RunStepToolCall, discriminator="function"):
     that represents the inputs
     and output consumed and emitted by the specified function.
 
-
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
     :vartype id: str
@@ -4214,7 +4212,6 @@ class RunStepFunctionToolCall(RunStepToolCall, discriminator="function"):
 
 class RunStepFunctionToolCallDetails(_model_base.Model):
     """The detailed information about the function called by the model.
-
 
     :ivar name: The name of the function. Required.
     :vartype name: str
@@ -4257,7 +4254,6 @@ class RunStepFunctionToolCallDetails(_model_base.Model):
 class RunStepMessageCreationDetails(RunStepDetails, discriminator="message_creation"):
     """The detailed information associated with a message creation run step.
 
-
     :ivar type: The object type, which is always 'message_creation'. Required. Represents a run
      step to create a message.
     :vartype type: str or ~azure.ai.projects.dp1.models.MESSAGE_CREATION
@@ -4295,7 +4291,6 @@ class RunStepMessageCreationDetails(RunStepDetails, discriminator="message_creat
 class RunStepMessageCreationReference(_model_base.Model):
     """The details of a message created as a part of a run step.
 
-
     :ivar message_id: The ID of the message created by this run step. Required.
     :vartype message_id: str
     """
@@ -4325,7 +4320,6 @@ class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="fabric_aisk
     """A record of a call to a Microsoft Fabric tool, issued by the model in evaluation of a defined
     tool, that represents
     executed Microsoft Fabric operations.
-
 
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
@@ -4369,7 +4363,6 @@ class RunStepSharepointToolCall(RunStepToolCall, discriminator="sharepoint_groun
     that represents
     executed SharePoint actions.
 
-
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
     :vartype id: str
@@ -4410,7 +4403,6 @@ class RunStepSharepointToolCall(RunStepToolCall, discriminator="sharepoint_groun
 class RunStepToolCallDetails(RunStepDetails, discriminator="tool_calls"):
     """The detailed information associated with a run step calling tools.
 
-
     :ivar type: The object type, which is always 'tool_calls'. Required. Represents a run step that
      calls tools.
     :vartype type: str or ~azure.ai.projects.dp1.models.TOOL_CALLS
@@ -4445,9 +4437,6 @@ class RunStepToolCallDetails(RunStepDetails, discriminator="tool_calls"):
 class SasCredential(BaseCredential, discriminator="SAS"):
     """SAS Credential definition.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar sas_token: SAS Token. Required.
     :vartype sas_token: str
     :ivar type: Required.
@@ -4477,7 +4466,6 @@ class SasCredential(BaseCredential, discriminator="SAS"):
 
 class SharepointToolDefinition(ToolDefinition, discriminator="sharepoint_grounding"):
     """The input definition information for a sharepoint tool as used to configure an agent.
-
 
     :ivar type: The object type, which is always 'sharepoint_grounding'. Required. Default value is
      "sharepoint_grounding".
@@ -4514,7 +4502,6 @@ class SharepointToolDefinition(ToolDefinition, discriminator="sharepoint_groundi
 
 class Sku(_model_base.Model):
     """Sku information.
-
 
     :ivar capacity: Sku capacity. Required.
     :vartype capacity: int
@@ -4564,7 +4551,6 @@ class Sku(_model_base.Model):
 class SubmitToolOutputsAction(RequiredAction, discriminator="submit_tool_outputs"):
     """The details for required tool calls that must be submitted for an agent thread run to continue.
 
-
     :ivar type: The object type, which is always 'submit_tool_outputs'. Required. Default value is
      "submit_tool_outputs".
     :vartype type: str
@@ -4602,7 +4588,6 @@ class SubmitToolOutputsAction(RequiredAction, discriminator="submit_tool_outputs
 class SubmitToolOutputsDetails(_model_base.Model):
     """The details describing tools that should be called to submit tool outputs.
 
-
     :ivar tool_calls: The list of tool calls that must be resolved for the agent thread run to
      continue. Required.
     :vartype tool_calls: list[~azure.ai.projects.dp1.models.RequiredToolCall]
@@ -4634,8 +4619,6 @@ class SubmitToolOutputsDetails(_model_base.Model):
 class SystemData(_model_base.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar created_at: The timestamp the resource was created at.
     :vartype created_at: ~datetime.datetime
     :ivar created_by: The identity that created the resource.
@@ -4660,9 +4643,6 @@ class SystemData(_model_base.Model):
 
 class ThreadDeletionStatus(_model_base.Model):
     """The status of a thread deletion operation.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar id: The ID of the resource specified for deletion. Required.
     :vartype id: str
@@ -4703,9 +4683,6 @@ class ThreadDeletionStatus(_model_base.Model):
 
 class ThreadMessage(_model_base.Model):
     """A single, existing message within an agent thread.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar id: The identifier, which can be referenced in API endpoints. Required.
     :vartype id: str
@@ -4827,16 +4804,13 @@ class ThreadMessageOptions(_model_base.Model):
     """A single message within an agent thread, as provided during that thread's creation for its
     initial state.
 
-    All required parameters must be populated in order to send to server.
-
     :ivar role: The role of the entity that is creating the message. Allowed values include:
 
-
-     * ``user``\\ : Indicates the message is sent by an actual user and should be used in most
-       cases to represent user-generated messages.
-     * ``assistant``\\ : Indicates the message is generated by the agent. Use this value to insert
-       messages from the agent into the
-       conversation. Required. Known values are: "user" and "assistant".
+     * `user`: Indicates the message is sent by an actual user and should be used in most
+     cases to represent user-generated messages.
+     * `assistant`: Indicates the message is generated by the agent. Use this value to insert
+     messages from the agent into the
+     conversation. Required. Known values are: "user" and "assistant".
     :vartype role: str or ~azure.ai.projects.dp1.models.MessageRole
     :ivar content: The textual content of the initial message. Currently, robust input including
      images and annotated text may only be provided via
@@ -4854,12 +4828,11 @@ class ThreadMessageOptions(_model_base.Model):
     role: Union[str, "_models.MessageRole"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The role of the entity that is creating the message. Allowed values include:
      
-     
-     * ``user``\ : Indicates the message is sent by an actual user and should be used in most
-       cases to represent user-generated messages.
-     * ``assistant``\ : Indicates the message is generated by the agent. Use this value to insert
-       messages from the agent into the
-       conversation. Required. Known values are: \"user\" and \"assistant\"."""
+     * `user`: Indicates the message is sent by an actual user and should be used in most
+     cases to represent user-generated messages.
+     * `assistant`: Indicates the message is generated by the agent. Use this value to insert
+     messages from the agent into the
+     conversation. Required. Known values are: \"user\" and \"assistant\"."""
     content: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The textual content of the initial message. Currently, robust input including images and
      annotated text may only be provided via
@@ -4896,9 +4869,6 @@ class ThreadMessageOptions(_model_base.Model):
 
 class ThreadRun(_model_base.Model):
     """Data representing a single evaluation run of an agent thread.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar id: The identifier, which can be referenced in API endpoints. Required.
     :vartype id: str
@@ -4945,7 +4915,7 @@ class ThreadRun(_model_base.Model):
      not incomplete. Required.
     :vartype incomplete_details: ~azure.ai.projects.dp1.models.IncompleteRunDetails
     :ivar usage: Usage statistics related to the run. This value will be ``null`` if the run is not
-     in a terminal state (i.e. ``in_progress``\\ , ``queued``\\ , etc.). Required.
+     in a terminal state (i.e. ``in_progress``, ``queued``, etc.). Required.
     :vartype usage: ~azure.ai.projects.dp1.models.RunCompletionUsage
     :ivar temperature: The sampling temperature used for this run. If not set, defaults to 1.
     :vartype temperature: float
@@ -5037,7 +5007,7 @@ class ThreadRun(_model_base.Model):
     """Details on why the run is incomplete. Will be ``null`` if the run is not incomplete. Required."""
     usage: "_models.RunCompletionUsage" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Usage statistics related to the run. This value will be ``null`` if the run is not in a
-     terminal state (i.e. ``in_progress``\ , ``queued``\ , etc.). Required."""
+     terminal state (i.e. ``in_progress``, ``queued``, etc.). Required."""
     temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The sampling temperature used for this run. If not set, defaults to 1."""
     top_p: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -5124,7 +5094,6 @@ class ThreadRun(_model_base.Model):
 class ToolConnection(_model_base.Model):
     """A connection resource.
 
-
     :ivar connection_id: A connection in a ToolConnectionList attached to this tool. Required.
     :vartype connection_id: str
     """
@@ -5151,8 +5120,8 @@ class ToolConnection(_model_base.Model):
 
 
 class ToolConnectionList(_model_base.Model):
-    """A set of connection resources currently used by either the ``bing_grounding``\\ ,
-    ``fabric_aiskill``\\ , or ``sharepoint_grounding`` tools.
+    """A set of connection resources currently used by either the ``bing_grounding``,
+    ``fabric_aiskill``, or ``sharepoint_grounding`` tools.
 
     :ivar connection_list: The connections attached to this tool. There can be a maximum of 1
      connection
@@ -5275,11 +5244,10 @@ class TruncationObject(_model_base.Model):
     """Controls for how a thread will be truncated prior to the run. Use this to control the initial
     context window of the run.
 
-
     :ivar type: The truncation strategy to use for the thread. The default is ``auto``. If set to
-     ``last_messages``\\ , the thread will
+     ``last_messages``, the thread will
      be truncated to the ``lastMessages`` count most recent messages in the thread. When set to
-     ``auto``\\ , messages in the middle of the thread
+     ``auto``, messages in the middle of the thread
      will be dropped to fit the context length of the model, ``max_prompt_tokens``. Required. Known
      values are: "auto" and "last_messages".
     :vartype type: str or ~azure.ai.projects.dp1.models.TruncationStrategy
@@ -5292,9 +5260,9 @@ class TruncationObject(_model_base.Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The truncation strategy to use for the thread. The default is ``auto``. If set to
-     ``last_messages``\ , the thread will
+     ``last_messages``, the thread will
      be truncated to the ``lastMessages`` count most recent messages in the thread. When set to
-     ``auto``\ , messages in the middle of the thread
+     ``auto``, messages in the middle of the thread
      will be dropped to fit the context length of the model, ``max_prompt_tokens``. Required. Known
      values are: \"auto\" and \"last_messages\"."""
     last_messages: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -5435,9 +5403,6 @@ class UpdateToolResourcesOptions(_model_base.Model):
 class VectorStore(_model_base.Model):
     """A vector store is a collection of processed files can be used by the ``file_search`` tool.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: The identifier, which can be referenced in API endpoints. Required.
     :vartype id: str
     :ivar object: The object type, which is always ``vector_store``. Required. Default value is
@@ -5453,9 +5418,9 @@ class VectorStore(_model_base.Model):
     :ivar file_counts: Files count grouped by status processed or being processed by this vector
      store. Required.
     :vartype file_counts: ~azure.ai.projects.dp1.models.VectorStoreFileCount
-    :ivar status: The status of the vector store, which can be either ``expired``\\ ,
-     ``in_progress``\\ , or ``completed``. A status of ``completed`` indicates that the vector store
-     is ready for use. Required. Known values are: "expired", "in_progress", and "completed".
+    :ivar status: The status of the vector store, which can be either ``expired``, ``in_progress``,
+     or ``completed``. A status of ``completed`` indicates that the vector store is ready for use.
+     Required. Known values are: "expired", "in_progress", and "completed".
     :vartype status: str or ~azure.ai.projects.dp1.models.VectorStoreStatus
     :ivar expires_after: Details on when this vector store expires.
     :vartype expires_after: ~azure.ai.projects.dp1.models.VectorStoreExpirationPolicy
@@ -5487,7 +5452,7 @@ class VectorStore(_model_base.Model):
     status: Union[str, "_models.VectorStoreStatus"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The status of the vector store, which can be either ``expired``\ , ``in_progress``\ , or
+    """The status of the vector store, which can be either ``expired``, ``in_progress``, or
      ``completed``. A status of ``completed`` indicates that the vector store is ready for use.
      Required. Known values are: \"expired\", \"in_progress\", and \"completed\"."""
     expires_after: Optional["_models.VectorStoreExpirationPolicy"] = rest_field(
@@ -5541,8 +5506,6 @@ class VectorStoreChunkingStrategyRequest(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     VectorStoreAutoChunkingStrategyRequest, VectorStoreStaticChunkingStrategyRequest
 
-    All required parameters must be populated in order to send to server.
-
     :ivar type: The object type. Required. Known values are: "auto" and "static".
     :vartype type: str or ~azure.ai.projects.dp1.models.VectorStoreChunkingStrategyRequestType
     """
@@ -5573,8 +5536,6 @@ class VectorStoreAutoChunkingStrategyRequest(VectorStoreChunkingStrategyRequest,
     """The default strategy. This strategy currently uses a max_chunk_size_tokens of 800 and
     chunk_overlap_tokens of 400.
 
-    All required parameters must be populated in order to send to server.
-
     :ivar type: The object type, which is always 'auto'. Required.
     :vartype type: str or ~azure.ai.projects.dp1.models.AUTO
     """
@@ -5603,7 +5564,6 @@ class VectorStoreChunkingStrategyResponse(_model_base.Model):
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     VectorStoreAutoChunkingStrategyResponse, VectorStoreStaticChunkingStrategyResponse
-
 
     :ivar type: The object type. Required. Known values are: "other" and "static".
     :vartype type: str or ~azure.ai.projects.dp1.models.VectorStoreChunkingStrategyResponseType
@@ -5635,7 +5595,6 @@ class VectorStoreAutoChunkingStrategyResponse(VectorStoreChunkingStrategyRespons
     """This is returned when the chunking strategy is unknown. Typically, this is because the file was
     indexed before the chunking_strategy concept was introduced in the API.
 
-
     :ivar type: The object type, which is always 'other'. Required.
     :vartype type: str or ~azure.ai.projects.dp1.models.OTHER
     """
@@ -5662,7 +5621,6 @@ class VectorStoreAutoChunkingStrategyResponse(VectorStoreChunkingStrategyRespons
 class VectorStoreConfiguration(_model_base.Model):
     """Vector storage configuration is the list of data sources, used when multiple
     files can be used for the enterprise file search.
-
 
     :ivar data_sources: Data sources. Required.
     :vartype data_sources: list[~azure.ai.projects.dp1.models.VectorStoreDataSource]
@@ -5694,7 +5652,6 @@ class VectorStoreConfiguration(_model_base.Model):
 class VectorStoreConfigurations(_model_base.Model):
     """The structure, containing the list of vector storage configurations i.e. the list of azure
     asset IDs.
-
 
     :ivar store_name: Name. Required.
     :vartype store_name: str
@@ -5733,7 +5690,6 @@ class VectorStoreDataSource(_model_base.Model):
     source
     for the enterprise file search.
 
-
     :ivar asset_identifier: Asset URI. Required.
     :vartype asset_identifier: str
     :ivar asset_type: The asset type. Required. Known values are: "uri_asset" and "id_asset".
@@ -5768,9 +5724,6 @@ class VectorStoreDataSource(_model_base.Model):
 
 class VectorStoreDeletionStatus(_model_base.Model):
     """Response object for deleting a vector store.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar id: The ID of the resource specified for deletion. Required.
     :vartype id: str
@@ -5812,7 +5765,6 @@ class VectorStoreDeletionStatus(_model_base.Model):
 class VectorStoreExpirationPolicy(_model_base.Model):
     """The expiration policy for a vector store.
 
-
     :ivar anchor: Anchor timestamp after which the expiration policy applies. Supported anchors:
      ``last_active_at``. Required. "last_active_at"
     :vartype anchor: str or ~azure.ai.projects.dp1.models.VectorStoreExpirationPolicyAnchor
@@ -5850,9 +5802,6 @@ class VectorStoreExpirationPolicy(_model_base.Model):
 class VectorStoreFile(_model_base.Model):
     """Description of a file attached to a vector store.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: The identifier, which can be referenced in API endpoints. Required.
     :vartype id: str
     :ivar object: The object type, which is always ``vector_store.file``. Required. Default value
@@ -5867,10 +5816,10 @@ class VectorStoreFile(_model_base.Model):
     :vartype created_at: ~datetime.datetime
     :ivar vector_store_id: The ID of the vector store that the file is attached to. Required.
     :vartype vector_store_id: str
-    :ivar status: The status of the vector store file, which can be either ``in_progress``\\ ,
-     ``completed``\\ , ``cancelled``\\ , or ``failed``. The status ``completed`` indicates that the
-     vector store file is ready for use. Required. Known values are: "in_progress", "completed",
-     "failed", and "cancelled".
+    :ivar status: The status of the vector store file, which can be either ``in_progress``,
+     ``completed``, ``cancelled``, or ``failed``. The status ``completed`` indicates that the vector
+     store file is ready for use. Required. Known values are: "in_progress", "completed", "failed",
+     and "cancelled".
     :vartype status: str or ~azure.ai.projects.dp1.models.VectorStoreFileStatus
     :ivar last_error: The last error associated with this vector store file. Will be ``null`` if
      there are no errors. Required.
@@ -5896,9 +5845,9 @@ class VectorStoreFile(_model_base.Model):
     status: Union[str, "_models.VectorStoreFileStatus"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The status of the vector store file, which can be either ``in_progress``\ , ``completed``\ ,
-     ``cancelled``\ , or ``failed``. The status ``completed`` indicates that the vector store file
-     is ready for use. Required. Known values are: \"in_progress\", \"completed\", \"failed\", and
+    """The status of the vector store file, which can be either ``in_progress``, ``completed``,
+     ``cancelled``, or ``failed``. The status ``completed`` indicates that the vector store file is
+     ready for use. Required. Known values are: \"in_progress\", \"completed\", \"failed\", and
      \"cancelled\"."""
     last_error: "_models.VectorStoreFileError" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The last error associated with this vector store file. Will be ``null`` if there are no errors.
@@ -5936,9 +5885,6 @@ class VectorStoreFile(_model_base.Model):
 class VectorStoreFileBatch(_model_base.Model):
     """A batch of files attached to a vector store.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: The identifier, which can be referenced in API endpoints. Required.
     :vartype id: str
     :ivar object: The object type, which is always ``vector_store.file_batch``. Required. Default
@@ -5949,8 +5895,8 @@ class VectorStoreFileBatch(_model_base.Model):
     :vartype created_at: ~datetime.datetime
     :ivar vector_store_id: The ID of the vector store that the file is attached to. Required.
     :vartype vector_store_id: str
-    :ivar status: The status of the vector store files batch, which can be either ``in_progress``\\
-     , ``completed``\\ , ``cancelled`` or ``failed``. Required. Known values are: "in_progress",
+    :ivar status: The status of the vector store files batch, which can be either ``in_progress``,
+     ``completed``, ``cancelled`` or ``failed``. Required. Known values are: "in_progress",
      "completed", "cancelled", and "failed".
     :vartype status: str or ~azure.ai.projects.dp1.models.VectorStoreFileBatchStatus
     :ivar file_counts: Files count grouped by status processed or being processed by this vector
@@ -5972,9 +5918,9 @@ class VectorStoreFileBatch(_model_base.Model):
     status: Union[str, "_models.VectorStoreFileBatchStatus"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The status of the vector store files batch, which can be either ``in_progress``\ ,
-     ``completed``\ , ``cancelled`` or ``failed``. Required. Known values are: \"in_progress\",
-     \"completed\", \"cancelled\", and \"failed\"."""
+    """The status of the vector store files batch, which can be either ``in_progress``, ``completed``,
+     ``cancelled`` or ``failed``. Required. Known values are: \"in_progress\", \"completed\",
+     \"cancelled\", and \"failed\"."""
     file_counts: "_models.VectorStoreFileCount" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Files count grouped by status processed or being processed by this vector store. Required."""
 
@@ -6003,7 +5949,6 @@ class VectorStoreFileBatch(_model_base.Model):
 
 class VectorStoreFileCount(_model_base.Model):
     """Counts of files processed or being processed by this vector store grouped by status.
-
 
     :ivar in_progress: The number of files that are currently being processed. Required.
     :vartype in_progress: int
@@ -6053,9 +5998,6 @@ class VectorStoreFileCount(_model_base.Model):
 class VectorStoreFileDeletionStatus(_model_base.Model):
     """Response object for deleting a vector store file relationship.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: The ID of the resource specified for deletion. Required.
     :vartype id: str
     :ivar deleted: A value indicating whether deletion was successful. Required.
@@ -6098,7 +6040,6 @@ class VectorStoreFileDeletionStatus(_model_base.Model):
 class VectorStoreFileError(_model_base.Model):
     """Details on the error that may have occurred while processing a file for this vector store.
 
-
     :ivar code: One of ``server_error`` or ``rate_limit_exceeded``. Required. Known values are:
      "server_error", "invalid_file", and "unsupported_file".
     :vartype code: str or ~azure.ai.projects.dp1.models.VectorStoreFileErrorCode
@@ -6135,7 +6076,6 @@ class VectorStoreFileError(_model_base.Model):
 
 class VectorStoreStaticChunkingStrategyOptions(_model_base.Model):
     """Options to configure a vector store static chunking strategy.
-
 
     :ivar max_chunk_size_tokens: The maximum number of tokens in each chunk. The default value is
      800. The minimum value is 100 and the maximum value is 4096. Required.
@@ -6175,8 +6115,6 @@ class VectorStoreStaticChunkingStrategyOptions(_model_base.Model):
 class VectorStoreStaticChunkingStrategyRequest(VectorStoreChunkingStrategyRequest, discriminator="static"):
     """A statically configured chunking strategy.
 
-    All required parameters must be populated in order to send to server.
-
     :ivar type: The object type, which is always 'static'. Required.
     :vartype type: str or ~azure.ai.projects.dp1.models.STATIC
     :ivar static: The options for the static chunking strategy. Required.
@@ -6212,7 +6150,6 @@ class VectorStoreStaticChunkingStrategyResponse(
     VectorStoreChunkingStrategyResponse, discriminator="static"
 ):  # pylint: disable=name-too-long
     """A statically configured chunking strategy.
-
 
     :ivar type: The object type, which is always 'static'. Required.
     :vartype type: str or ~azure.ai.projects.dp1.models.STATIC
