@@ -56,7 +56,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
             self.DefaultEndpoint,
             self.EnableEndpointDiscovery,
             client.connection_policy.UseMultipleWriteLocations,
-            client.connection_policy,
+            client.connection_policy
         )
         self.startup = True
         self.refresh_task = None
