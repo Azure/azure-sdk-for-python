@@ -1,0 +1,46 @@
+2025-03-20 08:20:10,752 — Logger_test_static_method.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — <module>:231 — test_static_method.py
+2025-03-20 08:20:10,753 — Logger_test_static_method.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — <module>:237 — Running pylint on original file...
+2025-03-20 08:20:11,038 — Logger_test_static_method.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — run_pylint:207 — PYLINT SCORE: 9.23076923076923
+2025-03-20 08:20:11,038 — Logger_test_static_method.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — <module>:239 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-20 08:20:11,038 — Logger_test_static_method.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — <module>:246 — Fixing file...
+2025-03-20 08:20:11,039 — Logger_test_static_method.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — fix_file:132 — MODEL: gpt-4o
+2025-03-20 08:20:19,589 — Logger_test_static_method.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — fix_file:149 — FIXED CONTENT: # --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+from typing import Any
+
+
+class SomeClient():
+    def __init__(self, credential: str, *, api_version: str = "2018", **kwargs: Any) -> None:
+        """
+        :param credential: The credential to use for authentication.
+        :type credential: str
+        :keyword api_version: The API version to use for the client.
+        :paramtype api_version: str
+        :keyword one: The first parameter.
+        :paramtype one: str
+        """
+        self.credential: str = credential
+        self._api_version: str = api_version
+        self.one: str = kwargs.get("one")
+
+    def _private_method(self) -> None:
+        pass
+
+    def create_configuration2(self) -> None:
+        pass
+
+
+class SomethingElse():
+    @staticmethod
+    def download_thing(some: str) -> None:
+        some = some + 1
+2025-03-20 08:20:19,590 — Logger_test_static_method.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — <module>:248 — Running pylint on fixed file...
+2025-03-20 08:20:19,631 — Logger_test_static_method.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — run_pylint:207 — PYLINT SCORE: 10.0
+2025-03-20 08:20:19,631 — Logger_test_static_method.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — <module>:251 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-20 08:20:19,631 — Logger_test_static_method.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — <module>:254 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-20 08:20:19,631 — Logger_test_static_method.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — <module>:255 — 
+
+
+

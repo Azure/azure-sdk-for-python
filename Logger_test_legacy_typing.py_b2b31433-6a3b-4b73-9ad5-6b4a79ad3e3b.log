@@ -1,0 +1,33 @@
+2025-03-20 08:22:34,232 — Logger_test_legacy_typing.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — <module>:231 — test_legacy_typing.py
+2025-03-20 08:22:34,232 — Logger_test_legacy_typing.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — <module>:237 — Running pylint on original file...
+2025-03-20 08:22:34,317 — Logger_test_legacy_typing.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — run_pylint:207 — PYLINT SCORE: 8.333333333333334
+2025-03-20 08:22:34,317 — Logger_test_legacy_typing.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — <module>:239 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-20 08:22:34,318 — Logger_test_legacy_typing.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — <module>:246 — Fixing file...
+2025-03-20 08:22:34,318 — Logger_test_legacy_typing.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — fix_file:132 — MODEL: gpt-4o
+2025-03-20 08:22:37,987 — Logger_test_legacy_typing.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — fix_file:149 — FIXED CONTENT: # --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+from typing import Any
+# This code violates do-not-use-legacy-typing
+class ClassNameClient():
+    def __init__(self, credential: str, *, api_version: str = "2018", **kwargs: Any) -> None:
+        """
+        :param credential: The credential to use for authentication.
+        :type credential: str
+        :keyword api_version: The API version to use for the client.
+        :paramtype api_version: str
+        :keyword eight: The eighth parameter.
+        :paramtype eight: str
+        """
+        self.credential: str = credential
+        self.api_version: str = api_version
+        self.eight: str = kwargs.get("eight")
+2025-03-20 08:22:37,987 — Logger_test_legacy_typing.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — <module>:248 — Running pylint on fixed file...
+2025-03-20 08:22:38,044 — Logger_test_legacy_typing.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — run_pylint:207 — PYLINT SCORE: 10.0
+2025-03-20 08:22:38,044 — Logger_test_legacy_typing.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — <module>:251 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-20 08:22:38,045 — Logger_test_legacy_typing.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — <module>:254 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-20 08:22:38,045 — Logger_test_legacy_typing.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — <module>:255 — 
+
+
+

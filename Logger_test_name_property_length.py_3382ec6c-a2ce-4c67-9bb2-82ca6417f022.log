@@ -1,0 +1,75 @@
+2025-03-20 08:17:32,402 — Logger_test_name_property_length.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — <module>:231 — test_name_property_length.py
+2025-03-20 08:17:32,402 — Logger_test_name_property_length.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — <module>:237 — Running pylint on original file...
+2025-03-20 08:17:32,600 — Logger_test_name_property_length.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — run_pylint:207 — PYLINT SCORE: 8.88888888888889
+2025-03-20 08:17:32,600 — Logger_test_name_property_length.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — <module>:239 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-20 08:17:32,600 — Logger_test_name_property_length.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — <module>:246 — Fixing file...
+2025-03-20 08:17:32,601 — Logger_test_name_property_length.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — fix_file:132 — MODEL: gpt-4o
+2025-03-20 08:17:54,498 — Logger_test_name_property_length.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — fix_file:149 — FIXED CONTENT: # --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+from typing import Any, List
+from azure.core.tracing.decorator import distributed_trace
+
+# Renamed the class to adhere to pylint name length rules
+class ShortClient():
+    def __init__(self, credential: str, *, api_version: str ="2018", **kwargs: Any) -> None:
+        """
+        :param credential: The credential to use for authentication.
+        :type credential: str
+        :keyword api_version: The API version to use for the client.
+        :paramtype api_version: str
+        :keyword eight: The eighth parameter.
+        :paramtype eight: str
+        """
+        self.credential: str = credential
+        self.eight: str = kwargs.get("eight")
+        self._api_version: str = api_version
+
+class ClassNameGoodClient():
+    @distributed_trace
+    def get_func_name(self, **kwargs: Any) -> str:
+        seven = kwargs.get("seven")
+        return seven
+
+    @distributed_trace
+    def get_function_good(self, **kwargs: Any) -> List:
+        short_list = []
+        six = kwargs.get("six")
+        six = six + ""
+        return short_list
+
+    def _private_func(self, **kwargs) -> str:
+        short_list = []
+        five = kwargs.get("five")
+        five = five + ""
+        return short_list
+
+    def __init__(self,
+                 credential: str,
+                 short_name: str,
+                 *, api_version: str ="2018", **kwargs: Any) -> None:
+        """
+        :param credential: The credential to use for authentication.
+        :type credential: str
+        :param short_name: The first parameter.
+        :paramtype short_name: str
+        :keyword api_version: The API version to use for the client.
+        :paramtype api_version: str
+        :keyword four: The fourth parameter.
+        :paramtype four: str
+        """
+        self.credential: str = credential
+        self.short_name: str = short_name
+        self._api_version: str = api_version
+        self.four: str = kwargs.get("four")
+
+    SHORT_NAME_CONST = 10
+2025-03-20 08:17:54,499 — Logger_test_name_property_length.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — <module>:248 — Running pylint on fixed file...
+2025-03-20 08:17:55,015 — Logger_test_name_property_length.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — run_pylint:207 — PYLINT SCORE: 10.0
+2025-03-20 08:17:55,016 — Logger_test_name_property_length.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — <module>:251 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-20 08:17:55,016 — Logger_test_name_property_length.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — <module>:254 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-20 08:17:55,016 — Logger_test_name_property_length.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — <module>:255 — 
+
+
+

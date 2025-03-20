@@ -1,0 +1,93 @@
+2025-03-20 08:16:45,146 — Logger_test_admonition_docstring.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — <module>:231 — test_admonition_docstring.py
+2025-03-20 08:16:45,146 — Logger_test_admonition_docstring.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — <module>:237 — Running pylint on original file...
+2025-03-20 08:16:45,332 — Logger_test_admonition_docstring.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — run_pylint:207 — PYLINT SCORE: 7.5
+2025-03-20 08:16:45,332 — Logger_test_admonition_docstring.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — <module>:239 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-20 08:16:45,333 — Logger_test_admonition_docstring.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — <module>:246 — Fixing file...
+2025-03-20 08:16:45,334 — Logger_test_admonition_docstring.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — fix_file:132 — MODEL: gpt-4o
+2025-03-20 08:16:48,948 — Logger_test_admonition_docstring.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — fix_file:149 — FIXED CONTENT: # --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+# This code violates docstring-admonition-needs-newline
+class DeadClient():
+    def get_function(self, x: int) -> int:
+        """
+        :param x: This is a parameter
+        :type x: int
+        :return: int y
+        :rtype: int
+
+        docstring
+            .. admonition:: Example:
+                This is Example content.
+                Should support multi-line.
+                Can also include file:
+                .. literalinclude:: ../samples/sample_detect_language.py
+        """
+        y = x+1
+        return y
+2025-03-20 08:16:48,949 — Logger_test_admonition_docstring.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — <module>:248 — Running pylint on fixed file...
+2025-03-20 08:16:49,168 — Logger_test_admonition_docstring.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — run_pylint:207 — PYLINT SCORE: 7.5
+2025-03-20 08:16:49,169 — Logger_test_admonition_docstring.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — <module>:251 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-20 08:16:49,169 — Logger_test_admonition_docstring.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — <module>:246 — Fixing file...
+2025-03-20 08:16:49,171 — Logger_test_admonition_docstring.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — fix_file:132 — MODEL: gpt-4o
+2025-03-20 08:16:53,185 — Logger_test_admonition_docstring.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — fix_file:149 — FIXED CONTENT: # --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+# This code violates docstring-admonition-needs-newline
+class DeadClient():
+    def get_function(self, x: int) -> int:
+        """
+        :param x: This is a parameter
+        :type x: int
+        :return: int y
+        :rtype: int
+
+        docstring
+
+        .. admonition:: Example:
+            This is Example content.
+            Should support multi-line.
+            Can also include file:
+            .. literalinclude:: ../samples/sample_detect_language.py
+        """
+        y = x+1
+        return y
+2025-03-20 08:16:53,186 — Logger_test_admonition_docstring.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — <module>:248 — Running pylint on fixed file...
+2025-03-20 08:16:53,302 — Logger_test_admonition_docstring.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — run_pylint:207 — PYLINT SCORE: 7.5
+2025-03-20 08:16:53,303 — Logger_test_admonition_docstring.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — <module>:251 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-20 08:16:53,303 — Logger_test_admonition_docstring.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — <module>:246 — Fixing file...
+2025-03-20 08:16:53,303 — Logger_test_admonition_docstring.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — fix_file:132 — MODEL: gpt-4o
+2025-03-20 08:16:57,478 — Logger_test_admonition_docstring.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — fix_file:149 — FIXED CONTENT: # --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+
+class DeadClient():
+    def get_function(self, x: int) -> int:
+        """
+        :param x: This is a parameter
+        :type x: int
+        :return: int y
+        :rtype: int
+
+        docstring
+
+        .. admonition:: Example:
+
+            This is Example content.
+            Should support multi-line.
+            Can also include file:
+            .. literalinclude:: ../samples/sample_detect_language.py
+        """
+        y = x + 1
+        return y
+2025-03-20 08:16:57,478 — Logger_test_admonition_docstring.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — <module>:248 — Running pylint on fixed file...
+2025-03-20 08:16:57,565 — Logger_test_admonition_docstring.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — run_pylint:207 — PYLINT SCORE: 7.5
+2025-03-20 08:16:57,565 — Logger_test_admonition_docstring.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — <module>:251 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-20 08:16:57,565 — Logger_test_admonition_docstring.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — <module>:254 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-20 08:16:57,565 — Logger_test_admonition_docstring.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — <module>:255 — 
+
+
+
