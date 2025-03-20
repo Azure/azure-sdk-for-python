@@ -35,13 +35,12 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         self,
         name: str,
         version: Optional[str] = None,
-        connection_name: Optional[str] = None, # TODO: Use me.
     ) -> ContainerClient:
 
-        pending_upload_response: PendingUploadResponse = self.create_or_get_start_pending_upload(
+        pending_upload_response: PendingUploadResponse = self.start_pending_upload(
             name=name,
             version=version,
-            pending_upload_request=PendingUploadRequest(
+            body=PendingUploadRequest(
                 pending_upload_type=PendingUploadType.TEMPORARY_BLOB_REFERENCE
             ),
         )
@@ -74,13 +73,12 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         )
 
 
-    def create_and_upload_file(
+    def upload_file_and_create_version(
         self,
         *,
         name: str,
         version: Optional[str] = None,
         file: str,
-        connection_name: Optional[str] = None,
         **kwargs: Any
     ) -> DatasetVersion:
         """Upload file to a blob storage, and create a dataset that references this file.
@@ -93,8 +91,6 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         :type version: str or None
         :param file: The file name (including optional path) to be uploaded. Required.
         :type file: str
-        :param connection_name: The name of the AI Project Connection to be used. Optional.
-        :type connection_name: str or None
         :return: The created dataset version.
         :rtype: ~azure.ai.projects.dp1.models.DatasetVersion
         :raises ~azure.core.exceptions.HttpResponseError: If an error occurs during the HTTP request.
@@ -106,7 +102,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         if path_file.is_dir():
             raise ValueError("The provided file is actually a folder. Use method `create_and_upload_folder` instead")
 
-        with self._create_dataset_and_get_its_container_client(name=name, version=version, connection_name=connection_name) as container_client:
+        with self._create_dataset_and_get_its_container_client(name=name, version=version) as container_client:
 
             with open(file=file, mode="rb") as data:
 
@@ -122,10 +118,10 @@ class DatasetsOperations(DatasetsOperationsGenerated):
 
                     logger.debug("[%s] Done uploading", inspect.currentframe().f_code.co_name)
 
-                    dataset_version = self.create_or_update(
+                    dataset_version = self.create_version(
                         name=name,
                         version=version, 
-                        dataset_version=DatasetVersion(
+                        body=DatasetVersion(
                             # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.blobclient?view=azure-python#azure-storage-blob-blobclient-url
                             # Per above doc the ".url" contains SAS token... should this be stripped away?
                             dataset_uri=blob_client.url, # "<account>.blob.windows.core.net/<container>/<file_name>"
@@ -136,13 +132,12 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         return dataset_version
 
 
-    def create_and_upload_folder(
+    def upload_folder_and_create_version(
         self,
         *,
         name: str,
         version: Optional[str] = None,
         folder: str,
-        connection_name: Optional[str] = None,
         **kwargs: Any
     ) -> DatasetVersion:
         """Upload all files in a folder and its sub folders to a blob storage, while maintaining 
@@ -156,8 +151,6 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         :type version: str or None
         :param folder: The folder name (including optional path) to be uploaded. Required.
         :type file: str
-        :param connection_name: The name of the AI Project Connection to be used. Optional.
-        :type connection_name: str or None
         :return: The created dataset version.
         :rtype: ~azure.ai.projects.dp1.models.DatasetVersion
         :raises ~azure.core.exceptions.HttpResponseError: If an error occurs during the HTTP request.
@@ -168,7 +161,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         if Path(path_folder).is_file():
             raise ValueError("The provided folder is actually a file. Use method `create_and_upload_file` instead.")
 
-        with self._create_dataset_and_get_its_container_client(name=name, version=version, connection_name=connection_name) as container_client:
+        with self._create_dataset_and_get_its_container_client(name=name, version=version) as container_client:
 
             # Recursively traverse all files in the folder
             files_uploaded: bool = False
@@ -185,10 +178,10 @@ class DatasetsOperations(DatasetsOperationsGenerated):
             if not files_uploaded:
                 raise ValueError("The provided folder is empty.")
 
-            dataset_version = self.create_or_update(
+            dataset_version = self.create_version(
                 name=name,
                 version=version, 
-                dataset_version=DatasetVersion(
+                body=DatasetVersion(
                     # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.blobclient?view=azure-python#azure-storage-blob-blobclient-url
                     # Per above doc the ".url" contains SAS token... should this be stripped away?
                     dataset_uri=container_client.url, # "<account>.blob.windows.core.net/<container> ?"
