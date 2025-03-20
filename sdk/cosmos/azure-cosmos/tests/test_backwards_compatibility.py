@@ -3,7 +3,6 @@
 
 import unittest
 import uuid
-from unittest.mock import MagicMock
 
 import pytest
 
@@ -12,6 +11,11 @@ from azure.core import MatchConditions
 from azure.cosmos import Offer, http_constants, CosmosClient, DatabaseProxy, ContainerProxy, PartitionKey
 from azure.cosmos.exceptions import CosmosHttpResponseError
 
+def check_pk_range_statistics_request_headers(raw_response):
+    assert raw_response.http_request.headers[http_constants.HttpHeaders.PopulatePartitionKeyRangeStatistics] == 'True'
+
+def check_quota_info_request_headers(raw_response):
+    assert raw_response.http_request.headers[http_constants.HttpHeaders.PopulateQuotaInfo] == 'True'
 
 @pytest.mark.cosmosEmulator
 class TestBackwardsCompatibility(unittest.TestCase):
@@ -45,41 +49,13 @@ class TestBackwardsCompatibility(unittest.TestCase):
         self.assertTrue(isinstance(database_offer, Offer))
         self.assertTrue(isinstance(container_offer, Offer))
 
-    def side_effect_populate_partition_key_range_statistics(self, *args, **kwargs):
-        # Extract request headers from args
-        self.assertTrue(args[2][http_constants.HttpHeaders.PopulatePartitionKeyRangeStatistics] is True)
-        raise StopIteration
-
-    def side_effect_populate_quota_info(self, *args, **kwargs):
-        # Extract request headers from args
-        self.assertTrue(args[2][http_constants.HttpHeaders.PopulateQuotaInfo] is True)
-        raise StopIteration
-
     def test_populate_quota_info(self):
-        cosmos_client_connection = self.containerForTest.client_connection
-        cosmos_client_connection._CosmosClientConnection__Get = MagicMock(
-            side_effect=self.side_effect_populate_quota_info)
-        try:
             self.containerForTest.read(populate_quota_info=True)
-        except StopIteration:
-            pass
-        try:
             self.containerForTest.read(False, False, True)
-        except StopIteration:
-            pass
 
     def test_populate_partition_key_range_statistics(self):
-        cosmos_client_connection = self.containerForTest.client_connection
-        cosmos_client_connection._CosmosClientConnection__Get = MagicMock(
-            side_effect=self.side_effect_populate_partition_key_range_statistics)
-        try:
-            self.containerForTest.read(populate_partition_key_range_statistics=True)
-        except StopIteration:
-            pass
-        try:
-            self.containerForTest.read(False, True)
-        except StopIteration:
-            pass
+        self.containerForTest.read(populate_partition_key_range_statistics=True, raw_response_hook=check_pk_range_statistics_request_headers)
+        self.containerForTest.read(False, True, raw_response_hook=check_pk_range_statistics_request_headers)
 
     def test_session_token_compatibility(self):
         # Verifying that behavior is unaffected across the board for using `session_token` on irrelevant methods
