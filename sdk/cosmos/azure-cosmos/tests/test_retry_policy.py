@@ -475,6 +475,5 @@ class TestRetryPolicy(unittest.TestCase):
                     message="Connection was reset",
                     response=test_config.FakeResponse({}))
 
-
 if __name__ == '__main__':
     unittest.main()

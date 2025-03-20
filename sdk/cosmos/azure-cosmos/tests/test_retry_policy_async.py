@@ -244,7 +244,6 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
             database = client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
             container = await database.create_container_if_not_exists(test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID,
                                                                       partition_key=PartitionKey("/pk"))
-
             try:
                 self.original_execute_function = _retry_utility.ExecuteFunctionAsync
                 mf = self.MockExecuteFunctionConnectionReset(self.original_execute_function)
@@ -522,7 +521,6 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
                     status_code=10054,
                     message="Connection was reset",
                     response=test_config.FakeResponse({}))
-
 
 if __name__ == '__main__':
     unittest.main()
