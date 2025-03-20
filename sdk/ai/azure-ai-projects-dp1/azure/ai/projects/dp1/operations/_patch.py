@@ -7,7 +7,6 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import logging
-import os
 import inspect
 from typing import List, Optional, Any
 from pathlib import Path

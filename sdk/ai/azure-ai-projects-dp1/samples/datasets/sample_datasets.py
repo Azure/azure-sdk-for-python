@@ -6,9 +6,9 @@
 
 """
 DESCRIPTION:
-    Given an AIProjectClient, this sample demonstrates how to use the datasets methods
-    to upload files, create datasets that reference those files, list datasets
-    and delete datasets.
+    Given an AIProjectClient, this sample demonstrates how to use the synchronous
+    datasets methods to upload files, create datasets that reference those files,
+    list datasets and delete datasets.
 
 USAGE:
     python sample_datasets.py
@@ -36,7 +36,7 @@ project_client = AIProjectClient(
     credential=DefaultAzureCredential(),
 )
 
-# Upload a single file and create a new dataset to reference the file
+print("Upload a single file and create a new dataset to reference the file:")
 dataset: DatasetVersion = project_client.datasets.upload_file_and_create_version(
     name=dataset_name,
     version="1.0",
@@ -44,7 +44,8 @@ dataset: DatasetVersion = project_client.datasets.upload_file_and_create_version
 )
 print(dataset)
 
-# Upload all files in a folder (including all subfolders) and create a new dataset version to reference the folder
+
+print("Upload all files in a folder (including subfolders) and create a new dataset version to reference the folder:")
 dataset = project_client.datasets.upload_folder_and_create_version(
     name=dataset_name,
     version="2.0",
@@ -52,19 +53,23 @@ dataset = project_client.datasets.upload_folder_and_create_version(
 )
 print(dataset)
 
-# Get an existing dataset version
+
+print("Get the existing dataset version `1.0`:")
 dataset = project_client.datasets.get_version(name=dataset_name, version="1.0")
 print(dataset)
 
-# List all versions of a particular dataset
+
+print(f"Listing all versions of the dataset named `{dataset_name}`:")
 for dataset in project_client.datasets.list_versions(name=dataset_name, list_view_type=ListViewType.ALL):
     print(dataset)
 
-# List latest versions of all datasets
+
+print("List latest versions of all datasets:")
 for dataset in project_client.datasets.list_latest(list_view_type=ListViewType.ALL):
     print(dataset)
 
-# Clean up
+
+print("Delete the dataset versions created above:")
 project_client.datasets.delete_version(name=dataset_name, version="1.0")
 project_client.datasets.delete_version(name=dataset_name, version="2.0")
 
