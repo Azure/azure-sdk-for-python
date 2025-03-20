@@ -146,7 +146,8 @@ class DatabaseProxy(object):
         session_token = kwargs.get('session_token')
         if session_token is not None:
             warnings.warn(
-                "The 'session_token' flag does not apply to this method and will be removed in the future.",
+                "The 'session_token' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
                 DeprecationWarning)
 
         database_link = _get_database_link(self)
@@ -235,17 +236,20 @@ class DatabaseProxy(object):
         session_token = kwargs.get('session_token')
         if session_token is not None:
             warnings.warn(
-                "The 'session_token' flag does not apply to this method and will be removed in the future.",
+                "The 'session_token' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
                 DeprecationWarning)
         etag = kwargs.get('etag')
         if etag is not None:
             warnings.warn(
-                "The 'etag' flag does not apply to this method and will be removed in the future.",
+                "The 'etag' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
                 DeprecationWarning)
         match_condition = kwargs.get('match_condition')
         if match_condition is not None:
             warnings.warn(
-                "The 'match_condition' flag does not apply to this method and will be removed in the future.",
+                "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
                 DeprecationWarning)
 
         definition: Dict[str, Any] = {"id": id}
@@ -339,17 +343,20 @@ class DatabaseProxy(object):
         session_token = kwargs.get('session_token')
         if session_token is not None:
             warnings.warn(
-                "The 'session_token' flag does not apply to this method and will be removed in the future.",
+                "The 'session_token' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
                 DeprecationWarning)
         etag = kwargs.get('etag')
         if etag is not None:
             warnings.warn(
-                "The 'etag' flag does not apply to this method and will be removed in the future.",
+                "The 'etag' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
                 DeprecationWarning)
         match_condition = kwargs.get('match_condition')
         if match_condition is not None:
             warnings.warn(
-                "The 'match_condition' flag does not apply to this method and will be removed in the future.",
+                "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
                 DeprecationWarning)
         try:
             container_proxy = self.get_container_client(id)
@@ -434,7 +441,8 @@ class DatabaseProxy(object):
         session_token = kwargs.get('session_token')
         if session_token is not None:
             warnings.warn(
-                "The 'session_token' flag does not apply to this method and will be removed in the future.",
+                "The 'session_token' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
                 DeprecationWarning)
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
@@ -476,7 +484,8 @@ class DatabaseProxy(object):
         session_token = kwargs.get('session_token')
         if session_token is not None:
             warnings.warn(
-                "The 'session_token' flag does not apply to this method and will be removed in the future.",
+                "The 'session_token' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
                 DeprecationWarning)
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
@@ -553,17 +562,20 @@ class DatabaseProxy(object):
         session_token = kwargs.get('session_token')
         if session_token is not None:
             warnings.warn(
-                "The 'session_token' flag does not apply to this method and will be removed in the future.",
+                "The 'session_token' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
                 DeprecationWarning)
         etag = kwargs.get('etag')
         if etag is not None:
             warnings.warn(
-                "The 'etag' flag does not apply to this method and will be removed in the future.",
+                "The 'etag' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
                 DeprecationWarning)
         match_condition = kwargs.get('match_condition')
         if match_condition is not None:
             warnings.warn(
-                "The 'match_condition' flag does not apply to this method and will be removed in the future.",
+                "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
                 DeprecationWarning)
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
@@ -616,17 +628,20 @@ class DatabaseProxy(object):
         session_token = kwargs.get('session_token')
         if session_token is not None:
             warnings.warn(
-                "The 'session_token' flag does not apply to this method and will be removed in the future.",
+                "The 'session_token' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
                 DeprecationWarning)
         etag = kwargs.get('etag')
         if etag is not None:
             warnings.warn(
-                "The 'etag' flag does not apply to this method and will be removed in the future.",
+                "The 'etag' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
                 DeprecationWarning)
         match_condition = kwargs.get('match_condition')
         if match_condition is not None:
             warnings.warn(
-                "The 'match_condition' flag does not apply to this method and will be removed in the future.",
+                "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
                 DeprecationWarning)
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers

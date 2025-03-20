@@ -177,7 +177,8 @@ class ContainerProxy:
         session_token = kwargs.get('session_token')
         if session_token is not None:
             warnings.warn(
-                "The 'session_token' flag does not apply to this method and will be removed in the future.",
+                "The 'session_token' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
                 DeprecationWarning)
 
         if priority is not None:
@@ -238,12 +239,14 @@ class ContainerProxy:
         etag = kwargs.get('etag')
         if etag is not None:
             warnings.warn(
-                "The 'etag' flag does not apply to this method and will be removed in the future.",
+                "The 'etag' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
                 DeprecationWarning)
         match_condition = kwargs.get('match_condition')
         if match_condition is not None:
             warnings.warn(
-                "The 'match_condition' flag does not apply to this method and will be removed in the future.",
+                "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
                 DeprecationWarning)
 
         if pre_trigger_include is not None:
@@ -499,6 +502,8 @@ class ContainerProxy:
             response_hook=response_hook,
             **kwargs
         )
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers, items)
         return items
 
     @overload
@@ -753,12 +758,14 @@ class ContainerProxy:
         etag = kwargs.get('etag')
         if etag is not None:
             warnings.warn(
-                "The 'etag' flag does not apply to this method and will be removed in the future.",
+                "The 'etag' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
                 DeprecationWarning)
         match_condition = kwargs.get('match_condition')
         if match_condition is not None:
             warnings.warn(
-                "The 'match_condition' flag does not apply to this method and will be removed in the future.",
+                "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
                 DeprecationWarning)
 
         if pre_trigger_include is not None:
@@ -1224,12 +1231,14 @@ class ContainerProxy:
         etag = kwargs.get('etag')
         if etag is not None:
             warnings.warn(
-                "The 'etag' flag does not apply to this method and will be removed in the future.",
+                "The 'etag' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
                 DeprecationWarning)
         match_condition = kwargs.get('match_condition')
         if match_condition is not None:
             warnings.warn(
-                "The 'match_condition' flag does not apply to this method and will be removed in the future.",
+                "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
                 DeprecationWarning)
 
         if pre_trigger_include is not None:
@@ -1280,12 +1289,14 @@ class ContainerProxy:
         etag = kwargs.get('etag')
         if etag is not None:
             warnings.warn(
-                "The 'etag' flag does not apply to this method and will be removed in the future.",
+                "The 'etag' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
                 DeprecationWarning)
         match_condition = kwargs.get('match_condition')
         if match_condition is not None:
             warnings.warn(
-                "The 'match_condition' flag does not apply to this method and will be removed in the future.",
+                "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
                 DeprecationWarning)
 
         if pre_trigger_include is not None:
