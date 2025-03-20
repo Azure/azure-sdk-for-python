@@ -335,6 +335,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
                 self._assert_key_attributes_equal(expected_key.properties, key)
         assert 0 == len(expected)
 
+    @pytest.mark.skip("Temporarily disabled due to service issue")
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
@@ -365,6 +366,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
                 self._assert_key_attributes_equal(expected[key.name].properties, key.properties)
                 del expected[key.name]
 
+    @pytest.mark.skip("Temporarily disabled due to service issue")
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy

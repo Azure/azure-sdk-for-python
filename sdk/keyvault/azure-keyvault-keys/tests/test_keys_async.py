@@ -342,6 +342,7 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         assert 0 == len(expected)
 
     @pytest.mark.asyncio
+    @pytest.mark.skip("Temporarily disabled due to service issue")
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
@@ -374,6 +375,7 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         assert len(expected) == 0
 
     @pytest.mark.asyncio
+    @pytest.mark.skip("Temporarily disabled due to service issue")
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
