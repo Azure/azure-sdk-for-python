@@ -13,10 +13,11 @@ except ImportError:
 
     class _MissingRequiredPackage(EvaluationException):
         """Raised when a required package is missing.
-        
+
         :param message: A message describing the error. This is the error message the user will see.
         :type message: str
         """
+
         def __init__(self, message: str, **kwargs: Any):
             kwargs.setdefault("category", ErrorCategory.MISSING_PACKAGE)
             kwargs.setdefault("blame", ErrorBlame.SYSTEM_ERROR)

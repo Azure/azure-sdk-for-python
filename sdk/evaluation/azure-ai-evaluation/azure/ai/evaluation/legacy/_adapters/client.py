@@ -16,6 +16,7 @@ from .entities import Run
 try:
     from promptflow.client import PFClient as _PFClient
 except ImportError:
+
     class _PFClient:
         def __init__(self, **kwargs):
             self._config = Configuration(override_config=kwargs.pop("config", None))
@@ -39,10 +40,8 @@ except ImportError:
             **kwargs,
         ) -> Run:
             raise MissingRequiredPackage("Please install 'promptflow' package to use PFClient")
-        
-        def get_details(
-            self, run: Union[str, Run], max_results: int = 100, all_results: bool = False
-        ) -> pd.DataFrame:
+
+        def get_details(self, run: Union[str, Run], max_results: int = 100, all_results: bool = False) -> pd.DataFrame:
             return pd.DataFrame()
 
         def get_metrics(self, run: Union[str, Run]) -> Dict[str, Any]:

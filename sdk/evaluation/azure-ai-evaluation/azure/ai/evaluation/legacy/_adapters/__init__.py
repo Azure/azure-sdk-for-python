@@ -12,6 +12,7 @@ from typing import Final
 _has_legacy = False
 try:
     from promptflow.client import PFClient
+
     _has_legacy = True
 except ImportError:
     pass
