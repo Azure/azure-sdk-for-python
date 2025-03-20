@@ -80,12 +80,8 @@ def get_build_info(build_link: str, check_type: CHECK_TYPE, service_directory: s
                 # Get the log file from the build link
                 log_output = requests.get(log_link, headers=AUTH_HEADERS)
                 build_output = log_output.content.decode("utf-8")
-                try:
-                    new_output = (build_output.split(f"next-pylint: commands[3]> python /mnt/vss/_work/1/s/eng/tox/run_pylint.py -t /mnt/vss/_work/1/s/sdk/{service_directory}/{package_name} --next=True")[1]).split(f"ERROR:root:{package_name} exited with linting error")[0]
-                    return new_output
-                except Exception as e:
-                    new_output = (build_output.split(f"next-pylint: commands[3]> python /mnt/vss/_work/1/s/eng/tox/run_pylint.py -t /mnt/vss/_work/1/s/sdk/***/azure-*** --next=True")[1]).split(f"ERROR:root:azure-*** exited with linting error")[0]
-                    return new_output
+                new_output = (build_output.split(f"next-pylint: commands[3]> python /mnt/vss/_work/1/s/eng/tox/run_pylint.py -t /mnt/vss/_work/1/s/sdk/{service_directory}/{package_name} --next=True")[1]).split(f"ERROR:root:{package_name} exited with linting error")[0]
+                return new_output
     except Exception as e:
         logging.error(f"Exception occurred while getting build info: {e}")
         return "Error getting build info"
