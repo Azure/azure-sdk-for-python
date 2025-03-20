@@ -1,0 +1,170 @@
+# iterater through the build logs and create issues for each failure by calling the issue creator
+import os
+import pathlib
+import argparse
+import requests
+import json
+import logging
+from vnext_issue_creator import create_vnext_issue  # Import the issue creator function
+from ci_tools.functions import discover_targeted_packages
+
+logging.getLogger().setLevel(logging.INFO)
+root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "..", ".."))
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(description="Iterate through build logs and create issues for each failure.")
+    parser.add_argument("--log-dir", required=True, help="Directory containing build logs")
+    parser.add_argument("--issue-creator", required=True, help="Path to the issue creator script")
+    return parser.parse_args()
+
+def find_failures(package_dir):
+    failures = []
+    build_id = os.getenv("BUILD_BUILDID")
+    timeline_link = f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds/{build_id}/timeline?api-version=6.0"
+
+    token = os.environ["SYSTEM_ACCESSTOKEN"]
+    AUTH_HEADERS = {"Authorization": f"Bearer {token}"}
+
+    try:
+        package_path = pathlib.Path(package_dir)
+        package_name = package_path.name
+
+        response = requests.get(timeline_link, headers=AUTH_HEADERS)
+        response_json = json.loads(response.text)
+    
+        for task in response_json["records"]:
+            if "Run Pylint Next" in task["name"]:
+                log_link = task['log']['url'] + "?api-version=6.0"
+                log_output = requests.get(log_link, headers=AUTH_HEADERS)
+                build_output = log_output.content.decode("utf-8")
+                if f"ERROR:root:{package_name} exited with linting error" in build_output:
+                    print(f"Found failure in task: {task['name']}")
+                    failures.append((task["name"], build_output))
+    except Exception as e:
+        print(f"Exception occurred while getting build info: {e}")
+
+    return failures
+
+def create_issues(failures):
+    for file, failure in failures:
+        create_vnext_issue(file, failure)
+
+def main():
+    args = parse_arguments()
+    failures = find_failures(target_dir)
+    if failures:
+        create_issues(failures)
+    else:
+        print("No failures found in the logs.")
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="""
+    This script is the single point for all checks invoked by CI within this repo. It works in two phases.
+        1. Identify which packages in the repo are in scope for this script invocation, based on a glob string and a service directory.
+        2. Invoke one or multiple `tox` environments for each package identified as in scope.
+
+    In the case of an environment invoking `pytest`, results can be collected in a junit xml file, and test markers can be selected via --mark_arg.
+    """
+    )
+
+    parser.add_argument(
+        "glob_string",
+        nargs="?",
+        help=(
+            "A comma separated list of glob strings that will target the top level directories that contain packages."
+            'Examples: All = "azure-*", Single = "azure-keyvault", Targeted Multiple = "azure-keyvault,azure-mgmt-resource"'
+        ),
+    )
+
+    parser.add_argument(
+        "--junitxml",
+        dest="test_results",
+        help=(
+            "The output path for the test results file of invoked checks."
+            'Example: --junitxml="junit/test-results.xml"'
+        ),
+    )
+
+    parser.add_argument(
+        "--mark_arg",
+        dest="mark_arg",
+        help=(
+            'The complete argument for `pytest -m "<input>"`. This can be used to exclude or include specific pytest markers.'
+            '--mark_arg="not cosmosEmulator"'
+        ),
+    )
+
+    parser.add_argument("--disablecov", help=("Flag. Disables code coverage."), action="store_true")
+
+    parser.add_argument(
+        "--tenvparallel",
+        default="",
+        dest="tenvparallel",
+        help=("Set tox parallel invocation.")
+    )
+
+    parser.add_argument(
+        "--service",
+        help=("Name of service directory (under sdk/) to test. Example: --service applicationinsights"),
+    )
+
+
+    parser.add_argument(
+        "-w",
+        "--wheel_dir",
+        dest="wheel_dir",
+        help="Location for prebuilt artifacts (if any)",
+    )
+
+    parser.add_argument(
+        "-i",
+        "--injected-packages",
+        dest="injected_packages",
+        default="",
+        help="Comma or space-separated list of packages that should be installed prior to dev_requirements. If local path, should be absolute.",
+    )
+
+    parser.add_argument(
+        "--filter-type",
+        dest="filter_type",
+        default="Build",
+        help="Filter type to identify eligible packages. for e.g. packages filtered in Build can pass filter type as Build,",
+        choices=["Build", "Docs", "Regression", "Omit_management", "None"],
+    )
+
+    parser.add_argument(
+        "-d",
+        "--dest-dir",
+        dest="dest_dir",
+        help="Location to generate any output files(if any). For e.g. apiview stub file",
+    )
+
+    args = parser.parse_args()
+
+    # We need to support both CI builds of everything and individual service
+    # folders. This logic allows us to do both.
+    if args.service and args.service != "auto":
+        service_dir = os.path.join("sdk", args.service)
+        target_dir = os.path.join(root_dir, service_dir)
+    else:
+        target_dir = root_dir
+
+    logging.info(f"Beginning discovery for {args.service} and root dir {root_dir}. Resolving to {target_dir}.")
+
+    if args.filter_type == "None":
+        args.filter_type = "Build"
+        compatibility_filter = False
+    else:
+        compatibility_filter = True
+
+    targeted_packages = discover_targeted_packages(
+        args.glob_string, target_dir, "", args.filter_type, compatibility_filter
+    )
+
+    if len(targeted_packages) == 0:
+        logging.info(f"No packages collected for targeting string {args.glob_string} and root dir {root_dir}. Exit 0.")
+        exit(0)
+
+    main()
