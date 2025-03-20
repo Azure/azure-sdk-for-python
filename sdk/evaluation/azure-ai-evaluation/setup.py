@@ -84,6 +84,6 @@ setup(
         "pytyped": ["py.typed"],
         "azure.ai.evaluation.simulator._prompty": ["*.prompty"],
         "azure.ai.evaluation.simulator._data_sources": ["*.json"],
-        "azure.ai.evaluation.autogen": ["**/*.py"],
+        "azure.ai.evaluation.autogen.raiclient": ["**/*.py"],
     },
 )

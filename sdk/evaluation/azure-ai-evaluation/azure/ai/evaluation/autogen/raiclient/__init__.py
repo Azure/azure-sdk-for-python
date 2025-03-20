@@ -24,6 +24,8 @@ except ImportError:
     _patch_all = []
 from ._patch import patch_sdk as _patch_sdk
 
+# Export GeneratedRAIClient as alias of MachineLearningServicesClient for backward compatibility 
+
 __all__ = [
     "MachineLearningServicesClient",
 ]
