@@ -11,11 +11,6 @@ from ci_tools.functions import discover_targeted_packages
 logging.getLogger().setLevel(logging.INFO)
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "..", ".."))
 
-def parse_arguments():
-    parser = argparse.ArgumentParser(description="Iterate through build logs and create issues for each failure.")
-    parser.add_argument("--log-dir", required=True, help="Directory containing build logs")
-    parser.add_argument("--issue-creator", required=True, help="Path to the issue creator script")
-    return parser.parse_args()
 
 def find_failures(package_dir):
     failures = []
@@ -50,7 +45,6 @@ def create_issues(failures):
         create_vnext_issue(file, failure)
 
 def main():
-    args = parse_arguments()
     failures = find_failures(target_dir)
     if failures:
         create_issues(failures)
