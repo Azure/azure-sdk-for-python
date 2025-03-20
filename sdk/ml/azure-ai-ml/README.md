@@ -1,6 +1,6 @@
-# Azure ML Package client library for Python
+# Azure Machine Learning Python SDK v2
 
-We are excited to introduce the GA of Azure Machine Learning Python SDK v2. The Python SDK v2 introduces new SDK capabilities like standalone local jobs, reusable components for pipelines and managed online/batch inferencing. Python SDK v2 allows you to move from simple to complex tasks easily and incrementally. This is enabled by using a common object model which brings concept reuse and consistency of actions across various tasks. The SDK v2 shares its foundation with the CLI v2 which is also GA.
+The Azure Machine Learning Python SDK v2 provides SDK capabilities like submitting training jobs, reusable components for pipelines, and managed online/batch inferencing. Python SDK v2 allows you to move from simple to complex tasks easily and incrementally. This is enabled by using a common object model which brings the concept reuse and consistency of actions across various tasks. The SDK v2 shares its foundation with the [Azure CLI extension for Azure Machine Learning v2](/azure/machine-learning/how-to-configure-cli).
 
 [Source code][source_code]
 | [Package (PyPI)][ml_pypi]
