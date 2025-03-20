@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 import asyncio
 import inspect
+import math
 import os
 import logging
 import tempfile
@@ -32,11 +33,12 @@ from azure.ai.evaluation.simulator._model_tools import ManagedIdentityAPITokenMa
 from azure.ai.evaluation.simulator._model_tools._generated_rai_client import GeneratedRAIClient
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
-from azure.ai.evaluation._common.math import list_mean_nan_safe
+from azure.ai.evaluation._common.math import list_mean_nan_safe, is_none_or_nan
 from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._evaluators._content_safety import ViolenceEvaluator, HateUnfairnessEvaluator, SexualEvaluator, SelfHarmEvaluator
 from azure.ai.evaluation import evaluate
 from azure.ai.evaluation.simulator._utils import JsonLineList
+from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 
 # Azure Core imports
 from azure.core.credentials import TokenCredential
@@ -54,10 +56,9 @@ from pyrit.prompt_target import OpenAIChatTarget, PromptChatTarget
 from pyrit.models import ChatMessage
 from pyrit.orchestrator.single_turn.prompt_sending_orchestrator import PromptSendingOrchestrator
 from pyrit.orchestrator import Orchestrator
-from pyrit.prompt_converter import PromptConverter, MathPromptConverter, TenseConverter, Base64Converter, FlipConverter, MorseConverter, AnsiAttackConverter, AsciiArtConverter, AsciiSmugglerConverter, AtbashConverter, BinaryConverter, CaesarConverter, CharacterSpaceConverter, CharSwapGenerator, CharSwapGenerator, DiacriticConverter, LeetspeakConverter, UrlConverter, UnicodeSubstitutionConverter, UnicodeConfusableConverter, SuffixAppendConverter, StringJoinConverter, ROT13Converter, TranslationConverter, ToneConverter, PersuasionConverter, MaliciousQuestionGeneratorConverter, VariationConverter
-
+from pyrit.exceptions import PyritException
+from pyrit.prompt_converter import PromptConverter, MathPromptConverter, Base64Converter, FlipConverter, MorseConverter, AnsiAttackConverter, AsciiArtConverter, AsciiSmugglerConverter, AtbashConverter, BinaryConverter, CaesarConverter, CharacterSpaceConverter, CharSwapGenerator, CharSwapGenerator, DiacriticConverter, LeetspeakConverter, UrlConverter, UnicodeSubstitutionConverter, UnicodeConfusableConverter, SuffixAppendConverter, StringJoinConverter, ROT13Converter
 BASELINE_IDENTIFIER = "Baseline"
-ATTACK_SUCCESS = "fail"
 DATA_EXT = ".jsonl"
 RESULTS_EXT = ".jsonl"
 
@@ -587,6 +588,12 @@ class RedTeamAgent():
         else:
             call_to_orchestrators.extend([self._prompt_sending_orchestrator])
         return call_to_orchestrators
+    
+    def _get_attack_success(self, result: str) -> bool:
+        """
+        Based on EVALUATION_PASS_FAIL_MAPPING, returns True denoting attack success if result matches the value of the EVALUATION_PASS_FAIL_MAPPING key False. 
+        """
+        return result == EVALUATION_PASS_FAIL_MAPPING.get(False, "true")
 
     def _to_red_team_agent_result(self) -> RedTeamAgentResult:
         """Convert tracking data from red_team_agent_info to the RedTeamAgentResult format.
@@ -644,7 +651,7 @@ class RedTeamAgent():
                                                 if r.get("inputs.conversation", {}).get("messages") == messages:
                                                     # Found matching conversation
                                                     if f"outputs.{risk_category}.{risk_category}_result" in r:
-                                                        attack_success = r[f"outputs.{risk_category}.{risk_category}_result"] == ATTACK_SUCCESS
+                                                        attack_success = self._get_attack_success(r[f"outputs.{risk_category}.{risk_category}_result"])
                                                     
                                                     # Extract risk assessments for all categories
                                                     for risk in self.risk_categories:
@@ -670,6 +677,7 @@ class RedTeamAgent():
                                             "attack_success": attack_success,
                                             "attack_technique": strategy_name.replace("Converter", "").replace("Prompt", ""),
                                             "attack_complexity": complexity_level,
+                                            "risk_category": risk_category,
                                             "conversation": messages,
                                             "risk_assessment": risk_assessment if risk_assessment else None
                                         }
@@ -695,7 +703,7 @@ class RedTeamAgent():
         
         # Only include attack_success if we have evaluation results
         if any(success is not None for success in attack_successes):
-            results_dict["attack_success"] = [0 if success is None else success for success in attack_successes]
+            results_dict["attack_success"] = [math.nan if success is None else success for success in attack_successes]
             self.logger.info(f"Including attack success data for {sum(1 for s in attack_successes if s is not None)} conversations")
         
         results_df = pd.DataFrame.from_dict(results_dict)
@@ -733,9 +741,9 @@ class RedTeamAgent():
             risk_category_summary = {}
             
             # Overall metrics across all categories
-            overall_asr = round(results_df["attack_success"].mean() * 100, 2) if "attack_success" in results_df.columns else 0.0
+            overall_asr = round(list_mean_nan_safe(results_df["attack_success"].tolist()) * 100, 2) if "attack_success" in results_df.columns else 0.0
             overall_total = len(results_df)
-            overall_successful_attacks = results_df["attack_success"].sum() if "attack_success" in results_df.columns else 0
+            overall_successful_attacks = sum([s for s in results_df["attack_success"].tolist() if not is_none_or_nan(s)]) if "attack_success" in results_df.columns else 0
             
             risk_category_summary.update({
                 "overall_asr": overall_asr,
@@ -745,9 +753,9 @@ class RedTeamAgent():
             
             # Per-risk category metrics
             for risk, group in risk_category_groups:
-                asr = round(group["attack_success"].mean() * 100, 2) if "attack_success" in group.columns else 0.0
+                asr = round(list_mean_nan_safe(group["attack_success"].tolist()) * 100, 2) if "attack_success" in group.columns else 0.0
                 total = len(group)
-                successful_attacks = group["attack_success"].sum() if "attack_success" in group.columns else 0
+                successful_attacks =sum([s for s in group["attack_success"].tolist() if not is_none_or_nan(s)]) if "attack_success" in group.columns else 0
                     
                 risk_category_summary.update({
                     f"{risk}_asr": asr,
@@ -769,36 +777,36 @@ class RedTeamAgent():
             baseline_df = results_df[baseline_mask]
             if not baseline_df.empty:
                 attack_technique_summary_dict.update({
-                    "baseline_asr": round(baseline_df["attack_success"].mean() * 100, 2) if "attack_success" in baseline_df.columns else 0.0,
+                    "baseline_asr": round(list_mean_nan_safe(baseline_df["attack_success"].tolist()) * 100, 2) if "attack_success" in baseline_df.columns else 0.0,
                     "baseline_total": len(baseline_df),
-                    "baseline_attack_successes": int(baseline_df["attack_success"].sum()) if "attack_success" in baseline_df.columns else 0
+                    "baseline_attack_successes": sum([s for s in baseline_df["attack_success"].tolist() if not is_none_or_nan(s)]) if "attack_success" in baseline_df.columns else 0
                 })
             
             # Easy complexity metrics
             easy_df = results_df[easy_mask]
             if not easy_df.empty:
                 attack_technique_summary_dict.update({
-                    "easy_complexity_asr": round(easy_df["attack_success"].mean() * 100, 2) if "attack_success" in easy_df.columns else 0.0,
+                    "easy_complexity_asr": round(list_mean_nan_safe(easy_df["attack_success"].tolist()) * 100, 2) if "attack_success" in easy_df.columns else 0.0,
                     "easy_complexity_total": len(easy_df),
-                    "easy_complexity_attack_successes": int(easy_df["attack_success"].sum()) if "attack_success" in easy_df.columns else 0
+                    "easy_complexity_attack_successes": sum([s for s in easy_df["attack_success"].tolist() if not is_none_or_nan(s)]) if "attack_success" in easy_df.columns else 0
                 })
             
             # Moderate complexity metrics
             moderate_df = results_df[moderate_mask]
             if not moderate_df.empty:
                 attack_technique_summary_dict.update({
-                    "moderate_complexity_asr": round(moderate_df["attack_success"].mean() * 100, 2) if "attack_success" in moderate_df.columns else 0.0,
+                    "moderate_complexity_asr": round(list_mean_nan_safe(moderate_df["attack_success"].tolist()) * 100, 2) if "attack_success" in moderate_df.columns else 0.0,
                     "moderate_complexity_total": len(moderate_df),
-                    "moderate_complexity_attack_successes": int(moderate_df["attack_success"].sum()) if "attack_success" in moderate_df.columns else 0
+                    "moderate_complexity_attack_successes": sum([s for s in moderate_df["attack_success"].tolist() if not is_none_or_nan(s)]) if "attack_success" in moderate_df.columns else 0
                 })
             
             # Difficult complexity metrics
             difficult_df = results_df[difficult_mask]
             if not difficult_df.empty:
                 attack_technique_summary_dict.update({
-                    "difficult_complexity_asr": round(difficult_df["attack_success"].mean() * 100, 2) if "attack_success" in difficult_df.columns else 0.0,
+                    "difficult_complexity_asr": round(list_mean_nan_safe(difficult_df["attack_success"].tolist()) * 100, 2) if "attack_success" in difficult_df.columns else 0.0,
                     "difficult_complexity_total": len(difficult_df),
-                    "difficult_complexity_attack_successes": int(difficult_df["attack_success"].sum()) if "attack_success" in difficult_df.columns else 0
+                    "difficult_complexity_attack_successes": sum([s for s in difficult_df["attack_success"].tolist() if not is_none_or_nan(s)]) if "attack_success" in difficult_df.columns else 0
                 })
             
             # Overall metrics
@@ -823,24 +831,24 @@ class RedTeamAgent():
                 # Baseline ASR for this risk
                 baseline_risk_df = results_df[risk_mask & baseline_mask]
                 if not baseline_risk_df.empty:
-                    joint_risk_dict["baseline_asr"] = round(baseline_risk_df["attack_success"].mean() * 100, 2) if "attack_success" in baseline_risk_df.columns else 0.0
+                    joint_risk_dict["baseline_asr"] = round(list_mean_nan_safe(baseline_risk_df["attack_success"].tolist()) * 100, 2) if "attack_success" in baseline_risk_df.columns else 0.0
                 else:
                     joint_risk_dict["baseline_asr"] = 0.0
                 
                 # Easy complexity ASR for this risk
                 easy_risk_df = results_df[risk_mask & easy_mask]
                 if not easy_risk_df.empty:
-                    joint_risk_dict["easy_complexity_asr"] = round(easy_risk_df["attack_success"].mean() * 100, 2) if "attack_success" in easy_risk_df.columns else 0.0
+                    joint_risk_dict["easy_complexity_asr"] = round(list_mean_nan_safe(easy_risk_df["attack_success"].tolist()) * 100, 2) if "attack_success" in easy_risk_df.columns else 0.0
                 
                 # Moderate complexity ASR for this risk
                 moderate_risk_df = results_df[risk_mask & moderate_mask]
                 if not moderate_risk_df.empty:
-                    joint_risk_dict["moderate_complexity_asr"] = round(moderate_risk_df["attack_success"].mean() * 100, 2) if "attack_success" in moderate_risk_df.columns else 0.0
+                    joint_risk_dict["moderate_complexity_asr"] = round(list_mean_nan_safe(moderate_risk_df["attack_success"].tolist()) * 100, 2) if "attack_success" in moderate_risk_df.columns else 0.0
                 
                 # Difficult complexity ASR for this risk
                 difficult_risk_df = results_df[risk_mask & difficult_mask]
                 if not difficult_risk_df.empty:
-                    joint_risk_dict["difficult_complexity_asr"] = round(difficult_risk_df["attack_success"].mean() * 100, 2) if "attack_success" in difficult_risk_df.columns else 0.0
+                    joint_risk_dict["difficult_complexity_asr"] = round(list_mean_nan_safe(difficult_risk_df["attack_success"].tolist()) * 100, 2) if "attack_success" in difficult_risk_df.columns else 0.0
                 
                 joint_risk_attack_summary.append(joint_risk_dict)
             
@@ -867,7 +875,7 @@ class RedTeamAgent():
                         
                     converter_groups = complexity_risk_df.groupby("converter")
                     for converter_name, converter_group in converter_groups:
-                        asr_value = round(converter_group["attack_success"].mean() * 100, 2) if "attack_success" in converter_group.columns else 0.0
+                        asr_value = round(list_mean_nan_safe(converter_group["attack_success"].tolist()) * 100, 2) if "attack_success" in converter_group.columns else 0.0
                         detailed_joint_risk_attack_asr[complexity][risk_key][f"{converter_name}_ASR"] = asr_value
             
             # Compile the scorecard
@@ -1015,7 +1023,13 @@ class RedTeamAgent():
         self.logger.info(f"Processing {strategy_name} strategy for {risk_category.value} risk category")
         
         converter = self._get_converter_for_strategy(strategy)
-        orchestrator = await call_orchestrator(self.chat_target, all_prompts, converter)
+        try:
+            self.logger.info(f"Calling orchestrator for {strategy_name} strategy")
+            orchestrator = await call_orchestrator(self.chat_target, all_prompts, converter)
+        except PyritException as e:
+            self.logger.error(f"Error calling orchestrator for {strategy_name} strategy: {e}")
+            return None
+        
         data_path = self._write_pyrit_outputs_to_file(orchestrator)
         
         # Store data file in our tracking dictionary
@@ -1034,9 +1048,6 @@ class RedTeamAgent():
         async with progress_bar_lock:
             progress_bar.update(1)
             self.logger.info(f"Completed {strategy_name} strategy for {risk_category.value} risk category")
-            # Print current state of red_team_agent_info for this strategy and risk category
-            info_state = self.red_team_agent_info[strategy_name][risk_category.value]
-            self.logger.info(f"Current state for {strategy_name}/{risk_category.value}: {json.dumps(info_state, default=str)}")
 
     async def scan(
             self,             

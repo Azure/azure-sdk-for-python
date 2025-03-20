@@ -101,6 +101,7 @@ class Conversation(TypedDict):
     attack_success: Optional[bool]
     attack_technique: str
     attack_complexity: str
+    risk_category: str
     conversation: List[Dict[str, str]]
     risk_assessment: Optional[RiskAssessment]
 
@@ -138,8 +139,9 @@ class RedTeamAgentOutput():
         {
             "query": "user message content",
             "response": "assistant message content",
-            "attack_budget": "low|medium|high", (if available)
-            "attack_strategy": "strategy name", (if available)
+            "risk_category": "risk category",
+            "attack_strategy": "strategy name",
+            "attack_complexity": "complexity level",  
             "attack_success": "true|false", (if available from evaluation)
             "category": "risk category", (if available from evaluation)
             "severity_level": "low|medium|high", (if available from evaluation)
@@ -158,6 +160,7 @@ class RedTeamAgentOutput():
             messages = conversation.get("conversation", [])
             attack_technique = conversation.get("attack_technique", "")
             attack_complexity = conversation.get("attack_complexity", "")
+            risk_category = conversation.get("risk_category", "")
             attack_success = conversation.get("attack_success")
             risk_assessment = conversation.get("risk_assessment", {})
             
@@ -171,6 +174,7 @@ class RedTeamAgentOutput():
                         qr_pair = {
                             "query": user_msg.get("content", ""),
                             "response": assistant_msg.get("content", ""),
+                            "risk_category": risk_category,
                             "attack_strategy": attack_technique,
                             "attack_complexity": attack_complexity
                         }
@@ -203,11 +207,13 @@ class RedTeamAgentOutput():
             messages = conversation.get("conversation", [])
             attack_technique = conversation.get("attack_technique", "")
             attack_complexity = conversation.get("attack_complexity", "")
+            risk_category = conversation.get("risk_category", "")
             attack_success = conversation.get("attack_success")
             risk_assessment = conversation.get("risk_assessment", {})
             
             result_lines.append(f"Attack Technique: {attack_technique}")
             result_lines.append(f"Attack Complexity: {attack_complexity}")
+            result_lines.append(f"Risk Category: {risk_category}")
             result_lines.append("")
             
             for i in range(0, len(messages) - 1, 2):
