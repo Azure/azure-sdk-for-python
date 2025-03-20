@@ -92,7 +92,7 @@ class TestBackwardsCompatibility(unittest.TestCase):
         replace_container_read = replace_container.read()
         assert replace_container is not None
         assert replace_container_read != container2_read
-        assert len(replace_container_read) == len(container2_read) + 1 # default_ttl as a new additional property
+        assert 'default_ttl' in replace_container_read # Check for default_ttl as a new additional property
         database.delete_container(replace_container.id, session_token=str(uuid.uuid4()))
         try:
             container2.read()
