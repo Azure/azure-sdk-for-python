@@ -223,9 +223,9 @@ class AgentsApiResponseFormat(_model_base.Model):
 class AgentsNamedToolChoice(_model_base.Model):
     """Specifies a tool the model should use. Use to force the model to call a specific tool.
 
-    :ivar type: the type of tool. If type is ``function``\\ , the function name must be set.
-     Required. Known values are: "function", "code_interpreter", "file_search", "bing_grounding",
-     "fabric_aiskill", "sharepoint_grounding", and "azure_ai_search".
+    :ivar type: the type of tool. If type is ``function``\\, the function name must be set. Required.
+     Known values are: "function", "code_interpreter", "file_search", "bing_grounding",
+     "fabric_dataagent", "sharepoint_grounding", and "azure_ai_search".
     :vartype type: str or ~azure.ai.projects.models.AgentsNamedToolChoiceType
     :ivar function: The name of the function to call.
     :vartype function: ~azure.ai.projects.models.FunctionName
@@ -236,7 +236,7 @@ class AgentsNamedToolChoice(_model_base.Model):
     )
     """the type of tool. If type is ``function``\ , the function name must be set. Required. Known
      values are: \"function\", \"code_interpreter\", \"file_search\", \"bing_grounding\",
-     \"fabric_aiskill\", \"sharepoint_grounding\", and \"azure_ai_search\"."""
+     \"fabric_dataagent\", \"sharepoint_grounding\", and \"azure_ai_search\"."""
     function: Optional["_models.FunctionName"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the function to call."""
 
@@ -384,13 +384,12 @@ class AISearchIndexResource(_model_base.Model):
     :vartype index_connection_id: str
     :ivar index_name: The name of an index in an IndexResource attached to this agent. Required.
     :vartype index_name: str
-    :ivar query_type: Type of query in an AIIndexResource attached to this agent. Required. Known
-     values are: "simple", "semantic", "vector", "vector_simple_hybrid", and
-     "vector_semantic_hybrid".
+    :ivar query_type: Type of query in an AIIndexResource attached to this agent. Known values are:
+     "simple", "semantic", "vector", "vector_simple_hybrid", and "vector_semantic_hybrid".
     :vartype query_type: str or ~azure.ai.projects.models.AzureAISearchQueryType
-    :ivar top_k: Number of documents to retrieve from search and present to the model. Required.
+    :ivar top_k: Number of documents to retrieve from search and present to the model.
     :vartype top_k: int
-    :ivar filter: Odata filter string for search resource. Required.
+    :ivar filter: Odata filter string for search resource.
     :vartype filter: str
     """
 
@@ -398,15 +397,15 @@ class AISearchIndexResource(_model_base.Model):
     """An index connection id in an IndexResource attached to this agent. Required."""
     index_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of an index in an IndexResource attached to this agent. Required."""
-    query_type: Union[str, "_models.AzureAISearchQueryType"] = rest_field(
+    query_type: Optional[Union[str, "_models.AzureAISearchQueryType"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Type of query in an AIIndexResource attached to this agent. Required. Known values are:
-     \"simple\", \"semantic\", \"vector\", \"vector_simple_hybrid\", and \"vector_semantic_hybrid\"."""
-    top_k: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Number of documents to retrieve from search and present to the model. Required."""
-    filter: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Odata filter string for search resource. Required."""
+    """Type of query in an AIIndexResource attached to this agent. Known values are: \"simple\",
+     \"semantic\", \"vector\", \"vector_simple_hybrid\", and \"vector_semantic_hybrid\"."""
+    top_k: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Number of documents to retrieve from search and present to the model."""
+    filter: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Odata filter string for search resource."""
 
     @overload
     def __init__(
@@ -414,9 +413,9 @@ class AISearchIndexResource(_model_base.Model):
         *,
         index_connection_id: str,
         index_name: str,
-        query_type: Union[str, "_models.AzureAISearchQueryType"],
-        top_k: int,
-        filter: str,  # pylint: disable=redefined-builtin
+        query_type: Optional[Union[str, "_models.AzureAISearchQueryType"]] = None,
+        top_k: Optional[int] = None,
+        filter: Optional[str] = None,  # pylint: disable=redefined-builtin
     ) -> None: ...
 
     @overload
@@ -3260,20 +3259,20 @@ class MessageTextUrlCitationDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MicrosoftFabricToolDefinition(ToolDefinition, discriminator="fabric_aiskill"):
+class MicrosoftFabricToolDefinition(ToolDefinition, discriminator="fabric_dataagent"):
     """The input definition information for a Microsoft Fabric tool as used to configure an agent.
 
-    :ivar type: The object type, which is always 'fabric_aiskill'. Required. Default value is
-     "fabric_aiskill".
+    :ivar type: The object type, which is always 'fabric_dataagent'. Required. Default value is
+     "fabric_dataagent".
     :vartype type: str
-    :ivar fabric_aiskill: The list of connections used by the Microsoft Fabric tool. Required.
-    :vartype fabric_aiskill: ~azure.ai.projects.models.ToolConnectionList
+    :ivar fabric_dataagent: The list of connections used by the Microsoft Fabric tool. Required.
+    :vartype fabric_dataagent: ~azure.ai.projects.models.ToolConnectionList
     """
 
-    type: Literal["fabric_aiskill"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The object type, which is always 'fabric_aiskill'. Required. Default value is
-     \"fabric_aiskill\"."""
-    fabric_aiskill: "_models.ToolConnectionList" = rest_field(
+    type: Literal["fabric_dataagent"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'fabric_dataagent'. Required. Default value is
+     \"fabric_dataagent\"."""
+    fabric_dataagent: "_models.ToolConnectionList" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of connections used by the Microsoft Fabric tool. Required."""
@@ -3282,7 +3281,7 @@ class MicrosoftFabricToolDefinition(ToolDefinition, discriminator="fabric_aiskil
     def __init__(
         self,
         *,
-        fabric_aiskill: "_models.ToolConnectionList",
+        fabric_dataagent: "_models.ToolConnectionList",
     ) -> None: ...
 
     @overload
@@ -3293,7 +3292,7 @@ class MicrosoftFabricToolDefinition(ToolDefinition, discriminator="fabric_aiskil
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="fabric_aiskill", **kwargs)
+        super().__init__(*args, type="fabric_dataagent", **kwargs)
 
 
 class OpenAIFile(_model_base.Model):
@@ -4901,8 +4900,7 @@ class RunStepDeltaCodeInterpreterDetailItemObject(_model_base.Model):  # pylint:
     :vartype input: str
     :ivar outputs: The outputs from the Code Interpreter tool call. Code Interpreter can output one
      or more
-     items, including text (\\ ``logs``\\ ) or images (\\ ``image``\\ ). Each of these are
-     represented by a
+     items, including text (``logs``) or images (``image``). Each of these are represented by a
      different object type.
     :vartype outputs: list[~azure.ai.projects.models.RunStepDeltaCodeInterpreterOutput]
     """
@@ -4913,8 +4911,7 @@ class RunStepDeltaCodeInterpreterDetailItemObject(_model_base.Model):  # pylint:
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The outputs from the Code Interpreter tool call. Code Interpreter can output one or more
-     items, including text (\ ``logs``\ ) or images (\ ``image``\ ). Each of these are represented
-     by a
+     items, including text (``logs``) or images (``image``). Each of these are represented by a
      different object type."""
 
     @overload
@@ -5763,7 +5760,7 @@ class RunStepMessageCreationReference(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="fabric_aiskill"):
+class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="fabric_dataagent"):
     """A record of a call to a Microsoft Fabric tool, issued by the model in evaluation of a defined
     tool, that represents
     executed Microsoft Fabric operations.
@@ -5771,18 +5768,18 @@ class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="fabric_aisk
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
     :vartype id: str
-    :ivar type: The object type, which is always 'fabric_aiskill'. Required. Default value is
-     "fabric_aiskill".
+    :ivar type: The object type, which is always 'fabric_dataagent'. Required. Default value is
+     "fabric_dataagent".
     :vartype type: str
     :ivar microsoft_fabric: Reserved for future use. Required.
     :vartype microsoft_fabric: dict[str, str]
     """
 
-    type: Literal["fabric_aiskill"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The object type, which is always 'fabric_aiskill'. Required. Default value is
-     \"fabric_aiskill\"."""
+    type: Literal["fabric_dataagent"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'fabric_dataagent'. Required. Default value is
+     \"fabric_dataagent\"."""
     microsoft_fabric: Dict[str, str] = rest_field(
-        name="fabric_aiskill", visibility=["read", "create", "update", "delete", "query"]
+        name="fabric_dataagent", visibility=["read", "create", "update", "delete", "query"]
     )
     """Reserved for future use. Required."""
 
@@ -5802,7 +5799,7 @@ class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="fabric_aisk
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="fabric_aiskill", **kwargs)
+        super().__init__(*args, type="fabric_dataagent", **kwargs)
 
 
 class RunStepSharepointToolCall(RunStepToolCall, discriminator="sharepoint_grounding"):
@@ -6175,12 +6172,11 @@ class ThreadMessageOptions(_model_base.Model):
 
     :ivar role: The role of the entity that is creating the message. Allowed values include:
 
-
-     * ``user``\\ : Indicates the message is sent by an actual user and should be used in most
-       cases to represent user-generated messages.
-     * ``assistant``\\ : Indicates the message is generated by the agent. Use this value to insert
-       messages from the agent into the
-       conversation. Required. Known values are: "user" and "assistant".
+     * `user`: Indicates the message is sent by an actual user and should be used in most
+     cases to represent user-generated messages.
+     * `assistant`: Indicates the message is generated by the agent. Use this value to insert
+     messages from the agent into the
+     conversation. Required. Known values are: "user" and "assistant".
     :vartype role: str or ~azure.ai.projects.models.MessageRole
     :ivar content: The textual content of the initial message. Currently, robust input including
      images and annotated text may only be provided via
@@ -6198,12 +6194,11 @@ class ThreadMessageOptions(_model_base.Model):
     role: Union[str, "_models.MessageRole"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The role of the entity that is creating the message. Allowed values include:
      
-     
-     * ``user``\ : Indicates the message is sent by an actual user and should be used in most
-       cases to represent user-generated messages.
-     * ``assistant``\ : Indicates the message is generated by the agent. Use this value to insert
-       messages from the agent into the
-       conversation. Required. Known values are: \"user\" and \"assistant\"."""
+     * `user`: Indicates the message is sent by an actual user and should be used in most
+     cases to represent user-generated messages.
+     * `assistant`: Indicates the message is generated by the agent. Use this value to insert
+     messages from the agent into the
+     conversation. Required. Known values are: \"user\" and \"assistant\"."""
     content: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The textual content of the initial message. Currently, robust input including images and
      annotated text may only be provided via
@@ -6490,8 +6485,8 @@ class ToolConnection(_model_base.Model):
 
 
 class ToolConnectionList(_model_base.Model):
-    """A set of connection resources currently used by either the ``bing_grounding``\\ ,
-    ``fabric_aiskill``\\ , or ``sharepoint_grounding`` tools.
+    """A set of connection resources currently used by either the ``bing_grounding``,
+    ``fabric_dataagent``, or ``sharepoint_grounding`` tools.
 
     :ivar connection_list: The connections attached to this tool. There can be a maximum of 1
      connection
@@ -6632,7 +6627,7 @@ class TruncationObject(_model_base.Model):
     """The truncation strategy to use for the thread. The default is ``auto``. If set to
      ``last_messages``, the thread will
      be truncated to the ``lastMessages`` count most recent messages in the thread. When set to
-     ``auto``\ , messages in the middle of the thread
+     ``auto`` , messages in the middle of the thread
      will be dropped to fit the context length of the model, ``max_prompt_tokens``. Required. Known
      values are: \"auto\" and \"last_messages\"."""
     last_messages: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -6787,9 +6782,9 @@ class VectorStore(_model_base.Model):
     :ivar file_counts: Files count grouped by status processed or being processed by this vector
      store. Required.
     :vartype file_counts: ~azure.ai.projects.models.VectorStoreFileCount
-    :ivar status: The status of the vector store, which can be either ``expired``\\ ,
-     ``in_progress``\\ , or ``completed``. A status of ``completed`` indicates that the vector store
-     is ready for use. Required. Known values are: "expired", "in_progress", and "completed".
+    :ivar status: The status of the vector store, which can be either ``expired``, ``in_progress``,
+     or ``completed``. A status of ``completed`` indicates that the vector store is ready for use.
+     Required. Known values are: "expired", "in_progress", and "completed".
     :vartype status: str or ~azure.ai.projects.models.VectorStoreStatus
     :ivar expires_after: Details on when this vector store expires.
     :vartype expires_after: ~azure.ai.projects.models.VectorStoreExpirationPolicy
@@ -6821,7 +6816,7 @@ class VectorStore(_model_base.Model):
     status: Union[str, "_models.VectorStoreStatus"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The status of the vector store, which can be either ``expired``\ , ``in_progress``\ , or
+    """The status of the vector store, which can be either ``expired``, ``in_progress``, or
      ``completed``. A status of ``completed`` indicates that the vector store is ready for use.
      Required. Known values are: \"expired\", \"in_progress\", and \"completed\"."""
     expires_after: Optional["_models.VectorStoreExpirationPolicy"] = rest_field(
@@ -7185,10 +7180,10 @@ class VectorStoreFile(_model_base.Model):
     :vartype created_at: ~datetime.datetime
     :ivar vector_store_id: The ID of the vector store that the file is attached to. Required.
     :vartype vector_store_id: str
-    :ivar status: The status of the vector store file, which can be either ``in_progress``\\ ,
-     ``completed``\\ , ``cancelled``\\ , or ``failed``. The status ``completed`` indicates that the
-     vector store file is ready for use. Required. Known values are: "in_progress", "completed",
-     "failed", and "cancelled".
+    :ivar status: The status of the vector store file, which can be either ``in_progress``,
+     ``completed``, ``cancelled``, or ``failed``. The status ``completed`` indicates that the vector
+     store file is ready for use. Required. Known values are: "in_progress", "completed", "failed",
+     and "cancelled".
     :vartype status: str or ~azure.ai.projects.models.VectorStoreFileStatus
     :ivar last_error: The last error associated with this vector store file. Will be ``null`` if
      there are no errors. Required.
@@ -7214,9 +7209,9 @@ class VectorStoreFile(_model_base.Model):
     status: Union[str, "_models.VectorStoreFileStatus"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The status of the vector store file, which can be either ``in_progress``\ , ``completed``\ ,
-     ``cancelled``\ , or ``failed``. The status ``completed`` indicates that the vector store file
-     is ready for use. Required. Known values are: \"in_progress\", \"completed\", \"failed\", and
+    """The status of the vector store file, which can be either ``in_progress``, ``completed``,
+     ``cancelled``, or ``failed``. The status ``completed`` indicates that the vector store file is
+     ready for use. Required. Known values are: \"in_progress\", \"completed\", \"failed\", and
      \"cancelled\"."""
     last_error: "_models.VectorStoreFileError" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The last error associated with this vector store file. Will be ``null`` if there are no errors.
@@ -7264,8 +7259,8 @@ class VectorStoreFileBatch(_model_base.Model):
     :vartype created_at: ~datetime.datetime
     :ivar vector_store_id: The ID of the vector store that the file is attached to. Required.
     :vartype vector_store_id: str
-    :ivar status: The status of the vector store files batch, which can be either ``in_progress``\\
-     , ``completed``\\ , ``cancelled`` or ``failed``. Required. Known values are: "in_progress",
+    :ivar status: The status of the vector store files batch, which can be either ``in_progress``,
+     ``completed``, ``cancelled`` or ``failed``. Required. Known values are: "in_progress",
      "completed", "cancelled", and "failed".
     :vartype status: str or ~azure.ai.projects.models.VectorStoreFileBatchStatus
     :ivar file_counts: Files count grouped by status processed or being processed by this vector
@@ -7287,9 +7282,9 @@ class VectorStoreFileBatch(_model_base.Model):
     status: Union[str, "_models.VectorStoreFileBatchStatus"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The status of the vector store files batch, which can be either ``in_progress``\ ,
-     ``completed``\ , ``cancelled`` or ``failed``. Required. Known values are: \"in_progress\",
-     \"completed\", \"cancelled\", and \"failed\"."""
+    """The status of the vector store files batch, which can be either ``in_progress``, ``completed``,
+     ``cancelled`` or ``failed``. Required. Known values are: \"in_progress\", \"completed\",
+     \"cancelled\", and \"failed\"."""
     file_counts: "_models.VectorStoreFileCount" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Files count grouped by status processed or being processed by this vector store. Required."""
 
