@@ -27,7 +27,7 @@ except ImportError:
 
 from azure.core.tracing import SpanKind, HttpSpanMixin, Link as CoreLink  # type: ignore[attr-defined] # pylint: disable=no-name-in-module
 
-from ._schema import OpenTelemetrySchema
+from ._schema import OpenTelemetrySchema, OpenTelemetrySchemaVersion as _OpenTelemetrySchemaVersion
 from ._version import VERSION
 
 AttributeValue = Union[
@@ -113,6 +113,8 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
     :paramtype links: list[~azure.core.tracing.Link]
     :keyword context: Context headers of parent span that should be used when creating a new span.
     :paramtype context: Dict[str, str]
+    :keyword schema_version: The OpenTelemetry schema version to use for the span.
+    :paramtype schema_version: str
     """
 
     def __init__(
@@ -125,9 +127,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         **kwargs: Any,
     ) -> None:
         self._current_ctxt_manager: Optional[_SuppressionContextManager] = None
-
-        # TODO: Once we have additional supported versions, we should add a way to specify the version.
-        self._schema_version = OpenTelemetrySchema.get_latest_version()
+        self._schema_version = kwargs.pop("schema_version", _OpenTelemetrySchemaVersion.V1_23_1)
         self._attribute_mappings = OpenTelemetrySchema.get_attribute_mappings(self._schema_version)
 
         if span:
