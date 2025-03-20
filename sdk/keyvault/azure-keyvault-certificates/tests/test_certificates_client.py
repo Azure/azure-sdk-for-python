@@ -725,6 +725,24 @@ class TestCertificateClient(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", only_latest)
     @CertificatesClientPreparer()
     @recorded_by_proxy
+    def test_preserve_certificate_order(self, client, **kwargs):
+        """
+        Ensure that preserve_certificate_order works with begin_create_certificate and that the property appears in
+        models returned by the service.
+        """
+        cert_name = self.get_resource_name("cert")
+        cert_policy = CertificatePolicy.get_default()
+
+        # create certificate
+        certificate = client.begin_create_certificate(
+            certificate_name=cert_name, policy=cert_policy, preserve_certificate_order=True
+        ).result()
+
+        assert certificate.properties.preserve_certificate_order is True
+
+    @pytest.mark.parametrize("api_version", only_latest)
+    @CertificatesClientPreparer()
+    @recorded_by_proxy
     def test_40x_handling(self, client, **kwargs):
         """Ensure 404 and 409 responses are raised with azure-core exceptions instead of generated KV ones"""
 
