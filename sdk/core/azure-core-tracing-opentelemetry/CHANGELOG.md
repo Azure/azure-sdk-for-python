@@ -5,6 +5,7 @@
 ### Features Added
 
 - If a span exits with an exception, the exception name is now recorded in the `error.type` attribute. ([#34619](https://github.com/Azure/azure-sdk-for-python/pull/34619))
+- Added support for passing a schema version to fetch available attribute mappings and set the schema URL on the tracer's instrumentation scope. ([#40161](https://github.com/Azure/azure-sdk-for-python/pull/40161))
 
 ### Breaking Changes
 

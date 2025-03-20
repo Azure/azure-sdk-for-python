@@ -32,6 +32,15 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             :language: python
             :dedent: 8
             :caption: Initialize and call a CoherenceEvaluator with a query and response.
+    
+    .. admonition:: Example with Threshold:
+
+        .. literalinclude:: ../samples/evaluation_samples_threshold.py
+            :start-after: [START threshold_coherence_evaluator]
+            :end-before: [END threshold_coherence_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize with threshold and and call a CoherenceEvaluator with a query and response.
 
     .. note::
 

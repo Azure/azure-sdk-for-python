@@ -27,7 +27,7 @@ class MultiEvaluatorBase(EvaluatorBase[T]):
     """
 
     def __init__(self, evaluators: List[EvaluatorBase[T]], **kwargs):
-        self._threshold = kwargs.pop("threshold", 0)
+        self._threshold = kwargs.pop("threshold", 3)
         self._higher_is_better = kwargs.pop("_higher_is_better", False)
         super().__init__(threshold=self._threshold, _higher_is_better=self._higher_is_better)
         self._parallel = kwargs.pop("_parallel", True)

@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Union
+from typing import Optional, Union
 
 from typing_extensions import overload, override
 
@@ -23,6 +23,13 @@ class QAEvaluator(MultiEvaluatorBase[Union[str, float]]):
     :param model_config: Configuration for the Azure OpenAI model.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
+    :param threshold: Optional dictionary of thresholds for different evaluation metrics.
+        Keys can be "groundedness", "relevance", "coherence", "fluency", "similarity",
+        and "f1_score". Default values are 3 for integer metrics and 0.5 for float
+        metrics. If None or an empty dictionary is provided, default values will be
+        used for all metrics. If a partial dictionary is provided, default values
+        will be used for any missing keys.
+    :type threshold: Optional[dict]
     :return: A callable class that evaluates and generates metrics for "question-answering" scenario.
     :param kwargs: Additional arguments to pass to the evaluator.
     :type kwargs: Any
@@ -36,6 +43,15 @@ class QAEvaluator(MultiEvaluatorBase[Union[str, float]]):
             :dedent: 8
             :caption: Initialize and call a QAEvaluator.
 
+    .. admonition:: Example with Threshold:
+    
+        .. literalinclude:: ../samples/evaluation_samples_threshold.py
+            :start-after: [START threshold_qa_evaluator]
+            :end-before: [END threshold_qa_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize with threshold and call a QAEvaluator.
+
     .. note::
 
         To align with our support of a diverse set of models, keys without the `gpt_` prefix has been added.
@@ -46,16 +62,31 @@ class QAEvaluator(MultiEvaluatorBase[Union[str, float]]):
     id = "qa"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
-    def __init__(self, model_config, threshold=3, _higher_is_better=True, **kwargs):
-        self.threshold = threshold
-        self._higher_is_better = _higher_is_better
+    def __init__(self, model_config, threshold: Optional[dict] = {}, **kwargs):
+        default_threshold = {
+            "groundedness": 3,
+            "relevance": 3,
+            "coherence": 3,
+            "fluency": 3,
+            "similarity": 3,
+            "f1_score": 0.5,
+        }
+        if threshold is None:
+            threshold = {}
+        for key in default_threshold.keys():
+            if key not in threshold:
+                threshold[key] = default_threshold[key]
+            if not isinstance(threshold[key], (int, float)):
+                raise TypeError(
+                    f"Threshold for {key} must be an int or float, got {type(threshold[key])}"
+                )
         evaluators = [
-            GroundednessEvaluator(model_config, threshold=threshold),
-            RelevanceEvaluator(model_config, threshold=threshold),
-            CoherenceEvaluator(model_config, threshold=threshold),
-            FluencyEvaluator(model_config, threshold=threshold),
-            SimilarityEvaluator(model_config, threshold=threshold),
-            F1ScoreEvaluator(),
+            GroundednessEvaluator(model_config, threshold=threshold["groundedness"]),
+            RelevanceEvaluator(model_config, threshold=threshold["relevance"]),
+            CoherenceEvaluator(model_config, threshold=threshold["coherence"]),
+            FluencyEvaluator(model_config, threshold=threshold["fluency"]),
+            SimilarityEvaluator(model_config, threshold=threshold["similarity"]),
+            F1ScoreEvaluator(threshold=threshold["f1_score"]),
         ]
         super().__init__(evaluators=evaluators, **kwargs)
 

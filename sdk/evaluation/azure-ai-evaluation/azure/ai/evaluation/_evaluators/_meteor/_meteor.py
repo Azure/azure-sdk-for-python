@@ -44,6 +44,15 @@ class MeteorScoreEvaluator(EvaluatorBase):
             :language: python
             :dedent: 8
             :caption: Initialize and call a MeteorScoreEvaluator with alpha of 0.8.
+
+    .. admonition:: Example with Threshold:
+
+        .. literalinclude:: ../samples/evaluation_samples_threshold.py
+            :start-after: [START threshold_meteor_score_evaluator]
+            :end-before: [END threshold_meteor_score_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize with threshold and call a MeteorScoreEvaluator.
     """
 
     id = "azureml://registries/azureml/models/Meteor-Score-Evaluator/versions/3"

@@ -45,6 +45,15 @@ class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             :dedent: 8
             :caption: Initialize and call a RetrievalEvaluator.
 
+    .. admonition:: Example with Threshold:
+    
+        .. literalinclude:: ../samples/evaluation_samples_threshold.py
+            :start-after: [START threshold_retrieval_evaluator]
+            :end-before: [END threshold_retrieval_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize with threshold and call a RetrievalEvaluator.
+
     .. note::
 
         To align with our support of a diverse set of models, an output key without the `gpt_` prefix has been added.

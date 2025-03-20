@@ -37,6 +37,15 @@ class F1ScoreEvaluator(EvaluatorBase):
             :language: python
             :dedent: 8
             :caption: Initialize and call an F1ScoreEvaluator.
+
+    .. admonition:: Example with Threshold:
+
+        .. literalinclude:: ../samples/evaluation_samples_threshold.py
+            :start-after: [START threshold_f1_score_evaluator]
+            :end-before: [END threshold_f1_score_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize with threshold and call an F1ScoreEvaluator.
     """
 
     id = "azureml://registries/azureml/models/F1Score-Evaluator/versions/3"

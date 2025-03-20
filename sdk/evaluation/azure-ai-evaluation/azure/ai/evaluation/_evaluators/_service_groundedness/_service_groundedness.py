@@ -41,6 +41,15 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
             :dedent: 8
             :caption: Initialize and call a GroundednessProEvaluator with a query, response, and context.
 
+    .. admonition:: Example with threshold:
+
+        .. literalinclude:: ../samples/evaluation_samples_threshold.py
+            :start-after: [START threshold_groundedness_pro_evaluator]
+            :end-before: [END threshold_groundedness_pro_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize with a specified threshold and call GroundednessProEvaluator with a query, response, and context.
+
     .. note::
 
         If this evaluator is supplied to the `evaluate` function, the aggregated metric

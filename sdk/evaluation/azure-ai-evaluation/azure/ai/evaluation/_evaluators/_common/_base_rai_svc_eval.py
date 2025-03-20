@@ -54,7 +54,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         credential: TokenCredential,
         eval_last_turn: bool = False,
         conversation_aggregation_type: _AggregationType = _AggregationType.MEAN,
-        threshold: int = 0,
+        threshold: int = 3,
         _higher_is_better: Optional[bool] = False,
     ):
         super().__init__(eval_last_turn=eval_last_turn, conversation_aggregation_type=conversation_aggregation_type, threshold=threshold, _higher_is_better=_higher_is_better)
@@ -177,6 +177,6 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
             return Tasks.PROTECTED_MATERIAL
         if self._eval_metric == EvaluationMetrics.CODE_VULNERABILITY:
             return Tasks.CODE_VULNERABILITY
-        if self._eval_metric == EvaluationMetrics.ISA:
-            return Tasks.ISA
+        if self._eval_metric == EvaluationMetrics.UNGROUNDED_ATTRIBUTES:
+            return Tasks.UNGROUNDED_ATTRIBUTES
         return Tasks.CONTENT_HARM
