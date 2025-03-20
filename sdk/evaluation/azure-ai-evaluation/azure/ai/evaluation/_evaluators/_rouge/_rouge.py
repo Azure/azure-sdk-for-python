@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 from enum import Enum
 
-from typing import Dict, Optional
+from typing import Dict
 from typing_extensions import overload, override
 
 from azure.ai.evaluation._vendor.rouge_score import rouge_scorer
@@ -82,7 +82,7 @@ class RougeScoreEvaluator(EvaluatorBase):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, rouge_type: RougeType, threshold: Optional[dict] = {}):
+    def __init__(self, rouge_type: RougeType, threshold: dict = {}):
         self._rouge_type = rouge_type
         self._higher_is_better = True
         super().__init__()
