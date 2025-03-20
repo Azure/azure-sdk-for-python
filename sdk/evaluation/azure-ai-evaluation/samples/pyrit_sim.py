@@ -45,7 +45,7 @@ async def main():
         credential=DefaultAzureCredential(),
     )
 
-    outputs = await red_team_agent.attack(
+    outputs = await red_team_agent.scan(
         target=model_config, # type: ignore
         attack_objective_generator=attack_objective_generator,
     )
@@ -68,7 +68,7 @@ async def main():
         credential=DefaultAzureCredential(),
     )
 
-    outputs = await red_team_agent.attack(
+    outputs = await red_team_agent.scan(
         target=call_to_ai_application, # type: ignore
         attack_objective_generator=attack_objective_generator,
     )
@@ -103,7 +103,7 @@ async def main():
         credential=DefaultAzureCredential(),
     )
 
-    outputs = await red_team_agent.attack(
+    outputs = await red_team_agent.scan(
         target=callback_target, # type: ignore
         attack_objective_generator=attack_objective_generator,
     )
@@ -122,7 +122,7 @@ async def main():
         credential=DefaultAzureCredential(),
     )
 
-    outputs = await red_team_agent.attack(
+    outputs = await red_team_agent.scan(
         target=pyrit_target, # type: ignore
         attack_objective_generator=attack_objective_generator,
     )
@@ -136,7 +136,7 @@ async def main():
         credential=DefaultAzureCredential(),
     )
 
-    outputs = await red_team_agent.attack(
+    outputs = await red_team_agent.scan(
         target=call_to_ai_application, # type: ignore
         attack_objective_generator=attack_objective_generator,
     )
@@ -148,9 +148,9 @@ async def main():
         credential=DefaultAzureCredential(),
     )
 
-    outputs = await red_team_agent.attack(
+    outputs = await red_team_agent.scan(
         target=call_to_ai_application, # type: ignore
-        attack_strategy=[AttackStrategy.EASY],
+        attack_strategies=[AttackStrategy.EASY],
         attack_objective_generator=attack_objective_generator,
     )
     print(outputs)
@@ -161,9 +161,9 @@ async def main():
         credential=DefaultAzureCredential(),
     )
     
-    outputs = await red_team_agent.attack(
+    outputs = await red_team_agent.scan(
         target=model_config, # type: ignore
-        attack_strategy=[AttackStrategy.MODERATE],
+        attack_strategies=[AttackStrategy.MODERATE],
         attack_objective_generator=attack_objective_generator,
     )
     print(outputs)
@@ -174,9 +174,9 @@ async def main():
         credential=DefaultAzureCredential(),
     )
 
-    outputs = await red_team_agent.attack(
+    outputs = await red_team_agent.scan(
         target=model_config, # type: ignore
-        attack_strategy=[AttackStrategy.DIFFICULT],
+        attack_strategies=[AttackStrategy.DIFFICULT],
         attack_objective_generator=attack_objective_generator,
     )
 
@@ -186,9 +186,9 @@ async def main():
         credential=DefaultAzureCredential(),
     )
 
-    outputs = await red_team_agent.attack(
+    outputs = await red_team_agent.scan(
         target=model_config, # type: ignore
-        attack_strategy=[AttackStrategy.Compose([AttackStrategy.Flip, AttackStrategy.Base64]), 
+        attack_strategies=[AttackStrategy.Compose([AttackStrategy.Flip, AttackStrategy.Base64]), 
             AttackStrategy.EASY,
             AttackStrategy.Morse],
         output_path="RacoonRedTeamEvalResults.jsonl", 
@@ -202,9 +202,9 @@ async def main():
         credential=DefaultAzureCredential(),
     )
 
-    outputs = await red_team_agent.attack(
+    outputs = await red_team_agent.scan(
         target=model_config, # type: ignore
-        attack_strategy=[AttackStrategy.DIFFICULT, AttackStrategy.Compose([AttackStrategy.Math, AttackStrategy.Tense])],
+        attack_strategies=[AttackStrategy.DIFFICULT, AttackStrategy.Compose([AttackStrategy.Math, AttackStrategy.Tense])],
         output_path="DIFFICULTBudget-Duplicates.jsonl",
         attack_objective_generator=attack_objective_generator,
     )
@@ -216,9 +216,9 @@ async def main():
         credential=DefaultAzureCredential(),
     )
 
-    outputs = await red_team_agent.attack(
+    outputs = await red_team_agent.scan(
         target=call_to_ai_application, # type: ignore
-        attack_strategy=[AttackStrategy.EASY, AttackStrategy.MODERATE, AttackStrategy.DIFFICULT],
+        attack_strategies=[AttackStrategy.EASY, AttackStrategy.MODERATE, AttackStrategy.DIFFICULT],
         attack_objective_generator=attack_objective_generator,
     )
     print(outputs)
@@ -239,11 +239,11 @@ async def main():
         credential=DefaultAzureCredential(),
     )
 
-    outputs = await red_team_agent.attack(
+    outputs = await red_team_agent.scan(
         target=call_to_ai_application,
         attack_objective_generator=attack_objective_generator,
         application_scenario=application_scenario,
-        attack_strategy=[AttackStrategy.EASY, AttackStrategy.MODERATE, AttackStrategy.DIFFICULT],
+        attack_strategies=[AttackStrategy.EASY, AttackStrategy.MODERATE, AttackStrategy.DIFFICULT],
     )
     # # [END red_team_agent_attack_objectives]
 
