@@ -25,6 +25,8 @@ class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
     :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
+    :param threshold: The threshold for the content safety evaluator. Default is 3.
+    :type threshold: int
     :param kwargs: Additional arguments to pass to the evaluator.
     :type kwargs: Any
     :return: A function that evaluates content-safety metrics for "question-answering" scenario.
@@ -37,17 +39,27 @@ class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
             :language: python
             :dedent: 8
             :caption: Initialize and call a ContentSafetyEvaluator.
+    
+    # todo: should threshold be a dict like QAEvaluator?
+    .. admonition:: Example with Threshold:
+    
+        .. literalinclude:: ../samples/evaluation_samples_threshold.py
+            :start-after: [START threshold_content_safety_evaluator]
+            :end-before: [END threshold_content_safety_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize with threshold and call a ContentSafetyEvaluator.
     """
 
     id = "content_safety"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
-    def __init__(self, credential, azure_ai_project, **kwargs):
+    def __init__(self, credential, azure_ai_project, threshold=3, **kwargs):
         evaluators = [
-            ViolenceEvaluator(credential, azure_ai_project),
-            SexualEvaluator(credential, azure_ai_project),
-            SelfHarmEvaluator(credential, azure_ai_project),
-            HateUnfairnessEvaluator(credential, azure_ai_project),
+            ViolenceEvaluator(credential, azure_ai_project, threshold=threshold),
+            SexualEvaluator(credential, azure_ai_project, threshold=threshold),
+            SelfHarmEvaluator(credential, azure_ai_project, threshold=threshold),
+            HateUnfairnessEvaluator(credential, azure_ai_project, threshold=threshold),
         ]
         super().__init__(evaluators=evaluators, **kwargs)
 
