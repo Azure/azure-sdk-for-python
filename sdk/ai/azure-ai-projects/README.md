@@ -1333,6 +1333,15 @@ In addition, you might find helpful to see the tracing logs in console. You can 
 ```python
 project_client.telemetry.enable(destination=sys.stdout)
 ```
+
+#### How to get traces for service-side tool calls
+
+Additional traces related to available run steps, which include service-side tool calls, will be recorded when tracing is enabled and the run steps are retrieved in your code:
+```python
+steps = project_client.agents.list_run_steps(thread_id=thread.id, run_id=run.id)
+```
+You do not have to iterate over the steps in your code to get them traced. Content recording has to be enabled for the tool call details to be included in the traces.
+
 #### How to trace your own functions
 
 The decorator `trace_function` is provided for tracing your own function calls using OpenTelemetry. By default the function name is used as the name for the span. Alternatively you can provide the name for the span as a parameter to the decorator.

@@ -4,6 +4,8 @@
 
 ### Features added
 
+* Added support for tracing run steps when agents.list_run_steps is called. This can be used to trace service-side tool calls.
+
 ### Sample updates
 
 ### Bugs Fixed
