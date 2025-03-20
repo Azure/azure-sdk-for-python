@@ -96,15 +96,24 @@ class QueueServiceClient(  # type: ignore [misc]
     def __init__(
         self, account_url: str,
         credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+        *,
+        api_version: Optional[str] = None,
+        secondary_hostname: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
         loop = kwargs.pop('loop', None)
         parsed_url, sas_token = _parse_url(account_url=account_url, credential=credential)
         self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(QueueServiceClient, self).__init__(parsed_url, service='queue', credential=credential, **kwargs)
+        super(QueueServiceClient, self).__init__(
+            parsed_url,
+            service='queue',
+            credential=credential,
+            secondary_hostname=secondary_hostname,
+            **kwargs
+        )
         self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline, loop=loop)
-        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
+        self._client._config.version = get_api_version(api_version)  # type: ignore [assignment]
         self._loop = loop
         self._configure_encryption(kwargs)
 
