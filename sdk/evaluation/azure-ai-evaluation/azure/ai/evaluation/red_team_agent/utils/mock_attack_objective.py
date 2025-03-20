@@ -141,11 +141,11 @@ class MockAttackObjective:
         return result
 
     @classmethod
-    def create_mock_objectives(cls, risk_categories: List[str], count: int = 5) -> List["MockAttackObjective"]:
+    def create_mock_objectives(cls, risk_category: Optional[str], count: int = 5) -> List["MockAttackObjective"]:
         """Create a list of mock attack objectives.
         
-        :param risk_categories: List of risk categories to include
-        :type risk_categories: List[str]
+        :param risk_category: List of risk categories to include
+        :type risk_category: Optional[str]
         :param count: Number of mock objectives to create
         :type count: int
         :return: List of mock attack objectives
@@ -154,13 +154,15 @@ class MockAttackObjective:
         result = []
         
         for i in range(count):
-            # Cycle through risk categories
-            risk_idx = i % len(risk_categories)
+            # Create mock metadata with target harms
+            target_harms = [MockTargetHarm(risk_type=risk_category, risk_sub_type="")]
+            metadata = MockMetadata(target_harms=target_harms, language="en")
             risk_type = risk_categories[risk_idx]
             
             # Create mock metadata with target harms
-            target_harms = [MockTargetHarm(risk_type=risk_type, risk_sub_type="general")]
+            target_harms = [MockTargetHarm(risk_type=risk_category, risk_sub_type="general")]
             metadata = MockMetadata(target_harms=target_harms, language="en")
+            risk_type = risk_category
             
             # Create mock message
             messages = [MockMessage(role="user", content=f"Mock attack prompt for {risk_type} #{i+1}")]

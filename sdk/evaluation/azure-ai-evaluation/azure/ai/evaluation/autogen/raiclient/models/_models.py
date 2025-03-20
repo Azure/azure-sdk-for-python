@@ -19,8 +19,6 @@ if TYPE_CHECKING:
 class AnnotationDTO(_model_base.Model):
     """AnnotationDTO.
 
-    All required parameters must be populated in order to send to server.
-
     :ivar annotation_task: Required.
     :vartype annotation_task: str
     :ivar content_type: Required.
@@ -78,7 +76,8 @@ class AnnotationDTO(_model_base.Model):
 class AttackObjective(_model_base.Model):
     """Attack Objective.
 
-
+    :ivar id: The unique identifier. Required.
+    :vartype id: str
     :ivar metadata: The metadata.
     :vartype metadata: ~raiclient.models.Metadata
     :ivar source: List of sources. Required.
@@ -89,6 +88,8 @@ class AttackObjective(_model_base.Model):
     :vartype messages: list[~raiclient.models.Message]
     """
 
+    id: str = rest_field(name="Id", visibility=["read", "create", "update", "delete", "query"])
+    """The unique identifier. Required."""
     metadata: Optional["_models.Metadata"] = rest_field(
         name="Metadata", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -106,6 +107,7 @@ class AttackObjective(_model_base.Model):
     def __init__(
         self,
         *,
+        id: str,  # pylint: disable=redefined-builtin
         source: List[str],
         modality: str,
         messages: List["_models.Message"],
@@ -125,8 +127,6 @@ class AttackObjective(_model_base.Model):
 
 class Content(_model_base.Model):
     """Content.
-
-    All required parameters must be populated in order to send to server.
 
     :ivar messages: Required.
     :vartype messages: list[any]
@@ -155,8 +155,6 @@ class Content(_model_base.Model):
 
 class CustomizationParameters(_model_base.Model):
     """Customization Parameters.
-
-    All required parameters must be populated in order to send to server.
 
     :ivar application_scenario: Application scenario.
     :vartype application_scenario: str
@@ -195,8 +193,6 @@ class CustomizationParameters(_model_base.Model):
 class Data(_model_base.Model):
     """Data.
 
-    All required parameters must be populated in order to send to server.
-
     :ivar asset_id: Required.
     :vartype asset_id: str
     """
@@ -224,8 +220,6 @@ class Data(_model_base.Model):
 
 class Grader(_model_base.Model):
     """Grader.
-
-    All required parameters must be populated in order to send to server.
 
     :ivar name: Required.
     :vartype name: str
@@ -267,8 +261,6 @@ class Grader(_model_base.Model):
 class GraderConfigBase(_model_base.Model):
     """GraderConfigBase.
 
-    All required parameters must be populated in order to send to server.
-
     :ivar type: Required.
     :vartype type: str
     """
@@ -296,8 +288,6 @@ class GraderConfigBase(_model_base.Model):
 
 class GradersDTO(_model_base.Model):
     """GradersDTO.
-
-    All required parameters must be populated in order to send to server.
 
     :ivar data: Required.
     :vartype data: ~raiclient.models.Data
@@ -347,7 +337,6 @@ class GradersDTO(_model_base.Model):
 
 class LongRunningResponse(_model_base.Model):
     """LongRunningResponse.
-
 
     :ivar location: Required.
     :vartype location: str
@@ -417,7 +406,6 @@ class Message(_model_base.Model):
 class Metadata(_model_base.Model):
     """Metadata.
 
-
     :ivar target_harms: List of target harms. Required.
     :vartype target_harms: list[~raiclient.models.TargetHarm]
     :ivar language: The language. Required.
@@ -453,8 +441,6 @@ class Metadata(_model_base.Model):
 class ModelConfig(_model_base.Model):
     """ModelConfig.
 
-    All required parameters must be populated in order to send to server.
-
     :ivar azure_endpoint: Required.
     :vartype azure_endpoint: str
     """
@@ -482,8 +468,6 @@ class ModelConfig(_model_base.Model):
 
 class SampleGenerator(_model_base.Model):
     """SampleGenerator.
-
-    All required parameters must be populated in order to send to server.
 
     :ivar model_name: Required.
     :vartype model_name: str

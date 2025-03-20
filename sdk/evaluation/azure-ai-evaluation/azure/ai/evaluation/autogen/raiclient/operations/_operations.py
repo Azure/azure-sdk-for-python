@@ -126,7 +126,7 @@ def build_rai_svc_get_attack_objectives_request(  # pylint: disable=name-too-lon
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if risk_types is not None:
-        _params["riskTypes"] = _SERIALIZER.query("risk_types", risk_types, "[str]", div=",")
+        _params["riskTypes"] = [_SERIALIZER.query("risk_types", q, "str") if q is not None else "" for q in risk_types]
     if lang is not None:
         _params["lang"] = _SERIALIZER.query("lang", lang, "str")
     if strategy is not None:
@@ -505,13 +505,13 @@ class RAISvcOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_jail_break_dataset_with_type(self, type: str, **kwargs: Any) -> str:
+    def get_jail_break_dataset_with_type(self, type: str, **kwargs: Any) -> List[str]:
         """Get the jailbreak dataset with type.
 
         :param type: Type of jailbreak dataset. Required.
         :type type: str
-        :return: str
-        :rtype: str
+        :return: list of str
+        :rtype: list[str]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -525,7 +525,7 @@ class RAISvcOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[str] = kwargs.pop("cls", None)
+        cls: ClsType[List[str]] = kwargs.pop("cls", None)
 
         _request = build_rai_svc_get_jail_break_dataset_with_type_request(
             type=type,
@@ -562,7 +562,7 @@ class RAISvcOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(str, response.json())
+            deserialized = _deserialize(List[str], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -648,11 +648,11 @@ class RAISvcOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_jail_break_dataset(self, **kwargs: Any) -> str:
+    def get_jail_break_dataset(self, **kwargs: Any) -> List[str]:
         """Get the jailbreak dataset.
 
-        :return: str
-        :rtype: str
+        :return: list of str
+        :rtype: list[str]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -666,7 +666,7 @@ class RAISvcOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[str] = kwargs.pop("cls", None)
+        cls: ClsType[List[str]] = kwargs.pop("cls", None)
 
         _request = build_rai_svc_get_jail_break_dataset_request(
             api_version=self._config.api_version,
@@ -702,7 +702,7 @@ class RAISvcOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(str, response.json())
+            deserialized = _deserialize(List[str], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
