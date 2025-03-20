@@ -1740,7 +1740,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             process_storage_error(error)
 
     @distributed_trace_async
-    async def create_symbolic_link(
+    async def create_symlink(
         self, target: str,
         *,
         metadata: Optional[Dict[str, str]] = None,
@@ -1752,7 +1752,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
-        """NFS only. Create a symbolic link to the specified file.
+        """NFS only. Creates a symbolic link to the specified file.
 
         :param str target:
             Specifies the file path the symbolic link will point to. The file path can be either relative or absolute.
@@ -1794,7 +1794,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_symbolic_link(
+    async def get_symlink(
         self,
         *,
         timeout: Optional[int] = None,
