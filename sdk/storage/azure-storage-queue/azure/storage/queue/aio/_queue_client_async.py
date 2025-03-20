@@ -39,6 +39,12 @@ from .._shared.response_handlers import (
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
+    from .._message_encoding import (
+        BinaryBase64DecodePolicy,
+        BinaryBase64EncodePolicy,
+        TextBase64DecodePolicy,
+        TextBase64EncodePolicy
+    )
     from .._models import QueueProperties
 
 
@@ -76,9 +82,11 @@ class QueueClient(  # type: ignore [misc]
     :keyword message_encode_policy: The encoding policy to use on outgoing messages.
         Default is not to encode messages. Other options include :class:`TextBase64EncodePolicy`,
         :class:`BinaryBase64EncodePolicy` or `None`.
+    :paramtype message_encode_policy: BinaryBase64EncodePolicy or TextBase64EncodePolicy or None
     :keyword message_decode_policy: The decoding policy to use on incoming messages.
         Default value is not to decode messages. Other options include :class:`TextBase64DecodePolicy`,
         :class:`BinaryBase64DecodePolicy` or `None`.
+    :paramtype message_decode_policy: BinaryBase64DecodePolicy or TextBase64DecodePolicy or None
     :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
         authentication. Only has an effect when credential is of type TokenCredential. The value could be
         https://storage.azure.com/ (default) or https://<account>.queue.core.windows.net.
@@ -104,6 +112,12 @@ class QueueClient(  # type: ignore [misc]
         self, account_url: str,
         queue_name: str,
         credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+        *,
+        api_version: Optional[str] = None,
+        secondary_hostname: Optional[str] = None,
+        message_encode_policy: Optional[Union["BinaryBase64EncodePolicy", "TextBase64EncodePolicy"]] = None,
+        message_decode_policy: Optional[Union["BinaryBase64DecodePolicy", "TextBase64DecodePolicy"]] = None,
+        audience: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
@@ -111,12 +125,19 @@ class QueueClient(  # type: ignore [misc]
         parsed_url, sas_token = _parse_url(account_url=account_url, queue_name=queue_name, credential=credential)
         self.queue_name = queue_name
         self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(QueueClient, self).__init__(parsed_url, service='queue', credential=credential, **kwargs)
+        super(QueueClient, self).__init__(
+            parsed_url,
+            service='queue',
+            credential=credential,
+            secondary_hostname=secondary_hostname,
+            audience=audience,
+            **kwargs
+        )
 
-        self._message_encode_policy = kwargs.get('message_encode_policy', None) or NoEncodePolicy()
-        self._message_decode_policy = kwargs.get('message_decode_policy', None) or NoDecodePolicy()
+        self._message_encode_policy = message_encode_policy or NoEncodePolicy()
+        self._message_decode_policy = message_decode_policy or NoDecodePolicy()
         self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline, loop=loop)
-        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
+        self._client._config.version = get_api_version(api_version)  # type: ignore [assignment]
         self._loop = loop
         self._configure_encryption(kwargs)
 
@@ -132,12 +153,15 @@ class QueueClient(  # type: ignore [misc]
             queue_name=self.queue_name,
             hostname=hostname,
             scheme=self.scheme,
-            query_str=self._query_str)
+            query_str=self._query_str
+        )
 
     @classmethod
     def from_queue_url(
         cls, queue_url: str,
         credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+        *,
+        audience: Optional[str] = None,
         **kwargs: Any
     ) -> Self:
         """A client to interact with a specific Queue.
@@ -164,13 +188,15 @@ class QueueClient(  # type: ignore [misc]
         :rtype: ~azure.storage.queue.QueueClient
         """
         account_url, queue_name = _from_queue_url(queue_url=queue_url)
-        return cls(account_url, queue_name=queue_name, credential=credential, **kwargs)
+        return cls(account_url, queue_name=queue_name, credential=credential, audience=audience, **kwargs)
 
     @classmethod
     def from_connection_string(
         cls, conn_str: str,
         queue_name: str,
         credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+        *,
+        audience: Optional[str] = None,
         **kwargs: Any
     ) -> Self:
         """Create QueueClient from a Connection String.
@@ -208,16 +234,16 @@ class QueueClient(  # type: ignore [misc]
                 :dedent: 8
                 :caption: Create the queue client from connection string.
         """
-        account_url, secondary, credential = parse_connection_str(
-            conn_str, credential, 'queue')
+        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'queue')
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
-        return cls(account_url, queue_name=queue_name, credential=credential, **kwargs)
+        return cls(account_url, queue_name=queue_name, credential=credential, audience=audience, **kwargs)
 
     @distributed_trace_async
     async def create_queue(
         self, *,
         metadata: Optional[Dict[str, str]] = None,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """Creates a new queue in the storage account.
@@ -225,7 +251,7 @@ class QueueClient(  # type: ignore [misc]
         If a queue with the same name already exists, the operation fails with
         a `ResourceExistsError`.
 
-        :keyword dict(str,str) metadata:
+        :keyword Dict[str, str] metadata:
             A dict containing name-value pairs to associate with the queue as
             metadata. Note that metadata names preserve the case with which they
             were created, but are case-insensitive when set or read.
@@ -248,18 +274,21 @@ class QueueClient(  # type: ignore [misc]
                 :dedent: 12
                 :caption: Create a queue.
         """
-        timeout = kwargs.pop('timeout', None)
         headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))
         try:
             return await self._client.queue.create(
-                metadata=metadata, timeout=timeout, headers=headers, cls=deserialize_queue_creation, **kwargs
+                metadata=metadata,
+                timeout=timeout,
+                headers=headers,
+                cls=deserialize_queue_creation,
+                **kwargs
             )
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def delete_queue(self, **kwargs: Any) -> None:
+    async def delete_queue(self, *, timeout: Optional[int] = None, **kwargs: Any) -> None:
         """Deletes the specified queue and any messages it contains.
 
         When a queue is successfully deleted, it is immediately marked for deletion
@@ -287,14 +316,13 @@ class QueueClient(  # type: ignore [misc]
                 :dedent: 16
                 :caption: Delete a queue.
         """
-        timeout = kwargs.pop('timeout', None)
         try:
             await self._client.queue.delete(timeout=timeout, **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_queue_properties(self, **kwargs: Any) -> "QueueProperties":
+    async def get_queue_properties(self, *, timeout: Optional[int] = None, **kwargs: Any) -> "QueueProperties":
         """Returns all user-defined metadata for the specified queue.
 
         The data returned does not include the queue's list of messages.
@@ -313,10 +341,11 @@ class QueueClient(  # type: ignore [misc]
                 :dedent: 16
                 :caption: Get the properties on the queue.
         """
-        timeout = kwargs.pop('timeout', None)
         try:
             response = cast("QueueProperties", await (self._client.queue.get_properties(
-                timeout=timeout, cls=deserialize_queue_properties, **kwargs
+                timeout=timeout,
+                cls=deserialize_queue_properties,
+                **kwargs
             )))
         except HttpResponseError as error:
             process_storage_error(error)
@@ -326,13 +355,15 @@ class QueueClient(  # type: ignore [misc]
     @distributed_trace_async
     async def set_queue_metadata(
         self, metadata: Optional[Dict[str, str]] = None,
+        *,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Sets user-defined metadata on the specified queue.
 
         Metadata is associated with the queue as name-value pairs.
 
-        :param Optional[Dict[str, Any]] metadata:
+        :param Optional[Dict[str, str]] metadata:
             A dict containing name-value pairs to associate with the
             queue as metadata.
         :keyword int timeout:
@@ -353,18 +384,20 @@ class QueueClient(  # type: ignore [misc]
                 :dedent: 16
                 :caption: Set metadata on the queue.
         """
-        timeout = kwargs.pop('timeout', None)
         headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))
         try:
             return await self._client.queue.set_metadata(
-                timeout=timeout, headers=headers, cls=return_response_headers, **kwargs
+                timeout=timeout,
+                headers=headers,
+                cls=return_response_headers,
+                **kwargs
             )
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_queue_access_policy(self, **kwargs: Any) -> Dict[str, AccessPolicy]:
+    async def get_queue_access_policy(self, *, timeout: Optional[int] = None, **kwargs: Any) -> Dict[str, AccessPolicy]:
         """Returns details about any stored access policies specified on the
         queue that may be used with Shared Access Signatures.
 
@@ -377,10 +410,11 @@ class QueueClient(  # type: ignore [misc]
         :return: A dictionary of access policies associated with the queue.
         :rtype: dict(str, ~azure.storage.queue.AccessPolicy)
         """
-        timeout = kwargs.pop('timeout', None)
         try:
             _, identifiers = cast(Tuple[Dict, List], await self._client.queue.get_access_policy(
-                timeout=timeout, cls=return_headers_and_deserialized, **kwargs
+                timeout=timeout,
+                cls=return_headers_and_deserialized,
+                **kwargs
             ))
         except HttpResponseError as error:
             process_storage_error(error)
@@ -389,6 +423,8 @@ class QueueClient(  # type: ignore [misc]
     @distributed_trace_async
     async def set_queue_access_policy(
         self, signed_identifiers: Dict[str, AccessPolicy],
+        *,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """Sets stored access policies for the queue that may be used with Shared
@@ -426,7 +462,6 @@ class QueueClient(  # type: ignore [misc]
                 :dedent: 16
                 :caption: Set an access policy on the queue.
         """
-        timeout = kwargs.pop('timeout', None)
         if len(signed_identifiers) > 15:
             raise ValueError(
                 "Too many access policies provided. The server does not support setting "
@@ -449,6 +484,7 @@ class QueueClient(  # type: ignore [misc]
         *,
         visibility_timeout: Optional[int] = None,
         time_to_live: Optional[int] = None,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> "QueueMessage":
         """Adds a new message to the back of the message queue.
@@ -487,7 +523,7 @@ class QueueClient(  # type: ignore [misc]
             #other-client--per-operation-configuration>`__.
         :return:
             A :class:`~azure.storage.queue.QueueMessage` object.
-            This object is also populated with the content although it is not
+            This object is also populated with the content, although it is not
             returned from the service.
         :rtype: ~azure.storage.queue.QueueMessage
 
@@ -500,20 +536,21 @@ class QueueClient(  # type: ignore [misc]
                 :dedent: 16
                 :caption: Send messages.
         """
-        timeout = kwargs.pop('timeout', None)
         if self.key_encryption_key:
             modify_user_agent_for_encryption(
                 self._config.user_agent_policy.user_agent,
                 self._sdk_moniker,
                 self.encryption_version,
-                kwargs)
+                kwargs
+            )
 
         try:
             self._message_encode_policy.configure(
                 require_encryption=self.require_encryption,
                 key_encryption_key=self.key_encryption_key,
                 resolver=self.key_resolver_function,
-                encryption_version=self.encryption_version)
+                encryption_version=self.encryption_version
+            )
         except TypeError:
             warnings.warn(
                 "TypeError when calling message_encode_policy.configure. \
@@ -524,7 +561,8 @@ class QueueClient(  # type: ignore [misc]
             self._message_encode_policy.configure(
                 require_encryption=self.require_encryption,
                 key_encryption_key=self.key_encryption_key,
-                resolver=self.key_resolver_function)
+                resolver=self.key_resolver_function
+            )
         encoded_content = self._message_encode_policy(content)
         new_message = GenQueueMessage(message_text=encoded_content)
 
@@ -541,8 +579,8 @@ class QueueClient(  # type: ignore [misc]
                 id=enqueued[0].message_id,
                 inserted_on=enqueued[0].insertion_time,
                 expires_on=enqueued[0].expiration_time,
-                pop_receipt = enqueued[0].pop_receipt,
-                next_visible_on = enqueued[0].time_next_visible
+                pop_receipt=enqueued[0].pop_receipt,
+                next_visible_on=enqueued[0].time_next_visible
             )
             return queue_message
         except HttpResponseError as error:
@@ -552,6 +590,7 @@ class QueueClient(  # type: ignore [misc]
     async def receive_message(
         self, *,
         visibility_timeout: Optional[int] = None,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Optional[QueueMessage]:
         """Removes one message from the front of the queue.
@@ -591,13 +630,13 @@ class QueueClient(  # type: ignore [misc]
                 :dedent: 12
                 :caption: Receive one message from the queue.
         """
-        timeout = kwargs.pop('timeout', None)
         if self.key_encryption_key or self.key_resolver_function:
             modify_user_agent_for_encryption(
                 self._config.user_agent_policy.user_agent,
                 self._sdk_moniker,
                 self.encryption_version,
-                kwargs)
+                kwargs
+            )
 
         self._message_decode_policy.configure(
             require_encryption=self.require_encryption,
@@ -612,8 +651,7 @@ class QueueClient(  # type: ignore [misc]
                 cls=self._message_decode_policy,
                 **kwargs
             )
-            wrapped_message = QueueMessage._from_generated(  # pylint: disable=protected-access
-                message[0]) if message != [] else None
+            wrapped_message = QueueMessage._from_generated(message[0]) if message != [] else None  # pylint: disable=protected-access
             return wrapped_message
         except HttpResponseError as error:
             process_storage_error(error)
@@ -624,6 +662,7 @@ class QueueClient(  # type: ignore [misc]
         messages_per_page: Optional[int] = None,
         visibility_timeout: Optional[int] = None,
         max_messages: Optional[int] = None,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[QueueMessage]:
         """Removes one or more messages from the front of the queue.
@@ -674,13 +713,13 @@ class QueueClient(  # type: ignore [misc]
                 :dedent: 16
                 :caption: Receive messages from the queue.
         """
-        timeout = kwargs.pop('timeout', None)
         if self.key_encryption_key or self.key_resolver_function:
             modify_user_agent_for_encryption(
                 self._config.user_agent_policy.user_agent,
                 self._sdk_moniker,
                 self.encryption_version,
-                kwargs)
+                kwargs
+            )
 
         self._message_decode_policy.configure(
             require_encryption=self.require_encryption,
@@ -698,8 +737,12 @@ class QueueClient(  # type: ignore [misc]
             if max_messages is not None and messages_per_page is not None:
                 if max_messages < messages_per_page:
                     raise ValueError("max_messages must be greater or equal to messages_per_page")
-            return AsyncItemPaged(command, results_per_page=messages_per_page,
-                                  page_iterator_class=MessagesPaged, max_messages=max_messages)
+            return AsyncItemPaged(
+                command,
+                results_per_page=messages_per_page,
+                page_iterator_class=MessagesPaged,
+                max_messages=max_messages
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -710,6 +753,7 @@ class QueueClient(  # type: ignore [misc]
         content: Optional[object] = None,
         *,
         visibility_timeout: Optional[int] = None,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> QueueMessage:
         """Updates the visibility timeout of a message. You can also use this
@@ -762,13 +806,13 @@ class QueueClient(  # type: ignore [misc]
                 :dedent: 16
                 :caption: Update a message.
         """
-        timeout = kwargs.pop('timeout', None)
         if self.key_encryption_key or self.key_resolver_function:
             modify_user_agent_for_encryption(
                 self._config.user_agent_policy.user_agent,
                 self._sdk_moniker,
                 self.encryption_version,
-                kwargs)
+                kwargs
+            )
 
         if isinstance(message, QueueMessage):
             message_id = message.id
@@ -827,8 +871,8 @@ class QueueClient(  # type: ignore [misc]
                 inserted_on=inserted_on,
                 dequeue_count=dequeue_count,
                 expires_on=expires_on,
-                pop_receipt = response['popreceipt'],
-                next_visible_on = response['time_next_visible']
+                pop_receipt=response['popreceipt'],
+                next_visible_on=response['time_next_visible']
             )
             return new_message
         except HttpResponseError as error:
@@ -837,6 +881,8 @@ class QueueClient(  # type: ignore [misc]
     @distributed_trace_async
     async def peek_messages(
         self, max_messages: Optional[int] = None,
+        *,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> List[QueueMessage]:
         """Retrieves one or more messages from the front of the queue, but does
@@ -881,13 +927,13 @@ class QueueClient(  # type: ignore [misc]
         if max_messages and not 1 <= max_messages <= 32:
             raise ValueError("Number of messages to peek should be between 1 and 32")
 
-        timeout = kwargs.pop('timeout', None)
         if self.key_encryption_key or self.key_resolver_function:
             modify_user_agent_for_encryption(
                 self._config.user_agent_policy.user_agent,
                 self._sdk_moniker,
                 self.encryption_version,
-                kwargs)
+                kwargs
+            )
 
         self._message_decode_policy.configure(
             require_encryption=self.require_encryption,
@@ -896,7 +942,10 @@ class QueueClient(  # type: ignore [misc]
         )
         try:
             messages = await self._client.messages.peek(
-                number_of_messages=max_messages, timeout=timeout, cls=self._message_decode_policy, **kwargs
+                number_of_messages=max_messages,
+                timeout=timeout,
+                cls=self._message_decode_policy,
+                **kwargs
             )
             wrapped_messages = []
             for peeked in messages:
@@ -906,7 +955,7 @@ class QueueClient(  # type: ignore [misc]
             process_storage_error(error)
 
     @distributed_trace_async
-    async def clear_messages(self, **kwargs: Any) -> None:
+    async def clear_messages(self, *, timeout: Optional[int] = None, **kwargs: Any) -> None:
         """Deletes all messages from the specified queue.
 
         :keyword int timeout:
@@ -925,7 +974,6 @@ class QueueClient(  # type: ignore [misc]
                 :dedent: 16
                 :caption: Clears all messages.
         """
-        timeout = kwargs.pop('timeout', None)
         try:
             await self._client.messages.clear(timeout=timeout, **kwargs)
         except HttpResponseError as error:
@@ -935,6 +983,8 @@ class QueueClient(  # type: ignore [misc]
     async def delete_message(
         self, message: Union[str, QueueMessage],
         pop_receipt: Optional[str] = None,
+        *,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """Deletes the specified message.
@@ -971,8 +1021,6 @@ class QueueClient(  # type: ignore [misc]
                 :dedent: 16
                 :caption: Delete a message.
         """
-        timeout = kwargs.pop('timeout', None)
-
         receipt: Optional[str]
         if isinstance(message, QueueMessage):
             message_id = message.id

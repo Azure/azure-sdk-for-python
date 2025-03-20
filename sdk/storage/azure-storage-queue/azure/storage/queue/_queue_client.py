@@ -441,8 +441,8 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         """
         if len(signed_identifiers) > 15:
             raise ValueError(
-                'Too many access policies provided. The server does not support setting '
-                'more than 15 access policies on a single resource.'
+                "Too many access policies provided. The server does not support setting "
+                "more than 15 access policies on a single resource."
             )
         identifiers = []
         for key, value in signed_identifiers.items():
@@ -451,11 +451,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 value.expiry = serialize_iso(value.expiry)
             identifiers.append(SignedIdentifier(id=key, access_policy=value))
         try:
-            self._client.queue.set_access_policy(
-                queue_acl=identifiers or None,
-                timeout=timeout,
-                **kwargs
-            )
+            self._client.queue.set_access_policy(queue_acl=identifiers or None, timeout=timeout, **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -504,7 +500,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             #other-client--per-operation-configuration>`__.
         :return:
             A :class:`~azure.storage.queue.QueueMessage` object.
-            This object is also populated with the content although it is not
+            This object is also populated with the content, although it is not
             returned from the service.
         :rtype: ~azure.storage.queue.QueueMessage
 
