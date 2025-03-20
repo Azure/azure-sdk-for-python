@@ -28,7 +28,11 @@ def find_failures(package_dir):
         response_json = json.loads(response.text)
     
         for task in response_json["records"]:
+            logging.info(f"Task: {task}")
             if "Run Pylint Next" in task["name"]:
+                logging.info(f"Found task: {task['name']}")
+                logging.info(f"Task details: {task}")
+                logging.info(f"Task log URL: {task['log']['url']}")
                 log_link = task['log']['url'] + "?api-version=6.0"
                 log_output = requests.get(log_link, headers=AUTH_HEADERS)
                 build_output = log_output.content.decode("utf-8")
