@@ -64,16 +64,11 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         self,
         credential,
         azure_ai_project,
-        threshold: float = 0,
     ):
-        self._threshold = threshold
-        self._higher_is_better = False
         super().__init__(
             eval_metric=EvaluationMetrics.XPIA,
             azure_ai_project=azure_ai_project,
             credential=credential,
-            threshold=threshold,
-            _higher_is_better=False,
         )
 
     @overload
