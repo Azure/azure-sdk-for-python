@@ -542,11 +542,11 @@ class RedTeamAgent():
             if "azure_deployment" in target and "azure_endpoint" in target: # Azure OpenAI
                 api_key = target.get("api_key", None)
                 if not api_key:
-                    chat_target = OpenAIChatTarget(deployment_name=target["azure_deployment"], endpoint=target["azure_endpoint"], use_aad_auth=True)
+                    chat_target = OpenAIChatTarget(model_name=target["azure_deployment"], endpoint=target["azure_endpoint"], use_aad_auth=True)
                 else: 
-                    chat_target = OpenAIChatTarget(deployment_name=target["azure_deployment"], endpoint=target["azure_endpoint"], api_key=api_key)
+                    chat_target = OpenAIChatTarget(model_name=target["azure_deployment"], endpoint=target["azure_endpoint"], api_key=api_key)
             else: # OpenAI
-                chat_target = OpenAIChatTarget(deployment=target["model"], endpoint=target.get("base_url", None), key=target["api_key"], is_azure_target=False)
+                chat_target = OpenAIChatTarget(model_name=target["model"], endpoint=target.get("base_url", None), api_key=target["api_key"])
         else:
             # Target is callable
             # First, determine if the callable has is a valid callback target

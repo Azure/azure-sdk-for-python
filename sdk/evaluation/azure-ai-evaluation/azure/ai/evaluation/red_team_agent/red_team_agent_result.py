@@ -189,3 +189,45 @@ class RedTeamAgentOutput():
                         result_lines.append(json.dumps(qr_pair))
             
         return "\n".join(result_lines)
+    
+    def attack_simulation(self) -> str:
+        """
+        Returns the attack simulation data in a human-readable format.
+        """
+        if not self.redteaming_data:
+            return ""
+        
+        result_lines = []
+        
+        for conversation in self.redteaming_data:
+            messages = conversation.get("conversation", [])
+            attack_technique = conversation.get("attack_technique", "")
+            attack_complexity = conversation.get("attack_complexity", "")
+            attack_success = conversation.get("attack_success")
+            risk_assessment = conversation.get("risk_assessment", {})
+            
+            result_lines.append(f"Attack Technique: {attack_technique}")
+            result_lines.append(f"Attack Complexity: {attack_complexity}")
+            result_lines.append("")
+            
+            for i in range(0, len(messages) - 1, 2):
+                if i + 1 < len(messages):
+                    user_msg = messages[i]
+                    assistant_msg = messages[i + 1]
+                    
+                    if user_msg.get("role") == "user" and assistant_msg.get("role") == "assistant":
+                        result_lines.append(f"User: {user_msg.get('content', '')}")
+                        result_lines.append(f"Assistant: {assistant_msg.get('content', '')}")
+                        result_lines.append("")
+            
+            if attack_success is not None:
+                result_lines.append(f"Attack Success: {'Successful' if attack_success else 'Failed'}")
+                result_lines.append("")
+            
+            for category, assessment in risk_assessment.items() if risk_assessment else {}:
+                if assessment and assessment.get("severity_label", None):
+                    result_lines.append(f"Category: {category}")
+                    result_lines.append(f"Severity Level: {assessment.get('severity_label', '')}")
+                    result_lines.append("")
+        
+        return "\n".join(result_lines)
