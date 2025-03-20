@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Dict, TypeVar, Union
+from typing import Dict, TypeVar, Union, Optional
 
 from typing_extensions import override
 
@@ -40,6 +40,10 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         to produce a single result.
         Default is ~azure.ai.evaluation._AggregationType.MEAN.
     :type conversation_aggregation_type: ~azure.ai.evaluation._AggregationType
+    :param threshold: The threshold for the evaluation. Default is 3.
+    :type threshold: Optional[int]
+    :param _higher_is_better: If True, higher scores are better. Default is True.
+    :type _higher_is_better: Optional[bool]
     """
 
     @override
@@ -50,11 +54,14 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         credential: TokenCredential,
         eval_last_turn: bool = False,
         conversation_aggregation_type: _AggregationType = _AggregationType.MEAN,
+        threshold: int = 3,
+        _higher_is_better: Optional[bool] = False,
     ):
-        super().__init__(eval_last_turn=eval_last_turn, conversation_aggregation_type=conversation_aggregation_type)
+        super().__init__(eval_last_turn=eval_last_turn, conversation_aggregation_type=conversation_aggregation_type, threshold=threshold, _higher_is_better=_higher_is_better)
         self._eval_metric = eval_metric
         self._azure_ai_project = validate_azure_ai_project(azure_ai_project)
         self._credential = credential
+        self._threshold = threshold
 
     @override
     def __call__(  # pylint: disable=docstring-missing-param
@@ -170,6 +177,6 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
             return Tasks.PROTECTED_MATERIAL
         if self._eval_metric == EvaluationMetrics.CODE_VULNERABILITY:
             return Tasks.CODE_VULNERABILITY
-        if self._eval_metric == EvaluationMetrics.ISA:
-            return Tasks.ISA
+        if self._eval_metric == EvaluationMetrics.UNGROUNDED_ATTRIBUTES:
+            return Tasks.UNGROUNDED_ATTRIBUTES
         return Tasks.CONTENT_HARM

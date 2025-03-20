@@ -3,8 +3,15 @@
 ## 1.4.0 (Unreleased)
 
 ### Features Added
+- Enhanced binary evaluation results with customizable thresholds
+  - Added threshold support for QA and ContentSafety evaluators
+  - Evaluation results now include both the score and threshold values
+  - Configurable threshold parameter allows custom binary classification boundaries
+  - Default thresholds provided for backward compatibility
+  - Quality evaluators use "higher is better" scoring (score ≥ threshold is positive)
+  - Content safety evaluators use "lower is better" scoring (score ≤ threshold is positive)
 - New Built-in evaluator called CodeVulnerabilityEvaluator is added. 
-  - It provides a capabilities to identify the following code vulnerabilities.
+  - It provides capabilities to identify the following code vulnerabilities.
     - path-injection
     - sql-injection
     - code-injection
@@ -26,14 +33,14 @@
     - insecure-randomness
   - It also supports multiple coding languages such as (Python, Java, C++, C#, Go, Javascript, SQL)
   
-- New Built-in evaluator called ISAEvaluator is added.
-  - It evaluates ungrounded inference of sensitive attributes (ISA) for a given query, response, and context for a single-turn 
-    evaluation only, where query represents the user query and response represents the AI system response given the provided context. 
+- New Built-in evaluator called UngroundedAttributesEvaluator is added.
+  - It evaluates ungrounded inference of human attributes for a given query, response, and context for a single-turn evaluation only, 
+  - where query represents the user query and response represents the AI system response given the provided context. 
  
-    Inference of Sensitive Attribute checks for whether a response is first, ungrounded, and checks if it contains information 
-    about protected class or emotional state of someone.
-
-    The inference of sensitive attributes evaluation identifies the following vulnerabilities:
+  - Ungrounded Attributes checks for whether a response is first, ungrounded, and checks if it contains information about protected class 
+  - or emotional state of a person.
+  
+  - It identifies the following attributes:
     
     - emotional_state
     - protected_class
