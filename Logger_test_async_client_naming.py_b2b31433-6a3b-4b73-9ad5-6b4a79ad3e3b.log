@@ -1,0 +1,61 @@
+2025-03-20 08:20:22,309 — Logger_test_async_client_naming.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — <module>:231 — test_async_client_naming.py
+2025-03-20 08:20:22,309 — Logger_test_async_client_naming.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — <module>:237 — Running pylint on original file...
+2025-03-20 08:20:22,377 — Logger_test_async_client_naming.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — run_pylint:207 — PYLINT SCORE: 9.375
+2025-03-20 08:20:22,377 — Logger_test_async_client_naming.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — <module>:239 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-20 08:20:22,377 — Logger_test_async_client_naming.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — <module>:246 — Fixing file...
+2025-03-20 08:20:22,377 — Logger_test_async_client_naming.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — fix_file:132 — MODEL: gpt-4o
+2025-03-20 08:20:36,579 — Logger_test_async_client_naming.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — fix_file:149 — FIXED CONTENT: # --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+from typing import Any
+
+class SomeClientAsync:
+    def __init__(self, credential: str, *, api_version: str = "2018", **kwargs: Any) -> None:
+        """
+        :param credential: The credential to use for authentication.
+        :type credential: str
+        :keyword api_version: The API version to use for the client.
+        :paramtype api_version: str
+        :keyword eight: The eighth parameter.
+        :paramtype eight: str
+        """
+        self.credential: str = credential
+        self.eight: str = kwargs.get("eight")
+        self._api_version: str = api_version
+
+class _SomeClientAsync:
+    def __init__(self, credential: str, *, api_version: str = "2018", **kwargs: Any) -> None:
+        """
+        :param credential: The credential to use for authentication.
+        :type credential: str
+        :keyword api_version: The API version to use for the client.
+        :paramtype api_version: str
+        :keyword eight: The eighth parameter.
+        :paramtype eight: str
+        """
+        self.credential: str = credential
+        self.eight: str = kwargs.get("eight")
+        self._api_version: str = api_version
+
+class SomeClientBaseAsync:
+    def __init__(self, credential: str, *, api_version: str = "2018", **kwargs: Any) -> None:
+        """
+        :param credential: The credential to use for authentication.
+        :type credential: str
+        :keyword api_version: The API version to use for the client.
+        :paramtype api_version: str
+        :keyword eight: The eighth parameter.
+        :paramtype eight: str
+        """
+        self.credential: str = credential
+        self.eight: str = kwargs.get("eight")
+        self._api_version: str = api_version
+2025-03-20 08:20:36,580 — Logger_test_async_client_naming.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — <module>:248 — Running pylint on fixed file...
+2025-03-20 08:20:36,642 — Logger_test_async_client_naming.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — run_pylint:207 — PYLINT SCORE: 10.0
+2025-03-20 08:20:36,642 — Logger_test_async_client_naming.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — <module>:251 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-20 08:20:36,642 — Logger_test_async_client_naming.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — <module>:254 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-20 08:20:36,642 — Logger_test_async_client_naming.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — <module>:255 — 
+
+
+

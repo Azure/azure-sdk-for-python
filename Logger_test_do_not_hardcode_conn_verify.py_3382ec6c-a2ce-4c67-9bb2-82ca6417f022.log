@@ -1,0 +1,51 @@
+2025-03-20 08:15:47,136 — Logger_test_do_not_hardcode_conn_verify.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — <module>:231 — test_do_not_hardcode_conn_verify.py
+2025-03-20 08:15:47,137 — Logger_test_do_not_hardcode_conn_verify.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — <module>:237 — Running pylint on original file...
+2025-03-20 08:15:49,471 — Logger_test_do_not_hardcode_conn_verify.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — run_pylint:207 — PYLINT SCORE: 8.75
+2025-03-20 08:15:49,471 — Logger_test_do_not_hardcode_conn_verify.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — <module>:239 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-20 08:15:49,472 — Logger_test_do_not_hardcode_conn_verify.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — <module>:246 — Fixing file...
+2025-03-20 08:15:49,472 — Logger_test_do_not_hardcode_conn_verify.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — fix_file:132 — MODEL: gpt-4o
+2025-03-20 08:15:59,021 — Logger_test_do_not_hardcode_conn_verify.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — fix_file:149 — FIXED CONTENT: class FunctionKeywordArgumentsErrors:
+    def create(self, x, connection_verify):
+        if connection_verify:
+            return x + 1
+        return x
+
+    def run(self, connection_verify=None):
+        client = self.create(connection_verify=connection_verify, x=0)
+        return client
+2025-03-20 08:15:59,022 — Logger_test_do_not_hardcode_conn_verify.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — <module>:248 — Running pylint on fixed file...
+2025-03-20 08:15:59,317 — Logger_test_do_not_hardcode_conn_verify.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — run_pylint:207 — PYLINT SCORE: 8.75
+2025-03-20 08:15:59,319 — Logger_test_do_not_hardcode_conn_verify.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — <module>:251 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-20 08:15:59,319 — Logger_test_do_not_hardcode_conn_verify.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — <module>:246 — Fixing file...
+2025-03-20 08:15:59,324 — Logger_test_do_not_hardcode_conn_verify.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — fix_file:132 — MODEL: gpt-4o
+2025-03-20 08:16:00,931 — Logger_test_do_not_hardcode_conn_verify.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — fix_file:149 — FIXED CONTENT: class FunctionKeywordArgumentsErrors:
+    def create(self, x, connection_verify):
+        if connection_verify:
+            return x + 1
+        return x
+
+    def run(self, connection_verify=False):
+        client = self.create(connection_verify=connection_verify, x=0)
+        return client
+2025-03-20 08:16:00,935 — Logger_test_do_not_hardcode_conn_verify.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — <module>:248 — Running pylint on fixed file...
+2025-03-20 08:16:01,132 — Logger_test_do_not_hardcode_conn_verify.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — run_pylint:207 — PYLINT SCORE: 8.75
+2025-03-20 08:16:01,133 — Logger_test_do_not_hardcode_conn_verify.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — <module>:251 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-20 08:16:01,133 — Logger_test_do_not_hardcode_conn_verify.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — <module>:246 — Fixing file...
+2025-03-20 08:16:01,134 — Logger_test_do_not_hardcode_conn_verify.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — fix_file:132 — MODEL: gpt-4o
+2025-03-20 08:16:02,970 — Logger_test_do_not_hardcode_conn_verify.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — fix_file:149 — FIXED CONTENT: class FunctionKeywordArgumentsErrors:
+    def create(self, x, connection_verify):
+        if connection_verify:
+            return x + 1
+        return x
+
+    def run(self, connection_verify=False):
+        client = self.create(x=0, connection_verify=connection_verify)
+        return client
+2025-03-20 08:16:02,971 — Logger_test_do_not_hardcode_conn_verify.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — <module>:248 — Running pylint on fixed file...
+2025-03-20 08:16:03,139 — Logger_test_do_not_hardcode_conn_verify.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — run_pylint:207 — PYLINT SCORE: 8.75
+2025-03-20 08:16:03,139 — Logger_test_do_not_hardcode_conn_verify.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — <module>:251 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-20 08:16:03,140 — Logger_test_do_not_hardcode_conn_verify.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — <module>:254 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-20 08:16:03,140 — Logger_test_do_not_hardcode_conn_verify.py_3382ec6c-a2ce-4c67-9bb2-82ca6417f022.log — DEBUG — <module>:255 — 
+
+
+

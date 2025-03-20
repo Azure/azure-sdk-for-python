@@ -1,0 +1,30 @@
+2025-03-20 08:20:03,682 — Logger_test_do_not_hardcode_conn_verify.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — <module>:231 — test_do_not_hardcode_conn_verify.py
+2025-03-20 08:20:03,682 — Logger_test_do_not_hardcode_conn_verify.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — <module>:237 — Running pylint on original file...
+2025-03-20 08:20:04,209 — Logger_test_do_not_hardcode_conn_verify.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — run_pylint:207 — PYLINT SCORE: 8.75
+2025-03-20 08:20:04,209 — Logger_test_do_not_hardcode_conn_verify.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — <module>:239 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-20 08:20:04,209 — Logger_test_do_not_hardcode_conn_verify.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — <module>:246 — Fixing file...
+2025-03-20 08:20:04,209 — Logger_test_do_not_hardcode_conn_verify.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — fix_file:132 — MODEL: gpt-4o
+2025-03-20 08:20:10,674 — Logger_test_do_not_hardcode_conn_verify.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — fix_file:149 — FIXED CONTENT: # Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+
+
+class FunctionKeywordArgumentsErrors:
+    def create(self, x, connection_verify):
+        return x + 1 if connection_verify else x
+
+    def run(self):
+        client = self.create(x=0, connection_verify=self.get_connection_verify())
+        return client
+
+    def get_connection_verify(self):
+        # Placeholder for actual implementation to get connection verification setting
+        return False
+2025-03-20 08:20:10,674 — Logger_test_do_not_hardcode_conn_verify.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — <module>:248 — Running pylint on fixed file...
+2025-03-20 08:20:10,752 — Logger_test_do_not_hardcode_conn_verify.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — run_pylint:207 — PYLINT SCORE: 10.0
+2025-03-20 08:20:10,752 — Logger_test_do_not_hardcode_conn_verify.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — <module>:251 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-20 08:20:10,752 — Logger_test_do_not_hardcode_conn_verify.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — <module>:254 — ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-03-20 08:20:10,752 — Logger_test_do_not_hardcode_conn_verify.py_b2b31433-6a3b-4b73-9ad5-6b4a79ad3e3b.log — DEBUG — <module>:255 — 
+
+
+
