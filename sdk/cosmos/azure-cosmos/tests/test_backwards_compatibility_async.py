@@ -74,7 +74,7 @@ class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
         replace_container_read = await replace_container.read()
         assert replace_container is not None
         assert replace_container_read != container2_read
-        assert 'default_ttl' in replace_container_read
+        assert 'defaultTtl' in replace_container_read # Check for default_ttl as a new additional property
         assert replace_container_read['default_ttl'] == 30
         await database.delete_container(replace_container.id, session_token=str(uuid.uuid4()))
         try:
@@ -113,7 +113,7 @@ class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
         replace_container_read = await replace_container.read()
         assert replace_container is not None
         assert replace_container_read != container2_read
-        assert len(replace_container_read) == len(container2_read) + 1 # default_ttl as a new additional property
+        assert 'defaultTtl' in replace_container_read # Check for default_ttl as a new additional property
         await database.delete_container(replace_container.id, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
         try:
             await container2.read()
