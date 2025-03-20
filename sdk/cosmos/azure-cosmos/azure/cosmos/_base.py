@@ -33,6 +33,7 @@ from typing import Dict, Any, List, Mapping, Optional, Sequence, Union, Tuple, T
 from urllib.parse import quote as urllib_quote
 from urllib.parse import urlsplit
 from azure.core import MatchConditions
+from azure.cosmos.documents import _OperationType
 
 from . import documents
 from . import http_constants
@@ -185,7 +186,11 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     is_session_consistency = consistency_level == documents.ConsistencyLevel.Session
 
     # set session token if required
-    if is_session_consistency is True and not IsMasterResource(resource_type):
+    # is_session_consistency is wrong - if neither client default is set nor request option then the default
+    # account consistency level needs to be taken into account. That is missing here.
+    if (is_session_consistency is True and not IsMasterResource(resource_type)
+            and (_OperationType.IsReadOnlyOperation(operation_type) or
+                 cosmos_client_connection._global_endpoint_manager.get_use_multiple_write_locations())): # pylint: disable=protected-access:
         # if there is a token set via option, then use it to override default
         if options.get("sessionToken"):
             headers[http_constants.HttpHeaders.SessionToken] = options["sessionToken"]
