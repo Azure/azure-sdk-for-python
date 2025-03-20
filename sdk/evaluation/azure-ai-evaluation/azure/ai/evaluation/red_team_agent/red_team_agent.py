@@ -1028,6 +1028,7 @@ class RedTeamAgent():
             orchestrator = await call_orchestrator(self.chat_target, all_prompts, converter)
         except PyritException as e:
             self.logger.error(f"Error calling orchestrator for {strategy_name} strategy: {e}")
+            self.logger.debug(f"Error calling orchestrator for {strategy_name} strategy using prompts: {all_prompts}")
             return None
         
         data_path = self._write_pyrit_outputs_to_file(orchestrator)
