@@ -59,6 +59,10 @@ module test_module 'test.bicep' = {
     aiEmbeddingsModelCapacity: aiEmbeddingsModelCapacity
   }
 }
+output AZURE_APPCONFIG_ID string = test_module.outputs.AZURE_APPCONFIG_ID
+output AZURE_APPCONFIG_NAME string = test_module.outputs.AZURE_APPCONFIG_NAME
+output AZURE_APPCONFIG_RESOURCE_GROUP string = test_module.outputs.AZURE_APPCONFIG_RESOURCE_GROUP
+output AZURE_APPCONFIG_ENDPOINT string = test_module.outputs.AZURE_APPCONFIG_ENDPOINT
 output AZURE_AI_AISERVICES_ID string = test_module.outputs.AZURE_AI_AISERVICES_ID
 output AZURE_AI_AISERVICES_NAME string = test_module.outputs.AZURE_AI_AISERVICES_NAME
 output AZURE_AI_AISERVICES_RESOURCE_GROUP string = test_module.outputs.AZURE_AI_AISERVICES_RESOURCE_GROUP

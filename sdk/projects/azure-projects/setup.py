@@ -75,6 +75,7 @@ setup(
         "azure-identity>=1.20",
         "azure-core>=1.31.0",
         "typing-extensions>=4.5",
+        "azure-appconfiguration-provider>=2.0.0",  # TODO: This needs to be removed.
     ],
     python_requires=">=3.8",
     project_urls={

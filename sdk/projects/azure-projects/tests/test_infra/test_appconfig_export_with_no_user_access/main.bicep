@@ -22,6 +22,9 @@ var azdTags = {
   'azd-env-name': environmentName
 }
 
+@sys.description('ID of the user or app to assign application roles')
+param principalId string
+
 resource resourcegroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   name: defaultName
   location: location
@@ -38,6 +41,7 @@ module test_module 'test.bicep' = {
     defaultName: defaultName
     tenantId: tenantId
     azdTags: azdTags
+    principalId: principalId
   }
 }
 output AZURE_APPCONFIG_ID string = test_module.outputs.AZURE_APPCONFIG_ID

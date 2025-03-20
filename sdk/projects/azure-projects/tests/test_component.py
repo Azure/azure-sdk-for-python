@@ -238,7 +238,7 @@ def test_component_infra_hybrid():
         resource: BlobContainer
         string: str = "teststring"
         another_resource: BlobStorage = field(default=BlobStorage(), repr=False)
-        data: dict = field(factory=dict, repr=False, foo=string, bar=another_resource)
+        data: dict = field(default_factory=dict, repr=False, foo=string, bar=another_resource)
 
         def some_func(self) -> str:
             return self.string

@@ -5,6 +5,7 @@ from azure.projects.resources._extension.roles import RoleAssignment
 from azure.projects.resources.ai import CognitiveServicesAccount, AIServices
 from azure.projects.resources.ai.deployment import AIDeployment, AIChat, AIEmbeddings
 from azure.projects.resources.appconfig import ConfigStore
+from azure.projects.resources.appconfig.setting import ConfigSetting
 from azure.projects.resources.foundry import MLWorkspace, AIHub, AIProject
 from azure.projects.resources.foundry._connection import AIConnection
 from azure.projects.resources.keyvault import KeyVault
@@ -61,3 +62,4 @@ def test_identifiers():
     assert ResourceIdentifiers.ai_embeddings_deployment.resource() is AIEmbeddings
     assert ResourceIdentifiers.ai_connection.resource() is AIConnection
     assert ResourceIdentifiers.config_store.resource() is ConfigStore
+    assert ResourceIdentifiers.config_setting.resource() is ConfigSetting

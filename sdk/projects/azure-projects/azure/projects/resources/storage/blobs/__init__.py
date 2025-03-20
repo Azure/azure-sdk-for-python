@@ -182,7 +182,6 @@ class BlobStorage(_ClientResource, Generic[BlobServiceResourceType]):
                     kwargs.pop(key, None)  # type: ignore[misc]  # Not using string literal key.
         super().__init__(
             properties,
-            extensions=extensions,
             existing=existing,
             parent=parent,
             subresource="blobServices",

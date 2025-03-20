@@ -204,6 +204,7 @@ def test_appconfig_defaults():
             "disableLocalAuth": True,
             "createMode": "Default",
             "publicNetworkAccess": "Disabled",
+            "dataPlaneProxy": {"authenticationMode": "Pass-through", "privateLinkDelegation": "Disabled"},
         },
         "tags": GLOBAL_PARAMS["azdTags"],
         "identity": IDENTITY,
@@ -306,10 +307,10 @@ def test_appconfig_client():
     # TODO: This needs to be in an async test case.
     # This raises a runtime error because the Async client creates an asyncio.Lock object
     # when there's no running event loop.
-    # client = r.get_client(use_async=True)
-    # assert isinstance(client, AsyncAzureAppConfigurationClient)
-    # assert client._impl._config.endpoint == "https://test.azconfig.io"
-    # assert client._impl._config.api_version == "v1.0"
+    client = r.get_client(use_async=True)
+    assert isinstance(client, AsyncAzureAppConfigurationClient)
+    assert client._impl._config.endpoint == "https://test.azconfig.io"
+    assert client._impl._config.api_version == "v1.0"
 
 
 def test_appconfig_infra():
@@ -378,7 +379,7 @@ def test_appconfig_app():
         )
 
     class TestApp(AzureApp):
-        client: AzureAppConfigurationClient = field(factory=client_builder, api_version="v3.0")
+        client: AzureAppConfigurationClient = field(default_factory=client_builder, api_version="v3.0")
 
     app = TestApp()
     assert app.client._impl._config.endpoint == "https://different.azconfig.io"

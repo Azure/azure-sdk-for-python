@@ -44,6 +44,10 @@ module test_module 'test.bicep' = {
     azdTags: azdTags
   }
 }
+output AZURE_APPCONFIG_ID string = test_module.outputs.AZURE_APPCONFIG_ID
+output AZURE_APPCONFIG_NAME string = test_module.outputs.AZURE_APPCONFIG_NAME
+output AZURE_APPCONFIG_RESOURCE_GROUP string = test_module.outputs.AZURE_APPCONFIG_RESOURCE_GROUP
+output AZURE_APPCONFIG_ENDPOINT string = test_module.outputs.AZURE_APPCONFIG_ENDPOINT
 output AZURE_STORAGE_ID_STORAGETEST string = test_module.outputs.AZURE_STORAGE_ID_STORAGETEST
 output AZURE_STORAGE_NAME_STORAGETEST string = test_module.outputs.AZURE_STORAGE_NAME_STORAGETEST
 output AZURE_STORAGE_RESOURCE_GROUP_STORAGETEST string = test_module.outputs.AZURE_STORAGE_RESOURCE_GROUP_STORAGETEST

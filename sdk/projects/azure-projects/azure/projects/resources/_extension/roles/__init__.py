@@ -127,6 +127,8 @@ BUILT_IN_ROLES: Dict[str, RoleDefinition] = {
     "Search Service Contributor": RoleDefinition("7ca78c08-252a-4471-8644-bb5ff32d4ba0"),
     "App Compliance Automation Administrator": RoleDefinition("0f37683f-2463-46b6-9ce7-9b788b988ba2"),
     "App Compliance Automation Reader": RoleDefinition("ffc6bbe0-e443-4c3b-bf54-26581bb2f78e"),
+    "App Configuration Contributor": RoleDefinition("fe86443c-f201-4fc4-9d2a-ac61149fbda0"),
     "App Configuration Data Owner": RoleDefinition("5ae67dd6-50cb-40e7-96ff-dc2bfa4b606b"),
     "App Configuration Data Reader": RoleDefinition("516239f1-63e1-4d78-a4de-a74fb236a071"),
+    "App Configuration Reader": RoleDefinition("175b81b9-6e0d-490a-85e4-0d422273c10c"),
 }

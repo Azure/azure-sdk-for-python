@@ -4,12 +4,12 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from collections import ChainMap
 from typing import (
     IO,
     Any,
     List,
     Mapping,
-    MutableMapping,
     Optional,
     Tuple,
     Dict,
@@ -27,6 +27,7 @@ from ._bicep.expressions import MISSING, Output, Parameter, PlaceholderParameter
 from ._resource import FieldType, Resource, FieldsType, _load_dev_environment
 from .resources._extension import add_extensions
 from .resources import ResourceIdentifiers
+from .resources.appconfig.setting import ConfigSetting
 
 
 _BICEP_PARAMS = {
@@ -75,7 +76,7 @@ def _init_project(
     if not os.path.isfile(azure_yaml):
         with open(azure_yaml, "w", encoding="utf-8") as config:
             config.write(
-                "# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/miain/schemas/v1.0/azure.yaml.json\n\n"  # pylint: disable=line-too-long
+                "# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json\n\n"  # pylint: disable=line-too-long
             )
             config.write(f"name: {project_name}\n")
             config.write("metadata:\n")
@@ -119,8 +120,8 @@ def provision(
     output_dir: str = ".",
     user_access: bool = True,
     location: Optional[str] = None,
-    config_store: Optional[MutableMapping[str, Any]] = None,
-) -> MutableMapping[str, Any]:
+    config_store: Optional[Mapping[str, Any]] = None,
+) -> Mapping[str, Any]:
     deployment_name = deployment.__class__.__name__
     config_store = config_store or {}
     working_dir = os.path.abspath(output_dir)
@@ -141,9 +142,8 @@ def provision(
     returncode = _provision_project(deployment_name)
     if returncode != 0:
         raise RuntimeError()
-    config = _load_dev_environment(deployment_name)
-    config_store.update(config)
-    return config
+    env_config = _load_dev_environment(deployment_name)
+    return ChainMap(env_config)
 
 
 def export(
@@ -200,7 +200,6 @@ def export(
             parameters=parameters,
             deployment_name=deployment_name,
             infra_dir=infra_dir,
-            config=config_store,
         )
         main.write("\n")
     # TODO: Full parameters file
@@ -233,15 +232,24 @@ def _parse_module(
                 component_resources=_get_component_resources(resource),
                 component_fields=component_fields,
             )
+    if component.config_store:
+        outputs = [o for f in component_fields.values() for o in f.outputs.values()]
+        for output in outputs:
+            new_setting = ConfigSetting(
+                name=output.name,  # f"{output.name}$azprojects",
+                value=output,
+                store=component.config_store,
+            )
+            new_setting.__bicep__(component_fields, parameters=parameters, infra_component=component)
 
 
 def _write_resources(  # pylint: disable=too-many-statements
+    *,
     bicep: IO[str],
     fields: List[FieldType],
     parameters: Dict[str, Parameter],
     infra_dir: str,
     deployment_name: str,
-    config: Mapping[str, Any],
     resource_group_scope: Optional[ResourceSymbol] = None,
 ) -> List[Tuple[str, str]]:
     all_outputs = []
@@ -289,7 +297,6 @@ def _write_resources(  # pylint: disable=too-many-statements
                         fields=fields[index + 1 :],
                         parameters=parameters,
                         infra_dir=infra_dir,
-                        config=config,
                         resource_group_scope=field.symbol,
                         deployment_name="",  # TODO: support submodules/resource groups
                     )

@@ -216,6 +216,9 @@ def test_storage_blobs_defaults():
 
 
 def test_storage_blobs_export(export_dir):
+    with pytest.raises(ValueError):
+        BlobStorage(account="account", resource_group="foo", parent=StorageAccount())
+
     class test(AzureInfrastructure):
         r: BlobStorage = BlobStorage()
 

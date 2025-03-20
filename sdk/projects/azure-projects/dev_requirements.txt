@@ -14,3 +14,4 @@ azure-keyvault-keys
 azure-keyvault-secrets
 azure-ai-inference
 azure-appconfiguration
+azure-appconfiguration-provider

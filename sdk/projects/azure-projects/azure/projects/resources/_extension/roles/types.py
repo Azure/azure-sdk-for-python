@@ -8,7 +8,7 @@
 from typing import Literal, Union
 from typing_extensions import Required, TypedDict
 
-from ...._bicep.expressions import Expression, ResourceSymbol
+from ...._bicep.expressions import Expression
 
 
 VERSION = "2022-04-01"
@@ -36,5 +36,5 @@ class RoleAssignmentResource(TypedDict, total=False):
     """The resource name"""
     properties: RoleAssignmentProperties
     """Role assignment properties."""
-    scope: ResourceSymbol
+    scope: Expression
     """Use when creating a resource at a scope that is different than the deployment scope."""

@@ -14,6 +14,36 @@ resource userassignedidentity 'Microsoft.ManagedIdentity/userAssignedIdentities@
 
 
 
+resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024-05-01' = {
+  properties: {
+    disableLocalAuth: true
+    createMode: 'Default'
+    dataPlaneProxy: {
+      authenticationMode: 'Pass-through'
+      privateLinkDelegation: 'Disabled'
+    }
+    publicNetworkAccess: 'Enabled'
+  }
+  name: defaultName
+  sku: {
+    name: 'Standard'
+  }
+  location: location
+  tags: azdTags
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${userassignedidentity.id}': {}
+    }
+  }
+}
+
+output AZURE_APPCONFIG_ID string = configurationstore.id
+output AZURE_APPCONFIG_NAME string = configurationstore.name
+output AZURE_APPCONFIG_RESOURCE_GROUP string = resourceGroup().name
+output AZURE_APPCONFIG_ENDPOINT string = configurationstore.properties.endpoint
+
+
 resource aiservices_account 'Microsoft.CognitiveServices/accounts@2024-10-01' = {
   kind: 'AIServices'
   properties: {
@@ -274,8 +304,310 @@ resource connection_vxwdzretqhgneqwxyhbo 'Microsoft.MachineLearningServices/work
 
 
 
-resource roleassignment_pqjisaqxrgcysgrhdblx 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('MicrosoftCognitiveServicesaccounts', '${defaultName}-aiservices', 'ServicePrincipal', 'Cognitive Services OpenAI Contributor')
+resource keyvalue_azureappconfigid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_APPCONFIG_ID'
+  properties: {
+    value: configurationstore.id
+  }
+}
+
+
+
+resource keyvalue_azureappconfigname 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_APPCONFIG_NAME'
+  properties: {
+    value: configurationstore.name
+  }
+}
+
+
+
+resource keyvalue_azureappconfigresourcegroup 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_APPCONFIG_RESOURCE_GROUP'
+  properties: {
+    value: resourceGroup().name
+  }
+}
+
+
+
+resource keyvalue_azureappconfigendpoint 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_APPCONFIG_ENDPOINT'
+  properties: {
+    value: configurationstore.properties.endpoint
+  }
+}
+
+
+
+resource keyvalue_azureaiaiservicesid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_AI_AISERVICES_ID'
+  properties: {
+    value: aiservices_account.id
+  }
+}
+
+
+
+resource keyvalue_azureaiaiservicesname 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_AI_AISERVICES_NAME'
+  properties: {
+    value: aiservices_account.name
+  }
+}
+
+
+
+resource keyvalue_azureaiaiservicesresourcegroup 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_AI_AISERVICES_RESOURCE_GROUP'
+  properties: {
+    value: resourceGroup().name
+  }
+}
+
+
+
+resource keyvalue_azureaiaiservicesendpoint 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_AI_AISERVICES_ENDPOINT'
+  properties: {
+    value: aiservices_account.properties.endpoint
+  }
+}
+
+
+
+resource keyvalue_azuresearchid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_SEARCH_ID'
+  properties: {
+    value: searchservice.id
+  }
+}
+
+
+
+resource keyvalue_azuresearchname 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_SEARCH_NAME'
+  properties: {
+    value: searchservice.name
+  }
+}
+
+
+
+resource keyvalue_azuresearchresourcegroup 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_SEARCH_RESOURCE_GROUP'
+  properties: {
+    value: resourceGroup().name
+  }
+}
+
+
+
+resource keyvalue_azuresearchendpoint 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_SEARCH_ENDPOINT'
+  properties: {
+    value: 'https://${searchservice.name}.search.windows.net/'
+  }
+}
+
+
+
+resource keyvalue_azurestorageid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_STORAGE_ID'
+  properties: {
+    value: storageaccount.id
+  }
+}
+
+
+
+resource keyvalue_azurestoragename 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_STORAGE_NAME'
+  properties: {
+    value: storageaccount.name
+  }
+}
+
+
+
+resource keyvalue_azurestorageresourcegroup 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_STORAGE_RESOURCE_GROUP'
+  properties: {
+    value: resourceGroup().name
+  }
+}
+
+
+
+resource keyvalue_azureblobsendpoint 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_BLOBS_ENDPOINT'
+  properties: {
+    value: storageaccount.properties.primaryEndpoints.blob
+  }
+}
+
+
+
+resource keyvalue_azurekeyvaultid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_KEYVAULT_ID'
+  properties: {
+    value: vault.id
+  }
+}
+
+
+
+resource keyvalue_azurekeyvaultname 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_KEYVAULT_NAME'
+  properties: {
+    value: vault.name
+  }
+}
+
+
+
+resource keyvalue_azurekeyvaultresourcegroup 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_KEYVAULT_RESOURCE_GROUP'
+  properties: {
+    value: resourceGroup().name
+  }
+}
+
+
+
+resource keyvalue_azurekeyvaultendpoint 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_KEYVAULT_ENDPOINT'
+  properties: {
+    value: vault.properties.vaultUri
+  }
+}
+
+
+
+resource keyvalue_azureaifoundryhubid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_AIFOUNDRY_HUB_ID'
+  properties: {
+    value: hub_workspace.id
+  }
+}
+
+
+
+resource keyvalue_azureaifoundryhubname 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_AIFOUNDRY_HUB_NAME'
+  properties: {
+    value: hub_workspace.name
+  }
+}
+
+
+
+resource keyvalue_azureaifoundryhubresourcegroup 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_AIFOUNDRY_HUB_RESOURCE_GROUP'
+  properties: {
+    value: resourceGroup().name
+  }
+}
+
+
+
+resource keyvalue_azureaifoundryprojectid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_AIFOUNDRY_PROJECT_ID'
+  properties: {
+    value: project_workspace.id
+  }
+}
+
+
+
+resource keyvalue_azureaifoundryprojectname 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_AIFOUNDRY_PROJECT_NAME'
+  properties: {
+    value: project_workspace.name
+  }
+}
+
+
+
+resource keyvalue_azureaifoundryprojectresourcegroup 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_AIFOUNDRY_PROJECT_RESOURCE_GROUP'
+  properties: {
+    value: resourceGroup().name
+  }
+}
+
+
+
+resource keyvalue_azureaifoundryprojectendpoint 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_AIFOUNDRY_PROJECT_ENDPOINT'
+  properties: {
+    value: project_workspace.properties.discoveryUrl
+  }
+}
+
+
+
+resource roleassignment_gxaeyfznpvgorjrkpllp 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftAppConfigurationconfigurationStores', environmentName, defaultName, 'ServicePrincipal', 'App Configuration Data Reader')
+  properties: {
+    principalId: userassignedidentity.properties.principalId
+    principalType: 'ServicePrincipal'
+    roleDefinitionId: subscriptionResourceId(
+      'Microsoft.Authorization/roleDefinitions',
+      '516239f1-63e1-4d78-a4de-a74fb236a071'
+    )
+
+  }
+  scope: configurationstore
+}
+
+
+
+resource roleassignment_unxsuzdqhucrcsmcfuyc 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftAppConfigurationconfigurationStores', environmentName, defaultName, 'User', 'App Configuration Data Owner')
+  properties: {
+    principalId: principalId
+    principalType: 'User'
+    roleDefinitionId: subscriptionResourceId(
+      'Microsoft.Authorization/roleDefinitions',
+      '5ae67dd6-50cb-40e7-96ff-dc2bfa4b606b'
+    )
+
+  }
+  scope: configurationstore
+}
+
+
+
+resource roleassignment_iwqyskxadwyqpexjwfcy 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftCognitiveServicesaccounts', environmentName, '${defaultName}-aiservices', 'ServicePrincipal', 'Cognitive Services OpenAI Contributor')
   properties: {
     principalId: userassignedidentity.properties.principalId
     principalType: 'ServicePrincipal'
@@ -290,8 +622,8 @@ resource roleassignment_pqjisaqxrgcysgrhdblx 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_wpbwavohdylvllgtoewg 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('MicrosoftCognitiveServicesaccounts', '${defaultName}-aiservices', 'ServicePrincipal', 'Cognitive Services Contributor')
+resource roleassignment_hmfasjqbixwvwxlvyigx 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftCognitiveServicesaccounts', environmentName, '${defaultName}-aiservices', 'ServicePrincipal', 'Cognitive Services Contributor')
   properties: {
     principalId: userassignedidentity.properties.principalId
     principalType: 'ServicePrincipal'
@@ -306,8 +638,8 @@ resource roleassignment_wpbwavohdylvllgtoewg 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_mgufizgvzsqmbzqocksu 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('MicrosoftCognitiveServicesaccounts', '${defaultName}-aiservices', 'ServicePrincipal', 'Cognitive Services OpenAI User')
+resource roleassignment_qiwviqlvorhviuoikyhn 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftCognitiveServicesaccounts', environmentName, '${defaultName}-aiservices', 'ServicePrincipal', 'Cognitive Services OpenAI User')
   properties: {
     principalId: userassignedidentity.properties.principalId
     principalType: 'ServicePrincipal'
@@ -322,8 +654,8 @@ resource roleassignment_mgufizgvzsqmbzqocksu 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_xmpyattycxterihwzhjs 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('MicrosoftCognitiveServicesaccounts', '${defaultName}-aiservices', 'ServicePrincipal', 'Cognitive Services User')
+resource roleassignment_vqsitscwkobrdvlojpeo 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftCognitiveServicesaccounts', environmentName, '${defaultName}-aiservices', 'ServicePrincipal', 'Cognitive Services User')
   properties: {
     principalId: userassignedidentity.properties.principalId
     principalType: 'ServicePrincipal'
@@ -338,8 +670,8 @@ resource roleassignment_xmpyattycxterihwzhjs 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_pjkjzujnwnqnlupkacxk 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('MicrosoftCognitiveServicesaccounts', '${defaultName}-aiservices', 'User', 'Cognitive Services OpenAI Contributor')
+resource roleassignment_djccqiqwpzkgpvmsxtpg 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftCognitiveServicesaccounts', environmentName, '${defaultName}-aiservices', 'User', 'Cognitive Services OpenAI Contributor')
   properties: {
     principalId: principalId
     principalType: 'User'
@@ -354,8 +686,8 @@ resource roleassignment_pjkjzujnwnqnlupkacxk 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_pqrtmtgtctxarhamusgu 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('MicrosoftCognitiveServicesaccounts', '${defaultName}-aiservices', 'User', 'Cognitive Services Contributor')
+resource roleassignment_rgqwxelwqrhtwxkejhyc 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftCognitiveServicesaccounts', environmentName, '${defaultName}-aiservices', 'User', 'Cognitive Services Contributor')
   properties: {
     principalId: principalId
     principalType: 'User'
@@ -370,8 +702,8 @@ resource roleassignment_pqrtmtgtctxarhamusgu 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_brzmmiebdqmayimhrmyf 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('MicrosoftCognitiveServicesaccounts', '${defaultName}-aiservices', 'User', 'Cognitive Services OpenAI User')
+resource roleassignment_eiambevcfusbcnjuoefk 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftCognitiveServicesaccounts', environmentName, '${defaultName}-aiservices', 'User', 'Cognitive Services OpenAI User')
   properties: {
     principalId: principalId
     principalType: 'User'
@@ -386,8 +718,8 @@ resource roleassignment_brzmmiebdqmayimhrmyf 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_uowcqnnqpxydgmvubghf 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('MicrosoftCognitiveServicesaccounts', '${defaultName}-aiservices', 'User', 'Cognitive Services User')
+resource roleassignment_ulmeiktaicqeonwxbgkw 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftCognitiveServicesaccounts', environmentName, '${defaultName}-aiservices', 'User', 'Cognitive Services User')
   properties: {
     principalId: principalId
     principalType: 'User'
@@ -402,8 +734,8 @@ resource roleassignment_uowcqnnqpxydgmvubghf 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_cdonmjaqgybenzhvmfxb 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('MicrosoftSearchsearchServices', defaultName, 'ServicePrincipal', 'Search Index Data Contributor')
+resource roleassignment_abzfoushrjbmnlrhqrnd 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftSearchsearchServices', environmentName, defaultName, 'ServicePrincipal', 'Search Index Data Contributor')
   properties: {
     principalId: userassignedidentity.properties.principalId
     principalType: 'ServicePrincipal'
@@ -418,8 +750,8 @@ resource roleassignment_cdonmjaqgybenzhvmfxb 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_vgmyhposexgcatgnydmr 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('MicrosoftSearchsearchServices', defaultName, 'ServicePrincipal', 'Search Index Data Reader')
+resource roleassignment_hvisesjfcmlfirhfodqk 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftSearchsearchServices', environmentName, defaultName, 'ServicePrincipal', 'Search Index Data Reader')
   properties: {
     principalId: userassignedidentity.properties.principalId
     principalType: 'ServicePrincipal'
@@ -434,8 +766,8 @@ resource roleassignment_vgmyhposexgcatgnydmr 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_pojtkcjzvggpxotmpbhb 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('MicrosoftSearchsearchServices', defaultName, 'ServicePrincipal', 'Search Service Contributor')
+resource roleassignment_hjoxkiksaauprlvmtajt 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftSearchsearchServices', environmentName, defaultName, 'ServicePrincipal', 'Search Service Contributor')
   properties: {
     principalId: userassignedidentity.properties.principalId
     principalType: 'ServicePrincipal'
@@ -450,8 +782,8 @@ resource roleassignment_pojtkcjzvggpxotmpbhb 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_gsqyzpufbonqoitqiiyw 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('MicrosoftSearchsearchServices', defaultName, 'User', 'Search Index Data Contributor')
+resource roleassignment_xbkkwfxuhxhkoubdvkgs 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftSearchsearchServices', environmentName, defaultName, 'User', 'Search Index Data Contributor')
   properties: {
     principalId: principalId
     principalType: 'User'
@@ -466,8 +798,8 @@ resource roleassignment_gsqyzpufbonqoitqiiyw 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_finkmwrfduymlwanhzyj 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('MicrosoftSearchsearchServices', defaultName, 'User', 'Search Index Data Reader')
+resource roleassignment_fozyeqjragxsjygyqahr 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftSearchsearchServices', environmentName, defaultName, 'User', 'Search Index Data Reader')
   properties: {
     principalId: principalId
     principalType: 'User'
@@ -482,8 +814,8 @@ resource roleassignment_finkmwrfduymlwanhzyj 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_fqkkmaqkhvvaicolyhhg 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('MicrosoftSearchsearchServices', defaultName, 'User', 'Search Service Contributor')
+resource roleassignment_miizhpyelsmuregyflxu 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftSearchsearchServices', environmentName, defaultName, 'User', 'Search Service Contributor')
   properties: {
     principalId: principalId
     principalType: 'User'
@@ -498,8 +830,8 @@ resource roleassignment_fqkkmaqkhvvaicolyhhg 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_encgtylpbtuphwxutrla 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('MicrosoftStoragestorageAccountsblobServices', 'default', 'ServicePrincipal', 'Storage Blob Data Contributor')
+resource roleassignment_qdxwvfwdcxdhyslfngyw 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftStoragestorageAccountsblobServices', environmentName, storageaccount.name, 'default', 'ServicePrincipal', 'Storage Blob Data Contributor')
   properties: {
     principalId: userassignedidentity.properties.principalId
     principalType: 'ServicePrincipal'
@@ -514,8 +846,8 @@ resource roleassignment_encgtylpbtuphwxutrla 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_kucxlyfeelslmhoskuin 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('MicrosoftStoragestorageAccountsblobServices', 'default', 'User', 'Storage Blob Data Contributor')
+resource roleassignment_coargsxbrhdmojcevwkk 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftStoragestorageAccountsblobServices', environmentName, storageaccount.name, 'default', 'User', 'Storage Blob Data Contributor')
   properties: {
     principalId: principalId
     principalType: 'User'
@@ -530,8 +862,8 @@ resource roleassignment_kucxlyfeelslmhoskuin 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_rvlirodumbwgpeecviid 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('MicrosoftKeyVaultvaults', defaultName, 'ServicePrincipal', 'Key Vault Administrator')
+resource roleassignment_gcbdbuudnabzzeifflkj 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftKeyVaultvaults', environmentName, defaultName, 'ServicePrincipal', 'Key Vault Administrator')
   properties: {
     principalId: userassignedidentity.properties.principalId
     principalType: 'ServicePrincipal'
@@ -546,8 +878,8 @@ resource roleassignment_rvlirodumbwgpeecviid 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_xblvyueyhgijfwhkgdsi 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('MicrosoftKeyVaultvaults', defaultName, 'User', 'Key Vault Administrator')
+resource roleassignment_nqvjjhotidgzatrnakyo 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftKeyVaultvaults', environmentName, defaultName, 'User', 'Key Vault Administrator')
   properties: {
     principalId: principalId
     principalType: 'User'
@@ -562,8 +894,8 @@ resource roleassignment_xblvyueyhgijfwhkgdsi 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_mvraisqpdcgsnsagubkr 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('MicrosoftMachineLearningServicesworkspaces', '${defaultName}-project', 'ServicePrincipal', 'Contributor')
+resource roleassignment_spqbmvwxoqzqsqzxfotj 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftMachineLearningServicesworkspaces', environmentName, '${defaultName}-project', 'ServicePrincipal', 'Contributor')
   properties: {
     principalId: userassignedidentity.properties.principalId
     principalType: 'ServicePrincipal'
@@ -578,8 +910,8 @@ resource roleassignment_mvraisqpdcgsnsagubkr 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_heujtrbfiqbyxhwslcai 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('MicrosoftMachineLearningServicesworkspaces', '${defaultName}-project', 'User', 'Contributor')
+resource roleassignment_jrohwqfrqxqaoskjukqf 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftMachineLearningServicesworkspaces', environmentName, '${defaultName}-project', 'User', 'Contributor')
   properties: {
     principalId: principalId
     principalType: 'User'
@@ -590,6 +922,22 @@ resource roleassignment_heujtrbfiqbyxhwslcai 'Microsoft.Authorization/roleAssign
 
   }
   scope: project_workspace
+}
+
+
+
+resource roleassignment_kvjoxlocbytxyhtrwdln 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftResourcesresourceGroups', environmentName, defaultName, 'User', 'App Configuration Data Owner')
+  properties: {
+    principalId: principalId
+    principalType: 'User'
+    roleDefinitionId: subscriptionResourceId(
+      'Microsoft.Authorization/roleDefinitions',
+      '5ae67dd6-50cb-40e7-96ff-dc2bfa4b606b'
+    )
+
+  }
+  scope: resourceGroup()
 }
 
 

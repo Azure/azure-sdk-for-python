@@ -4,17 +4,14 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from concurrent.futures import ThreadPoolExecutor
 import asyncio
 import sys
-import threading
 import keyword
 import types
+from collections import ChainMap
 from typing import (
-    Coroutine,
     Generic,
     Mapping,
-    MutableMapping,
     Protocol,
     Any,
     Tuple,
@@ -28,6 +25,7 @@ from typing import (
 from typing_extensions import Self, TypeVar, dataclass_transform
 
 from ._bicep.expressions import Parameter, MISSING, Default
+from ._utils import run_coroutine_sync
 from ._resource import Resource, _load_dev_environment, SyncClient, AsyncClient
 from .resources import RESOURCE_FROM_CLIENT_ANNOTATION
 from .resources.resourcegroup import ResourceGroup
@@ -81,7 +79,7 @@ class ComponentField(Parameter):
         self,
         *,
         default: Any,
-        factory: Union[Literal[Default.MISSING], DefaultFactory, AsyncDefaultFactory],
+        default_factory: Union[Literal[Default.MISSING], DefaultFactory, AsyncDefaultFactory],
         repr: bool,
         init: bool,
         alias: Optional[str],
@@ -89,7 +87,7 @@ class ComponentField(Parameter):
     ):
         # TODO: make Parameter name optional?
         super().__init__("", default=default)
-        self._factory = factory
+        self._default_factory = default_factory
         self._owner: Optional[Type] = None
         self._attrname: Optional[str] = None
         self._name: Optional[str] = None
@@ -111,8 +109,8 @@ class ComponentField(Parameter):
     def __repr__(self) -> str:
         if self.default is not MISSING:
             return f"Field(default={repr(self.default)})"
-        if self._factory is not MISSING:
-            return f"Field(default={getattr(self._factory, '__name__', 'factory')}(**kwargs))"
+        if self._default_factory is not MISSING:
+            return f"Field(default={getattr(self._default_factory, '__name__', 'default_factory')}(**kwargs))"
         return "Field()"
 
     def __set_name__(self, owner: Type, name: str) -> None:
@@ -121,7 +119,7 @@ class ComponentField(Parameter):
         self._attrname = "_field__" + name
 
     async def _run_factory(self):
-        factory = self._factory(**self.kwargs)
+        factory = self._default_factory(**self.kwargs)
         try:
             await factory
         except TypeError:
@@ -135,7 +133,7 @@ class ComponentField(Parameter):
         if obj is None:
             if self.default is not MISSING:
                 return self.default
-            if self._factory is not MISSING:
+            if self._default_factory is not MISSING:
                 return run_coroutine_sync(self._run_factory())
             raise AttributeError(f"No default value provided for '{self._owner.__name__}.{self._name}'.")
         return getattr(obj, self._attrname)
@@ -150,17 +148,17 @@ class ComponentField(Parameter):
 def field(
     *,
     default=MISSING,
-    factory=MISSING,
+    default_factory=MISSING,
     repr=True,
     init=True,
     alias=None,
     **kwargs,
 ):
-    if default is not MISSING and factory is not MISSING:
+    if default is not MISSING and default_factory is not MISSING:
         raise ValueError("Cannot specify both 'default' and 'factory'.")
     if alias and not init:
         raise ValueError("Alias is only supported if init=True.")
-    return ComponentField(default=default, factory=factory, repr=repr, init=init, alias=alias, **kwargs)
+    return ComponentField(default=default, default_factory=default_factory, repr=repr, init=init, alias=alias, **kwargs)
 
 
 @dataclass_transform(
@@ -249,7 +247,7 @@ class AzureInfrastructure(metaclass=AzureInfraComponent):
     _repr_str: str = field(default="", init=False, repr=False)
     resource_group: ResourceGroup = field(default=ResourceGroup(), repr=False)
     identity: Optional[UserAssignedIdentity] = field(default=UserAssignedIdentity(), repr=False)
-    config_store: Optional[ConfigStore] = field(default=None, repr=False)
+    config_store: Optional[ConfigStore[Any]] = field(default=ConfigStore(), repr=False)
 
     def __init__(self, **kwargs):
         for key, value in kwargs.items():
@@ -347,13 +345,13 @@ def make_infra(cls_name, fields, *, bases=(), namespace=None, module=None) -> Ty
     field_specifiers=(field,), eq_default=False, order_default=False, kw_only_default=True, frozen_default=True
 )
 class AzureAppComponent(type):
-    def __call__(cls, **kwargs):
+    def __call__(cls, **kwargs):  # pylint: disable=too-many-statements
         instance_kwargs = {}
         missing_kwargs = []
         repr_objects = []
-        for attr, (annotation, attr_field) in get_mro_annotations(  # pylint: disable=too-many-nested-blocks
-            cls, AzureApp
-        ).items():
+        dev_env = kwargs.pop("__dev_env", ChainMap())
+        mro_annotations = kwargs.pop("__mro_annotations", None) or get_mro_annotations(cls, AzureApp)
+        for attr, (annotation, attr_field) in mro_annotations.items():  # pylint: disable=too-many-nested-blocks
             try:
                 include_in_repr = True
                 client_kwargs = {}
@@ -400,7 +398,9 @@ class AzureAppComponent(type):
                     # already be processed by the time we get to any resources defined the app.
                     client, credential = value.get_client(
                         annotation,
-                        config_store=instance_kwargs.get("config_store"),
+                        # We check both the local dev_env provided from load/provision and the provided
+                        # config_store. We prioritize the latter because explicit > implicit.
+                        config_store=dev_env,
                         return_credential=True,
                         **client_kwargs,
                     )
@@ -412,6 +412,16 @@ class AzureAppComponent(type):
                     instance_kwargs[attr] = value
                     if include_in_repr:
                         repr_objects.append(f"{attr}={repr(value)}")
+                if attr == "config_store":
+                    # We update the dev_env (used for creating clients) to include a user or infra
+                    # provided config store.
+                    dev_env = dev_env.new_child(instance_kwargs[attr])
+                    # if annotation.__name__ == "Mapping":
+                    # If the default config_store field type hint is used, we can update
+                    # the instance config store to include the full dev_env. However
+                    # if the user has chosed to overwrite the field with a different type
+                    # (e.g. AppConfigurationProvider), we don't want to mess with that.
+                    # instance_kwargs[attr] = dev_env
                 if attr in missing_kwargs:
                     missing_kwargs.pop(missing_kwargs.index(attr))
         if kwargs:
@@ -426,36 +436,6 @@ class AzureAppComponent(type):
         return super().__call__(**instance_kwargs)
 
 
-T = TypeVar("T")
-
-
-def run_coroutine_sync(coroutine: Coroutine[Any, Any, T], timeout: float = 30) -> T:
-    # TODO: Found this on StackOverflow - needs further inspection
-    # https://stackoverflow.com/questions/55647753/call-async-function-from-sync-function-while-the-synchronous-function-continues
-
-    def run_in_new_loop():
-        new_loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(new_loop)
-        try:
-            return new_loop.run_until_complete(coroutine)
-        finally:
-            new_loop.close()
-
-    try:
-        loop = asyncio.get_running_loop()
-    except RuntimeError:
-        return asyncio.run(coroutine)
-
-    if threading.current_thread() is threading.main_thread():
-        if not loop.is_running():
-            return loop.run_until_complete(coroutine)
-        with ThreadPoolExecutor() as pool:
-            future = pool.submit(run_in_new_loop)
-            return future.result(timeout=timeout)
-    else:
-        return asyncio.run_coroutine_threadsafe(coroutine, loop).result()
-
-
 InfrastructureType = TypeVar("InfrastructureType", bound=AzureInfrastructure, default=AzureInfrastructure)
 
 
@@ -463,9 +443,9 @@ class AzureApp(Generic[InfrastructureType], metaclass=AzureAppComponent):
     # TODO: As these will have classattribute defaults, need to test behaviour
     # Might need to build a specifier object or use field
     _infra: Optional[InfrastructureType] = field(alias="infra", default=None, repr=False)
-    _closeables: List[Union[SyncClient, AsyncClient]] = field(factory=list, init=False, repr=False)
+    _closeables: List[Union[SyncClient, AsyncClient]] = field(default_factory=list, init=False, repr=False)
     _repr_str: str = field(default="", init=False, repr=False)
-    config_store: Mapping[str, Any] = field(factory=dict, repr=False)
+    config_store: Mapping[str, Any] = field(default_factory=dict, repr=False)
 
     def __init__(self, **kwargs):
         for key, value in kwargs.items():
@@ -482,8 +462,7 @@ class AzureApp(Generic[InfrastructureType], metaclass=AzureAppComponent):
     def load(
         cls,
         *,
-        config_store: Optional[MutableMapping[str, Any]] = None,
-        env_name: Optional[str] = None,
+        config_store: Optional[Mapping[str, Any]] = None,
     ) -> Self: ...
     @overload
     @classmethod
@@ -492,38 +471,34 @@ class AzureApp(Generic[InfrastructureType], metaclass=AzureAppComponent):
         infra: InfrastructureType,
         attr_map: Optional[Mapping[str, str]] = None,
         *,
-        config_store: Optional[MutableMapping[str, Any]] = None,
-        env_name: Optional[str] = None,
+        config_store: Optional[Mapping[str, Any]] = None,
     ) -> Self: ...
     @classmethod
-    def load(
-        cls,
-        infra=None,
-        attr_map=None,
-        *,
-        config_store=None,
-        env_name=None,
-    ):
+    def load(cls, infra=None, attr_map=None, *, config_store=None, **kwargs):
         if attr_map and not infra:
             raise ValueError("Cannot specify attr_map without providing infrastructure object.")
         attr_map = attr_map or {}
         config_store = config_store or {}
+        dev_env = kwargs.pop("__dev_env", None)
+        # We only want to do this once per instance, so we'll pass it through to the metaclass.
+        mro_annotations = kwargs.pop("__mro_annotations", None) or get_mro_annotations(cls, AzureApp)
         if not infra:
-            env_name = env_name or cls.__name__
             fields = []
-            for attr, annotation in get_annotations(cls).items():
+            for attr, (annotation, _) in mro_annotations.items():
                 if annotation.__name__ in RESOURCE_FROM_CLIENT_ANNOTATION:
                     resource_cls = RESOURCE_FROM_CLIENT_ANNOTATION[annotation.__name__].resource()
                     attr_map[attr] = attr
                     fields.append((attr, resource_cls, field(default=resource_cls())))
+                elif attr == "config_store" and not config_store:
+                    # We special case this one.
+                    attr_map[attr] = attr
             infra = make_infra(f"AutoInfra{cls.__name__}", fields)()
         if attr_map:
-            kwargs = {c_attr: getattr(infra, i_attr) for c_attr, i_attr in attr_map.items()}
+            kwargs = {app_attr: getattr(infra, infra_attr) for app_attr, infra_attr in attr_map.items()}
         else:
             infra_resources = {r.identifier: r for r in infra.__dict__.values() if isinstance(r, Resource)}
             kwargs = {}
-            for attr, annotation in get_annotations(cls).items():
-                # TODO: Duplicate annotation traversal - needs revising
+            for attr, (annotation, _) in mro_annotations.items():
                 # TODO: Currently this doesn't support other type hints like Union/Optional
                 # TODO: This doesn't support alias
                 if (
@@ -531,17 +506,23 @@ class AzureApp(Generic[InfrastructureType], metaclass=AzureAppComponent):
                     and RESOURCE_FROM_CLIENT_ANNOTATION[annotation.__name__] in infra_resources
                 ):
                     kwargs[attr] = infra_resources[RESOURCE_FROM_CLIENT_ANNOTATION[annotation.__name__]]
-
-        # TODO: duplicate config loading
-        config_store.update(_load_dev_environment(infra.__class__.__name__))
-        return cls(config_store=config_store, infra=infra, **kwargs)
+        if dev_env is None:
+            # We use a ChainMap here so that it can be added to the Infra ConfigStore resource in the
+            # constructor purely during the client construction. This wont be persisted to the
+            # app.config_store attribute.
+            # If there's a config_store in the infra, then that will ultimately be placed first in the chain.
+            dev_env = ChainMap(_load_dev_environment(infra.__class__.__name__))
+        if config_store or "config_store" not in kwargs:
+            # If specified, overwrite. Otherwise add if not present.
+            kwargs["config_store"] = config_store
+        return cls(infra=infra, __dev_env=dev_env, __mro_annotations=mro_annotations, **kwargs)
 
     @overload
     @classmethod
     def provision(
         cls,
         *,
-        config_store: Optional[Mapping[str, Any]] = None,
+        parameters: Optional[Mapping[str, Any]] = None,
         **kwargs,
     ) -> Self: ...
     @overload
@@ -551,7 +532,7 @@ class AzureApp(Generic[InfrastructureType], metaclass=AzureAppComponent):
         infra: InfrastructureType,
         *,
         attr_map: Optional[Mapping[str, str]] = None,
-        config_store: Optional[Mapping[str, Any]] = None,
+        parameters: Optional[Mapping[str, Any]] = None,
         **kwargs,
     ) -> Self: ...
     @classmethod
@@ -560,24 +541,31 @@ class AzureApp(Generic[InfrastructureType], metaclass=AzureAppComponent):
         infra=None,
         *,
         attr_map=None,
-        config_store=None,
+        parameters=None,
         **kwargs,
     ):
         if attr_map and not infra:
             raise ValueError("Cannot specify attr_map without providing infrastructure object.")
+        mro_annotations = get_mro_annotations(cls, AzureApp)
         from ._provision import provision
 
         if not infra:
             attr_map = {}
             fields = []
-            for attr, annotation in get_annotations(cls).items():
+            for attr, (annotation, _) in mro_annotations.items():
                 if annotation.__name__ in RESOURCE_FROM_CLIENT_ANNOTATION:
                     resource_cls = RESOURCE_FROM_CLIENT_ANNOTATION[annotation.__name__].resource()
                     attr_map[attr] = attr
                     fields.append((attr, resource_cls, field(default=resource_cls())))
-            infra = make_infra(f"_{cls.__name__}Infra", fields)()
-        provision(infra, config_store=config_store, **kwargs)
-        return cls.load(infra, attr_map=attr_map, config_store=config_store)
+                elif attr == "config_store":
+                    # We special case this one.
+                    attr_map[attr] = attr
+            infra = make_infra(f"AutoInfra{cls.__name__}", fields)()
+        dev_env = provision(infra, config_store=parameters, **kwargs)
+        # The dev env returned here is a ChainMap of the deployed settings along with the user
+        # provided config. If there's a config_store provided with the infra deployment, this
+        # will be added to the front of the chain.
+        return cls.load(infra, attr_map=attr_map, __dev_env=dev_env, __mro_annotations=mro_annotations)
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self._repr_str})"
@@ -610,7 +598,7 @@ class AzureApp(Generic[InfrastructureType], metaclass=AzureAppComponent):
     def close(self) -> None:
         # We only close clients we instantiated via Resource.get_client()
         # If a client was either passed directly to the constructor, or returned
-        # from a field default or factory, it is assumed that we don't own it.
+        # from a field default or default_factory, it is assumed that we don't own it.
         run_coroutine_sync(self.aclose())
 
     async def aclose(self) -> None:

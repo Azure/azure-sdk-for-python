@@ -6,6 +6,8 @@
 # pylint: disable=arguments-differ
 
 from collections import defaultdict
+from collections.abc import Mapping as ABCMapping
+import inspect
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -20,6 +22,7 @@ from typing import (
     Optional,
     cast,
     overload,
+    get_origin,
 )
 from typing_extensions import TypeVar, Unpack, TypedDict
 
@@ -79,8 +82,10 @@ class ConfigStoreKwargs(TypedDict, total=False):
                 Literal[
                     "App Compliance Automation Administrator",
                     "App Compliance Automation Reader",
+                    "App Configuration Contributor",
                     "App Configuration Data Owner",
                     "App Configuration Data Reader",
+                    "App Configuration Reader",
                     "Contributor",
                     "Owner",
                     "Reader",
@@ -100,8 +105,10 @@ class ConfigStoreKwargs(TypedDict, total=False):
                 Literal[
                     "App Compliance Automation Administrator",
                     "App Compliance Automation Reader",
+                    "App Configuration Contributor",
                     "App Configuration Data Owner",
                     "App Configuration Data Reader",
+                    "App Configuration Reader",
                     "Contributor",
                     "Owner",
                     "Reader",
@@ -124,10 +131,12 @@ ConfigStoreResourceType = TypeVar("ConfigStoreResourceType", bound=Mapping[str, 
 ClientType = TypeVar("ClientType")
 _DEFAULT_CONFIG_STORE: "ConfigStoreResource" = {
     "name": GLOBAL_PARAMS["defaultName"],
-    "sku": {"name": "Free"},
+    "sku": {"name": "Standard"},
     "properties": {
         "disableLocalAuth": True,
         "createMode": "Default",
+        "dataPlaneProxy": {"authenticationMode": "Pass-through", "privateLinkDelegation": "Disabled"},
+        "publicNetworkAccess": "Enabled",
     },
     "location": GLOBAL_PARAMS["location"],
     "tags": GLOBAL_PARAMS["azdTags"],
@@ -304,6 +313,20 @@ class ConfigStore(_ClientResource, Generic[ConfigStoreResourceType]):
                 from azure.appconfiguration import AzureAppConfigurationClient as SyncAzureAppConfigurationClient
 
                 cls = SyncAzureAppConfigurationClient
+                use_async = False
+        elif get_origin(cls) is ABCMapping or cls.__name__ == "AzureAppConfigurationProvider":
+            # TODO: This should be two separate branches, default Mapping should be a simple
+            # download of the config into a map using a simple raw PipelineClient (can still apply
+            # pipeline config kwargs). Then we can remove dependency.
+            if use_async or inspect.iscoroutinefunction(getattr(cls, "close", None)):
+                from azure.appconfiguration.provider.aio import load
+
+                cls = load
+                use_async = True
+            else:
+                from azure.appconfiguration.provider import load
+
+                cls = load
                 use_async = False
         return super().get_client(
             cls,

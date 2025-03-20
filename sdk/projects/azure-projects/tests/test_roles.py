@@ -16,8 +16,20 @@ from azure.projects import Parameter, export
 TEST_SUB = str(uuid4())
 RG = ResourceSymbol("resourcegroup")
 IDENTITY = Output(None, "properties.principalId", ResourceSymbol("userassignedidentity"))
-CONTRIB_GUID = Guid("MicrosoftStoragestorageAccounts", "foo", "ServicePrincipal", "Storage Blob Data Contributor")
-OWNER_GUID = Guid("MicrosoftStoragestorageAccounts", "foo", "ServicePrincipal", "Storage Blob Data Owner")
+CONTRIB_GUID = Guid(
+    "MicrosoftStoragestorageAccounts",
+    GLOBAL_PARAMS["environmentName"],
+    "foo",
+    "ServicePrincipal",
+    "Storage Blob Data Contributor",
+)
+OWNER_GUID = Guid(
+    "MicrosoftStoragestorageAccounts",
+    GLOBAL_PARAMS["environmentName"],
+    "foo",
+    "ServicePrincipal",
+    "Storage Blob Data Owner",
+)
 
 
 def test_roles_properties():

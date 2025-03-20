@@ -8,8 +8,10 @@ from typing import Dict, List, Literal, Any, Optional, Union, TYPE_CHECKING, cas
 from typing_extensions import Required, TypedDict
 
 from .roles import RoleAssignment as RoleResource, BUILT_IN_ROLES
-from ..._bicep.expressions import Parameter, PlaceholderParameter, ResourceSymbol, Expression, Guid
+from .._identifiers import ResourceIdentifiers
+from ..._bicep.expressions import Parameter, PlaceholderParameter, ResourceSymbol, Expression, Guid, ResourceGroup
 from ..._bicep.utils import clean_name
+from ..._parameters import GLOBAL_PARAMS
 
 if TYPE_CHECKING:
     from ..._resource import FieldsType
@@ -85,16 +87,21 @@ def _build_role_assignment(
     fields: "FieldsType",
     name: Union[str, Parameter],
     *,
+    parent: Optional[ResourceSymbol],
     parameters: Dict[str, Parameter],
-    symbol: ResourceSymbol,
+    symbol: Expression,
     principal_id: Expression,
     principal_type: Literal["ServicePrincipal", "User"],
 ) -> ResourceSymbol:
     if isinstance(role, (str, Parameter)):
+        if parent:
+            # TODO: Should 'Guid' be a subtype of Parameter?
+            unique_name = Guid(resource, GLOBAL_PARAMS["environmentName"], parent.name, name, principal_type, role)
+        else:
+            unique_name = Guid(resource, GLOBAL_PARAMS["environmentName"], name, principal_type, role)
         new_role = RoleResource(
             {
-                # TODO: Should 'Guid' be a subtype of Parameter?
-                "name": Guid(resource, name, principal_type, role),
+                "name": unique_name,
                 "properties": {
                     "principalId": principal_id,
                     "principalType": principal_type,
@@ -156,6 +163,7 @@ def add_extensions(fields: "FieldsType", parameters: Dict[str, Parameter]):
                         role,
                         fields,
                         field.properties["name"],
+                        parent=field.properties.get("parent"),
                         parameters=parameters,
                         symbol=field.symbol,
                         principal_id=parameters["managedIdentityPrincipalId"],
@@ -177,6 +185,7 @@ def add_extensions(fields: "FieldsType", parameters: Dict[str, Parameter]):
                         role,
                         fields,
                         field.properties["name"],
+                        parent=field.properties.get("parent"),
                         parameters=parameters,
                         symbol=field.symbol,
                         principal_id=parameters["principalId"],
@@ -186,3 +195,29 @@ def add_extensions(fields: "FieldsType", parameters: Dict[str, Parameter]):
             # TODO: We shouldn't do this - not sure if we need to find a way to surface the resource
             # symbols or if we can just safely remove it.
             field.extensions["user_roles"] = role_symbols  # type: ignore[typeddict-item]  # TODO
+
+    # We need to set up a special role for deploying config settings.
+    config_stores = [field for field in fields.values() if field.identifier == ResourceIdentifiers.config_store]
+    for store in config_stores:
+        keyvalues = [
+            f
+            for f in fields.values()
+            if f.identifier == ResourceIdentifiers.config_setting and f.properties["parent"] == store.symbol
+        ]
+        rg = [f for f in fields.values() if f.symbol == store.resource_group]
+        if not rg or not rg[0].existing:
+            symbol = ResourceGroup()
+        else:
+            symbol = ResourceGroup(rg[0].properties["name"])
+        if keyvalues:
+            _build_role_assignment(
+                clean_name("Microsoft.Resources/resourceGroups"),
+                "App Configuration Data Owner",
+                fields,
+                name=store.properties["name"],
+                parent=None,
+                parameters=parameters,
+                symbol=symbol,
+                principal_id=GLOBAL_PARAMS["principalId"],
+                principal_type="User",
+            )

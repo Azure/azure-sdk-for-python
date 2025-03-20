@@ -395,7 +395,7 @@ def test_search_app():
         return SearchIndexClient("https://different.search.windows.net/", credential=DefaultAzureCredential(), **kwargs)
 
     class TestApp(AzureApp):
-        client: SearchIndexClient = field(factory=client_builder, api_version="v3.0")
+        client: SearchIndexClient = field(default_factory=client_builder, api_version="v3.0")
 
     app = TestApp()
     assert app.client._client._config.endpoint == "https://different.search.windows.net/"

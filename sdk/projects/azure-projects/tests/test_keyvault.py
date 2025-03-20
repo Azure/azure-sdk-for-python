@@ -378,7 +378,7 @@ def test_keyvault_app():
         return KeyClient("https://different.vault.azure.net", credential=DefaultAzureCredential(), **kwargs)
 
     class TestApp(AzureApp):
-        client: KeyClient = field(factory=client_builder, api_version="v3.0")
+        client: KeyClient = field(default_factory=client_builder, api_version="v3.0")
 
     app = TestApp()
     assert app.client.vault_url == "https://different.vault.azure.net"

@@ -42,6 +42,10 @@ module test_module 'test.bicep' = {
     azdTags: azdTags
   }
 }
+output AZURE_APPCONFIG_ID string = test_module.outputs.AZURE_APPCONFIG_ID
+output AZURE_APPCONFIG_NAME string = test_module.outputs.AZURE_APPCONFIG_NAME
+output AZURE_APPCONFIG_RESOURCE_GROUP string = test_module.outputs.AZURE_APPCONFIG_RESOURCE_GROUP
+output AZURE_APPCONFIG_ENDPOINT string = test_module.outputs.AZURE_APPCONFIG_ENDPOINT
 output AZURE_SEARCH_ID_TEST string = test_module.outputs.AZURE_SEARCH_ID_TEST
 output AZURE_SEARCH_NAME_TEST string = test_module.outputs.AZURE_SEARCH_NAME_TEST
 output AZURE_SEARCH_RESOURCE_GROUP_TEST string = test_module.outputs.AZURE_SEARCH_RESOURCE_GROUP_TEST

@@ -18,10 +18,15 @@ resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024
   properties: {
     disableLocalAuth: true
     createMode: 'Default'
+    dataPlaneProxy: {
+      authenticationMode: 'Pass-through'
+      privateLinkDelegation: 'Disabled'
+    }
+    publicNetworkAccess: 'Enabled'
   }
   name: defaultName
   sku: {
-    name: 'Free'
+    name: 'Standard'
   }
   location: location
   tags: azdTags
@@ -43,11 +48,15 @@ resource configurationstore_foo 'Microsoft.AppConfiguration/configurationStores@
   properties: {
     disableLocalAuth: true
     createMode: 'Default'
+    dataPlaneProxy: {
+      authenticationMode: 'Pass-through'
+      privateLinkDelegation: 'Disabled'
+    }
     publicNetworkAccess: 'Enabled'
   }
   name: 'foo'
   sku: {
-    name: 'Free'
+    name: 'Standard'
   }
   location: location
   tags: azdTags
@@ -59,14 +68,94 @@ resource configurationstore_foo 'Microsoft.AppConfiguration/configurationStores@
   }
 }
 
-output AZURE_APPCONFIG_ID_FOO string = configurationstore_foo.id
-output AZURE_APPCONFIG_NAME_FOO string = configurationstore_foo.name
-output AZURE_APPCONFIG_RESOURCE_GROUP_FOO string = resourceGroup().name
-output AZURE_APPCONFIG_ENDPOINT_FOO string = configurationstore_foo.properties.endpoint
+output AZURE_APPCONFIG_ID string = configurationstore_foo.id
+output AZURE_APPCONFIG_NAME string = configurationstore_foo.name
+output AZURE_APPCONFIG_RESOURCE_GROUP string = resourceGroup().name
+output AZURE_APPCONFIG_ENDPOINT string = configurationstore_foo.properties.endpoint
 
 
-resource roleassignment_qxodouesmklfftwklutc 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('MicrosoftAppConfigurationconfigurationStores', defaultName, 'ServicePrincipal', 'App Configuration Data Reader')
+resource keyvalue_azureappconfigid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore_foo
+  name: 'AZURE_APPCONFIG_ID'
+  properties: {
+    value: configurationstore.id
+  }
+}
+
+
+
+resource keyvalue_azureappconfigname 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore_foo
+  name: 'AZURE_APPCONFIG_NAME'
+  properties: {
+    value: configurationstore.name
+  }
+}
+
+
+
+resource keyvalue_azureappconfigresourcegroup 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore_foo
+  name: 'AZURE_APPCONFIG_RESOURCE_GROUP'
+  properties: {
+    value: resourceGroup().name
+  }
+}
+
+
+
+resource keyvalue_azureappconfigendpoint 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore_foo
+  name: 'AZURE_APPCONFIG_ENDPOINT'
+  properties: {
+    value: configurationstore.properties.endpoint
+  }
+}
+
+
+
+resource keyvalue_azureappconfigidfoo 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore_foo
+  name: 'AZURE_APPCONFIG_ID_FOO'
+  properties: {
+    value: configurationstore_foo.id
+  }
+}
+
+
+
+resource keyvalue_azureappconfignamefoo 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore_foo
+  name: 'AZURE_APPCONFIG_NAME_FOO'
+  properties: {
+    value: configurationstore_foo.name
+  }
+}
+
+
+
+resource keyvalue_azureappconfigresourcegroupfoo 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore_foo
+  name: 'AZURE_APPCONFIG_RESOURCE_GROUP_FOO'
+  properties: {
+    value: resourceGroup().name
+  }
+}
+
+
+
+resource keyvalue_azureappconfigendpointfoo 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore_foo
+  name: 'AZURE_APPCONFIG_ENDPOINT_FOO'
+  properties: {
+    value: configurationstore_foo.properties.endpoint
+  }
+}
+
+
+
+resource roleassignment_gxaeyfznpvgorjrkpllp 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftAppConfigurationconfigurationStores', environmentName, defaultName, 'ServicePrincipal', 'App Configuration Data Reader')
   properties: {
     principalId: userassignedidentity.properties.principalId
     principalType: 'ServicePrincipal'
@@ -81,8 +170,8 @@ resource roleassignment_qxodouesmklfftwklutc 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_rgfqntzclayyzscssvnm 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('MicrosoftAppConfigurationconfigurationStores', defaultName, 'User', 'App Configuration Data Owner')
+resource roleassignment_unxsuzdqhucrcsmcfuyc 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftAppConfigurationconfigurationStores', environmentName, defaultName, 'User', 'App Configuration Data Owner')
   properties: {
     principalId: principalId
     principalType: 'User'
@@ -97,8 +186,8 @@ resource roleassignment_rgfqntzclayyzscssvnm 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_nvzfuhmtbzfqnfcwpvss 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('MicrosoftAppConfigurationconfigurationStores', 'foo', 'ServicePrincipal', 'App Configuration Data Reader')
+resource roleassignment_fphbpzhnuggbagsiqrfr 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftAppConfigurationconfigurationStores', environmentName, 'foo', 'ServicePrincipal', 'App Configuration Data Reader')
   properties: {
     principalId: userassignedidentity.properties.principalId
     principalType: 'ServicePrincipal'
@@ -113,8 +202,8 @@ resource roleassignment_nvzfuhmtbzfqnfcwpvss 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_rexvoysplfyqzindrbcx 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('MicrosoftAppConfigurationconfigurationStores', 'foo', 'User', 'App Configuration Data Owner')
+resource roleassignment_roouyxmawujljdelobxd 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftAppConfigurationconfigurationStores', environmentName, 'foo', 'User', 'App Configuration Data Owner')
   properties: {
     principalId: principalId
     principalType: 'User'
@@ -125,6 +214,22 @@ resource roleassignment_rexvoysplfyqzindrbcx 'Microsoft.Authorization/roleAssign
 
   }
   scope: configurationstore_foo
+}
+
+
+
+resource roleassignment_vhxymfftulupqwfkndxv 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftResourcesresourceGroups', environmentName, 'foo', 'User', 'App Configuration Data Owner')
+  properties: {
+    principalId: principalId
+    principalType: 'User'
+    roleDefinitionId: subscriptionResourceId(
+      'Microsoft.Authorization/roleDefinitions',
+      '5ae67dd6-50cb-40e7-96ff-dc2bfa4b606b'
+    )
+
+  }
+  scope: resourceGroup()
 }
 
 

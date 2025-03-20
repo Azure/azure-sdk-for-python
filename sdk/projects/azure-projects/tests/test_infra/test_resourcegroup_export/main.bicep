@@ -31,7 +31,22 @@ resource resourcegroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   tags: azdTags
 }
 
-
-
+module test_module 'test.bicep' = {
+  name: '${deployment().name}_test'
+  scope: resourcegroup
+  params: {
+    location: location
+    environmentName: environmentName
+    defaultNamePrefix: defaultNamePrefix
+    defaultName: defaultName
+    principalId: principalId
+    tenantId: tenantId
+    azdTags: azdTags
+  }
+}
+output AZURE_APPCONFIG_ID string = test_module.outputs.AZURE_APPCONFIG_ID
+output AZURE_APPCONFIG_NAME string = test_module.outputs.AZURE_APPCONFIG_NAME
+output AZURE_APPCONFIG_RESOURCE_GROUP string = test_module.outputs.AZURE_APPCONFIG_RESOURCE_GROUP
+output AZURE_APPCONFIG_ENDPOINT string = test_module.outputs.AZURE_APPCONFIG_ENDPOINT
 
 

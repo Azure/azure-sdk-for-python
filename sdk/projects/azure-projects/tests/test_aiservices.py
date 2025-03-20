@@ -388,7 +388,7 @@ def test_aiservices_app():
         return EmptyClient("fake-endpoint", **kwargs)
 
     class TestApp(AzureApp):
-        client: EmptyClient = field(factory=client_builder, test_attr="foobar")
+        client: EmptyClient = field(default_factory=client_builder, test_attr="foobar")
 
     app = TestApp()
     assert app.client.endpoint == "fake-endpoint"

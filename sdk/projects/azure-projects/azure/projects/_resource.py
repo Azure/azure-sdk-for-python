@@ -38,6 +38,7 @@ from dotenv import dotenv_values
 from azure.core.settings import _unset
 
 from .resources._identifiers import ResourceIdentifiers
+from ._utils import run_coroutine_sync
 from ._setting import StoredPrioritizedSetting
 from ._bicep.expressions import Output, Expression, Parameter, ResourceSymbol, ResourceGroup as RGSymbol
 from ._bicep.utils import clean_name
@@ -486,6 +487,7 @@ class Resource:  # pylint: disable=too-many-instance-attributes
         *,
         parameters: Dict[str, Parameter],
         infra_component: Optional[AzureInfrastructure] = None,
+        depends_on: Optional[List[ResourceSymbol]] = None,
     ) -> Tuple[ResourceSymbol, ...]:
         properties = self._resolve_resource(parameters, infra_component)
         extensions: ExtensionResources = defaultdict(list)  # type: ignore[assignment]  # Doesn't like defaultdict
@@ -504,7 +506,7 @@ class Resource:  # pylint: disable=too-many-instance-attributes
         if self._existing:
             if "name" not in properties and "name" not in self.DEFAULTS:
                 raise ValueError(f"Reference to existing resource {repr(self)} is missing 'name'.")
-            ref_properties = {"name": properties.get("name", self.DEFAULTS["name"])}
+            ref_properties = {"name": properties.get("name") or self.DEFAULTS["name"]}
             rg = None
             if parents:
                 ref_properties["parent"] = parents[0]
@@ -565,6 +567,8 @@ class Resource:  # pylint: disable=too-many-instance-attributes
                 )
         else:
             params = {}
+            if depends_on:
+                params["dependsOn"] = depends_on
             if self.parent:
                 params["parent"] = parents[0]
             outputs = {}
@@ -652,6 +656,12 @@ class _ClientResource(Resource):
 
         return DefaultAzureCredential()
 
+    async def _await_coroutine(self, client):
+        try:
+            return await client
+        except TypeError:
+            return client
+
     @overload
     def get_client(
         self,
@@ -715,6 +725,7 @@ class _ClientResource(Resource):
         if transport is not None:
             client_kwargs["transport"] = transport
         client = cls(endpoint, credential=credential, **client_kwargs)
+        client = run_coroutine_sync(self._await_coroutine(client))
         if return_credential:
             return client, credential
         return client

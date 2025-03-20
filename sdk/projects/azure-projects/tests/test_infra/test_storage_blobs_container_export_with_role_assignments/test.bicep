@@ -14,6 +14,36 @@ resource userassignedidentity 'Microsoft.ManagedIdentity/userAssignedIdentities@
 
 
 
+resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024-05-01' = {
+  properties: {
+    disableLocalAuth: true
+    createMode: 'Default'
+    dataPlaneProxy: {
+      authenticationMode: 'Pass-through'
+      privateLinkDelegation: 'Disabled'
+    }
+    publicNetworkAccess: 'Enabled'
+  }
+  name: defaultName
+  sku: {
+    name: 'Standard'
+  }
+  location: location
+  tags: azdTags
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${userassignedidentity.id}': {}
+    }
+  }
+}
+
+output AZURE_APPCONFIG_ID string = configurationstore.id
+output AZURE_APPCONFIG_NAME string = configurationstore.name
+output AZURE_APPCONFIG_RESOURCE_GROUP string = resourceGroup().name
+output AZURE_APPCONFIG_ENDPOINT string = configurationstore.properties.endpoint
+
+
 resource storageaccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   properties: {
     accessTier: 'Hot'
@@ -61,8 +91,160 @@ output AZURE_BLOB_CONTAINER_RESOURCE_GROUP string = resourceGroup().name
 output AZURE_BLOB_CONTAINER_ENDPOINT string = '${storageaccount.properties.primaryEndpoints.blob}${container.name}'
 
 
-resource roleassignment_encgtylpbtuphwxutrla 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('MicrosoftStoragestorageAccountsblobServices', 'default', 'ServicePrincipal', 'Storage Blob Data Contributor')
+resource keyvalue_azureappconfigid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_APPCONFIG_ID'
+  properties: {
+    value: configurationstore.id
+  }
+}
+
+
+
+resource keyvalue_azureappconfigname 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_APPCONFIG_NAME'
+  properties: {
+    value: configurationstore.name
+  }
+}
+
+
+
+resource keyvalue_azureappconfigresourcegroup 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_APPCONFIG_RESOURCE_GROUP'
+  properties: {
+    value: resourceGroup().name
+  }
+}
+
+
+
+resource keyvalue_azureappconfigendpoint 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_APPCONFIG_ENDPOINT'
+  properties: {
+    value: configurationstore.properties.endpoint
+  }
+}
+
+
+
+resource keyvalue_azurestorageid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_STORAGE_ID'
+  properties: {
+    value: storageaccount.id
+  }
+}
+
+
+
+resource keyvalue_azurestoragename 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_STORAGE_NAME'
+  properties: {
+    value: storageaccount.name
+  }
+}
+
+
+
+resource keyvalue_azurestorageresourcegroup 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_STORAGE_RESOURCE_GROUP'
+  properties: {
+    value: resourceGroup().name
+  }
+}
+
+
+
+resource keyvalue_azureblobsendpoint 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_BLOBS_ENDPOINT'
+  properties: {
+    value: storageaccount.properties.primaryEndpoints.blob
+  }
+}
+
+
+
+resource keyvalue_azureblobcontainerid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_BLOB_CONTAINER_ID'
+  properties: {
+    value: container.id
+  }
+}
+
+
+
+resource keyvalue_azureblobcontainername 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_BLOB_CONTAINER_NAME'
+  properties: {
+    value: container.name
+  }
+}
+
+
+
+resource keyvalue_azureblobcontainerresourcegroup 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_BLOB_CONTAINER_RESOURCE_GROUP'
+  properties: {
+    value: resourceGroup().name
+  }
+}
+
+
+
+resource keyvalue_azureblobcontainerendpoint 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_BLOB_CONTAINER_ENDPOINT'
+  properties: {
+    value: '${storageaccount.properties.primaryEndpoints.blob}${container.name}'
+  }
+}
+
+
+
+resource roleassignment_gxaeyfznpvgorjrkpllp 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftAppConfigurationconfigurationStores', environmentName, defaultName, 'ServicePrincipal', 'App Configuration Data Reader')
+  properties: {
+    principalId: userassignedidentity.properties.principalId
+    principalType: 'ServicePrincipal'
+    roleDefinitionId: subscriptionResourceId(
+      'Microsoft.Authorization/roleDefinitions',
+      '516239f1-63e1-4d78-a4de-a74fb236a071'
+    )
+
+  }
+  scope: configurationstore
+}
+
+
+
+resource roleassignment_unxsuzdqhucrcsmcfuyc 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftAppConfigurationconfigurationStores', environmentName, defaultName, 'User', 'App Configuration Data Owner')
+  properties: {
+    principalId: principalId
+    principalType: 'User'
+    roleDefinitionId: subscriptionResourceId(
+      'Microsoft.Authorization/roleDefinitions',
+      '5ae67dd6-50cb-40e7-96ff-dc2bfa4b606b'
+    )
+
+  }
+  scope: configurationstore
+}
+
+
+
+resource roleassignment_qdxwvfwdcxdhyslfngyw 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftStoragestorageAccountsblobServices', environmentName, storageaccount.name, 'default', 'ServicePrincipal', 'Storage Blob Data Contributor')
   properties: {
     principalId: userassignedidentity.properties.principalId
     principalType: 'ServicePrincipal'
@@ -77,8 +259,8 @@ resource roleassignment_encgtylpbtuphwxutrla 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_kucxlyfeelslmhoskuin 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('MicrosoftStoragestorageAccountsblobServices', 'default', 'User', 'Storage Blob Data Contributor')
+resource roleassignment_coargsxbrhdmojcevwkk 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftStoragestorageAccountsblobServices', environmentName, storageaccount.name, 'default', 'User', 'Storage Blob Data Contributor')
   properties: {
     principalId: principalId
     principalType: 'User'
@@ -93,8 +275,8 @@ resource roleassignment_kucxlyfeelslmhoskuin 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_kyetambyjgdyrkjmdodi 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('MicrosoftStoragestorageAccountsblobServicescontainers', defaultName, 'ServicePrincipal', 'Owner')
+resource roleassignment_ngskryuiollablohlazi 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftStoragestorageAccountsblobServicescontainers', environmentName, blobservice.name, defaultName, 'ServicePrincipal', 'Owner')
   properties: {
     principalId: userassignedidentity.properties.principalId
     principalType: 'ServicePrincipal'
@@ -109,8 +291,8 @@ resource roleassignment_kyetambyjgdyrkjmdodi 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_ticrtbqazxjoqmnhyrel 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('MicrosoftStoragestorageAccountsblobServicescontainers', defaultName, 'User', 'Contributor')
+resource roleassignment_lfpzbwkutxbrkyqbzxjz 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftStoragestorageAccountsblobServicescontainers', environmentName, blobservice.name, defaultName, 'User', 'Contributor')
   properties: {
     principalId: principalId
     principalType: 'User'
@@ -121,6 +303,22 @@ resource roleassignment_ticrtbqazxjoqmnhyrel 'Microsoft.Authorization/roleAssign
 
   }
   scope: container
+}
+
+
+
+resource roleassignment_kvjoxlocbytxyhtrwdln 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftResourcesresourceGroups', environmentName, defaultName, 'User', 'App Configuration Data Owner')
+  properties: {
+    principalId: principalId
+    principalType: 'User'
+    roleDefinitionId: subscriptionResourceId(
+      'Microsoft.Authorization/roleDefinitions',
+      '5ae67dd6-50cb-40e7-96ff-dc2bfa4b606b'
+    )
+
+  }
+  scope: resourceGroup()
 }
 
 

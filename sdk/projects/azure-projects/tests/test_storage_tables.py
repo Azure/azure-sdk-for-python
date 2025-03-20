@@ -216,6 +216,9 @@ def test_storage_tables_defaults():
 
 
 def test_storage_tables_export(export_dir):
+    with pytest.raises(ValueError):
+        TableStorage(account="account", resource_group="foo", parent=StorageAccount())
+
     class test(AzureInfrastructure):
         r: TableStorage = TableStorage()
 
@@ -274,6 +277,7 @@ def test_storage_tables_export_with_no_user_access(export_dir):
 def test_storage_tables_client():
     from azure.data.tables import TableServiceClient
     from azure.data.tables.aio import TableServiceClient as AsyncTableServiceClient
+    from azure.identity import DefaultAzureCredential
 
     r = TableStorage()
     with pytest.raises(RuntimeError):
@@ -289,6 +293,9 @@ def test_storage_tables_client():
     assert isinstance(client, TableServiceClient)
     client = r.get_client(AsyncTableServiceClient)
     assert isinstance(client, AsyncTableServiceClient)
+    client, credential = r.get_client(TableServiceClient, return_credential=True)
+    assert isinstance(client, TableServiceClient)
+    assert isinstance(credential, DefaultAzureCredential)
 
 
 def test_storage_tables_infra():

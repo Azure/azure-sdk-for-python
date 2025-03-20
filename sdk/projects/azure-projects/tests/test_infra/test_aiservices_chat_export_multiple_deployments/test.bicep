@@ -16,6 +16,36 @@ resource userassignedidentity 'Microsoft.ManagedIdentity/userAssignedIdentities@
 
 
 
+resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024-05-01' = {
+  properties: {
+    disableLocalAuth: true
+    createMode: 'Default'
+    dataPlaneProxy: {
+      authenticationMode: 'Pass-through'
+      privateLinkDelegation: 'Disabled'
+    }
+    publicNetworkAccess: 'Enabled'
+  }
+  name: defaultName
+  sku: {
+    name: 'Standard'
+  }
+  location: location
+  tags: azdTags
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${userassignedidentity.id}': {}
+    }
+  }
+}
+
+output AZURE_APPCONFIG_ID string = configurationstore.id
+output AZURE_APPCONFIG_NAME string = configurationstore.name
+output AZURE_APPCONFIG_RESOURCE_GROUP string = resourceGroup().name
+output AZURE_APPCONFIG_ENDPOINT string = configurationstore.properties.endpoint
+
+
 resource aiservices_account 'Microsoft.CognitiveServices/accounts@2024-10-01' = {
   kind: 'AIServices'
   properties: {
@@ -92,8 +122,240 @@ output AZURE_AI_CHAT_MODEL_VERSION_TWO string = chat_deployment_two.properties.m
 output AZURE_AI_CHAT_ENDPOINT_TWO string = '${aiservices_account.properties.endpoint}openai/deployments/${chat_deployment_two.name}'
 
 
-resource roleassignment_pqjisaqxrgcysgrhdblx 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('MicrosoftCognitiveServicesaccounts', '${defaultName}-aiservices', 'ServicePrincipal', 'Cognitive Services OpenAI Contributor')
+resource keyvalue_azureappconfigid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_APPCONFIG_ID'
+  properties: {
+    value: configurationstore.id
+  }
+}
+
+
+
+resource keyvalue_azureappconfigname 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_APPCONFIG_NAME'
+  properties: {
+    value: configurationstore.name
+  }
+}
+
+
+
+resource keyvalue_azureappconfigresourcegroup 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_APPCONFIG_RESOURCE_GROUP'
+  properties: {
+    value: resourceGroup().name
+  }
+}
+
+
+
+resource keyvalue_azureappconfigendpoint 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_APPCONFIG_ENDPOINT'
+  properties: {
+    value: configurationstore.properties.endpoint
+  }
+}
+
+
+
+resource keyvalue_azureaiaiservicesid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_AI_AISERVICES_ID'
+  properties: {
+    value: aiservices_account.id
+  }
+}
+
+
+
+resource keyvalue_azureaiaiservicesname 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_AI_AISERVICES_NAME'
+  properties: {
+    value: aiservices_account.name
+  }
+}
+
+
+
+resource keyvalue_azureaiaiservicesresourcegroup 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_AI_AISERVICES_RESOURCE_GROUP'
+  properties: {
+    value: resourceGroup().name
+  }
+}
+
+
+
+resource keyvalue_azureaiaiservicesendpoint 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_AI_AISERVICES_ENDPOINT'
+  properties: {
+    value: aiservices_account.properties.endpoint
+  }
+}
+
+
+
+resource keyvalue_azureaichatidone 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_AI_CHAT_ID_ONE'
+  properties: {
+    value: chat_deployment_one.id
+  }
+}
+
+
+
+resource keyvalue_azureaichatnameone 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_AI_CHAT_NAME_ONE'
+  properties: {
+    value: chat_deployment_one.name
+  }
+}
+
+
+
+resource keyvalue_azureaichatresourcegroupone 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_AI_CHAT_RESOURCE_GROUP_ONE'
+  properties: {
+    value: resourceGroup().name
+  }
+}
+
+
+
+resource keyvalue_azureaichatmodelnameone 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_AI_CHAT_MODEL_NAME_ONE'
+  properties: {
+    value: chat_deployment_one.properties.model.name
+  }
+}
+
+
+
+resource keyvalue_azureaichatmodelversionone 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_AI_CHAT_MODEL_VERSION_ONE'
+  properties: {
+    value: chat_deployment_one.properties.model.version
+  }
+}
+
+
+
+resource keyvalue_azureaichatendpointone 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_AI_CHAT_ENDPOINT_ONE'
+  properties: {
+    value: '${aiservices_account.properties.endpoint}openai/deployments/${chat_deployment_one.name}'
+  }
+}
+
+
+
+resource keyvalue_azureaichatidtwo 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_AI_CHAT_ID_TWO'
+  properties: {
+    value: chat_deployment_two.id
+  }
+}
+
+
+
+resource keyvalue_azureaichatnametwo 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_AI_CHAT_NAME_TWO'
+  properties: {
+    value: chat_deployment_two.name
+  }
+}
+
+
+
+resource keyvalue_azureaichatresourcegrouptwo 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_AI_CHAT_RESOURCE_GROUP_TWO'
+  properties: {
+    value: resourceGroup().name
+  }
+}
+
+
+
+resource keyvalue_azureaichatmodelnametwo 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_AI_CHAT_MODEL_NAME_TWO'
+  properties: {
+    value: chat_deployment_two.properties.model.name
+  }
+}
+
+
+
+resource keyvalue_azureaichatmodelversiontwo 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_AI_CHAT_MODEL_VERSION_TWO'
+  properties: {
+    value: chat_deployment_two.properties.model.version
+  }
+}
+
+
+
+resource keyvalue_azureaichatendpointtwo 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_AI_CHAT_ENDPOINT_TWO'
+  properties: {
+    value: '${aiservices_account.properties.endpoint}openai/deployments/${chat_deployment_two.name}'
+  }
+}
+
+
+
+resource roleassignment_gxaeyfznpvgorjrkpllp 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftAppConfigurationconfigurationStores', environmentName, defaultName, 'ServicePrincipal', 'App Configuration Data Reader')
+  properties: {
+    principalId: userassignedidentity.properties.principalId
+    principalType: 'ServicePrincipal'
+    roleDefinitionId: subscriptionResourceId(
+      'Microsoft.Authorization/roleDefinitions',
+      '516239f1-63e1-4d78-a4de-a74fb236a071'
+    )
+
+  }
+  scope: configurationstore
+}
+
+
+
+resource roleassignment_unxsuzdqhucrcsmcfuyc 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftAppConfigurationconfigurationStores', environmentName, defaultName, 'User', 'App Configuration Data Owner')
+  properties: {
+    principalId: principalId
+    principalType: 'User'
+    roleDefinitionId: subscriptionResourceId(
+      'Microsoft.Authorization/roleDefinitions',
+      '5ae67dd6-50cb-40e7-96ff-dc2bfa4b606b'
+    )
+
+  }
+  scope: configurationstore
+}
+
+
+
+resource roleassignment_iwqyskxadwyqpexjwfcy 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftCognitiveServicesaccounts', environmentName, '${defaultName}-aiservices', 'ServicePrincipal', 'Cognitive Services OpenAI Contributor')
   properties: {
     principalId: userassignedidentity.properties.principalId
     principalType: 'ServicePrincipal'
@@ -108,8 +370,8 @@ resource roleassignment_pqjisaqxrgcysgrhdblx 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_wpbwavohdylvllgtoewg 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('MicrosoftCognitiveServicesaccounts', '${defaultName}-aiservices', 'ServicePrincipal', 'Cognitive Services Contributor')
+resource roleassignment_hmfasjqbixwvwxlvyigx 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftCognitiveServicesaccounts', environmentName, '${defaultName}-aiservices', 'ServicePrincipal', 'Cognitive Services Contributor')
   properties: {
     principalId: userassignedidentity.properties.principalId
     principalType: 'ServicePrincipal'
@@ -124,8 +386,8 @@ resource roleassignment_wpbwavohdylvllgtoewg 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_mgufizgvzsqmbzqocksu 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('MicrosoftCognitiveServicesaccounts', '${defaultName}-aiservices', 'ServicePrincipal', 'Cognitive Services OpenAI User')
+resource roleassignment_qiwviqlvorhviuoikyhn 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftCognitiveServicesaccounts', environmentName, '${defaultName}-aiservices', 'ServicePrincipal', 'Cognitive Services OpenAI User')
   properties: {
     principalId: userassignedidentity.properties.principalId
     principalType: 'ServicePrincipal'
@@ -140,8 +402,8 @@ resource roleassignment_mgufizgvzsqmbzqocksu 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_xmpyattycxterihwzhjs 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('MicrosoftCognitiveServicesaccounts', '${defaultName}-aiservices', 'ServicePrincipal', 'Cognitive Services User')
+resource roleassignment_vqsitscwkobrdvlojpeo 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftCognitiveServicesaccounts', environmentName, '${defaultName}-aiservices', 'ServicePrincipal', 'Cognitive Services User')
   properties: {
     principalId: userassignedidentity.properties.principalId
     principalType: 'ServicePrincipal'
@@ -156,8 +418,8 @@ resource roleassignment_xmpyattycxterihwzhjs 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_pjkjzujnwnqnlupkacxk 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('MicrosoftCognitiveServicesaccounts', '${defaultName}-aiservices', 'User', 'Cognitive Services OpenAI Contributor')
+resource roleassignment_djccqiqwpzkgpvmsxtpg 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftCognitiveServicesaccounts', environmentName, '${defaultName}-aiservices', 'User', 'Cognitive Services OpenAI Contributor')
   properties: {
     principalId: principalId
     principalType: 'User'
@@ -172,8 +434,8 @@ resource roleassignment_pjkjzujnwnqnlupkacxk 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_pqrtmtgtctxarhamusgu 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('MicrosoftCognitiveServicesaccounts', '${defaultName}-aiservices', 'User', 'Cognitive Services Contributor')
+resource roleassignment_rgqwxelwqrhtwxkejhyc 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftCognitiveServicesaccounts', environmentName, '${defaultName}-aiservices', 'User', 'Cognitive Services Contributor')
   properties: {
     principalId: principalId
     principalType: 'User'
@@ -188,8 +450,8 @@ resource roleassignment_pqrtmtgtctxarhamusgu 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_brzmmiebdqmayimhrmyf 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('MicrosoftCognitiveServicesaccounts', '${defaultName}-aiservices', 'User', 'Cognitive Services OpenAI User')
+resource roleassignment_eiambevcfusbcnjuoefk 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftCognitiveServicesaccounts', environmentName, '${defaultName}-aiservices', 'User', 'Cognitive Services OpenAI User')
   properties: {
     principalId: principalId
     principalType: 'User'
@@ -204,8 +466,8 @@ resource roleassignment_brzmmiebdqmayimhrmyf 'Microsoft.Authorization/roleAssign
 
 
 
-resource roleassignment_uowcqnnqpxydgmvubghf 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('MicrosoftCognitiveServicesaccounts', '${defaultName}-aiservices', 'User', 'Cognitive Services User')
+resource roleassignment_ulmeiktaicqeonwxbgkw 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftCognitiveServicesaccounts', environmentName, '${defaultName}-aiservices', 'User', 'Cognitive Services User')
   properties: {
     principalId: principalId
     principalType: 'User'
@@ -216,6 +478,22 @@ resource roleassignment_uowcqnnqpxydgmvubghf 'Microsoft.Authorization/roleAssign
 
   }
   scope: aiservices_account
+}
+
+
+
+resource roleassignment_kvjoxlocbytxyhtrwdln 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid('MicrosoftResourcesresourceGroups', environmentName, defaultName, 'User', 'App Configuration Data Owner')
+  properties: {
+    principalId: principalId
+    principalType: 'User'
+    roleDefinitionId: subscriptionResourceId(
+      'Microsoft.Authorization/roleDefinitions',
+      '5ae67dd6-50cb-40e7-96ff-dc2bfa4b606b'
+    )
+
+  }
+  scope: resourceGroup()
 }
 
 

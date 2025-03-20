@@ -42,6 +42,7 @@ class ResourceIdentifiers(Enum):
     ai_embeddings_deployment = "ai:deployment:embeddings"
     ai_connection = "ai:connection"
     config_store = "appconfig"
+    config_setting = "appconfig.setting"
 
     def resource(  # pylint: disable=too-many-branches,too-many-statements,too-many-return-statements
         self,
@@ -144,6 +145,10 @@ class ResourceIdentifiers(Enum):
             from .appconfig import ConfigStore
 
             return ConfigStore
+        if self == self.config_setting:
+            from .appconfig.setting import ConfigSetting
+
+            return ConfigSetting
         raise TypeError(f"Unknown resource identifier: {self}")
 
 
@@ -175,4 +180,5 @@ RESOURCE_FROM_CLIENT_ANNOTATION: Dict[str, ResourceIdentifiers] = {
     "SearchIndexClient": ResourceIdentifiers.search,
     "SearchClient": ResourceIdentifiers.search,
     "AzureAppConfigurationClient": ResourceIdentifiers.config_store,
+    "AzureAppConfigurationProvider": ResourceIdentifiers.config_store,
 }
