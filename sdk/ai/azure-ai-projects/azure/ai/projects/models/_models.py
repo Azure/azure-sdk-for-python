@@ -376,6 +376,60 @@ class AgentThreadCreationOptions(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class AISearchIndexResource(_model_base.Model):
+    """A AI Search Index resource.
+
+    :ivar index_connection_id: An index connection id in an IndexResource attached to this agent.
+     Required.
+    :vartype index_connection_id: str
+    :ivar index_name: The name of an index in an IndexResource attached to this agent. Required.
+    :vartype index_name: str
+    :ivar query_type: Type of query in an AIIndexResource attached to this agent. Required. Known
+     values are: "simple", "semantic", "vector", "vector_simple_hybrid", and
+     "vector_semantic_hybrid".
+    :vartype query_type: str or ~azure.ai.projects.models.AzureAISearchQueryType
+    :ivar top_k: Number of documents to retrieve from search and present to the model. Required.
+    :vartype top_k: int
+    :ivar filter: Odata filter string for search resource. Required.
+    :vartype filter: str
+    """
+
+    index_connection_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An index connection id in an IndexResource attached to this agent. Required."""
+    index_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of an index in an IndexResource attached to this agent. Required."""
+    query_type: Union[str, "_models.AzureAISearchQueryType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Type of query in an AIIndexResource attached to this agent. Required. Known values are:
+     \"simple\", \"semantic\", \"vector\", \"vector_simple_hybrid\", and \"vector_semantic_hybrid\"."""
+    top_k: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Number of documents to retrieve from search and present to the model. Required."""
+    filter: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Odata filter string for search resource. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index_connection_id: str,
+        index_name: str,
+        query_type: Union[str, "_models.AzureAISearchQueryType"],
+        top_k: int,
+        filter: str,  # pylint: disable=redefined-builtin
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class TargetModelConfig(_model_base.Model):
     """Abstract class for model configuration.
 
@@ -572,10 +626,10 @@ class AzureAISearchResource(_model_base.Model):
 
     :ivar index_list: The indices attached to this agent. There can be a maximum of 1 index
      resource attached to the agent.
-    :vartype index_list: list[~azure.ai.projects.models.IndexResource]
+    :vartype index_list: list[~azure.ai.projects.models.AISearchIndexResource]
     """
 
-    index_list: Optional[List["_models.IndexResource"]] = rest_field(
+    index_list: Optional[List["_models.AISearchIndexResource"]] = rest_field(
         name="indexes", visibility=["read", "create", "update", "delete", "query"]
     )
     """The indices attached to this agent. There can be a maximum of 1 index
@@ -585,7 +639,7 @@ class AzureAISearchResource(_model_base.Model):
     def __init__(
         self,
         *,
-        index_list: Optional[List["_models.IndexResource"]] = None,
+        index_list: Optional[List["_models.AISearchIndexResource"]] = None,
     ) -> None: ...
 
     @overload
@@ -1825,40 +1879,6 @@ class IncompleteRunDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class IndexResource(_model_base.Model):
-    """A Index resource.
-
-    :ivar index_connection_id: An index connection id in an IndexResource attached to this agent.
-     Required.
-    :vartype index_connection_id: str
-    :ivar index_name: The name of an index in an IndexResource attached to this agent. Required.
-    :vartype index_name: str
-    """
-
-    index_connection_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """An index connection id in an IndexResource attached to this agent. Required."""
-    index_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The name of an index in an IndexResource attached to this agent. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        index_connection_id: str,
-        index_name: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class InternalConnectionProperties(_model_base.Model):
     """Connection properties.
 
@@ -1912,8 +1932,7 @@ class InternalConnectionProperties(_model_base.Model):
 
 
 class InternalConnectionPropertiesAADAuth(InternalConnectionProperties, discriminator="AAD"):
-    """Connection properties for connections with AAD authentication (aka ``Entra ID passthrough``\\
-    ).
+    """Connection properties for connections with AAD authentication (aka ``Entra ID passthrough``).
 
     :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
      "Serverless", "AzureBlob", "AIServices", "CognitiveSearch", "ApiKey", "CustomKeys", and
@@ -6611,7 +6630,7 @@ class TruncationObject(_model_base.Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The truncation strategy to use for the thread. The default is ``auto``. If set to
-     ``last_messages``\ , the thread will
+     ``last_messages``, the thread will
      be truncated to the ``lastMessages`` count most recent messages in the thread. When set to
      ``auto``\ , messages in the middle of the thread
      will be dropped to fit the context length of the model, ``max_prompt_tokens``. Required. Known
