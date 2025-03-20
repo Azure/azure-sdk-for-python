@@ -31,5 +31,5 @@ urllib3==2.2.3
 six==1.17.0
 
 # local dev packages
-./tools/azure-sdk-tools/dev_requirements.txt
 ./tools/azure-sdk-tools[build]
+./tools/azure-sdk-tools[ghtools]
