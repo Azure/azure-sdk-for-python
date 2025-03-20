@@ -44,8 +44,6 @@ from azure.core.credentials import TokenCredential
 # Redteaming imports
 from .red_team_agent_result import RedTeamAgentResult, RedTeamingScorecard, RedTeamingParameters, Conversation, RedTeamAgentOutput
 from .callback_chat_target import CallbackChatTarget
-from .utils.mock_attack_objective import MockAttackObjective
-from .utils.mock_evaluate import mock_evaluate
 from .attack_strategy import AttackStrategy
 from .attack_objective_generator import RiskCategory, AttackObjectiveGenerator
 from .default_converter import DefaultConverter
@@ -356,18 +354,13 @@ class RedTeamAgent():
                             message["content"] = f"{random.choice(jailbreak_prefixes)} {message['content']}"
         except Exception as e:
             self.logger.error(f"Error calling get_attack_objectives: {str(e)}")
-            self.logger.info("Using mock objectives instead")
-            objectives_response = MockAttackObjective.create_mock_response(
-                risk_category=[risk_cat_value],
-                count=num_objectives
-            )
+            self.logger.info("API call failed, returning empty objectives list")
+            return []
+            
         # Check if the response is valid
         if not objectives_response or (isinstance(objectives_response, dict) and not objectives_response.get("objectives")):
-            self.logger.warning("Empty or invalid response, using mock data")
-            objectives_response = MockAttackObjective.create_mock_response(
-                risk_categories=[risk_cat_value],
-                count=num_objectives
-            )
+            self.logger.warning("Empty or invalid response, returning empty list")
+            return []
         
         # Process the response - organize by category and extract content/IDs
         objectives_by_category = {risk_cat_value: []}
@@ -377,7 +370,7 @@ class RedTeamAgent():
         
         # Process list format and organize by category
         for obj in objectives_response:
-            obj_id = obj.get("id", f"mock-{len(uncategorized_objectives)}")
+            obj_id = obj.get("id", f"obj-{len(uncategorized_objectives)}")
             target_harms = obj.get("metadata", {}).get("target_harms", [])
             content = ""
             if "messages" in obj and len(obj["messages"]) > 0:
