@@ -131,6 +131,8 @@ class QueueServiceClient(  # type: ignore [misc]
     def from_connection_string(
         cls, conn_str: str,
         credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+        *,
+        audience: Optional[str] = None,
         **kwargs: Any
     ) -> Self:
         """Create QueueServiceClient from a Connection String.
@@ -160,14 +162,13 @@ class QueueServiceClient(  # type: ignore [misc]
                 :dedent: 8
                 :caption: Creating the QueueServiceClient with a connection string.
         """
-        account_url, secondary, credential = parse_connection_str(
-            conn_str, credential, 'queue')
+        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'queue')
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
-        return cls(account_url, credential=credential, **kwargs)
+        return cls(account_url, credential=credential, audience=audience, **kwargs)
 
     @distributed_trace_async
-    async def get_service_stats(self, **kwargs: Any) -> Dict[str, Any]:
+    async def get_service_stats(self, *, timeout: Optional[int] = None, **kwargs: Any) -> Dict[str, Any]:
         """Retrieves statistics related to replication for the Queue service.
 
         It is only available when read-access geo-redundant replication is enabled for
@@ -191,7 +192,6 @@ class QueueServiceClient(  # type: ignore [misc]
         :return: The queue service stats.
         :rtype: Dict[str, Any]
         """
-        timeout = kwargs.pop('timeout', None)
         try:
             stats = await self._client.service.get_statistics(
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
@@ -200,7 +200,7 @@ class QueueServiceClient(  # type: ignore [misc]
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_service_properties(self, **kwargs: Any) -> Dict[str, Any]:
+    async def get_service_properties(self, *, timeout: Optional[int] = None, **kwargs: Any) -> Dict[str, Any]:
         """Gets the properties of a storage account's Queue service, including
         Azure Storage Analytics.
 
@@ -219,7 +219,6 @@ class QueueServiceClient(  # type: ignore [misc]
                 :dedent: 12
                 :caption: Getting queue service properties.
         """
-        timeout = kwargs.pop('timeout', None)
         try:
             service_props = await self._client.service.get_properties(timeout=timeout, **kwargs)
             return service_properties_deserialize(service_props)
@@ -232,6 +231,8 @@ class QueueServiceClient(  # type: ignore [misc]
         hour_metrics: Optional["Metrics"] = None,
         minute_metrics: Optional["Metrics"] = None,
         cors: Optional[List[CorsRule]] = None,
+        *,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """Sets the properties of a storage account's Queue service, including
@@ -268,7 +269,6 @@ class QueueServiceClient(  # type: ignore [misc]
                 :dedent: 12
                 :caption: Setting queue service properties.
         """
-        timeout = kwargs.pop('timeout', None)
         props = StorageServiceProperties(
             logging=analytics_logging,
             hour_metrics=hour_metrics,
@@ -284,6 +284,9 @@ class QueueServiceClient(  # type: ignore [misc]
     def list_queues(
         self, name_starts_with: Optional[str] = None,
         include_metadata: Optional[bool] = False,
+        *,
+        results_per_page: Optional[int] = None,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncItemPaged:
         """Returns a generator to list the queues under the specified account.
@@ -319,17 +322,18 @@ class QueueServiceClient(  # type: ignore [misc]
                 :dedent: 16
                 :caption: List queues in the service.
         """
-        results_per_page = kwargs.pop('results_per_page', None)
-        timeout = kwargs.pop('timeout', None)
         include = ['metadata'] if include_metadata else None
         command = functools.partial(
             self._client.service.list_queues_segment,
             prefix=name_starts_with,
             include=include,
             timeout=timeout,
-            **kwargs)
+            **kwargs
+        )
         return AsyncItemPaged(
-            command, prefix=name_starts_with, results_per_page=results_per_page,
+            command,
+            prefix=name_starts_with,
+            results_per_page=results_per_page,
             page_iterator_class=QueuePropertiesPaged
         )
 
@@ -337,6 +341,8 @@ class QueueServiceClient(  # type: ignore [misc]
     async def create_queue(
         self, name: str,
         metadata: Optional[Dict[str, str]] = None,
+        *,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> QueueClient:
         """Creates a new queue under the specified account.
@@ -363,16 +369,16 @@ class QueueServiceClient(  # type: ignore [misc]
                 :dedent: 12
                 :caption: Create a queue in the service.
         """
-        timeout = kwargs.pop('timeout', None)
         queue = self.get_queue_client(name)
         kwargs.setdefault('merge_span', True)
-        await queue.create_queue(
-            metadata=metadata, timeout=timeout, **kwargs)
+        await queue.create_queue(metadata=metadata, timeout=timeout, **kwargs)
         return queue
 
     @distributed_trace_async
     async def delete_queue(
         self, queue: Union["QueueProperties", str],
+        *,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """Deletes the specified queue and any messages it contains.
@@ -402,15 +408,11 @@ class QueueServiceClient(  # type: ignore [misc]
                 :dedent: 16
                 :caption: Delete a queue in the service.
         """
-        timeout = kwargs.pop('timeout', None)
         queue_client = self.get_queue_client(queue)
         kwargs.setdefault('merge_span', True)
         await queue_client.delete_queue(timeout=timeout, **kwargs)
 
-    def get_queue_client(
-        self, queue: Union["QueueProperties", str],
-        **kwargs: Any
-    ) -> QueueClient:
+    def get_queue_client(self, queue: Union["QueueProperties", str], **kwargs: Any) -> QueueClient:
         """Get a client to interact with the specified queue.
 
         The queue need not already exist.
@@ -437,8 +439,8 @@ class QueueServiceClient(  # type: ignore [misc]
             queue_name = queue
 
         _pipeline = AsyncPipeline(
-            transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable=protected-access
-            policies=self._pipeline._impl_policies # type: ignore # pylint: disable=protected-access
+            transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies  # type: ignore # pylint: disable=protected-access
         )
 
         return QueueClient(
