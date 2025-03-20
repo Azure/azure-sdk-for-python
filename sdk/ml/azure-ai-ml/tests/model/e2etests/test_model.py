@@ -104,7 +104,7 @@ class TestModel(AzureRecordedTestCase):
 
         model = load_model(path)
         model.name = model_name
-        
+
         model = registry_client.models.create_or_update(model)
         assert model.name == model_name
         assert model.version == "3"

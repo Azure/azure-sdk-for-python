@@ -25,7 +25,9 @@ from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
-from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.operations._model_versions_operations import build_create_or_update_request_initial
+from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.operations._model_versions_operations import (
+    build_create_or_update_request_initial,
+)
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview._vendor import _convert_request
 
 from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
@@ -263,35 +265,23 @@ class ModelOperations(_ScopeDependentOperations):
             model_version_resource = model._to_rest_object()
             auto_increment_version = model._auto_increment_version
             try:
-                result = None
-                if self._registry_name:
-                    cont_token = self._scope_kwargs.pop("continuation_token", None)  # type: Optional[str]
-                    # if continuation token is None and system_metadata attribute found
-                    # we need to send the system_metadata values in the request
-                    if cont_token is None and hasattr(model_version_resource.properties, "system_metadata"):
-                        result = self._begin_create_or_update_model_with_system_metadata(
-                            name=str(name),
-                            version=str(version),
-                            body=model_version_resource,
-                            registry_name=self._registry_name,
-                            **self._scope_kwargs,
-                        ).result()
-                    else:
-                        result = self._model_versions_operation.begin_create_or_update(
-                            name=name,
-                            version=version,
-                            body=model_version_resource,
-                            registry_name=self._registry_name,
-                            **self._scope_kwargs,
-                        ).result()
-                else:
-                    result = self._model_versions_operation.create_or_update(
+                cont_token = self._scope_kwargs.pop("continuation_token", None)  # type: Optional[str]
+                result = (
+                    self._begin_create_or_update_registry_model(
+                        name,
+                        version,
+                        model_version_resource,
+                        cont_token,
+                    )
+                    if self._registry_name
+                    else self._model_versions_operation.create_or_update(
                         name=name,
                         version=version,
                         body=model_version_resource,
                         workspace_name=self._workspace_name,
                         **self._scope_kwargs,
                     )
+                )
 
                 if not result and self._registry_name:
                     result = self._get(name=str(model.name), version=model.version)
@@ -319,6 +309,29 @@ class ModelOperations(_ScopeDependentOperations):
             else:
                 raise ex
 
+    def _begin_create_or_update_registry_model(self, name, version, model_version_resource, cont_token):
+        # if continuation token is None and system_metadata attribute found
+        # we need to send the system_metadata values in the request
+        return (
+            self._begin_create_or_update_model_with_system_metadata(
+                name=str(name),
+                version=str(version),
+                body=model_version_resource,
+                registry_name=self._registry_name,
+                **self._scope_kwargs,
+            ).result()
+            if self._registry_name
+            and cont_token is None
+            and hasattr(model_version_resource.properties, "system_metadata")
+            else self._model_versions_operation.begin_create_or_update(
+                name=name,
+                version=version,
+                body=model_version_resource,
+                registry_name=self._registry_name,
+                **self._scope_kwargs,
+            ).result()
+        )
+
     # this method is only used for model create/update with system metadata
     def _begin_create_or_update_model_with_system_metadata(
         self,
@@ -327,13 +340,13 @@ class ModelOperations(_ScopeDependentOperations):
         resource_group_name,  # type: str
         registry_name,  # type: str
         body,  # type: "ModelVersion"
-        **kwargs  # type: Any
+        **kwargs,  # type: Any
     ):
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
         _json = self._model_versions_operation._serialize.body(body, "ModelVersionData")
-        _json['properties']['system_metadata'] = body.properties.system_metadata
+        _json["properties"]["system_metadata"] = body.properties.system_metadata
 
         request = build_create_or_update_request_initial(
             name=name,
@@ -358,13 +371,19 @@ class ModelOperations(_ScopeDependentOperations):
         response_headers["x-ms-async-operation-timeout"] = self._model_versions_operation._deserialize(
             "duration", response.headers.get("x-ms-async-operation-timeout")
         )
-        response_headers["Location"] = self._model_versions_operation._deserialize("str", response.headers.get("Location"))
-        response_headers["Retry-After"] = self._model_versions_operation._deserialize("int", response.headers.get("Retry-After"))
+        response_headers["Location"] = self._model_versions_operation._deserialize(
+            "str", response.headers.get("Location")
+        )
+        response_headers["Retry-After"] = self._model_versions_operation._deserialize(
+            "int", response.headers.get("Retry-After")
+        )
 
         cls = kwargs.pop("cls", None)
+
         def get_long_running_output(pipeline_response):
             if cls:
                 return cls(pipeline_response, None, {})
+            return None
 
         polling = kwargs.pop("polling", True)
         if polling is True:
@@ -375,7 +394,9 @@ class ModelOperations(_ScopeDependentOperations):
         else:
             polling_method = polling
 
-        return LROPoller(self._model_versions_operation._client, pipeline_response, get_long_running_output, polling_method)
+        return LROPoller(
+            self._model_versions_operation._client, pipeline_response, get_long_running_output, polling_method
+        )
 
     def _get(self, name: str, version: Optional[str] = None) -> ModelVersion:  # name:latest
         if version:
