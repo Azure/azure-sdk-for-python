@@ -43,6 +43,15 @@ class QAEvaluator(MultiEvaluatorBase[Union[str, float]]):
             :dedent: 8
             :caption: Initialize and call a QAEvaluator.
 
+    .. admonition:: Example with Threshold:
+    
+        .. literalinclude:: ../samples/evaluation_samples_threshold.py
+            :start-after: [START threshold_qa_evaluator]
+            :end-before: [END threshold_qa_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize with threshold and call a QAEvaluator.
+
     .. note::
 
         To align with our support of a diverse set of models, keys without the `gpt_` prefix has been added.

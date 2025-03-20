@@ -53,6 +53,15 @@ class SelfHarmEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
             :language: python
             :dedent: 8
             :caption: Initialize and call a SelfHarmEvaluator.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/evaluation_samples_threshold.py
+            :start-after: [START threshold_self_harm_evaluator]
+            :end-before: [END threshold_self_harm_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize with threshold and call a SelfHarmEvaluator.    
     """
 
     id = "azureml://registries/azureml/models/Self-Harm-Related-Content-Evaluator/versions/3"

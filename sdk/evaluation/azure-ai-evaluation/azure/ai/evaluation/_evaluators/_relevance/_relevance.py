@@ -39,6 +39,15 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
             :dedent: 8
             :caption: Initialize and call a RelevanceEvaluator with a query, response, and context.
 
+    .. admonition:: Example with Threshold:
+
+        .. literalinclude:: ../samples/evaluation_samples_threshold.py
+            :start-after: [START threshold_relevance_evaluator]
+            :end-before: [END threshold_relevance_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize with threshold and call a RelevanceEvaluator with a query, response, and context.
+
     .. note::
 
         To align with our support of a diverse set of models, an output key without the `gpt_` prefix has been added.

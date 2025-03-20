@@ -34,11 +34,20 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/evaluation_samples_evaluate.py
-            :start-after: [START rouge_score_evaluator]
-            :end-before: [END rouge_score_evaluator]
+            :start-after: [START similarity_evaluator]
+            :end-before: [END similarity_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call a RougeScoreEvaluator with a four-gram rouge type.
+            :caption: Initialize and call a SimilarityEvaluator with a four-gram rouge type.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/evaluation_samples_threshold.py
+            :start-after: [START threshold_similarity_evaluator]
+            :end-before: [END threshold_similarity_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize with a threshold and call a SimilarityEvaluator.
 
     .. note::
 

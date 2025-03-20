@@ -3,10 +3,13 @@
 ## 1.4.0 (Unreleased)
 
 ### Features Added
-- Binary results for QA and ContentSafety evaluators are now available. 
-    - Evaluation results will show the result and threshold for each evaluator.
-    - Set your own `threshold` for binary evaluation results. Quality evaluators will always have higher score is better for binary results. Content safety evaluators will always have lower score is better for binary results.
-    - Defaults have been added to `threshold` for maximum backward compatibility
+- Enhanced binary evaluation results with customizable thresholds
+  - Added threshold support for QA and ContentSafety evaluators
+  - Evaluation results now include both the score and threshold values
+  - Configurable threshold parameter allows custom binary classification boundaries
+  - Default thresholds provided for backward compatibility
+  - Quality evaluators use "higher is better" scoring (score ≥ threshold is positive)
+  - Content safety evaluators use "lower is better" scoring (score ≤ threshold is positive)
 - New Built-in evaluator called CodeVulnerabilityEvaluator is added. 
   - It provides capabilities to identify the following code vulnerabilities.
     - path-injection

@@ -45,6 +45,14 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             :dedent: 8
             :caption: Initialize and call a GroundednessEvaluator.
 
+    .. admonition:: Example with Threshold:
+        .. literalinclude:: ../samples/evaluation_samples_threshold.py
+            :start-after: [START threshold_groundedness_evaluator]
+            :end-before: [END threshold_groundedness_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize with threshold and call a GroundednessEvaluator.
+
     .. note::
 
         To align with our support of a diverse set of models, an output key without the `gpt_` prefix has been added.

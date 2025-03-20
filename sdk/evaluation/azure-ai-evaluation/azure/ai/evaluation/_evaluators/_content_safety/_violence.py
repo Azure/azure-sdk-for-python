@@ -55,6 +55,15 @@ class ViolenceEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
             :language: python
             :dedent: 8
             :caption: Initialize and call a ViolenceEvaluator.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/evaluation_samples_threshold.py
+            :start-after: [START threshold_violence_evaluator]
+            :end-before: [END threshold_violence_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize with threshold and call a ViolenceEvaluator.
     """
 
     id = "azureml://registries/azureml/models/Violent-Content-Evaluator/versions/3"

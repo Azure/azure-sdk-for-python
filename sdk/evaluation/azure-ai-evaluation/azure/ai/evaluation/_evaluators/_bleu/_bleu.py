@@ -34,6 +34,14 @@ class BleuScoreEvaluator(EvaluatorBase):
             :language: python
             :dedent: 8
             :caption: Initialize and call an BleuScoreEvaluator.
+
+    .. admonition:: Example with Threshold:
+        .. literalinclude:: ../samples/evaluation_samples_threshold.py
+            :start-after: [START threshold_bleu_score_evaluator]
+            :end-before: [END threshold_bleu_score_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize with threshold and call an BleuScoreEvaluator.
     """
 
     id = "azureml://registries/azureml/models/Bleu-Score-Evaluator/versions/3"

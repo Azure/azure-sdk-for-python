@@ -67,6 +67,15 @@ class RougeScoreEvaluator(EvaluatorBase):
             :language: python
             :dedent: 8
             :caption: Initialize and call a RougeScoreEvaluator with a four-gram rouge type.
+
+    .. admonition:: Example with threshold:
+
+        .. literalinclude:: ../samples/evaluation_samples_threshold.py
+            :start-after: [START threshold_rouge_score_evaluator]
+            :end-before: [END threshold_rouge_score_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize with a specified threshold and call a RougeScoreEvaluator with a four-gram rouge type.
     """
 
     id = "azureml://registries/azureml/models/Rouge-Score-Evaluator/versions/3"
