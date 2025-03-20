@@ -48,11 +48,11 @@ class ResourceIdentifiers(Enum):
         self,
     ) -> Type["Resource"]:
         if self == self.resource_group:
-            from .resourcegroup import ResourceGroup
+            from .resourcegroup._resource import ResourceGroup
 
             return ResourceGroup
         if self == self.user_assigned_identity:
-            from .managedidentity import UserAssignedIdentity
+            from .managedidentity._resource import UserAssignedIdentity
 
             return UserAssignedIdentity
         if self == self.role_assignment:
@@ -60,23 +60,23 @@ class ResourceIdentifiers(Enum):
 
             return RoleAssignment
         if self == self.storage_account:
-            from .storage import StorageAccount
+            from .storage._resource import StorageAccount
 
             return StorageAccount
         if self == self.blob_storage:
-            from .storage.blobs import BlobStorage
+            from .storage.blobs._resource import BlobStorage
 
             return BlobStorage
         if self == self.datalake_storage:
             raise NotImplementedError()
         if self == self.blob_container:
-            from .storage.blobs.container import BlobContainer
+            from .storage.blobs.container._resource import BlobContainer
 
             return BlobContainer
         if self == self.file_system:
             raise NotImplementedError()
         if self == self.table_storage:
-            from .storage.tables import TableStorage
+            from .storage.tables._resource import TableStorage
 
             return TableStorage
         if self == self.table:
@@ -94,7 +94,7 @@ class ResourceIdentifiers(Enum):
         if self == self.system_topic_subscription:
             raise NotImplementedError()
         if self == self.keyvault:
-            from .keyvault import KeyVault
+            from .keyvault._resource import KeyVault
 
             return KeyVault
         if self == self.keyvault_key:
@@ -102,39 +102,39 @@ class ResourceIdentifiers(Enum):
         if self == self.keyvault_secret:
             raise NotImplementedError()
         if self == self.search:
-            from .search import SearchService
+            from .search._resource import SearchService
 
             return SearchService
         if self == self.cognitive_services:
-            from .ai import CognitiveServicesAccount
+            from .ai._resource import CognitiveServicesAccount
 
             return CognitiveServicesAccount
         if self == self.ml_workspace:
-            from .foundry import MLWorkspace
+            from .foundry._resource import MLWorkspace
 
             return MLWorkspace
         if self == self.ai_services:
-            from .ai import AIServices
+            from .ai._resource import AIServices
 
             return AIServices
         if self == self.ai_project:
-            from .foundry import AIProject
+            from .foundry._resource import AIProject
 
             return AIProject
         if self == self.ai_hub:
-            from .foundry import AIHub
+            from .foundry._resource import AIHub
 
             return AIHub
         if self == self.ai_deployment:
-            from .ai.deployment import AIDeployment
+            from .ai.deployment._resource import AIDeployment
 
             return AIDeployment
         if self == self.ai_chat_deployment:
-            from .ai.deployment import AIChat
+            from .ai.deployment._resource import AIChat
 
             return AIChat
         if self == self.ai_embeddings_deployment:
-            from .ai.deployment import AIEmbeddings
+            from .ai.deployment._resource import AIEmbeddings
 
             return AIEmbeddings
         if self == self.ai_connection:
@@ -142,11 +142,11 @@ class ResourceIdentifiers(Enum):
 
             return AIConnection
         if self == self.config_store:
-            from .appconfig import ConfigStore
+            from .appconfig._resource import ConfigStore
 
             return ConfigStore
         if self == self.config_setting:
-            from .appconfig.setting import ConfigSetting
+            from .appconfig.setting._resource import ConfigSetting
 
             return ConfigSetting
         raise TypeError(f"Unknown resource identifier: {self}")

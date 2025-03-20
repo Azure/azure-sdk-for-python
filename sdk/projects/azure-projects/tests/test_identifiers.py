@@ -2,11 +2,11 @@ import pytest
 
 from azure.projects.resources import ResourceIdentifiers
 from azure.projects.resources._extension.roles import RoleAssignment
-from azure.projects.resources.ai import CognitiveServicesAccount, AIServices
+from azure.projects.resources.ai._resource import CognitiveServicesAccount, AIServices
 from azure.projects.resources.ai.deployment import AIDeployment, AIChat, AIEmbeddings
 from azure.projects.resources.appconfig import ConfigStore
 from azure.projects.resources.appconfig.setting import ConfigSetting
-from azure.projects.resources.foundry import MLWorkspace, AIHub, AIProject
+from azure.projects.resources.foundry._resource import MLWorkspace, AIHub, AIProject
 from azure.projects.resources.foundry._connection import AIConnection
 from azure.projects.resources.keyvault import KeyVault
 from azure.projects.resources.managedidentity import UserAssignedIdentity

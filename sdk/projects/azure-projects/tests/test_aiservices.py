@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from uuid import uuid4
 
 import pytest
-from azure.projects.resources.ai import AIServices, CognitiveServicesAccount
+from azure.projects.resources.ai._resource import AIServices, CognitiveServicesAccount
 from azure.projects.resources.resourcegroup import ResourceGroup
 from azure.projects._parameters import GLOBAL_PARAMS
 from azure.projects.resources import RESOURCE_FROM_CLIENT_ANNOTATION, ResourceIdentifiers
