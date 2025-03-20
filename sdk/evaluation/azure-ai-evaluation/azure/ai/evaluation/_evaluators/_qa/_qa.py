@@ -57,7 +57,7 @@ class QAEvaluator(MultiEvaluatorBase[Union[str, float]]):
         ]
         super().__init__(evaluators=evaluators, **kwargs)
 
-    @overload  # type: ignore
+    @overload
     def __call__(self, *, query: str, response: str, context: str, ground_truth: str):
         """
         Evaluates question-answering scenario.
@@ -73,26 +73,28 @@ class QAEvaluator(MultiEvaluatorBase[Union[str, float]]):
         :return: The scores for QA scenario.
         :rtype: Dict[str, Union[str, float]]
         """
+        ...
 
-    @override
-    def __call__(  # pylint: disable=docstring-missing-param
-        self,
-        *args,
-        **kwargs,
-    ):
+    @overload
+    def __call__(self, *args, **kwargs):
         """
         Evaluates question-answering scenario.
 
-        :keyword query: The query to be evaluated.
-        :paramtype query: str
-        :keyword response: The response to be evaluated.
-        :paramtype response: str
-        :keyword context: The context to be evaluated.
-        :paramtype context: str
-        :keyword ground_truth: The ground truth to be evaluated.
-        :paramtype ground_truth: str
+        :param args: The arguments to pass to the evaluation function.
+        :type args: Any
         :return: The scores for QA scenario.
         :rtype: Dict[str, Union[str, float]]
         """
+        ...
 
+    @override
+    def __call__(self, *args, **kwargs):
+        """
+        Evaluates question-answering scenario.
+
+        ::param args: The arguments to pass to the evaluation function.
+        :type args: Any
+        :return: The scores for QA scenario.
+        :rtype: Dict[str, Union[str, float]]
+        """
         return super().__call__(*args, **kwargs)

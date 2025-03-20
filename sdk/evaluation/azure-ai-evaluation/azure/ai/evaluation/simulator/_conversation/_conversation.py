@@ -4,7 +4,7 @@
 
 import asyncio
 import logging
-from typing import Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation.simulator._constants import SupportedLanguages
@@ -87,6 +87,8 @@ async def simulate_conversation(
     :paramtype bots: List[ConversationBot]
     :keyword session: The session to use for making API calls.
     :paramtype session: AsyncHttpPipeline
+    :keyword language: The language to use for the conversation.
+    :paramtype language: SupportedLanguages
     :keyword stopping_criteria: A callable that determines when the conversation should stop.
     :paramtype stopping_criteria: Callable[[str], bool]
     :keyword turn_limit: The maximum number of turns in the conversation. Defaults to 10.
@@ -101,7 +103,7 @@ async def simulate_conversation(
     :rtype: Tuple[Optional[str], List[ConversationTurn]]
     """
 
-    session_state = {}
+    session_state: Dict[str, Any] = {}
     # Read the first prompt.
     (first_response, request, _, full_response) = await bots[0].generate_response(
         session=session,

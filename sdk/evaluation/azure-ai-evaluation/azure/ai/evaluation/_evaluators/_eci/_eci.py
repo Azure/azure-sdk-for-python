@@ -65,7 +65,7 @@ class ECIEvaluator(RaiServiceEvaluatorBase):
             credential=credential,
         )
 
-    @overload
+    @overload  # type: ignore[override]
     def __call__(
         self,
         *,

@@ -106,7 +106,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
     # This needs to be overridden just to change the function header into something more informative,
     # and to be able to add a more specific docstring. The actual function contents should just be
     # super().__call__(<inputs>)
-    def __call__(  # pylint: disable=docstring-missing-param
+    def __call__(
         self,
         *args,
         **kwargs,
@@ -116,8 +116,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         The actual behavior of this function shouldn't change beyond adding more inputs to the
         async_run_allowing_running_loop call.
 
-        :keyword kwargs: A dictionary that contains inputs needed to evaluate a conversation.
-        :type kwargs: Dict
+        :param Any args: (Unused) The arguments to evaluate.
         :return: The evaluation result
         :rtype: Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]
         """
@@ -293,8 +292,6 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         This function must be overridden by child classes IF they need to both a conversation and
         other inputs to be passed in.
 
-        :keyword kwargs: The inputs to convert.
-        :type kwargs: Dict
         :return: A list of arbitrary values that are valid inputs for this evaluator's do_eval function.
         :rtype: List
         """
@@ -383,8 +380,6 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
     async def _real_call(self, **kwargs) -> Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]:
         """The asynchronous call where real end-to-end evaluation logic is performed.
 
-        :keyword kwargs: The inputs to evaluate.
-        :type kwargs: Dict
         :return: The evaluation result.
         :rtype: Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]
         """

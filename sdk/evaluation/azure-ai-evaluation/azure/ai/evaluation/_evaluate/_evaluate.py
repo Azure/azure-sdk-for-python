@@ -6,7 +6,7 @@ import json
 import logging
 import os
 import re
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypedDict, TypeVar, Union
+from typing import Any, Callable, Dict, List, Optional, Sequence, Set, Tuple, TypedDict, TypeVar, Union, cast
 
 import pandas as pd
 from promptflow._sdk._constants import LINE_NUMBER
@@ -161,36 +161,39 @@ def _aggregate_label_defect_metrics(df: pd.DataFrame) -> Tuple[List[str], Dict[s
         metric_name = col.split(".")[1]
         if metric_name.endswith("_label") and metric_name.replace("_label", "").lower() in handled_metrics:
             label_cols.append(col)
-        if metric_name.endswith("_details") and metric_name.replace("_details", "").lower() in handled_metrics:    
+        if metric_name.endswith("_details") and metric_name.replace("_details", "").lower() in handled_metrics:
             details_cols = col
 
     label_df = df[label_cols]
     defect_rates = {}
     for col in label_df.columns:
         defect_rate_name = col.replace("_label", "_defect_rate")
-        col_with_boolean_values = pd.to_numeric(label_df[col], errors="coerce")
+        col_with_boolean_values = cast(Sequence[float], pd.to_numeric(label_df[col], errors="coerce"))
         try:
             defect_rates[defect_rate_name] = round(list_mean_nan_safe(col_with_boolean_values), 2)
         except EvaluationException:  # only exception that can be cause is all NaN values
             msg = f"All score evaluations are NaN/None for column {col}. No aggregation can be performed."
             LOGGER.warning(msg)
-    
+
     if details_cols:
         details_df = df[details_cols]
-        detail_defect_rates = {}
-        
+        detail_defect_rates: Dict[str, float] = {}
+
         for key, value in details_df.items():
             _process_rows(value, detail_defect_rates)
-                    
+
         for key, value in detail_defect_rates.items():
-            col_with_boolean_values = pd.to_numeric(value, errors="coerce")
+            col_with_boolean_values = cast(Sequence[float], pd.to_numeric(value, errors="coerce"))
             try:
-                defect_rates[f"{details_cols}.{key}_defect_rate"] = round(list_mean_nan_safe(col_with_boolean_values), 2)
+                defect_rates[f"{details_cols}.{key}_defect_rate"] = round(
+                    list_mean_nan_safe(col_with_boolean_values), 2
+                )
             except EvaluationException:  # only exception that can be cause is all NaN values
                 msg = f"All score evaluations are NaN/None for column {key}. No aggregation can be performed."
                 LOGGER.warning(msg)
-                
+
     return label_cols, defect_rates
+
 
 def _process_rows(row, detail_defect_rates):
     for key, value in row.items():
@@ -198,6 +201,7 @@ def _process_rows(row, detail_defect_rates):
             detail_defect_rates[key] = []
         detail_defect_rates[key].append(value)
     return detail_defect_rates
+
 
 def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Callable]) -> Dict[str, float]:
     """Aggregate metrics from the evaluation results.
@@ -478,7 +482,7 @@ def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_proj
 def _apply_target_to_data(
     target: Callable,
     data: Union[str, os.PathLike],
-    batch_client: TClient,
+    batch_client: ProxyClient,
     initial_data: pd.DataFrame,
     evaluation_name: Optional[str] = None,
     **kwargs,

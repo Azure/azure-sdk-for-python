@@ -136,7 +136,7 @@ class ConversationBot:
                         self.conversation_starter = jinja2.Template(
                             conversation_starter_content, undefined=jinja2.StrictUndefined
                         )
-                    except jinja2.exceptions.TemplateSyntaxError as e:  # noqa: F841
+                    except jinja2.exceptions.TemplateSyntaxError:  # noqa: F841
                         self.conversation_starter = conversation_starter_content
             else:
                 self.logger.info(
@@ -149,7 +149,7 @@ class ConversationBot:
         conversation_history: List[ConversationTurn],
         max_history: int,
         turn_number: int = 0,
-        session_state: Optional[Dict[str, Any]] = None,
+        session_state: Optional[Dict[str, Any]] = None,  # pylint: disable=unused-argument
     ) -> Tuple[dict, dict, float, dict]:
         """
         Prompt the ConversationBot for a response.
@@ -162,6 +162,8 @@ class ConversationBot:
         :type max_history: int
         :param turn_number: Parameters used to query GPT-4 model.
         :type turn_number: int
+        :param session_state: Unused parameter.
+        :type session_state: Optional[Dict[str, Any]]
         :return: The response from the ConversationBot.
         :rtype: Tuple[dict, dict, float, dict]
         """

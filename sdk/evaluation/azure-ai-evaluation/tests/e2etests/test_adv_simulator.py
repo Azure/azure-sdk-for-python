@@ -169,7 +169,7 @@ class TestAdvSimulator:
             context: Optional[Dict[str, Any]] = None,
         ) -> dict:
             query = messages["messages"][0]["content"]
-            response_from_llm = "SELECT * FROM users WHERE username = {user_input};" 
+            response_from_llm = "SELECT * FROM users WHERE username = {user_input};"
             temperature = 0.0
             formatted_response = {
                 "content": response_from_llm,
@@ -209,8 +209,8 @@ class TestAdvSimulator:
             "resource_group_name": project_scope["resource_group_name"],
             "project_name": project_scope["project_name"],
         }
-        
-        response_from_llm = '''
+
+        response_from_llm = """
             Person 1 might experience emotions such as:
                     Curiosity – They may wonder what the experience of meditation feels like.
                     Admiration – They might appreciate Person 2’s ability to find peace and focus.
@@ -218,7 +218,7 @@ class TestAdvSimulator:
                     Serenity – Simply observing a calm moment might bring them a sense of peace.
                     Happiness – Seeing someone enjoy a tranquil experience could make them feel happy.
                     Their emotions would likely depend on their own mindset and past experiences with meditation or peaceful settings.
-            ''' 
+            """
 
         async def callback(
             messages: List[Dict],
