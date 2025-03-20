@@ -32,6 +32,49 @@ class AdminKeyKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The secondary API key for the search service."""
 
 
+class ComputeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Configure this property to support the search service using either the default compute or Azure
+    Confidential Compute.
+    """
+
+    DEFAULT = "default"
+    """Create the service with the default compute."""
+    CONFIDENTIAL = "confidential"
+    """Create the service with Azure Confidential Compute."""
+
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
+
+class FeatureName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The name of the feature offered in this region."""
+
+    GROK = "Grok"
+    """Supports Grok feature."""
+    IMAGE_VECTORIZATION = "ImageVectorization"
+    """Supports Image Vectorization feature."""
+    DOCUMENT_INTELLIGENCE = "DocumentIntelligence"
+    """Supports Document Intelligence feature."""
+    QUERY_REWRITE = "QueryRewrite"
+    """Supports Query Rewrite feature."""
+    S3 = "S3"
+    """Supports S3 feature."""
+    STORAGE_OPTIMIZED = "StorageOptimized"
+    """Supports Storage Optimized feature."""
+    SEMANTIC_SEARCH = "SemanticSearch"
+    """Supports Semantic Search feature."""
+    MEGA_STORE = "MegaStore"
+    """Supports Mega Store feature."""
+    AVAILABILITY_ZONES = "AvailabilityZones"
+    """Supports Availability Zones feature."""
+
+
 class HostingMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Applicable only for the standard3 SKU. You can set this property to enable up to 3 high density
     partitions that allow up to 1000 indexes, which is much higher than the maximum indexes allowed

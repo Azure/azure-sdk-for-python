@@ -1,3 +1,4 @@
 -e ../../../tools/azure-sdk-tools
 -e ../../resources/azure-mgmt-resource
 ../../identity/azure-identity
+aiohttp

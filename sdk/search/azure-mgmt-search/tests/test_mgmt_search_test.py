@@ -1,4 +1,4 @@
-﻿# coding: utf-8
+# coding: utf-8
 
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6,12 +6,13 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
-
+import pytest
 import azure.mgmt.search
 from datetime import date, timedelta
 from devtools_testutils import AzureMgmtRecordedTestCase, ResourceGroupPreparer, recorded_by_proxy
 
 
+@pytest.mark.live_test_only
 class TestMgmtSearch(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(azure.mgmt.search.SearchManagementClient)
