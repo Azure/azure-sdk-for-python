@@ -3610,7 +3610,7 @@ class WhatIfChange(_serialization.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar resource_id: Resource ID. Required.
+    :ivar resource_id: Resource ID.
     :vartype resource_id: str
     :ivar deployment_id: The resource id of the Deployment responsible for this change.
     :vartype deployment_id: str
@@ -3634,7 +3634,6 @@ class WhatIfChange(_serialization.Model):
     """
 
     _validation = {
-        "resource_id": {"required": True},
         "change_type": {"required": True},
     }
 
@@ -3653,8 +3652,8 @@ class WhatIfChange(_serialization.Model):
     def __init__(
         self,
         *,
-        resource_id: str,
         change_type: Union[str, "_models.ChangeType"],
+        resource_id: Optional[str] = None,
         deployment_id: Optional[str] = None,
         symbolic_name: Optional[str] = None,
         identifiers: Optional[JSON] = None,
@@ -3665,7 +3664,7 @@ class WhatIfChange(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword resource_id: Resource ID. Required.
+        :keyword resource_id: Resource ID.
         :paramtype resource_id: str
         :keyword deployment_id: The resource id of the Deployment responsible for this change.
         :paramtype deployment_id: str
