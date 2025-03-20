@@ -54,7 +54,7 @@ async def main():
     # When calling the load() class method, a config_store Mapping can be passed in to be used for the
     # construction of any client instances. If provided, this will replace any configuration store automatically
     # derived from the deployment infrastructure. In addition to this, when building clients, the constructor will
-    # also attempt to load an AZD .env file from a previously prosivioned deployment for this app, and read from
+    # also attempt to load an AZD .env file from a previously provisioned deployment for this app, and read from
     # environment variables.
     # If the settings required to build the clients cannot be resolved, a RuntimeError will be raised.
     with SampleApp.load(config_store={"AZURE_BLOBS_ENDPOINT": "https://alternative.blob.core.windows.net/"}) as app:

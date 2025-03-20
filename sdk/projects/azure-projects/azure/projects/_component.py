@@ -20,7 +20,9 @@ from typing import (
     Optional,
     List,
     Type,
+    get_args,
     overload,
+    get_origin,
 )
 from typing_extensions import Self, TypeVar, dataclass_transform
 
@@ -54,12 +56,25 @@ def get_annotations(cls: Type) -> Mapping[str, Any]:
 
 
 def get_mro_annotations(cls: Type, base_cls: Type) -> Mapping[str, Tuple[Any, Any]]:
+    # TODO: Test if it's worth replacing this with typing.get_type_hints()
+    # TODO: I don't think this supports string annotations. Need to test.
     mro = cls.mro()
     return {
         attr: (ann, t.__dict__.get(attr))
         for t in reversed(mro[: mro.index(base_cls) + 1])
         for attr, ann in get_annotations(t).items()
     }
+
+
+def get_optional_annotation(annotation: Any) -> Type:
+    if get_origin(annotation) is Union:
+        union_args = get_args(annotation)
+        if len(union_args) > 2 or union_args[1] is not getattr(types, "NoneType", None):
+            raise TypeError(
+                f"Unsupported type annotation: {annotation}. Only 'Optional' or 'Union' with None is supported."
+            )
+        return union_args[0]
+    return annotation
 
 
 class DefaultFactory(Protocol):
@@ -419,7 +434,7 @@ class AzureAppComponent(type):
                     # if annotation.__name__ == "Mapping":
                     # If the default config_store field type hint is used, we can update
                     # the instance config store to include the full dev_env. However
-                    # if the user has chosed to overwrite the field with a different type
+                    # if the user has chosen to overwrite the field with a different type
                     # (e.g. AppConfigurationProvider), we don't want to mess with that.
                     # instance_kwargs[attr] = dev_env
                 if attr in missing_kwargs:
@@ -485,6 +500,7 @@ class AzureApp(Generic[InfrastructureType], metaclass=AzureAppComponent):
         if not infra:
             fields = []
             for attr, (annotation, _) in mro_annotations.items():
+                annotation = get_optional_annotation(annotation)
                 if annotation.__name__ in RESOURCE_FROM_CLIENT_ANNOTATION:
                     resource_cls = RESOURCE_FROM_CLIENT_ANNOTATION[annotation.__name__].resource()
                     attr_map[attr] = attr
@@ -499,7 +515,7 @@ class AzureApp(Generic[InfrastructureType], metaclass=AzureAppComponent):
             infra_resources = {r.identifier: r for r in infra.__dict__.values() if isinstance(r, Resource)}
             kwargs = {}
             for attr, (annotation, _) in mro_annotations.items():
-                # TODO: Currently this doesn't support other type hints like Union/Optional
+                annotation = get_optional_annotation(annotation)
                 # TODO: This doesn't support alias
                 if (
                     annotation.__name__ in RESOURCE_FROM_CLIENT_ANNOTATION

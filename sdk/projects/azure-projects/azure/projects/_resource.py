@@ -656,7 +656,8 @@ class _ClientResource(Resource):
 
         return DefaultAzureCredential()
 
-    async def _await_coroutine(self, client):
+    async def _build_client(self, cls, endpoint, **kwargs):
+        client = cls(endpoint, **kwargs)
         try:
             return await client
         except TypeError:
@@ -724,8 +725,7 @@ class _ClientResource(Resource):
         credential = self._build_credential(cls, use_async=use_async, credential=credential)
         if transport is not None:
             client_kwargs["transport"] = transport
-        client = cls(endpoint, credential=credential, **client_kwargs)
-        client = run_coroutine_sync(self._await_coroutine(client))
+        client = run_coroutine_sync(self._build_client(cls, endpoint, credential=credential, **client_kwargs))
         if return_credential:
             return client, credential
         return client
