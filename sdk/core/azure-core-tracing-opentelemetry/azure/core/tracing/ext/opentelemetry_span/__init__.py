@@ -127,7 +127,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         **kwargs: Any,
     ) -> None:
         self._current_ctxt_manager: Optional[_SuppressionContextManager] = None
-        self._schema_version = kwargs.pop("schema_version", _OpenTelemetrySchemaVersion.V1_23_1)
+        self._schema_version = kwargs.pop("schema_version", _OpenTelemetrySchemaVersion.V1_19_0)
         self._attribute_mappings = OpenTelemetrySchema.get_attribute_mappings(self._schema_version)
 
         if span:

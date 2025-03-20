@@ -1,24 +1,18 @@
 # Release History
 
-## 1.0.0b12 (Unreleased)
+## 1.0.0b12 (2025-03-20)
 
 ### Features Added
 
 - If a span exits with an exception, the exception name is now recorded in the `error.type` attribute. ([#34619](https://github.com/Azure/azure-sdk-for-python/pull/34619))
 - Added support for passing a schema version to fetch available attribute mappings and set the schema URL on the tracer's instrumentation scope. ([#40161](https://github.com/Azure/azure-sdk-for-python/pull/40161))
-
-### Breaking Changes
-
-- Remapped certain attributes to converge with OpenTelemetry semantic conventions version `1.23.1` ([#34089](https://github.com/Azure/azure-sdk-for-python/pull/34089)):
-    - `http.method` -> `http.request.method`
-    - `http.status_code` -> `http.response.status_code`
-    - `net.peer.name` -> `server.address`
-    - `net.peer.port` -> `server.port`
-    - `http.url` -> `url.full`
+- Added additional span suppression logic to prevent unnecessary spans from being created. ([#39994](https://github.com/Azure/azure-sdk-for-python/pull/39994))
+    - `SpanKind.INTERNAL` spans are suppressed if their parent span is of type `SpanKind.INTERNAL`, `SpanKind.CLIENT`, or `SpanKind.PRODUCER`.
+- Update `OpenTelemetrySpan.change_context` to also accept spans of type `OpenTelemetrySpan`. ([#39994](https://github.com/Azure/azure-sdk-for-python/pull/39994))
 
 ### Bugs Fixed
 
-### Other Changes
+- Fixed an issue where the original context was not properly restored after exiting an `OpenTelemetrySpan` context in certain scenarios. ([#39994](https://github.com/Azure/azure-sdk-for-python/pull/39994))
 
 ## 1.0.0b11 (2023-09-07)
 
