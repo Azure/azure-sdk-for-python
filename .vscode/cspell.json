@@ -332,6 +332,7 @@
     "msrest",
     "msrestazure",
     "MSSQL",
+    "MSRC",
     "mutex",
     "myacr",
     "mydirectory",
@@ -1435,7 +1436,8 @@
         "fmeasure",
         "upia",
         "xpia",
-        "expirable"
+        "expirable",
+        "ralphe"
       ]
     },
     {

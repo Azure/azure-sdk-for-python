@@ -22,8 +22,14 @@
 ### Breaking Changes
 
 - Removed automatic tracing enablement for the OpenTelemetry plugin if `opentelemetry` was imported. To enable tracing with the plugin, please import `azure.core.settings.settings` and set `settings.tracing_implementation` to `"opentelemetry"`. #39563
+- In `DistributedTracingPolicy`, the default span name is now just the HTTP method (e.g., "GET", "POST") and no longer includes the URL path. This change was made to converge with the OpenTelemetry HTTP semantic conventions. The full URL is still included in the span attributes.
+- Renamed span attributes in `DistributedTracingPolicy`:
+    - "x-ms-client-request-id" is now "az.client_request_id"
+    - "x-ms-request-id" is now "az.service_request_id"
 
 ### Bugs Fixed
+
+- Fixed an issue where the `traceparent` header was not being set correctly in the `DistributedTracingPolicy`. The `traceparent` header will now set based on the context of the HTTP client span. #40074
 
 ### Other Changes
 
