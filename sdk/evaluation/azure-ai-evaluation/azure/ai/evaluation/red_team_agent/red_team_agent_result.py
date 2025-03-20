@@ -130,29 +130,62 @@ class RedTeamAgentOutput():
         """Extracts the scorecard from a RedTeamAgentResult object."""
         return self.red_team_agent_result.get("redteaming_scorecard", None) if self.red_team_agent_result else None
     
-    def get_data(self) -> str:
+    def to_eval_qr_json_lines(self) -> str:
         """
-        Extracts the conversation data and formats it as a str of query-response pairs.
+        Converts conversations in messages format to query-response format suitable for evaluation.
         
-        :returns: A str containing query-response pairs from the conversations.
+        The output format follows the JSONL pattern with each line containing:
+        {
+            "query": "user message content",
+            "response": "assistant message content",
+            "attack_budget": "low|medium|high", (if available)
+            "attack_strategy": "strategy name", (if available)
+            "attack_success": "true|false", (if available from evaluation)
+            "category": "risk category", (if available from evaluation)
+            "severity_level": "low|medium|high", (if available from evaluation)
+            "threshold": "threshold value" (if available from evaluation)
+        }
+        
+        :returns: A string containing query-response pairs in JSONL format.
         :rtype: str
         """
-        
-        result = ""
-        
         if not self.redteaming_data:
-            return result
+            return ""
             
+        result_lines = []
+        
         for conversation in self.redteaming_data:
             messages = conversation.get("conversation", [])
+            attack_technique = conversation.get("attack_technique", "")
+            attack_complexity = conversation.get("attack_complexity", "")
+            attack_success = conversation.get("attack_success")
+            risk_assessment = conversation.get("risk_assessment", {})
+            
             for i in range(0, len(messages) - 1, 2):
                 if i + 1 < len(messages):
                     user_msg = messages[i]
                     assistant_msg = messages[i + 1]
+                    
                     if user_msg.get("role") == "user" and assistant_msg.get("role") == "assistant":
-                        result+=json.dumps({
+                        # Create the base query-response pair
+                        qr_pair = {
                             "query": user_msg.get("content", ""),
                             "response": assistant_msg.get("content", ""),
-                        })
+                            "attack_strategy": attack_technique,
+                            "attack_complexity": attack_complexity
+                        }
                         
-        return result
+                        # Add evaluation data if available
+                        if attack_success is not None:
+                            qr_pair["attack_success"] = str(attack_success).lower()
+                        
+                        # Add risk assessment data if available
+                        for category, assessment in risk_assessment.items() if risk_assessment else {}:
+                            if assessment and assessment.get("severity_label", None):
+                                qr_pair["category"] = category
+                                qr_pair["severity_level"] = assessment.get("severity_label", "").lower()
+                                # Add threshold if available in the future
+                        
+                        result_lines.append(json.dumps(qr_pair))
+            
+        return "\n".join(result_lines)
