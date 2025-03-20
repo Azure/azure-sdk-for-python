@@ -1273,7 +1273,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :type partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword response_hook: A callable invoked with the response metadata.
-        response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]] = None,
+        :paramtype response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]] = None,
         :returns: An Iterable of conflicts (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """

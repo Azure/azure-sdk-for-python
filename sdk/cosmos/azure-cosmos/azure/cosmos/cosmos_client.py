@@ -25,7 +25,6 @@
 from typing import Any, Dict, Iterable, List, Mapping, Optional, Union, cast, Callable
 import warnings
 
-from azure.core import MatchConditions
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.paging import ItemPaged
 from azure.core.credentials import TokenCredential

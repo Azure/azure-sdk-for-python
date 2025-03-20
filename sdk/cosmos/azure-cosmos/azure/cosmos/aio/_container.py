@@ -24,8 +24,8 @@
 from datetime import datetime
 from typing import (Any, Dict, Mapping, Optional, Sequence, Type, Union, List, Tuple, cast, overload, AsyncIterable,
                     Callable)
-from typing_extensions import Literal
 import warnings
+from typing_extensions import Literal
 from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.tracing.decorator import distributed_trace

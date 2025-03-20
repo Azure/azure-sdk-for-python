@@ -25,7 +25,6 @@
 from typing import Any, Dict, List, Union, Optional, Mapping, Callable
 
 import warnings
-from azure.core import MatchConditions
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.paging import ItemPaged
 from azure.cosmos.partition_key import PartitionKey
@@ -255,6 +254,11 @@ class DatabaseProxy(object):
         if partition_key is not None:
             definition["partitionKey"] = partition_key
         if indexing_policy is not None:
+            if indexing_policy.get("indexingMode") is IndexingMode.Lazy:
+                warnings.warn(
+                    "Lazy indexing mode has been deprecated. Mode will be set to consistent indexing by the backend.",
+                    DeprecationWarning
+                )
             definition["indexingPolicy"] = indexing_policy
         if default_ttl is not None:
             definition["defaultTtl"] = default_ttl
