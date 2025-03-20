@@ -333,13 +333,11 @@ class RedTeamAgent():
         # Fetch objectives from RAI client for this specific risk category
         try:
             self.logger.info(f"API call: get_attack_objectives({risk_cat_value}, app: {application_scenario}, strategy: {strategy})")
-            
             objectives_response = await self.generated_rai_client.get_attack_objectives(
-                risk_categories=[risk_cat_value],  # Now just passing a single category
+                risk_category=risk_cat_value,
                 application_scenario=application_scenario or "",
                 strategy=strategy
             )
-            
             if isinstance(objectives_response, dict):
                 obj_count = len(objectives_response.get("objectives", [])) if "objectives" in objectives_response else 0
                 self.logger.info(f"API returned {obj_count} objectives (dict format)")
@@ -360,10 +358,9 @@ class RedTeamAgent():
             self.logger.error(f"Error calling get_attack_objectives: {str(e)}")
             self.logger.info("Using mock objectives instead")
             objectives_response = MockAttackObjective.create_mock_response(
-                risk_categories=[risk_cat_value],
+                risk_category=[risk_cat_value],
                 count=num_objectives
             )
-        
         # Check if the response is valid
         if not objectives_response or (isinstance(objectives_response, dict) and not objectives_response.get("objectives")):
             self.logger.warning("Empty or invalid response, using mock data")
