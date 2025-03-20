@@ -24,7 +24,7 @@ from ._utils import get_int_env_var, get_value_from_path
 from ._status import BatchStatus
 from ._result import BatchResult, BatchRunDetails, BatchRunError, TokenMetrics
 from ._run_storage import AbstractRunStorage, NoOpRunStorage
-from ._logging import log_progress, NodeLogManager
+from .._common._logging import log_progress, NodeLogManager
 from ..._exceptions import ErrorBlame
 from ._exceptions import (
     BatchEngineCanceledError,
