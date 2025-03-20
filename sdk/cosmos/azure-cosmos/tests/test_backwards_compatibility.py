@@ -50,8 +50,8 @@ class TestBackwardsCompatibility(unittest.TestCase):
         self.assertTrue(isinstance(container_offer, Offer))
 
     def test_populate_quota_info(self):
-            self.containerForTest.read(populate_quota_info=True)
-            self.containerForTest.read(False, False, True)
+            self.containerForTest.read(populate_quota_info=True, raw_response_hook=check_quota_info_request_headers)
+            self.containerForTest.read(False, False, True, raw_response_hook=check_quota_info_request_headers)
 
     def test_populate_partition_key_range_statistics(self):
         self.containerForTest.read(populate_partition_key_range_statistics=True, raw_response_hook=check_pk_range_statistics_request_headers)
