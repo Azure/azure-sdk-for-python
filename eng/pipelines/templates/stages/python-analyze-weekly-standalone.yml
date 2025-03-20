@@ -97,11 +97,10 @@ extends:
                   displayName: 'Get vNext Issues'
                   continueOnError: true
                   inputs:
-                    scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
+                    scriptPath: 'tools/azure-sdk-tools/gh_tools/call_issue_creator.py'
                     arguments: >-
                       ${{ parameters.BuildTargetingString }}
                       --service="${{ parameters.ServiceDirectory }}"
-                      --toxenv="vnext"
                       --disablecov
                   env:
                     GH_TOKEN: $(azuresdk-github-pat)
