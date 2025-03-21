@@ -154,6 +154,8 @@ if __name__ == "__main__":
         args.glob_string, target_dir, "", args.filter_type, compatibility_filter
     )
 
+    logging.info(f"Targeted packages: {targeted_packages}")
+
     if len(targeted_packages) == 0:
         logging.info(f"No packages collected for targeting string {args.glob_string} and root dir {root_dir}. Exit 0.")
         exit(0)
