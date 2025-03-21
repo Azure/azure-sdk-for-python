@@ -48,9 +48,16 @@ class TestComputeManagementAvailabilitySetsOperations(AzureMgmtRecordedTestCase)
                 ],
                 "tags": {"str": "str"},
                 "type": "str",
+                "virtualMachineScaleSetMigrationInfo": {
+                    "defaultVirtualMachineScaleSetInfo": {
+                        "constrainedMaximumCapacity": bool,
+                        "defaultVirtualMachineScaleSet": {"id": "str"},
+                    },
+                    "migrateToVirtualMachineScaleSet": {"id": "str"},
+                },
                 "virtualMachines": [{"id": "str"}],
             },
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -82,9 +89,16 @@ class TestComputeManagementAvailabilitySetsOperations(AzureMgmtRecordedTestCase)
                     }
                 ],
                 "tags": {"str": "str"},
+                "virtualMachineScaleSetMigrationInfo": {
+                    "defaultVirtualMachineScaleSetInfo": {
+                        "constrainedMaximumCapacity": bool,
+                        "defaultVirtualMachineScaleSet": {"id": "str"},
+                    },
+                    "migrateToVirtualMachineScaleSet": {"id": "str"},
+                },
                 "virtualMachines": [{"id": "str"}],
             },
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -96,7 +110,7 @@ class TestComputeManagementAvailabilitySetsOperations(AzureMgmtRecordedTestCase)
         response = self.client.availability_sets.delete(
             resource_group_name=resource_group.name,
             availability_set_name="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -108,7 +122,7 @@ class TestComputeManagementAvailabilitySetsOperations(AzureMgmtRecordedTestCase)
         response = self.client.availability_sets.get(
             resource_group_name=resource_group.name,
             availability_set_name="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -118,7 +132,7 @@ class TestComputeManagementAvailabilitySetsOperations(AzureMgmtRecordedTestCase)
     @recorded_by_proxy
     def test_availability_sets_list_by_subscription(self, resource_group):
         response = self.client.availability_sets.list_by_subscription(
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -129,7 +143,7 @@ class TestComputeManagementAvailabilitySetsOperations(AzureMgmtRecordedTestCase)
     def test_availability_sets_list(self, resource_group):
         response = self.client.availability_sets.list(
             resource_group_name=resource_group.name,
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -141,8 +155,58 @@ class TestComputeManagementAvailabilitySetsOperations(AzureMgmtRecordedTestCase)
         response = self.client.availability_sets.list_available_sizes(
             resource_group_name=resource_group.name,
             availability_set_name="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
         result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_availability_sets_start_migration_to_virtual_machine_scale_set(self, resource_group):
+        response = self.client.availability_sets.start_migration_to_virtual_machine_scale_set(
+            resource_group_name=resource_group.name,
+            availability_set_name="str",
+            parameters={"virtualMachineScaleSetFlexible": {"id": "str"}},
+            api_version="2024-11-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_availability_sets_cancel_migration_to_virtual_machine_scale_set(self, resource_group):
+        response = self.client.availability_sets.cancel_migration_to_virtual_machine_scale_set(
+            resource_group_name=resource_group.name,
+            availability_set_name="str",
+            api_version="2024-11-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_availability_sets_validate_migration_to_virtual_machine_scale_set(self, resource_group):
+        response = self.client.availability_sets.validate_migration_to_virtual_machine_scale_set(
+            resource_group_name=resource_group.name,
+            availability_set_name="str",
+            parameters={"virtualMachineScaleSetFlexible": {"id": "str"}},
+            api_version="2024-11-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_availability_sets_begin_convert_to_virtual_machine_scale_set(self, resource_group):
+        response = self.client.availability_sets.begin_convert_to_virtual_machine_scale_set(
+            resource_group_name=resource_group.name,
+            availability_set_name="str",
+            api_version="2024-11-01",
+        ).result()  # call '.result()' to poll until service return final result
+
         # please add some check logic here by yourself
         # ...

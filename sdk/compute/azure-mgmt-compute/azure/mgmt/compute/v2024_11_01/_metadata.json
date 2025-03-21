@@ -1,6 +1,6 @@
 {
-    "chosen_version": "2024-07-01",
-    "total_api_version_list": ["2024-07-01"],
+    "chosen_version": "2024-11-01",
+    "total_api_version_list": ["2024-11-01"],
     "client": {
         "name": "ComputeManagementClient",
         "filename": "_compute_management_client",
