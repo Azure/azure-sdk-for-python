@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+# Third-party imports
 import asyncio
 import inspect
 import math
@@ -12,10 +13,10 @@ from typing import Callable, Dict, List, Optional, Union, cast
 import json
 from pathlib import Path
 import itertools
-import pandas as pd
-from tqdm import tqdm
 import random
 import uuid
+import pandas as pd
+from tqdm import tqdm
 
 # Azure AI Evaluation imports
 from azure.ai.evaluation._evaluate._eval_run import EvalRun
@@ -43,21 +44,21 @@ from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 # Azure Core imports
 from azure.core.credentials import TokenCredential
 
-# Redteaming imports
+# Red Teaming imports
 from .red_team_agent_result import RedTeamAgentResult, RedTeamingScorecard, RedTeamingParameters, Conversation, RedTeamAgentOutput
 from .callback_chat_target import CallbackChatTarget
 from .attack_strategy import AttackStrategy
 from .attack_objective_generator import RiskCategory, AttackObjectiveGenerator
 from .default_converter import DefaultConverter
 
-#PyRIT imports
+# PyRIT imports
 from pyrit.common import initialize_pyrit, DUCK_DB
 from pyrit.prompt_target import OpenAIChatTarget, PromptChatTarget
 from pyrit.models import ChatMessage
 from pyrit.orchestrator.single_turn.prompt_sending_orchestrator import PromptSendingOrchestrator
 from pyrit.orchestrator import Orchestrator
 from pyrit.exceptions import PyritException
-from pyrit.prompt_converter import PromptConverter, MathPromptConverter, Base64Converter, FlipConverter, MorseConverter, AnsiAttackConverter, AsciiArtConverter, AsciiSmugglerConverter, AtbashConverter, BinaryConverter, CaesarConverter, CharacterSpaceConverter, CharSwapGenerator, CharSwapGenerator, DiacriticConverter, LeetspeakConverter, UrlConverter, UnicodeSubstitutionConverter, UnicodeConfusableConverter, SuffixAppendConverter, StringJoinConverter, ROT13Converter
+from pyrit.prompt_converter import PromptConverter, MathPromptConverter, Base64Converter, FlipConverter, MorseConverter, AnsiAttackConverter, AsciiArtConverter, AsciiSmugglerConverter, AtbashConverter, BinaryConverter, CaesarConverter, CharacterSpaceConverter, CharSwapGenerator, DiacriticConverter, LeetspeakConverter, UrlConverter, UnicodeSubstitutionConverter, UnicodeConfusableConverter, SuffixAppendConverter, StringJoinConverter, ROT13Converter
 BASELINE_IDENTIFIER = "Baseline"
 DATA_EXT = ".jsonl"
 RESULTS_EXT = ".jsonl"
@@ -121,9 +122,17 @@ def _setup_logger():
 
 @experimental
 class RedTeamAgent():
+    """
+    This class uses various attack strategies to test the robustness of AI models against adversarial inputs.
+    It logs the results of these evaluations and provides detailed scorecards summarizing the attack success rates.
+    
+    :param azure_ai_project: The Azure AI project configuration
+    :type azure_ai_project: dict
+    :param credential: The credential to authenticate with Azure services
+    :type credential: TokenCredential
+    """
     def __init__(self, azure_ai_project, credential):
-        validate_azure_ai_project(azure_ai_project)
-        self.azure_ai_project = AzureAIProject(**azure_ai_project) #type: ignore
+        self.azure_ai_project = validate_azure_ai_project(azure_ai_project)
         self.credential=credential
         self.logger = _setup_logger()
         self.token_manager = ManagedIdentityAPITokenManager(
@@ -496,7 +505,12 @@ class RedTeamAgent():
             objective_target=chat_target,
             prompt_converters=[converter] if converter and isinstance(converter, PromptConverter) else converter if converter else []
         )
-        await orchestrator.send_prompts_async(prompt_list=all_prompts)
+        try:
+            await orchestrator.send_prompts_async(prompt_list=all_prompts)
+        except PyritException as e:
+            self.logger.error(f"Error sending prompts via PromptSendingOrchestrator: {e}")
+            self.logger.debug(f"Error sending prompts via PromptSendingOrchestrator with converter: {converter}, prompts: {all_prompts}")
+            return None
         return orchestrator
     
     def _write_pyrit_outputs_to_file(self, orchestrator: Orchestrator) -> str:
@@ -1023,12 +1037,10 @@ class RedTeamAgent():
         self.logger.info(f"Processing {strategy_name} strategy for {risk_category.value} risk category")
         
         converter = self._get_converter_for_strategy(strategy)
-        try:
-            self.logger.info(f"Calling orchestrator for {strategy_name} strategy")
-            orchestrator = await call_orchestrator(self.chat_target, all_prompts, converter)
-        except PyritException as e:
-            self.logger.error(f"Error calling orchestrator for {strategy_name} strategy: {e}")
-            self.logger.debug(f"Error calling orchestrator for {strategy_name} strategy using prompts: {all_prompts}")
+        self.logger.info(f"Calling orchestrator for {strategy_name} strategy")
+        orchestrator = await call_orchestrator(self.chat_target, all_prompts, converter)
+        if not orchestrator:
+            self.logger.error(f"Error calling orchestrator for {strategy_name} strategy") 
             return None
         
         data_path = self._write_pyrit_outputs_to_file(orchestrator)
@@ -1204,7 +1216,6 @@ class RedTeamAgent():
             # Process results
             self.logger.info("=" * 80)
             self.logger.info(f"PROCESSING RESULTS")
-            self.logger.info(f"Final red_team_agent_info structure: {json.dumps({k: {rk: list(rv.keys()) for rk, rv in v.items()} for k, v in self.red_team_agent_info.items()})}")
             
             # Convert results to RedTeamAgentResult using only red_team_agent_info
             red_team_agent_result = self._to_red_team_agent_result()
