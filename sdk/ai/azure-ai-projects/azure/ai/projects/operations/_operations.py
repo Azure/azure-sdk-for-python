@@ -115,9 +115,9 @@ def build_agents_get_agent_request(agent_id: str, **kwargs: Any) -> HttpRequest:
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/assistants/{agentId}"
+    _url = "/assistants/{assistantId}"
     path_format_arguments = {
-        "agentId": _SERIALIZER.url("agent_id", agent_id, "str"),
+        "assistantId": _SERIALIZER.url("agent_id", agent_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -140,9 +140,9 @@ def build_agents_update_agent_request(agent_id: str, **kwargs: Any) -> HttpReque
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/assistants/{agentId}"
+    _url = "/assistants/{assistantId}"
     path_format_arguments = {
-        "agentId": _SERIALIZER.url("agent_id", agent_id, "str"),
+        "assistantId": _SERIALIZER.url("agent_id", agent_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -166,9 +166,9 @@ def build_agents_delete_agent_request(agent_id: str, **kwargs: Any) -> HttpReque
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/assistants/{agentId}"
+    _url = "/assistants/{assistantId}"
     path_format_arguments = {
-        "agentId": _SERIALIZER.url("agent_id", agent_id, "str"),
+        "assistantId": _SERIALIZER.url("agent_id", agent_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -6553,8 +6553,8 @@ class ConnectionsOperations:
         """List the details of all the connections (not including their credentials).
 
         :keyword category: Category of the workspace connection. Known values are: "AzureOpenAI",
-         "Serverless", "AzureBlob", "AIServices", "CognitiveSearch", and "API Key". Default value is
-         None.
+         "Serverless", "AzureBlob", "AIServices", "CognitiveSearch", "ApiKey", "CustomKeys", and
+         "CognitiveService". Default value is None.
         :paramtype category: str or ~azure.ai.projects.models.ConnectionType
         :keyword include_all: Indicates whether to list datastores. Service default: do not list
          datastores. Default value is None.
