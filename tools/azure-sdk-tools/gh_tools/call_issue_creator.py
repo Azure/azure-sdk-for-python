@@ -107,6 +107,15 @@ if __name__ == "__main__":
         help="Comma or space-separated list of packages that should be installed prior to dev_requirements. If local path, should be absolute.",
     )
 
+    parser.add_argument(
+        "--filter-type",
+        dest="filter_type",
+        default="Build",
+        help="Filter type to identify eligible packages. for e.g. packages filtered in Build can pass filter type as Build,",
+        choices=["Build", "Docs", "Regression", "Omit_management", "None"],
+    )
+
+
     args = parser.parse_args()
 
     # We need to support both CI builds of everything and individual service
