@@ -34,16 +34,16 @@ def find_failures(package_dir):
                 build_output = log_output.content.decode("utf-8")
                 version = build_output.split("'pylint':")[1].split("'")[1]
                 if f"ERROR:root:{package_name} exited with linting error" in build_output:
-                    print(f"Found failure in task: {task['name']}")
+                    logging.info(f"Found failure in task: {task['name']}")
                     return package_dir, "pylint", version
     except Exception as e:
-        print(f"Exception occurred while getting build info: {e}")
+        logging.info(f"Exception occurred while getting build info: {e}")
 
-        return None, None, None
+    return None, None, None
 
 def main(targeted_packages):
     for package in targeted_packages:
-        print(f"Processing package: {package}")
+        logging.info(f"Processing package: {package}")
         file, failure, version = find_failures(package)
         if failure:
             logging.info(f"Creating issue for {file} with failure: {failure}")
