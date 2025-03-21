@@ -160,7 +160,7 @@ def get_labels(package_name: str, service: str) -> list[str]:
     return labels
 
 
-def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE) -> None:
+def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE, version_found: Optional[str] = None) -> None:
     """This is called when a client library fails a vnext check.
     An issue is created with the details or an existing issue is updated with the latest information."""
 
@@ -179,7 +179,7 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE) -> None:
     issues = repo.get_issues(state="open", labels=[check_type], creator="azure-sdk")
     vnext_issue = [issue for issue in issues if issue.title.split("needs")[0].strip() == package_name]
 
-    version = get_version_running(check_type)
+    version = version_found if version_found else get_version_running(check_type)
     build_link = get_build_link(check_type)
     build_info = get_build_info(build_link, check_type, service_directory, package_name)
     merge_date = get_date_for_version_bump(today)
