@@ -7,10 +7,7 @@
 
 import functools
 import warnings
-from typing import (
-    Any, cast, Dict, List, Optional,
-    Tuple, TYPE_CHECKING, Union
-)
+from typing import Any, cast, Dict, List, Optional, Tuple, TYPE_CHECKING, Union
 from typing_extensions import Self
 
 from azure.core.exceptions import HttpResponseError
@@ -26,10 +23,7 @@ from ._queue_client_helpers import _format_url, _from_queue_url, _parse_url
 from ._serialize import get_api_version
 from ._shared.base_client import parse_connection_str, StorageAccountHostsMixin
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
-from ._shared.response_handlers import (
-    process_storage_error,
-    return_headers_and_deserialized,
-    return_response_headers)
+from ._shared.response_handlers import process_storage_error, return_headers_and_deserialized, return_response_headers
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
@@ -86,18 +80,22 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             :dedent: 12
             :caption: Create the queue client with url and credential.
     """
+
     def __init__(
-        self, account_url: str,
+        self,
+        account_url: str,
         queue_name: str,
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        credential: Optional[
+            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
+        ] = None,  # pylint: disable=line-too-long
         **kwargs: Any
     ) -> None:
         parsed_url, sas_token = _parse_url(account_url=account_url, queue_name=queue_name, credential=credential)
         self.queue_name = queue_name
         self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(QueueClient, self).__init__(parsed_url, service='queue', credential=credential, **kwargs)
-        self._message_encode_policy = kwargs.get('message_encode_policy', None) or NoEncodePolicy()
-        self._message_decode_policy = kwargs.get('message_decode_policy', None) or NoDecodePolicy()
+        super(QueueClient, self).__init__(parsed_url, service="queue", credential=credential, **kwargs)
+        self._message_encode_policy = kwargs.get("message_encode_policy", None) or NoEncodePolicy()
+        self._message_decode_policy = kwargs.get("message_decode_policy", None) or NoDecodePolicy()
         self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
         self._configure_encryption(kwargs)
@@ -110,16 +108,15 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         :returns: The formatted endpoint URL according to the specified location mode hostname.
         :rtype: str
         """
-        return _format_url(
-            queue_name=self.queue_name,
-            hostname=hostname,
-            scheme=self.scheme,
-            query_str=self._query_str)
+        return _format_url(queue_name=self.queue_name, hostname=hostname, scheme=self.scheme, query_str=self._query_str)
 
     @classmethod
     def from_queue_url(
-        cls, queue_url: str,
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        cls,
+        queue_url: str,
+        credential: Optional[
+            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
+        ] = None,  # pylint: disable=line-too-long
         **kwargs: Any
     ) -> Self:
         """A client to interact with a specific Queue.
@@ -150,9 +147,12 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @classmethod
     def from_connection_string(
-        cls, conn_str: str,
+        cls,
+        conn_str: str,
         queue_name: str,
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        credential: Optional[
+            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
+        ] = None,  # pylint: disable=line-too-long
         **kwargs: Any
     ) -> Self:
         """Create QueueClient from a Connection String.
@@ -190,18 +190,13 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 :dedent: 8
                 :caption: Create the queue client from connection string.
         """
-        account_url, secondary, credential = parse_connection_str(
-            conn_str, credential, 'queue')
-        if 'secondary_hostname' not in kwargs:
-            kwargs['secondary_hostname'] = secondary
+        account_url, secondary, credential = parse_connection_str(conn_str, credential, "queue")
+        if "secondary_hostname" not in kwargs:
+            kwargs["secondary_hostname"] = secondary
         return cls(account_url, queue_name=queue_name, credential=credential, **kwargs)
 
     @distributed_trace
-    def create_queue(
-        self, *,
-        metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
-    ) -> None:
+    def create_queue(self, *, metadata: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """Creates a new queue in the storage account.
 
         If a queue with the same name already exists, the operation fails with
@@ -230,16 +225,13 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 :dedent: 8
                 :caption: Create a queue.
         """
-        headers = kwargs.pop('headers', {})
-        timeout = kwargs.pop('timeout', None)
+        headers = kwargs.pop("headers", {})
+        timeout = kwargs.pop("timeout", None)
         headers.update(add_metadata_headers(metadata))
         try:
             return self._client.queue.create(
-                metadata=metadata,
-                timeout=timeout,
-                headers=headers,
-                cls=deserialize_queue_creation,
-                **kwargs)
+                metadata=metadata, timeout=timeout, headers=headers, cls=deserialize_queue_creation, **kwargs
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -272,7 +264,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 :dedent: 12
                 :caption: Delete a queue.
         """
-        timeout = kwargs.pop('timeout', None)
+        timeout = kwargs.pop("timeout", None)
         try:
             self._client.queue.delete(timeout=timeout, **kwargs)
         except HttpResponseError as error:
@@ -298,22 +290,19 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 :dedent: 12
                 :caption: Get the properties on the queue.
         """
-        timeout = kwargs.pop('timeout', None)
+        timeout = kwargs.pop("timeout", None)
         try:
-            response = cast("QueueProperties", self._client.queue.get_properties(
-                timeout=timeout,
-                cls=deserialize_queue_properties,
-                **kwargs))
+            response = cast(
+                "QueueProperties",
+                self._client.queue.get_properties(timeout=timeout, cls=deserialize_queue_properties, **kwargs),
+            )
         except HttpResponseError as error:
             process_storage_error(error)
         response.name = self.queue_name
         return response
 
     @distributed_trace
-    def set_queue_metadata(
-        self, metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
-    ) -> Dict[str, Any]:
+    def set_queue_metadata(self, metadata: Optional[Dict[str, str]] = None, **kwargs: Any) -> Dict[str, Any]:
         """Sets user-defined metadata on the specified queue.
 
         Metadata is associated with the queue as name-value pairs.
@@ -340,15 +329,13 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 :dedent: 12
                 :caption: Set metadata on the queue.
         """
-        timeout = kwargs.pop('timeout', None)
-        headers = kwargs.pop('headers', {})
+        timeout = kwargs.pop("timeout", None)
+        headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))
         try:
             return self._client.queue.set_metadata(
-                timeout=timeout,
-                headers=headers,
-                cls=return_response_headers,
-                **kwargs)
+                timeout=timeout, headers=headers, cls=return_response_headers, **kwargs
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -366,21 +353,18 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         :return: A dictionary of access policies associated with the queue.
         :rtype: Dict[str, ~azure.storage.queue.AccessPolicy]
         """
-        timeout = kwargs.pop('timeout', None)
+        timeout = kwargs.pop("timeout", None)
         try:
-            _, identifiers = cast(Tuple[Dict, List], self._client.queue.get_access_policy(
-                timeout=timeout,
-                cls=return_headers_and_deserialized,
-                **kwargs))
+            _, identifiers = cast(
+                Tuple[Dict, List],
+                self._client.queue.get_access_policy(timeout=timeout, cls=return_headers_and_deserialized, **kwargs),
+            )
         except HttpResponseError as error:
             process_storage_error(error)
         return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
 
     @distributed_trace
-    def set_queue_access_policy(
-        self, signed_identifiers: Dict[str, AccessPolicy],
-        **kwargs: Any
-    ) -> None:
+    def set_queue_access_policy(self, signed_identifiers: Dict[str, AccessPolicy], **kwargs: Any) -> None:
         """Sets stored access policies for the queue that may be used with Shared
         Access Signatures.
 
@@ -416,11 +400,12 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 :dedent: 12
                 :caption: Set an access policy on the queue.
         """
-        timeout = kwargs.pop('timeout', None)
+        timeout = kwargs.pop("timeout", None)
         if len(signed_identifiers) > 15:
             raise ValueError(
-                'Too many access policies provided. The server does not support setting '
-                'more than 15 access policies on a single resource.')
+                "Too many access policies provided. The server does not support setting "
+                "more than 15 access policies on a single resource."
+            )
         identifiers = []
         for key, value in signed_identifiers.items():
             if value:
@@ -428,16 +413,14 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 value.expiry = serialize_iso(value.expiry)
             identifiers.append(SignedIdentifier(id=key, access_policy=value))
         try:
-            self._client.queue.set_access_policy(
-                queue_acl=identifiers or None,
-                timeout=timeout,
-                **kwargs)
+            self._client.queue.set_access_policy(queue_acl=identifiers or None, timeout=timeout, **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
     def send_message(
-        self, content: Optional[object],
+        self,
+        content: Optional[object],
         *,
         visibility_timeout: Optional[int] = None,
         time_to_live: Optional[int] = None,
@@ -492,20 +475,19 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 :dedent: 12
                 :caption: Send messages.
         """
-        timeout = kwargs.pop('timeout', None)
+        timeout = kwargs.pop("timeout", None)
         if self.key_encryption_key:
             modify_user_agent_for_encryption(
-                self._config.user_agent_policy.user_agent,
-                self._sdk_moniker,
-                self.encryption_version,
-                kwargs)
+                self._config.user_agent_policy.user_agent, self._sdk_moniker, self.encryption_version, kwargs
+            )
 
         try:
             self._message_encode_policy.configure(
                 require_encryption=self.require_encryption,
                 key_encryption_key=self.key_encryption_key,
                 resolver=self.key_resolver_function,
-                encryption_version=self.encryption_version)
+                encryption_version=self.encryption_version,
+            )
         except TypeError:
             warnings.warn(
                 "TypeError when calling message_encode_policy.configure. \
@@ -516,7 +498,8 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             self._message_encode_policy.configure(
                 require_encryption=self.require_encryption,
                 key_encryption_key=self.key_encryption_key,
-                resolver=self.key_resolver_function)
+                resolver=self.key_resolver_function,
+            )
         encoded_content = self._message_encode_policy(content)
         new_message = GenQueueMessage(message_text=encoded_content)
 
@@ -526,25 +509,22 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 visibilitytimeout=visibility_timeout,
                 message_time_to_live=time_to_live,
                 timeout=timeout,
-                **kwargs)
+                **kwargs
+            )
             queue_message = QueueMessage(
                 content=content,
                 id=enqueued[0].message_id,
                 inserted_on=enqueued[0].insertion_time,
                 expires_on=enqueued[0].expiration_time,
-                pop_receipt = enqueued[0].pop_receipt,
-                next_visible_on = enqueued[0].time_next_visible
+                pop_receipt=enqueued[0].pop_receipt,
+                next_visible_on=enqueued[0].time_next_visible,
             )
             return queue_message
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
-    def receive_message(
-        self, *,
-        visibility_timeout: Optional[int] = None,
-        **kwargs: Any
-    ) -> Optional[QueueMessage]:
+    def receive_message(self, *, visibility_timeout: Optional[int] = None, **kwargs: Any) -> Optional[QueueMessage]:
         """Removes one message from the front of the queue.
 
         When the message is retrieved from the queue, the response includes the message
@@ -582,18 +562,16 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 :dedent: 12
                 :caption: Receive one message from the queue.
         """
-        timeout = kwargs.pop('timeout', None)
+        timeout = kwargs.pop("timeout", None)
         if self.key_encryption_key or self.key_resolver_function:
             modify_user_agent_for_encryption(
-                self._config.user_agent_policy.user_agent,
-                self._sdk_moniker,
-                self.encryption_version,
-                kwargs)
+                self._config.user_agent_policy.user_agent, self._sdk_moniker, self.encryption_version, kwargs
+            )
 
         self._message_decode_policy.configure(
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
-            resolver=self.key_resolver_function
+            resolver=self.key_resolver_function,
         )
         try:
             message = self._client.messages.dequeue(
@@ -603,15 +581,17 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 cls=self._message_decode_policy,
                 **kwargs
             )
-            wrapped_message = QueueMessage._from_generated(  # pylint: disable=protected-access
-                message[0]) if message != [] else None
+            wrapped_message = (
+                QueueMessage._from_generated(message[0]) if message != [] else None  # pylint: disable=protected-access
+            )
             return wrapped_message
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
     def receive_messages(
-        self, *,
+        self,
+        *,
         messages_per_page: Optional[int] = None,
         visibility_timeout: Optional[int] = None,
         max_messages: Optional[int] = None,
@@ -675,18 +655,16 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 :dedent: 12
                 :caption: Receive messages from the queue.
         """
-        timeout = kwargs.pop('timeout', None)
+        timeout = kwargs.pop("timeout", None)
         if self.key_encryption_key or self.key_resolver_function:
             modify_user_agent_for_encryption(
-                self._config.user_agent_policy.user_agent,
-                self._sdk_moniker,
-                self.encryption_version,
-                kwargs)
+                self._config.user_agent_policy.user_agent, self._sdk_moniker, self.encryption_version, kwargs
+            )
 
         self._message_decode_policy.configure(
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
-            resolver=self.key_resolver_function
+            resolver=self.key_resolver_function,
         )
         try:
             command = functools.partial(
@@ -699,14 +677,19 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             if max_messages is not None and messages_per_page is not None:
                 if max_messages < messages_per_page:
                     raise ValueError("max_messages must be greater or equal to messages_per_page")
-            return ItemPaged(command, results_per_page=messages_per_page,
-                             page_iterator_class=MessagesPaged, max_messages=max_messages)
+            return ItemPaged(
+                command,
+                results_per_page=messages_per_page,
+                page_iterator_class=MessagesPaged,
+                max_messages=max_messages,
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
     def update_message(
-        self, message: Union[str, QueueMessage],
+        self,
+        message: Union[str, QueueMessage],
         pop_receipt: Optional[str] = None,
         content: Optional[object] = None,
         *,
@@ -763,13 +746,11 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 :dedent: 12
                 :caption: Update a message.
         """
-        timeout = kwargs.pop('timeout', None)
+        timeout = kwargs.pop("timeout", None)
         if self.key_encryption_key or self.key_resolver_function:
             modify_user_agent_for_encryption(
-                self._config.user_agent_policy.user_agent,
-                self._sdk_moniker,
-                self.encryption_version,
-                kwargs)
+                self._config.user_agent_policy.user_agent, self._sdk_moniker, self.encryption_version, kwargs
+            )
 
         if isinstance(message, QueueMessage):
             message_id = message.id
@@ -794,7 +775,8 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                     self.require_encryption,
                     self.key_encryption_key,
                     self.key_resolver_function,
-                    encryption_version=self.encryption_version)
+                    encryption_version=self.encryption_version,
+                )
             except TypeError:
                 warnings.warn(
                     "TypeError when calling message_encode_policy.configure. \
@@ -803,40 +785,40 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                     Retrying without encryption_version."
                 )
                 self._message_encode_policy.configure(
-                    self.require_encryption,
-                    self.key_encryption_key,
-                    self.key_resolver_function)
+                    self.require_encryption, self.key_encryption_key, self.key_resolver_function
+                )
             encoded_message_text = self._message_encode_policy(message_text)
             updated = GenQueueMessage(message_text=encoded_message_text)
         else:
             updated = None
         try:
-            response = cast(QueueMessage, self._client.message_id.update(
-                queue_message=updated,
-                visibilitytimeout=visibility_timeout or 0,
-                timeout=timeout,
-                pop_receipt=receipt,
-                cls=return_response_headers,
-                queue_message_id=message_id,
-                **kwargs))
+            response = cast(
+                QueueMessage,
+                self._client.message_id.update(
+                    queue_message=updated,
+                    visibilitytimeout=visibility_timeout or 0,
+                    timeout=timeout,
+                    pop_receipt=receipt,
+                    cls=return_response_headers,
+                    queue_message_id=message_id,
+                    **kwargs
+                ),
+            )
             new_message = QueueMessage(
                 content=message_text,
                 id=message_id,
                 inserted_on=inserted_on,
                 dequeue_count=dequeue_count,
                 expires_on=expires_on,
-                pop_receipt = response['popreceipt'],
-                next_visible_on = response['time_next_visible']
+                pop_receipt=response["popreceipt"],
+                next_visible_on=response["time_next_visible"],
             )
             return new_message
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
-    def peek_messages(
-        self, max_messages: Optional[int] = None,
-        **kwargs: Any
-    ) -> List[QueueMessage]:
+    def peek_messages(self, max_messages: Optional[int] = None, **kwargs: Any) -> List[QueueMessage]:
         """Retrieves one or more messages from the front of the queue, but does
         not alter the visibility of the message.
 
@@ -879,25 +861,21 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         if max_messages and not 1 <= max_messages <= 32:
             raise ValueError("Number of messages to peek should be between 1 and 32")
 
-        timeout = kwargs.pop('timeout', None)
+        timeout = kwargs.pop("timeout", None)
         if self.key_encryption_key or self.key_resolver_function:
             modify_user_agent_for_encryption(
-                self._config.user_agent_policy.user_agent,
-                self._sdk_moniker,
-                self.encryption_version,
-                kwargs)
+                self._config.user_agent_policy.user_agent, self._sdk_moniker, self.encryption_version, kwargs
+            )
 
         self._message_decode_policy.configure(
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
-            resolver=self.key_resolver_function
+            resolver=self.key_resolver_function,
         )
         try:
             messages = self._client.messages.peek(
-                number_of_messages=max_messages,
-                timeout=timeout,
-                cls=self._message_decode_policy,
-                **kwargs)
+                number_of_messages=max_messages, timeout=timeout, cls=self._message_decode_policy, **kwargs
+            )
             wrapped_messages = []
             for peeked in messages:
                 wrapped_messages.append(QueueMessage._from_generated(peeked))  # pylint: disable=protected-access
@@ -925,7 +903,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 :dedent: 12
                 :caption: Clears all messages.
         """
-        timeout = kwargs.pop('timeout', None)
+        timeout = kwargs.pop("timeout", None)
         try:
             self._client.messages.clear(timeout=timeout, **kwargs)
         except HttpResponseError as error:
@@ -933,9 +911,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def delete_message(
-        self, message: Union[str, QueueMessage],
-        pop_receipt: Optional[str] = None,
-        **kwargs: Any
+        self, message: Union[str, QueueMessage], pop_receipt: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Deletes the specified message.
 
@@ -971,7 +947,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 :dedent: 12
                 :caption: Delete a message.
         """
-        timeout = kwargs.pop('timeout', None)
+        timeout = kwargs.pop("timeout", None)
 
         receipt: Optional[str]
         if isinstance(message, QueueMessage):
@@ -984,11 +960,6 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         if receipt is None:
             raise ValueError("pop_receipt must be present")
         try:
-            self._client.message_id.delete(
-                pop_receipt=receipt,
-                timeout=timeout,
-                queue_message_id=message_id,
-                **kwargs
-            )
+            self._client.message_id.delete(pop_receipt=receipt, timeout=timeout, queue_message_id=message_id, **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
