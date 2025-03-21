@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: create_or_update_test_function.py
+FILE: create_or_update_test.py
 
 DESCRIPTION:
     This sample shows how to create or update a load test
@@ -21,8 +21,7 @@ USAGE:
 """
 from azure.developer.loadtesting import LoadTestAdministrationClient
 
-# for details refer: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/loadtestservice/azure-developer
-# -loadtesting/README.md
+# for details refer: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/loadtesting/azure-developer-loadtesting/README.md
 from azure.identity import DefaultAzureCredential
 
 import os
@@ -42,7 +41,7 @@ result = client.create_or_update_test(
     {
         "description": "",
         "displayName": "My New Load Test",
-        "loadTestConfig": {
+        "loadTestConfiguration": {
             "engineInstances": 1,
             "splitAllCSVs": False,
         },
@@ -65,7 +64,7 @@ result = client.create_or_update_test(
                 "type": "AKV_SECRET_URI",
             }
         },
-        "environmentVariables": {"my-varaible": "value"},
+        "environmentVariables": {"my-variable": "value"},
     },
 )
 

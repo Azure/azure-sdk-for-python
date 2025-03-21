@@ -1,5 +1,22 @@
 # Release History
 
+## 1.1.0b1 (2025-03-24)
+
+Updated the client library to use API Version 2025-05-01-preview. This adds all the capabilities that were introduced until this API version.
+
+This version and all future versions will require Python 3.8+. Python 3.7 is no longer supported.
+
+### Features Added
+
+- Support for AutoStop Criteria
+- Support for Quick Load Tests with RPS Inputs
+- Support for URL Tests with JSON based test plans
+- Support for Locust Load Tests
+- Support for Multi Region Load Tests
+- Support for Disabling Public IP Deployment for Private Load Tests
+- Support for uploading ZIP Artifacts
+- Support for all Test Profiles & Test Profile Run Scenarios
+
 ## 1.0.1 (2025-01-20)
 
 ### Bugs Fixed
