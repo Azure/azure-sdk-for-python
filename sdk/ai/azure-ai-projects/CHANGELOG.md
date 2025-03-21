@@ -4,6 +4,8 @@
 
 ### Features added
 
+* New parameters added for Azure AI Search tool, with corresponding sample update.
+
 ### Sample updates
 
 ### Bugs Fixed
