@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 from __future__ import annotations
 import time
-from typing import TYPE_CHECKING, Any, Awaitable, Optional, cast, TypeVar
+from typing import TYPE_CHECKING, Any, Awaitable, Optional, cast, TypeVar, Union
 
 from ...credentials import AccessTokenInfo, TokenRequestOptions
 from ..pipeline import PipelineRequest, PipelineResponse
@@ -29,7 +29,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
     :param credential: The credential.
     :type credential: ~corehttp.credentials.TokenCredential
     :param str scopes: Lets you specify the type of access needed.
-    :keyword list[dict[str, str]] auth_flows: A list of authentication flows to use for the credential.
+    :keyword list[dict[str, Union[str, list[str]]]] auth_flows: A list of authentication flows to use for the credential.
     """
 
     # pylint: disable=unused-argument
@@ -37,7 +37,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         self,
         credential: "AsyncTokenCredential",
         *scopes: str,
-        auth_flows: Optional[list[dict[str, str]]] = None,
+        auth_flows: Optional[list[dict[str, Union[str, list[str]]]]] = None,
         **kwargs: Any,
     ) -> None:
         super().__init__()
@@ -54,13 +54,16 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         return self._lock_instance
 
     async def on_request(
-        self, request: PipelineRequest[HTTPRequestType], *, auth_flows: Optional[list[dict[str, str]]] = None
+        self,
+        request: PipelineRequest[HTTPRequestType],
+        *,
+        auth_flows: Optional[list[dict[str, Union[str, list[str]]]]] = None,
     ) -> None:
         """Adds a bearer token Authorization header to request and sends request to next policy.
 
         :param request: The pipeline request object to be modified.
         :type request: ~corehttp.runtime.pipeline.PipelineRequest
-        :keyword list[dict[str, str]] auth_flows: A list of authentication flows to use for the credential.
+        :keyword list[dict[str, Union[str, list[str]]]] auth_flows: A list of authentication flows to use for the credential.
         :raises: :class:`~corehttp.exceptions.ServiceRequestError`
         """
         _BearerTokenCredentialPolicyBase._enforce_https(request)  # pylint:disable=protected-access
