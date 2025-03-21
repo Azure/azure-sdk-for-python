@@ -159,6 +159,7 @@ class CheckFile:
         self.package_name = self.whole_package_name.split("-", 2)[-1]
         self.sdk_folder = package_info["path"][0].split("/")[-1]
         self.tag_is_stable = package_info["tagIsStable"]
+        self.target_release_date = package_info["targetReleaseDate"] or current_time()
 
     def get_private_package(self) -> List[str]:
         return self.package_info["artifacts"]
@@ -302,7 +303,7 @@ class CheckFile:
             next_version = self.next_version
             content[1:1] = [
                 "\n",
-                f"## {next_version}{self.version_suggestion} ({current_time()})\n\n",
+                f"## {next_version}{self.version_suggestion} ({self.target_release_date})\n\n",
                 self.get_changelog(),
                 "\n",
             ]

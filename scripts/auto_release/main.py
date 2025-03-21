@@ -147,6 +147,7 @@ class CodegenTestPR:
             "repoHttpsUrl": "https://github.com/Azure/azure-rest-api-specs",
             "specFolder": self.spec_repo,
             file_name: [self.readme_local_folder()],
+            "targetReleaseDate": self.target_release_date,
         }
         log(str(input_data))
 
