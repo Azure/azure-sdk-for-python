@@ -5,25 +5,24 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: create_or_update_app_components.py
+FILE: create_or_update_app_components_test.py
 
 DESCRIPTION:
-    This sample shows how to create or update app component
+    This sample shows how to create or update app component for an existing test.
 
 USAGE:
-    python create_or_update_app_components.py
+    python create_or_update_app_components_test.py
 
     Set the environment variables with your own values before running the sample:
     1)  AZURE_CLIENT_ID - client id
     2)  AZURE_CLIENT_SECRET - client secret
     3)  AZURE_TENANT_ID - tenant id for your Azure
-    4)  RESOURCE_ID - resource id of resource to connect
+    4)  RESOURCE_ID - resource id of resource that will be added as the app component
     5)  LOADTESTSERVICE_ENDPOINT - Data Plane endpoint for Loadtestservice
 """
 from azure.developer.loadtesting import LoadTestAdministrationClient
 
-# for details refer: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/loadtestservice/azure-developer
-# -loadtesting/README.md
+# for details refer: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/loadtesting/azure-developer-loadtesting/README.md
 from azure.identity import DefaultAzureCredential
 
 import os
@@ -38,7 +37,6 @@ RESOURCE_ID = os.environ["RESOURCE_ID"]
 client = LoadTestAdministrationClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
 
 TEST_ID = "my-sdk-test-id"
-APP_COMPONENT = "my-new-app-component"
 
 result = client.create_or_update_app_components(
     TEST_ID,

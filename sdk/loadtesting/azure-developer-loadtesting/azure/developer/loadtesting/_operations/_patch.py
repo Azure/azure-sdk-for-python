@@ -221,7 +221,7 @@ class LoadTestAdministrationClientOperationsMixin(GeneratedAdministrationClientO
         if polling_interval is None:
             polling_interval = 5
         upload_test_file_operation = super()._begin_upload_test_file(
-            test_id=test_id, file_name=file_name, file_type=file_type, **kwargs
+            test_id=test_id, file_name=file_name, file_type=file_type, body=body, **kwargs
         )
 
         command = partial(self.get_test_file, test_id=test_id, file_name=file_name)
