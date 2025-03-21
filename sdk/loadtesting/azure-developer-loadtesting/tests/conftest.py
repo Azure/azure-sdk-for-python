@@ -24,9 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import os
-import platform
 import pytest
-import sys
 
 from dotenv import load_dotenv
 
