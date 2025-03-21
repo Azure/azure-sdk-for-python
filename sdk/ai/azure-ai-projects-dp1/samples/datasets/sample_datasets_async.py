@@ -7,7 +7,7 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to use the asynchronous
-    datasets methods to upload files, create datasets that reference those files,
+    `.datasets` methods to upload files, create datasets that reference those files,
     list datasets and delete datasets.
 
 USAGE:
