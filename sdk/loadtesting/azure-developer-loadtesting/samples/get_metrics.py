@@ -29,9 +29,6 @@ from azure.identity import DefaultAzureCredential
 import os
 from dotenv import load_dotenv
 
-# for various
-import time
-
 load_dotenv()
 LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]
 
