@@ -502,8 +502,6 @@ class ContainerProxy:
             response_hook=response_hook,
             **kwargs
         )
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, items)
         return items
 
     @overload
