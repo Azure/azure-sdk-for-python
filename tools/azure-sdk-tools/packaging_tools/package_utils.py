@@ -160,6 +160,14 @@ class CheckFile:
         self.sdk_folder = package_info["path"][0].split("/")[-1]
         self.tag_is_stable = package_info["tagIsStable"]
         self.target_release_date = package_info["targetReleaseDate"] or current_time()
+        self.allow_invalid_next_version = package_info["allowInvalidNextVersion"]
+        self._next_version = None
+
+    @property
+    def next_version(self) -> str:
+        if self._next_version is None:
+            self._next_version = self.calculate_next_version()
+        return self._next_version
 
     def get_private_package(self) -> List[str]:
         return self.package_info["artifacts"]
@@ -245,7 +253,7 @@ class CheckFile:
     def get_changelog(self) -> str:
         return self.package_info["changelog"]["content"]
 
-    def calculate_next_version_proc(self, last_version: str):
+    def calculate_next_version_proc(self, last_version: str) -> str:
         preview_tag = not self.tag_is_stable
         changelog = self.get_changelog()
         if changelog == "":
@@ -269,12 +277,11 @@ class CheckFile:
 
         return next_version
 
-    def calculate_next_version(self):
+    def calculate_next_version(self) -> str:
         last_version = self.get_last_release_version()
         if last_version:
-            self.next_version = self.calculate_next_version_proc(last_version)
-        else:
-            self.next_version = "1.0.0b1"
+            return self.calculate_next_version_proc(last_version)
+        return "1.0.0b1"
 
     def get_all_files_under_package_folder(self) -> List[str]:
         files = []
@@ -294,11 +301,21 @@ class CheckFile:
             if Path(file).name == "_version.py":
                 modify_file(file, edit_version_file)
 
+    @property
+    def has_invalid_next_version(self) -> bool:
+        return self.next_version == "0.0.0"
+
     def check_version(self):
-        self.calculate_next_version()
+        if self.has_invalid_next_version and not self.allow_invalid_next_version:
+            _LOGGER.info(f"next version is invalid, skip check _version.py")
+            return
         self.edit_all_version_file()
 
     def check_changelog_file(self):
+        if self.has_invalid_next_version and not self.allow_invalid_next_version:
+            _LOGGER.info(f"next version is invalid, skip check CHANGELOG.md")
+            return
+
         def edit_changelog_proc(content: List[str]):
             next_version = self.next_version
             content[1:1] = [

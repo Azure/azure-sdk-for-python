@@ -279,6 +279,7 @@ def main(generate_input, generate_output):
                     readme_python_content = get_readme_python_content(str(Path(spec_folder) / readme_or_tsp))
                     package_entry["isMultiapi"] = is_multiapi_package(readme_python_content)
                     package_entry["targetReleaseDate"] = data.get("targetReleaseDate", "")
+                    package_entry["allowInvalidNextVersion"] = data.get("targetReleaseDate", False)
                     result[package_name] = package_entry
                 else:
                     result[package_name]["path"].append(folder_name)

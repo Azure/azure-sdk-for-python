@@ -148,6 +148,7 @@ class CodegenTestPR:
             "specFolder": self.spec_repo,
             file_name: [self.readme_local_folder()],
             "targetReleaseDate": self.target_release_date,
+            "allowInvalidNextVersion": True,
         }
         log(str(input_data))
 
