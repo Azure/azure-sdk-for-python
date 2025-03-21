@@ -10,6 +10,7 @@ azure-core
 six
 isodate
 azure-appconfiguration
+azure-appconfiguration-provider
 azure-core-tracing-opentelemetry
 azure-keyvault-secrets
 azure-monitor-opentelemetry-exporter
@@ -72,3 +73,4 @@ promptflow-core
 promptflow-devkit
 nltk
 azure-monitor-opentelemetry
+python-dotenv
