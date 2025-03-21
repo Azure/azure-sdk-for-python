@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed the issue that could not deserialize `document_debug_info`.    #40138
+
 ### Other Changes
 
 ## 11.6.0b10 (2025-03-11)
