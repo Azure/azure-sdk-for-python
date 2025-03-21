@@ -196,7 +196,7 @@ class DataType:
 
 
 class IndexingDirective:
-    """Specifies whether or not the resource is to be indexed."""
+    """Specifies whether the resource is to be indexed."""
     Default: int = 0
     """Use any pre-defined/pre-configured defaults."""
     Exclude: int = 1
@@ -224,7 +224,7 @@ class PermissionMode:
 
 
 class TriggerType:
-    """Specifies the type of a trigger."""
+    """Specifies the type of trigger."""
     Pre: Literal["pre"] = "pre"
     """Trigger should be executed before the associated operation(s)."""
     Post: Literal["post"] = "post"
