@@ -293,15 +293,15 @@ class WorkspaceConfigurationOptions(object):
         from azure.ai.ml.constants import Scope
 
         # list workspaces in the resource group set in ml_client
-        hubs = ml_client.workspace_hubs.list()
-        hubs = ml_client.workspace_hubs.list(scope=Scope.RESOURCE_GROUP)
+        hubs = ml_client.workspace_hubs.list()  # type:ignore
+        hubs = ml_client.workspace_hubs.list(scope=Scope.RESOURCE_GROUP)  # type:ignore
 
         # list workspaces in the subscription set in ml_client
-        hubs = ml_client.workspace_hubs.list(scope=Scope.SUBSCRIPTION)
+        hubs = ml_client.workspace_hubs.list(scope=Scope.SUBSCRIPTION)  # type:ignore
         # [END hub_list]
 
         # [START hub_get]
-        workspace = ml_client.workspace_hubs.get(name="test-hub1")
+        workspace = ml_client.workspace_hubs.get(name="test-hub1")  # type:ignore
         # [END hub_get]
 
         # [START hub_begin_create]
@@ -314,17 +314,17 @@ class WorkspaceConfigurationOptions(object):
             location="eastus",
             resource_group=resource_group,
         )
-        hub = ml_client.workspace_hubs.begin_create(workspace_hub=hub).result()
+        hub = ml_client.workspace_hubs.begin_create(workspace_hub=hub).result()  # type:ignore
         # [END hub_begin_create]
 
         # [START hub_begin_update]
-        hub = ml_client.workspace_hubs.get(name="test-hub1")
+        hub = ml_client.workspace_hubs.get(name="test-hub1")  # type:ignore
         hub.description = "a different description"
-        hub = ml_client.workspace_hubs.begin_update(workspace_hub=hub).result()
+        hub = ml_client.workspace_hubs.begin_update(workspace_hub=hub).result()  # type:ignore
         # [END hub_begin_update]
 
         # [START hub_begin_delete]
-        ml_client.workspace_hubs.begin_delete(
+        ml_client.workspace_hubs.begin_delete(  # type:ignore
             name="test-hub1", delete_dependent_resources=True, permanently_delete=True
         )
         # [END hub_begin_delete]
