@@ -46,40 +46,6 @@ def print_check(cmd):
     subprocess.check_call(cmd, shell=True)
 
 
-def preview_version_plus(preview_label: str, last_version: str) -> str:
-    num = last_version.split(preview_label)
-    num[1] = str(int(num[1]) + 1)
-    return f"{num[0]}{preview_label}{num[1]}"
-
-
-def stable_version_plus(changelog: str, last_version: str):
-    flag = [False, False, False]  # breaking, feature, bugfix
-    flag[0] = "### Breaking Changes" in changelog
-    flag[1] = "### Features Added" in changelog
-    flag[2] = "### Bugs Fixed" in changelog
-
-    num = last_version.split(".")
-    if flag[0]:
-        return f"{int(num[0]) + 1}.0.0"
-    elif flag[1]:
-        return f"{num[0]}.{int(num[1]) + 1}.0"
-    elif flag[2]:
-        return f"{num[0]}.{num[1]}.{int(num[2]) + 1}"
-    else:
-        return "0.0.0"
-
-
-# find all the files of one folder, including files in subdirectory
-def all_files(path: str, files: List[str]):
-    all_folder = os.listdir(path)
-    for item in all_folder:
-        folder = str(Path(f"{path}/{item}"))
-        if os.path.isdir(folder):
-            all_files(folder, files)
-        else:
-            files.append(folder)
-
-
 def modify_file(file_path: str, func: Any):
     with open(file_path, "r") as file_in:
         content = file_in.readlines()
@@ -383,10 +349,6 @@ class CodegenTestPR:
     def get_private_package(self) -> List[str]:
         content = self.get_autorest_result()
         return content["packages"][0]["artifacts"]
-
-    @property
-    def get_whl_package(self) -> str:
-        return [package for package in self.get_private_package() if package.endswith(".whl")][0]
 
     def ask_check_policy(self):
         changelog = self.get_changelog()
