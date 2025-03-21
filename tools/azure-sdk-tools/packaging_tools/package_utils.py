@@ -162,6 +162,7 @@ class CheckFile:
         self.target_release_date = package_info["targetReleaseDate"] or current_time()
         self.allow_invalid_next_version = package_info["allowInvalidNextVersion"]
         self._next_version = None
+        self.version_suggestion = ""
 
     @property
     def next_version(self) -> str:
