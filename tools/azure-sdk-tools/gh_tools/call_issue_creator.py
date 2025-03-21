@@ -61,7 +61,7 @@ def main(targeted_packages):
             logging.info(f"No failures found for {file}. Closing issue if exists.")
             close_vnext_issue(file, type_check)
         else:
-            # If no failure is found, there was an error in the process
+            # If failure is None, there was an error in the process
             logging.info(f"No action taken.")
         
 
@@ -85,38 +85,12 @@ if __name__ == "__main__":
         ),
     )
 
-    parser.add_argument(
-        "--junitxml",
-        dest="test_results",
-        help=(
-            "The output path for the test results file of invoked checks."
-            'Example: --junitxml="junit/test-results.xml"'
-        ),
-    )
-
-    parser.add_argument(
-        "--mark_arg",
-        dest="mark_arg",
-        help=(
-            'The complete argument for `pytest -m "<input>"`. This can be used to exclude or include specific pytest markers.'
-            '--mark_arg="not cosmosEmulator"'
-        ),
-    )
-
     parser.add_argument("--disablecov", help=("Flag. Disables code coverage."), action="store_true")
-
-    parser.add_argument(
-        "--tenvparallel",
-        default="",
-        dest="tenvparallel",
-        help=("Set tox parallel invocation.")
-    )
 
     parser.add_argument(
         "--service",
         help=("Name of service directory (under sdk/) to test. Example: --service applicationinsights"),
     )
-
 
     parser.add_argument(
         "-w",
@@ -131,21 +105,6 @@ if __name__ == "__main__":
         dest="injected_packages",
         default="",
         help="Comma or space-separated list of packages that should be installed prior to dev_requirements. If local path, should be absolute.",
-    )
-
-    parser.add_argument(
-        "--filter-type",
-        dest="filter_type",
-        default="Build",
-        help="Filter type to identify eligible packages. for e.g. packages filtered in Build can pass filter type as Build,",
-        choices=["Build", "Docs", "Regression", "Omit_management", "None"],
-    )
-
-    parser.add_argument(
-        "-d",
-        "--dest-dir",
-        dest="dest_dir",
-        help="Location to generate any output files(if any). For e.g. apiview stub file",
     )
 
     args = parser.parse_args()
