@@ -5,7 +5,7 @@ import argparse
 import requests
 import json
 import logging
-from vnext_issue_creator import create_vnext_issue  # Import the issue creator function
+from vnext_issue_creator import create_vnext_issue, close_vnext_issue  # Import the issue creator function
 from ci_tools.functions import discover_targeted_packages
 
 logging.getLogger().setLevel(logging.INFO)
@@ -13,7 +13,6 @@ root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "
 
 
 def find_failures(package_dir):
-    failures = []
     build_id = os.getenv("BUILD_BUILDID")
     timeline_link = f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds/{build_id}/timeline?api-version=6.0"
 
@@ -35,25 +34,23 @@ def find_failures(package_dir):
                 build_output = log_output.content.decode("utf-8")
                 if f"ERROR:root:{package_name} exited with linting error" in build_output:
                     print(f"Found failure in task: {task['name']}")
-                    failures.append((task["name"], build_output))
+                    return package_dir, "pylint"
     except Exception as e:
         print(f"Exception occurred while getting build info: {e}")
 
-    return failures
-
-def create_issues(failures):
-    for file, failure in failures:
-        create_vnext_issue(file, failure)
+    return None, None
 
 def main(targeted_packages):
     for package in targeted_packages:
         print(f"Processing package: {package}")
-        failures = find_failures(package)
-        if failures:
-            create_issues(failures)
+        file, failure = find_failures(package)
+        if failure:
+            logging.info(f"Creating issue for {file} with failure: {failure}")
+            create_vnext_issue(file, failure)
         else:
-            print("No failures found in the logs.")
-
+            logging.info(f"No failures found for {file}. Closing issue if exists.")
+            close_vnext_issue(package, "pylint")
+        
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
