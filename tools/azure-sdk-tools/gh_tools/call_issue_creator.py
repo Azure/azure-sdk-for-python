@@ -12,13 +12,17 @@ logging.getLogger().setLevel(logging.INFO)
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "..", ".."))
 
 
-def find_failures(package_name):
+def find_failures(package_dir):
     failures = []
     build_id = os.getenv("BUILD_BUILDID")
     timeline_link = f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds/{build_id}/timeline?api-version=6.0"
 
     token = os.environ["SYSTEM_ACCESSTOKEN"]
     AUTH_HEADERS = {"Authorization": f"Bearer {token}"}
+
+    package_name = os.path.basename(package_dir)
+
+    logging.info(f"Package name: {package_name}")
 
     try:
         response = requests.get(timeline_link, headers=AUTH_HEADERS)
@@ -41,12 +45,14 @@ def create_issues(failures):
     for file, failure in failures:
         create_vnext_issue(file, failure)
 
-def main():
-    failures = find_failures(args.glob_string)
-    if failures:
-        create_issues(failures)
-    else:
-        print("No failures found in the logs.")
+def main(targeted_packages):
+    for package in targeted_packages:
+        print(f"Processing package: {package}")
+        failures = find_failures(package)
+        if failures:
+            create_issues(failures)
+        else:
+            print("No failures found in the logs.")
 
 
 if __name__ == "__main__":
@@ -154,10 +160,8 @@ if __name__ == "__main__":
         args.glob_string, target_dir, "", args.filter_type, compatibility_filter
     )
 
-    logging.info(f"Targeted packages: {targeted_packages}")
-
     if len(targeted_packages) == 0:
         logging.info(f"No packages collected for targeting string {args.glob_string} and root dir {root_dir}. Exit 0.")
         exit(0)
 
-    main()
+    main(targeted_packages)
