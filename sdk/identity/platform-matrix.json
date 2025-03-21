@@ -11,7 +11,7 @@
         "ubuntu_20.04_3.8_msal": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
-          "PythonVersion": "3.8",
+          "PythonVersion": "env:PYVERSION_N5",
           "CoverageArg": "--disablecov",
           "InjectedPackages": "git+https://github.com/AzureAD/microsoft-authentication-library-for-python@dev",
           "UnsupportedToxEnvironments": "mindependency,latestdependency"
