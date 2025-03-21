@@ -27,6 +27,7 @@ from ._models import break_tool_call_into_messages, convert_message
 # Maximum items to fetch in a single AI Services API call (imposed by the service).
 _AI_SERVICES_API_MAX_LIMIT = 100
 
+
 class AIAgentConverter:
     """
     A converter for AI agent data.
@@ -51,7 +52,6 @@ class AIAgentConverter:
         :param thread_id: The ID of the thread.
         :type thread_id: str
         :return: A list of messages in chronological order.
-        :rtype: List[Message]
         """
         to_return = []
 
@@ -87,7 +87,11 @@ class AIAgentConverter:
         after = None
         while has_more:
             run_steps = self.project_client.agents.list_run_steps(
-                thread_id=thread_id, run_id=run_id, limit=_AI_SERVICES_API_MAX_LIMIT, order=ListSortOrder.ASCENDING, after=after
+                thread_id=thread_id,
+                run_id=run_id,
+                limit=_AI_SERVICES_API_MAX_LIMIT,
+                order=ListSortOrder.ASCENDING,
+                after=after,
             )
             has_more = run_steps.has_more
             after = run_steps.last_id
@@ -176,15 +180,46 @@ class AIAgentConverter:
         return query, responses
 
     @staticmethod
-    def _filter_messages_up_to_run_id(chronological_messages, run_id: str):
+    def _filter_run_ids_up_to_run_id(run_ids: List[str], run_id: str, include_run_id: bool = True) -> List[str]:
+        """
+        Filters run IDs up to a specific run ID.
+
+        This method processes a list of run IDs and filters out run IDs that come after the specified run ID.
+        It ensures that only run IDs up to and including the specified run ID are included in the result.
+
+        :param run_ids: The list of run IDs in chronological order.
+        :type run_ids: List[str]
+        :param run_id: The ID of the run to filter messages up to.
+        :type run_id: str
+        :return: The filtered list of run IDs up to the specified run ID.
+        :rtype: List[str]
+        """
+        for index, single_run_id in enumerate(run_ids):
+            # Since this is the conversation of the entire thread and we are interested in a given run, we need to
+            # filter out the messages that came after the run.
+            if single_run_id == run_id:
+                if include_run_id:
+                    return run_ids[: index + 1]
+                return run_ids[:index]
+
+        # If we didn't find the run_id, we return an empty list.
+        return []
+
+    @staticmethod
+    def _filter_messages_up_to_run_id(
+        chronological_messages, run_id: str, include_run_id: bool = True
+    ) -> List[Message]:
         """
         Filters messages up to a specific run ID.
 
+        This method processes a list of messages in chronological order and filters out messages that come after the specified run ID.
+        It ensures that only messages up to and including the specified run ID are included in the result.
+
         :param chronological_messages: The list of messages in chronological order.
         :type chronological_messages: List[Message]
-        :param run_id: The ID of the run.
+        :param run_id: The ID of the run to filter messages up to.
         :type run_id: str
-        :return: The filtered list of messages.
+        :return: The filtered list of messages up to the specified run ID.
         :rtype: List[Message]
         """
         filtered_messages = []
@@ -196,6 +231,11 @@ class AIAgentConverter:
                 if single_turn.run_id == run_id:
                     in_my_current_run = True
 
+                    # If we entered our current run and its the run that we have requested to filter up to, but
+                    # not including, we can break out of the loop.
+                    if not include_run_id:
+                        break
+
             # Then, if we think that we are currently in our run and we have a message that is not from our run,
             # it means that we have left our run.
             if in_my_current_run and single_turn.run_id != run_id:
@@ -205,6 +245,147 @@ class AIAgentConverter:
             filtered_messages.append(single_turn)
 
         return filtered_messages
+
+    @staticmethod
+    def _extract_typed_messages(ai_services_messages) -> List[Message]:
+        """
+        Extracts and converts AI service messages to a list of typed Message objects.
+
+        This method processes a list of messages from the AI service, converting them into
+        appropriate Message subclass instances (UserMessage, AssistantMessage) based on their role.
+        It filters out messages without content and handles different message roles accordingly.
+
+        :param ai_services_messages: A list of messages from the AI service.
+        :type ai_services_messages: _models.OpenAIPageableListOfThreadMessage (some internal type from ai projects)
+        :return: A list of typed Message objects.
+        :rtype: List[Message]
+        """
+        # We will collect messages in this accumulator.
+        final_messages: List[Message] = []
+
+        # Each visible message in the conversation is a message from the user or the assistant, we collect
+        # both the text and timestamp, so we can recreate the chronological order.
+        for single_turn in ai_services_messages:
+            # This shouldn't really happen, ever. What's the point of a message without content? But to avoid a nasty
+            # crash on one of the historical messages, let's check for it and bail out from this iteration.
+            if len(single_turn.content) < 1:
+                continue
+
+            # Build the content of the text message.
+            content = {
+                "type": "text",
+                "text": single_turn.content[0].text.value,
+            }
+
+            # If we have a user message, then we save it as such and since it's a human message, there is no
+            # run_id associated with it.
+            if single_turn.role == _USER:
+                final_messages.append(UserMessage(content=[content], createdAt=single_turn.created_at))
+                continue
+
+            # In this case, we have an assistant message. Unfortunately, this would only have the user-facing
+            # agent's response, without any details on what tool was called, with what parameters, and what
+            # the result was. That will be added later in the method.
+            if single_turn.role == _AGENT:
+                # We are required to put the run_id in the assistant message.
+                final_messages.append(
+                    AssistantMessage(content=[content], run_id=single_turn.run_id, createdAt=single_turn.created_at)
+                )
+                continue
+
+        return final_messages
+
+    def _fetch_tool_calls(self, thread_id: str, run_id: str) -> List[Message]:
+        """
+        Fetches tool calls for a given thread and run, and converts them into messages.
+
+        This method retrieves tool calls for a specified thread and run, converts them into messages using the
+        `break_tool_call_into_messages` utility function, and returns the list of messages.
+
+        :param thread_id: The ID of the thread.
+        :type thread_id: str
+        :param run_id: The ID of the run.
+        :type run_id: str
+        :return: A list of messages converted from tool calls.
+        :rtype: List[Message]
+        """
+        tool_calls: List[Message] = []
+        for chrono_tool_call in self._list_tool_calls_chronological(thread_id, run_id):
+            tool_calls.extend(break_tool_call_into_messages(chrono_tool_call, run_id))
+        return tool_calls
+
+    def _retrieve_tool_calls_up_to_including_run_id(
+        self, thread_id: str, run_id: str, exclude_tool_calls_previous_runs: bool = False
+    ) -> List[Message]:
+        """
+        Converts tool calls to messages for a given thread and run.
+
+        This method retrieves tool calls for a specified thread and run, converts them into messages,
+        and optionally includes tool calls from previous runs.
+
+        :param thread_id: The ID of the thread.
+        :type thread_id: str
+        :param run_id: The ID of the run.
+        :type run_id: str
+        :param exclude_tool_calls_previous_runs: Whether to exclude tool calls from previous runs in the conversion. Default is False.
+        :type exclude_tool_calls_previous_runs: bool
+        :return: A list of messages converted from tool calls.
+        :rtype: List[Message]
+        """
+        to_return: List[Message] = []
+
+        # Add all the tool calls and results of this run as messages.
+        for tool_call in self._list_tool_calls_chronological(thread_id, run_id):
+            # We need to add the tool call and the result as two separate messages.
+            to_return.extend(break_tool_call_into_messages(tool_call, run_id))
+
+        # We also request to add all the tool calls and results of the previous runs into the chat history. This is
+        # a bit of an expensive operation, but the requirement is to support this functionality, even at the penalty
+        # in latency in performance. New agents api is to include these details cheaply through a single API call in
+        # list_messages, but until that is available, we need to do this. User can also opt-out of this functionality
+        # by setting the exclude_tool_calls_previous_runs flag to True.
+        if not exclude_tool_calls_previous_runs:
+            # These are all the assistant (any number) in the thread.
+            # We set the include_run_id to False, since we don't want to include the current run's tool calls, which
+            # are already included in the previous step.
+            run_ids_up_to_run_id = AIAgentConverter._filter_run_ids_up_to_run_id(
+                self._list_run_ids_chronological(thread_id), run_id, include_run_id=False
+            )
+
+            # Since each _list_tool_calls_chronological call is expensive, we can use a thread pool to speed
+            # up the process by parallelizing the AI Services API requests.
+            with ThreadPoolExecutor() as executor:
+                futures = {
+                    executor.submit(self._fetch_tool_calls, thread_id, run_id): run_id
+                    for run_id in run_ids_up_to_run_id
+                }
+                for future in as_completed(futures):
+                    to_return.extend(future.result())
+
+        return to_return
+
+    def _retrieve_all_tool_calls(self, thread_id: str, run_ids: List[str]) -> List[Message]:
+        """
+        Converts all tool calls to messages for a given thread and list of run IDs.
+
+        This method retrieves tool calls for a specified thread and list of run IDs, converts them into messages,
+        and returns the list of messages.
+
+        :param thread_id: The ID of the thread.
+        :type thread_id: str
+        :param run_ids: The list of run IDs.
+        :type run_ids: List[str]
+        :return: A list of messages converted from tool calls.
+        :rtype: List[Message]
+        """
+        to_return: List[Message] = []
+
+        with ThreadPoolExecutor() as executor:
+            futures = {executor.submit(self._fetch_tool_calls, thread_id, run_id): run_id for run_id in run_ids}
+            for future in as_completed(futures):
+                to_return.extend(future.result())
+
+        return to_return
 
     @staticmethod
     def _is_agent_tool_call(message: Message) -> bool:
@@ -265,67 +446,17 @@ class AIAgentConverter:
         # Walk through the "user-facing" conversation history and start adding messages.
         chronological_conversation = self._list_messages_chronological(thread_id)
 
-        # We will collect messages in this accumulator.
-        final_messages: List[Message] = []
+        # Since this is Xth run of out possibly N runs, we are only interested is messages that are before the run X.
+        chrono_until_run_id = AIAgentConverter._filter_messages_up_to_run_id(chronological_conversation, run_id)
 
-        # Each visible message in the conversation is a message from the user or the assistant, we collect
-        # both the text and timestamp, so we can recreate the chronological order.
-        for single_turn in AIAgentConverter._filter_messages_up_to_run_id(chronological_conversation, run_id):
-            # This shouldn't really happen, ever. What's the point of a message without content? But to avoid a nasty
-            # crash on one of the historical messages, let's check for it and bail out from this iteration.
-            if len(single_turn.content) < 1:
-                continue
-
-            # Build the content of the text message.
-            content = {
-                "type": "text",
-                "text": single_turn.content[0].text.value,
-            }
-
-            # If we have a user message, then we save it as such and since it's a human message, there is no
-            # run_id associated with it.
-            if single_turn.role == _USER:
-                final_messages.append(UserMessage(content=[content], createdAt=single_turn.created_at))
-                continue
-
-            # In this case, we have an assistant message. Unfortunately, this would only have the user-facing
-            # agent's response, without any details on what tool was called, with what parameters, and what
-            # the result was. That will be added later in the method.
-            if single_turn.role == _AGENT:
-                # We are required to put the run_id in the assistant message.
-                final_messages.append(
-                    AssistantMessage(content=[content], run_id=single_turn.run_id, createdAt=single_turn.created_at)
-                )
-                continue
+        # Messages are now still in hidden AI services' type, so to get finer control over our typing, we need to
+        # convert the message to a friendly schema.
+        final_messages = AIAgentConverter._extract_typed_messages(chrono_until_run_id)
 
         # Third, add all the tool calls and results as messages.
-        for tool_call in self._list_tool_calls_chronological(thread_id, run_id):
-            # We need to add the tool call and the result as two separate messages.
-            final_messages.extend(break_tool_call_into_messages(tool_call, run_id))
-
-        # We also request to add all the tool calls and results of the previous runs into the chat history. This is
-        # a bit of an expensive operation, but the requirement is to support this functionality, even at the penalty
-        # in latency in performance. New agents api is to include these details cheaply through a single API call in
-        # list_messages, but until that is available, we need to do this. User can also opt-out of this functionality
-        # by setting the exclude_tool_calls_previous_runs flag to True.
-        if not exclude_tool_calls_previous_runs:
-            # These are all the assistant (any number) in the thread.
-            all_run_ids = self._list_run_ids_chronological(thread_id)
-
-            # Helper method to fetch tool calls for a given run ID.
-            def fetch_tool_calls(local_run_id) -> List[Message]:
-                tool_calls: List[Message] = []
-                if local_run_id != thread_run.id:
-                    for chrono_tool_call in self._list_tool_calls_chronological(thread_id, local_run_id):
-                        tool_calls.extend(break_tool_call_into_messages(chrono_tool_call, local_run_id))
-                return tool_calls
-
-            # Since each _list_tool_calls_chronological call is expensive, we can use a thread pool to speed
-            # up the process by parallelizing the AI Services API requests.
-            with ThreadPoolExecutor() as executor:
-                futures = {executor.submit(fetch_tool_calls, run_id): run_id for run_id in all_run_ids}
-                for future in as_completed(futures):
-                    final_messages.extend(future.result())
+        final_messages.extend(
+            self._retrieve_tool_calls_up_to_including_run_id(thread_id, run_id, exclude_tool_calls_previous_runs)
+        )
 
         # All of our final messages have to be in chronological order. We use a secondary sorting key,
         # since the tool_result and assistant events would come with the same timestamp, so we need to
@@ -340,8 +471,7 @@ class AIAgentConverter:
             final_messages.insert(0, SystemMessage(content=instructions))
 
         # We need to collect all the messages that are not the current run's response.
-        query: List[Message] = [what for what in final_messages if what.run_id != run_id]
-        responses: List[Message] = [what for what in final_messages if what.run_id == run_id]
+        query, responses = AIAgentConverter._break_into_query_responses(final_messages, run_id)
 
         # Collect it into the final result and dump it to JSON.
         final_result = EvaluatorData(
@@ -351,6 +481,94 @@ class AIAgentConverter:
         )
 
         return json.loads(final_result.to_json())
+
+    def prepare_evaluation_data(self, thread_id: str, filename: str = None) -> List[dict]:
+        """
+        Prepares evaluation data for a given thread and optionally writes it to a file.
+
+        This method retrieves all run IDs and messages for the specified thread, processes them to create evaluation data,
+        and optionally writes the evaluation data to a JSONL file. The evaluation data includes query and response messages
+        as well as tool definitions.
+
+        :param thread_id: The ID of the thread.
+        :type thread_id: str
+        :param filename: The name of the file to write the evaluation data to. If None, the data is not written to a file.
+        :type filename: str, optional
+        :return: A list of evaluation data dictionaries.
+        :rtype: List[dict]
+        """
+        list_of_run_evaluations: List[dict] = []
+
+        # These are all the run IDs.
+        run_ids = self._list_run_ids_chronological(thread_id)
+
+        # If there were no messages in the thread, we can return an empty list.
+        if len(run_ids) < 1:
+            return list_of_run_evaluations
+
+        # These are all the messages.
+        chronological_conversation = self._list_messages_chronological(thread_id)
+
+        # If there are no messages in the thread, we can return an empty list.
+        if len(chronological_conversation) < 1:
+            return list_of_run_evaluations
+
+        # These are all the tool calls.
+        all_sorted_tool_calls = AIAgentConverter._sort_messages(self._retrieve_all_tool_calls(thread_id, run_ids))
+
+        # The last run should have all the tool definitions.
+        thread_run = self.project_client.agents.get_run(thread_id=thread_id, run_id=run_ids[-1])
+        instructions = thread_run.instructions
+
+        # So then we can get the tool definitions.
+        tool_definitions = AIAgentConverter._extract_function_tool_definitions(thread_run)
+
+        # Now, we create a new evaluator object for each run.
+        for run_id in run_ids:
+            # We need to filter out the messages that are not from the current run.
+            simple_messages = AIAgentConverter._filter_messages_up_to_run_id(chronological_conversation, run_id)
+
+            # Now we need to convert from OpenAI's general ThreadMessage model into our Azure Agents models.
+            typed_simple_messages = AIAgentConverter._extract_typed_messages(simple_messages)
+
+            # We also need to filter out the tool calls that are not from the current run.
+            sorted_tool_calls = AIAgentConverter._filter_messages_up_to_run_id(all_sorted_tool_calls, run_id)
+
+            # Build the big list.
+            this_runs_messages = []
+            this_runs_messages.extend(typed_simple_messages)
+            this_runs_messages.extend(sorted_tool_calls)
+
+            # Sort it, so it looks nicely in chronological order.
+            this_runs_messages = AIAgentConverter._sort_messages(this_runs_messages)
+
+            # If we have a system message, we need to put it at the top of the list.
+            if instructions:
+                # The system message will have a string content.
+                this_runs_messages.insert(0, SystemMessage(content=instructions))
+
+            # Since now we have the messages in the expected order, we need to break them into the query and
+            # responses.
+            query, responses = AIAgentConverter._break_into_query_responses(this_runs_messages, run_id)
+
+            # Finally, let's pack it up into the final result.
+            final_result = EvaluatorData(
+                query=query,
+                response=responses,
+                tool_definitions=tool_definitions,
+            )
+
+            # Add it to the list of evaluations.
+            list_of_run_evaluations.append(json.loads(final_result.to_json()))
+
+        # So, if we have the filename, we can write it to the file, which is expected to be a JSONL file.
+        if filename:
+            with open(filename, mode="w", encoding="utf-8") as file:
+                for evaluation in list_of_run_evaluations:
+                    file.write(json.dumps(evaluation) + "\n")
+
+        # We always return the list of evaluations, even if we didn't or did write it to a file.
+        return list_of_run_evaluations
 
     @staticmethod
     def run_ids_from_conversation(conversation: dict) -> List[str]:
