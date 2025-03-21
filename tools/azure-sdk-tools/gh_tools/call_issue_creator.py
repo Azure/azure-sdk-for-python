@@ -1,6 +1,9 @@
-# iterater through the build logs and create issues for each failure by calling the issue creator
+# --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+
 import os
-import pathlib
 import argparse
 import requests
 import json
