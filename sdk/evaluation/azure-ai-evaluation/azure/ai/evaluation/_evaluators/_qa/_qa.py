@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Optional, Union
+from typing import Union
 
 from typing_extensions import overload, override
 
@@ -23,13 +23,18 @@ class QAEvaluator(MultiEvaluatorBase[Union[str, float]]):
     :param model_config: Configuration for the Azure OpenAI model.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
-    :param threshold: Optional dictionary of thresholds for different evaluation metrics.
-        Keys can be "groundedness", "relevance", "coherence", "fluency", "similarity",
-        and "f1_score". Default values are 3 for integer metrics and 0.5 for float
-        metrics. If None or an empty dictionary is provided, default values will be
-        used for all metrics. If a partial dictionary is provided, default values
-        will be used for any missing keys.
-    :type threshold: Optional[dict]
+    :param groundedness_threshold: The threshold for groundedness evaluation. Default is 3.
+    :type groundedness_threshold: int
+    :param relevance_threshold: The threshold for relevance evaluation. Default is 3.
+    :type relevance_threshold: int
+    :param coherence_threshold: The threshold for coherence evaluation. Default is 3.
+    :type coherence_threshold: int
+    :param fluency_threshold: The threshold for fluency evaluation. Default is 3.
+    :type fluency_threshold: int
+    :param similarity_threshold: The threshold for similarity evaluation. Default is 3.
+    :type similarity_threshold: int
+    :param f1_score_threshold: The threshold for F1 score evaluation. Default is 0.5.
+    :type f1_score_threshold: float
     :return: A callable class that evaluates and generates metrics for "question-answering" scenario.
     :param kwargs: Additional arguments to pass to the evaluator.
     :type kwargs: Any
@@ -62,31 +67,36 @@ class QAEvaluator(MultiEvaluatorBase[Union[str, float]]):
     id = "qa"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
-    def __init__(self, model_config, threshold: Optional[dict] = {}, **kwargs):
-        default_threshold = {
-            "groundedness": 3,
-            "relevance": 3,
-            "coherence": 3,
-            "fluency": 3,
-            "similarity": 3,
-            "f1_score": 0.5,
-        }
-        if threshold is None:
-            threshold = {}
-        for key in default_threshold.keys():
-            if key not in threshold:
-                threshold[key] = default_threshold[key]
-            if not isinstance(threshold[key], (int, float)):
-                raise TypeError(
-                    f"Threshold for {key} must be an int or float, got {type(threshold[key])}"
-                )
+    def __init__(
+        self,
+        model_config,
+        groundedness_threshold: int = 3,
+        relevance_threshold: int = 3,
+        coherence_threshold: int = 3,
+        fluency_threshold: int = 3,
+        similarity_threshold: int = 3,
+        f1_score_threshold: float = 0.5,
+        **kwargs
+    ):
+        # Type checking
+        for name, value in [
+            ("groundedness_threshold", groundedness_threshold),
+            ("relevance_threshold", relevance_threshold),
+            ("coherence_threshold", coherence_threshold),
+            ("fluency_threshold", fluency_threshold),
+            ("similarity_threshold", similarity_threshold),
+            ("f1_score_threshold", f1_score_threshold),
+        ]:
+            if not isinstance(value, (int, float)):
+                raise TypeError(f"{name} must be an int or float, got {type(value)}")
+
         evaluators = [
-            GroundednessEvaluator(model_config, threshold=threshold["groundedness"]),
-            RelevanceEvaluator(model_config, threshold=threshold["relevance"]),
-            CoherenceEvaluator(model_config, threshold=threshold["coherence"]),
-            FluencyEvaluator(model_config, threshold=threshold["fluency"]),
-            SimilarityEvaluator(model_config, threshold=threshold["similarity"]),
-            F1ScoreEvaluator(threshold=threshold["f1_score"]),
+            GroundednessEvaluator(model_config, threshold=groundedness_threshold),
+            RelevanceEvaluator(model_config, threshold=relevance_threshold),
+            CoherenceEvaluator(model_config, threshold=coherence_threshold),
+            FluencyEvaluator(model_config, threshold=fluency_threshold),
+            SimilarityEvaluator(model_config, threshold=similarity_threshold),
+            F1ScoreEvaluator(threshold=f1_score_threshold),
         ]
         super().__init__(evaluators=evaluators, **kwargs)
 

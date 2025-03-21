@@ -124,7 +124,7 @@ class TestBasicThresholdBehavior:
 
 @pytest.mark.unittest
 class TestRougeThresholdBehavior:
-    """Tests for threshold behavior in Rouge evaluators which use dictionary thresholds."""
+    """Tests for threshold behavior in Rouge evaluators which use individual threshold parameters."""
     
     def test_rouge_default_threshold(self):
         """Test that default thresholds are set correctly in Rouge evaluator."""
@@ -137,15 +137,11 @@ class TestRougeThresholdBehavior:
     
     def test_rouge_custom_threshold(self):
         """Test that custom thresholds work correctly in Rouge evaluator."""
-        custom_threshold = {
-            "precision": 0.9,
-            "recall": 0.1,
-            "f1_score": 0.75
-        }
-        
         evaluator = RougeScoreEvaluator(
             rouge_type=RougeType.ROUGE_L, 
-            threshold=custom_threshold
+            precision_threshold=0.9,
+            recall_threshold=0.1,
+            f1_score_threshold=0.75
         )
         
         # Custom thresholds should be set
@@ -156,15 +152,11 @@ class TestRougeThresholdBehavior:
     @patch("azure.ai.evaluation._evaluators._rouge._rouge.RougeScoreEvaluator.__call__")
     def test_rouge_threshold_behavior(self, mock_call):
         """Test threshold behavior with mocked Rouge scores."""
-        custom_threshold = {
-            "precision": 0.9,
-            "recall": 0.1,
-            "f1_score": 0.75
-        }
-        
         evaluator = RougeScoreEvaluator(
             rouge_type=RougeType.ROUGE_L, 
-            threshold=custom_threshold
+            precision_threshold=0.9,
+            recall_threshold=0.1,
+            f1_score_threshold=0.75
         )
         
         # Mock results with precision passing, recall failing, and f1_score passing
@@ -200,13 +192,12 @@ class TestRougeThresholdBehavior:
     @patch("azure.ai.evaluation._evaluators._rouge._rouge.RougeScoreEvaluator.__call__")
     def test_rouge_different_types(self, mock_call, rouge_type):
         """Test that different Rouge types work correctly with thresholds."""
-        threshold = {
-            "precision": 0.5,
-            "recall": 0.5,
-            "f1_score": 0.5
-        }
-        
-        evaluator = RougeScoreEvaluator(rouge_type=rouge_type, threshold=threshold)
+        evaluator = RougeScoreEvaluator(
+            rouge_type=rouge_type, 
+            precision_threshold=0.5,
+            recall_threshold=0.5,
+            f1_score_threshold=0.5
+        )
         
         # Mock scores that all pass the threshold
         result = {
