@@ -27,6 +27,8 @@ from ._models import break_tool_call_into_messages, convert_message
 # Maximum items to fetch in a single AI Services API call (imposed by the service).
 _AI_SERVICES_API_MAX_LIMIT = 100
 
+# Maximum number of workers allowed to make API calls at the same time.
+_MAX_WORKERS = 10
 
 class AIAgentConverter:
     """
@@ -354,7 +356,7 @@ class AIAgentConverter:
 
             # Since each _list_tool_calls_chronological call is expensive, we can use a thread pool to speed
             # up the process by parallelizing the AI Services API requests.
-            with ThreadPoolExecutor() as executor:
+            with ThreadPoolExecutor(max_workers=_MAX_WORKERS) as executor:
                 futures = {
                     executor.submit(self._fetch_tool_calls, thread_id, run_id): run_id
                     for run_id in run_ids_up_to_run_id
@@ -380,7 +382,7 @@ class AIAgentConverter:
         """
         to_return: List[Message] = []
 
-        with ThreadPoolExecutor() as executor:
+        with ThreadPoolExecutor(max_workers=_MAX_WORKERS) as executor:
             futures = {executor.submit(self._fetch_tool_calls, thread_id, run_id): run_id for run_id in run_ids}
             for future in as_completed(futures):
                 to_return.extend(future.result())
@@ -590,7 +592,7 @@ class AIAgentConverter:
             return self._prepare_single_thread_evaluation_data(thread_id=thread_ids, filename=filename)
 
         evaluations = []
-        with ThreadPoolExecutor() as executor:
+        with ThreadPoolExecutor(max_workers=_MAX_WORKERS) as executor:
             # We override the filename, because we don't want to write the file for each thread, having to handle
             # threading issues and file being opened from multiple threads, instead, we just want to write it once
             # at the end.
