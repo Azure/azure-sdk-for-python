@@ -69,7 +69,7 @@ def get_mro_annotations(cls: Type, base_cls: Type) -> Mapping[str, Tuple[Any, An
 def get_optional_annotation(annotation: Any) -> Type:
     if get_origin(annotation) is Union:
         union_args = get_args(annotation)
-        if len(union_args) > 2 or union_args[1] is not getattr(types, "NoneType", None):
+        if len(union_args) > 2 or union_args[1] is not type(None):
             raise TypeError(
                 f"Unsupported type annotation: {annotation}. Only 'Optional' or 'Union' with None is supported."
             )
