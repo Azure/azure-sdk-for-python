@@ -170,6 +170,9 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE) -> None:
     auth = Auth.Token(os.environ["GH_TOKEN"])
     g = Github(auth=auth)
 
+    logging.info(f"Creating vnext issue for {package_name} and {service_directory} with {check_type}...")
+
+
     today = datetime.date.today()
     repo = g.get_repo("Azure/azure-sdk-for-python")
 
