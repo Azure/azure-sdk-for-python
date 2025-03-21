@@ -590,8 +590,23 @@ class AIAgentConverter:
             return self._prepare_single_thread_evaluation_data(thread_id=thread_ids, filename=filename)
 
         evaluations = []
-        for thread_id in thread_ids:
-            evaluations.extend(self._prepare_single_thread_evaluation_data(thread_id=str(thread_id), filename=filename))
+        with ThreadPoolExecutor() as executor:
+            # We override the filename, because we don't want to write the file for each thread, having to handle
+            # threading issues and file being opened from multiple threads, instead, we just want to write it once
+            # at the end.
+            futures = {
+                executor.submit(self._prepare_single_thread_evaluation_data, str(thread_id), None): thread_id
+                for thread_id in thread_ids
+            }
+            for future in as_completed(futures):
+                evaluations.extend(future.result())
+
+        # So, if we have the filename, we can write it to the file, which is expected to be a JSONL file.
+        if filename:
+            with open(filename, mode="a", encoding="utf-8") as file:
+                for evaluation in evaluations:
+                    file.write(json.dumps(evaluation) + "\n")
+
         return evaluations
 
     @staticmethod
