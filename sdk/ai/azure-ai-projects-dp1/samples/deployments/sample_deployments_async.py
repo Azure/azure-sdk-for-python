@@ -10,11 +10,11 @@ DESCRIPTION:
     `.deployments` methods to enumerate AI models deployed to your AI Foundry Project.
 
 USAGE:
-    python sample_deployments.py
+    python sample_deployments_async.py
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-identity
+    pip install azure-ai-projects azure-identity aiohttp
 
     Set these environment variables with your own values:
     1) PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
