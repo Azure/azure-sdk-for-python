@@ -29,7 +29,8 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
     :param credential: The credential.
     :type credential: ~corehttp.credentials.TokenCredential
     :param str scopes: Lets you specify the type of access needed.
-    :keyword list[dict[str, Union[str, list[str]]]] auth_flows: A list of authentication flows to use for the credential.
+    :keyword auth_flows: A list of authentication flows to use for the credential.
+    :paramtype auth_flows: list[dict[str, Union[str, list[str]]]]
     """
 
     # pylint: disable=unused-argument
@@ -63,7 +64,8 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
 
         :param request: The pipeline request object to be modified.
         :type request: ~corehttp.runtime.pipeline.PipelineRequest
-        :keyword list[dict[str, Union[str, list[str]]]] auth_flows: A list of authentication flows to use for the credential.
+        :keyword auth_flows: A list of authentication flows to use for the credential.
+        :paramtype auth_flows: list[dict[str, Union[str, list[str]]]]
         :raises: :class:`~corehttp.exceptions.ServiceRequestError`
         """
         _BearerTokenCredentialPolicyBase._enforce_https(request)  # pylint:disable=protected-access

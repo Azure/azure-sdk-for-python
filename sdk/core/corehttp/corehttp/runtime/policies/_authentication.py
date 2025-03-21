@@ -32,7 +32,8 @@ class _BearerTokenCredentialPolicyBase:
     :param credential: The credential.
     :type credential: ~corehttp.credentials.TokenCredential
     :param str scopes: Lets you specify the type of access needed.
-    :keyword list[dict[str, Union[str, list[str]]]] auth_flows: A list of authentication flows to use for the credential.
+    :keyword auth_flows: A list of authentication flows to use for the credential.
+    :paramtype auth_flows: list[dict[str, Union[str, list[str]]]]
     """
 
     # pylint: disable=unused-argument
@@ -90,7 +91,8 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
     :param credential: The credential.
     :type credential: ~corehttp.TokenCredential
     :param str scopes: Lets you specify the type of access needed.
-    :keyword list[dict[str, Union[str, list[str]]]] auth_flows: A list of authentication flows to use for the credential.
+    :keyword auth_flows: A list of authentication flows to use for the credential.
+    :paramtype auth_flows: list[dict[str, Union[str, list[str]]]]
     :raises: :class:`~corehttp.exceptions.ServiceRequestError`
     """
 
@@ -105,7 +107,8 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
         The base implementation authorizes the request with a bearer token.
 
         :param ~corehttp.runtime.pipeline.PipelineRequest request: the request
-        :keyword list[dict[str, Union[str, list[str]]]] auth_flows: A list of authentication flows to use for the credential.
+        :keyword auth_flows: A list of authentication flows to use for the credential.
+        :paramtype auth_flows: list[dict[str, Union[str, list[str]]]]
         """
         self._enforce_https(request)
 
