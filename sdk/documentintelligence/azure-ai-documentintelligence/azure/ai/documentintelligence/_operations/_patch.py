@@ -41,17 +41,6 @@ def _parse_operation_id(operation_location_header):
     return re.match(regex, operation_location_header).group(1)
 
 
-class DocumentModelAdministrationPolling(OperationResourcePolling):
-    """Polling method overrides for administration endpoints."""
-
-    def get_final_get_url(self, pipeline_response: Any) -> None:
-        """If a final GET is needed, returns the URL.
-
-        :param any pipeline_response: The pipeline response to get the final url.
-        :rtype: None
-        """
-        return None
-
 class AnalyzeDocumentLROPoller(LROPoller[PollingReturnType_co]):
     @property
     def details(self) -> Mapping[str, Any]:
@@ -295,7 +284,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
                 "str", response.headers.get("Operation-Location")
             )
 
-            deserialized = _deserialize(_models.DocumentModelDetails, response.json()["result"])
+            deserialized = _deserialize(_models.DocumentModelDetails, response.json().get("result"))
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
@@ -306,7 +295,13 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
 
         if polling is True:
             polling_method: PollingMethod = cast(
-                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, lro_algorithms=[DocumentModelAdministrationPolling()], **kwargs)
+                PollingMethod,
+                LROBasePolling(
+                    lro_delay,
+                    path_format_arguments=path_format_arguments,
+                    lro_options={"final-state-via": "operation-location"},
+                    **kwargs,
+                ),
             )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
@@ -359,7 +354,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
                 "str", response.headers.get("Operation-Location")
             )
 
-            deserialized = _deserialize(_models.DocumentClassifierDetails, response.json())
+            deserialized = _deserialize(_models.DocumentClassifierDetails, response.json().get("result"))
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
@@ -370,7 +365,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
 
         if polling is True:
             polling_method: PollingMethod = cast(
-                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, lro_options={"final-state-via": "operation-location"}, **kwargs)
             )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
