@@ -30,7 +30,7 @@ USAGE:
        Azure AI Foundry project.
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
        the "Models + endpoints" tab in your Azure AI Foundry project.
-    2) AI_SEARCH_CONNECTION_NAME - The connection name of the AI Search connection to your Foundry project,
+    3) AI_SEARCH_CONNECTION_NAME - The connection name of the AI Search connection to your Foundry project,
        as found under the "Name" column in the "Connected Resources" tab in your Azure AI Foundry project.
 """
 
