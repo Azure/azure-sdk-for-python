@@ -183,6 +183,13 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                         target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
                     )
                 eval_inputs.append({"query": query, "tool_call": tool_call, "tool_definition": tool_definition})
+            else:
+                EvaluationException(
+                    message="Tool definition not found",
+                    blame=ErrorBlame.USER_ERROR,
+                    category=ErrorCategory.INVALID_VALUE,
+                    target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
+                )
 
         return eval_inputs
 
