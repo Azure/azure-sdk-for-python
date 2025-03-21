@@ -170,7 +170,7 @@ class SparkConfigurationOptions(object):
             dynamic_allocation_enabled=True,
             dynamic_allocation_min_executors=1,
             dynamic_allocation_max_executors=3,
-            identity=ManagedIdentityConfiguration(), # type:ignore
+            identity=ManagedIdentityConfiguration(),  # type:ignore
             inputs={
                 "input1": Input(
                     type="uri_file", path="azureml://datastores/workspaceblobstore/paths/python/data.csv", mode="direct"
@@ -252,11 +252,11 @@ class SparkConfigurationOptions(object):
         )
 
         # Define pipeline
-        @dsl.pipeline(description="submit a pipeline with spark job") # type:ignore
+        @dsl.pipeline(description="submit a pipeline with spark job")  # type:ignore
         def spark_pipeline_from_builder(data):
             add_greeting_column = first_step(file_input=data)
             count_by_row = second_step(file_input=data)
-            return {"output": count_by_row.outputs.output} # type:ignore
+            return {"output": count_by_row.outputs.output}  # type:ignore
 
         pipeline = spark_pipeline_from_builder(
             data=Input(path="/dataset/iris.csv", type=AssetTypes.URI_FILE, mode=InputOutputModes.DIRECT),
