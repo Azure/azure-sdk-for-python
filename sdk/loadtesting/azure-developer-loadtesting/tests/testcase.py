@@ -34,7 +34,6 @@ LoadTestingPreparer = functools.partial(
     "loadtesting",
     loadtesting_endpoint="00000000-0000-0000-0000-000000000000.eastus.cnt-prod.loadtesting.azure.com",
     loadtesting_test_id="some-test-id",
-    loadtesting_file_id="some-file-id",
     loadtesting_test_run_id="some-test-run-id",
     loadtesting_app_component_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRG/providers/Microsoft.Web/sites/contoso-sampleapp",
     loadtesting_subscription_id="azure_subscription_id",
