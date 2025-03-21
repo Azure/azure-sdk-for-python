@@ -32,23 +32,24 @@ def find_failures(package_dir):
                 log_link = task['log']['url'] + "?api-version=6.0"
                 log_output = requests.get(log_link, headers=AUTH_HEADERS)
                 build_output = log_output.content.decode("utf-8")
+                version = build_output.split("'pylint':")[1].split("'")[1]
                 if f"ERROR:root:{package_name} exited with linting error" in build_output:
                     print(f"Found failure in task: {task['name']}")
-                    return package_dir, "pylint"
+                    return package_dir, "pylint", version
     except Exception as e:
         print(f"Exception occurred while getting build info: {e}")
 
-    return None, None
+        return None, None, None
 
 def main(targeted_packages):
     for package in targeted_packages:
         print(f"Processing package: {package}")
-        file, failure = find_failures(package)
+        file, failure, version = find_failures(package)
         if failure:
             logging.info(f"Creating issue for {file} with failure: {failure}")
-            create_vnext_issue(file, failure)
+            create_vnext_issue(file, failure, version)
         else:
-            logging.info(f"No failures found for {file}. Closing issue if exists.")
+            logging.info(f"No failures found for {package}. Closing issue if exists.")
             close_vnext_issue(package, "pylint")
         
 
