@@ -18,7 +18,6 @@ import pathlib
 import requests
 import json
 from typing_extensions import Literal
-from ci_tools.variables import in_ci
 from github import Github, Auth
 
 from ci_tools.variables import discover_repo_root
@@ -59,7 +58,7 @@ def get_build_link(check_type: CHECK_TYPE) -> str:
         f"https://dev.azure.com/azure-sdk/internal/_build/results?buildId={build_id}&view=logs&j={job_id}&t={next_id}"
     )
 
-def get_build_info(build_link: str, check_type: CHECK_TYPE, service_directory: str, package_name: str) -> str:
+def get_build_info(service_directory: str, package_name: str) -> str:
     """Get the build info from the build link."""
     build_id = os.getenv("BUILD_BUILDID")
     timeline_link =f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds/{build_id}/timeline?api-version=6.0"
@@ -180,7 +179,7 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE, version_found: 
 
     version = version_found if version_found else get_version_running(check_type)
     build_link = get_build_link(check_type)
-    build_info = get_build_info(build_link, check_type, service_directory, package_name)
+    build_info = get_build_info(service_directory, package_name)
     merge_date = get_date_for_version_bump(today)
     error_type = "linting" if check_type == "pylint" else "docstring" if check_type == "sphinx" else "typing"
     guide_link = (
@@ -203,7 +202,6 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE, version_found: 
             f"\n**{check_type.capitalize()} errors:** [Link to build ({today.strftime('%Y-%m-%d')})]({build_link})"
             f"\n\n**Build Details:**"
             f"\n\n{build_info}"
-            # f"</details>"
             f"\n"
             f"\n**How to fix:**"
             f"\n\n**Note:** if you are a bot, fix the {check_type} errors listed above under `Build Details`. If you are a human follow the steps below:"

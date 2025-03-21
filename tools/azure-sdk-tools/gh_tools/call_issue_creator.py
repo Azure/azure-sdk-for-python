@@ -32,29 +32,36 @@ def find_failures(package_dir):
                 log_link = task['log']['url'] + "?api-version=6.0"
                 log_output = requests.get(log_link, headers=AUTH_HEADERS)
                 build_output = log_output.content.decode("utf-8")
+                # Get the version of pylint from the build output
                 version = build_output.split("'pylint':")[1].split("'")[1]
+
+                # Check if the build output contains the error message
                 if f"ERROR:root:{package_name} exited with linting error" in build_output:
                     logging.info(f"Found failure in task: {task['name']}")
-                    return package_dir, "pylint", version
+                    return package_dir, "pylint", version, True
                 else:
                     logging.info(f"No failure found in task: {task['name']}")
-                    return package_dir, "pylint", None
+                    return package_dir, "pylint", version, False
     except Exception as e:
         logging.info(f"Exception occurred while getting build info: {e}")
 
-    return None, None, None
+    return None, None, None, None
 
 def main(targeted_packages):
     for package in targeted_packages:
+        # iterate through the packages and find failures
+        # there may be multiple packages in the targeted_packages list
         logging.info(f"Processing package: {package}")
-        file, failure, version = find_failures(package)
-        if failure and version:
+        file, type_check, version, failure = find_failures(package)
+        if failure:
+            # Create an issue for the failure
             logging.info(f"Creating issue for {file} with failure: {failure}")
-            create_vnext_issue(file, failure, version)
-        elif failure and not version:
+            create_vnext_issue(file, type_check, version)
+        elif failure is False:
             logging.info(f"No failures found for {file}. Closing issue if exists.")
-            close_vnext_issue(file, failure)
+            close_vnext_issue(file, type_check)
         else:
+            # If no failure is found, there was an error in the process
             logging.info(f"No action taken.")
         
 
