@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: get_metics.py
+FILE: get_metrics.py
 
 DESCRIPTION:
     This sample shows how to get metrics for a test run
@@ -29,9 +29,6 @@ from azure.identity import DefaultAzureCredential
 import os
 from dotenv import load_dotenv
 
-# for various
-import time
-
 load_dotenv()
 LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]
 
@@ -39,7 +36,7 @@ LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]
 client = LoadTestRunClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
 
 TEST_ID = "my-sdk-test-id"
-TEST_RUN_ID = "some-test-run-id"
+TEST_RUN_ID = "my-sdk-test-run-id"
 
 test_run_response = client.get_test_run(TEST_RUN_ID)
 
@@ -56,7 +53,7 @@ metrics = client.list_metrics(
     TEST_RUN_ID,
     metric_name=metric_definitions["value"][0]["name"],
     metric_namespace=metric_namespaces["value"][0]["name"],
-    time_interval=test_run_response["startDateTime"]+"/"+test_run_response["endDateTime"]
+    time_interval=test_run_response["startDateTime"] + "/" + test_run_response["endDateTime"],
 )
 
 for page in metrics.by_page():

@@ -5,13 +5,13 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: delete_load_test_run.py
+FILE: begin_test_profile_run.py
 
 DESCRIPTION:
-    This sample shows how to delete a load test run
+    This sample shows how to start a test profile run.
 
 USAGE:
-    python delete_load_test_run.py
+    python begin_test_profile_run.py
 
     Set the environment variables with your own values before running the sample:
     1)  AZURE_CLIENT_ID - client id
@@ -31,9 +31,23 @@ from dotenv import load_dotenv
 load_dotenv()
 LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]
 
-TEST_RUN_ID = "my-sdk-test-run-id"
+TEST_PROFILE_RUN_ID = "my-sdk-test-profile-run-id"
+TEST_PROFILE_ID = "my-sdk-test-profile-id"
 
 # Build a client through AAD and resource endpoint
 client = LoadTestRunClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
 
-client.delete_test_run(TEST_RUN_ID)
+testProfileRunPoller = client.begin_test_profile_run(
+    TEST_PROFILE_RUN_ID,
+    {
+        "testProfileId": TEST_PROFILE_ID,
+        "displayName": "My Test Profile Run Run",
+    },
+)
+
+# waiting for test run status to be completed with timeout = 3600 seconds
+result = testProfileRunPoller.result(3600)
+
+print(result["status"])
+print(result)
+print(result["recommendations"])
