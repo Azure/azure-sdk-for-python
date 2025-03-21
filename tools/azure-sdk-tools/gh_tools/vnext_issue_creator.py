@@ -19,7 +19,6 @@ import requests
 import json
 from typing_extensions import Literal
 from ci_tools.variables import in_ci
-from azure.identity import DefaultAzureCredential
 from github import Github, Auth
 
 from ci_tools.variables import discover_repo_root
