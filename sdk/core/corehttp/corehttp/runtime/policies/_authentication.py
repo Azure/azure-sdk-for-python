@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 from __future__ import annotations
 import time
-from typing import TYPE_CHECKING, Optional, TypeVar, MutableMapping, Any
+from typing import TYPE_CHECKING, Optional, TypeVar, MutableMapping, Any, Union
 
 from ...credentials import TokenRequestOptions
 from ...rest import HttpResponse, HttpRequest
