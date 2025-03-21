@@ -14,6 +14,7 @@ if TYPE_CHECKING:
 
 
 from ._models import (  # type: ignore
+    AISearchIndexResource,
     AOAIModelConfig,
     Agent,
     AgentDeletionStatus,
@@ -48,7 +49,6 @@ from ._models import (  # type: ignore
     FunctionName,
     FunctionToolDefinition,
     IncompleteRunDetails,
-    IndexResource,
     InputData,
     MAASModelConfig,
     MessageAttachment,
@@ -189,6 +189,7 @@ from ._enums import (  # type: ignore
     AgentsApiToolChoiceOptionMode,
     AgentsNamedToolChoiceType,
     AuthenticationType,
+    AzureAISearchQueryType,
     ConnectionType,
     DoneEvent,
     ErrorEvent,
@@ -228,6 +229,7 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "AISearchIndexResource",
     "AOAIModelConfig",
     "Agent",
     "AgentDeletionStatus",
@@ -262,7 +264,6 @@ __all__ = [
     "FunctionName",
     "FunctionToolDefinition",
     "IncompleteRunDetails",
-    "IndexResource",
     "InputData",
     "MAASModelConfig",
     "MessageAttachment",
@@ -400,6 +401,7 @@ __all__ = [
     "AgentsApiToolChoiceOptionMode",
     "AgentsNamedToolChoiceType",
     "AuthenticationType",
+    "AzureAISearchQueryType",
     "ConnectionType",
     "DoneEvent",
     "ErrorEvent",

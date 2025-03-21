@@ -42,8 +42,9 @@ from typing import (
 from azure.core.credentials import AccessToken, TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
 
-from ._enums import AgentStreamEvent, ConnectionType, MessageRole
+from ._enums import AgentStreamEvent, ConnectionType, MessageRole, AzureAISearchQueryType
 from ._models import (
+    AISearchIndexResource,
     AzureAISearchResource,
     AzureAISearchToolDefinition,
     AzureFunctionDefinition,
@@ -58,7 +59,6 @@ from ._models import (
     FunctionDefinition,
     FunctionToolDefinition,
     GetConnectionResponse,
-    IndexResource,
     MessageImageFileContent,
     MessageTextContent,
     MessageTextFileCitationAnnotation,
@@ -765,8 +765,8 @@ class AzureAISearchTool(Tool[AzureAISearchToolDefinition]):
     A tool that searches for information using Azure AI Search.
     """
 
-    def __init__(self, index_connection_id: str, index_name: str):
-        self.index_list = [IndexResource(index_connection_id=index_connection_id, index_name=index_name)]
+    def __init__(self, index_connection_id: str, index_name: str, query_type: AzureAISearchQueryType = AzureAISearchQueryType.SIMPLE, filter: str = "", top_k: int = 5):
+        self.index_list = [AISearchIndexResource(index_connection_id=index_connection_id, index_name=index_name, query_type=query_type, filter=filter, top_k=top_k)]
 
     @property
     def definitions(self) -> List[AzureAISearchToolDefinition]:

@@ -50,6 +50,8 @@ class AgentsNamedToolChoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class AgentStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Each event in a server-sent events stream has an ``event`` and ``data`` property:
 
+
+
     .. code-block::
 
        event: thread.created
@@ -58,7 +60,7 @@ class AgentStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     We emit events whenever a new object is created, transitions to a new state, or is being
     streamed in parts (deltas). For example, we emit ``thread.run.created`` when a new run
     is created, ``thread.run.completed`` when a run completes, and so on. When an Agent chooses
-    to create a message during a run, we emit a ``thread.message.created event``\\ , a
+    to create a message during a run, we emit a ``thread.message.created event``, a
     ``thread.message.in_progress`` event, many ``thread.message.delta`` events, and finally a
     ``thread.message.completed`` event.
 
@@ -138,6 +140,21 @@ class AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Custom authentication"""
     NONE = "None"
     """No authentication"""
+
+
+class AzureAISearchQueryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Available query types for Azure AI Search tool."""
+
+    SIMPLE = "simple"
+    """Query type ``simple``"""
+    SEMANTIC = "semantic"
+    """Query type ``semantic``"""
+    VECTOR = "vector"
+    """Query type ``vector``"""
+    VECTOR_SIMPLE_HYBRID = "vector_simple_hybrid"
+    """Query type ``vector_simple_hybrid``"""
+    VECTOR_SEMANTIC_HYBRID = "vector_semantic_hybrid"
+    """Query type ``vector_semantic_hybrid``"""
 
 
 class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -306,7 +323,6 @@ class MessageStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class OpenApiAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Authentication type for OpenApi endpoint. Allowed types are:
-
 
     * Anonymous (no authentication required)
     * Connection (requires connection_id to endpoint, as setup in AI Foundry)

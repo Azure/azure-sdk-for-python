@@ -30,12 +30,14 @@ USAGE:
        Azure AI Foundry project.
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
        the "Models + endpoints" tab in your Azure AI Foundry project.
+    3) AI_SEARCH_CONNECTION_NAME - The connection name of the AI Search connection to your Foundry project,
+       as found under the "Name" column in the "Connected Resources" tab in your Azure AI Foundry project.
 """
 
 import os
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models import AzureAISearchTool, ConnectionType, ListSortOrder, MessageRole
+from azure.ai.projects.models import AzureAISearchQueryType, AzureAISearchTool, ListSortOrder, MessageRole
 
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(),
@@ -43,17 +45,19 @@ project_client = AIProjectClient.from_connection_string(
 )
 
 # [START create_agent_with_azure_ai_search_tool]
-conn_list = project_client.connections.list()
-conn_id = ""
-for conn in conn_list:
-    if conn.connection_type == ConnectionType.AZURE_AI_SEARCH:
-        conn_id = conn.id
-        break
+connection = project_client.connections.get(connection_name=os.environ["AI_SEARCH_CONNECTION_NAME"])
+conn_id = connection.id
 
 print(conn_id)
 
 # Initialize agent AI search tool and add the search index connection id
-ai_search = AzureAISearchTool(index_connection_id=conn_id, index_name="sample_index")
+ai_search = AzureAISearchTool(
+    index_connection_id=conn_id,
+    index_name="sample_index",
+    query_type=AzureAISearchQueryType.SIMPLE,
+    top_k=3,
+    filter=""
+)
 
 # Create agent with AI search tool and process assistant run
 with project_client:
