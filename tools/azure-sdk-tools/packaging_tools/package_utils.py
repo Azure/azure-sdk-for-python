@@ -179,7 +179,6 @@ class CheckFile:
     # Use the template to update readme and setup by packaging_tools
     @return_origin_path
     def check_file_with_packaging_tool(self):
-        check_call(f"pip install {self.get_whl_package} --force-reinstall", shell=True)
         module = importlib.import_module(self.whole_package_name.replace("-", "."))
         title = ""
         for item in getattr(module, "__all__", []):
