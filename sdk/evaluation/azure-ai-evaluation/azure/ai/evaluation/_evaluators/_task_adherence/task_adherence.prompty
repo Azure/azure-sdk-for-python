@@ -38,25 +38,69 @@ system:
 **Definition:**
 Response completely ignores instructions or deviates significantly
 
+**Example:**
+  **Query:** What is a recommended weekend itinerary in Paris?
+  **Response:** Paris is a lovely city with a rich history.
+
+Explanation: This response completely misses the task by not providing any itinerary details. It offers a generic statement about Paris rather than a structured travel plan.
+
+
 **Level 2: Barely adherent**
 
 **Definition:**
 Response partially aligns with instructions but has critical gaps.
+
+**Example:**
+  **Query:** What is a recommended weekend itinerary in Paris?
+  **Response:** Spend your weekend visiting famous places in Paris.
+
+Explanation: While the response hints at visiting well-known sites, it is extremely vague and lacks specific details, such as which sites to visit or any order of activities, leaving major gaps in the instructions.
+
 
 **Level 3: Moderately adherent**
 
 **Definition:**
 Response meets the core requirements but lacks precision or clarity.
 
+**Example:**
+  **Query:** What is a recommended weekend itinerary in Paris?
+  **Response:** Visit the Eiffel Tower and the Louvre on Saturday, and stroll through Montmartre on Sunday.
+
+Explanation: This answer meets the basic requirement by naming a few key attractions and assigning them to specific days. However, it lacks additional context, such as timings, additional activities, or details to make the itinerary practical and clear.
+
+
 **Level 4: Mostly adherent**
 
 **Definition:**
 Response is clear, accurate, and aligns with instructions with minor issues.
 
-**Level 5: Fully adnerent**
+**Example:**
+  **Query:** What is a recommended weekend itinerary in Paris?
+  **Response:** For a weekend in Paris, start Saturday with a morning visit to the Eiffel Tower, then head to the Louvre in the early afternoon. In the evening, enjoy a leisurely walk along the Seine. On Sunday, begin with a visit to Notre-Dame Cathedral, followed by exploring the art and cafés in Montmartre. This plan offers a mix of cultural visits and relaxing experiences.
+
+Explanation: This response is clear, structured, and provides a concrete itinerary with specific attractions and a suggested order of activities. It is accurate and useful, though it might benefit from a few more details like exact timings or restaurant suggestions to be perfect.
+
+
+**Level 5: Fully adherent**
 
 **Definition:**
 Response is flawless, accurate, and follows instructions to the letter.
+
+**Example:**
+  **Query:** What is a recommended weekend itinerary in Paris?
+  **Response:** Here is a detailed weekend itinerary in Paris:
+Saturday:
+Morning: Begin your day with a visit to the Eiffel Tower to admire the views from the top.
+Early Afternoon: Head to the Louvre for a guided tour of its most famous exhibits.
+Late Afternoon: Take a relaxing walk along the Seine, stopping at local boutiques.
+Evening: Enjoy dinner at a classic Parisian bistro near the river.
+Sunday:
+Morning: Visit the Notre-Dame Cathedral to explore its architecture and history.
+Midday: Wander the charming streets of Montmartre, stopping by art galleries and cafés.
+Afternoon: Finish your trip with a scenic boat tour on the Seine.
+This itinerary balances cultural immersion, leisure, and local dining experiences, ensuring a well-rounded visit.
+
+Explanation:  This response is comprehensive and meticulously follows the instructions. It provides detailed steps, timings, and a variety of activities that fully address the query, leaving no critical gaps.
 
 # Data
 Query: {{query}}
