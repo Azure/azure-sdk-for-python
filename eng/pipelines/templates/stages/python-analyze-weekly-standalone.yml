@@ -93,6 +93,19 @@ extends:
                   env:
                     GH_TOKEN: $(azuresdk-github-pat)
 
+                - task: PythonScript@0
+                  displayName: 'Get vNext Issues'
+                  continueOnError: true
+                  inputs:
+                    scriptPath: 'tools/azure-sdk-tools/gh_tools/call_issue_creator.py'
+                    arguments: >-
+                      ${{ parameters.BuildTargetingString }}
+                      --service="${{ parameters.ServiceDirectory }}"
+                      --disablecov
+                  env:
+                    GH_TOKEN: $(azuresdk-github-pat)
+                    SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+
                 - task: UsePythonVersion@0
                   displayName: 'Use Python 3.13 for docs generation'
                   inputs:
