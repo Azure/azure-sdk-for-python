@@ -12,7 +12,7 @@ logging.getLogger().setLevel(logging.INFO)
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "..", ".."))
 
 
-def find_failures(package_dir):
+def find_failures(package_name):
     failures = []
     build_id = os.getenv("BUILD_BUILDID")
     timeline_link = f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds/{build_id}/timeline?api-version=6.0"
@@ -21,11 +21,6 @@ def find_failures(package_dir):
     AUTH_HEADERS = {"Authorization": f"Bearer {token}"}
 
     try:
-        package_path = pathlib.Path(package_dir)
-        package_name = package_path.name
-        logging.info(f"Package name: {package_name}")
-        logging.info(f"Timeline link: {package_dir}")
-
         response = requests.get(timeline_link, headers=AUTH_HEADERS)
         response_json = json.loads(response.text)
     
@@ -47,7 +42,7 @@ def create_issues(failures):
         create_vnext_issue(file, failure)
 
 def main():
-    failures = find_failures(target_dir)
+    failures = find_failures(args.glob_string)
     if failures:
         create_issues(failures)
     else:
