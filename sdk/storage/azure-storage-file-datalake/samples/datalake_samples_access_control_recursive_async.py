@@ -13,8 +13,8 @@ DESCRIPTION:
 USAGE:
     python datalake_samples_access_control_recursive_async.py
     Set the environment variables with your own values before running the sample:
-    1) STORAGE_ACCOUNT_NAME - the storage account name
-    2) STORAGE_ACCOUNT_KEY - the storage account key
+    1) DATALAKE_STORAGE_ACCOUNT_NAME - the storage account name
+    2) DATALAKE_STORAGE_ACCOUNT_KEY - the storage account key
 """
 
 import os
@@ -102,8 +102,8 @@ async def create_child_files(directory_client, num_child_files):
 
 
 async def main():
-    account_name = os.getenv('STORAGE_ACCOUNT_NAME', "")
-    account_key = os.getenv('STORAGE_ACCOUNT_KEY', "")
+    account_name = os.getenv('DATALAKE_STORAGE_ACCOUNT_NAME', "")
+    account_key = os.getenv('DATALAKE_STORAGE_ACCOUNT_KEY', "")
 
     # set up the service client with the credentials from the environment variables
     service_client = DataLakeServiceClient(account_url="{}://{}.dfs.core.windows.net".format(
@@ -113,7 +113,7 @@ async def main():
 
     async with service_client:
         # generate a random name for testing purpose
-        fs_name = "testfs{}".format(random.randint(1, 1000))
+        fs_name = "testfs{}recursiveasync".format(random.randint(1, 1000))
         print("Generating a test filesystem named '{}'.".format(fs_name))
 
         # create the filesystem
