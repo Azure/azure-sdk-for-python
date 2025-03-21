@@ -41,13 +41,6 @@ if __name__ == "__main__":
         required=False,      
     )
 
-    parser.add_argument(
-        "--vnext",
-        default=False,
-        help="Make vnext issue.",
-        required=False,      
-    )
-
     args = parser.parse_args()
 
     pkg_dir = os.path.abspath(args.target_package)
@@ -78,5 +71,5 @@ if __name__ == "__main__":
         logging.error(
             "{} exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(pkg_details.name, e.returncode)
         )
-        
+
         exit(1)
