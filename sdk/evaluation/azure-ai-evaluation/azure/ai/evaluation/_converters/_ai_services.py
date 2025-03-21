@@ -10,7 +10,7 @@ from azure.ai.projects.models import (
     ListSortOrder,
 )
 
-from typing import List
+from typing import List, Union
 
 # Constants.
 from ._models import _USER, _AGENT, _TOOL, _TOOL_CALL, _TOOL_CALLS, _FUNCTION
@@ -482,7 +482,7 @@ class AIAgentConverter:
 
         return json.loads(final_result.to_json())
 
-    def prepare_evaluation_data(self, thread_id: str, filename: str = None) -> List[dict]:
+    def _prepare_single_thread_evaluation_data(self, thread_id: str, filename: str = None) -> List[dict]:
         """
         Prepares evaluation data for a given thread and optionally writes it to a file.
 
@@ -563,12 +563,36 @@ class AIAgentConverter:
 
         # So, if we have the filename, we can write it to the file, which is expected to be a JSONL file.
         if filename:
-            with open(filename, mode="w", encoding="utf-8") as file:
+            with open(filename, mode="a", encoding="utf-8") as file:
                 for evaluation in list_of_run_evaluations:
                     file.write(json.dumps(evaluation) + "\n")
 
         # We always return the list of evaluations, even if we didn't or did write it to a file.
         return list_of_run_evaluations
+
+    def prepare_evaluation_data(self, thread_ids=Union[str, List[str]], filename: str = None) -> List[dict]:
+        """
+        Prepares evaluation data for a given thread or list of threads and optionally writes it to a file.
+
+        This method retrieves all run IDs and messages for the specified thread(s), processes them to create evaluation data,
+        and optionally writes the evaluation data to a JSONL file. The evaluation data includes query and response messages
+        as well as tool definitions.
+
+        :param thread_ids: The ID(s) of the thread(s). Can be a single thread ID or a list of thread IDs.
+        :type thread_ids: Union[str, List[str]]
+        :param filename: The name of the file to write the evaluation data to. If None, the data is not written to a file.
+        :type filename: str, optional
+        :return: A list of evaluation data dictionaries.
+        :rtype: List[dict]
+        """
+        # Single instance, pretty much the same as the list.
+        if isinstance(thread_ids, str):
+            return self._prepare_single_thread_evaluation_data(thread_id=thread_ids, filename=filename)
+
+        evaluations = []
+        for thread_id in thread_ids:
+            evaluations.extend(self._prepare_single_thread_evaluation_data(thread_id=str(thread_id), filename=filename))
+        return evaluations
 
     @staticmethod
     def run_ids_from_conversation(conversation: dict) -> List[str]:
