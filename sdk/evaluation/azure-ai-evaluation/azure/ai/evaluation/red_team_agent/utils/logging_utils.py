@@ -10,7 +10,7 @@ import os
 from datetime import datetime
 
 
-def setup_logger(logger_name="RedTeamAgentLogger"):
+def setup_logger(logger_name="RedTeamAgentLogger", output_dir=None):
     """Configure and return a logger instance for the Red Team Agent.
     
     Creates two handlers:
@@ -19,11 +19,20 @@ def setup_logger(logger_name="RedTeamAgentLogger"):
     
     :param logger_name: Name to use for the logger
     :type logger_name: str
+    :param output_dir: Directory to store log files in. If None, logs are stored in current directory.
+    :type output_dir: Optional[str]
     :return: The configured logger instance
     :rtype: logging.Logger
     """
     # Format matches what's expected in test_setup_logger
-    log_filename = datetime.now().strftime("redteam_agent_%Y%m%d_%H%M%S.log")
+    log_filename = "redteam_agent.log"
+    
+    # If output directory is specified, create path with that directory
+    if output_dir:
+        os.makedirs(output_dir, exist_ok=True)
+        log_filepath = os.path.join(output_dir, log_filename)
+    else:
+        log_filepath = log_filename
     
     logger = logging.getLogger(logger_name)
     logger.setLevel(logging.DEBUG)
@@ -34,13 +43,13 @@ def setup_logger(logger_name="RedTeamAgentLogger"):
             logger.removeHandler(handler)
             
     # File handler - captures all logs at DEBUG level with detailed formatting
-    file_handler = logging.FileHandler(log_filename)
+    file_handler = logging.FileHandler(log_filepath)
     file_handler.setLevel(logging.DEBUG)
     file_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(name)s - %(message)s')
     file_handler.setFormatter(file_formatter)
     logger.addHandler(file_handler)
     
-    # Console handler - shows only WARNING and above for better visibility
+    # Console handler - shows only WARNING and above to reduce output but keep important messages
     console_handler = logging.StreamHandler()
     console_handler.setLevel(logging.WARNING)
     console_formatter = logging.Formatter('%(levelname)s: %(message)s')
