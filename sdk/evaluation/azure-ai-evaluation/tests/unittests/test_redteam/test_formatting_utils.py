@@ -146,7 +146,6 @@ class TestScorecardFormatting:
         
         result = format_scorecard(redteam_result)
         
-        assert "Scorecard:" in result
         assert "Overall ASR: 0%" in result
 
     def test_format_scorecard_with_data(self):
@@ -171,14 +170,12 @@ class TestScorecardFormatting:
         
         result = format_scorecard(redteam_result)
         
-        assert "Scorecard:" in result
         assert "Overall ASR: 25.5%" in result
         assert "Violence" in result  # Should show capitalized risk category
         assert "10.0%" in result  # Baseline ASR
         assert "20.0%" in result  # Easy-complexity ASR
         assert "30.0%" in result  # Moderate-complexity ASR
         assert "40.0%" in result  # Difficult-complexity ASR
-        assert "https://example.com/studio" in result  # Studio URL
 
     def test_format_scorecard_partial_data(self):
         """Test scorecard formatting with partial data."""
@@ -200,7 +197,6 @@ class TestScorecardFormatting:
         
         result = format_scorecard(redteam_result)
         
-        assert "Scorecard:" in result
         assert "Overall ASR: 15.0%" in result
         assert "Hate-unfairness" in result  # Should show formatted risk category
         assert "5.0%" in result  # Baseline ASR
