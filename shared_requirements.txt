@@ -72,3 +72,4 @@ promptflow-core
 promptflow-devkit
 nltk
 azure-monitor-opentelemetry
+pyrit

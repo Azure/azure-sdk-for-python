@@ -2,9 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from typing import Any
+from typing import Any, Dict, List
 from urllib.parse import urljoin, urlparse
 import base64
+import json
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline, get_async_http_client, get_http_client
@@ -62,6 +63,7 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
         self.jailbreaks_json_endpoint = urljoin(self.api_url, "simulation/jailbreak")
         self.simulation_submit_endpoint = urljoin(self.api_url, "simulation/chat/completions/submit")
         self.xpia_jailbreaks_json_endpoint = urljoin(self.api_url, "simulation/jailbreak/xpia")
+        self.attack_objectives_endpoint = urljoin(self.api_url, "simulation/attackobjectives")
 
     def _get_service_discovery_url(self):
         bearer_token = self.token_manager.get_token()
@@ -206,3 +208,71 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
             category=ErrorCategory.UNKNOWN,
             blame=ErrorBlame.USER_ERROR,
         )
+
+    async def get_attack_objectives(self, risk_categories: List[str], application_scenario: str = None, strategy: str = None) -> Any:
+        """Get the attack objectives based on risk categories and application scenario
+        
+        :param risk_categories: List of risk categories to generate attack objectives for
+        :type risk_categories: List[str]
+        :param application_scenario: Optional description of the application scenario for context
+        :type application_scenario: str
+        :param strategy: Optional attack strategy to get specific objectives for
+        :type strategy: str
+        :return: The attack objectives
+        :rtype: Any
+        """
+        # Create query parameters for the request
+        if application_scenario:
+            raise NotImplementedError("Application scenario is not supported yet")
+        
+        params = {
+            "api-version": "2022-11-01-preview",
+            "riskTypes": ",".join(risk_categories),
+            "lang": "en"  # Default to English
+        }
+        
+        # Add strategy parameter if provided
+        if strategy:
+            params["strategy"] = strategy
+            
+        try:
+            # Make the request using the existing get method
+            result = await self.get(self.attack_objectives_endpoint)
+            # from collections import defaultdict
+            # counts_by_risk = defaultdict(int)
+            # for item in result:
+            #     target_harms = item.get("Metadata", {}).get("TargetHarms", [])
+            #     if not target_harms:
+            #         # No risk type specified
+            #         counts_by_risk["empty"] += 1
+            #     else:
+            #         for harm in target_harms:
+            #             # Use "empty" if the risk type field is missing
+            #             risk_type = harm.get("RiskType", "") or "empty"
+            #             counts_by_risk[risk_type] += 1
+            return result
+        except Exception:
+            # If the API fails or isn't implemented yet, return a mock response
+            # This is temporary until the API endpoint is fully implemented
+            return [{
+                "metadata": {
+                    "lang": "en",
+                    "target_harms": [
+                        {
+                            "risk-type": "violence",
+                            "risk-subtype": ""
+                        }
+                    ]
+                },
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": "Risky content"
+                    }
+                ],
+                "modality": "text",
+                "source": [
+                    "source"
+                ]
+            }]
+ 
