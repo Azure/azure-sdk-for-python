@@ -8,6 +8,7 @@ import math
 import os
 import logging
 import tempfile
+import shutil
 from datetime import datetime
 from typing import Callable, Dict, List, Optional, Union, cast
 import json
@@ -48,7 +49,7 @@ from azure.core.credentials import TokenCredential
 from .red_team_agent_result import RedTeamAgentResult, RedTeamingScorecard, RedTeamingParameters, Conversation, RedTeamAgentOutput
 from .callback_chat_target import CallbackChatTarget
 from .attack_strategy import AttackStrategy
-from .attack_objective_generator import RiskCategory, AttackObjectiveGenerator
+from .risk_category import RiskCategory
 from .default_converter import DefaultConverter
 
 # PyRIT imports
@@ -84,13 +85,8 @@ ATTACK_STRATEGY_COMPLEXITY_MAP = {
     str(AttackStrategy.UnicodeConfusable.value): "easy",
     str(AttackStrategy.UnicodeSubstitution.value): "easy",
     str(AttackStrategy.Url.value): "easy",
-    str(AttackStrategy.EASY.value): "easy", 
-    str(AttackStrategy.Math.value): "moderate",
-    str(AttackStrategy.Persuasion.value): "moderate",
+    str(AttackStrategy.EASY.value): "easy",
     str(AttackStrategy.Tense.value): "moderate",
-    str(AttackStrategy.Tone.value): "moderate",
-    str(AttackStrategy.Translation.value): "moderate",
-    str(AttackStrategy.Variation.value): "moderate",
     str(AttackStrategy.MODERATE.value): "moderate",
     str(AttackStrategy.DIFFICULT.value): "difficult",
     str(AttackStrategy.Jailbreak.value): "easy"
@@ -153,6 +149,9 @@ class RedTeamAgent():
         
         # keep track of data and eval result file names 
         self.red_team_agent_info = {}
+        
+        # Create a temp directory for this session
+        self.temp_dir = None
 
         initialize_pyrit(memory_db_type=DUCK_DB)
 
@@ -296,15 +295,15 @@ class RedTeamAgent():
     
     async def _get_attack_objectives(
         self,
-        attack_objective_generator,
+        num_objectives: int = 10,
         risk_category: Optional[RiskCategory] = None,  # Now accepting a single risk category
         application_scenario: Optional[str] = None,
         strategy: Optional[str] = None
     ) -> List[str]:
         """Get attack objectives from the RAI client for a specific risk category.
         
-        :param attack_objective_generator: The generator with risk categories to get attack objectives for
-        :type attack_objective_generator: ~azure.ai.evaluation.redteam.AttackObjectiveGenerator
+        :param num_objectives: The number of objectives to get
+        :type num_objectives: int
         :param risk_category: The specific risk category to get objectives for
         :type risk_category: Optional[RiskCategory]
         :param application_scenario: Optional description of the application scenario for context
@@ -315,15 +314,14 @@ class RedTeamAgent():
         :rtype: List[str]
         """
         if not risk_category:
-            self.logger.warning("No risk category provided, using the first category from the generator")
-            risk_category = attack_objective_generator.risk_categories[0] if attack_objective_generator.risk_categories else None
+            self.logger.warning("No specific risk category provided, using the first category from the inputs")
+            risk_category = self.risk_categories[0] if self.risk_categories else None
             if not risk_category:
-                self.logger.error("No risk categories found in generator")
+                self.logger.error("No risk categories found in inputs")
                 return []
         
         # Convert risk category to lowercase for consistent caching
         risk_cat_value = risk_category.value.lower()
-        num_objectives = attack_objective_generator.num_objectives
         
         self.logger.info("=" * 50)
         self.logger.info(f"GET ATTACK OBJECTIVES: {risk_cat_value}, strategy: {strategy}")
@@ -545,7 +543,11 @@ class RedTeamAgent():
         :rtype: Union[str, os.PathLike]
         """
         base_path = str(uuid.uuid4())
-        output_path = f"{base_path}{DATA_EXT}"
+
+        if self.temp_dir and Path(self.temp_dir).exists():
+            output_path = Path(self.temp_dir) / f"{base_path}{DATA_EXT}"
+        else:
+            output_path = f"{base_path}{DATA_EXT}"
 
         memory = orchestrator.get_memory()
 
@@ -971,6 +973,9 @@ class RedTeamAgent():
         
         output = ["Scorecard:"]
         output.append(f"Overall ASR: {overall_asr}%")
+        successful_attacks = scorecard["risk_category_summary"][0].get("overall_attack_successes", math.nan)
+        overall_total = scorecard["risk_category_summary"][0].get("overall_total", math.nan)
+        output.append(f"Number of successful attacks: {successful_attacks}/{overall_total}")
         
         separator = "-" * 108
         output.append(separator)
@@ -997,62 +1002,62 @@ class RedTeamAgent():
         data_path: Union[str, os.PathLike],
         risk_category: RiskCategory,
         strategy: Union[AttackStrategy, List[AttackStrategy]],
-        evaluation_name: Optional[str] = None,
+        scan_name: Optional[str] = None,
         data_only: bool = False,
-        output_path: Optional[Union[str, os.PathLike]] = None
     ) -> None:
         """Call the evaluate method if not data_only.
 
-        :param evaluation_name: Optional name for the evaluation.
-        :type evaluation_name: Optional[str]
+        :param scan_name: Optional name for the evaluation.
+        :type scan_name: Optional[str]
         :param data_only: Whether to return only data paths instead of evaluation results.
         :type data_only: bool
         :param data_path: Path to the input data.
-        :type data_path: Optional[Union[str, os.PathLike]]
-        :param output_path: Path for output results.
-        :type output_path: Optional[Union[str, os.PathLike]]
+        :type data_path: Optional[Union[str, os.PathLike]]s
         :return: Evaluation results or data paths.
         :rtype: Union[Dict[str, EvaluationResult], Dict[str, List[str]]]
         """
         strategy_name = self._get_strategy_name(strategy)
-        self.logger.info(f"Evaluate called with data_path={data_path}, risk_category={risk_category.value}, strategy={strategy_name},output_path={output_path}, data_only={data_only}, evaluation_name={evaluation_name}")
+        self.logger.info(f"Evaluate called with data_path={data_path}, risk_category={risk_category.value}, strategy={strategy_name}, data_only={data_only}, scan_name={scan_name}")
         if data_only:
             return None
-        result_path = output_path if output_path else f"{str(uuid.uuid4())}{RESULTS_EXT}"
+        
+        if self.temp_dir and Path(self.temp_dir).exists():
+            output_path = Path(self.temp_dir) / f"{str(uuid.uuid4())}{DATA_EXT}"
+        else:
+            output_path = f"{str(uuid.uuid4())}{RESULTS_EXT}"
+            
         evaluators_dict = {
             risk_category.value: RISK_CATEGORY_EVALUATOR_MAP[risk_category](azure_ai_project=self.azure_ai_project, credential=self.credential)
         }
         evaluate_outputs = evaluate(
             data=data_path,
             evaluators=evaluators_dict,
-            output_path=result_path,
+            output_path=output_path,
         )
-        self.red_team_agent_info[self._get_strategy_name(strategy)][risk_category.value]["evaluation_result_file"] = str(result_path)
+        self.red_team_agent_info[self._get_strategy_name(strategy)][risk_category.value]["evaluation_result_file"] = str(output_path)
         self.red_team_agent_info[self._get_strategy_name(strategy)][risk_category.value]["evaluation_result"] = evaluate_outputs
 
     async def _process_attack(
             self, 
-            target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
             call_orchestrator: Callable, 
             strategy: Union[AttackStrategy, List[AttackStrategy]],
             risk_category: RiskCategory,
             all_prompts: List[str],
             progress_bar: tqdm,
             progress_bar_lock: asyncio.Lock,
-            evaluation_name: Optional[str] = None,
+            scan_name: Optional[str] = None,
             data_only: bool = False, 
             output_path: Optional[Union[str, os.PathLike]] = None,
         ) ->  Optional[EvaluationResult]:
         """Process a red team scan with the given orchestrator, converter, and prompts.
         
-        :param target: The target model or function to scan
         :param call_orchestrator: Function to call to create an orchestrator
         :param strategy: The attack strategy to use
         :param risk_category: The risk category to evaluate
         :param all_prompts: List of prompts to use for the scan
         :param progress_bar: Progress bar to update
         :param progress_bar_lock: Lock for the progress bar
-        :param evaluation_name: Optional name for the evaluation
+        :param scan_name: Optional name for the evaluation
         :param data_only: Whether to return only data without evaluation
         :param output_path: Optional path for output
         """
@@ -1074,12 +1079,11 @@ class RedTeamAgent():
         self.logger.info(f"Updated red_team_agent_info with data file: {strategy_name} -> {risk_category.value} -> {data_path}")
         
         await self._evaluate(
-            evaluation_name=evaluation_name,
+            scan_name=scan_name,
             risk_category=risk_category,
             strategy=strategy,
             data_only=data_only,
             data_path=data_path,
-            output_path=output_path,
         )
         
         async with progress_bar_lock:
@@ -1089,29 +1093,25 @@ class RedTeamAgent():
     async def scan(
             self,             
             target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration, PromptChatTarget],
-            evaluation_name: Optional[str] = None,
-            num_turns : int = 1,
+            scan_name: Optional[str] = None,
             attack_strategies: List[Union[AttackStrategy, List[AttackStrategy]]] = [],
             data_only: bool = False, 
             output_path: Optional[Union[str, os.PathLike]] = None,
-            attack_objective_generator: Optional[AttackObjectiveGenerator] = None,
-            application_scenario: Optional[str] = None) -> RedTeamAgentOutput:
+            application_scenario: Optional[str] = None,
+            risk_categories: Optional[List[RiskCategory]] = None,
+            num_objectives: int = 10) -> RedTeamAgentOutput:
         """Run a red team scan against the target using the specified strategies.
         
         :param target: The target model or function to scan
         :type target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration, PromptChatTarget]
-        :param evaluation_name: Optional name for the evaluation
-        :type evaluation_name: Optional[str]
-        :param num_turns: Number of conversation turns to use in the scan
-        :type num_turns: int
+        :param scan_name: Optional name for the scan
+        :type scan_name: Optional[str]
         :param attack_strategies: List of attack strategies to use
         :type attack_strategies: List[Union[AttackStrategy, List[AttackStrategy]]]
         :param data_only: Whether to return only data without evaluation
         :type data_only: bool
         :param output_path: Optional path for output
         :type output_path: Optional[Union[str, os.PathLike]]
-        :param attack_objective_generator: Generator for attack objectives
-        :type attack_objective_generator: Optional[AttackObjectiveGenerator]
         :param application_scenario: Optional description of the application scenario
         :type application_scenario: Optional[str]
         :return: The output from the red team scan
@@ -1119,153 +1119,155 @@ class RedTeamAgent():
         """
         
         self.logger.info("=" * 80)
-        self.logger.info(f"STARTING RED TEAM SCAN with evaluation_name: {evaluation_name}")
+        self.logger.info(f"STARTING RED TEAM SCAN with scan_name: {scan_name}")
         self.logger.info(f"Attack strategies: {attack_strategies}")
         self.logger.info(f"data_only: {data_only}, output_path: {output_path}")
         
-        chat_target = self._get_chat_target(target)
-        self.chat_target = chat_target
-        self.application_scenario = application_scenario or ""
+        # Create a temporary directory for this scan
+        self.temp_dir = tempfile.mkdtemp(prefix="redteam_")
+        self.logger.info(f"Created temporary directory: {self.temp_dir}")
         
-        if not attack_objective_generator:
-            raise EvaluationException(
-                message="Attack objective generator is required for red team agent.",
-                internal_message="Attack objective generator is not provided.",
-                target=ErrorTarget.RED_TEAM_AGENT,
-                category=ErrorCategory.MISSING_FIELD,
-                blame=ErrorBlame.USER_ERROR
-            )
-            
-        # If risk categories aren't specified, use all available categories
-        if not attack_objective_generator.risk_categories:
-            self.logger.info("No risk categories specified, using all available categories")
-            attack_objective_generator.risk_categories = list(RiskCategory)
-            
-        self.risk_categories = attack_objective_generator.risk_categories
-        self.logger.info(f"Risk categories to process: {[rc.value for rc in self.risk_categories]}")
-        
-        self.logger.info("Using AttackObjectiveGenerator to get attack objectives")
-        # Prepend AttackStrategy.Baseline to the attack strategy list
-        if AttackStrategy.Baseline not in attack_strategies:
-            attack_strategies.insert(0, AttackStrategy.Baseline)
-            self.logger.info("Added Baseline to attack strategies")
-            
-        with self._start_redteam_mlflow_run(self.azure_ai_project, evaluation_name) as eval_run:
-            self.ai_studio_url = _get_ai_studio_url(trace_destination=self.trace_destination, evaluation_id=eval_run.info.run_id)
-            # todo: temp change to show the URL in int and with flight info
-            self.ai_studio_url = self.ai_studio_url.replace("ai.azure.com", "int.ai.azure.com")
-            self.ai_studio_url = f"{self.ai_studio_url}&flight=AIRedTeaming=true,EvalConvergence"
-            print(f"Track your red team scan in AI Foundry: {self.ai_studio_url}")
-            self.logger.info(f"Started MLFlow run: {self.ai_studio_url}")
-            
-            self.logger.info("=" * 80)
-            self.logger.info(f"Setting up scan configuration")
-            flattened_attack_strategies = self._get_flattened_attack_strategies(attack_strategies)
-            self.logger.info(f"Found {len(flattened_attack_strategies)} attack strategies")
-            
-            orchestrators = self._get_orchestrators_for_attack_strategies(attack_strategies)
-            self.logger.info(f"Selected {len(orchestrators)} orchestrators for attack strategies")
-            
-            # Calculate total tasks: #risk_categories * #converters * #orchestrators
-            total_tasks = len(self.risk_categories) * len(flattened_attack_strategies) * len(orchestrators)
-            self.logger.info(f"Total tasks to run: {total_tasks} ({len(self.risk_categories)} risk categories * {len(flattened_attack_strategies)} strategies * {len(orchestrators)} orchestrators)")
-            
-            # Initialize our tracking dictionary early with empty structures
-            # This ensures we have a place to store results even if tasks fail
-            self.red_team_agent_info = {}
-            for strategy in flattened_attack_strategies:
-                strategy_name = self._get_strategy_name(strategy)
-                self.red_team_agent_info[strategy_name] = {}
-                for risk_category in self.risk_categories:
-                    self.red_team_agent_info[strategy_name][risk_category.value] = {
-                        "data_file": "",
-                        "evaluation_result_file": "",
-                        "evaluation_result": None
-                    }
-            
-            self.logger.info(f"Initialized tracking dictionary with {len(self.red_team_agent_info)} strategies")
-            
-            progress_bar = tqdm(
-                total=total_tasks,
-                desc="Scanning: ",
-                ncols=100,
-                unit="scan",
-            )
-            progress_bar_lock = asyncio.Lock()
-            
-            risk_tasks = []
-            # Outer loop over risk categories
-            self.logger.info("=" * 80)
-            self.logger.info(f"STARTING RISK CATEGORY PROCESSING LOOP")
-            combinations = list(itertools.product(orchestrators, flattened_attack_strategies, self.risk_categories))
-            for combo_idx, (call_orchestrator, strategy, risk_category) in enumerate(combinations):
-                strategy_name = self._get_strategy_name(strategy)
-
-                # Log which combination we're processing
-                self.logger.info(f"[{combo_idx+1}/{len(combinations)}] Processing orchestrator + strategy + risk category combination: {call_orchestrator.__name__} + {strategy_name} + {risk_category.value}")
-
-                objectives = await self._get_attack_objectives(
-                    attack_objective_generator=attack_objective_generator,
-                    risk_category=risk_category,
-                    application_scenario=application_scenario,
-                    strategy=strategy_name
-                )
+        try:
+            chat_target = self._get_chat_target(target)
+            self.chat_target = chat_target
+            self.application_scenario = application_scenario or ""
                 
-                risk_tasks.append(
-                    self._process_attack(
-                        target=target,
-                        call_orchestrator=call_orchestrator,
-                        all_prompts=objectives,
-                        strategy=strategy,
-                        progress_bar=progress_bar,
-                        progress_bar_lock=progress_bar_lock,
-                        evaluation_name=evaluation_name,
-                        data_only=data_only,
-                        output_path=output_path,
-                        risk_category=risk_category
-                    )
-                )
-            
-            await asyncio.gather(*risk_tasks)    
-            progress_bar.close()
-            
-            # Process results
-            self.logger.info("=" * 80)
-            self.logger.info(f"PROCESSING RESULTS")
-            
-            # Convert results to RedTeamAgentResult using only red_team_agent_info
-            red_team_agent_result = self._to_red_team_agent_result()
-            
-            # Create output with either full results or just conversations
-            if data_only:
-                self.logger.info("Data-only mode, creating output with just conversations")
-                output = RedTeamAgentOutput(redteaming_data=red_team_agent_result["redteaming_data"])
+            # If risk categories aren't specified, use all available categories
+            if not risk_categories:
+                self.logger.info("No risk categories specified, using all available categories")
+                self.risk_categories = list(RiskCategory)
             else:
-                output = RedTeamAgentOutput(
-                    red_team_agent_result=red_team_agent_result, 
-                    redteaming_data=red_team_agent_result["redteaming_data"]
+                self.risk_categories = risk_categories
+                self.logger.info(f"Risk categories to process: {[rc.value for rc in self.risk_categories]}")
+            
+            self.logger.info("Getting attack objectives")
+            # Prepend AttackStrategy.Baseline to the attack strategy list
+            if AttackStrategy.Baseline not in attack_strategies:
+                attack_strategies.insert(0, AttackStrategy.Baseline)
+                self.logger.info("Added Baseline to attack strategies")
+                
+            with self._start_redteam_mlflow_run(self.azure_ai_project, scan_name) as eval_run:
+                self.ai_studio_url = _get_ai_studio_url(trace_destination=self.trace_destination, evaluation_id=eval_run.info.run_id)
+                # todo: temp change to show the URL in int and with flight info
+                self.ai_studio_url = self.ai_studio_url.replace("ai.azure.com", "int.ai.azure.com")
+                self.ai_studio_url = f"{self.ai_studio_url}&flight=AIRedTeaming=true,EvalConvergence"
+                print(f"Track your red team scan in AI Foundry: {self.ai_studio_url}")
+                self.logger.info(f"Started MLFlow run: {self.ai_studio_url}")
+                
+                self.logger.info("=" * 80)
+                self.logger.info(f"Setting up scan configuration")
+                flattened_attack_strategies = self._get_flattened_attack_strategies(attack_strategies)
+                self.logger.info(f"Found {len(flattened_attack_strategies)} attack strategies")
+                
+                orchestrators = self._get_orchestrators_for_attack_strategies(attack_strategies)
+                self.logger.info(f"Selected {len(orchestrators)} orchestrators for attack strategies")
+                
+                # Calculate total tasks: #risk_categories * #converters * #orchestrators
+                total_tasks = len(self.risk_categories) * len(flattened_attack_strategies) * len(orchestrators)
+                self.logger.info(f"Total tasks to run: {total_tasks} ({len(self.risk_categories)} risk categories * {len(flattened_attack_strategies)} strategies * {len(orchestrators)} orchestrators)")
+                
+                # Initialize our tracking dictionary early with empty structures
+                # This ensures we have a place to store results even if tasks fail
+                self.red_team_agent_info = {}
+                for strategy in flattened_attack_strategies:
+                    strategy_name = self._get_strategy_name(strategy)
+                    self.red_team_agent_info[strategy_name] = {}
+                    for risk_category in self.risk_categories:
+                        self.red_team_agent_info[strategy_name][risk_category.value] = {
+                            "data_file": "",
+                            "evaluation_result_file": "",
+                            "evaluation_result": None
+                        }
+                
+                self.logger.info(f"Initialized tracking dictionary with {len(self.red_team_agent_info)} strategies")
+                
+                progress_bar = tqdm(
+                    total=total_tasks,
+                    desc="Scanning: ",
+                    ncols=100,
+                    unit="scan",
+                )
+                progress_bar_lock = asyncio.Lock()
+                
+                risk_tasks = []
+                # Outer loop over risk categories
+                self.logger.info("=" * 80)
+                self.logger.info(f"STARTING RISK CATEGORY PROCESSING LOOP")
+                combinations = list(itertools.product(orchestrators, flattened_attack_strategies, self.risk_categories))
+                for combo_idx, (call_orchestrator, strategy, risk_category) in enumerate(combinations):
+                    strategy_name = self._get_strategy_name(strategy)
+
+                    # Log which combination we're processing
+                    self.logger.info(f"[{combo_idx+1}/{len(combinations)}] Processing orchestrator + strategy + risk category combination: {call_orchestrator.__name__} + {strategy_name} + {risk_category.value}")
+
+                    self.logger.info(f"Getting attack objectives for: {num_objectives} objectives, {risk_category.value} risk category, {application_scenario} application scenario, {strategy_name} strategy")
+                    objectives = await self._get_attack_objectives(
+                        num_objectives=num_objectives,
+                        risk_category=risk_category,
+                        application_scenario=application_scenario,
+                        strategy=strategy_name)
+                    
+                    risk_tasks.append(
+                        self._process_attack(
+                            call_orchestrator=call_orchestrator,
+                            all_prompts=objectives,
+                            strategy=strategy,
+                            progress_bar=progress_bar,
+                            progress_bar_lock=progress_bar_lock,
+                            scan_name=scan_name,
+                            data_only=data_only,
+                            output_path=output_path,
+                            risk_category=risk_category
+                        )
+                    )
+                
+                await asyncio.gather(*risk_tasks)    
+                progress_bar.close()
+                
+                # Process results
+                self.logger.info("=" * 80)
+                self.logger.info(f"PROCESSING RESULTS")
+                
+                # Convert results to RedTeamAgentResult using only red_team_agent_info
+                red_team_agent_result = self._to_red_team_agent_result()
+                
+                # Create output with either full results or just conversations
+                if data_only:
+                    self.logger.info("Data-only mode, creating output with just conversations")
+                    output = RedTeamAgentOutput(redteaming_data=red_team_agent_result["redteaming_data"])
+                else:
+                    output = RedTeamAgentOutput(
+                        red_team_agent_result=red_team_agent_result, 
+                        redteaming_data=red_team_agent_result["redteaming_data"]
+                    )
+                
+                # Log results to MLFlow
+                self.logger.info("Logging results to MLFlow")
+                await self._log_redteam_results_to_mlflow(
+                    redteam_output=output,
+                    eval_run=eval_run,
+                    data_only=data_only
                 )
             
-            # Log results to MLFlow
-            self.logger.info("Logging results to MLFlow")
-            await self._log_redteam_results_to_mlflow(
-                redteam_output=output,
-                eval_run=eval_run,
-                data_only=data_only
-            )
-        
-        if data_only: 
-            self.logger.info("Data-only mode, returning results without evaluation")
+            if data_only: 
+                self.logger.info("Data-only mode, returning results without evaluation")
+                return output
+            
+            # For the final output, write to the user-specified path if provided
+            if output_path and output.red_team_agent_result:
+                self.logger.info(f"Writing output to {output_path}")
+                _write_output(output_path, output.red_team_agent_result)
+            
+            if output.red_team_agent_result:
+                self.logger.info("Generating scorecard")
+                scorecard = self._to_scorecard(output.red_team_agent_result)
+                print(scorecard)
+            
+            self.logger.info("Scan completed successfully")
             return output
-        
-        if output_path and output.red_team_agent_result:
-            self.logger.info(f"Writing output to {output_path}")
-            _write_output(output_path, output.red_team_agent_result)
-        
-        if output.red_team_agent_result:
-            self.logger.info("Generating scorecard")
-            scorecard = self._to_scorecard(output.red_team_agent_result)
-            print(scorecard)
-        
-        self.logger.info("Scan completed successfully")
-        return output
+        finally:
+            # Always clean up the temporary directory
+            if self.temp_dir and os.path.exists(self.temp_dir):
+                self.logger.info(f"Cleaning up temporary directory: {self.temp_dir}")
+                shutil.rmtree(self.temp_dir, ignore_errors=True)
+                self.temp_dir = None
