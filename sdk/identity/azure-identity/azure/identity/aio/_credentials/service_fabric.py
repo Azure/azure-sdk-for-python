@@ -26,15 +26,12 @@ class ServiceFabricCredential(AsyncManagedIdentityBase):
     async def get_token(
         self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
     ) -> AccessToken:
-        if not self._client:
-            raise CredentialUnavailableError(message=self.get_unavailable_message())
-        if self._client._identity_config:  # pylint:disable=protected-access
+        if self._client and self._client._identity_config:  # pylint:disable=protected-access
             raise ClientAuthenticationError(message=SERVICE_FABRIC_ERROR_MESSAGE)
         return await super().get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
 
     async def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
-        if not self._client:
-            raise CredentialUnavailableError(message=self.get_unavailable_message())
-        if self._client._identity_config:  # pylint:disable=protected-access
+
+        if self._client and self._client._identity_config:  # pylint:disable=protected-access
             raise ClientAuthenticationError(message=SERVICE_FABRIC_ERROR_MESSAGE)
         return await super().get_token_info(*scopes, options=options)
