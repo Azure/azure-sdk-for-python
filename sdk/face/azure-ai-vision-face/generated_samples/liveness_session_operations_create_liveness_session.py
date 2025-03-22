@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.ai.vision.face import FaceAdministrationClient
+from azure.ai.vision.face import FaceSessionClient
 
 """
 # PREREQUISITES
@@ -17,7 +17,7 @@ from azure.ai.vision.face import FaceAdministrationClient
 
 
 def main():
-    client = FaceAdministrationClient(
+    client = FaceClient(
         endpoint="ENDPOINT",
         credential="CREDENTIAL",
     )
@@ -26,14 +26,13 @@ def main():
         body={
             "authTokenTimeToLiveInSeconds": 60,
             "deviceCorrelationId": "your_device_correlation_id",
-            "deviceCorrelationIdSetInClient": True,
+            "deviceCorrelationIdSetInClient": False,
             "livenessOperationMode": "Passive",
-            "sendResultsToClient": True,
         },
     )
     print(response)
 
 
-# x-ms-original-file: v1.2-preview.1/LivenessSessionOperations_CreateLivenessSession.json
+# x-ms-original-file: v1.2/LivenessSessionOperations_CreateLivenessSession.json
 if __name__ == "__main__":
     main()

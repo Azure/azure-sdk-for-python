@@ -29,8 +29,9 @@ class ServiceNetworkingMgmtClientConfiguration:  # pylint: disable=too-many-inst
     :type subscription_id: str
     :param base_url: Service host. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: The API version to use for this operation. Default value is "2025-01-01".
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Default value is
+     "2025-03-01-preview". Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     """
 
@@ -41,7 +42,7 @@ class ServiceNetworkingMgmtClientConfiguration:  # pylint: disable=too-many-inst
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        api_version: str = kwargs.pop("api_version", "2025-01-01")
+        api_version: str = kwargs.pop("api_version", "2025-03-01-preview")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

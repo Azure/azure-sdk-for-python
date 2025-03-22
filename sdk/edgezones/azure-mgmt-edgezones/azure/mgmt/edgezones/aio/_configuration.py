@@ -14,11 +14,10 @@ from azure.mgmt.core.policies import ARMHttpLoggingPolicy, AsyncARMChallengeAuth
 from .._version import VERSION
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class EdgeZonesMgmtClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+class EdgeZonesMgmtClientConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for EdgeZonesMgmtClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -28,13 +27,21 @@ class EdgeZonesMgmtClientConfiguration:  # pylint: disable=too-many-instance-att
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
+    :param base_url: Service host. Default value is "https://management.azure.com".
+    :type base_url: str
     :keyword api_version: The API version to use for this operation. Default value is
      "2024-04-01-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, credential: "AsyncTokenCredential", subscription_id: str, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        credential: "AsyncTokenCredential",
+        subscription_id: str,
+        base_url: str = "https://management.azure.com",
+        **kwargs: Any
+    ) -> None:
         api_version: str = kwargs.pop("api_version", "2024-04-01-preview")
 
         if credential is None:
@@ -44,6 +51,7 @@ class EdgeZonesMgmtClientConfiguration:  # pylint: disable=too-many-instance-att
 
         self.credential = credential
         self.subscription_id = subscription_id
+        self.base_url = base_url
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://management.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "mgmt-edgezones/{}".format(VERSION))

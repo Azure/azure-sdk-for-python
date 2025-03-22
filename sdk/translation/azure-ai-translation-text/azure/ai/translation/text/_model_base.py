@@ -1,10 +1,11 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=protected-access, arguments-differ, signature-differs, broad-except
+# pylint: disable=protected-access, broad-except
 
 import copy
 import calendar
@@ -19,6 +20,7 @@ import enum
 import email.utils
 from datetime import datetime, date, time, timedelta, timezone
 from json import JSONEncoder
+import xml.etree.ElementTree as ET
 from typing_extensions import Self
 import isodate
 from azure.core.exceptions import DeserializationError
@@ -123,7 +125,7 @@ def _serialize_datetime(o, format: typing.Optional[str] = None):
 
 def _is_readonly(p):
     try:
-        return p._visibility == ["read"]  # pylint: disable=protected-access
+        return p._visibility == ["read"]
     except AttributeError:
         return False
 
@@ -286,6 +288,12 @@ def _deserialize_decimal(attr):
     return decimal.Decimal(str(attr))
 
 
+def _deserialize_int_as_str(attr):
+    if isinstance(attr, int):
+        return attr
+    return int(attr)
+
+
 _DESERIALIZE_MAPPING = {
     datetime: _deserialize_datetime,
     date: _deserialize_date,
@@ -307,9 +315,11 @@ _DESERIALIZE_MAPPING_WITHFORMAT = {
 
 
 def get_deserializer(annotation: typing.Any, rf: typing.Optional["_RestField"] = None):
+    if annotation is int and rf and rf._format == "str":
+        return _deserialize_int_as_str
     if rf and rf._format:
         return _DESERIALIZE_MAPPING_WITHFORMAT.get(rf._format)
-    return _DESERIALIZE_MAPPING.get(annotation)
+    return _DESERIALIZE_MAPPING.get(annotation)  # pyright: ignore
 
 
 def _get_type_alias_type(module_name: str, alias_name: str):
@@ -363,15 +373,34 @@ class _MyMutableMapping(MutableMapping[str, typing.Any]):  # pylint: disable=uns
         return not self.__eq__(other)
 
     def keys(self) -> typing.KeysView[str]:
+        """
+        :returns: a set-like object providing a view on D's keys
+        :rtype: ~typing.KeysView
+        """
         return self._data.keys()
 
     def values(self) -> typing.ValuesView[typing.Any]:
+        """
+        :returns: an object providing a view on D's values
+        :rtype: ~typing.ValuesView
+        """
         return self._data.values()
 
     def items(self) -> typing.ItemsView[str, typing.Any]:
+        """
+        :returns: set-like object providing a view on D's items
+        :rtype: ~typing.ItemsView
+        """
         return self._data.items()
 
     def get(self, key: str, default: typing.Any = None) -> typing.Any:
+        """
+        Get the value for key if key is in the dictionary, else default.
+        :param str key: The key to look up.
+        :param any default: The value to return if key is not in the dictionary. Defaults to None
+        :returns: D[k] if k in D, else d.
+        :rtype: any
+        """
         try:
             return self[key]
         except KeyError:
@@ -387,17 +416,38 @@ class _MyMutableMapping(MutableMapping[str, typing.Any]):  # pylint: disable=uns
     def pop(self, key: str, default: typing.Any) -> typing.Any: ...
 
     def pop(self, key: str, default: typing.Any = _UNSET) -> typing.Any:
+        """
+        Removes specified key and return the corresponding value.
+        :param str key: The key to pop.
+        :param any default: The value to return if key is not in the dictionary
+        :returns: The value corresponding to the key.
+        :rtype: any
+        :raises KeyError: If key is not found and default is not given.
+        """
         if default is _UNSET:
             return self._data.pop(key)
         return self._data.pop(key, default)
 
     def popitem(self) -> typing.Tuple[str, typing.Any]:
+        """
+        Removes and returns some (key, value) pair
+        :returns: The (key, value) pair.
+        :rtype: tuple
+        :raises KeyError: if D is empty.
+        """
         return self._data.popitem()
 
     def clear(self) -> None:
+        """
+        Remove all items from D.
+        """
         self._data.clear()
 
     def update(self, *args: typing.Any, **kwargs: typing.Any) -> None:
+        """
+        Updates D from mapping/iterable E and F.
+        :param any args: Either a mapping object or an iterable of key-value pairs.
+        """
         self._data.update(*args, **kwargs)
 
     @typing.overload
@@ -407,6 +457,13 @@ class _MyMutableMapping(MutableMapping[str, typing.Any]):  # pylint: disable=uns
     def setdefault(self, key: str, default: typing.Any) -> typing.Any: ...
 
     def setdefault(self, key: str, default: typing.Any = _UNSET) -> typing.Any:
+        """
+        Same as calling D.get(k, d), and setting D[k]=d if k not found
+        :param str key: The key to look up.
+        :param any default: The value to set if key is not in the dictionary
+        :returns: D[k] if k in D, else d.
+        :rtype: any
+        """
         if default is _UNSET:
             return self._data.setdefault(key)
         return self._data.setdefault(key, default)
@@ -441,6 +498,10 @@ def _serialize(o, format: typing.Optional[str] = None):  # pylint: disable=too-m
         return float(o)
     if isinstance(o, enum.Enum):
         return o.value
+    if isinstance(o, int):
+        if format == "str":
+            return str(o)
+        return o
     try:
         # First try datetime.datetime
         return _serialize_datetime(o, format)
@@ -471,11 +532,16 @@ def _create_value(rf: typing.Optional["_RestField"], value: typing.Any) -> typin
         return value
     if rf._is_model:
         return _deserialize(rf._type, value)
+    if isinstance(value, ET.Element):
+        value = _deserialize(rf._type, value)
     return _serialize(value, rf._format)
 
 
 class Model(_MyMutableMapping):
     _is_model = True
+    # label whether current class's _attr_to_rest_field has been calculated
+    # could not see _attr_to_rest_field directly because subclass inherits it from parent class
+    _calculated: typing.Set[str] = set()
 
     def __init__(self, *args: typing.Any, **kwargs: typing.Any) -> None:
         class_name = self.__class__.__name__
@@ -486,10 +552,58 @@ class Model(_MyMutableMapping):
             for rest_field in self._attr_to_rest_field.values()
             if rest_field._default is not _UNSET
         }
-        if args:
-            dict_to_pass.update(
-                {k: _create_value(_get_rest_field(self._attr_to_rest_field, k), v) for k, v in args[0].items()}
-            )
+        if args:  # pylint: disable=too-many-nested-blocks
+            if isinstance(args[0], ET.Element):
+                existed_attr_keys = []
+                model_meta = getattr(self, "_xml", {})
+
+                for rf in self._attr_to_rest_field.values():
+                    prop_meta = getattr(rf, "_xml", {})
+                    xml_name = prop_meta.get("name", rf._rest_name)
+                    xml_ns = prop_meta.get("ns", model_meta.get("ns", None))
+                    if xml_ns:
+                        xml_name = "{" + xml_ns + "}" + xml_name
+
+                    # attribute
+                    if prop_meta.get("attribute", False) and args[0].get(xml_name) is not None:
+                        existed_attr_keys.append(xml_name)
+                        dict_to_pass[rf._rest_name] = _deserialize(rf._type, args[0].get(xml_name))
+                        continue
+
+                    # unwrapped element is array
+                    if prop_meta.get("unwrapped", False):
+                        # unwrapped array could either use prop items meta/prop meta
+                        if prop_meta.get("itemsName"):
+                            xml_name = prop_meta.get("itemsName")
+                            xml_ns = prop_meta.get("itemNs")
+                            if xml_ns:
+                                xml_name = "{" + xml_ns + "}" + xml_name
+                        items = args[0].findall(xml_name)  # pyright: ignore
+                        if len(items) > 0:
+                            existed_attr_keys.append(xml_name)
+                            dict_to_pass[rf._rest_name] = _deserialize(rf._type, items)
+                        continue
+
+                    # text element is primitive type
+                    if prop_meta.get("text", False):
+                        if args[0].text is not None:
+                            dict_to_pass[rf._rest_name] = _deserialize(rf._type, args[0].text)
+                        continue
+
+                    # wrapped element could be normal property or array, it should only have one element
+                    item = args[0].find(xml_name)
+                    if item is not None:
+                        existed_attr_keys.append(xml_name)
+                        dict_to_pass[rf._rest_name] = _deserialize(rf._type, item)
+
+                # rest thing is additional properties
+                for e in args[0]:
+                    if e.tag not in existed_attr_keys:
+                        dict_to_pass[e.tag] = _convert_element(e)
+            else:
+                dict_to_pass.update(
+                    {k: _create_value(_get_rest_field(self._attr_to_rest_field, k), v) for k, v in args[0].items()}
+                )
         else:
             non_attr_kwargs = [k for k in kwargs if k not in self._attr_to_rest_field]
             if non_attr_kwargs:
@@ -507,55 +621,70 @@ class Model(_MyMutableMapping):
     def copy(self) -> "Model":
         return Model(self.__dict__)
 
-    def __new__(cls, *args: typing.Any, **kwargs: typing.Any) -> Self:  # pylint: disable=unused-argument
-        # we know the last three classes in mro are going to be 'Model', 'dict', and 'object'
-        mros = cls.__mro__[:-3][::-1]  # ignore model, dict, and object parents, and reverse the mro order
-        attr_to_rest_field: typing.Dict[str, _RestField] = {  # map attribute name to rest_field property
-            k: v for mro_class in mros for k, v in mro_class.__dict__.items() if k[0] != "_" and hasattr(v, "_type")
-        }
-        annotations = {
-            k: v
-            for mro_class in mros
-            if hasattr(mro_class, "__annotations__")  # pylint: disable=no-member
-            for k, v in mro_class.__annotations__.items()  # pylint: disable=no-member
-        }
-        for attr, rf in attr_to_rest_field.items():
-            rf._module = cls.__module__
-            if not rf._type:
-                rf._type = rf._get_deserialize_callable_from_annotation(annotations.get(attr, None))
-            if not rf._rest_name_input:
-                rf._rest_name_input = attr
-        cls._attr_to_rest_field: typing.Dict[str, _RestField] = dict(attr_to_rest_field.items())
+    def __new__(cls, *args: typing.Any, **kwargs: typing.Any) -> Self:
+        if f"{cls.__module__}.{cls.__qualname__}" not in cls._calculated:
+            # we know the last nine classes in mro are going to be 'Model', '_MyMutableMapping', 'MutableMapping',
+            # 'Mapping', 'Collection', 'Sized', 'Iterable', 'Container' and 'object'
+            mros = cls.__mro__[:-9][::-1]  # ignore parents, and reverse the mro order
+            attr_to_rest_field: typing.Dict[str, _RestField] = {  # map attribute name to rest_field property
+                k: v for mro_class in mros for k, v in mro_class.__dict__.items() if k[0] != "_" and hasattr(v, "_type")
+            }
+            annotations = {
+                k: v
+                for mro_class in mros
+                if hasattr(mro_class, "__annotations__")
+                for k, v in mro_class.__annotations__.items()
+            }
+            for attr, rf in attr_to_rest_field.items():
+                rf._module = cls.__module__
+                if not rf._type:
+                    rf._type = rf._get_deserialize_callable_from_annotation(annotations.get(attr, None))
+                if not rf._rest_name_input:
+                    rf._rest_name_input = attr
+            cls._attr_to_rest_field: typing.Dict[str, _RestField] = dict(attr_to_rest_field.items())
+            cls._calculated.add(f"{cls.__module__}.{cls.__qualname__}")
 
         return super().__new__(cls)  # pylint: disable=no-value-for-parameter
 
     def __init_subclass__(cls, discriminator: typing.Optional[str] = None) -> None:
         for base in cls.__bases__:
-            if hasattr(base, "__mapping__"):  # pylint: disable=no-member
-                base.__mapping__[discriminator or cls.__name__] = cls  # type: ignore  # pylint: disable=no-member
+            if hasattr(base, "__mapping__"):
+                base.__mapping__[discriminator or cls.__name__] = cls  # type: ignore
 
     @classmethod
-    def _get_discriminator(cls, exist_discriminators) -> typing.Optional[str]:
+    def _get_discriminator(cls, exist_discriminators) -> typing.Optional["_RestField"]:
         for v in cls.__dict__.values():
-            if (
-                isinstance(v, _RestField) and v._is_discriminator and v._rest_name not in exist_discriminators
-            ):  # pylint: disable=protected-access
-                return v._rest_name  # pylint: disable=protected-access
+            if isinstance(v, _RestField) and v._is_discriminator and v._rest_name not in exist_discriminators:
+                return v
         return None
 
     @classmethod
     def _deserialize(cls, data, exist_discriminators):
-        if not hasattr(cls, "__mapping__"):  # pylint: disable=no-member
+        if not hasattr(cls, "__mapping__"):
             return cls(data)
         discriminator = cls._get_discriminator(exist_discriminators)
-        exist_discriminators.append(discriminator)
-        mapped_cls = cls.__mapping__.get(data.get(discriminator), cls)  # pyright: ignore # pylint: disable=no-member
-        if mapped_cls == cls:
+        if discriminator is None:
             return cls(data)
-        return mapped_cls._deserialize(data, exist_discriminators)  # pylint: disable=protected-access
+        exist_discriminators.append(discriminator._rest_name)
+        if isinstance(data, ET.Element):
+            model_meta = getattr(cls, "_xml", {})
+            prop_meta = getattr(discriminator, "_xml", {})
+            xml_name = prop_meta.get("name", discriminator._rest_name)
+            xml_ns = prop_meta.get("ns", model_meta.get("ns", None))
+            if xml_ns:
+                xml_name = "{" + xml_ns + "}" + xml_name
+
+            if data.get(xml_name) is not None:
+                discriminator_value = data.get(xml_name)
+            else:
+                discriminator_value = data.find(xml_name).text  # pyright: ignore
+        else:
+            discriminator_value = data.get(discriminator._rest_name)
+        mapped_cls = cls.__mapping__.get(discriminator_value, cls)  # pyright: ignore
+        return mapped_cls._deserialize(data, exist_discriminators)
 
     def as_dict(self, *, exclude_readonly: bool = False) -> typing.Dict[str, typing.Any]:
-        """Return a dict that can be JSONify using json.dump.
+        """Return a dict that can be turned into json using json.dump.
 
         :keyword bool exclude_readonly: Whether to remove the readonly properties.
         :returns: A dict JSON compatible object
@@ -563,6 +692,7 @@ class Model(_MyMutableMapping):
         """
 
         result = {}
+        readonly_props = []
         if exclude_readonly:
             readonly_props = [p._rest_name for p in self._attr_to_rest_field.values() if _is_readonly(p)]
         for k, v in self.items():
@@ -617,6 +747,8 @@ def _deserialize_dict(
 ):
     if obj is None:
         return obj
+    if isinstance(obj, ET.Element):
+        obj = {child.tag: child for child in obj}
     return {k: _deserialize(value_deserializer, v, module) for k, v in obj.items()}
 
 
@@ -637,6 +769,8 @@ def _deserialize_sequence(
 ):
     if obj is None:
         return obj
+    if isinstance(obj, ET.Element):
+        obj = list(obj)
     return type(obj)(_deserialize(deserializer, entry, module) for entry in obj)
 
 
@@ -647,12 +781,12 @@ def _sorted_annotations(types: typing.List[typing.Any]) -> typing.List[typing.An
     )
 
 
-def _get_deserialize_callable_from_annotation(  # pylint: disable=R0911, R0915, R0912
+def _get_deserialize_callable_from_annotation(  # pylint: disable=too-many-return-statements, too-many-branches
     annotation: typing.Any,
     module: typing.Optional[str],
     rf: typing.Optional["_RestField"] = None,
 ) -> typing.Optional[typing.Callable[[typing.Any], typing.Any]]:
-    if not annotation or annotation in [int, float]:
+    if not annotation:
         return None
 
     # is it a type alias?
@@ -667,7 +801,7 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=R0911, R0915, 
         except AttributeError:
             model_name = annotation
         if module is not None:
-            annotation = _get_model(module, model_name)
+            annotation = _get_model(module, model_name)  # type: ignore
 
     try:
         if module and _is_model(annotation):
@@ -727,7 +861,6 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=R0911, R0915, 
     try:
         if annotation._name in ["List", "Set", "Tuple", "Sequence"]:  # pyright: ignore
             if len(annotation.__args__) > 1:  # pyright: ignore
-
                 entry_deserializers = [
                     _get_deserialize_callable_from_annotation(dt, module, rf)
                     for dt in annotation.__args__  # pyright: ignore
@@ -762,12 +895,23 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=R0911, R0915, 
 def _deserialize_with_callable(
     deserializer: typing.Optional[typing.Callable[[typing.Any], typing.Any]],
     value: typing.Any,
-):
+):  # pylint: disable=too-many-return-statements
     try:
         if value is None or isinstance(value, _Null):
             return None
+        if isinstance(value, ET.Element):
+            if deserializer is str:
+                return value.text or ""
+            if deserializer is int:
+                return int(value.text) if value.text else None
+            if deserializer is float:
+                return float(value.text) if value.text else None
+            if deserializer is bool:
+                return value.text == "true" if value.text else None
         if deserializer is None:
             return value
+        if deserializer in [int, float, bool]:
+            return deserializer(value)
         if isinstance(deserializer, CaseInsensitiveEnumMeta):
             try:
                 return deserializer(value)
@@ -797,6 +941,35 @@ def _deserialize(
     return _deserialize_with_callable(deserializer, value)
 
 
+def _failsafe_deserialize(
+    deserializer: typing.Any,
+    value: typing.Any,
+    module: typing.Optional[str] = None,
+    rf: typing.Optional["_RestField"] = None,
+    format: typing.Optional[str] = None,
+) -> typing.Any:
+    try:
+        return _deserialize(deserializer, value, module, rf, format)
+    except DeserializationError:
+        _LOGGER.warning(
+            "Ran into a deserialization error. Ignoring since this is failsafe deserialization", exc_info=True
+        )
+        return None
+
+
+def _failsafe_deserialize_xml(
+    deserializer: typing.Any,
+    value: typing.Any,
+) -> typing.Any:
+    try:
+        return _deserialize_xml(deserializer, value)
+    except DeserializationError:
+        _LOGGER.warning(
+            "Ran into a deserialization error. Ignoring since this is failsafe deserialization", exc_info=True
+        )
+        return None
+
+
 class _RestField:
     def __init__(
         self,
@@ -808,6 +981,7 @@ class _RestField:
         default: typing.Any = _UNSET,
         format: typing.Optional[str] = None,
         is_multipart_file_input: bool = False,
+        xml: typing.Optional[typing.Dict[str, typing.Any]] = None,
     ):
         self._type = type
         self._rest_name_input = name
@@ -818,6 +992,7 @@ class _RestField:
         self._default = default
         self._format = format
         self._is_multipart_file_input = is_multipart_file_input
+        self._xml = xml if xml is not None else {}
 
     @property
     def _class_type(self) -> typing.Any:
@@ -868,6 +1043,7 @@ def rest_field(
     default: typing.Any = _UNSET,
     format: typing.Optional[str] = None,
     is_multipart_file_input: bool = False,
+    xml: typing.Optional[typing.Dict[str, typing.Any]] = None,
 ) -> typing.Any:
     return _RestField(
         name=name,
@@ -876,6 +1052,7 @@ def rest_field(
         default=default,
         format=format,
         is_multipart_file_input=is_multipart_file_input,
+        xml=xml,
     )
 
 
@@ -883,5 +1060,176 @@ def rest_discriminator(
     *,
     name: typing.Optional[str] = None,
     type: typing.Optional[typing.Callable] = None,  # pylint: disable=redefined-builtin
+    visibility: typing.Optional[typing.List[str]] = None,
+    xml: typing.Optional[typing.Dict[str, typing.Any]] = None,
 ) -> typing.Any:
-    return _RestField(name=name, type=type, is_discriminator=True)
+    return _RestField(name=name, type=type, is_discriminator=True, visibility=visibility, xml=xml)
+
+
+def serialize_xml(model: Model, exclude_readonly: bool = False) -> str:
+    """Serialize a model to XML.
+
+    :param Model model: The model to serialize.
+    :param bool exclude_readonly: Whether to exclude readonly properties.
+    :returns: The XML representation of the model.
+    :rtype: str
+    """
+    return ET.tostring(_get_element(model, exclude_readonly), encoding="unicode")  # type: ignore
+
+
+def _get_element(
+    o: typing.Any,
+    exclude_readonly: bool = False,
+    parent_meta: typing.Optional[typing.Dict[str, typing.Any]] = None,
+    wrapped_element: typing.Optional[ET.Element] = None,
+) -> typing.Union[ET.Element, typing.List[ET.Element]]:
+    if _is_model(o):
+        model_meta = getattr(o, "_xml", {})
+
+        # if prop is a model, then use the prop element directly, else generate a wrapper of model
+        if wrapped_element is None:
+            wrapped_element = _create_xml_element(
+                model_meta.get("name", o.__class__.__name__),
+                model_meta.get("prefix"),
+                model_meta.get("ns"),
+            )
+
+        readonly_props = []
+        if exclude_readonly:
+            readonly_props = [p._rest_name for p in o._attr_to_rest_field.values() if _is_readonly(p)]
+
+        for k, v in o.items():
+            # do not serialize readonly properties
+            if exclude_readonly and k in readonly_props:
+                continue
+
+            prop_rest_field = _get_rest_field(o._attr_to_rest_field, k)
+            if prop_rest_field:
+                prop_meta = getattr(prop_rest_field, "_xml").copy()
+                # use the wire name as xml name if no specific name is set
+                if prop_meta.get("name") is None:
+                    prop_meta["name"] = k
+            else:
+                # additional properties will not have rest field, use the wire name as xml name
+                prop_meta = {"name": k}
+
+            # if no ns for prop, use model's
+            if prop_meta.get("ns") is None and model_meta.get("ns"):
+                prop_meta["ns"] = model_meta.get("ns")
+                prop_meta["prefix"] = model_meta.get("prefix")
+
+            if prop_meta.get("unwrapped", False):
+                # unwrapped could only set on array
+                wrapped_element.extend(_get_element(v, exclude_readonly, prop_meta))
+            elif prop_meta.get("text", False):
+                # text could only set on primitive type
+                wrapped_element.text = _get_primitive_type_value(v)
+            elif prop_meta.get("attribute", False):
+                xml_name = prop_meta.get("name", k)
+                if prop_meta.get("ns"):
+                    ET.register_namespace(prop_meta.get("prefix"), prop_meta.get("ns"))  # pyright: ignore
+                    xml_name = "{" + prop_meta.get("ns") + "}" + xml_name  # pyright: ignore
+                # attribute should be primitive type
+                wrapped_element.set(xml_name, _get_primitive_type_value(v))
+            else:
+                # other wrapped prop element
+                wrapped_element.append(_get_wrapped_element(v, exclude_readonly, prop_meta))
+        return wrapped_element
+    if isinstance(o, list):
+        return [_get_element(x, exclude_readonly, parent_meta) for x in o]  # type: ignore
+    if isinstance(o, dict):
+        result = []
+        for k, v in o.items():
+            result.append(
+                _get_wrapped_element(
+                    v,
+                    exclude_readonly,
+                    {
+                        "name": k,
+                        "ns": parent_meta.get("ns") if parent_meta else None,
+                        "prefix": parent_meta.get("prefix") if parent_meta else None,
+                    },
+                )
+            )
+        return result
+
+    # primitive case need to create element based on parent_meta
+    if parent_meta:
+        return _get_wrapped_element(
+            o,
+            exclude_readonly,
+            {
+                "name": parent_meta.get("itemsName", parent_meta.get("name")),
+                "prefix": parent_meta.get("itemsPrefix", parent_meta.get("prefix")),
+                "ns": parent_meta.get("itemsNs", parent_meta.get("ns")),
+            },
+        )
+
+    raise ValueError("Could not serialize value into xml: " + o)
+
+
+def _get_wrapped_element(
+    v: typing.Any,
+    exclude_readonly: bool,
+    meta: typing.Optional[typing.Dict[str, typing.Any]],
+) -> ET.Element:
+    wrapped_element = _create_xml_element(
+        meta.get("name") if meta else None, meta.get("prefix") if meta else None, meta.get("ns") if meta else None
+    )
+    if isinstance(v, (dict, list)):
+        wrapped_element.extend(_get_element(v, exclude_readonly, meta))
+    elif _is_model(v):
+        _get_element(v, exclude_readonly, meta, wrapped_element)
+    else:
+        wrapped_element.text = _get_primitive_type_value(v)
+    return wrapped_element
+
+
+def _get_primitive_type_value(v) -> str:
+    if v is True:
+        return "true"
+    if v is False:
+        return "false"
+    if isinstance(v, _Null):
+        return ""
+    return str(v)
+
+
+def _create_xml_element(tag, prefix=None, ns=None):
+    if prefix and ns:
+        ET.register_namespace(prefix, ns)
+    if ns:
+        return ET.Element("{" + ns + "}" + tag)
+    return ET.Element(tag)
+
+
+def _deserialize_xml(
+    deserializer: typing.Any,
+    value: str,
+) -> typing.Any:
+    element = ET.fromstring(value)  # nosec
+    return _deserialize(deserializer, element)
+
+
+def _convert_element(e: ET.Element):
+    # dict case
+    if len(e.attrib) > 0 or len({child.tag for child in e}) > 1:
+        dict_result: typing.Dict[str, typing.Any] = {}
+        for child in e:
+            if dict_result.get(child.tag) is not None:
+                if isinstance(dict_result[child.tag], list):
+                    dict_result[child.tag].append(_convert_element(child))
+                else:
+                    dict_result[child.tag] = [dict_result[child.tag], _convert_element(child)]
+            else:
+                dict_result[child.tag] = _convert_element(child)
+        dict_result.update(e.attrib)
+        return dict_result
+    # array case
+    if len(e) > 0:
+        array_result: typing.List[typing.Any] = []
+        for child in e:
+            array_result.append(_convert_element(child))
+        return array_result
+    # primitive case
+    return e.text

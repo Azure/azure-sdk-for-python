@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 #
@@ -39,6 +40,7 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) DEVCENTER_ENDPOINT - the endpoint for your devcenter
 """
+
 
 def dev_box_create_connect_delete():
     # [START dev_box_create_connect_delete]
@@ -101,6 +103,7 @@ def dev_box_create_connect_delete():
     delete_result = delete_poller.result()
     print(f"Completed deletion for the dev box with status {delete_result.status}")
     # [END dev_box_create_connect_delete]
+
 
 if __name__ == "__main__":
     dev_box_create_connect_delete()

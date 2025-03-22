@@ -32,10 +32,10 @@ def main():
 
     client.organizations.begin_delete(
         resource_group_name="rgneon",
-        organization_name="2_3",
+        organization_name="testOrg123",
     ).result()
 
 
-# x-ms-original-file: 2024-08-01-preview/Organizations_Delete_MaximumSet_Gen.json
+# x-ms-original-file: 2025-03-01-preview/Organizations_Delete_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

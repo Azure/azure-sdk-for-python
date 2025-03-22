@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
+from typing_extensions import Self
 
 from azure.core import PipelineClient
 from azure.core.pipeline import policies
@@ -18,20 +19,20 @@ from ._operations import BatchClientOperationsMixin
 from ._serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class BatchClient(BatchClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+class BatchClient(BatchClientOperationsMixin):
     """BatchClient.
 
     :param endpoint: Batch account endpoint (for example:
-     https://batchaccount.eastus2.batch.azure.com). Required.
+     `https://batchaccount.eastus2.batch.azure.com
+     <https://batchaccount.eastus2.batch.azure.com>`_). Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2024-02-01.19.0". Note that overriding this default value may result in unsupported behavior.
+     "2024-07-01.20.0". Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
@@ -91,7 +92,7 @@ class BatchClient(BatchClientOperationsMixin):  # pylint: disable=client-accepts
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "BatchClient":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 

@@ -29,7 +29,7 @@ class IoTOperationsMgmtClientConfiguration:  # pylint: disable=too-many-instance
     :type subscription_id: str
     :param base_url: Service host. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: The API version to use for this operation. Default value is "2024-11-01".
+    :keyword api_version: The API version to use for this operation. Default value is "2025-04-01".
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
@@ -41,7 +41,7 @@ class IoTOperationsMgmtClientConfiguration:  # pylint: disable=too-many-instance
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        api_version: str = kwargs.pop("api_version", "2024-11-01")
+        api_version: str = kwargs.pop("api_version", "2025-04-01")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

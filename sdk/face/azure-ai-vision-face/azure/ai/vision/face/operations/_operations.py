@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -11,6 +11,7 @@ import json
 import sys
 from typing import Any, Callable, Dict, IO, Iterator, List, Optional, TypeVar, Union, cast, overload
 
+from azure.core import PipelineClient
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -29,8 +30,9 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import _model_base, models as _models
-from .._model_base import SdkJSONEncoder, _deserialize
-from .._serialization import Serializer
+from .._configuration import FaceAdministrationClientConfiguration
+from .._model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
+from .._serialization import Deserializer, Serializer
 from .._validation import api_version_validation
 from .._vendor import FaceClientMixinABC, FaceSessionClientMixinABC, prepare_multipart_form_data
 
@@ -45,6 +47,389 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dic
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
+
+
+def build_face_detect_from_url_request(
+    *,
+    detection_model: Optional[Union[str, _models.FaceDetectionModel]] = None,
+    recognition_model: Optional[Union[str, _models.FaceRecognitionModel]] = None,
+    return_face_id: Optional[bool] = None,
+    return_face_attributes: Optional[List[Union[str, _models.FaceAttributeType]]] = None,
+    return_face_landmarks: Optional[bool] = None,
+    return_recognition_model: Optional[bool] = None,
+    face_id_time_to_live: Optional[int] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/detect"
+
+    # Construct parameters
+    if detection_model is not None:
+        _params["detectionModel"] = _SERIALIZER.query("detection_model", detection_model, "str")
+    if recognition_model is not None:
+        _params["recognitionModel"] = _SERIALIZER.query("recognition_model", recognition_model, "str")
+    if return_face_id is not None:
+        _params["returnFaceId"] = _SERIALIZER.query("return_face_id", return_face_id, "bool")
+    if return_face_attributes is not None:
+        _params["returnFaceAttributes"] = _SERIALIZER.query(
+            "return_face_attributes", return_face_attributes, "[str]", div=","
+        )
+    if return_face_landmarks is not None:
+        _params["returnFaceLandmarks"] = _SERIALIZER.query("return_face_landmarks", return_face_landmarks, "bool")
+    if return_recognition_model is not None:
+        _params["returnRecognitionModel"] = _SERIALIZER.query(
+            "return_recognition_model", return_recognition_model, "bool"
+        )
+    if face_id_time_to_live is not None:
+        _params["faceIdTimeToLive"] = _SERIALIZER.query("face_id_time_to_live", face_id_time_to_live, "int")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_face_detect_request(
+    *,
+    detection_model: Optional[Union[str, _models.FaceDetectionModel]] = None,
+    recognition_model: Optional[Union[str, _models.FaceRecognitionModel]] = None,
+    return_face_id: Optional[bool] = None,
+    return_face_attributes: Optional[List[Union[str, _models.FaceAttributeType]]] = None,
+    return_face_landmarks: Optional[bool] = None,
+    return_recognition_model: Optional[bool] = None,
+    face_id_time_to_live: Optional[int] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: str = kwargs.pop("content_type")
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/detect"
+
+    # Construct parameters
+    if detection_model is not None:
+        _params["detectionModel"] = _SERIALIZER.query("detection_model", detection_model, "str")
+    if recognition_model is not None:
+        _params["recognitionModel"] = _SERIALIZER.query("recognition_model", recognition_model, "str")
+    if return_face_id is not None:
+        _params["returnFaceId"] = _SERIALIZER.query("return_face_id", return_face_id, "bool")
+    if return_face_attributes is not None:
+        _params["returnFaceAttributes"] = _SERIALIZER.query(
+            "return_face_attributes", return_face_attributes, "[str]", div=","
+        )
+    if return_face_landmarks is not None:
+        _params["returnFaceLandmarks"] = _SERIALIZER.query("return_face_landmarks", return_face_landmarks, "bool")
+    if return_recognition_model is not None:
+        _params["returnRecognitionModel"] = _SERIALIZER.query(
+            "return_recognition_model", return_recognition_model, "bool"
+        )
+    if face_id_time_to_live is not None:
+        _params["faceIdTimeToLive"] = _SERIALIZER.query("face_id_time_to_live", face_id_time_to_live, "int")
+
+    # Construct headers
+    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_face_find_similar_request(**kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/findsimilars"
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
+
+
+def build_face_verify_face_to_face_request(**kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/verify"
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
+
+
+def build_face_group_request(**kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/group"
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
+
+
+def build_face_find_similar_from_large_face_list_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/findsimilars"
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
+
+
+def build_face_identify_from_large_person_group_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/identify"
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
+
+
+def build_face_verify_from_large_person_group_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/verify"
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
+
+
+def build_face_session_create_liveness_session_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/detectLiveness-sessions"
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
+
+
+def build_face_session_delete_liveness_session_request(  # pylint: disable=name-too-long
+    session_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/detectLiveness-sessions/{sessionId}"
+    path_format_arguments = {
+        "sessionId": _SERIALIZER.url("session_id", session_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, headers=_headers, **kwargs)
+
+
+def build_face_session_get_liveness_session_result_request(  # pylint: disable=name-too-long
+    session_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/detectLiveness-sessions/{sessionId}"
+    path_format_arguments = {
+        "sessionId": _SERIALIZER.url("session_id", session_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
+
+
+def build_face_session_create_liveness_with_verify_session_request(  # pylint: disable=name-too-long
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/detectLivenessWithVerify-sessions"
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
+
+
+def build_face_session_delete_liveness_with_verify_session_request(  # pylint: disable=name-too-long
+    session_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/detectLivenessWithVerify-sessions/{sessionId}"
+    path_format_arguments = {
+        "sessionId": _SERIALIZER.url("session_id", session_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, headers=_headers, **kwargs)
+
+
+def build_face_session_get_liveness_with_verify_session_result_request(  # pylint: disable=name-too-long
+    session_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/detectLivenessWithVerify-sessions/{sessionId}"
+    path_format_arguments = {
+        "sessionId": _SERIALIZER.url("session_id", session_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
+
+
+def build_face_session_detect_from_session_image_request(  # pylint: disable=name-too-long
+    *,
+    detection_model: Optional[Union[str, _models.FaceDetectionModel]] = None,
+    recognition_model: Optional[Union[str, _models.FaceRecognitionModel]] = None,
+    return_face_id: Optional[bool] = None,
+    return_face_attributes: Optional[List[Union[str, _models.FaceAttributeType]]] = None,
+    return_face_landmarks: Optional[bool] = None,
+    return_recognition_model: Optional[bool] = None,
+    face_id_time_to_live: Optional[int] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/detect"
+
+    # Construct parameters
+    if detection_model is not None:
+        _params["detectionModel"] = _SERIALIZER.query("detection_model", detection_model, "str")
+    if recognition_model is not None:
+        _params["recognitionModel"] = _SERIALIZER.query("recognition_model", recognition_model, "str")
+    if return_face_id is not None:
+        _params["returnFaceId"] = _SERIALIZER.query("return_face_id", return_face_id, "bool")
+    if return_face_attributes is not None:
+        _params["returnFaceAttributes"] = _SERIALIZER.query(
+            "return_face_attributes", return_face_attributes, "[str]", div=","
+        )
+    if return_face_landmarks is not None:
+        _params["returnFaceLandmarks"] = _SERIALIZER.query("return_face_landmarks", return_face_landmarks, "bool")
+    if return_recognition_model is not None:
+        _params["returnRecognitionModel"] = _SERIALIZER.query(
+            "return_recognition_model", return_recognition_model, "bool"
+        )
+    if face_id_time_to_live is not None:
+        _params["faceIdTimeToLive"] = _SERIALIZER.query("face_id_time_to_live", face_id_time_to_live, "int")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_face_session_get_session_image_request(  # pylint: disable=name-too-long
+    session_image_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+
+    accept = _headers.pop("Accept", "application/octet-stream")
+
+    # Construct URL
+    _url = "/sessionImages/{sessionImageId}"
+    path_format_arguments = {
+        "sessionImageId": _SERIALIZER.url("session_image_id", session_image_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
 
 
 def build_large_face_list_create_request(large_face_list_id: str, **kwargs: Any) -> HttpRequest:
@@ -815,3869 +1200,13 @@ def build_large_person_group_update_face_request(  # pylint: disable=name-too-lo
     return HttpRequest(method="PATCH", url=_url, headers=_headers, **kwargs)
 
 
-def build_face_detect_from_url_request(
-    *,
-    detection_model: Optional[Union[str, _models.FaceDetectionModel]] = None,
-    recognition_model: Optional[Union[str, _models.FaceRecognitionModel]] = None,
-    return_face_id: Optional[bool] = None,
-    return_face_attributes: Optional[List[Union[str, _models.FaceAttributeType]]] = None,
-    return_face_landmarks: Optional[bool] = None,
-    return_recognition_model: Optional[bool] = None,
-    face_id_time_to_live: Optional[int] = None,
-    **kwargs: Any,
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/detect"
-
-    # Construct parameters
-    if detection_model is not None:
-        _params["detectionModel"] = _SERIALIZER.query("detection_model", detection_model, "str")
-    if recognition_model is not None:
-        _params["recognitionModel"] = _SERIALIZER.query("recognition_model", recognition_model, "str")
-    if return_face_id is not None:
-        _params["returnFaceId"] = _SERIALIZER.query("return_face_id", return_face_id, "bool")
-    if return_face_attributes is not None:
-        _params["returnFaceAttributes"] = _SERIALIZER.query(
-            "return_face_attributes", return_face_attributes, "[str]", div=","
-        )
-    if return_face_landmarks is not None:
-        _params["returnFaceLandmarks"] = _SERIALIZER.query("return_face_landmarks", return_face_landmarks, "bool")
-    if return_recognition_model is not None:
-        _params["returnRecognitionModel"] = _SERIALIZER.query(
-            "return_recognition_model", return_recognition_model, "bool"
-        )
-    if face_id_time_to_live is not None:
-        _params["faceIdTimeToLive"] = _SERIALIZER.query("face_id_time_to_live", face_id_time_to_live, "int")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_face_detect_request(
-    *,
-    detection_model: Optional[Union[str, _models.FaceDetectionModel]] = None,
-    recognition_model: Optional[Union[str, _models.FaceRecognitionModel]] = None,
-    return_face_id: Optional[bool] = None,
-    return_face_attributes: Optional[List[Union[str, _models.FaceAttributeType]]] = None,
-    return_face_landmarks: Optional[bool] = None,
-    return_recognition_model: Optional[bool] = None,
-    face_id_time_to_live: Optional[int] = None,
-    **kwargs: Any,
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: str = kwargs.pop("content_type")
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/detect"
-
-    # Construct parameters
-    if detection_model is not None:
-        _params["detectionModel"] = _SERIALIZER.query("detection_model", detection_model, "str")
-    if recognition_model is not None:
-        _params["recognitionModel"] = _SERIALIZER.query("recognition_model", recognition_model, "str")
-    if return_face_id is not None:
-        _params["returnFaceId"] = _SERIALIZER.query("return_face_id", return_face_id, "bool")
-    if return_face_attributes is not None:
-        _params["returnFaceAttributes"] = _SERIALIZER.query(
-            "return_face_attributes", return_face_attributes, "[str]", div=","
-        )
-    if return_face_landmarks is not None:
-        _params["returnFaceLandmarks"] = _SERIALIZER.query("return_face_landmarks", return_face_landmarks, "bool")
-    if return_recognition_model is not None:
-        _params["returnRecognitionModel"] = _SERIALIZER.query(
-            "return_recognition_model", return_recognition_model, "bool"
-        )
-    if face_id_time_to_live is not None:
-        _params["faceIdTimeToLive"] = _SERIALIZER.query("face_id_time_to_live", face_id_time_to_live, "int")
-
-    # Construct headers
-    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_face_find_similar_request(**kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/findsimilars"
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
-
-
-def build_face_verify_face_to_face_request(**kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/verify"
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
-
-
-def build_face_group_request(**kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/group"
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
-
-
-def build_face_find_similar_from_large_face_list_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/findsimilars"
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
-
-
-def build_face_identify_from_large_person_group_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/identify"
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
-
-
-def build_face_verify_from_large_person_group_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/verify"
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
-
-
-def build_face_session_create_liveness_session_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/detectLiveness/singleModal/sessions"
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
-
-
-def build_face_session_delete_liveness_session_request(  # pylint: disable=name-too-long
-    session_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/detectLiveness/singleModal/sessions/{sessionId}"
-    path_format_arguments = {
-        "sessionId": _SERIALIZER.url("session_id", session_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, headers=_headers, **kwargs)
-
-
-def build_face_session_get_liveness_session_result_request(  # pylint: disable=name-too-long
-    session_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/detectLiveness/singleModal/sessions/{sessionId}"
-    path_format_arguments = {
-        "sessionId": _SERIALIZER.url("session_id", session_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
-
-
-def build_face_session_get_liveness_sessions_request(  # pylint: disable=name-too-long
-    *, start: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/detectLiveness/singleModal/sessions"
-
-    # Construct parameters
-    if start is not None:
-        _params["start"] = _SERIALIZER.query("start", start, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_face_session_get_liveness_session_audit_entries_request(  # pylint: disable=name-too-long
-    session_id: str, *, start: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/detectLiveness/singleModal/sessions/{sessionId}/audit"
-    path_format_arguments = {
-        "sessionId": _SERIALIZER.url("session_id", session_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    if start is not None:
-        _params["start"] = _SERIALIZER.query("start", start, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_face_session_create_liveness_with_verify_session_request(  # pylint: disable=name-too-long
-    **kwargs: Any,
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/detectLivenessWithVerify/singleModal/sessions"
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
-
-
-def build_face_session_create_liveness_with_verify_session_with_verify_image_request(  # pylint: disable=name-too-long
-    **kwargs: Any,
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/detectLivenessWithVerify/singleModal/sessions"
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
-
-
-def build_face_session_delete_liveness_with_verify_session_request(  # pylint: disable=name-too-long
-    session_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/detectLivenessWithVerify/singleModal/sessions/{sessionId}"
-    path_format_arguments = {
-        "sessionId": _SERIALIZER.url("session_id", session_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, headers=_headers, **kwargs)
-
-
-def build_face_session_get_liveness_with_verify_session_result_request(  # pylint: disable=name-too-long
-    session_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/detectLivenessWithVerify/singleModal/sessions/{sessionId}"
-    path_format_arguments = {
-        "sessionId": _SERIALIZER.url("session_id", session_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
-
-
-def build_face_session_get_liveness_with_verify_sessions_request(  # pylint: disable=name-too-long
-    *, start: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/detectLivenessWithVerify/singleModal/sessions"
-
-    # Construct parameters
-    if start is not None:
-        _params["start"] = _SERIALIZER.query("start", start, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_face_session_get_liveness_with_verify_session_audit_entries_request(  # pylint: disable=name-too-long
-    session_id: str, *, start: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/detectLivenessWithVerify/singleModal/sessions/{sessionId}/audit"
-    path_format_arguments = {
-        "sessionId": _SERIALIZER.url("session_id", session_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    if start is not None:
-        _params["start"] = _SERIALIZER.query("start", start, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_face_session_detect_from_session_image_request(  # pylint: disable=name-too-long
-    *,
-    detection_model: Optional[Union[str, _models.FaceDetectionModel]] = None,
-    recognition_model: Optional[Union[str, _models.FaceRecognitionModel]] = None,
-    return_face_id: Optional[bool] = None,
-    return_face_attributes: Optional[List[Union[str, _models.FaceAttributeType]]] = None,
-    return_face_landmarks: Optional[bool] = None,
-    return_recognition_model: Optional[bool] = None,
-    face_id_time_to_live: Optional[int] = None,
-    **kwargs: Any,
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/detect"
-
-    # Construct parameters
-    if detection_model is not None:
-        _params["detectionModel"] = _SERIALIZER.query("detection_model", detection_model, "str")
-    if recognition_model is not None:
-        _params["recognitionModel"] = _SERIALIZER.query("recognition_model", recognition_model, "str")
-    if return_face_id is not None:
-        _params["returnFaceId"] = _SERIALIZER.query("return_face_id", return_face_id, "bool")
-    if return_face_attributes is not None:
-        _params["returnFaceAttributes"] = _SERIALIZER.query(
-            "return_face_attributes", return_face_attributes, "[str]", div=","
-        )
-    if return_face_landmarks is not None:
-        _params["returnFaceLandmarks"] = _SERIALIZER.query("return_face_landmarks", return_face_landmarks, "bool")
-    if return_recognition_model is not None:
-        _params["returnRecognitionModel"] = _SERIALIZER.query(
-            "return_recognition_model", return_recognition_model, "bool"
-        )
-    if face_id_time_to_live is not None:
-        _params["faceIdTimeToLive"] = _SERIALIZER.query("face_id_time_to_live", face_id_time_to_live, "int")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_face_session_get_session_image_request(  # pylint: disable=name-too-long
-    session_image_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-
-    accept = _headers.pop("Accept", "application/octet-stream")
-
-    # Construct URL
-    _url = "/session/sessionImages/{sessionImageId}"
-    path_format_arguments = {
-        "sessionImageId": _SERIALIZER.url("session_image_id", session_image_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
-
-
-class LargeFaceListOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.vision.face.FaceAdministrationClient`'s
-        :attr:`large_face_list` attribute.
-    """
-
-    def __init__(self, *args, **kwargs):
-        input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @overload
-    def create(
-        self, large_face_list_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
-        """Create an empty Large Face List with user-specified largeFaceListId, name, an optional userData
-        and recognitionModel.
-
-        Please refer to
-        https://learn.microsoft.com/rest/api/face/face-list-operations/create-large-face-list for more
-        details.
-
-        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
-         maximum length is 64. Required.
-        :type large_face_list_id: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create(
-        self,
-        large_face_list_id: str,
-        *,
-        name: str,
-        content_type: str = "application/json",
-        user_data: Optional[str] = None,
-        recognition_model: Optional[Union[str, _models.FaceRecognitionModel]] = None,
-        **kwargs: Any,
-    ) -> None:
-        """Create an empty Large Face List with user-specified largeFaceListId, name, an optional userData
-        and recognitionModel.
-
-        Please refer to
-        https://learn.microsoft.com/rest/api/face/face-list-operations/create-large-face-list for more
-        details.
-
-        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
-         maximum length is 64. Required.
-        :type large_face_list_id: str
-        :keyword name: User defined name, maximum length is 128. Required.
-        :paramtype name: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword user_data: Optional user defined data. Length should not exceed 16K. Default value is
-         None.
-        :paramtype user_data: str
-        :keyword recognition_model: The 'recognitionModel' associated with this face list. Supported
-         'recognitionModel' values include 'recognition_01', 'recognition_02, 'recognition_03', and
-         'recognition_04'. The default value is 'recognition_01'. 'recognition_04' is recommended since
-         its accuracy is improved on faces wearing masks compared with 'recognition_03', and its overall
-         accuracy is improved compared with 'recognition_01' and 'recognition_02'. Known values are:
-         "recognition_01", "recognition_02", "recognition_03", and "recognition_04". Default value is
-         None.
-        :paramtype recognition_model: str or ~azure.ai.vision.face.models.FaceRecognitionModel
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create(
-        self, large_face_list_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
-        """Create an empty Large Face List with user-specified largeFaceListId, name, an optional userData
-        and recognitionModel.
-
-        Please refer to
-        https://learn.microsoft.com/rest/api/face/face-list-operations/create-large-face-list for more
-        details.
-
-        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
-         maximum length is 64. Required.
-        :type large_face_list_id: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def create(  # pylint: disable=inconsistent-return-statements
-        self,
-        large_face_list_id: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        name: str = _Unset,
-        user_data: Optional[str] = None,
-        recognition_model: Optional[Union[str, _models.FaceRecognitionModel]] = None,
-        **kwargs: Any,
-    ) -> None:
-        """Create an empty Large Face List with user-specified largeFaceListId, name, an optional userData
-        and recognitionModel.
-
-        Please refer to
-        https://learn.microsoft.com/rest/api/face/face-list-operations/create-large-face-list for more
-        details.
-
-        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
-         maximum length is 64. Required.
-        :type large_face_list_id: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword name: User defined name, maximum length is 128. Required.
-        :paramtype name: str
-        :keyword user_data: Optional user defined data. Length should not exceed 16K. Default value is
-         None.
-        :paramtype user_data: str
-        :keyword recognition_model: The 'recognitionModel' associated with this face list. Supported
-         'recognitionModel' values include 'recognition_01', 'recognition_02, 'recognition_03', and
-         'recognition_04'. The default value is 'recognition_01'. 'recognition_04' is recommended since
-         its accuracy is improved on faces wearing masks compared with 'recognition_03', and its overall
-         accuracy is improved compared with 'recognition_01' and 'recognition_02'. Known values are:
-         "recognition_01", "recognition_02", "recognition_03", and "recognition_04". Default value is
-         None.
-        :paramtype recognition_model: str or ~azure.ai.vision.face.models.FaceRecognitionModel
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            if name is _Unset:
-                raise TypeError("missing required argument: name")
-            body = {"name": name, "recognitionModel": recognition_model, "userData": user_data}
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_large_face_list_create_request(
-            large_face_list_id=large_face_list_id,
-            content_type=content_type,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @distributed_trace
-    def delete(self, large_face_list_id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
-        """Delete a face from a Large Face List by specified largeFaceListId and persistedFaceId.
-
-        Please refer to
-        https://learn.microsoft.com/rest/api/face/face-list-operations/delete-large-face-list for more
-        details.
-
-        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
-         maximum length is 64. Required.
-        :type large_face_list_id: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_large_face_list_delete_request(
-            large_face_list_id=large_face_list_id,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @distributed_trace
-    def get(
-        self, large_face_list_id: str, *, return_recognition_model: Optional[bool] = None, **kwargs: Any
-    ) -> _models.LargeFaceList:
-        """Please refer to
-        https://learn.microsoft.com/rest/api/face/face-list-operations/get-large-face-list for more
-        details.
-
-        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
-         maximum length is 64. Required.
-        :type large_face_list_id: str
-        :keyword return_recognition_model: Return 'recognitionModel' or not. The default value is
-         false. Default value is None.
-        :paramtype return_recognition_model: bool
-        :return: LargeFaceList. The LargeFaceList is compatible with MutableMapping
-        :rtype: ~azure.ai.vision.face.models.LargeFaceList
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.LargeFaceList] = kwargs.pop("cls", None)
-
-        _request = build_large_face_list_get_request(
-            large_face_list_id=large_face_list_id,
-            return_recognition_model=return_recognition_model,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.LargeFaceList, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def update(
-        self, large_face_list_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
-        """Please refer to
-        https://learn.microsoft.com/rest/api/face/face-list-operations/update-large-face-list for more
-        details.
-
-        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
-         maximum length is 64. Required.
-        :type large_face_list_id: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def update(
-        self,
-        large_face_list_id: str,
-        *,
-        content_type: str = "application/json",
-        name: Optional[str] = None,
-        user_data: Optional[str] = None,
-        **kwargs: Any,
-    ) -> None:
-        """Please refer to
-        https://learn.microsoft.com/rest/api/face/face-list-operations/update-large-face-list for more
-        details.
-
-        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
-         maximum length is 64. Required.
-        :type large_face_list_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword name: User defined name, maximum length is 128. Default value is None.
-        :paramtype name: str
-        :keyword user_data: Optional user defined data. Length should not exceed 16K. Default value is
-         None.
-        :paramtype user_data: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def update(
-        self, large_face_list_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
-        """Please refer to
-        https://learn.microsoft.com/rest/api/face/face-list-operations/update-large-face-list for more
-        details.
-
-        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
-         maximum length is 64. Required.
-        :type large_face_list_id: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def update(  # pylint: disable=inconsistent-return-statements
-        self,
-        large_face_list_id: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        name: Optional[str] = None,
-        user_data: Optional[str] = None,
-        **kwargs: Any,
-    ) -> None:
-        """Please refer to
-        https://learn.microsoft.com/rest/api/face/face-list-operations/update-large-face-list for more
-        details.
-
-        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
-         maximum length is 64. Required.
-        :type large_face_list_id: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword name: User defined name, maximum length is 128. Default value is None.
-        :paramtype name: str
-        :keyword user_data: Optional user defined data. Length should not exceed 16K. Default value is
-         None.
-        :paramtype user_data: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            body = {"name": name, "userData": user_data}
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_large_face_list_update_request(
-            large_face_list_id=large_face_list_id,
-            content_type=content_type,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @distributed_trace
-    def get_large_face_lists(
-        self,
-        *,
-        start: Optional[str] = None,
-        top: Optional[int] = None,
-        return_recognition_model: Optional[bool] = None,
-        **kwargs: Any,
-    ) -> List[_models.LargeFaceList]:
-        """List Large Face Lists' information of largeFaceListId, name, userData and recognitionModel.
-
-        Please refer to
-        https://learn.microsoft.com/rest/api/face/face-list-operations/get-large-face-lists for more
-        details.
-
-        :keyword start: List resources greater than the "start". It contains no more than 64
-         characters. Default is empty. Default value is None.
-        :paramtype start: str
-        :keyword top: The number of items to list, ranging in [1, 1000]. Default is 1000. Default value
-         is None.
-        :paramtype top: int
-        :keyword return_recognition_model: Return 'recognitionModel' or not. The default value is
-         false. Default value is None.
-        :paramtype return_recognition_model: bool
-        :return: list of LargeFaceList
-        :rtype: list[~azure.ai.vision.face.models.LargeFaceList]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.LargeFaceList]] = kwargs.pop("cls", None)
-
-        _request = build_large_face_list_get_large_face_lists_request(
-            start=start,
-            top=top,
-            return_recognition_model=return_recognition_model,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(List[_models.LargeFaceList], response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def get_training_status(self, large_face_list_id: str, **kwargs: Any) -> _models.FaceTrainingResult:
-        """Please refer to
-        https://learn.microsoft.com/rest/api/face/face-list-operations/get-large-face-list-training-status
-        for more details.
-
-        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
-         maximum length is 64. Required.
-        :type large_face_list_id: str
-        :return: FaceTrainingResult. The FaceTrainingResult is compatible with MutableMapping
-        :rtype: ~azure.ai.vision.face.models.FaceTrainingResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.FaceTrainingResult] = kwargs.pop("cls", None)
-
-        _request = build_large_face_list_get_training_status_request(
-            large_face_list_id=large_face_list_id,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.FaceTrainingResult, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    def _train_initial(self, large_face_list_id: str, **kwargs: Any) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_large_face_list_train_request(
-            large_face_list_id=large_face_list_id,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["operation-Location"] = self._deserialize("str", response.headers.get("operation-Location"))
-
-        deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def begin_train(self, large_face_list_id: str, **kwargs: Any) -> LROPoller[None]:
-        """Submit a Large Face List training task.
-
-        Please refer to
-        https://learn.microsoft.com/rest/api/face/face-list-operations/train-large-face-list for more
-        details.
-
-        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
-         maximum length is 64. Required.
-        :type large_face_list_id: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._train_initial(
-                large_face_list_id=large_face_list_id, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    @overload
-    def add_face_from_url(
-        self,
-        large_face_list_id: str,
-        body: JSON,
-        *,
-        target_face: Optional[List[int]] = None,
-        detection_model: Optional[Union[str, _models.FaceDetectionModel]] = None,
-        user_data: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> _models.AddFaceResult:
-        """Add a face to a specified Large Face List, up to 1,000,000 faces.
-
-        Please refer to
-        https://learn.microsoft.com/rest/api/face/face-list-operations/add-large-face-list-face-from-url
-        for more details.
-
-        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
-         maximum length is 64. Required.
-        :type large_face_list_id: str
-        :param body: Required.
-        :type body: JSON
-        :keyword target_face: A face rectangle to specify the target face to be added to a person, in
-         the format of 'targetFace=left,top,width,height'. Default value is None.
-        :paramtype target_face: list[int]
-        :keyword detection_model: The 'detectionModel' associated with the detected faceIds. Supported
-         'detectionModel' values include 'detection_01', 'detection_02' and 'detection_03'. The default
-         value is 'detection_01'. Known values are: "detection_01", "detection_02", and "detection_03".
-         Default value is None.
-        :paramtype detection_model: str or ~azure.ai.vision.face.models.FaceDetectionModel
-        :keyword user_data: User-provided data attached to the face. The size limit is 1K. Default
-         value is None.
-        :paramtype user_data: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AddFaceResult. The AddFaceResult is compatible with MutableMapping
-        :rtype: ~azure.ai.vision.face.models.AddFaceResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def add_face_from_url(
-        self,
-        large_face_list_id: str,
-        *,
-        url: str,
-        target_face: Optional[List[int]] = None,
-        detection_model: Optional[Union[str, _models.FaceDetectionModel]] = None,
-        user_data: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> _models.AddFaceResult:
-        """Add a face to a specified Large Face List, up to 1,000,000 faces.
-
-        Please refer to
-        https://learn.microsoft.com/rest/api/face/face-list-operations/add-large-face-list-face-from-url
-        for more details.
-
-        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
-         maximum length is 64. Required.
-        :type large_face_list_id: str
-        :keyword url: URL of input image. Required.
-        :paramtype url: str
-        :keyword target_face: A face rectangle to specify the target face to be added to a person, in
-         the format of 'targetFace=left,top,width,height'. Default value is None.
-        :paramtype target_face: list[int]
-        :keyword detection_model: The 'detectionModel' associated with the detected faceIds. Supported
-         'detectionModel' values include 'detection_01', 'detection_02' and 'detection_03'. The default
-         value is 'detection_01'. Known values are: "detection_01", "detection_02", and "detection_03".
-         Default value is None.
-        :paramtype detection_model: str or ~azure.ai.vision.face.models.FaceDetectionModel
-        :keyword user_data: User-provided data attached to the face. The size limit is 1K. Default
-         value is None.
-        :paramtype user_data: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AddFaceResult. The AddFaceResult is compatible with MutableMapping
-        :rtype: ~azure.ai.vision.face.models.AddFaceResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def add_face_from_url(
-        self,
-        large_face_list_id: str,
-        body: IO[bytes],
-        *,
-        target_face: Optional[List[int]] = None,
-        detection_model: Optional[Union[str, _models.FaceDetectionModel]] = None,
-        user_data: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> _models.AddFaceResult:
-        """Add a face to a specified Large Face List, up to 1,000,000 faces.
-
-        Please refer to
-        https://learn.microsoft.com/rest/api/face/face-list-operations/add-large-face-list-face-from-url
-        for more details.
-
-        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
-         maximum length is 64. Required.
-        :type large_face_list_id: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword target_face: A face rectangle to specify the target face to be added to a person, in
-         the format of 'targetFace=left,top,width,height'. Default value is None.
-        :paramtype target_face: list[int]
-        :keyword detection_model: The 'detectionModel' associated with the detected faceIds. Supported
-         'detectionModel' values include 'detection_01', 'detection_02' and 'detection_03'. The default
-         value is 'detection_01'. Known values are: "detection_01", "detection_02", and "detection_03".
-         Default value is None.
-        :paramtype detection_model: str or ~azure.ai.vision.face.models.FaceDetectionModel
-        :keyword user_data: User-provided data attached to the face. The size limit is 1K. Default
-         value is None.
-        :paramtype user_data: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AddFaceResult. The AddFaceResult is compatible with MutableMapping
-        :rtype: ~azure.ai.vision.face.models.AddFaceResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def add_face_from_url(
-        self,
-        large_face_list_id: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        url: str = _Unset,
-        target_face: Optional[List[int]] = None,
-        detection_model: Optional[Union[str, _models.FaceDetectionModel]] = None,
-        user_data: Optional[str] = None,
-        **kwargs: Any,
-    ) -> _models.AddFaceResult:
-        """Add a face to a specified Large Face List, up to 1,000,000 faces.
-
-        Please refer to
-        https://learn.microsoft.com/rest/api/face/face-list-operations/add-large-face-list-face-from-url
-        for more details.
-
-        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
-         maximum length is 64. Required.
-        :type large_face_list_id: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword url: URL of input image. Required.
-        :paramtype url: str
-        :keyword target_face: A face rectangle to specify the target face to be added to a person, in
-         the format of 'targetFace=left,top,width,height'. Default value is None.
-        :paramtype target_face: list[int]
-        :keyword detection_model: The 'detectionModel' associated with the detected faceIds. Supported
-         'detectionModel' values include 'detection_01', 'detection_02' and 'detection_03'. The default
-         value is 'detection_01'. Known values are: "detection_01", "detection_02", and "detection_03".
-         Default value is None.
-        :paramtype detection_model: str or ~azure.ai.vision.face.models.FaceDetectionModel
-        :keyword user_data: User-provided data attached to the face. The size limit is 1K. Default
-         value is None.
-        :paramtype user_data: str
-        :return: AddFaceResult. The AddFaceResult is compatible with MutableMapping
-        :rtype: ~azure.ai.vision.face.models.AddFaceResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AddFaceResult] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            if url is _Unset:
-                raise TypeError("missing required argument: url")
-            body = {"url": url}
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_large_face_list_add_face_from_url_request(
-            large_face_list_id=large_face_list_id,
-            target_face=target_face,
-            detection_model=detection_model,
-            user_data=user_data,
-            content_type=content_type,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.AddFaceResult, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def add_face(
-        self,
-        large_face_list_id: str,
-        image_content: bytes,
-        *,
-        target_face: Optional[List[int]] = None,
-        detection_model: Optional[Union[str, _models.FaceDetectionModel]] = None,
-        user_data: Optional[str] = None,
-        **kwargs: Any,
-    ) -> _models.AddFaceResult:
-        """Add a face to a specified Large Face List, up to 1,000,000 faces.
-
-        Please refer to
-        https://learn.microsoft.com/rest/api/face/face-list-operations/add-large-face-list-face for
-        more details.
-
-        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
-         maximum length is 64. Required.
-        :type large_face_list_id: str
-        :param image_content: The image to be analyzed. Required.
-        :type image_content: bytes
-        :keyword target_face: A face rectangle to specify the target face to be added to a person, in
-         the format of 'targetFace=left,top,width,height'. Default value is None.
-        :paramtype target_face: list[int]
-        :keyword detection_model: The 'detectionModel' associated with the detected faceIds. Supported
-         'detectionModel' values include 'detection_01', 'detection_02' and 'detection_03'. The default
-         value is 'detection_01'. Known values are: "detection_01", "detection_02", and "detection_03".
-         Default value is None.
-        :paramtype detection_model: str or ~azure.ai.vision.face.models.FaceDetectionModel
-        :keyword user_data: User-provided data attached to the face. The size limit is 1K. Default
-         value is None.
-        :paramtype user_data: str
-        :return: AddFaceResult. The AddFaceResult is compatible with MutableMapping
-        :rtype: ~azure.ai.vision.face.models.AddFaceResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: str = kwargs.pop("content_type", _headers.pop("content-type", "application/octet-stream"))
-        cls: ClsType[_models.AddFaceResult] = kwargs.pop("cls", None)
-
-        _content = image_content
-
-        _request = build_large_face_list_add_face_request(
-            large_face_list_id=large_face_list_id,
-            target_face=target_face,
-            detection_model=detection_model,
-            user_data=user_data,
-            content_type=content_type,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.AddFaceResult, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def delete_face(  # pylint: disable=inconsistent-return-statements
-        self, large_face_list_id: str, persisted_face_id: str, **kwargs: Any
-    ) -> None:
-        """Please refer to
-        https://learn.microsoft.com/rest/api/face/face-list-operations/delete-large-face-list-face for
-        more details.
-
-        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
-         maximum length is 64. Required.
-        :type large_face_list_id: str
-        :param persisted_face_id: Face ID of the face. Required.
-        :type persisted_face_id: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_large_face_list_delete_face_request(
-            large_face_list_id=large_face_list_id,
-            persisted_face_id=persisted_face_id,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @distributed_trace
-    def get_face(self, large_face_list_id: str, persisted_face_id: str, **kwargs: Any) -> _models.LargeFaceListFace:
-        """Please refer to
-        https://learn.microsoft.com/rest/api/face/face-list-operations/get-large-face-list-face for
-        more details.
-
-        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
-         maximum length is 64. Required.
-        :type large_face_list_id: str
-        :param persisted_face_id: Face ID of the face. Required.
-        :type persisted_face_id: str
-        :return: LargeFaceListFace. The LargeFaceListFace is compatible with MutableMapping
-        :rtype: ~azure.ai.vision.face.models.LargeFaceListFace
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.LargeFaceListFace] = kwargs.pop("cls", None)
-
-        _request = build_large_face_list_get_face_request(
-            large_face_list_id=large_face_list_id,
-            persisted_face_id=persisted_face_id,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.LargeFaceListFace, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def update_face(
-        self,
-        large_face_list_id: str,
-        persisted_face_id: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> None:
-        """Please refer to
-        https://learn.microsoft.com/rest/api/face/face-list-operations/update-large-face-list-face for
-        more details.
-
-        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
-         maximum length is 64. Required.
-        :type large_face_list_id: str
-        :param persisted_face_id: Face ID of the face. Required.
-        :type persisted_face_id: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def update_face(
-        self,
-        large_face_list_id: str,
-        persisted_face_id: str,
-        *,
-        content_type: str = "application/json",
-        user_data: Optional[str] = None,
-        **kwargs: Any,
-    ) -> None:
-        """Please refer to
-        https://learn.microsoft.com/rest/api/face/face-list-operations/update-large-face-list-face for
-        more details.
-
-        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
-         maximum length is 64. Required.
-        :type large_face_list_id: str
-        :param persisted_face_id: Face ID of the face. Required.
-        :type persisted_face_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword user_data: User-provided data attached to the face. The length limit is 1K. Default
-         value is None.
-        :paramtype user_data: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def update_face(
-        self,
-        large_face_list_id: str,
-        persisted_face_id: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> None:
-        """Please refer to
-        https://learn.microsoft.com/rest/api/face/face-list-operations/update-large-face-list-face for
-        more details.
-
-        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
-         maximum length is 64. Required.
-        :type large_face_list_id: str
-        :param persisted_face_id: Face ID of the face. Required.
-        :type persisted_face_id: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def update_face(  # pylint: disable=inconsistent-return-statements
-        self,
-        large_face_list_id: str,
-        persisted_face_id: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        user_data: Optional[str] = None,
-        **kwargs: Any,
-    ) -> None:
-        """Please refer to
-        https://learn.microsoft.com/rest/api/face/face-list-operations/update-large-face-list-face for
-        more details.
-
-        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
-         maximum length is 64. Required.
-        :type large_face_list_id: str
-        :param persisted_face_id: Face ID of the face. Required.
-        :type persisted_face_id: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword user_data: User-provided data attached to the face. The length limit is 1K. Default
-         value is None.
-        :paramtype user_data: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            body = {"userData": user_data}
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_large_face_list_update_face_request(
-            large_face_list_id=large_face_list_id,
-            persisted_face_id=persisted_face_id,
-            content_type=content_type,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @distributed_trace
-    def get_faces(
-        self, large_face_list_id: str, *, start: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-    ) -> List[_models.LargeFaceListFace]:
-        """List faces' persistedFaceId and userData in a specified Large Face List.
-
-        Please refer to
-        https://learn.microsoft.com/rest/api/face/face-list-operations/get-large-face-list-faces for
-        more details.
-
-        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
-         maximum length is 64. Required.
-        :type large_face_list_id: str
-        :keyword start: List resources greater than the "start". It contains no more than 64
-         characters. Default is empty. Default value is None.
-        :paramtype start: str
-        :keyword top: The number of items to list, ranging in [1, 1000]. Default is 1000. Default value
-         is None.
-        :paramtype top: int
-        :return: list of LargeFaceListFace
-        :rtype: list[~azure.ai.vision.face.models.LargeFaceListFace]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.LargeFaceListFace]] = kwargs.pop("cls", None)
-
-        _request = build_large_face_list_get_faces_request(
-            large_face_list_id=large_face_list_id,
-            start=start,
-            top=top,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(List[_models.LargeFaceListFace], response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class LargePersonGroupOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.vision.face.FaceAdministrationClient`'s
-        :attr:`large_person_group` attribute.
-    """
-
-    def __init__(self, *args, **kwargs):
-        input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @overload
-    def create(
-        self, large_person_group_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
-        """Create a new Large Person Group with user-specified largePersonGroupId, name, an optional
-        userData and recognitionModel.
-
-        Please refer to
-        https://learn.microsoft.com/rest/api/face/person-group-operations/create-large-person-group for
-        more details.
-
-        :param large_person_group_id: ID of the container. Required.
-        :type large_person_group_id: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create(
-        self,
-        large_person_group_id: str,
-        *,
-        name: str,
-        content_type: str = "application/json",
-        user_data: Optional[str] = None,
-        recognition_model: Optional[Union[str, _models.FaceRecognitionModel]] = None,
-        **kwargs: Any,
-    ) -> None:
-        """Create a new Large Person Group with user-specified largePersonGroupId, name, an optional
-        userData and recognitionModel.
-
-        Please refer to
-        https://learn.microsoft.com/rest/api/face/person-group-operations/create-large-person-group for
-        more details.
-
-        :param large_person_group_id: ID of the container. Required.
-        :type large_person_group_id: str
-        :keyword name: User defined name, maximum length is 128. Required.
-        :paramtype name: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword user_data: Optional user defined data. Length should not exceed 16K. Default value is
-         None.
-        :paramtype user_data: str
-        :keyword recognition_model: The 'recognitionModel' associated with this face list. Supported
-         'recognitionModel' values include 'recognition_01', 'recognition_02, 'recognition_03', and
-         'recognition_04'. The default value is 'recognition_01'. 'recognition_04' is recommended since
-         its accuracy is improved on faces wearing masks compared with 'recognition_03', and its overall
-         accuracy is improved compared with 'recognition_01' and 'recognition_02'. Known values are:
-         "recognition_01", "recognition_02", "recognition_03", and "recognition_04". Default value is
-         None.
-        :paramtype recognition_model: str or ~azure.ai.vision.face.models.FaceRecognitionModel
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create(
-        self, large_person_group_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
-        """Create a new Large Person Group with user-specified largePersonGroupId, name, an optional
-        userData and recognitionModel.
-
-        Please refer to
-        https://learn.microsoft.com/rest/api/face/person-group-operations/create-large-person-group for
-        more details.
-
-        :param large_person_group_id: ID of the container. Required.
-        :type large_person_group_id: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def create(  # pylint: disable=inconsistent-return-statements
-        self,
-        large_person_group_id: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        name: str = _Unset,
-        user_data: Optional[str] = None,
-        recognition_model: Optional[Union[str, _models.FaceRecognitionModel]] = None,
-        **kwargs: Any,
-    ) -> None:
-        """Create a new Large Person Group with user-specified largePersonGroupId, name, an optional
-        userData and recognitionModel.
-
-        Please refer to
-        https://learn.microsoft.com/rest/api/face/person-group-operations/create-large-person-group for
-        more details.
-
-        :param large_person_group_id: ID of the container. Required.
-        :type large_person_group_id: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword name: User defined name, maximum length is 128. Required.
-        :paramtype name: str
-        :keyword user_data: Optional user defined data. Length should not exceed 16K. Default value is
-         None.
-        :paramtype user_data: str
-        :keyword recognition_model: The 'recognitionModel' associated with this face list. Supported
-         'recognitionModel' values include 'recognition_01', 'recognition_02, 'recognition_03', and
-         'recognition_04'. The default value is 'recognition_01'. 'recognition_04' is recommended since
-         its accuracy is improved on faces wearing masks compared with 'recognition_03', and its overall
-         accuracy is improved compared with 'recognition_01' and 'recognition_02'. Known values are:
-         "recognition_01", "recognition_02", "recognition_03", and "recognition_04". Default value is
-         None.
-        :paramtype recognition_model: str or ~azure.ai.vision.face.models.FaceRecognitionModel
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            if name is _Unset:
-                raise TypeError("missing required argument: name")
-            body = {"name": name, "recognitionModel": recognition_model, "userData": user_data}
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_large_person_group_create_request(
-            large_person_group_id=large_person_group_id,
-            content_type=content_type,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @distributed_trace
-    def delete(  # pylint: disable=inconsistent-return-statements
-        self, large_person_group_id: str, **kwargs: Any
-    ) -> None:
-        """Please refer to
-        https://learn.microsoft.com/rest/api/face/person-group-operations/delete-large-person-group for
-        more details.
-
-        :param large_person_group_id: ID of the container. Required.
-        :type large_person_group_id: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_large_person_group_delete_request(
-            large_person_group_id=large_person_group_id,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @distributed_trace
-    def get(
-        self, large_person_group_id: str, *, return_recognition_model: Optional[bool] = None, **kwargs: Any
-    ) -> _models.LargePersonGroup:
-        """Please refer to
-        https://learn.microsoft.com/rest/api/face/person-group-operations/get-large-person-group for
-        more details.
-
-        :param large_person_group_id: ID of the container. Required.
-        :type large_person_group_id: str
-        :keyword return_recognition_model: Return 'recognitionModel' or not. The default value is
-         false. Default value is None.
-        :paramtype return_recognition_model: bool
-        :return: LargePersonGroup. The LargePersonGroup is compatible with MutableMapping
-        :rtype: ~azure.ai.vision.face.models.LargePersonGroup
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.LargePersonGroup] = kwargs.pop("cls", None)
-
-        _request = build_large_person_group_get_request(
-            large_person_group_id=large_person_group_id,
-            return_recognition_model=return_recognition_model,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.LargePersonGroup, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def update(
-        self, large_person_group_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
-        """Please refer to
-        https://learn.microsoft.com/rest/api/face/person-group-operations/update-large-person-group for
-        more details.
-
-        :param large_person_group_id: ID of the container. Required.
-        :type large_person_group_id: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def update(
-        self,
-        large_person_group_id: str,
-        *,
-        content_type: str = "application/json",
-        name: Optional[str] = None,
-        user_data: Optional[str] = None,
-        **kwargs: Any,
-    ) -> None:
-        """Please refer to
-        https://learn.microsoft.com/rest/api/face/person-group-operations/update-large-person-group for
-        more details.
-
-        :param large_person_group_id: ID of the container. Required.
-        :type large_person_group_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword name: User defined name, maximum length is 128. Default value is None.
-        :paramtype name: str
-        :keyword user_data: Optional user defined data. Length should not exceed 16K. Default value is
-         None.
-        :paramtype user_data: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def update(
-        self, large_person_group_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
-        """Please refer to
-        https://learn.microsoft.com/rest/api/face/person-group-operations/update-large-person-group for
-        more details.
-
-        :param large_person_group_id: ID of the container. Required.
-        :type large_person_group_id: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def update(  # pylint: disable=inconsistent-return-statements
-        self,
-        large_person_group_id: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        name: Optional[str] = None,
-        user_data: Optional[str] = None,
-        **kwargs: Any,
-    ) -> None:
-        """Please refer to
-        https://learn.microsoft.com/rest/api/face/person-group-operations/update-large-person-group for
-        more details.
-
-        :param large_person_group_id: ID of the container. Required.
-        :type large_person_group_id: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword name: User defined name, maximum length is 128. Default value is None.
-        :paramtype name: str
-        :keyword user_data: Optional user defined data. Length should not exceed 16K. Default value is
-         None.
-        :paramtype user_data: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            body = {"name": name, "userData": user_data}
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_large_person_group_update_request(
-            large_person_group_id=large_person_group_id,
-            content_type=content_type,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @distributed_trace
-    def get_large_person_groups(
-        self,
-        *,
-        start: Optional[str] = None,
-        top: Optional[int] = None,
-        return_recognition_model: Optional[bool] = None,
-        **kwargs: Any,
-    ) -> List[_models.LargePersonGroup]:
-        """List all existing Large Person Groups' largePersonGroupId, name, userData and recognitionModel.
-
-        Please refer to
-        https://learn.microsoft.com/rest/api/face/person-group-operations/get-large-person-groups for
-        more details.
-
-        :keyword start: List resources greater than the "start". It contains no more than 64
-         characters. Default is empty. Default value is None.
-        :paramtype start: str
-        :keyword top: The number of items to list, ranging in [1, 1000]. Default is 1000. Default value
-         is None.
-        :paramtype top: int
-        :keyword return_recognition_model: Return 'recognitionModel' or not. The default value is
-         false. Default value is None.
-        :paramtype return_recognition_model: bool
-        :return: list of LargePersonGroup
-        :rtype: list[~azure.ai.vision.face.models.LargePersonGroup]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.LargePersonGroup]] = kwargs.pop("cls", None)
-
-        _request = build_large_person_group_get_large_person_groups_request(
-            start=start,
-            top=top,
-            return_recognition_model=return_recognition_model,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(List[_models.LargePersonGroup], response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def get_training_status(self, large_person_group_id: str, **kwargs: Any) -> _models.FaceTrainingResult:
-        """To check Large Person Group training status completed or still ongoing. Large Person Group
-        training is an asynchronous operation triggered by "Train Large Person Group" API.
-
-        Please refer to
-        https://learn.microsoft.com/rest/api/face/person-group-operations/get-large-person-group-training-status
-        for more details.
-
-        :param large_person_group_id: ID of the container. Required.
-        :type large_person_group_id: str
-        :return: FaceTrainingResult. The FaceTrainingResult is compatible with MutableMapping
-        :rtype: ~azure.ai.vision.face.models.FaceTrainingResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.FaceTrainingResult] = kwargs.pop("cls", None)
-
-        _request = build_large_person_group_get_training_status_request(
-            large_person_group_id=large_person_group_id,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.FaceTrainingResult, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    def _train_initial(self, large_person_group_id: str, **kwargs: Any) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_large_person_group_train_request(
-            large_person_group_id=large_person_group_id,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["operation-Location"] = self._deserialize("str", response.headers.get("operation-Location"))
-
-        deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def begin_train(self, large_person_group_id: str, **kwargs: Any) -> LROPoller[None]:
-        """Submit a Large Person Group training task. Training is a crucial step that only a trained Large
-        Person Group can be used by "Identify From Large Person Group".
-
-        Please refer to
-        https://learn.microsoft.com/rest/api/face/person-group-operations/train-large-person-group for
-        more details.
-
-        :param large_person_group_id: ID of the container. Required.
-        :type large_person_group_id: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._train_initial(
-                large_person_group_id=large_person_group_id,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs,
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    @overload
-    def create_person(
-        self, large_person_group_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.CreatePersonResult:
-        """Create a new person in a specified Large Person Group. To add face to this person, please call
-        "Add Large Person Group Person Face".
-
-        Please refer to
-        https://learn.microsoft.com/rest/api/face/person-group-operations/create-large-person-group-person
-        for more details.
-
-        :param large_person_group_id: ID of the container. Required.
-        :type large_person_group_id: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: CreatePersonResult. The CreatePersonResult is compatible with MutableMapping
-        :rtype: ~azure.ai.vision.face.models.CreatePersonResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create_person(
-        self,
-        large_person_group_id: str,
-        *,
-        name: str,
-        content_type: str = "application/json",
-        user_data: Optional[str] = None,
-        **kwargs: Any,
-    ) -> _models.CreatePersonResult:
-        """Create a new person in a specified Large Person Group. To add face to this person, please call
-        "Add Large Person Group Person Face".
-
-        Please refer to
-        https://learn.microsoft.com/rest/api/face/person-group-operations/create-large-person-group-person
-        for more details.
-
-        :param large_person_group_id: ID of the container. Required.
-        :type large_person_group_id: str
-        :keyword name: User defined name, maximum length is 128. Required.
-        :paramtype name: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword user_data: Optional user defined data. Length should not exceed 16K. Default value is
-         None.
-        :paramtype user_data: str
-        :return: CreatePersonResult. The CreatePersonResult is compatible with MutableMapping
-        :rtype: ~azure.ai.vision.face.models.CreatePersonResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create_person(
-        self, large_person_group_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.CreatePersonResult:
-        """Create a new person in a specified Large Person Group. To add face to this person, please call
-        "Add Large Person Group Person Face".
-
-        Please refer to
-        https://learn.microsoft.com/rest/api/face/person-group-operations/create-large-person-group-person
-        for more details.
-
-        :param large_person_group_id: ID of the container. Required.
-        :type large_person_group_id: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: CreatePersonResult. The CreatePersonResult is compatible with MutableMapping
-        :rtype: ~azure.ai.vision.face.models.CreatePersonResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def create_person(
-        self,
-        large_person_group_id: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        name: str = _Unset,
-        user_data: Optional[str] = None,
-        **kwargs: Any,
-    ) -> _models.CreatePersonResult:
-        """Create a new person in a specified Large Person Group. To add face to this person, please call
-        "Add Large Person Group Person Face".
-
-        Please refer to
-        https://learn.microsoft.com/rest/api/face/person-group-operations/create-large-person-group-person
-        for more details.
-
-        :param large_person_group_id: ID of the container. Required.
-        :type large_person_group_id: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword name: User defined name, maximum length is 128. Required.
-        :paramtype name: str
-        :keyword user_data: Optional user defined data. Length should not exceed 16K. Default value is
-         None.
-        :paramtype user_data: str
-        :return: CreatePersonResult. The CreatePersonResult is compatible with MutableMapping
-        :rtype: ~azure.ai.vision.face.models.CreatePersonResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.CreatePersonResult] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            if name is _Unset:
-                raise TypeError("missing required argument: name")
-            body = {"name": name, "userData": user_data}
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_large_person_group_create_person_request(
-            large_person_group_id=large_person_group_id,
-            content_type=content_type,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.CreatePersonResult, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def delete_person(  # pylint: disable=inconsistent-return-statements
-        self, large_person_group_id: str, person_id: str, **kwargs: Any
-    ) -> None:
-        """Please refer to
-        https://learn.microsoft.com/rest/api/face/person-group-operations/delete-large-person-group-person
-        for more details.
-
-        :param large_person_group_id: ID of the container. Required.
-        :type large_person_group_id: str
-        :param person_id: ID of the person. Required.
-        :type person_id: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_large_person_group_delete_person_request(
-            large_person_group_id=large_person_group_id,
-            person_id=person_id,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @distributed_trace
-    def get_person(self, large_person_group_id: str, person_id: str, **kwargs: Any) -> _models.LargePersonGroupPerson:
-        """Please refer to
-        https://learn.microsoft.com/rest/api/face/person-group-operations/get-large-person-group-person
-        for more details.
-
-        :param large_person_group_id: ID of the container. Required.
-        :type large_person_group_id: str
-        :param person_id: ID of the person. Required.
-        :type person_id: str
-        :return: LargePersonGroupPerson. The LargePersonGroupPerson is compatible with MutableMapping
-        :rtype: ~azure.ai.vision.face.models.LargePersonGroupPerson
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.LargePersonGroupPerson] = kwargs.pop("cls", None)
-
-        _request = build_large_person_group_get_person_request(
-            large_person_group_id=large_person_group_id,
-            person_id=person_id,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.LargePersonGroupPerson, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def update_person(
-        self,
-        large_person_group_id: str,
-        person_id: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> None:
-        """Please refer to
-        https://learn.microsoft.com/rest/api/face/person-group-operations/update-large-person-group-person
-        for more details.
-
-        :param large_person_group_id: ID of the container. Required.
-        :type large_person_group_id: str
-        :param person_id: ID of the person. Required.
-        :type person_id: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def update_person(
-        self,
-        large_person_group_id: str,
-        person_id: str,
-        *,
-        content_type: str = "application/json",
-        name: Optional[str] = None,
-        user_data: Optional[str] = None,
-        **kwargs: Any,
-    ) -> None:
-        """Please refer to
-        https://learn.microsoft.com/rest/api/face/person-group-operations/update-large-person-group-person
-        for more details.
-
-        :param large_person_group_id: ID of the container. Required.
-        :type large_person_group_id: str
-        :param person_id: ID of the person. Required.
-        :type person_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword name: User defined name, maximum length is 128. Default value is None.
-        :paramtype name: str
-        :keyword user_data: Optional user defined data. Length should not exceed 16K. Default value is
-         None.
-        :paramtype user_data: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def update_person(
-        self,
-        large_person_group_id: str,
-        person_id: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> None:
-        """Please refer to
-        https://learn.microsoft.com/rest/api/face/person-group-operations/update-large-person-group-person
-        for more details.
-
-        :param large_person_group_id: ID of the container. Required.
-        :type large_person_group_id: str
-        :param person_id: ID of the person. Required.
-        :type person_id: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def update_person(  # pylint: disable=inconsistent-return-statements
-        self,
-        large_person_group_id: str,
-        person_id: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        name: Optional[str] = None,
-        user_data: Optional[str] = None,
-        **kwargs: Any,
-    ) -> None:
-        """Please refer to
-        https://learn.microsoft.com/rest/api/face/person-group-operations/update-large-person-group-person
-        for more details.
-
-        :param large_person_group_id: ID of the container. Required.
-        :type large_person_group_id: str
-        :param person_id: ID of the person. Required.
-        :type person_id: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword name: User defined name, maximum length is 128. Default value is None.
-        :paramtype name: str
-        :keyword user_data: Optional user defined data. Length should not exceed 16K. Default value is
-         None.
-        :paramtype user_data: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            body = {"name": name, "userData": user_data}
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_large_person_group_update_person_request(
-            large_person_group_id=large_person_group_id,
-            person_id=person_id,
-            content_type=content_type,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @distributed_trace
-    def get_persons(
-        self, large_person_group_id: str, *, start: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-    ) -> List[_models.LargePersonGroupPerson]:
-        """List all persons' information in the specified Large Person Group, including personId, name,
-        userData and persistedFaceIds of registered person faces.
-
-        Please refer to
-        https://learn.microsoft.com/rest/api/face/person-group-operations/get-large-person-group-persons
-        for more details.
-
-        :param large_person_group_id: ID of the container. Required.
-        :type large_person_group_id: str
-        :keyword start: List resources greater than the "start". It contains no more than 64
-         characters. Default is empty. Default value is None.
-        :paramtype start: str
-        :keyword top: The number of items to list, ranging in [1, 1000]. Default is 1000. Default value
-         is None.
-        :paramtype top: int
-        :return: list of LargePersonGroupPerson
-        :rtype: list[~azure.ai.vision.face.models.LargePersonGroupPerson]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.LargePersonGroupPerson]] = kwargs.pop("cls", None)
-
-        _request = build_large_person_group_get_persons_request(
-            large_person_group_id=large_person_group_id,
-            start=start,
-            top=top,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(List[_models.LargePersonGroupPerson], response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def add_face_from_url(
-        self,
-        large_person_group_id: str,
-        person_id: str,
-        body: JSON,
-        *,
-        target_face: Optional[List[int]] = None,
-        detection_model: Optional[Union[str, _models.FaceDetectionModel]] = None,
-        user_data: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> _models.AddFaceResult:
-        """Add a face to a person into a Large Person Group for face identification or verification.
-
-        Please refer to
-        https://learn.microsoft.com/rest/api/face/person-group-operations/add-large-person-group-person-face-from-url
-        for more details.
-
-        :param large_person_group_id: ID of the container. Required.
-        :type large_person_group_id: str
-        :param person_id: ID of the person. Required.
-        :type person_id: str
-        :param body: Required.
-        :type body: JSON
-        :keyword target_face: A face rectangle to specify the target face to be added to a person, in
-         the format of 'targetFace=left,top,width,height'. Default value is None.
-        :paramtype target_face: list[int]
-        :keyword detection_model: The 'detectionModel' associated with the detected faceIds. Supported
-         'detectionModel' values include 'detection_01', 'detection_02' and 'detection_03'. The default
-         value is 'detection_01'. Known values are: "detection_01", "detection_02", and "detection_03".
-         Default value is None.
-        :paramtype detection_model: str or ~azure.ai.vision.face.models.FaceDetectionModel
-        :keyword user_data: User-provided data attached to the face. The size limit is 1K. Default
-         value is None.
-        :paramtype user_data: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AddFaceResult. The AddFaceResult is compatible with MutableMapping
-        :rtype: ~azure.ai.vision.face.models.AddFaceResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def add_face_from_url(
-        self,
-        large_person_group_id: str,
-        person_id: str,
-        *,
-        url: str,
-        target_face: Optional[List[int]] = None,
-        detection_model: Optional[Union[str, _models.FaceDetectionModel]] = None,
-        user_data: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> _models.AddFaceResult:
-        """Add a face to a person into a Large Person Group for face identification or verification.
-
-        Please refer to
-        https://learn.microsoft.com/rest/api/face/person-group-operations/add-large-person-group-person-face-from-url
-        for more details.
-
-        :param large_person_group_id: ID of the container. Required.
-        :type large_person_group_id: str
-        :param person_id: ID of the person. Required.
-        :type person_id: str
-        :keyword url: URL of input image. Required.
-        :paramtype url: str
-        :keyword target_face: A face rectangle to specify the target face to be added to a person, in
-         the format of 'targetFace=left,top,width,height'. Default value is None.
-        :paramtype target_face: list[int]
-        :keyword detection_model: The 'detectionModel' associated with the detected faceIds. Supported
-         'detectionModel' values include 'detection_01', 'detection_02' and 'detection_03'. The default
-         value is 'detection_01'. Known values are: "detection_01", "detection_02", and "detection_03".
-         Default value is None.
-        :paramtype detection_model: str or ~azure.ai.vision.face.models.FaceDetectionModel
-        :keyword user_data: User-provided data attached to the face. The size limit is 1K. Default
-         value is None.
-        :paramtype user_data: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AddFaceResult. The AddFaceResult is compatible with MutableMapping
-        :rtype: ~azure.ai.vision.face.models.AddFaceResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def add_face_from_url(
-        self,
-        large_person_group_id: str,
-        person_id: str,
-        body: IO[bytes],
-        *,
-        target_face: Optional[List[int]] = None,
-        detection_model: Optional[Union[str, _models.FaceDetectionModel]] = None,
-        user_data: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> _models.AddFaceResult:
-        """Add a face to a person into a Large Person Group for face identification or verification.
-
-        Please refer to
-        https://learn.microsoft.com/rest/api/face/person-group-operations/add-large-person-group-person-face-from-url
-        for more details.
-
-        :param large_person_group_id: ID of the container. Required.
-        :type large_person_group_id: str
-        :param person_id: ID of the person. Required.
-        :type person_id: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword target_face: A face rectangle to specify the target face to be added to a person, in
-         the format of 'targetFace=left,top,width,height'. Default value is None.
-        :paramtype target_face: list[int]
-        :keyword detection_model: The 'detectionModel' associated with the detected faceIds. Supported
-         'detectionModel' values include 'detection_01', 'detection_02' and 'detection_03'. The default
-         value is 'detection_01'. Known values are: "detection_01", "detection_02", and "detection_03".
-         Default value is None.
-        :paramtype detection_model: str or ~azure.ai.vision.face.models.FaceDetectionModel
-        :keyword user_data: User-provided data attached to the face. The size limit is 1K. Default
-         value is None.
-        :paramtype user_data: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AddFaceResult. The AddFaceResult is compatible with MutableMapping
-        :rtype: ~azure.ai.vision.face.models.AddFaceResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def add_face_from_url(
-        self,
-        large_person_group_id: str,
-        person_id: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        url: str = _Unset,
-        target_face: Optional[List[int]] = None,
-        detection_model: Optional[Union[str, _models.FaceDetectionModel]] = None,
-        user_data: Optional[str] = None,
-        **kwargs: Any,
-    ) -> _models.AddFaceResult:
-        """Add a face to a person into a Large Person Group for face identification or verification.
-
-        Please refer to
-        https://learn.microsoft.com/rest/api/face/person-group-operations/add-large-person-group-person-face-from-url
-        for more details.
-
-        :param large_person_group_id: ID of the container. Required.
-        :type large_person_group_id: str
-        :param person_id: ID of the person. Required.
-        :type person_id: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword url: URL of input image. Required.
-        :paramtype url: str
-        :keyword target_face: A face rectangle to specify the target face to be added to a person, in
-         the format of 'targetFace=left,top,width,height'. Default value is None.
-        :paramtype target_face: list[int]
-        :keyword detection_model: The 'detectionModel' associated with the detected faceIds. Supported
-         'detectionModel' values include 'detection_01', 'detection_02' and 'detection_03'. The default
-         value is 'detection_01'. Known values are: "detection_01", "detection_02", and "detection_03".
-         Default value is None.
-        :paramtype detection_model: str or ~azure.ai.vision.face.models.FaceDetectionModel
-        :keyword user_data: User-provided data attached to the face. The size limit is 1K. Default
-         value is None.
-        :paramtype user_data: str
-        :return: AddFaceResult. The AddFaceResult is compatible with MutableMapping
-        :rtype: ~azure.ai.vision.face.models.AddFaceResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AddFaceResult] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            if url is _Unset:
-                raise TypeError("missing required argument: url")
-            body = {"url": url}
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_large_person_group_add_face_from_url_request(
-            large_person_group_id=large_person_group_id,
-            person_id=person_id,
-            target_face=target_face,
-            detection_model=detection_model,
-            user_data=user_data,
-            content_type=content_type,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.AddFaceResult, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def add_face(
-        self,
-        large_person_group_id: str,
-        person_id: str,
-        image_content: bytes,
-        *,
-        target_face: Optional[List[int]] = None,
-        detection_model: Optional[Union[str, _models.FaceDetectionModel]] = None,
-        user_data: Optional[str] = None,
-        **kwargs: Any,
-    ) -> _models.AddFaceResult:
-        """Add a face to a person into a Large Person Group for face identification or verification.
-
-        Please refer to
-        https://learn.microsoft.com/rest/api/face/person-group-operations/add-large-person-group-person-face
-        for more details.
-
-        :param large_person_group_id: ID of the container. Required.
-        :type large_person_group_id: str
-        :param person_id: ID of the person. Required.
-        :type person_id: str
-        :param image_content: The image to be analyzed. Required.
-        :type image_content: bytes
-        :keyword target_face: A face rectangle to specify the target face to be added to a person, in
-         the format of 'targetFace=left,top,width,height'. Default value is None.
-        :paramtype target_face: list[int]
-        :keyword detection_model: The 'detectionModel' associated with the detected faceIds. Supported
-         'detectionModel' values include 'detection_01', 'detection_02' and 'detection_03'. The default
-         value is 'detection_01'. Known values are: "detection_01", "detection_02", and "detection_03".
-         Default value is None.
-        :paramtype detection_model: str or ~azure.ai.vision.face.models.FaceDetectionModel
-        :keyword user_data: User-provided data attached to the face. The size limit is 1K. Default
-         value is None.
-        :paramtype user_data: str
-        :return: AddFaceResult. The AddFaceResult is compatible with MutableMapping
-        :rtype: ~azure.ai.vision.face.models.AddFaceResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: str = kwargs.pop("content_type", _headers.pop("content-type", "application/octet-stream"))
-        cls: ClsType[_models.AddFaceResult] = kwargs.pop("cls", None)
-
-        _content = image_content
-
-        _request = build_large_person_group_add_face_request(
-            large_person_group_id=large_person_group_id,
-            person_id=person_id,
-            target_face=target_face,
-            detection_model=detection_model,
-            user_data=user_data,
-            content_type=content_type,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.AddFaceResult, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def delete_face(  # pylint: disable=inconsistent-return-statements
-        self, large_person_group_id: str, person_id: str, persisted_face_id: str, **kwargs: Any
-    ) -> None:
-        """Delete a face from a person in a Large Person Group by specified largePersonGroupId, personId
-        and persistedFaceId.
-
-        Please refer to
-        https://learn.microsoft.com/rest/api/face/person-group-operations/delete-large-person-group-person-face
-        for more details.
-
-        :param large_person_group_id: ID of the container. Required.
-        :type large_person_group_id: str
-        :param person_id: ID of the person. Required.
-        :type person_id: str
-        :param persisted_face_id: Face ID of the face. Required.
-        :type persisted_face_id: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_large_person_group_delete_face_request(
-            large_person_group_id=large_person_group_id,
-            person_id=person_id,
-            persisted_face_id=persisted_face_id,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @distributed_trace
-    def get_face(
-        self, large_person_group_id: str, person_id: str, persisted_face_id: str, **kwargs: Any
-    ) -> _models.LargePersonGroupPersonFace:
-        """Please refer to
-        https://learn.microsoft.com/rest/api/face/person-group-operations/get-large-person-group-person-face
-        for more details.
-
-        :param large_person_group_id: ID of the container. Required.
-        :type large_person_group_id: str
-        :param person_id: ID of the person. Required.
-        :type person_id: str
-        :param persisted_face_id: Face ID of the face. Required.
-        :type persisted_face_id: str
-        :return: LargePersonGroupPersonFace. The LargePersonGroupPersonFace is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.vision.face.models.LargePersonGroupPersonFace
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.LargePersonGroupPersonFace] = kwargs.pop("cls", None)
-
-        _request = build_large_person_group_get_face_request(
-            large_person_group_id=large_person_group_id,
-            person_id=person_id,
-            persisted_face_id=persisted_face_id,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.LargePersonGroupPersonFace, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def update_face(
-        self,
-        large_person_group_id: str,
-        person_id: str,
-        persisted_face_id: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> None:
-        """Please refer to
-        https://learn.microsoft.com/rest/api/face/person-group-operations/update-large-person-group-person-face
-        for more details.
-
-        :param large_person_group_id: ID of the container. Required.
-        :type large_person_group_id: str
-        :param person_id: ID of the person. Required.
-        :type person_id: str
-        :param persisted_face_id: Face ID of the face. Required.
-        :type persisted_face_id: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def update_face(
-        self,
-        large_person_group_id: str,
-        person_id: str,
-        persisted_face_id: str,
-        *,
-        content_type: str = "application/json",
-        user_data: Optional[str] = None,
-        **kwargs: Any,
-    ) -> None:
-        """Please refer to
-        https://learn.microsoft.com/rest/api/face/person-group-operations/update-large-person-group-person-face
-        for more details.
-
-        :param large_person_group_id: ID of the container. Required.
-        :type large_person_group_id: str
-        :param person_id: ID of the person. Required.
-        :type person_id: str
-        :param persisted_face_id: Face ID of the face. Required.
-        :type persisted_face_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword user_data: User-provided data attached to the face. The length limit is 1K. Default
-         value is None.
-        :paramtype user_data: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def update_face(
-        self,
-        large_person_group_id: str,
-        person_id: str,
-        persisted_face_id: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> None:
-        """Please refer to
-        https://learn.microsoft.com/rest/api/face/person-group-operations/update-large-person-group-person-face
-        for more details.
-
-        :param large_person_group_id: ID of the container. Required.
-        :type large_person_group_id: str
-        :param person_id: ID of the person. Required.
-        :type person_id: str
-        :param persisted_face_id: Face ID of the face. Required.
-        :type persisted_face_id: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def update_face(  # pylint: disable=inconsistent-return-statements
-        self,
-        large_person_group_id: str,
-        person_id: str,
-        persisted_face_id: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        user_data: Optional[str] = None,
-        **kwargs: Any,
-    ) -> None:
-        """Please refer to
-        https://learn.microsoft.com/rest/api/face/person-group-operations/update-large-person-group-person-face
-        for more details.
-
-        :param large_person_group_id: ID of the container. Required.
-        :type large_person_group_id: str
-        :param person_id: ID of the person. Required.
-        :type person_id: str
-        :param persisted_face_id: Face ID of the face. Required.
-        :type persisted_face_id: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword user_data: User-provided data attached to the face. The length limit is 1K. Default
-         value is None.
-        :paramtype user_data: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            body = {"userData": user_data}
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_large_person_group_update_face_request(
-            large_person_group_id=large_person_group_id,
-            person_id=person_id,
-            persisted_face_id=persisted_face_id,
-            content_type=content_type,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-
 class FaceClientOperationsMixin(FaceClientMixinABC):
 
     @overload
     def _detect_from_url(
         self,
-        body: JSON,
         *,
+        url: str,
         content_type: str = "application/json",
         detection_model: Optional[Union[str, _models.FaceDetectionModel]] = None,
         recognition_model: Optional[Union[str, _models.FaceRecognitionModel]] = None,
@@ -4691,8 +1220,8 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
     @overload
     def _detect_from_url(
         self,
+        body: JSON,
         *,
-        url: str,
         content_type: str = "application/json",
         detection_model: Optional[Union[str, _models.FaceDetectionModel]] = None,
         recognition_model: Optional[Union[str, _models.FaceRecognitionModel]] = None,
@@ -4738,8 +1267,9 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         and attributes.
 
         Please refer to
-        https://learn.microsoft.com/rest/api/face/face-detection-operations/detect-from-url for more
-        details.
+        `https://learn.microsoft.com/rest/api/face/face-detection-operations/detect-from-url
+        <https://learn.microsoft.com/rest/api/face/face-detection-operations/detect-from-url>`_ for
+        more details.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
@@ -4821,7 +1351,9 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4839,7 +1371,7 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -4869,8 +1401,9 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         """Detect human faces in an image, return face rectangles, and optionally with faceIds, landmarks,
         and attributes.
 
-        Please refer to https://learn.microsoft.com/rest/api/face/face-detection-operations/detect for
-        more details.
+        Please refer to `https://learn.microsoft.com/rest/api/face/face-detection-operations/detect
+        <https://learn.microsoft.com/rest/api/face/face-detection-operations/detect>`_ for more
+        details.
 
         :param image_content: The input image binary. Required.
         :type image_content: bytes
@@ -4940,7 +1473,9 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4958,7 +1493,7 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -4970,27 +1505,6 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    @overload
-    def find_similar(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> List[_models.FaceFindSimilarResult]:
-        """Given query face's faceId, to search the similar-looking faces from a faceId array. A faceId
-        array contains the faces created by Detect.
-
-        Please refer to
-        https://learn.microsoft.com/rest/api/face/face-recognition-operations/find-similar for more
-        details.
-
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: list of FaceFindSimilarResult
-        :rtype: list[~azure.ai.vision.face.models.FaceFindSimilarResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
 
     @overload
     def find_similar(
@@ -5007,7 +1521,8 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         array contains the faces created by Detect.
 
         Please refer to
-        https://learn.microsoft.com/rest/api/face/face-recognition-operations/find-similar for more
+        `https://learn.microsoft.com/rest/api/face/face-recognition-operations/find-similar
+        <https://learn.microsoft.com/rest/api/face/face-recognition-operations/find-similar>`_ for more
         details.
 
         :keyword face_id: faceId of the query face. User needs to call "Detect" first to get a valid
@@ -5034,13 +1549,36 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
 
     @overload
     def find_similar(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> List[_models.FaceFindSimilarResult]:
+        """Given query face's faceId, to search the similar-looking faces from a faceId array. A faceId
+        array contains the faces created by Detect.
+
+        Please refer to
+        `https://learn.microsoft.com/rest/api/face/face-recognition-operations/find-similar
+        <https://learn.microsoft.com/rest/api/face/face-recognition-operations/find-similar>`_ for more
+        details.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: list of FaceFindSimilarResult
+        :rtype: list[~azure.ai.vision.face.models.FaceFindSimilarResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def find_similar(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> List[_models.FaceFindSimilarResult]:
         """Given query face's faceId, to search the similar-looking faces from a faceId array. A faceId
         array contains the faces created by Detect.
 
         Please refer to
-        https://learn.microsoft.com/rest/api/face/face-recognition-operations/find-similar for more
+        `https://learn.microsoft.com/rest/api/face/face-recognition-operations/find-similar
+        <https://learn.microsoft.com/rest/api/face/face-recognition-operations/find-similar>`_ for more
         details.
 
         :param body: Required.
@@ -5068,7 +1606,8 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         array contains the faces created by Detect.
 
         Please refer to
-        https://learn.microsoft.com/rest/api/face/face-recognition-operations/find-similar for more
+        `https://learn.microsoft.com/rest/api/face/face-recognition-operations/find-similar
+        <https://learn.microsoft.com/rest/api/face/face-recognition-operations/find-similar>`_ for more
         details.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
@@ -5132,7 +1671,9 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5150,7 +1691,7 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -5165,33 +1706,14 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
 
     @overload
     def verify_face_to_face(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.FaceVerificationResult:
-        """Verify whether two faces belong to a same person.
-
-        Please refer to
-        https://learn.microsoft.com/rest/api/face/face-recognition-operations/verify-face-to-face for
-        more details.
-
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: FaceVerificationResult. The FaceVerificationResult is compatible with MutableMapping
-        :rtype: ~azure.ai.vision.face.models.FaceVerificationResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def verify_face_to_face(
         self, *, face_id1: str, face_id2: str, content_type: str = "application/json", **kwargs: Any
     ) -> _models.FaceVerificationResult:
         """Verify whether two faces belong to a same person.
 
         Please refer to
-        https://learn.microsoft.com/rest/api/face/face-recognition-operations/verify-face-to-face for
-        more details.
+        `https://learn.microsoft.com/rest/api/face/face-recognition-operations/verify-face-to-face
+        <https://learn.microsoft.com/rest/api/face/face-recognition-operations/verify-face-to-face>`_
+        for more details.
 
         :keyword face_id1: The faceId of one face, come from "Detect". Required.
         :paramtype face_id1: str
@@ -5207,13 +1729,35 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
 
     @overload
     def verify_face_to_face(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.FaceVerificationResult:
+        """Verify whether two faces belong to a same person.
+
+        Please refer to
+        `https://learn.microsoft.com/rest/api/face/face-recognition-operations/verify-face-to-face
+        <https://learn.microsoft.com/rest/api/face/face-recognition-operations/verify-face-to-face>`_
+        for more details.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: FaceVerificationResult. The FaceVerificationResult is compatible with MutableMapping
+        :rtype: ~azure.ai.vision.face.models.FaceVerificationResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def verify_face_to_face(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.FaceVerificationResult:
         """Verify whether two faces belong to a same person.
 
         Please refer to
-        https://learn.microsoft.com/rest/api/face/face-recognition-operations/verify-face-to-face for
-        more details.
+        `https://learn.microsoft.com/rest/api/face/face-recognition-operations/verify-face-to-face
+        <https://learn.microsoft.com/rest/api/face/face-recognition-operations/verify-face-to-face>`_
+        for more details.
 
         :param body: Required.
         :type body: IO[bytes]
@@ -5232,8 +1776,9 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         """Verify whether two faces belong to a same person.
 
         Please refer to
-        https://learn.microsoft.com/rest/api/face/face-recognition-operations/verify-face-to-face for
-        more details.
+        `https://learn.microsoft.com/rest/api/face/face-recognition-operations/verify-face-to-face
+        <https://learn.microsoft.com/rest/api/face/face-recognition-operations/verify-face-to-face>`_
+        for more details.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
@@ -5281,7 +1826,9 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5299,7 +1846,7 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -5313,14 +1860,18 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         return deserialized  # type: ignore
 
     @overload
-    def group(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.FaceGroupingResult:
+    def group(
+        self, *, face_ids: List[str], content_type: str = "application/json", **kwargs: Any
+    ) -> _models.FaceGroupingResult:
         """Divide candidate faces into groups based on face similarity.
 
-        Please refer to https://learn.microsoft.com/rest/api/face/face-recognition-operations/group for
-        more details.
+        Please refer to `https://learn.microsoft.com/rest/api/face/face-recognition-operations/group
+        <https://learn.microsoft.com/rest/api/face/face-recognition-operations/group>`_ for more
+        details.
 
-        :param body: Required.
-        :type body: JSON
+        :keyword face_ids: Array of candidate faceIds created by "Detect". The maximum is 1000 faces.
+         Required.
+        :paramtype face_ids: list[str]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5330,17 +1881,15 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         """
 
     @overload
-    def group(
-        self, *, face_ids: List[str], content_type: str = "application/json", **kwargs: Any
-    ) -> _models.FaceGroupingResult:
+    def group(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.FaceGroupingResult:
         """Divide candidate faces into groups based on face similarity.
 
-        Please refer to https://learn.microsoft.com/rest/api/face/face-recognition-operations/group for
-        more details.
+        Please refer to `https://learn.microsoft.com/rest/api/face/face-recognition-operations/group
+        <https://learn.microsoft.com/rest/api/face/face-recognition-operations/group>`_ for more
+        details.
 
-        :keyword face_ids: Array of candidate faceIds created by "Detect". The maximum is 1000 faces.
-         Required.
-        :paramtype face_ids: list[str]
+        :param body: Required.
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5355,8 +1904,9 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
     ) -> _models.FaceGroupingResult:
         """Divide candidate faces into groups based on face similarity.
 
-        Please refer to https://learn.microsoft.com/rest/api/face/face-recognition-operations/group for
-        more details.
+        Please refer to `https://learn.microsoft.com/rest/api/face/face-recognition-operations/group
+        <https://learn.microsoft.com/rest/api/face/face-recognition-operations/group>`_ for more
+        details.
 
         :param body: Required.
         :type body: IO[bytes]
@@ -5374,8 +1924,9 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
     ) -> _models.FaceGroupingResult:
         """Divide candidate faces into groups based on face similarity.
 
-        Please refer to https://learn.microsoft.com/rest/api/face/face-recognition-operations/group for
-        more details.
+        Please refer to `https://learn.microsoft.com/rest/api/face/face-recognition-operations/group
+        <https://learn.microsoft.com/rest/api/face/face-recognition-operations/group>`_ for more
+        details.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
@@ -5420,7 +1971,9 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5438,7 +1991,7 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -5450,27 +2003,6 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    @overload
-    def find_similar_from_large_face_list(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> List[_models.FaceFindSimilarResult]:
-        """Given query face's faceId, to search the similar-looking faces from a Large Face List. A
-        'largeFaceListId' is created by Create Large Face List.
-
-        Please refer to
-        https://learn.microsoft.com/rest/api/face/face-recognition-operations/find-similar-from-large-face-list
-        for more details.
-
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: list of FaceFindSimilarResult
-        :rtype: list[~azure.ai.vision.face.models.FaceFindSimilarResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
 
     @overload
     def find_similar_from_large_face_list(
@@ -5487,7 +2019,8 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         'largeFaceListId' is created by Create Large Face List.
 
         Please refer to
-        https://learn.microsoft.com/rest/api/face/face-recognition-operations/find-similar-from-large-face-list
+        `https://learn.microsoft.com/rest/api/face/face-recognition-operations/find-similar-from-large-face-list
+        <https://learn.microsoft.com/rest/api/face/face-recognition-operations/find-similar-from-large-face-list>`_
         for more details.
 
         :keyword face_id: faceId of the query face. User needs to call "Detect" first to get a valid
@@ -5514,13 +2047,36 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
 
     @overload
     def find_similar_from_large_face_list(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> List[_models.FaceFindSimilarResult]:
+        """Given query face's faceId, to search the similar-looking faces from a Large Face List. A
+        'largeFaceListId' is created by Create Large Face List.
+
+        Please refer to
+        `https://learn.microsoft.com/rest/api/face/face-recognition-operations/find-similar-from-large-face-list
+        <https://learn.microsoft.com/rest/api/face/face-recognition-operations/find-similar-from-large-face-list>`_
+        for more details.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: list of FaceFindSimilarResult
+        :rtype: list[~azure.ai.vision.face.models.FaceFindSimilarResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def find_similar_from_large_face_list(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> List[_models.FaceFindSimilarResult]:
         """Given query face's faceId, to search the similar-looking faces from a Large Face List. A
         'largeFaceListId' is created by Create Large Face List.
 
         Please refer to
-        https://learn.microsoft.com/rest/api/face/face-recognition-operations/find-similar-from-large-face-list
+        `https://learn.microsoft.com/rest/api/face/face-recognition-operations/find-similar-from-large-face-list
+        <https://learn.microsoft.com/rest/api/face/face-recognition-operations/find-similar-from-large-face-list>`_
         for more details.
 
         :param body: Required.
@@ -5548,7 +2104,8 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         'largeFaceListId' is created by Create Large Face List.
 
         Please refer to
-        https://learn.microsoft.com/rest/api/face/face-recognition-operations/find-similar-from-large-face-list
+        `https://learn.microsoft.com/rest/api/face/face-recognition-operations/find-similar-from-large-face-list
+        <https://learn.microsoft.com/rest/api/face/face-recognition-operations/find-similar-from-large-face-list>`_
         for more details.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
@@ -5612,7 +2169,9 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5630,7 +2189,7 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -5642,27 +2201,6 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    @overload
-    def identify_from_large_person_group(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> List[_models.FaceIdentificationResult]:
-        """1-to-many identification to find the closest matches of the specific query person face from a
-        Large Person Group.
-
-        Please refer to
-        https://learn.microsoft.com/rest/api/face/face-recognition-operations/identify-from-person-group
-        for more details.
-
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: list of FaceIdentificationResult
-        :rtype: list[~azure.ai.vision.face.models.FaceIdentificationResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
 
     @overload
     def identify_from_large_person_group(
@@ -5679,7 +2217,8 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         Large Person Group.
 
         Please refer to
-        https://learn.microsoft.com/rest/api/face/face-recognition-operations/identify-from-person-group
+        `https://learn.microsoft.com/rest/api/face/face-recognition-operations/identify-from-person-group
+        <https://learn.microsoft.com/rest/api/face/face-recognition-operations/identify-from-person-group>`_
         for more details.
 
         :keyword face_ids: Array of query faces faceIds, created by the "Detect". Each of the faces are
@@ -5707,13 +2246,36 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
 
     @overload
     def identify_from_large_person_group(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> List[_models.FaceIdentificationResult]:
+        """1-to-many identification to find the closest matches of the specific query person face from a
+        Large Person Group.
+
+        Please refer to
+        `https://learn.microsoft.com/rest/api/face/face-recognition-operations/identify-from-person-group
+        <https://learn.microsoft.com/rest/api/face/face-recognition-operations/identify-from-person-group>`_
+        for more details.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: list of FaceIdentificationResult
+        :rtype: list[~azure.ai.vision.face.models.FaceIdentificationResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def identify_from_large_person_group(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> List[_models.FaceIdentificationResult]:
         """1-to-many identification to find the closest matches of the specific query person face from a
         Large Person Group.
 
         Please refer to
-        https://learn.microsoft.com/rest/api/face/face-recognition-operations/identify-from-person-group
+        `https://learn.microsoft.com/rest/api/face/face-recognition-operations/identify-from-person-group
+        <https://learn.microsoft.com/rest/api/face/face-recognition-operations/identify-from-person-group>`_
         for more details.
 
         :param body: Required.
@@ -5741,7 +2303,8 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         Large Person Group.
 
         Please refer to
-        https://learn.microsoft.com/rest/api/face/face-recognition-operations/identify-from-person-group
+        `https://learn.microsoft.com/rest/api/face/face-recognition-operations/identify-from-person-group
+        <https://learn.microsoft.com/rest/api/face/face-recognition-operations/identify-from-person-group>`_
         for more details.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
@@ -5806,7 +2369,9 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5824,7 +2389,7 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -5839,26 +2404,6 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
 
     @overload
     def verify_from_large_person_group(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.FaceVerificationResult:
-        """Verify whether a face belongs to a person in a Large Person Group.
-
-        Please refer to
-        https://learn.microsoft.com/rest/api/face/face-recognition-operations/verify-from-large-person-group
-        for more details.
-
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: FaceVerificationResult. The FaceVerificationResult is compatible with MutableMapping
-        :rtype: ~azure.ai.vision.face.models.FaceVerificationResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def verify_from_large_person_group(
         self,
         *,
         face_id: str,
@@ -5870,7 +2415,8 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         """Verify whether a face belongs to a person in a Large Person Group.
 
         Please refer to
-        https://learn.microsoft.com/rest/api/face/face-recognition-operations/verify-from-large-person-group
+        `https://learn.microsoft.com/rest/api/face/face-recognition-operations/verify-from-large-person-group
+        <https://learn.microsoft.com/rest/api/face/face-recognition-operations/verify-from-large-person-group>`_
         for more details.
 
         :keyword face_id: The faceId of the face, come from "Detect". Required.
@@ -5890,12 +2436,34 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
 
     @overload
     def verify_from_large_person_group(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.FaceVerificationResult:
+        """Verify whether a face belongs to a person in a Large Person Group.
+
+        Please refer to
+        `https://learn.microsoft.com/rest/api/face/face-recognition-operations/verify-from-large-person-group
+        <https://learn.microsoft.com/rest/api/face/face-recognition-operations/verify-from-large-person-group>`_
+        for more details.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: FaceVerificationResult. The FaceVerificationResult is compatible with MutableMapping
+        :rtype: ~azure.ai.vision.face.models.FaceVerificationResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def verify_from_large_person_group(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.FaceVerificationResult:
         """Verify whether a face belongs to a person in a Large Person Group.
 
         Please refer to
-        https://learn.microsoft.com/rest/api/face/face-recognition-operations/verify-from-large-person-group
+        `https://learn.microsoft.com/rest/api/face/face-recognition-operations/verify-from-large-person-group
+        <https://learn.microsoft.com/rest/api/face/face-recognition-operations/verify-from-large-person-group>`_
         for more details.
 
         :param body: Required.
@@ -5921,7 +2489,8 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         """Verify whether a face belongs to a person in a Large Person Group.
 
         Please refer to
-        https://learn.microsoft.com/rest/api/face/face-recognition-operations/verify-from-large-person-group
+        `https://learn.microsoft.com/rest/api/face/face-recognition-operations/verify-from-large-person-group
+        <https://learn.microsoft.com/rest/api/face/face-recognition-operations/verify-from-large-person-group>`_
         for more details.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
@@ -5975,7 +2544,9 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5993,7 +2564,7 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -6012,11 +2583,12 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
     @overload
     def create_liveness_session(
         self, body: _models.CreateLivenessSessionContent, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.CreateLivenessSessionResult:
+    ) -> _models.LivenessSession:
         """Create a new detect liveness session.
 
         Please refer to
-        https://learn.microsoft.com/rest/api/face/liveness-session-operations/create-liveness-session
+        `https://learn.microsoft.com/rest/api/face/liveness-session-operations/create-liveness-session
+        <https://learn.microsoft.com/rest/api/face/liveness-session-operations/create-liveness-session>`_
         for more details.
 
         :param body: Body parameter. Required.
@@ -6024,20 +2596,20 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: CreateLivenessSessionResult. The CreateLivenessSessionResult is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.vision.face.models.CreateLivenessSessionResult
+        :return: LivenessSession. The LivenessSession is compatible with MutableMapping
+        :rtype: ~azure.ai.vision.face.models.LivenessSession
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def create_liveness_session(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.CreateLivenessSessionResult:
+    ) -> _models.LivenessSession:
         """Create a new detect liveness session.
 
         Please refer to
-        https://learn.microsoft.com/rest/api/face/liveness-session-operations/create-liveness-session
+        `https://learn.microsoft.com/rest/api/face/liveness-session-operations/create-liveness-session
+        <https://learn.microsoft.com/rest/api/face/liveness-session-operations/create-liveness-session>`_
         for more details.
 
         :param body: Body parameter. Required.
@@ -6045,20 +2617,20 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: CreateLivenessSessionResult. The CreateLivenessSessionResult is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.vision.face.models.CreateLivenessSessionResult
+        :return: LivenessSession. The LivenessSession is compatible with MutableMapping
+        :rtype: ~azure.ai.vision.face.models.LivenessSession
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def create_liveness_session(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.CreateLivenessSessionResult:
+    ) -> _models.LivenessSession:
         """Create a new detect liveness session.
 
         Please refer to
-        https://learn.microsoft.com/rest/api/face/liveness-session-operations/create-liveness-session
+        `https://learn.microsoft.com/rest/api/face/liveness-session-operations/create-liveness-session
+        <https://learn.microsoft.com/rest/api/face/liveness-session-operations/create-liveness-session>`_
         for more details.
 
         :param body: Body parameter. Required.
@@ -6066,28 +2638,31 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: CreateLivenessSessionResult. The CreateLivenessSessionResult is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.vision.face.models.CreateLivenessSessionResult
+        :return: LivenessSession. The LivenessSession is compatible with MutableMapping
+        :rtype: ~azure.ai.vision.face.models.LivenessSession
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="v1.2",
+        params_added_on={"v1.2": ["content_type", "accept"]},
+    )
     def create_liveness_session(
         self, body: Union[_models.CreateLivenessSessionContent, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.CreateLivenessSessionResult:
+    ) -> _models.LivenessSession:
         """Create a new detect liveness session.
 
         Please refer to
-        https://learn.microsoft.com/rest/api/face/liveness-session-operations/create-liveness-session
+        `https://learn.microsoft.com/rest/api/face/liveness-session-operations/create-liveness-session
+        <https://learn.microsoft.com/rest/api/face/liveness-session-operations/create-liveness-session>`_
         for more details.
 
         :param body: Body parameter. Is one of the following types: CreateLivenessSessionContent, JSON,
          IO[bytes] Required.
         :type body: ~azure.ai.vision.face.models.CreateLivenessSessionContent or JSON or IO[bytes]
-        :return: CreateLivenessSessionResult. The CreateLivenessSessionResult is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.vision.face.models.CreateLivenessSessionResult
+        :return: LivenessSession. The LivenessSession is compatible with MutableMapping
+        :rtype: ~azure.ai.vision.face.models.LivenessSession
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -6102,7 +2677,7 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.CreateLivenessSessionResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.LivenessSession] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -6119,7 +2694,9 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -6137,13 +2714,13 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.CreateLivenessSessionResult, response.json())
+            deserialized = _deserialize(_models.LivenessSession, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -6151,13 +2728,18 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="v1.2",
+        params_added_on={"v1.2": ["session_id", "accept"]},
+    )
     def delete_liveness_session(  # pylint: disable=inconsistent-return-statements
         self, session_id: str, **kwargs: Any
     ) -> None:
         """Delete all session related information for matching the specified session id.
 
         Please refer to
-        https://learn.microsoft.com/rest/api/face/liveness-session-operations/delete-liveness-session
+        `https://learn.microsoft.com/rest/api/face/liveness-session-operations/delete-liveness-session
+        <https://learn.microsoft.com/rest/api/face/liveness-session-operations/delete-liveness-session>`_
         for more details.
 
         :param session_id: The unique ID to reference this session. Required.
@@ -6186,7 +2768,9 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -6197,18 +2781,23 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="v1.2",
+        params_added_on={"v1.2": ["session_id", "accept"]},
+    )
     def get_liveness_session_result(self, session_id: str, **kwargs: Any) -> _models.LivenessSession:
         """Please refer to
-        https://learn.microsoft.com/rest/api/face/liveness-session-operations/get-liveness-session-result
+        `https://learn.microsoft.com/rest/api/face/liveness-session-operations/get-liveness-session-result
+        <https://learn.microsoft.com/rest/api/face/liveness-session-operations/get-liveness-session-result>`_
         for more details.
 
         :param session_id: The unique ID to reference this session. Required.
@@ -6237,7 +2826,9 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -6255,7 +2846,7 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -6268,274 +2859,63 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
 
         return deserialized  # type: ignore
 
-    @distributed_trace
-    def get_liveness_sessions(
-        self, *, start: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-    ) -> List[_models.LivenessSessionItem]:
-        """Lists sessions for /detectLiveness/SingleModal.
-
-        Please refer to
-        https://learn.microsoft.com/rest/api/face/liveness-session-operations/get-liveness-sessions for
-        more details.
-
-        :keyword start: List resources greater than the "start". It contains no more than 64
-         characters. Default is empty. Default value is None.
-        :paramtype start: str
-        :keyword top: The number of items to list, ranging in [1, 1000]. Default is 1000. Default value
-         is None.
-        :paramtype top: int
-        :return: list of LivenessSessionItem
-        :rtype: list[~azure.ai.vision.face.models.LivenessSessionItem]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.LivenessSessionItem]] = kwargs.pop("cls", None)
-
-        _request = build_face_session_get_liveness_sessions_request(
-            start=start,
-            top=top,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(List[_models.LivenessSessionItem], response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def get_liveness_session_audit_entries(
-        self, session_id: str, *, start: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-    ) -> List[_models.LivenessSessionAuditEntry]:
-        """Please refer to
-        https://learn.microsoft.com/rest/api/face/liveness-session-operations/get-liveness-session-audit-entries
-        for more details.
-
-        :param session_id: The unique ID to reference this session. Required.
-        :type session_id: str
-        :keyword start: List resources greater than the "start". It contains no more than 64
-         characters. Default is empty. Default value is None.
-        :paramtype start: str
-        :keyword top: The number of items to list, ranging in [1, 1000]. Default is 1000. Default value
-         is None.
-        :paramtype top: int
-        :return: list of LivenessSessionAuditEntry
-        :rtype: list[~azure.ai.vision.face.models.LivenessSessionAuditEntry]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.LivenessSessionAuditEntry]] = kwargs.pop("cls", None)
-
-        _request = build_face_session_get_liveness_session_audit_entries_request(
-            session_id=session_id,
-            start=start,
-            top=top,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(List[_models.LivenessSessionAuditEntry], response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
     @overload
-    def _create_liveness_with_verify_session(
-        self,
-        body: _models.CreateLivenessWithVerifySessionContent,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> _models.CreateLivenessWithVerifySessionResult: ...
-    @overload
-    def _create_liveness_with_verify_session(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.CreateLivenessWithVerifySessionResult: ...
-    @overload
-    def _create_liveness_with_verify_session(
-        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.CreateLivenessWithVerifySessionResult: ...
-
-    @distributed_trace
-    def _create_liveness_with_verify_session(
-        self, body: Union[_models.CreateLivenessWithVerifySessionContent, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.CreateLivenessWithVerifySessionResult:
-        """Create a new liveness session with verify. Client device submits VerifyImage during the
-        /detectLivenessWithVerify/singleModal call.
-
-        Please refer to
-        https://learn.microsoft.com/rest/api/face/liveness-session-operations/create-liveness-with-verify-session
-        for more details.
-
-        :param body: Body parameter. Is one of the following types:
-         CreateLivenessWithVerifySessionContent, JSON, IO[bytes] Required.
-        :type body: ~azure.ai.vision.face.models.CreateLivenessWithVerifySessionContent or JSON or
-         IO[bytes]
-        :return: CreateLivenessWithVerifySessionResult. The CreateLivenessWithVerifySessionResult is
-         compatible with MutableMapping
-        :rtype: ~azure.ai.vision.face.models.CreateLivenessWithVerifySessionResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.CreateLivenessWithVerifySessionResult] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_face_session_create_liveness_with_verify_session_request(
-            content_type=content_type,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.CreateLivenessWithVerifySessionResult, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def _create_liveness_with_verify_session_with_verify_image(  # pylint: disable=name-too-long
-        self, body: _models.CreateLivenessWithVerifySessionMultipartContent, **kwargs: Any
-    ) -> _models.CreateLivenessWithVerifySessionResult: ...
-    @overload
-    def _create_liveness_with_verify_session_with_verify_image(  # pylint: disable=name-too-long
-        self, body: JSON, **kwargs: Any
-    ) -> _models.CreateLivenessWithVerifySessionResult: ...
-
-    @distributed_trace
-    def _create_liveness_with_verify_session_with_verify_image(  # pylint: disable=name-too-long
-        self, body: Union[_models.CreateLivenessWithVerifySessionMultipartContent, JSON], **kwargs: Any
-    ) -> _models.CreateLivenessWithVerifySessionResult:
+    def create_liveness_with_verify_session(
+        self, body: _models.CreateLivenessWithVerifySessionContent, **kwargs: Any
+    ) -> _models.LivenessWithVerifySession:
         """Create a new liveness session with verify. Provide the verify image during session creation.
 
         Please refer to
-        https://learn.microsoft.com/rest/api/face/liveness-session-operations/create-liveness-with-verify-session-with-verify-image
+        `https://learn.microsoft.com/rest/api/face/liveness-session-operations/create-liveness-with-verify-session-with-verify-image
+        <https://learn.microsoft.com/rest/api/face/liveness-session-operations/create-liveness-with-verify-session-with-verify-image>`_
+        for more details.
+
+        :param body: Request content of liveness with verify session creation. Required.
+        :type body: ~azure.ai.vision.face.models.CreateLivenessWithVerifySessionContent
+        :return: LivenessWithVerifySession. The LivenessWithVerifySession is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.vision.face.models.LivenessWithVerifySession
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_liveness_with_verify_session(self, body: JSON, **kwargs: Any) -> _models.LivenessWithVerifySession:
+        """Create a new liveness session with verify. Provide the verify image during session creation.
+
+        Please refer to
+        `https://learn.microsoft.com/rest/api/face/liveness-session-operations/create-liveness-with-verify-session-with-verify-image
+        <https://learn.microsoft.com/rest/api/face/liveness-session-operations/create-liveness-with-verify-session-with-verify-image>`_
+        for more details.
+
+        :param body: Request content of liveness with verify session creation. Required.
+        :type body: JSON
+        :return: LivenessWithVerifySession. The LivenessWithVerifySession is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.vision.face.models.LivenessWithVerifySession
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="v1.2",
+        params_added_on={"v1.2": ["content_type", "accept"]},
+    )
+    def create_liveness_with_verify_session(
+        self, body: Union[_models.CreateLivenessWithVerifySessionContent, JSON], **kwargs: Any
+    ) -> _models.LivenessWithVerifySession:
+        """Create a new liveness session with verify. Provide the verify image during session creation.
+
+        Please refer to
+        `https://learn.microsoft.com/rest/api/face/liveness-session-operations/create-liveness-with-verify-session-with-verify-image
+        <https://learn.microsoft.com/rest/api/face/liveness-session-operations/create-liveness-with-verify-session-with-verify-image>`_
         for more details.
 
         :param body: Request content of liveness with verify session creation. Is either a
-         CreateLivenessWithVerifySessionMultipartContent type or a JSON type. Required.
-        :type body: ~azure.ai.vision.face.models.CreateLivenessWithVerifySessionMultipartContent or
-         JSON
-        :return: CreateLivenessWithVerifySessionResult. The CreateLivenessWithVerifySessionResult is
-         compatible with MutableMapping
-        :rtype: ~azure.ai.vision.face.models.CreateLivenessWithVerifySessionResult
+         CreateLivenessWithVerifySessionContent type or a JSON type. Required.
+        :type body: ~azure.ai.vision.face.models.CreateLivenessWithVerifySessionContent or JSON
+        :return: LivenessWithVerifySession. The LivenessWithVerifySession is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.vision.face.models.LivenessWithVerifySession
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -6549,14 +2929,23 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.CreateLivenessWithVerifySessionResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.LivenessWithVerifySession] = kwargs.pop("cls", None)
 
         _body = body.as_dict() if isinstance(body, _model_base.Model) else body
-        _file_fields: List[str] = ["VerifyImage"]
-        _data_fields: List[str] = ["Parameters"]
+        _file_fields: List[str] = ["verifyImage"]
+        _data_fields: List[str] = [
+            "livenessOperationMode",
+            "deviceCorrelationIdSetInClient",
+            "enableSessionImage",
+            "livenessModelVersion",
+            "deviceCorrelationId",
+            "authTokenTimeToLiveInSeconds",
+            "returnVerifyImageHash",
+            "verifyConfidenceThreshold",
+        ]
         _files, _data = prepare_multipart_form_data(_body, _file_fields, _data_fields)
 
-        _request = build_face_session_create_liveness_with_verify_session_with_verify_image_request(
+        _request = build_face_session_create_liveness_with_verify_session_request(
             files=_files,
             data=_data,
             headers=_headers,
@@ -6564,7 +2953,9 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -6582,13 +2973,13 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.CreateLivenessWithVerifySessionResult, response.json())
+            deserialized = _deserialize(_models.LivenessWithVerifySession, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -6596,13 +2987,18 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="v1.2",
+        params_added_on={"v1.2": ["session_id", "accept"]},
+    )
     def delete_liveness_with_verify_session(  # pylint: disable=inconsistent-return-statements
         self, session_id: str, **kwargs: Any
     ) -> None:
         """Delete all session related information for matching the specified session id.
 
         Please refer to
-        https://learn.microsoft.com/rest/api/face/liveness-session-operations/delete-liveness-with-verify-session
+        `https://learn.microsoft.com/rest/api/face/liveness-session-operations/delete-liveness-with-verify-session
+        <https://learn.microsoft.com/rest/api/face/liveness-session-operations/delete-liveness-with-verify-session>`_
         for more details.
 
         :param session_id: The unique ID to reference this session. Required.
@@ -6631,7 +3027,9 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -6642,20 +3040,25 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="v1.2",
+        params_added_on={"v1.2": ["session_id", "accept"]},
+    )
     def get_liveness_with_verify_session_result(
         self, session_id: str, **kwargs: Any
     ) -> _models.LivenessWithVerifySession:
         """Please refer to
-        https://learn.microsoft.com/rest/api/face/liveness-session-operations/get-liveness-with-verify-session-result
+        `https://learn.microsoft.com/rest/api/face/liveness-session-operations/get-liveness-with-verify-session-result
+        <https://learn.microsoft.com/rest/api/face/liveness-session-operations/get-liveness-with-verify-session-result>`_
         for more details.
 
         :param session_id: The unique ID to reference this session. Required.
@@ -6685,7 +3088,9 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -6703,7 +3108,7 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -6716,156 +3121,11 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
 
         return deserialized  # type: ignore
 
-    @distributed_trace
-    def get_liveness_with_verify_sessions(
-        self, *, start: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-    ) -> List[_models.LivenessSessionItem]:
-        """Lists sessions for /detectLivenessWithVerify/SingleModal.
-
-        Please refer to
-        https://learn.microsoft.com/rest/api/face/liveness-session-operations/get-liveness-with-verify-sessions
-        for more details.
-
-        :keyword start: List resources greater than the "start". It contains no more than 64
-         characters. Default is empty. Default value is None.
-        :paramtype start: str
-        :keyword top: The number of items to list, ranging in [1, 1000]. Default is 1000. Default value
-         is None.
-        :paramtype top: int
-        :return: list of LivenessSessionItem
-        :rtype: list[~azure.ai.vision.face.models.LivenessSessionItem]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.LivenessSessionItem]] = kwargs.pop("cls", None)
-
-        _request = build_face_session_get_liveness_with_verify_sessions_request(
-            start=start,
-            top=top,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(List[_models.LivenessSessionItem], response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def get_liveness_with_verify_session_audit_entries(  # pylint: disable=name-too-long
-        self, session_id: str, *, start: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-    ) -> List[_models.LivenessSessionAuditEntry]:
-        """Please refer to
-        https://learn.microsoft.com/rest/api/face/liveness-session-operations/get-liveness-with-verify-session-audit-entries
-        for more details.
-
-        :param session_id: The unique ID to reference this session. Required.
-        :type session_id: str
-        :keyword start: List resources greater than the "start". It contains no more than 64
-         characters. Default is empty. Default value is None.
-        :paramtype start: str
-        :keyword top: The number of items to list, ranging in [1, 1000]. Default is 1000. Default value
-         is None.
-        :paramtype top: int
-        :return: list of LivenessSessionAuditEntry
-        :rtype: list[~azure.ai.vision.face.models.LivenessSessionAuditEntry]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.LivenessSessionAuditEntry]] = kwargs.pop("cls", None)
-
-        _request = build_face_session_get_liveness_with_verify_session_audit_entries_request(
-            session_id=session_id,
-            start=start,
-            top=top,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(List[_models.LivenessSessionAuditEntry], response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
     @overload
     def detect_from_session_image(
         self,
-        body: JSON,
         *,
+        session_image_id: str,
         content_type: str = "application/json",
         detection_model: Optional[Union[str, _models.FaceDetectionModel]] = None,
         recognition_model: Optional[Union[str, _models.FaceRecognitionModel]] = None,
@@ -6880,11 +3140,12 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         and attributes.
 
         Please refer to
-        https://learn.microsoft.com/rest/api/face/face-detection-operations/detect-from-session-image-id
+        `https://learn.microsoft.com/rest/api/face/face-detection-operations/detect-from-session-image-id
+        <https://learn.microsoft.com/rest/api/face/face-detection-operations/detect-from-session-image-id>`_
         for more details.
 
-        :param body: Required.
-        :type body: JSON
+        :keyword session_image_id: Id of session image. Required.
+        :paramtype session_image_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6927,8 +3188,8 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
     @overload
     def detect_from_session_image(
         self,
+        body: JSON,
         *,
-        session_image_id: str,
         content_type: str = "application/json",
         detection_model: Optional[Union[str, _models.FaceDetectionModel]] = None,
         recognition_model: Optional[Union[str, _models.FaceRecognitionModel]] = None,
@@ -6943,11 +3204,12 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         and attributes.
 
         Please refer to
-        https://learn.microsoft.com/rest/api/face/face-detection-operations/detect-from-session-image-id
+        `https://learn.microsoft.com/rest/api/face/face-detection-operations/detect-from-session-image-id
+        <https://learn.microsoft.com/rest/api/face/face-detection-operations/detect-from-session-image-id>`_
         for more details.
 
-        :keyword session_image_id: Id of session image. Required.
-        :paramtype session_image_id: str
+        :param body: Required.
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7006,7 +3268,8 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         and attributes.
 
         Please refer to
-        https://learn.microsoft.com/rest/api/face/face-detection-operations/detect-from-session-image-id
+        `https://learn.microsoft.com/rest/api/face/face-detection-operations/detect-from-session-image-id
+        <https://learn.microsoft.com/rest/api/face/face-detection-operations/detect-from-session-image-id>`_
         for more details.
 
         :param body: Required.
@@ -7085,7 +3348,8 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         and attributes.
 
         Please refer to
-        https://learn.microsoft.com/rest/api/face/face-detection-operations/detect-from-session-image-id
+        `https://learn.microsoft.com/rest/api/face/face-detection-operations/detect-from-session-image-id
+        <https://learn.microsoft.com/rest/api/face/face-detection-operations/detect-from-session-image-id>`_
         for more details.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
@@ -7168,7 +3432,9 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -7186,7 +3452,7 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -7201,12 +3467,13 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="v1.2-preview.1",
-        params_added_on={"v1.2-preview.1": ["session_image_id", "accept"]},
+        method_added_on="v1.2",
+        params_added_on={"v1.2": ["session_image_id", "accept"]},
     )
     def get_session_image(self, session_image_id: str, **kwargs: Any) -> Iterator[bytes]:
         """Please refer to
-        https://learn.microsoft.com/rest/api/face/liveness-session-operations/get-session-image for
+        `https://learn.microsoft.com/rest/api/face/liveness-session-operations/get-session-image
+        <https://learn.microsoft.com/rest/api/face/liveness-session-operations/get-session-image>`_ for
         more details.
 
         :param session_image_id: The request ID of the image to be retrieved. Required.
@@ -7235,7 +3502,9 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "apiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -7253,7 +3522,7 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.FaceErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -7265,3 +3534,3479 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
+
+
+class LargeFaceListOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.vision.face.FaceAdministrationClient`'s
+        :attr:`large_face_list` attribute.
+    """
+
+    def __init__(self, *args, **kwargs):
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: FaceAdministrationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @overload
+    def create(
+        self,
+        large_face_list_id: str,
+        *,
+        name: str,
+        content_type: str = "application/json",
+        user_data: Optional[str] = None,
+        recognition_model: Optional[Union[str, _models.FaceRecognitionModel]] = None,
+        **kwargs: Any,
+    ) -> None:
+        """Create an empty Large Face List with user-specified largeFaceListId, name, an optional userData
+        and recognitionModel.
+
+        Please refer to
+        `https://learn.microsoft.com/rest/api/face/face-list-operations/create-large-face-list
+        <https://learn.microsoft.com/rest/api/face/face-list-operations/create-large-face-list>`_ for
+        more details.
+
+        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
+         maximum length is 64. Required.
+        :type large_face_list_id: str
+        :keyword name: User defined name, maximum length is 128. Required.
+        :paramtype name: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword user_data: Optional user defined data. Length should not exceed 16K. Default value is
+         None.
+        :paramtype user_data: str
+        :keyword recognition_model: The 'recognitionModel' associated with this face list. Supported
+         'recognitionModel' values include 'recognition_01', 'recognition_02, 'recognition_03', and
+         'recognition_04'. The default value is 'recognition_01'. 'recognition_04' is recommended since
+         its accuracy is improved on faces wearing masks compared with 'recognition_03', and its overall
+         accuracy is improved compared with 'recognition_01' and 'recognition_02'. Known values are:
+         "recognition_01", "recognition_02", "recognition_03", and "recognition_04". Default value is
+         None.
+        :paramtype recognition_model: str or ~azure.ai.vision.face.models.FaceRecognitionModel
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create(
+        self, large_face_list_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
+        """Create an empty Large Face List with user-specified largeFaceListId, name, an optional userData
+        and recognitionModel.
+
+        Please refer to
+        `https://learn.microsoft.com/rest/api/face/face-list-operations/create-large-face-list
+        <https://learn.microsoft.com/rest/api/face/face-list-operations/create-large-face-list>`_ for
+        more details.
+
+        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
+         maximum length is 64. Required.
+        :type large_face_list_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create(
+        self, large_face_list_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
+        """Create an empty Large Face List with user-specified largeFaceListId, name, an optional userData
+        and recognitionModel.
+
+        Please refer to
+        `https://learn.microsoft.com/rest/api/face/face-list-operations/create-large-face-list
+        <https://learn.microsoft.com/rest/api/face/face-list-operations/create-large-face-list>`_ for
+        more details.
+
+        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
+         maximum length is 64. Required.
+        :type large_face_list_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def create(  # pylint: disable=inconsistent-return-statements
+        self,
+        large_face_list_id: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        name: str = _Unset,
+        user_data: Optional[str] = None,
+        recognition_model: Optional[Union[str, _models.FaceRecognitionModel]] = None,
+        **kwargs: Any,
+    ) -> None:
+        """Create an empty Large Face List with user-specified largeFaceListId, name, an optional userData
+        and recognitionModel.
+
+        Please refer to
+        `https://learn.microsoft.com/rest/api/face/face-list-operations/create-large-face-list
+        <https://learn.microsoft.com/rest/api/face/face-list-operations/create-large-face-list>`_ for
+        more details.
+
+        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
+         maximum length is 64. Required.
+        :type large_face_list_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword name: User defined name, maximum length is 128. Required.
+        :paramtype name: str
+        :keyword user_data: Optional user defined data. Length should not exceed 16K. Default value is
+         None.
+        :paramtype user_data: str
+        :keyword recognition_model: The 'recognitionModel' associated with this face list. Supported
+         'recognitionModel' values include 'recognition_01', 'recognition_02, 'recognition_03', and
+         'recognition_04'. The default value is 'recognition_01'. 'recognition_04' is recommended since
+         its accuracy is improved on faces wearing masks compared with 'recognition_03', and its overall
+         accuracy is improved compared with 'recognition_01' and 'recognition_02'. Known values are:
+         "recognition_01", "recognition_02", "recognition_03", and "recognition_04". Default value is
+         None.
+        :paramtype recognition_model: str or ~azure.ai.vision.face.models.FaceRecognitionModel
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            if name is _Unset:
+                raise TypeError("missing required argument: name")
+            body = {"name": name, "recognitionModel": recognition_model, "userData": user_data}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_large_face_list_create_request(
+            large_face_list_id=large_face_list_id,
+            content_type=content_type,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    def delete(self, large_face_list_id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+        """Delete a face from a Large Face List by specified largeFaceListId and persistedFaceId.
+
+        Please refer to
+        `https://learn.microsoft.com/rest/api/face/face-list-operations/delete-large-face-list
+        <https://learn.microsoft.com/rest/api/face/face-list-operations/delete-large-face-list>`_ for
+        more details.
+
+        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
+         maximum length is 64. Required.
+        :type large_face_list_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_large_face_list_delete_request(
+            large_face_list_id=large_face_list_id,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    def get(
+        self, large_face_list_id: str, *, return_recognition_model: Optional[bool] = None, **kwargs: Any
+    ) -> _models.LargeFaceList:
+        """Please refer to
+        `https://learn.microsoft.com/rest/api/face/face-list-operations/get-large-face-list
+        <https://learn.microsoft.com/rest/api/face/face-list-operations/get-large-face-list>`_ for more
+        details.
+
+        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
+         maximum length is 64. Required.
+        :type large_face_list_id: str
+        :keyword return_recognition_model: Return 'recognitionModel' or not. The default value is
+         false. Default value is None.
+        :paramtype return_recognition_model: bool
+        :return: LargeFaceList. The LargeFaceList is compatible with MutableMapping
+        :rtype: ~azure.ai.vision.face.models.LargeFaceList
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.LargeFaceList] = kwargs.pop("cls", None)
+
+        _request = build_large_face_list_get_request(
+            large_face_list_id=large_face_list_id,
+            return_recognition_model=return_recognition_model,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.LargeFaceList, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def update(
+        self,
+        large_face_list_id: str,
+        *,
+        content_type: str = "application/json",
+        name: Optional[str] = None,
+        user_data: Optional[str] = None,
+        **kwargs: Any,
+    ) -> None:
+        """Please refer to
+        `https://learn.microsoft.com/rest/api/face/face-list-operations/update-large-face-list
+        <https://learn.microsoft.com/rest/api/face/face-list-operations/update-large-face-list>`_ for
+        more details.
+
+        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
+         maximum length is 64. Required.
+        :type large_face_list_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword name: User defined name, maximum length is 128. Default value is None.
+        :paramtype name: str
+        :keyword user_data: Optional user defined data. Length should not exceed 16K. Default value is
+         None.
+        :paramtype user_data: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update(
+        self, large_face_list_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
+        """Please refer to
+        `https://learn.microsoft.com/rest/api/face/face-list-operations/update-large-face-list
+        <https://learn.microsoft.com/rest/api/face/face-list-operations/update-large-face-list>`_ for
+        more details.
+
+        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
+         maximum length is 64. Required.
+        :type large_face_list_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update(
+        self, large_face_list_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
+        """Please refer to
+        `https://learn.microsoft.com/rest/api/face/face-list-operations/update-large-face-list
+        <https://learn.microsoft.com/rest/api/face/face-list-operations/update-large-face-list>`_ for
+        more details.
+
+        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
+         maximum length is 64. Required.
+        :type large_face_list_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def update(  # pylint: disable=inconsistent-return-statements
+        self,
+        large_face_list_id: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        name: Optional[str] = None,
+        user_data: Optional[str] = None,
+        **kwargs: Any,
+    ) -> None:
+        """Please refer to
+        `https://learn.microsoft.com/rest/api/face/face-list-operations/update-large-face-list
+        <https://learn.microsoft.com/rest/api/face/face-list-operations/update-large-face-list>`_ for
+        more details.
+
+        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
+         maximum length is 64. Required.
+        :type large_face_list_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword name: User defined name, maximum length is 128. Default value is None.
+        :paramtype name: str
+        :keyword user_data: Optional user defined data. Length should not exceed 16K. Default value is
+         None.
+        :paramtype user_data: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            body = {"name": name, "userData": user_data}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_large_face_list_update_request(
+            large_face_list_id=large_face_list_id,
+            content_type=content_type,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    def get_large_face_lists(
+        self,
+        *,
+        start: Optional[str] = None,
+        top: Optional[int] = None,
+        return_recognition_model: Optional[bool] = None,
+        **kwargs: Any,
+    ) -> List[_models.LargeFaceList]:
+        """List Large Face Lists' information of largeFaceListId, name, userData and recognitionModel.
+
+        Please refer to
+        `https://learn.microsoft.com/rest/api/face/face-list-operations/get-large-face-lists
+        <https://learn.microsoft.com/rest/api/face/face-list-operations/get-large-face-lists>`_ for
+        more details.
+
+        :keyword start: List resources greater than the "start". It contains no more than 64
+         characters. Default is empty. Default value is None.
+        :paramtype start: str
+        :keyword top: The number of items to list, ranging in [1, 1000]. Default is 1000. Default value
+         is None.
+        :paramtype top: int
+        :keyword return_recognition_model: Return 'recognitionModel' or not. The default value is
+         false. Default value is None.
+        :paramtype return_recognition_model: bool
+        :return: list of LargeFaceList
+        :rtype: list[~azure.ai.vision.face.models.LargeFaceList]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.LargeFaceList]] = kwargs.pop("cls", None)
+
+        _request = build_large_face_list_get_large_face_lists_request(
+            start=start,
+            top=top,
+            return_recognition_model=return_recognition_model,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(List[_models.LargeFaceList], response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def get_training_status(self, large_face_list_id: str, **kwargs: Any) -> _models.FaceTrainingResult:
+        """Please refer to
+        `https://learn.microsoft.com/rest/api/face/face-list-operations/get-large-face-list-training-status
+        <https://learn.microsoft.com/rest/api/face/face-list-operations/get-large-face-list-training-status>`_
+        for more details.
+
+        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
+         maximum length is 64. Required.
+        :type large_face_list_id: str
+        :return: FaceTrainingResult. The FaceTrainingResult is compatible with MutableMapping
+        :rtype: ~azure.ai.vision.face.models.FaceTrainingResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.FaceTrainingResult] = kwargs.pop("cls", None)
+
+        _request = build_large_face_list_get_training_status_request(
+            large_face_list_id=large_face_list_id,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.FaceTrainingResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    def _train_initial(self, large_face_list_id: str, **kwargs: Any) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_large_face_list_train_request(
+            large_face_list_id=large_face_list_id,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["operation-Location"] = self._deserialize("str", response.headers.get("operation-Location"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def begin_train(self, large_face_list_id: str, **kwargs: Any) -> LROPoller[None]:
+        """Submit a Large Face List training task.
+
+        Please refer to
+        `https://learn.microsoft.com/rest/api/face/face-list-operations/train-large-face-list
+        <https://learn.microsoft.com/rest/api/face/face-list-operations/train-large-face-list>`_ for
+        more details.
+
+        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
+         maximum length is 64. Required.
+        :type large_face_list_id: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._train_initial(
+                large_face_list_id=large_face_list_id, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @overload
+    def add_face_from_url(
+        self,
+        large_face_list_id: str,
+        *,
+        url: str,
+        target_face: Optional[List[int]] = None,
+        detection_model: Optional[Union[str, _models.FaceDetectionModel]] = None,
+        user_data: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.AddFaceResult:
+        """Add a face to a specified Large Face List, up to 1,000,000 faces.
+
+        Please refer to
+        `https://learn.microsoft.com/rest/api/face/face-list-operations/add-large-face-list-face-from-url
+        <https://learn.microsoft.com/rest/api/face/face-list-operations/add-large-face-list-face-from-url>`_
+        for more details.
+
+        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
+         maximum length is 64. Required.
+        :type large_face_list_id: str
+        :keyword url: URL of input image. Required.
+        :paramtype url: str
+        :keyword target_face: A face rectangle to specify the target face to be added to a person, in
+         the format of 'targetFace=left,top,width,height'. Default value is None.
+        :paramtype target_face: list[int]
+        :keyword detection_model: The 'detectionModel' associated with the detected faceIds. Supported
+         'detectionModel' values include 'detection_01', 'detection_02' and 'detection_03'. The default
+         value is 'detection_01'. Known values are: "detection_01", "detection_02", and "detection_03".
+         Default value is None.
+        :paramtype detection_model: str or ~azure.ai.vision.face.models.FaceDetectionModel
+        :keyword user_data: User-provided data attached to the face. The size limit is 1K. Default
+         value is None.
+        :paramtype user_data: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AddFaceResult. The AddFaceResult is compatible with MutableMapping
+        :rtype: ~azure.ai.vision.face.models.AddFaceResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def add_face_from_url(
+        self,
+        large_face_list_id: str,
+        body: JSON,
+        *,
+        target_face: Optional[List[int]] = None,
+        detection_model: Optional[Union[str, _models.FaceDetectionModel]] = None,
+        user_data: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.AddFaceResult:
+        """Add a face to a specified Large Face List, up to 1,000,000 faces.
+
+        Please refer to
+        `https://learn.microsoft.com/rest/api/face/face-list-operations/add-large-face-list-face-from-url
+        <https://learn.microsoft.com/rest/api/face/face-list-operations/add-large-face-list-face-from-url>`_
+        for more details.
+
+        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
+         maximum length is 64. Required.
+        :type large_face_list_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword target_face: A face rectangle to specify the target face to be added to a person, in
+         the format of 'targetFace=left,top,width,height'. Default value is None.
+        :paramtype target_face: list[int]
+        :keyword detection_model: The 'detectionModel' associated with the detected faceIds. Supported
+         'detectionModel' values include 'detection_01', 'detection_02' and 'detection_03'. The default
+         value is 'detection_01'. Known values are: "detection_01", "detection_02", and "detection_03".
+         Default value is None.
+        :paramtype detection_model: str or ~azure.ai.vision.face.models.FaceDetectionModel
+        :keyword user_data: User-provided data attached to the face. The size limit is 1K. Default
+         value is None.
+        :paramtype user_data: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AddFaceResult. The AddFaceResult is compatible with MutableMapping
+        :rtype: ~azure.ai.vision.face.models.AddFaceResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def add_face_from_url(
+        self,
+        large_face_list_id: str,
+        body: IO[bytes],
+        *,
+        target_face: Optional[List[int]] = None,
+        detection_model: Optional[Union[str, _models.FaceDetectionModel]] = None,
+        user_data: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.AddFaceResult:
+        """Add a face to a specified Large Face List, up to 1,000,000 faces.
+
+        Please refer to
+        `https://learn.microsoft.com/rest/api/face/face-list-operations/add-large-face-list-face-from-url
+        <https://learn.microsoft.com/rest/api/face/face-list-operations/add-large-face-list-face-from-url>`_
+        for more details.
+
+        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
+         maximum length is 64. Required.
+        :type large_face_list_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword target_face: A face rectangle to specify the target face to be added to a person, in
+         the format of 'targetFace=left,top,width,height'. Default value is None.
+        :paramtype target_face: list[int]
+        :keyword detection_model: The 'detectionModel' associated with the detected faceIds. Supported
+         'detectionModel' values include 'detection_01', 'detection_02' and 'detection_03'. The default
+         value is 'detection_01'. Known values are: "detection_01", "detection_02", and "detection_03".
+         Default value is None.
+        :paramtype detection_model: str or ~azure.ai.vision.face.models.FaceDetectionModel
+        :keyword user_data: User-provided data attached to the face. The size limit is 1K. Default
+         value is None.
+        :paramtype user_data: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AddFaceResult. The AddFaceResult is compatible with MutableMapping
+        :rtype: ~azure.ai.vision.face.models.AddFaceResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def add_face_from_url(
+        self,
+        large_face_list_id: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        url: str = _Unset,
+        target_face: Optional[List[int]] = None,
+        detection_model: Optional[Union[str, _models.FaceDetectionModel]] = None,
+        user_data: Optional[str] = None,
+        **kwargs: Any,
+    ) -> _models.AddFaceResult:
+        """Add a face to a specified Large Face List, up to 1,000,000 faces.
+
+        Please refer to
+        `https://learn.microsoft.com/rest/api/face/face-list-operations/add-large-face-list-face-from-url
+        <https://learn.microsoft.com/rest/api/face/face-list-operations/add-large-face-list-face-from-url>`_
+        for more details.
+
+        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
+         maximum length is 64. Required.
+        :type large_face_list_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword url: URL of input image. Required.
+        :paramtype url: str
+        :keyword target_face: A face rectangle to specify the target face to be added to a person, in
+         the format of 'targetFace=left,top,width,height'. Default value is None.
+        :paramtype target_face: list[int]
+        :keyword detection_model: The 'detectionModel' associated with the detected faceIds. Supported
+         'detectionModel' values include 'detection_01', 'detection_02' and 'detection_03'. The default
+         value is 'detection_01'. Known values are: "detection_01", "detection_02", and "detection_03".
+         Default value is None.
+        :paramtype detection_model: str or ~azure.ai.vision.face.models.FaceDetectionModel
+        :keyword user_data: User-provided data attached to the face. The size limit is 1K. Default
+         value is None.
+        :paramtype user_data: str
+        :return: AddFaceResult. The AddFaceResult is compatible with MutableMapping
+        :rtype: ~azure.ai.vision.face.models.AddFaceResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AddFaceResult] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            if url is _Unset:
+                raise TypeError("missing required argument: url")
+            body = {"url": url}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_large_face_list_add_face_from_url_request(
+            large_face_list_id=large_face_list_id,
+            target_face=target_face,
+            detection_model=detection_model,
+            user_data=user_data,
+            content_type=content_type,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.AddFaceResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def add_face(
+        self,
+        large_face_list_id: str,
+        image_content: bytes,
+        *,
+        target_face: Optional[List[int]] = None,
+        detection_model: Optional[Union[str, _models.FaceDetectionModel]] = None,
+        user_data: Optional[str] = None,
+        **kwargs: Any,
+    ) -> _models.AddFaceResult:
+        """Add a face to a specified Large Face List, up to 1,000,000 faces.
+
+        Please refer to
+        `https://learn.microsoft.com/rest/api/face/face-list-operations/add-large-face-list-face
+        <https://learn.microsoft.com/rest/api/face/face-list-operations/add-large-face-list-face>`_ for
+        more details.
+
+        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
+         maximum length is 64. Required.
+        :type large_face_list_id: str
+        :param image_content: The image to be analyzed. Required.
+        :type image_content: bytes
+        :keyword target_face: A face rectangle to specify the target face to be added to a person, in
+         the format of 'targetFace=left,top,width,height'. Default value is None.
+        :paramtype target_face: list[int]
+        :keyword detection_model: The 'detectionModel' associated with the detected faceIds. Supported
+         'detectionModel' values include 'detection_01', 'detection_02' and 'detection_03'. The default
+         value is 'detection_01'. Known values are: "detection_01", "detection_02", and "detection_03".
+         Default value is None.
+        :paramtype detection_model: str or ~azure.ai.vision.face.models.FaceDetectionModel
+        :keyword user_data: User-provided data attached to the face. The size limit is 1K. Default
+         value is None.
+        :paramtype user_data: str
+        :return: AddFaceResult. The AddFaceResult is compatible with MutableMapping
+        :rtype: ~azure.ai.vision.face.models.AddFaceResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: str = kwargs.pop("content_type", _headers.pop("content-type", "application/octet-stream"))
+        cls: ClsType[_models.AddFaceResult] = kwargs.pop("cls", None)
+
+        _content = image_content
+
+        _request = build_large_face_list_add_face_request(
+            large_face_list_id=large_face_list_id,
+            target_face=target_face,
+            detection_model=detection_model,
+            user_data=user_data,
+            content_type=content_type,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.AddFaceResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def delete_face(  # pylint: disable=inconsistent-return-statements
+        self, large_face_list_id: str, persisted_face_id: str, **kwargs: Any
+    ) -> None:
+        """Please refer to
+        `https://learn.microsoft.com/rest/api/face/face-list-operations/delete-large-face-list-face
+        <https://learn.microsoft.com/rest/api/face/face-list-operations/delete-large-face-list-face>`_
+        for more details.
+
+        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
+         maximum length is 64. Required.
+        :type large_face_list_id: str
+        :param persisted_face_id: Face ID of the face. Required.
+        :type persisted_face_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_large_face_list_delete_face_request(
+            large_face_list_id=large_face_list_id,
+            persisted_face_id=persisted_face_id,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    def get_face(self, large_face_list_id: str, persisted_face_id: str, **kwargs: Any) -> _models.LargeFaceListFace:
+        """Please refer to
+        `https://learn.microsoft.com/rest/api/face/face-list-operations/get-large-face-list-face
+        <https://learn.microsoft.com/rest/api/face/face-list-operations/get-large-face-list-face>`_ for
+        more details.
+
+        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
+         maximum length is 64. Required.
+        :type large_face_list_id: str
+        :param persisted_face_id: Face ID of the face. Required.
+        :type persisted_face_id: str
+        :return: LargeFaceListFace. The LargeFaceListFace is compatible with MutableMapping
+        :rtype: ~azure.ai.vision.face.models.LargeFaceListFace
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.LargeFaceListFace] = kwargs.pop("cls", None)
+
+        _request = build_large_face_list_get_face_request(
+            large_face_list_id=large_face_list_id,
+            persisted_face_id=persisted_face_id,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.LargeFaceListFace, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def update_face(
+        self,
+        large_face_list_id: str,
+        persisted_face_id: str,
+        *,
+        content_type: str = "application/json",
+        user_data: Optional[str] = None,
+        **kwargs: Any,
+    ) -> None:
+        """Please refer to
+        `https://learn.microsoft.com/rest/api/face/face-list-operations/update-large-face-list-face
+        <https://learn.microsoft.com/rest/api/face/face-list-operations/update-large-face-list-face>`_
+        for more details.
+
+        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
+         maximum length is 64. Required.
+        :type large_face_list_id: str
+        :param persisted_face_id: Face ID of the face. Required.
+        :type persisted_face_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword user_data: User-provided data attached to the face. The length limit is 1K. Default
+         value is None.
+        :paramtype user_data: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update_face(
+        self,
+        large_face_list_id: str,
+        persisted_face_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> None:
+        """Please refer to
+        `https://learn.microsoft.com/rest/api/face/face-list-operations/update-large-face-list-face
+        <https://learn.microsoft.com/rest/api/face/face-list-operations/update-large-face-list-face>`_
+        for more details.
+
+        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
+         maximum length is 64. Required.
+        :type large_face_list_id: str
+        :param persisted_face_id: Face ID of the face. Required.
+        :type persisted_face_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update_face(
+        self,
+        large_face_list_id: str,
+        persisted_face_id: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> None:
+        """Please refer to
+        `https://learn.microsoft.com/rest/api/face/face-list-operations/update-large-face-list-face
+        <https://learn.microsoft.com/rest/api/face/face-list-operations/update-large-face-list-face>`_
+        for more details.
+
+        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
+         maximum length is 64. Required.
+        :type large_face_list_id: str
+        :param persisted_face_id: Face ID of the face. Required.
+        :type persisted_face_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def update_face(  # pylint: disable=inconsistent-return-statements
+        self,
+        large_face_list_id: str,
+        persisted_face_id: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        user_data: Optional[str] = None,
+        **kwargs: Any,
+    ) -> None:
+        """Please refer to
+        `https://learn.microsoft.com/rest/api/face/face-list-operations/update-large-face-list-face
+        <https://learn.microsoft.com/rest/api/face/face-list-operations/update-large-face-list-face>`_
+        for more details.
+
+        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
+         maximum length is 64. Required.
+        :type large_face_list_id: str
+        :param persisted_face_id: Face ID of the face. Required.
+        :type persisted_face_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword user_data: User-provided data attached to the face. The length limit is 1K. Default
+         value is None.
+        :paramtype user_data: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            body = {"userData": user_data}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_large_face_list_update_face_request(
+            large_face_list_id=large_face_list_id,
+            persisted_face_id=persisted_face_id,
+            content_type=content_type,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    def get_faces(
+        self, large_face_list_id: str, *, start: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
+    ) -> List[_models.LargeFaceListFace]:
+        """List faces' persistedFaceId and userData in a specified Large Face List.
+
+        Please refer to
+        `https://learn.microsoft.com/rest/api/face/face-list-operations/get-large-face-list-faces
+        <https://learn.microsoft.com/rest/api/face/face-list-operations/get-large-face-list-faces>`_
+        for more details.
+
+        :param large_face_list_id: Valid character is letter in lower case or digit or '-' or '_',
+         maximum length is 64. Required.
+        :type large_face_list_id: str
+        :keyword start: List resources greater than the "start". It contains no more than 64
+         characters. Default is empty. Default value is None.
+        :paramtype start: str
+        :keyword top: The number of items to list, ranging in [1, 1000]. Default is 1000. Default value
+         is None.
+        :paramtype top: int
+        :return: list of LargeFaceListFace
+        :rtype: list[~azure.ai.vision.face.models.LargeFaceListFace]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.LargeFaceListFace]] = kwargs.pop("cls", None)
+
+        _request = build_large_face_list_get_faces_request(
+            large_face_list_id=large_face_list_id,
+            start=start,
+            top=top,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(List[_models.LargeFaceListFace], response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class LargePersonGroupOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.vision.face.FaceAdministrationClient`'s
+        :attr:`large_person_group` attribute.
+    """
+
+    def __init__(self, *args, **kwargs):
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: FaceAdministrationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @overload
+    def create(
+        self,
+        large_person_group_id: str,
+        *,
+        name: str,
+        content_type: str = "application/json",
+        user_data: Optional[str] = None,
+        recognition_model: Optional[Union[str, _models.FaceRecognitionModel]] = None,
+        **kwargs: Any,
+    ) -> None:
+        """Create a new Large Person Group with user-specified largePersonGroupId, name, an optional
+        userData and recognitionModel.
+
+        Please refer to
+        `https://learn.microsoft.com/rest/api/face/person-group-operations/create-large-person-group
+        <https://learn.microsoft.com/rest/api/face/person-group-operations/create-large-person-group>`_
+        for more details.
+
+        :param large_person_group_id: ID of the container. Required.
+        :type large_person_group_id: str
+        :keyword name: User defined name, maximum length is 128. Required.
+        :paramtype name: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword user_data: Optional user defined data. Length should not exceed 16K. Default value is
+         None.
+        :paramtype user_data: str
+        :keyword recognition_model: The 'recognitionModel' associated with this face list. Supported
+         'recognitionModel' values include 'recognition_01', 'recognition_02, 'recognition_03', and
+         'recognition_04'. The default value is 'recognition_01'. 'recognition_04' is recommended since
+         its accuracy is improved on faces wearing masks compared with 'recognition_03', and its overall
+         accuracy is improved compared with 'recognition_01' and 'recognition_02'. Known values are:
+         "recognition_01", "recognition_02", "recognition_03", and "recognition_04". Default value is
+         None.
+        :paramtype recognition_model: str or ~azure.ai.vision.face.models.FaceRecognitionModel
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create(
+        self, large_person_group_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
+        """Create a new Large Person Group with user-specified largePersonGroupId, name, an optional
+        userData and recognitionModel.
+
+        Please refer to
+        `https://learn.microsoft.com/rest/api/face/person-group-operations/create-large-person-group
+        <https://learn.microsoft.com/rest/api/face/person-group-operations/create-large-person-group>`_
+        for more details.
+
+        :param large_person_group_id: ID of the container. Required.
+        :type large_person_group_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create(
+        self, large_person_group_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
+        """Create a new Large Person Group with user-specified largePersonGroupId, name, an optional
+        userData and recognitionModel.
+
+        Please refer to
+        `https://learn.microsoft.com/rest/api/face/person-group-operations/create-large-person-group
+        <https://learn.microsoft.com/rest/api/face/person-group-operations/create-large-person-group>`_
+        for more details.
+
+        :param large_person_group_id: ID of the container. Required.
+        :type large_person_group_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def create(  # pylint: disable=inconsistent-return-statements
+        self,
+        large_person_group_id: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        name: str = _Unset,
+        user_data: Optional[str] = None,
+        recognition_model: Optional[Union[str, _models.FaceRecognitionModel]] = None,
+        **kwargs: Any,
+    ) -> None:
+        """Create a new Large Person Group with user-specified largePersonGroupId, name, an optional
+        userData and recognitionModel.
+
+        Please refer to
+        `https://learn.microsoft.com/rest/api/face/person-group-operations/create-large-person-group
+        <https://learn.microsoft.com/rest/api/face/person-group-operations/create-large-person-group>`_
+        for more details.
+
+        :param large_person_group_id: ID of the container. Required.
+        :type large_person_group_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword name: User defined name, maximum length is 128. Required.
+        :paramtype name: str
+        :keyword user_data: Optional user defined data. Length should not exceed 16K. Default value is
+         None.
+        :paramtype user_data: str
+        :keyword recognition_model: The 'recognitionModel' associated with this face list. Supported
+         'recognitionModel' values include 'recognition_01', 'recognition_02, 'recognition_03', and
+         'recognition_04'. The default value is 'recognition_01'. 'recognition_04' is recommended since
+         its accuracy is improved on faces wearing masks compared with 'recognition_03', and its overall
+         accuracy is improved compared with 'recognition_01' and 'recognition_02'. Known values are:
+         "recognition_01", "recognition_02", "recognition_03", and "recognition_04". Default value is
+         None.
+        :paramtype recognition_model: str or ~azure.ai.vision.face.models.FaceRecognitionModel
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            if name is _Unset:
+                raise TypeError("missing required argument: name")
+            body = {"name": name, "recognitionModel": recognition_model, "userData": user_data}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_large_person_group_create_request(
+            large_person_group_id=large_person_group_id,
+            content_type=content_type,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    def delete(  # pylint: disable=inconsistent-return-statements
+        self, large_person_group_id: str, **kwargs: Any
+    ) -> None:
+        """Please refer to
+        `https://learn.microsoft.com/rest/api/face/person-group-operations/delete-large-person-group
+        <https://learn.microsoft.com/rest/api/face/person-group-operations/delete-large-person-group>`_
+        for more details.
+
+        :param large_person_group_id: ID of the container. Required.
+        :type large_person_group_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_large_person_group_delete_request(
+            large_person_group_id=large_person_group_id,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    def get(
+        self, large_person_group_id: str, *, return_recognition_model: Optional[bool] = None, **kwargs: Any
+    ) -> _models.LargePersonGroup:
+        """Please refer to
+        `https://learn.microsoft.com/rest/api/face/person-group-operations/get-large-person-group
+        <https://learn.microsoft.com/rest/api/face/person-group-operations/get-large-person-group>`_
+        for more details.
+
+        :param large_person_group_id: ID of the container. Required.
+        :type large_person_group_id: str
+        :keyword return_recognition_model: Return 'recognitionModel' or not. The default value is
+         false. Default value is None.
+        :paramtype return_recognition_model: bool
+        :return: LargePersonGroup. The LargePersonGroup is compatible with MutableMapping
+        :rtype: ~azure.ai.vision.face.models.LargePersonGroup
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.LargePersonGroup] = kwargs.pop("cls", None)
+
+        _request = build_large_person_group_get_request(
+            large_person_group_id=large_person_group_id,
+            return_recognition_model=return_recognition_model,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.LargePersonGroup, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def update(
+        self,
+        large_person_group_id: str,
+        *,
+        content_type: str = "application/json",
+        name: Optional[str] = None,
+        user_data: Optional[str] = None,
+        **kwargs: Any,
+    ) -> None:
+        """Please refer to
+        `https://learn.microsoft.com/rest/api/face/person-group-operations/update-large-person-group
+        <https://learn.microsoft.com/rest/api/face/person-group-operations/update-large-person-group>`_
+        for more details.
+
+        :param large_person_group_id: ID of the container. Required.
+        :type large_person_group_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword name: User defined name, maximum length is 128. Default value is None.
+        :paramtype name: str
+        :keyword user_data: Optional user defined data. Length should not exceed 16K. Default value is
+         None.
+        :paramtype user_data: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update(
+        self, large_person_group_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
+        """Please refer to
+        `https://learn.microsoft.com/rest/api/face/person-group-operations/update-large-person-group
+        <https://learn.microsoft.com/rest/api/face/person-group-operations/update-large-person-group>`_
+        for more details.
+
+        :param large_person_group_id: ID of the container. Required.
+        :type large_person_group_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update(
+        self, large_person_group_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
+        """Please refer to
+        `https://learn.microsoft.com/rest/api/face/person-group-operations/update-large-person-group
+        <https://learn.microsoft.com/rest/api/face/person-group-operations/update-large-person-group>`_
+        for more details.
+
+        :param large_person_group_id: ID of the container. Required.
+        :type large_person_group_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def update(  # pylint: disable=inconsistent-return-statements
+        self,
+        large_person_group_id: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        name: Optional[str] = None,
+        user_data: Optional[str] = None,
+        **kwargs: Any,
+    ) -> None:
+        """Please refer to
+        `https://learn.microsoft.com/rest/api/face/person-group-operations/update-large-person-group
+        <https://learn.microsoft.com/rest/api/face/person-group-operations/update-large-person-group>`_
+        for more details.
+
+        :param large_person_group_id: ID of the container. Required.
+        :type large_person_group_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword name: User defined name, maximum length is 128. Default value is None.
+        :paramtype name: str
+        :keyword user_data: Optional user defined data. Length should not exceed 16K. Default value is
+         None.
+        :paramtype user_data: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            body = {"name": name, "userData": user_data}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_large_person_group_update_request(
+            large_person_group_id=large_person_group_id,
+            content_type=content_type,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    def get_large_person_groups(
+        self,
+        *,
+        start: Optional[str] = None,
+        top: Optional[int] = None,
+        return_recognition_model: Optional[bool] = None,
+        **kwargs: Any,
+    ) -> List[_models.LargePersonGroup]:
+        """List all existing Large Person Groups' largePersonGroupId, name, userData and recognitionModel.
+
+        Please refer to
+        `https://learn.microsoft.com/rest/api/face/person-group-operations/get-large-person-groups
+        <https://learn.microsoft.com/rest/api/face/person-group-operations/get-large-person-groups>`_
+        for more details.
+
+        :keyword start: List resources greater than the "start". It contains no more than 64
+         characters. Default is empty. Default value is None.
+        :paramtype start: str
+        :keyword top: The number of items to list, ranging in [1, 1000]. Default is 1000. Default value
+         is None.
+        :paramtype top: int
+        :keyword return_recognition_model: Return 'recognitionModel' or not. The default value is
+         false. Default value is None.
+        :paramtype return_recognition_model: bool
+        :return: list of LargePersonGroup
+        :rtype: list[~azure.ai.vision.face.models.LargePersonGroup]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.LargePersonGroup]] = kwargs.pop("cls", None)
+
+        _request = build_large_person_group_get_large_person_groups_request(
+            start=start,
+            top=top,
+            return_recognition_model=return_recognition_model,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(List[_models.LargePersonGroup], response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def get_training_status(self, large_person_group_id: str, **kwargs: Any) -> _models.FaceTrainingResult:
+        """To check Large Person Group training status completed or still ongoing. Large Person Group
+        training is an asynchronous operation triggered by "Train Large Person Group" API.
+
+        Please refer to
+        `https://learn.microsoft.com/rest/api/face/person-group-operations/get-large-person-group-training-status
+        <https://learn.microsoft.com/rest/api/face/person-group-operations/get-large-person-group-training-status>`_
+        for more details.
+
+        :param large_person_group_id: ID of the container. Required.
+        :type large_person_group_id: str
+        :return: FaceTrainingResult. The FaceTrainingResult is compatible with MutableMapping
+        :rtype: ~azure.ai.vision.face.models.FaceTrainingResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.FaceTrainingResult] = kwargs.pop("cls", None)
+
+        _request = build_large_person_group_get_training_status_request(
+            large_person_group_id=large_person_group_id,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.FaceTrainingResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    def _train_initial(self, large_person_group_id: str, **kwargs: Any) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_large_person_group_train_request(
+            large_person_group_id=large_person_group_id,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["operation-Location"] = self._deserialize("str", response.headers.get("operation-Location"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def begin_train(self, large_person_group_id: str, **kwargs: Any) -> LROPoller[None]:
+        """Submit a Large Person Group training task. Training is a crucial step that only a trained Large
+        Person Group can be used by "Identify From Large Person Group".
+
+        Please refer to
+        `https://learn.microsoft.com/rest/api/face/person-group-operations/train-large-person-group
+        <https://learn.microsoft.com/rest/api/face/person-group-operations/train-large-person-group>`_
+        for more details.
+
+        :param large_person_group_id: ID of the container. Required.
+        :type large_person_group_id: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._train_initial(
+                large_person_group_id=large_person_group_id,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs,
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @overload
+    def create_person(
+        self,
+        large_person_group_id: str,
+        *,
+        name: str,
+        content_type: str = "application/json",
+        user_data: Optional[str] = None,
+        **kwargs: Any,
+    ) -> _models.CreatePersonResult:
+        """Create a new person in a specified Large Person Group. To add face to this person, please call
+        "Add Large Person Group Person Face".
+
+        Please refer to
+        `https://learn.microsoft.com/rest/api/face/person-group-operations/create-large-person-group-person
+        <https://learn.microsoft.com/rest/api/face/person-group-operations/create-large-person-group-person>`_
+        for more details.
+
+        :param large_person_group_id: ID of the container. Required.
+        :type large_person_group_id: str
+        :keyword name: User defined name, maximum length is 128. Required.
+        :paramtype name: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword user_data: Optional user defined data. Length should not exceed 16K. Default value is
+         None.
+        :paramtype user_data: str
+        :return: CreatePersonResult. The CreatePersonResult is compatible with MutableMapping
+        :rtype: ~azure.ai.vision.face.models.CreatePersonResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_person(
+        self, large_person_group_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.CreatePersonResult:
+        """Create a new person in a specified Large Person Group. To add face to this person, please call
+        "Add Large Person Group Person Face".
+
+        Please refer to
+        `https://learn.microsoft.com/rest/api/face/person-group-operations/create-large-person-group-person
+        <https://learn.microsoft.com/rest/api/face/person-group-operations/create-large-person-group-person>`_
+        for more details.
+
+        :param large_person_group_id: ID of the container. Required.
+        :type large_person_group_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: CreatePersonResult. The CreatePersonResult is compatible with MutableMapping
+        :rtype: ~azure.ai.vision.face.models.CreatePersonResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_person(
+        self, large_person_group_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.CreatePersonResult:
+        """Create a new person in a specified Large Person Group. To add face to this person, please call
+        "Add Large Person Group Person Face".
+
+        Please refer to
+        `https://learn.microsoft.com/rest/api/face/person-group-operations/create-large-person-group-person
+        <https://learn.microsoft.com/rest/api/face/person-group-operations/create-large-person-group-person>`_
+        for more details.
+
+        :param large_person_group_id: ID of the container. Required.
+        :type large_person_group_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: CreatePersonResult. The CreatePersonResult is compatible with MutableMapping
+        :rtype: ~azure.ai.vision.face.models.CreatePersonResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def create_person(
+        self,
+        large_person_group_id: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        name: str = _Unset,
+        user_data: Optional[str] = None,
+        **kwargs: Any,
+    ) -> _models.CreatePersonResult:
+        """Create a new person in a specified Large Person Group. To add face to this person, please call
+        "Add Large Person Group Person Face".
+
+        Please refer to
+        `https://learn.microsoft.com/rest/api/face/person-group-operations/create-large-person-group-person
+        <https://learn.microsoft.com/rest/api/face/person-group-operations/create-large-person-group-person>`_
+        for more details.
+
+        :param large_person_group_id: ID of the container. Required.
+        :type large_person_group_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword name: User defined name, maximum length is 128. Required.
+        :paramtype name: str
+        :keyword user_data: Optional user defined data. Length should not exceed 16K. Default value is
+         None.
+        :paramtype user_data: str
+        :return: CreatePersonResult. The CreatePersonResult is compatible with MutableMapping
+        :rtype: ~azure.ai.vision.face.models.CreatePersonResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.CreatePersonResult] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            if name is _Unset:
+                raise TypeError("missing required argument: name")
+            body = {"name": name, "userData": user_data}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_large_person_group_create_person_request(
+            large_person_group_id=large_person_group_id,
+            content_type=content_type,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.CreatePersonResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def delete_person(  # pylint: disable=inconsistent-return-statements
+        self, large_person_group_id: str, person_id: str, **kwargs: Any
+    ) -> None:
+        """Please refer to
+        `https://learn.microsoft.com/rest/api/face/person-group-operations/delete-large-person-group-person
+        <https://learn.microsoft.com/rest/api/face/person-group-operations/delete-large-person-group-person>`_
+        for more details.
+
+        :param large_person_group_id: ID of the container. Required.
+        :type large_person_group_id: str
+        :param person_id: ID of the person. Required.
+        :type person_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_large_person_group_delete_person_request(
+            large_person_group_id=large_person_group_id,
+            person_id=person_id,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    def get_person(self, large_person_group_id: str, person_id: str, **kwargs: Any) -> _models.LargePersonGroupPerson:
+        """Please refer to
+        `https://learn.microsoft.com/rest/api/face/person-group-operations/get-large-person-group-person
+        <https://learn.microsoft.com/rest/api/face/person-group-operations/get-large-person-group-person>`_
+        for more details.
+
+        :param large_person_group_id: ID of the container. Required.
+        :type large_person_group_id: str
+        :param person_id: ID of the person. Required.
+        :type person_id: str
+        :return: LargePersonGroupPerson. The LargePersonGroupPerson is compatible with MutableMapping
+        :rtype: ~azure.ai.vision.face.models.LargePersonGroupPerson
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.LargePersonGroupPerson] = kwargs.pop("cls", None)
+
+        _request = build_large_person_group_get_person_request(
+            large_person_group_id=large_person_group_id,
+            person_id=person_id,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.LargePersonGroupPerson, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def update_person(
+        self,
+        large_person_group_id: str,
+        person_id: str,
+        *,
+        content_type: str = "application/json",
+        name: Optional[str] = None,
+        user_data: Optional[str] = None,
+        **kwargs: Any,
+    ) -> None:
+        """Please refer to
+        `https://learn.microsoft.com/rest/api/face/person-group-operations/update-large-person-group-person
+        <https://learn.microsoft.com/rest/api/face/person-group-operations/update-large-person-group-person>`_
+        for more details.
+
+        :param large_person_group_id: ID of the container. Required.
+        :type large_person_group_id: str
+        :param person_id: ID of the person. Required.
+        :type person_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword name: User defined name, maximum length is 128. Default value is None.
+        :paramtype name: str
+        :keyword user_data: Optional user defined data. Length should not exceed 16K. Default value is
+         None.
+        :paramtype user_data: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update_person(
+        self,
+        large_person_group_id: str,
+        person_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> None:
+        """Please refer to
+        `https://learn.microsoft.com/rest/api/face/person-group-operations/update-large-person-group-person
+        <https://learn.microsoft.com/rest/api/face/person-group-operations/update-large-person-group-person>`_
+        for more details.
+
+        :param large_person_group_id: ID of the container. Required.
+        :type large_person_group_id: str
+        :param person_id: ID of the person. Required.
+        :type person_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update_person(
+        self,
+        large_person_group_id: str,
+        person_id: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> None:
+        """Please refer to
+        `https://learn.microsoft.com/rest/api/face/person-group-operations/update-large-person-group-person
+        <https://learn.microsoft.com/rest/api/face/person-group-operations/update-large-person-group-person>`_
+        for more details.
+
+        :param large_person_group_id: ID of the container. Required.
+        :type large_person_group_id: str
+        :param person_id: ID of the person. Required.
+        :type person_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def update_person(  # pylint: disable=inconsistent-return-statements
+        self,
+        large_person_group_id: str,
+        person_id: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        name: Optional[str] = None,
+        user_data: Optional[str] = None,
+        **kwargs: Any,
+    ) -> None:
+        """Please refer to
+        `https://learn.microsoft.com/rest/api/face/person-group-operations/update-large-person-group-person
+        <https://learn.microsoft.com/rest/api/face/person-group-operations/update-large-person-group-person>`_
+        for more details.
+
+        :param large_person_group_id: ID of the container. Required.
+        :type large_person_group_id: str
+        :param person_id: ID of the person. Required.
+        :type person_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword name: User defined name, maximum length is 128. Default value is None.
+        :paramtype name: str
+        :keyword user_data: Optional user defined data. Length should not exceed 16K. Default value is
+         None.
+        :paramtype user_data: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            body = {"name": name, "userData": user_data}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_large_person_group_update_person_request(
+            large_person_group_id=large_person_group_id,
+            person_id=person_id,
+            content_type=content_type,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    def get_persons(
+        self, large_person_group_id: str, *, start: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
+    ) -> List[_models.LargePersonGroupPerson]:
+        """List all persons' information in the specified Large Person Group, including personId, name,
+        userData and persistedFaceIds of registered person faces.
+
+        Please refer to
+        `https://learn.microsoft.com/rest/api/face/person-group-operations/get-large-person-group-persons
+        <https://learn.microsoft.com/rest/api/face/person-group-operations/get-large-person-group-persons>`_
+        for more details.
+
+        :param large_person_group_id: ID of the container. Required.
+        :type large_person_group_id: str
+        :keyword start: List resources greater than the "start". It contains no more than 64
+         characters. Default is empty. Default value is None.
+        :paramtype start: str
+        :keyword top: The number of items to list, ranging in [1, 1000]. Default is 1000. Default value
+         is None.
+        :paramtype top: int
+        :return: list of LargePersonGroupPerson
+        :rtype: list[~azure.ai.vision.face.models.LargePersonGroupPerson]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.LargePersonGroupPerson]] = kwargs.pop("cls", None)
+
+        _request = build_large_person_group_get_persons_request(
+            large_person_group_id=large_person_group_id,
+            start=start,
+            top=top,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(List[_models.LargePersonGroupPerson], response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def add_face_from_url(
+        self,
+        large_person_group_id: str,
+        person_id: str,
+        *,
+        url: str,
+        target_face: Optional[List[int]] = None,
+        detection_model: Optional[Union[str, _models.FaceDetectionModel]] = None,
+        user_data: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.AddFaceResult:
+        """Add a face to a person into a Large Person Group for face identification or verification.
+
+        Please refer to
+        `https://learn.microsoft.com/rest/api/face/person-group-operations/add-large-person-group-person-face-from-url
+        <https://learn.microsoft.com/rest/api/face/person-group-operations/add-large-person-group-person-face-from-url>`_
+        for more details.
+
+        :param large_person_group_id: ID of the container. Required.
+        :type large_person_group_id: str
+        :param person_id: ID of the person. Required.
+        :type person_id: str
+        :keyword url: URL of input image. Required.
+        :paramtype url: str
+        :keyword target_face: A face rectangle to specify the target face to be added to a person, in
+         the format of 'targetFace=left,top,width,height'. Default value is None.
+        :paramtype target_face: list[int]
+        :keyword detection_model: The 'detectionModel' associated with the detected faceIds. Supported
+         'detectionModel' values include 'detection_01', 'detection_02' and 'detection_03'. The default
+         value is 'detection_01'. Known values are: "detection_01", "detection_02", and "detection_03".
+         Default value is None.
+        :paramtype detection_model: str or ~azure.ai.vision.face.models.FaceDetectionModel
+        :keyword user_data: User-provided data attached to the face. The size limit is 1K. Default
+         value is None.
+        :paramtype user_data: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AddFaceResult. The AddFaceResult is compatible with MutableMapping
+        :rtype: ~azure.ai.vision.face.models.AddFaceResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def add_face_from_url(
+        self,
+        large_person_group_id: str,
+        person_id: str,
+        body: JSON,
+        *,
+        target_face: Optional[List[int]] = None,
+        detection_model: Optional[Union[str, _models.FaceDetectionModel]] = None,
+        user_data: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.AddFaceResult:
+        """Add a face to a person into a Large Person Group for face identification or verification.
+
+        Please refer to
+        `https://learn.microsoft.com/rest/api/face/person-group-operations/add-large-person-group-person-face-from-url
+        <https://learn.microsoft.com/rest/api/face/person-group-operations/add-large-person-group-person-face-from-url>`_
+        for more details.
+
+        :param large_person_group_id: ID of the container. Required.
+        :type large_person_group_id: str
+        :param person_id: ID of the person. Required.
+        :type person_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword target_face: A face rectangle to specify the target face to be added to a person, in
+         the format of 'targetFace=left,top,width,height'. Default value is None.
+        :paramtype target_face: list[int]
+        :keyword detection_model: The 'detectionModel' associated with the detected faceIds. Supported
+         'detectionModel' values include 'detection_01', 'detection_02' and 'detection_03'. The default
+         value is 'detection_01'. Known values are: "detection_01", "detection_02", and "detection_03".
+         Default value is None.
+        :paramtype detection_model: str or ~azure.ai.vision.face.models.FaceDetectionModel
+        :keyword user_data: User-provided data attached to the face. The size limit is 1K. Default
+         value is None.
+        :paramtype user_data: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AddFaceResult. The AddFaceResult is compatible with MutableMapping
+        :rtype: ~azure.ai.vision.face.models.AddFaceResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def add_face_from_url(
+        self,
+        large_person_group_id: str,
+        person_id: str,
+        body: IO[bytes],
+        *,
+        target_face: Optional[List[int]] = None,
+        detection_model: Optional[Union[str, _models.FaceDetectionModel]] = None,
+        user_data: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.AddFaceResult:
+        """Add a face to a person into a Large Person Group for face identification or verification.
+
+        Please refer to
+        `https://learn.microsoft.com/rest/api/face/person-group-operations/add-large-person-group-person-face-from-url
+        <https://learn.microsoft.com/rest/api/face/person-group-operations/add-large-person-group-person-face-from-url>`_
+        for more details.
+
+        :param large_person_group_id: ID of the container. Required.
+        :type large_person_group_id: str
+        :param person_id: ID of the person. Required.
+        :type person_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword target_face: A face rectangle to specify the target face to be added to a person, in
+         the format of 'targetFace=left,top,width,height'. Default value is None.
+        :paramtype target_face: list[int]
+        :keyword detection_model: The 'detectionModel' associated with the detected faceIds. Supported
+         'detectionModel' values include 'detection_01', 'detection_02' and 'detection_03'. The default
+         value is 'detection_01'. Known values are: "detection_01", "detection_02", and "detection_03".
+         Default value is None.
+        :paramtype detection_model: str or ~azure.ai.vision.face.models.FaceDetectionModel
+        :keyword user_data: User-provided data attached to the face. The size limit is 1K. Default
+         value is None.
+        :paramtype user_data: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AddFaceResult. The AddFaceResult is compatible with MutableMapping
+        :rtype: ~azure.ai.vision.face.models.AddFaceResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def add_face_from_url(
+        self,
+        large_person_group_id: str,
+        person_id: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        url: str = _Unset,
+        target_face: Optional[List[int]] = None,
+        detection_model: Optional[Union[str, _models.FaceDetectionModel]] = None,
+        user_data: Optional[str] = None,
+        **kwargs: Any,
+    ) -> _models.AddFaceResult:
+        """Add a face to a person into a Large Person Group for face identification or verification.
+
+        Please refer to
+        `https://learn.microsoft.com/rest/api/face/person-group-operations/add-large-person-group-person-face-from-url
+        <https://learn.microsoft.com/rest/api/face/person-group-operations/add-large-person-group-person-face-from-url>`_
+        for more details.
+
+        :param large_person_group_id: ID of the container. Required.
+        :type large_person_group_id: str
+        :param person_id: ID of the person. Required.
+        :type person_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword url: URL of input image. Required.
+        :paramtype url: str
+        :keyword target_face: A face rectangle to specify the target face to be added to a person, in
+         the format of 'targetFace=left,top,width,height'. Default value is None.
+        :paramtype target_face: list[int]
+        :keyword detection_model: The 'detectionModel' associated with the detected faceIds. Supported
+         'detectionModel' values include 'detection_01', 'detection_02' and 'detection_03'. The default
+         value is 'detection_01'. Known values are: "detection_01", "detection_02", and "detection_03".
+         Default value is None.
+        :paramtype detection_model: str or ~azure.ai.vision.face.models.FaceDetectionModel
+        :keyword user_data: User-provided data attached to the face. The size limit is 1K. Default
+         value is None.
+        :paramtype user_data: str
+        :return: AddFaceResult. The AddFaceResult is compatible with MutableMapping
+        :rtype: ~azure.ai.vision.face.models.AddFaceResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AddFaceResult] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            if url is _Unset:
+                raise TypeError("missing required argument: url")
+            body = {"url": url}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_large_person_group_add_face_from_url_request(
+            large_person_group_id=large_person_group_id,
+            person_id=person_id,
+            target_face=target_face,
+            detection_model=detection_model,
+            user_data=user_data,
+            content_type=content_type,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.AddFaceResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def add_face(
+        self,
+        large_person_group_id: str,
+        person_id: str,
+        image_content: bytes,
+        *,
+        target_face: Optional[List[int]] = None,
+        detection_model: Optional[Union[str, _models.FaceDetectionModel]] = None,
+        user_data: Optional[str] = None,
+        **kwargs: Any,
+    ) -> _models.AddFaceResult:
+        """Add a face to a person into a Large Person Group for face identification or verification.
+
+        Please refer to
+        `https://learn.microsoft.com/rest/api/face/person-group-operations/add-large-person-group-person-face
+        <https://learn.microsoft.com/rest/api/face/person-group-operations/add-large-person-group-person-face>`_
+        for more details.
+
+        :param large_person_group_id: ID of the container. Required.
+        :type large_person_group_id: str
+        :param person_id: ID of the person. Required.
+        :type person_id: str
+        :param image_content: The image to be analyzed. Required.
+        :type image_content: bytes
+        :keyword target_face: A face rectangle to specify the target face to be added to a person, in
+         the format of 'targetFace=left,top,width,height'. Default value is None.
+        :paramtype target_face: list[int]
+        :keyword detection_model: The 'detectionModel' associated with the detected faceIds. Supported
+         'detectionModel' values include 'detection_01', 'detection_02' and 'detection_03'. The default
+         value is 'detection_01'. Known values are: "detection_01", "detection_02", and "detection_03".
+         Default value is None.
+        :paramtype detection_model: str or ~azure.ai.vision.face.models.FaceDetectionModel
+        :keyword user_data: User-provided data attached to the face. The size limit is 1K. Default
+         value is None.
+        :paramtype user_data: str
+        :return: AddFaceResult. The AddFaceResult is compatible with MutableMapping
+        :rtype: ~azure.ai.vision.face.models.AddFaceResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: str = kwargs.pop("content_type", _headers.pop("content-type", "application/octet-stream"))
+        cls: ClsType[_models.AddFaceResult] = kwargs.pop("cls", None)
+
+        _content = image_content
+
+        _request = build_large_person_group_add_face_request(
+            large_person_group_id=large_person_group_id,
+            person_id=person_id,
+            target_face=target_face,
+            detection_model=detection_model,
+            user_data=user_data,
+            content_type=content_type,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.AddFaceResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def delete_face(  # pylint: disable=inconsistent-return-statements
+        self, large_person_group_id: str, person_id: str, persisted_face_id: str, **kwargs: Any
+    ) -> None:
+        """Delete a face from a person in a Large Person Group by specified largePersonGroupId, personId
+        and persistedFaceId.
+
+        Please refer to
+        `https://learn.microsoft.com/rest/api/face/person-group-operations/delete-large-person-group-person-face
+        <https://learn.microsoft.com/rest/api/face/person-group-operations/delete-large-person-group-person-face>`_
+        for more details.
+
+        :param large_person_group_id: ID of the container. Required.
+        :type large_person_group_id: str
+        :param person_id: ID of the person. Required.
+        :type person_id: str
+        :param persisted_face_id: Face ID of the face. Required.
+        :type persisted_face_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_large_person_group_delete_face_request(
+            large_person_group_id=large_person_group_id,
+            person_id=person_id,
+            persisted_face_id=persisted_face_id,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    def get_face(
+        self, large_person_group_id: str, person_id: str, persisted_face_id: str, **kwargs: Any
+    ) -> _models.LargePersonGroupPersonFace:
+        """Please refer to
+        `https://learn.microsoft.com/rest/api/face/person-group-operations/get-large-person-group-person-face
+        <https://learn.microsoft.com/rest/api/face/person-group-operations/get-large-person-group-person-face>`_
+        for more details.
+
+        :param large_person_group_id: ID of the container. Required.
+        :type large_person_group_id: str
+        :param person_id: ID of the person. Required.
+        :type person_id: str
+        :param persisted_face_id: Face ID of the face. Required.
+        :type persisted_face_id: str
+        :return: LargePersonGroupPersonFace. The LargePersonGroupPersonFace is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.vision.face.models.LargePersonGroupPersonFace
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.LargePersonGroupPersonFace] = kwargs.pop("cls", None)
+
+        _request = build_large_person_group_get_face_request(
+            large_person_group_id=large_person_group_id,
+            person_id=person_id,
+            persisted_face_id=persisted_face_id,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.LargePersonGroupPersonFace, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def update_face(
+        self,
+        large_person_group_id: str,
+        person_id: str,
+        persisted_face_id: str,
+        *,
+        content_type: str = "application/json",
+        user_data: Optional[str] = None,
+        **kwargs: Any,
+    ) -> None:
+        """Please refer to
+        `https://learn.microsoft.com/rest/api/face/person-group-operations/update-large-person-group-person-face
+        <https://learn.microsoft.com/rest/api/face/person-group-operations/update-large-person-group-person-face>`_
+        for more details.
+
+        :param large_person_group_id: ID of the container. Required.
+        :type large_person_group_id: str
+        :param person_id: ID of the person. Required.
+        :type person_id: str
+        :param persisted_face_id: Face ID of the face. Required.
+        :type persisted_face_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword user_data: User-provided data attached to the face. The length limit is 1K. Default
+         value is None.
+        :paramtype user_data: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update_face(
+        self,
+        large_person_group_id: str,
+        person_id: str,
+        persisted_face_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> None:
+        """Please refer to
+        `https://learn.microsoft.com/rest/api/face/person-group-operations/update-large-person-group-person-face
+        <https://learn.microsoft.com/rest/api/face/person-group-operations/update-large-person-group-person-face>`_
+        for more details.
+
+        :param large_person_group_id: ID of the container. Required.
+        :type large_person_group_id: str
+        :param person_id: ID of the person. Required.
+        :type person_id: str
+        :param persisted_face_id: Face ID of the face. Required.
+        :type persisted_face_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update_face(
+        self,
+        large_person_group_id: str,
+        person_id: str,
+        persisted_face_id: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> None:
+        """Please refer to
+        `https://learn.microsoft.com/rest/api/face/person-group-operations/update-large-person-group-person-face
+        <https://learn.microsoft.com/rest/api/face/person-group-operations/update-large-person-group-person-face>`_
+        for more details.
+
+        :param large_person_group_id: ID of the container. Required.
+        :type large_person_group_id: str
+        :param person_id: ID of the person. Required.
+        :type person_id: str
+        :param persisted_face_id: Face ID of the face. Required.
+        :type persisted_face_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def update_face(  # pylint: disable=inconsistent-return-statements
+        self,
+        large_person_group_id: str,
+        person_id: str,
+        persisted_face_id: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        user_data: Optional[str] = None,
+        **kwargs: Any,
+    ) -> None:
+        """Please refer to
+        `https://learn.microsoft.com/rest/api/face/person-group-operations/update-large-person-group-person-face
+        <https://learn.microsoft.com/rest/api/face/person-group-operations/update-large-person-group-person-face>`_
+        for more details.
+
+        :param large_person_group_id: ID of the container. Required.
+        :type large_person_group_id: str
+        :param person_id: ID of the person. Required.
+        :type person_id: str
+        :param persisted_face_id: Face ID of the face. Required.
+        :type persisted_face_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword user_data: User-provided data attached to the face. The length limit is 1K. Default
+         value is None.
+        :paramtype user_data: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            body = {"userData": user_data}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_large_person_group_update_face_request(
+            large_person_group_id=large_person_group_id,
+            person_id=person_id,
+            persisted_face_id=persisted_face_id,
+            content_type=content_type,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "apiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.FaceErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
