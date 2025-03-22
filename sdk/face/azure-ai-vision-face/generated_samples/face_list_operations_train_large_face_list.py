@@ -17,7 +17,7 @@ from azure.ai.vision.face import FaceAdministrationClient
 
 
 def main():
-    client = FaceAdministrationClient(
+    client = FaceClient(
         endpoint="ENDPOINT",
         credential="CREDENTIAL",
     )
@@ -27,6 +27,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: v1.2-preview.1/FaceListOperations_TrainLargeFaceList.json
+# x-ms-original-file: v1.2/FaceListOperations_TrainLargeFaceList.json
 if __name__ == "__main__":
     main()

@@ -32,54 +32,121 @@ def main():
 
     response = client.organizations.begin_create_or_update(
         resource_group_name="rgneon",
-        organization_name="XB-.:",
+        organization_name="testOrg123",
         resource={
-            "location": "upxxgikyqrbnv",
+            "location": "mxlsmperqlxtaalsunpleuta",
             "properties": {
                 "companyDetails": {
-                    "businessPhone": "hbeb",
-                    "companyName": "uxn",
-                    "country": "lpajqzptqchuko",
-                    "domain": "krjldeakhwiepvs",
-                    "numberOfEmployees": 23,
-                    "officeAddress": "chpkrlpmfslmawgunjxdllzcrctykq",
+                    "businessPhone": "nshcjawuxfzplbzeyjbd",
+                    "companyName": "bdplqyy",
+                    "country": "wdtegxupoepgebaudbdi",
+                    "domain": "jxnqzzdhtguhtuouqhx",
+                    "numberOfEmployees": 15,
+                    "officeAddress": "aqxujkkctyhsefilbcvlo",
                 },
                 "marketplaceDetails": {
                     "offerDetails": {
-                        "offerId": "bunyeeupoedueofwrzej",
-                        "planId": "nlbfiwtslenfwek",
-                        "planName": "ljbmgpkfqklaufacbpml",
-                        "publisherId": "hporaxnopmolttlnkbarw",
-                        "termId": "aedlchikwqckuploswthvshe",
-                        "termUnit": "qbcq",
+                        "offerId": "mg",
+                        "planId": "ddjcvdyflljaoyfvdnunqgecfhtz",
+                        "planName": "uciiaiirecatgizjitryrfcxlsrll",
+                        "publisherId": "wxfrcxidpruciyy",
+                        "termId": "spwiydyzbdi",
+                        "termUnit": "vljoeixsyfqnilhy",
                     },
-                    "subscriptionId": "yxmkfivp",
+                    "subscriptionId": "olwmihml",
                     "subscriptionStatus": "PendingFulfillmentStart",
                 },
                 "partnerOrganizationProperties": {
-                    "organizationId": "nrhvoqzulowcunhmvwfgjcaibvwcl",
-                    "organizationName": "2__.-",
+                    "organizationId": "yneivfklykgwuqnfzsphgtgbvqew",
+                    "organizationName": "test-entity",
                     "singleSignOnProperties": {
-                        "aadDomains": ["kndszgrwzbvvlssvkej"],
-                        "enterpriseAppId": "fpibacregjfncfdsojs",
+                        "aadDomains": ["xwcoekddrjlvwogssbfrv"],
+                        "enterpriseAppId": "jstu",
                         "singleSignOnState": "Initial",
-                        "singleSignOnUrl": "tmojh",
+                        "singleSignOnUrl": "rduuuystfxtrjaxjbrslrsqxajtou",
                     },
                 },
+                "projectProperties": {
+                    "attributes": [{"name": "ioyjfywmt", "value": "sfbpcr"}],
+                    "branch": {
+                        "attributes": [{"name": "ioyjfywmt", "value": "sfbpcr"}],
+                        "databaseName": "xargveemydmqrdtjcdhf",
+                        "databases": [
+                            {
+                                "attributes": [{"name": "ioyjfywmt", "value": "sfbpcr"}],
+                                "branchId": "zoaopvqitcgjdmsllgzdbrb",
+                                "entityName": "test-entity",
+                                "ownerName": "cutdyjupbqghhxfkmsslzvmjwa",
+                            }
+                        ],
+                        "endpoints": [
+                            {
+                                "attributes": [{"name": "ioyjfywmt", "value": "sfbpcr"}],
+                                "branchId": "oejenjawxexhuotsxodbl",
+                                "endpointType": "read_only",
+                                "entityName": "test-entity",
+                                "projectId": "fhfdyuiaaftqormerayks",
+                            }
+                        ],
+                        "entityName": "test-entity",
+                        "parentId": "test-id",
+                        "projectId": "vtdzaxdiwnzvq",
+                        "roleName": "imfhfgfpamibgcgibgxor",
+                        "roles": [
+                            {
+                                "attributes": [{"name": "ioyjfywmt", "value": "sfbpcr"}],
+                                "branchId": "iecxepxhnzhjzeiguki",
+                                "entityName": "test-entity",
+                                "isSuperUser": True,
+                                "permissions": ["ddwmkyztotgspcbetfokelddpmq"],
+                            }
+                        ],
+                    },
+                    "databases": [
+                        {
+                            "attributes": [{"name": "ioyjfywmt", "value": "sfbpcr"}],
+                            "branchId": "zoaopvqitcgjdmsllgzdbrb",
+                            "entityName": "test-entity",
+                            "ownerName": "cutdyjupbqghhxfkmsslzvmjwa",
+                        }
+                    ],
+                    "endpoints": [
+                        {
+                            "attributes": [{"name": "ioyjfywmt", "value": "sfbpcr"}],
+                            "branchId": "oejenjawxexhuotsxodbl",
+                            "endpointType": "read_only",
+                            "entityName": "test-entity",
+                            "projectId": "fhfdyuiaaftqormerayks",
+                        }
+                    ],
+                    "entityName": "test-entity",
+                    "pgVersion": 1,
+                    "regionId": "cpnssldzuftdqgjdaqzjayqujpb",
+                    "roles": [
+                        {
+                            "attributes": [{"name": "ioyjfywmt", "value": "sfbpcr"}],
+                            "branchId": "iecxepxhnzhjzeiguki",
+                            "entityName": "test-entity",
+                            "isSuperUser": True,
+                            "permissions": ["ddwmkyztotgspcbetfokelddpmq"],
+                        }
+                    ],
+                    "storage": 3,
+                },
                 "userDetails": {
-                    "emailAddress": "3i_%@w8-y.H-p.tvj.dG",
-                    "firstName": "buwwe",
-                    "lastName": "escynjpynkoox",
-                    "phoneNumber": "dlrqoowumy",
-                    "upn": "fwedjamgwwrotcjaucuzdwycfjdqn",
+                    "emailAddress": "test@microsoft.com",
+                    "firstName": "zoqvvuxxyldsfswe",
+                    "lastName": "rzvayulpqh",
+                    "phoneNumber": "lxxghuhwknsivwcrkug",
+                    "upn": "nbh",
                 },
             },
-            "tags": {"key2099": "omjjymaqtrqzksxszhzgyl"},
+            "tags": {"key9495": "qyrozqzrhquczmaffmczoxupeqrj"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2024-08-01-preview/Organizations_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2025-03-01-preview/Organizations_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 #
@@ -47,6 +48,7 @@ USAGE:
     1) DEVCENTER_ENDPOINT - the endpoint for your devcenter
 """
 
+
 async def dev_box_action_async():
 
     # Set the values of the dev center endpoint, client ID, and client secret of the AAD application as environment variables:
@@ -75,7 +77,9 @@ async def dev_box_action_async():
             raise ValueError("Missing Dev Box - please create one before running the example.")
 
         # Get the schedule default action. This action should exist for dev boxes created with auto-stop enabled
-        action = await client.get_dev_box_action(target_dev_box.project_name, "me", target_dev_box.name, "schedule-default")
+        action = await client.get_dev_box_action(
+            target_dev_box.project_name, "me", target_dev_box.name, "schedule-default"
+        )
         next_action_time = action.next.scheduled_time
         print(f"\nAction {action.Name} is schedule to {action.ActionType} at {next_action_time}.")
 
@@ -92,8 +96,10 @@ async def dev_box_action_async():
         await client.skip_dev_box_action(target_dev_box.project_name, "me", target_dev_box.name, "schedule-default")
         print(f"\nThe scheduled auto-stop action in dev box {target_dev_box.name} has been skipped")
 
+
 async def main():
     await dev_box_action_async()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(main())

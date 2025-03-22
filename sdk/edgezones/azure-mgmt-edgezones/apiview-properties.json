@@ -1,0 +1,25 @@
+{
+    "CrossLanguagePackageId": "Microsoft.EdgeZones",
+    "CrossLanguageDefinitionId": {
+        "azure.mgmt.edgezones.models.ErrorAdditionalInfo": "Azure.ResourceManager.CommonTypes.ErrorAdditionalInfo",
+        "azure.mgmt.edgezones.models.ErrorDetail": "Azure.ResourceManager.CommonTypes.ErrorDetail",
+        "azure.mgmt.edgezones.models.ErrorResponse": "Azure.ResourceManager.CommonTypes.ErrorResponse",
+        "azure.mgmt.edgezones.models.Resource": "Azure.ResourceManager.CommonTypes.Resource",
+        "azure.mgmt.edgezones.models.ProxyResource": "Azure.ResourceManager.CommonTypes.ProxyResource",
+        "azure.mgmt.edgezones.models.ExtendedZone": "Microsoft.EdgeZones.ExtendedZone",
+        "azure.mgmt.edgezones.models.ExtendedZoneProperties": "Microsoft.EdgeZones.ExtendedZoneProperties",
+        "azure.mgmt.edgezones.models.Operation": "Azure.ResourceManager.CommonTypes.Operation",
+        "azure.mgmt.edgezones.models.OperationDisplay": "Azure.ResourceManager.CommonTypes.OperationDisplay",
+        "azure.mgmt.edgezones.models.SystemData": "Azure.ResourceManager.CommonTypes.SystemData",
+        "azure.mgmt.edgezones.models.Origin": "Azure.ResourceManager.CommonTypes.Origin",
+        "azure.mgmt.edgezones.models.ActionType": "Azure.ResourceManager.CommonTypes.ActionType",
+        "azure.mgmt.edgezones.models.CreatedByType": "Azure.ResourceManager.CommonTypes.createdByType",
+        "azure.mgmt.edgezones.models.ProvisioningState": "Microsoft.EdgeZones.ProvisioningState",
+        "azure.mgmt.edgezones.models.RegistrationState": "Microsoft.EdgeZones.RegistrationState",
+        "azure.mgmt.edgezones.EdgeZonesMgmtClient.operations.list": "Azure.ResourceManager.Operations.list",
+        "azure.mgmt.edgezones.EdgeZonesMgmtClient.extended_zones.get": "Microsoft.EdgeZones.ExtendedZones.get",
+        "azure.mgmt.edgezones.EdgeZonesMgmtClient.extended_zones.list_by_subscription": "Microsoft.EdgeZones.ExtendedZones.listBySubscription",
+        "azure.mgmt.edgezones.EdgeZonesMgmtClient.extended_zones.register": "Microsoft.EdgeZones.ExtendedZones.register",
+        "azure.mgmt.edgezones.EdgeZonesMgmtClient.extended_zones.unregister": "Microsoft.EdgeZones.ExtendedZones.unregister"
+    }
+}

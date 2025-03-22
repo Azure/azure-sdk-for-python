@@ -153,3 +153,13 @@ class TestFabricMgmtFabricCapacitiesOperations(AzureMgmtRecordedTestCase):
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_fabric_capacities_list_usages(self, resource_group):
+        response = self.client.fabric_capacities.list_usages(
+            location="str",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...

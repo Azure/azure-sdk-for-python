@@ -71,8 +71,7 @@ class Index(_model_base.Model):
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         properties: Optional[Dict[str, str]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -107,8 +106,7 @@ class PagedIndex(_model_base.Model):
         *,
         value: List["_models.Index"],
         next_link: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -170,8 +168,7 @@ class VersionInfo(_model_base.Model):
         *,
         latest_version: str,
         next_version: Optional[int] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):

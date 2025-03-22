@@ -52,6 +52,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-11-01/DataflowEndpoint_CreateOrUpdate_EventGrid.json
+# x-ms-original-file: 2025-04-01/DataflowEndpoint_CreateOrUpdate_EventGrid.json
 if __name__ == "__main__":
     main()

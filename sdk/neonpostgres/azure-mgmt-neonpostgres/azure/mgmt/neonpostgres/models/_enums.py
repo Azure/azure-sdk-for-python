@@ -32,6 +32,15 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The entity was created by a key."""
 
 
+class EndpointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The compute endpoint type. Either read_write or read_only."""
+
+    READ_ONLY = "read_only"
+    """ReadOnly compute endpoint type"""
+    READ_WRITE = "read_write"
+    """ReadWrite compute endpoint type"""
+
+
 class MarketplaceSubscriptionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Marketplace subscription status of a resource."""
 

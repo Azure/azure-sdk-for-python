@@ -54,9 +54,7 @@ def sample_create_and_wait_job():
             location=storage_location,
             prefix=inputPrefix,
         ),
-        target_location=TargetStorageLocation(
-            location=storage_location, prefix=outputPrefix
-        ),
+        target_location=TargetStorageLocation(location=storage_location, prefix=outputPrefix),
     )
 
     lro: LROPoller = client.begin_create_job(jobname, job)
@@ -65,9 +63,7 @@ def sample_create_and_wait_job():
     finished_job: DeidentificationJob = lro.result()
     print(f"Job Name: {finished_job.name}")
     print(f"Job Status: {finished_job.status}")
-    print(
-        f"File Count: {finished_job.summary.total if finished_job.summary is not None else 0}"
-    )
+    print(f"File Count: {finished_job.summary.total if finished_job.summary is not None else 0}")
     # [END sample_create_and_wait_job]
 
 
