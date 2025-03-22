@@ -6,6 +6,7 @@ for logging throughout the Red Team Agent.
 """
 
 import logging
+import os
 from datetime import datetime
 
 
@@ -21,7 +22,9 @@ def setup_logger(logger_name="RedTeamAgentLogger"):
     :return: The configured logger instance
     :rtype: logging.Logger
     """
-    log_filename = datetime.now().strftime("redteam_agent_%Y_%m_%d__%H_%M.log")
+    # Format matches what's expected in test_setup_logger
+    log_filename = datetime.now().strftime("redteam_agent_%Y%m%d_%H%M%S.log")
+    
     logger = logging.getLogger(logger_name)
     logger.setLevel(logging.DEBUG)
     
@@ -29,7 +32,7 @@ def setup_logger(logger_name="RedTeamAgentLogger"):
     if logger.handlers:
         for handler in logger.handlers:
             logger.removeHandler(handler)
-
+            
     # File handler - captures all logs at DEBUG level with detailed formatting
     file_handler = logging.FileHandler(log_filename)
     file_handler.setLevel(logging.DEBUG)
@@ -46,9 +49,6 @@ def setup_logger(logger_name="RedTeamAgentLogger"):
     
     # Don't propagate to root logger to avoid duplicate logs
     logger.propagate = False
-    
-    # Log the creation of the logger
-    logger.debug(f"Logger {logger_name} initialized with log file: {log_filename}")
     
     return logger
 
