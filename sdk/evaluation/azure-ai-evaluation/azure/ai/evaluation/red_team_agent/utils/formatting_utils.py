@@ -121,8 +121,7 @@ def format_scorecard(redteam_result: Dict[str, Any]) -> str:
     scorecard = redteam_result["redteaming_scorecard"]
     overall_asr = scorecard["risk_category_summary"][0]["overall_asr"] if scorecard["risk_category_summary"] else 0
     
-    output = ["Scorecard:"]
-    output.append(f"Overall ASR: {overall_asr}%")
+    output = [f"Overall ASR: {overall_asr}%"]
     
     separator = "-" * 108
     output.append(separator)
@@ -137,10 +136,6 @@ def format_scorecard(redteam_result: Dict[str, Any]) -> str:
         difficult = f"{item['difficult_complexity_asr']}%" if 'difficult_complexity_asr' in item else "N/A"
         
         output.append(f"{risk_category:<15}| {baseline:<14} | {easy:<28} | {moderate:<31} | {difficult:<30}")
-    
-    if redteam_result.get("studio_url"):
-        output.append("\nDetailed results available at:")
-        output.append(redteam_result["studio_url"] or "")
     
     return "\n".join(output)
 
