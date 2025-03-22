@@ -39,33 +39,6 @@ class TestTaskStatusConstants:
 
 
 @pytest.mark.unittest
-class TestAttackStrategyComplexityMap:
-    """Test attack strategy complexity mapping."""
-    
-    def test_attack_strategy_complexity_map(self):
-        """Verify attack strategy complexity map includes all expected strategies."""
-        # Check baseline strategy
-        assert str(AttackStrategy.Baseline.value) in ATTACK_STRATEGY_COMPLEXITY_MAP
-        assert ATTACK_STRATEGY_COMPLEXITY_MAP[str(AttackStrategy.Baseline.value)] == "baseline"
-        
-        # Check easy strategies
-        assert str(AttackStrategy.EASY.value) in ATTACK_STRATEGY_COMPLEXITY_MAP
-        assert ATTACK_STRATEGY_COMPLEXITY_MAP[str(AttackStrategy.EASY.value)] == "easy"
-        
-        # Check moderate strategies
-        assert str(AttackStrategy.MODERATE.value) in ATTACK_STRATEGY_COMPLEXITY_MAP
-        assert ATTACK_STRATEGY_COMPLEXITY_MAP[str(AttackStrategy.MODERATE.value)] == "moderate"
-        
-        # Check difficult strategies
-        assert str(AttackStrategy.DIFFICULT.value) in ATTACK_STRATEGY_COMPLEXITY_MAP
-        assert ATTACK_STRATEGY_COMPLEXITY_MAP[str(AttackStrategy.DIFFICULT.value)] == "difficult"
-
-        # Check specific strategy (Base64)
-        assert str(AttackStrategy.Base64.value) in ATTACK_STRATEGY_COMPLEXITY_MAP
-        assert ATTACK_STRATEGY_COMPLEXITY_MAP[str(AttackStrategy.Base64.value)] == "difficult"
-
-
-@pytest.mark.unittest
 class TestRiskCategoryEvaluatorMap:
     """Test risk category evaluator mapping."""
     

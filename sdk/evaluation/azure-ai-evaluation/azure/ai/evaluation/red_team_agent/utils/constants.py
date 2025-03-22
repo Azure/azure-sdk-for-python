@@ -37,11 +37,7 @@ ATTACK_STRATEGY_COMPLEXITY_MAP = {
     str(AttackStrategy.UnicodeSubstitution.value): "easy",
     str(AttackStrategy.Url.value): "easy",
     str(AttackStrategy.EASY.value): "easy", 
-    str(AttackStrategy.Persuasion.value): "moderate",
     str(AttackStrategy.Tense.value): "moderate",
-    str(AttackStrategy.Tone.value): "moderate",
-    str(AttackStrategy.Translation.value): "moderate",
-    str(AttackStrategy.Variation.value): "moderate",
     str(AttackStrategy.MODERATE.value): "moderate",
     str(AttackStrategy.DIFFICULT.value): "difficult",
     str(AttackStrategy.Jailbreak.value): "easy"

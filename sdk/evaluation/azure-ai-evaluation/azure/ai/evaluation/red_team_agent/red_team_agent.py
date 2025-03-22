@@ -85,12 +85,18 @@ class RedTeamAgent():
     :type credential: TokenCredential
     :param timeout: The timeout in seconds for API calls (default: 120)
     :type timeout: int
+    :param output_dir: Directory to store all output files. If None, files are created in the current working directory.
+    :type output_dir: Optional[str]
     """
-    def __init__(self, azure_ai_project, credential, timeout=120):
+    def __init__(self, azure_ai_project, credential, timeout=120, output_dir=None):
         self.azure_ai_project = validate_azure_ai_project(azure_ai_project)
         self.credential = credential
         self.api_timeout = timeout
+        self.output_dir = output_dir
+        
+        # Initialize logger without output directory (will be updated during scan)
         self.logger = setup_logger()
+        
         self.token_manager = ManagedIdentityAPITokenManager(
             token_scope=TokenScope.DEFAULT_AZURE_MANAGEMENT,
             logger=logging.getLogger("RedTeamAgentLogger"),
@@ -103,6 +109,8 @@ class RedTeamAgent():
         self.completed_tasks = 0
         self.failed_tasks = 0
         self.start_time = None
+        self.scan_id = None
+        self.scan_output_dir = None
         
         self.rai_client = RAIClient(azure_ai_project=self.azure_ai_project, token_manager=self.token_manager)
         self.generated_rai_client = GeneratedRAIClient(azure_ai_project=self.azure_ai_project, token_manager=self.token_manager.get_aad_credential()) #type: ignore
@@ -202,16 +210,78 @@ class RedTeamAgent():
         self.logger.debug(f"Logging results to MLFlow, data_only={data_only}")
         artifact_name = "instance_results.json" if not data_only else "instance_data.json"
 
-        with tempfile.TemporaryDirectory() as tmpdir:
-            artifact_file = Path(tmpdir) / artifact_name
-            with open(artifact_file, "w", encoding=DefaultOpenEncoding.WRITE) as f:
+        # If we have a scan output directory, save the results there first
+        if hasattr(self, 'scan_output_dir') and self.scan_output_dir:
+            artifact_path = os.path.join(self.scan_output_dir, artifact_name)
+            self.logger.debug(f"Saving artifact to scan output directory: {artifact_path}")
+            
+            with open(artifact_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
                 if data_only:
                     # In data_only mode, we write the conversations in conversation/messages format
                     f.write(json.dumps({"conversations": redteam_output.redteaming_data or []}))
                 elif redteam_output.red_team_agent_result:
                     json.dump(redteam_output.red_team_agent_result, f)
-            eval_run.log_artifact(tmpdir, artifact_name)
-            self.logger.debug(f"Logged artifact: {artifact_name}")
+            
+            # Also save a human-readable scorecard if available
+            if not data_only and redteam_output.red_team_agent_result:
+                scorecard_path = os.path.join(self.scan_output_dir, "scorecard.txt")
+                with open(scorecard_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
+                    f.write(self._to_scorecard(redteam_output.red_team_agent_result))
+                self.logger.debug(f"Saved scorecard to: {scorecard_path}")
+                
+            # Create a dedicated artifacts directory with proper structure for MLFlow
+            # MLFlow requires the artifact_name file to be in the directory we're logging
+            
+            import tempfile
+            with tempfile.TemporaryDirectory() as tmpdir:
+                # First, create the main artifact file that MLFlow expects
+                with open(os.path.join(tmpdir, artifact_name), "w", encoding=DefaultOpenEncoding.WRITE) as f:
+                    if data_only:
+                        f.write(json.dumps({"conversations": redteam_output.redteaming_data or []}))
+                    elif redteam_output.red_team_agent_result:
+                        json.dump(redteam_output.red_team_agent_result, f)
+                
+                # Copy all relevant files to the temp directory
+                import shutil
+                for file in os.listdir(self.scan_output_dir):
+                    file_path = os.path.join(self.scan_output_dir, file)
+                    
+                    # Skip directories and log files if not in debug mode
+                    if os.path.isdir(file_path):
+                        continue
+                    if file.endswith('.log') and not os.environ.get('DEBUG'):
+                        continue
+                    
+                    try:
+                        shutil.copy(file_path, os.path.join(tmpdir, file))
+                        self.logger.debug(f"Copied file to artifact directory: {file}")
+                    except Exception as e:
+                        self.logger.warning(f"Failed to copy file {file} to artifact directory: {str(e)}")
+                
+                # Log the entire directory to MLFlow
+                try:
+                    eval_run.log_artifact(tmpdir, artifact_name)
+                    self.logger.debug(f"Successfully logged artifacts directory to MLFlow")
+                except Exception as e:
+                    self.logger.warning(f"Failed to log artifacts to MLFlow: {str(e)}")
+            
+            # Also log a direct property to capture the scan output directory
+            try:
+                eval_run.write_properties_to_run_history({"scan_output_dir": str(self.scan_output_dir)})
+                self.logger.debug("Logged scan_output_dir property to MLFlow")
+            except Exception as e:
+                self.logger.warning(f"Failed to log scan_output_dir property to MLFlow: {str(e)}")
+        else:
+            # Use temporary directory as before if no scan output directory exists
+            with tempfile.TemporaryDirectory() as tmpdir:
+                artifact_file = Path(tmpdir) / artifact_name
+                with open(artifact_file, "w", encoding=DefaultOpenEncoding.WRITE) as f:
+                    if data_only:
+                        f.write(json.dumps({"conversations": redteam_output.redteaming_data or []}))
+                    elif redteam_output.red_team_agent_result:
+                        json.dump(redteam_output.red_team_agent_result, f)
+                eval_run.log_artifact(tmpdir, artifact_name)
+                self.logger.debug(f"Logged artifact: {artifact_name}")
 
         eval_run.write_properties_to_run_history({
             EvaluationRunProperties.RUN_TYPE: "eval_run",
@@ -544,7 +614,13 @@ class RedTeamAgent():
         :rtype: Union[str, os.PathLike]
         """
         base_path = str(uuid.uuid4())
-        output_path = f"{base_path}{DATA_EXT}"
+        
+        # If scan output directory exists, place the file there
+        if hasattr(self, 'scan_output_dir') and self.scan_output_dir:
+            output_path = os.path.join(self.scan_output_dir, f"{base_path}{DATA_EXT}")
+        else:
+            output_path = f"{base_path}{DATA_EXT}"
+            
         self.logger.debug(f"Writing PyRIT outputs to file: {output_path}")
 
         memory = orchestrator.get_memory()
@@ -602,6 +678,11 @@ class RedTeamAgent():
         risk_categories = []
         attack_successes = []  # unified list for all attack successes
         conversations = []
+        
+        # Create a CSV summary file for attack data in the scan output directory if available
+        if hasattr(self, 'scan_output_dir') and self.scan_output_dir:
+            summary_file = os.path.join(self.scan_output_dir, "attack_summary.csv")
+            self.logger.debug(f"Creating attack summary CSV file: {summary_file}")
         
         self.logger.info(f"Building RedTeamAgentResult from red_team_agent_info with {len(self.red_team_agent_info)} strategies")
         
@@ -943,15 +1024,126 @@ class RedTeamAgent():
         self.logger.debug(f"Evaluate called with data_path={data_path}, risk_category={risk_category.value}, strategy={strategy_name}, output_path={output_path}, data_only={data_only}, evaluation_name={evaluation_name}")
         if data_only:
             return None
-        result_path = output_path if output_path else f"{str(uuid.uuid4())}{RESULTS_EXT}"
+            
+        # If output_path is provided, use it; otherwise create one in the scan output directory if available
+        if output_path:
+            result_path = output_path
+        elif hasattr(self, 'scan_output_dir') and self.scan_output_dir:
+            result_filename = f"{strategy_name}_{risk_category.value}_{str(uuid.uuid4())}{RESULTS_EXT}"
+            result_path = os.path.join(self.scan_output_dir, result_filename)
+        else:
+            result_path = f"{str(uuid.uuid4())}{RESULTS_EXT}"
+            
         evaluators_dict = {
             risk_category.value: RISK_CATEGORY_EVALUATOR_MAP[risk_category](azure_ai_project=self.azure_ai_project, credential=self.credential)
         }
-        evaluate_outputs = evaluate(
-            data=data_path,
-            evaluators=evaluators_dict,
-            output_path=result_path,
-        )
+        
+        # Completely suppress all output during evaluation call 
+        import io
+        import sys
+        import logging
+        # Don't re-import os as it's already imported at the module level
+        
+        # Create a DevNull class to completely discard all writes
+        class DevNull:
+            def write(self, msg):
+                pass
+            def flush(self):
+                pass
+        
+        # Store original stdout, stderr and logger settings
+        original_stdout = sys.stdout
+        original_stderr = sys.stderr
+        
+        # Get all relevant loggers
+        root_logger = logging.getLogger()
+        promptflow_logger = logging.getLogger('promptflow')
+        azure_logger = logging.getLogger('azure')
+        
+        # Store original levels
+        orig_root_level = root_logger.level
+        orig_promptflow_level = promptflow_logger.level
+        orig_azure_level = azure_logger.level
+        
+        # Setup a completely silent logger filter
+        class SilentFilter(logging.Filter):
+            def filter(self, record):
+                return False
+        
+        # Get original filters to restore later
+        orig_handlers = []
+        for handler in root_logger.handlers:
+            orig_handlers.append((handler, handler.filters.copy(), handler.level))
+        
+        try:
+            # Redirect all stdout/stderr output to DevNull to completely suppress it
+            sys.stdout = DevNull()
+            sys.stderr = DevNull()
+            
+            # Set all loggers to CRITICAL level to suppress most log messages
+            root_logger.setLevel(logging.CRITICAL)
+            promptflow_logger.setLevel(logging.CRITICAL)
+            azure_logger.setLevel(logging.CRITICAL)
+            
+            # Add silent filter to all handlers
+            silent_filter = SilentFilter()
+            for handler in root_logger.handlers:
+                handler.addFilter(silent_filter)
+                handler.setLevel(logging.CRITICAL)
+            
+            # Create a file handler for any logs we actually want to keep
+            file_log_path = os.path.join(self.scan_output_dir, "redteam_agent.log")
+            file_handler = logging.FileHandler(file_log_path, mode='a')
+            file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(name)s - %(message)s'))
+            
+            # Allow file handler to capture DEBUG logs
+            file_handler.setLevel(logging.DEBUG)
+            
+            # Setup our own minimal logger for critical events
+            eval_logger = logging.getLogger('redteam_evaluation')
+            eval_logger.propagate = False  # Don't pass to root logger
+            eval_logger.setLevel(logging.DEBUG)
+            eval_logger.addHandler(file_handler)
+            
+            # Run evaluation silently
+            eval_logger.debug(f"Starting evaluation for {risk_category.value}/{strategy_name}")
+            evaluate_outputs = evaluate(
+                data=data_path,
+                evaluators=evaluators_dict,
+                output_path=result_path,
+            )
+            eval_logger.debug(f"Completed evaluation for {risk_category.value}/{strategy_name}")
+            
+        finally:
+            # Restore original stdout and stderr
+            sys.stdout = original_stdout
+            sys.stderr = original_stderr
+            
+            # Restore original log levels
+            root_logger.setLevel(orig_root_level)
+            promptflow_logger.setLevel(orig_promptflow_level)
+            azure_logger.setLevel(orig_azure_level)
+            
+            # Restore original handlers and filters
+            for handler, filters, level in orig_handlers:
+                # Remove any filters we added
+                for filter in list(handler.filters):
+                    handler.removeFilter(filter)
+                
+                # Restore original filters
+                for filter in filters:
+                    handler.addFilter(filter)
+                
+                # Restore original level
+                handler.setLevel(level)
+            
+            # Clean up our custom logger
+            try:
+                if 'eval_logger' in locals() and 'file_handler' in locals():
+                    eval_logger.removeHandler(file_handler)
+                    file_handler.close()
+            except Exception as e:
+                self.logger.warning(f"Failed to clean up logger: {str(e)}")
         self.red_team_agent_info[self._get_strategy_name(strategy)][risk_category.value]["evaluation_result_file"] = str(result_path)
         self.red_team_agent_info[self._get_strategy_name(strategy)][risk_category.value]["evaluation_result"] = evaluate_outputs
         self.logger.debug(f"Evaluation complete for {strategy_name}/{risk_category.value}, results stored in red_team_agent_info")
@@ -1038,9 +1230,13 @@ class RedTeamAgent():
                     remaining_tasks = self.total_tasks - self.completed_tasks
                     est_remaining_time = avg_time_per_task * remaining_tasks if avg_time_per_task > 0 else 0
                     
+                    # Print task completion message and estimated time on separate lines
+                    # This ensures they don't get concatenated with tqdm output
+                    print("")  # Empty line to separate from progress bar
                     print(f"✅ Completed task {self.completed_tasks}/{self.total_tasks} ({completion_pct:.1f}%) - {strategy_name}/{risk_category.value} in {elapsed_time:.1f}s")
                     print(f"   Est. remaining: {est_remaining_time/60:.1f} minutes")
                 else:
+                    print("")  # Empty line to separate from progress bar
                     print(f"✅ Completed task {self.completed_tasks}/{self.total_tasks} ({completion_pct:.1f}%) - {strategy_name}/{risk_category.value} in {elapsed_time:.1f}s")
                 
             log_strategy_completion(self.logger, strategy_name, risk_category.value, elapsed_time)
@@ -1105,12 +1301,63 @@ class RedTeamAgent():
         self.completed_tasks = 0
         self.failed_tasks = 0
         
+        # Generate a unique scan ID for this run
+        self.scan_id = f"scan_{evaluation_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}" if evaluation_name else f"scan_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        self.scan_id = self.scan_id.replace(" ", "_")
+        
+        # Create output directory for this scan
+        # If DEBUG environment variable is set, use a regular folder name; otherwise, use a hidden folder
+        is_debug = os.environ.get("DEBUG", "").lower() in ("true", "1", "yes", "y")
+        folder_prefix = "" if is_debug else "."
+        self.scan_output_dir = os.path.join(self.output_dir or ".", f"{folder_prefix}{self.scan_id}")
+        os.makedirs(self.scan_output_dir, exist_ok=True)
+        
+        # Re-initialize logger with the scan output directory
+        self.logger = setup_logger(output_dir=self.scan_output_dir)
+        
+        # Set up logging filter to suppress various logs we don't want in the console
+        class LogFilter(logging.Filter):
+            def filter(self, record):
+                # Filter out promptflow logs and evaluation warnings about artifacts
+                if record.name.startswith('promptflow'):
+                    return False
+                if 'The path to the artifact is either not a directory or does not exist' in record.getMessage():
+                    return False
+                if 'RedTeamAgentOutput object at' in record.getMessage():
+                    return False
+                if 'timeout won\'t take effect' in record.getMessage():
+                    return False
+                if 'Submitting run' in record.getMessage():
+                    return False
+                return True
+                
+        # Apply filter to root logger to suppress unwanted logs
+        root_logger = logging.getLogger()
+        log_filter = LogFilter()
+        
+        # Remove existing filters first to avoid duplication
+        for handler in root_logger.handlers:
+            for filter in handler.filters:
+                handler.removeFilter(filter)
+            handler.addFilter(log_filter)
+        
+        # Also set up stderr logger to use the same filter
+        stderr_logger = logging.getLogger('stderr')
+        for handler in stderr_logger.handlers:
+            handler.addFilter(log_filter)
+            
         log_section_header(self.logger, "Starting red team scan")
         self.logger.info(f"Scan started with evaluation_name: {evaluation_name}")
+        self.logger.info(f"Scan ID: {self.scan_id}")
+        self.logger.info(f"Scan output directory: {self.scan_output_dir}")
         self.logger.debug(f"Attack strategies: {attack_strategies}")
         self.logger.debug(f"data_only: {data_only}, output_path: {output_path}")
         
+        # Clear, minimal output for start of scan
         print(f"🚀 STARTING RED TEAM SCAN: {evaluation_name}")
+        print(f"📂 Output directory: {self.scan_output_dir}")
+        self.logger.info(f"Starting RED TEAM SCAN: {evaluation_name}")
+        self.logger.info(f"Output directory: {self.scan_output_dir}")
         
         chat_target = self._get_chat_target(target)
         self.chat_target = chat_target
@@ -1134,6 +1381,7 @@ class RedTeamAgent():
             attack_objective_generator.risk_categories = list(RiskCategory)
             
         self.risk_categories = attack_objective_generator.risk_categories
+        # Show risk categories to user
         print(f"📊 Risk categories: {[rc.value for rc in self.risk_categories]}")
         self.logger.info(f"Risk categories to process: {[rc.value for rc in self.risk_categories]}")
         
@@ -1147,12 +1395,13 @@ class RedTeamAgent():
             # todo: temp change to show the URL in int and with flight info
             self.ai_studio_url = self.ai_studio_url.replace("ai.azure.com", "int.ai.azure.com")
             self.ai_studio_url = f"{self.ai_studio_url}&flight=AIRedTeaming=true,EvalConvergence"
+            # Show URL for tracking progress
             print(f"🔗 Track your red team scan in AI Foundry: {self.ai_studio_url}")
             self.logger.info(f"Started MLFlow run: {self.ai_studio_url}")
             
             log_subsection_header(self.logger, "Setting up scan configuration")
             flattened_attack_strategies = self._get_flattened_attack_strategies(attack_strategies)
-            print(f"🛠️ Using {len(flattened_attack_strategies)} attack strategies")
+            self.logger.info(f"Using {len(flattened_attack_strategies)} attack strategies")
             self.logger.info(f"Found {len(flattened_attack_strategies)} attack strategies")
             
             orchestrators = self._get_orchestrators_for_attack_strategies(attack_strategies)
@@ -1160,6 +1409,7 @@ class RedTeamAgent():
             
             # Calculate total tasks: #risk_categories * #converters * #orchestrators
             self.total_tasks = len(self.risk_categories) * len(flattened_attack_strategies) * len(orchestrators)
+            # Show task count for user awareness
             print(f"📋 Planning {self.total_tasks} total tasks")
             self.logger.info(f"Total tasks: {self.total_tasks} ({len(self.risk_categories)} risk categories * {len(flattened_attack_strategies)} strategies * {len(orchestrators)} orchestrators)")
             
@@ -1192,7 +1442,7 @@ class RedTeamAgent():
             
             # Process all API calls sequentially to respect dependencies between objectives
             log_section_header(self.logger, "Fetching attack objectives")
-            print(f"📥 FETCHING ATTACK OBJECTIVES")
+            # Removed console output
             
             # Dictionary to store all objectives
             all_objectives = {}
@@ -1241,11 +1491,10 @@ class RedTeamAgent():
                     if debug_mode:
                         print(f"  - {risk_category.value}: {len(objectives)} objectives")
             
-            print(f"✅ Completed fetching all attack objectives")
             self.logger.info("Completed fetching all attack objectives")
             
             log_section_header(self.logger, "Starting orchestrator processing")
-            print(f"🚀 STARTING ORCHESTRATOR PROCESSING")
+            # Removed console output
             
             # Create all tasks for parallel processing
             orchestrator_tasks = []
@@ -1282,8 +1531,8 @@ class RedTeamAgent():
             
             # Process tasks in parallel with optimized batching
             if parallel_execution and orchestrator_tasks:
-                self.logger.info(f"Processing {len(orchestrator_tasks)} tasks in parallel (max {max_parallel_tasks} at a time)")
                 print(f"⚙️ Processing {len(orchestrator_tasks)} tasks in parallel (max {max_parallel_tasks} at a time)")
+                self.logger.info(f"Processing {len(orchestrator_tasks)} tasks in parallel (max {max_parallel_tasks} at a time)")
                 
                 # Create batches for processing
                 for i in range(0, len(orchestrator_tasks), max_parallel_tasks):
@@ -1334,16 +1583,11 @@ class RedTeamAgent():
             tasks_timeout = sum(1 for status in self.task_statuses.values() if status == TASK_STATUS["TIMEOUT"])
             
             total_time = time.time() - self.start_time
-            print(f"\n📊 Scan Summary:")
-            print(f"   - Total tasks: {self.total_tasks}")
-            print(f"   - Completed: {tasks_completed}")
-            print(f"   - Failed: {tasks_failed}")
-            print(f"   - Timeouts: {tasks_timeout}")
-            print(f"   - Total time: {total_time/60:.1f} minutes")
+            # Only log the summary to file, don't print to console
+            self.logger.info(f"Scan Summary: Total tasks: {self.total_tasks}, Completed: {tasks_completed}, Failed: {tasks_failed}, Timeouts: {tasks_timeout}, Total time: {total_time/60:.1f} minutes")
             
             # Process results
             log_section_header(self.logger, "Processing results")
-            print(f"📝 PROCESSING RESULTS")
             
             # Convert results to RedTeamAgentResult using only red_team_agent_info
             red_team_agent_result = self._to_red_team_agent_result()
@@ -1371,13 +1615,39 @@ class RedTeamAgent():
             return output
         
         if output_path and output.red_team_agent_result:
-            self.logger.info(f"Writing output to {output_path}")
-            _write_output(output_path, output.red_team_agent_result)
+            # Ensure output_path is an absolute path
+            abs_output_path = output_path if os.path.isabs(output_path) else os.path.abspath(output_path)
+            self.logger.info(f"Writing output to {abs_output_path}")
+            _write_output(abs_output_path, output.red_team_agent_result)
+            
+            # Also save a copy to the scan output directory if available
+            if hasattr(self, 'scan_output_dir') and self.scan_output_dir:
+                final_output = os.path.join(self.scan_output_dir, "final_results.json")
+                _write_output(final_output, output.red_team_agent_result)
+                self.logger.info(f"Also saved a copy to {final_output}")
+        elif output.red_team_agent_result and hasattr(self, 'scan_output_dir') and self.scan_output_dir:
+            # If no output_path was specified but we have scan_output_dir, save there
+            final_output = os.path.join(self.scan_output_dir, "final_results.json")
+            _write_output(final_output, output.red_team_agent_result)
+            self.logger.info(f"Saved results to {final_output}")
         
         if output.red_team_agent_result:
             self.logger.debug("Generating scorecard")
             scorecard = self._to_scorecard(output.red_team_agent_result)
-            print(f"\n{scorecard}")
+            # Store scorecard in a variable for accessing later if needed
+            self.scorecard = scorecard
+            
+            # Print scorecard to console for user visibility (without extra header)
+            print(scorecard)
+            
+            # Print URL for detailed results (once only)
+            studio_url = output.red_team_agent_result.get("studio_url", "")
+            if studio_url:
+                print(f"\nDetailed results available at:\n{studio_url}")
+            
+            # Print the output directory path so the user can find it easily
+            if hasattr(self, 'scan_output_dir') and self.scan_output_dir:
+                print(f"\n📂 All scan files saved to: {self.scan_output_dir}")
         
         print(f"✅ Scan completed successfully!")
         self.logger.info("Scan completed successfully")
