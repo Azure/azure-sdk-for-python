@@ -9,7 +9,7 @@
 from io import IOBase
 import json
 import sys
-from typing import Any, AsyncIterable, Callable, Dict, IO, List, Optional, TYPE_CHECKING, TypeVar, Union, overload
+from typing import Any, AsyncIterable, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -30,71 +30,49 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ... import _model_base, models as _models
+from ... import models as _models
 from ..._model_base import SdkJSONEncoder, _deserialize
 from ..._serialization import Deserializer, Serializer
-from ..._vendor import FileType, prepare_multipart_form_data
 from ...operations._operations import (
-    build_agents_cancel_run_request,
-    build_agents_cancel_vector_store_file_batch_request,
+    build_agents_complete_by_agent_request,
+    build_agents_complete_request,
     build_agents_create_agent_request,
-    build_agents_create_message_request,
-    build_agents_create_run_request,
-    build_agents_create_thread_and_run_request,
     build_agents_create_thread_request,
-    build_agents_create_vector_store_file_batch_request,
-    build_agents_create_vector_store_file_request,
-    build_agents_create_vector_store_request,
     build_agents_delete_agent_request,
-    build_agents_delete_file_request,
+    build_agents_delete_message_request,
     build_agents_delete_thread_request,
-    build_agents_delete_vector_store_file_request,
-    build_agents_delete_vector_store_request,
     build_agents_get_agent_request,
-    build_agents_get_file_content_request,
-    build_agents_get_file_request,
     build_agents_get_message_request,
-    build_agents_get_run_request,
-    build_agents_get_run_step_request,
     build_agents_get_thread_request,
-    build_agents_get_vector_store_file_batch_request,
-    build_agents_get_vector_store_file_request,
-    build_agents_get_vector_store_request,
     build_agents_list_agents_request,
-    build_agents_list_files_request,
     build_agents_list_messages_request,
-    build_agents_list_run_steps_request,
-    build_agents_list_runs_request,
-    build_agents_list_vector_store_file_batch_files_request,
-    build_agents_list_vector_store_files_request,
-    build_agents_list_vector_stores_request,
-    build_agents_modify_vector_store_request,
-    build_agents_submit_tool_outputs_to_run_request,
+    build_agents_list_threads_request,
+    build_agents_send_message_request,
+    build_agents_stream_by_agent_request,
+    build_agents_stream_request,
     build_agents_update_agent_request,
     build_agents_update_message_request,
-    build_agents_update_run_request,
     build_agents_update_thread_request,
-    build_agents_upload_file_request,
     build_connections_get_request,
     build_connections_list_request,
+    build_datasets_create_request,
     build_datasets_create_version_request,
     build_datasets_delete_version_request,
     build_datasets_get_version_request,
     build_datasets_list_latest_request,
     build_datasets_list_versions_request,
     build_datasets_start_pending_upload_request,
-    build_datasets_versions_request,
     build_deployments_get_request,
     build_deployments_list_request,
     build_evaluations_create_run_request,
     build_evaluations_get_request,
     build_evaluations_list_request,
+    build_indexes_create_request,
     build_indexes_create_version_request,
     build_indexes_delete_version_request,
     build_indexes_get_version_request,
     build_indexes_list_latest_request,
     build_indexes_list_versions_request,
-    build_indexes_versions_request,
 )
 from .._configuration import AIProjectClientConfiguration
 
@@ -102,16 +80,13 @@ if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore
-
-if TYPE_CHECKING:
-    from ... import _types
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 _Unset: Any = object()
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class AgentsOperations:  # pylint: disable=too-many-public-methods
+class AgentsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -129,65 +104,954 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
-    async def create_agent(
+    async def send_message(
         self,
         *,
-        model: str,
+        role: Union[str, _models.AuthorRole],
+        content: List[_models.AIContent],
         content_type: str = "application/json",
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        instructions: Optional[str] = None,
-        tools: Optional[List[_models.ToolDefinition]] = None,
-        tool_resources: Optional[_models.ToolResources] = None,
-        temperature: Optional[float] = None,
-        top_p: Optional[float] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        user_id: Optional[str] = None,
+        agent_id: Optional[str] = None,
+        completion_id: Optional[str] = None,
+        author_name: Optional[str] = None,
+        created_at: Optional[int] = None,
+        completed_at: Optional[int] = None,
         **kwargs: Any
-    ) -> _models.Agent:
-        """Creates a new agent.
+    ) -> _models.ChatMessage:
+        """Creates (sends) a new chat message, returning the created ChatMessage.
 
-        :keyword model: The ID of the model to use. Required.
-        :paramtype model: str
+        :keyword role: The role of this message's author. Known values are: "user", "agent", "system",
+         "tool", and "developer". Required.
+        :paramtype role: str or ~azure.ai.projects.dp1.models.AuthorRole
+        :keyword content: The contents of the message. Required.
+        :paramtype content: list[~azure.ai.projects.dp1.models.AIContent]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword name: The name of the new agent. Default value is None.
-        :paramtype name: str
-        :keyword description: The description of the new agent. Default value is None.
-        :paramtype description: str
-        :keyword instructions: The system instructions for the new agent to use. Default value is None.
-        :paramtype instructions: str
-        :keyword tools: The collection of tools to enable for the new agent. Default value is None.
-        :paramtype tools: list[~azure.ai.projects.dp1.models.ToolDefinition]
-        :keyword tool_resources: A set of resources that are used by the agent's tools. The resources
-         are specific to the type of tool. For example, the ``code_interpreter``
-         tool requires a list of file IDs, while the ``file_search`` tool requires a list of vector
-         store IDs. Default value is None.
-        :paramtype tool_resources: ~azure.ai.projects.dp1.models.ToolResources
-        :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
-         will make the output more random,
-         while lower values like 0.2 will make it more focused and deterministic. Default value is
+        :keyword user_id: The ID of the user who created the message (if applicable). Default value is
          None.
-        :paramtype temperature: float
-        :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
-         model considers the results of the tokens with top_p probability mass.
-         So 0.1 means only the tokens comprising the top 10% probability mass are considered.
+        :paramtype user_id: str
+        :keyword agent_id: The ID of the agent who created the message (if applicable). Default value
+         is None.
+        :paramtype agent_id: str
+        :keyword completion_id: A unique completion ID, if this message was generated by a completion
+         process. Default value is None.
+        :paramtype completion_id: str
+        :keyword author_name: An optional display name for the author. Default value is None.
+        :paramtype author_name: str
+        :keyword created_at: The timestamp (in Unix time) when this message was created. Default value
+         is None.
+        :paramtype created_at: int
+        :keyword completed_at: The timestamp (in Unix time) when this message was completed, if
+         applicable. Default value is None.
+        :paramtype completed_at: int
+        :return: ChatMessage. The ChatMessage is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.ChatMessage
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
-         We generally recommend altering this or temperature but not both. Default value is None.
-        :paramtype top_p: float
-        :keyword response_format: The response format of the tool calls used by this agent. Is one of
-         the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
-        :paramtype response_format: str or str or
-         ~azure.ai.projects.dp1.models.AgentsApiResponseFormatMode or
-         ~azure.ai.projects.dp1.models.AgentsApiResponseFormat or
-         ~azure.ai.projects.dp1.models.ResponseFormatJsonSchemaType
-        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
-         for storing additional information about that object in a structured format. Keys may be up to
-         64 characters in length and values may be up to 512 characters in length. Default value is
+    @overload
+    async def send_message(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ChatMessage:
+        """Creates (sends) a new chat message, returning the created ChatMessage.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ChatMessage. The ChatMessage is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.ChatMessage
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def send_message(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ChatMessage:
+        """Creates (sends) a new chat message, returning the created ChatMessage.
+
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ChatMessage. The ChatMessage is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.ChatMessage
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def send_message(
+        self,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        role: Union[str, _models.AuthorRole] = _Unset,
+        content: List[_models.AIContent] = _Unset,
+        user_id: Optional[str] = None,
+        agent_id: Optional[str] = None,
+        completion_id: Optional[str] = None,
+        author_name: Optional[str] = None,
+        created_at: Optional[int] = None,
+        completed_at: Optional[int] = None,
+        **kwargs: Any
+    ) -> _models.ChatMessage:
+        """Creates (sends) a new chat message, returning the created ChatMessage.
+
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword role: The role of this message's author. Known values are: "user", "agent", "system",
+         "tool", and "developer". Required.
+        :paramtype role: str or ~azure.ai.projects.dp1.models.AuthorRole
+        :keyword content: The contents of the message. Required.
+        :paramtype content: list[~azure.ai.projects.dp1.models.AIContent]
+        :keyword user_id: The ID of the user who created the message (if applicable). Default value is
          None.
+        :paramtype user_id: str
+        :keyword agent_id: The ID of the agent who created the message (if applicable). Default value
+         is None.
+        :paramtype agent_id: str
+        :keyword completion_id: A unique completion ID, if this message was generated by a completion
+         process. Default value is None.
+        :paramtype completion_id: str
+        :keyword author_name: An optional display name for the author. Default value is None.
+        :paramtype author_name: str
+        :keyword created_at: The timestamp (in Unix time) when this message was created. Default value
+         is None.
+        :paramtype created_at: int
+        :keyword completed_at: The timestamp (in Unix time) when this message was completed, if
+         applicable. Default value is None.
+        :paramtype completed_at: int
+        :return: ChatMessage. The ChatMessage is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.ChatMessage
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ChatMessage] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            if role is _Unset:
+                raise TypeError("missing required argument: role")
+            if content is _Unset:
+                raise TypeError("missing required argument: content")
+            body = {
+                "agentId": agent_id,
+                "authorName": author_name,
+                "completedAt": completed_at,
+                "completionId": completion_id,
+                "content": content,
+                "createdAt": created_at,
+                "role": role,
+                "userId": user_id,
+            }
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agents_send_message_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ChatMessage, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_message(self, message_id: str, **kwargs: Any) -> _models.ChatMessage:
+        """Retrieves (reads) an existing chat message.
+
+        :param message_id: The identifier of the ChatMessage to retrieve. Required.
+        :type message_id: str
+        :return: ChatMessage. The ChatMessage is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.ChatMessage
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ChatMessage] = kwargs.pop("cls", None)
+
+        _request = build_agents_get_message_request(
+            message_id=message_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ChatMessage, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def update_message(
+        self, message_id: str, body: _models.ChatMessage, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ChatMessage:
+        """Updates an existing chat message (or creates if not found) and returns the updated message.
+
+        :param message_id: The identifier of the message to update. Required.
+        :type message_id: str
+        :param body: The new or modified ChatMessage object. Required.
+        :type body: ~azure.ai.projects.dp1.models.ChatMessage
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ChatMessage. The ChatMessage is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.ChatMessage
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update_message(
+        self, message_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ChatMessage:
+        """Updates an existing chat message (or creates if not found) and returns the updated message.
+
+        :param message_id: The identifier of the message to update. Required.
+        :type message_id: str
+        :param body: The new or modified ChatMessage object. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ChatMessage. The ChatMessage is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.ChatMessage
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update_message(
+        self, message_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ChatMessage:
+        """Updates an existing chat message (or creates if not found) and returns the updated message.
+
+        :param message_id: The identifier of the message to update. Required.
+        :type message_id: str
+        :param body: The new or modified ChatMessage object. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ChatMessage. The ChatMessage is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.ChatMessage
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def update_message(
+        self, message_id: str, body: Union[_models.ChatMessage, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.ChatMessage:
+        """Updates an existing chat message (or creates if not found) and returns the updated message.
+
+        :param message_id: The identifier of the message to update. Required.
+        :type message_id: str
+        :param body: The new or modified ChatMessage object. Is one of the following types:
+         ChatMessage, JSON, IO[bytes] Required.
+        :type body: ~azure.ai.projects.dp1.models.ChatMessage or JSON or IO[bytes]
+        :return: ChatMessage. The ChatMessage is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.ChatMessage
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ChatMessage] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agents_update_message_request(
+            message_id=message_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ChatMessage, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def delete_message(self, message_id: str, **kwargs: Any) -> None:
+        """Deletes a chat message. Returns 204 on success.
+
+        :param message_id: The ID of the message to delete. Required.
+        :type message_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_agents_delete_message_request(
+            message_id=message_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace_async
+    async def list_messages(self, **kwargs: Any) -> List[_models.ChatMessage]:
+        """Lists chat messages, returning a collection of ChatMessage objects.
+
+        :return: list of ChatMessage
+        :rtype: list[~azure.ai.projects.dp1.models.ChatMessage]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ChatMessage]] = kwargs.pop("cls", None)
+
+        _request = build_agents_list_messages_request(
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(List[_models.ChatMessage], response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_thread(
+        self, *, messages: List[_models.ChatMessage], content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Thread:
+        """Creates a new Thread and returns it.
+
+        :keyword messages: A list of messages in this thread. Required.
+        :paramtype messages: list[~azure.ai.projects.dp1.models.ChatMessage]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Thread. The Thread is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.Thread
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_thread(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Thread:
+        """Creates a new Thread and returns it.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Thread. The Thread is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.Thread
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_thread(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Thread:
+        """Creates a new Thread and returns it.
+
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Thread. The Thread is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.Thread
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create_thread(
+        self, body: Union[JSON, IO[bytes]] = _Unset, *, messages: List[_models.ChatMessage] = _Unset, **kwargs: Any
+    ) -> _models.Thread:
+        """Creates a new Thread and returns it.
+
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword messages: A list of messages in this thread. Required.
+        :paramtype messages: list[~azure.ai.projects.dp1.models.ChatMessage]
+        :return: Thread. The Thread is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.Thread
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Thread] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            if messages is _Unset:
+                raise TypeError("missing required argument: messages")
+            body = {"messages": messages}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agents_create_thread_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.Thread, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_thread(self, thread_id: str, **kwargs: Any) -> _models.Thread:
+        """Retrieves an existing thread by its ID.
+
+        :param thread_id: The identifier of the Thread. Required.
+        :type thread_id: str
+        :return: Thread. The Thread is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.Thread
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.Thread] = kwargs.pop("cls", None)
+
+        _request = build_agents_get_thread_request(
+            thread_id=thread_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.Thread, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def update_thread(
+        self, thread_id: str, body: _models.Thread, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Thread:
+        """Updates or replaces a thread by its ID, returning the updated Thread.
+
+        :param thread_id: The identifier of the Thread to update. Required.
+        :type thread_id: str
+        :param body: The updated Thread resource data. Required.
+        :type body: ~azure.ai.projects.dp1.models.Thread
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Thread. The Thread is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.Thread
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update_thread(
+        self, thread_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Thread:
+        """Updates or replaces a thread by its ID, returning the updated Thread.
+
+        :param thread_id: The identifier of the Thread to update. Required.
+        :type thread_id: str
+        :param body: The updated Thread resource data. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Thread. The Thread is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.Thread
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update_thread(
+        self, thread_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Thread:
+        """Updates or replaces a thread by its ID, returning the updated Thread.
+
+        :param thread_id: The identifier of the Thread to update. Required.
+        :type thread_id: str
+        :param body: The updated Thread resource data. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Thread. The Thread is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.Thread
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def update_thread(
+        self, thread_id: str, body: Union[_models.Thread, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.Thread:
+        """Updates or replaces a thread by its ID, returning the updated Thread.
+
+        :param thread_id: The identifier of the Thread to update. Required.
+        :type thread_id: str
+        :param body: The updated Thread resource data. Is one of the following types: Thread, JSON,
+         IO[bytes] Required.
+        :type body: ~azure.ai.projects.dp1.models.Thread or JSON or IO[bytes]
+        :return: Thread. The Thread is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.Thread
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Thread] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agents_update_thread_request(
+            thread_id=thread_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.Thread, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def delete_thread(self, thread_id: str, **kwargs: Any) -> None:
+        """Deletes a thread, returning 204 on success.
+
+        :param thread_id: The ID of the thread to delete. Required.
+        :type thread_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_agents_delete_thread_request(
+            thread_id=thread_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace_async
+    async def list_threads(self, **kwargs: Any) -> List[_models.Thread]:
+        """Lists all threads, returning an array of Thread items.
+
+        :return: list of Thread
+        :rtype: list[~azure.ai.projects.dp1.models.Thread]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.Thread]] = kwargs.pop("cls", None)
+
+        _request = build_agents_list_threads_request(
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(List[_models.Thread], response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_agent(
+        self,
+        *,
+        agent_model: _models.AgentModel,
+        content_type: str = "application/json",
+        description: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        name: Optional[str] = None,
+        instructions: Optional[List[_models.ChatMessage]] = None,
+        tools: Optional[List[_models.AgentToolDefinition]] = None,
+        tool_choice: Optional[_models.ToolChoiceBehavior] = None,
+        **kwargs: Any
+    ) -> _models.Agent:
+        """Creates a new Agent resource and returns it.
+
+        :keyword agent_model: The model definition for this agent. Required.
+        :paramtype agent_model: ~azure.ai.projects.dp1.models.AgentModel
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword description: A description of the agent; used for display purposes and to describe the
+         agent. Default value is None.
+        :paramtype description: str
+        :keyword metadata: Arbitrary metadata associated with this agent. Default value is None.
         :paramtype metadata: dict[str, str]
+        :keyword name: The name of the agent; used for display purposes and sent to the LLM to identify
+         the agent. Default value is None.
+        :paramtype name: str
+        :keyword instructions: Instructions provided to guide how this agent operates. Default value is
+         None.
+        :paramtype instructions: list[~azure.ai.projects.dp1.models.ChatMessage]
+        :keyword tools: A list of tool definitions available to the agent. Default value is None.
+        :paramtype tools: list[~azure.ai.projects.dp1.models.AgentToolDefinition]
+        :keyword tool_choice: How the agent should choose among provided tools. Default value is None.
+        :paramtype tool_choice: ~azure.ai.projects.dp1.models.ToolChoiceBehavior
         :return: Agent. The Agent is compatible with MutableMapping
         :rtype: ~azure.ai.projects.dp1.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -195,7 +1059,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def create_agent(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Agent:
-        """Creates a new agent.
+        """Creates a new Agent resource and returns it.
 
         :param body: Required.
         :type body: JSON
@@ -211,7 +1075,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     async def create_agent(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Agent:
-        """Creates a new agent.
+        """Creates a new Agent resource and returns it.
 
         :param body: Required.
         :type body: IO[bytes]
@@ -228,60 +1092,36 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        model: str = _Unset,
-        name: Optional[str] = None,
+        agent_model: _models.AgentModel = _Unset,
         description: Optional[str] = None,
-        instructions: Optional[str] = None,
-        tools: Optional[List[_models.ToolDefinition]] = None,
-        tool_resources: Optional[_models.ToolResources] = None,
-        temperature: Optional[float] = None,
-        top_p: Optional[float] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
+        name: Optional[str] = None,
+        instructions: Optional[List[_models.ChatMessage]] = None,
+        tools: Optional[List[_models.AgentToolDefinition]] = None,
+        tool_choice: Optional[_models.ToolChoiceBehavior] = None,
         **kwargs: Any
     ) -> _models.Agent:
-        """Creates a new agent.
+        """Creates a new Agent resource and returns it.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword model: The ID of the model to use. Required.
-        :paramtype model: str
-        :keyword name: The name of the new agent. Default value is None.
-        :paramtype name: str
-        :keyword description: The description of the new agent. Default value is None.
+        :keyword agent_model: The model definition for this agent. Required.
+        :paramtype agent_model: ~azure.ai.projects.dp1.models.AgentModel
+        :keyword description: A description of the agent; used for display purposes and to describe the
+         agent. Default value is None.
         :paramtype description: str
-        :keyword instructions: The system instructions for the new agent to use. Default value is None.
-        :paramtype instructions: str
-        :keyword tools: The collection of tools to enable for the new agent. Default value is None.
-        :paramtype tools: list[~azure.ai.projects.dp1.models.ToolDefinition]
-        :keyword tool_resources: A set of resources that are used by the agent's tools. The resources
-         are specific to the type of tool. For example, the ``code_interpreter``
-         tool requires a list of file IDs, while the ``file_search`` tool requires a list of vector
-         store IDs. Default value is None.
-        :paramtype tool_resources: ~azure.ai.projects.dp1.models.ToolResources
-        :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
-         will make the output more random,
-         while lower values like 0.2 will make it more focused and deterministic. Default value is
-         None.
-        :paramtype temperature: float
-        :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
-         model considers the results of the tokens with top_p probability mass.
-         So 0.1 means only the tokens comprising the top 10% probability mass are considered.
-
-         We generally recommend altering this or temperature but not both. Default value is None.
-        :paramtype top_p: float
-        :keyword response_format: The response format of the tool calls used by this agent. Is one of
-         the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
-        :paramtype response_format: str or str or
-         ~azure.ai.projects.dp1.models.AgentsApiResponseFormatMode or
-         ~azure.ai.projects.dp1.models.AgentsApiResponseFormat or
-         ~azure.ai.projects.dp1.models.ResponseFormatJsonSchemaType
-        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
-         for storing additional information about that object in a structured format. Keys may be up to
-         64 characters in length and values may be up to 512 characters in length. Default value is
-         None.
+        :keyword metadata: Arbitrary metadata associated with this agent. Default value is None.
         :paramtype metadata: dict[str, str]
+        :keyword name: The name of the agent; used for display purposes and sent to the LLM to identify
+         the agent. Default value is None.
+        :paramtype name: str
+        :keyword instructions: Instructions provided to guide how this agent operates. Default value is
+         None.
+        :paramtype instructions: list[~azure.ai.projects.dp1.models.ChatMessage]
+        :keyword tools: A list of tool definitions available to the agent. Default value is None.
+        :paramtype tools: list[~azure.ai.projects.dp1.models.AgentToolDefinition]
+        :keyword tool_choice: How the agent should choose among provided tools. Default value is None.
+        :paramtype tool_choice: ~azure.ai.projects.dp1.models.ToolChoiceBehavior
         :return: Agent. The Agent is compatible with MutableMapping
         :rtype: ~azure.ai.projects.dp1.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -301,19 +1141,16 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[_models.Agent] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            if model is _Unset:
-                raise TypeError("missing required argument: model")
+            if agent_model is _Unset:
+                raise TypeError("missing required argument: agent_model")
             body = {
+                "agentModel": agent_model,
                 "description": description,
                 "instructions": instructions,
                 "metadata": metadata,
-                "model": model,
                 "name": name,
-                "response_format": response_format,
-                "temperature": temperature,
-                "tool_resources": tool_resources,
+                "toolChoice": tool_choice,
                 "tools": tools,
-                "top_p": top_p,
             }
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
@@ -362,97 +1199,11 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def list_agents(
-        self,
-        *,
-        limit: Optional[int] = None,
-        order: Optional[Union[str, _models.ListSortOrder]] = None,
-        after: Optional[str] = None,
-        before: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.OpenAIPageableListOfAgent:
-        """Gets a list of agents that were previously created.
+    async def get_agent(self, agent_id: str, **kwargs: Any) -> _models.Agent:
+        """Retrieves an existing Agent by its ID.
 
-        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
-         100, and the default is 20. Default value is None.
-        :paramtype limit: int
-        :keyword order: Sort order by the created_at timestamp of the objects. asc for ascending order
-         and desc for descending order. Known values are: "asc" and "desc". Default value is None.
-        :paramtype order: str or ~azure.ai.projects.dp1.models.ListSortOrder
-        :keyword after: A cursor for use in pagination. after is an object ID that defines your place
-         in the list. For instance, if you make a list request and receive 100 objects, ending with
-         obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the
-         list. Default value is None.
-        :paramtype after: str
-        :keyword before: A cursor for use in pagination. before is an object ID that defines your place
-         in the list. For instance, if you make a list request and receive 100 objects, ending with
-         obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of
-         the list. Default value is None.
-        :paramtype before: str
-        :return: OpenAIPageableListOfAgent. The OpenAIPageableListOfAgent is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.OpenAIPageableListOfAgent
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.OpenAIPageableListOfAgent] = kwargs.pop("cls", None)
-
-        _request = build_agents_list_agents_request(
-            limit=limit,
-            order=order,
-            after=after,
-            before=before,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.OpenAIPageableListOfAgent, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get_agent(self, assistant_id: str, **kwargs: Any) -> _models.Agent:
-        """Retrieves an existing agent.
-
-        :param assistant_id: Identifier of the agent. Required.
-        :type assistant_id: str
+        :param agent_id: The ID of the Agent to retrieve. Required.
+        :type agent_id: str
         :return: Agent. The Agent is compatible with MutableMapping
         :rtype: ~azure.ai.projects.dp1.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -471,7 +1222,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[_models.Agent] = kwargs.pop("cls", None)
 
         _request = build_agents_get_agent_request(
-            assistant_id=assistant_id,
+            agent_id=agent_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -509,69 +1260,17 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def update_agent(
-        self,
-        assistant_id: str,
-        *,
-        content_type: str = "application/json",
-        model: Optional[str] = None,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        instructions: Optional[str] = None,
-        tools: Optional[List[_models.ToolDefinition]] = None,
-        tool_resources: Optional[_models.ToolResources] = None,
-        temperature: Optional[float] = None,
-        top_p: Optional[float] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
-        metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
+        self, agent_id: str, body: _models.Agent, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Agent:
-        """Modifies an existing agent.
+        """Updates or replaces an agent and returns the updated resource.
 
-        :param assistant_id: The ID of the agent to modify. Required.
-        :type assistant_id: str
+        :param agent_id: The ID of the Agent to update. Required.
+        :type agent_id: str
+        :param body: The updated Agent data. Required.
+        :type body: ~azure.ai.projects.dp1.models.Agent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword model: The ID of the model to use. Default value is None.
-        :paramtype model: str
-        :keyword name: The modified name for the agent to use. Default value is None.
-        :paramtype name: str
-        :keyword description: The modified description for the agent to use. Default value is None.
-        :paramtype description: str
-        :keyword instructions: The modified system instructions for the new agent to use. Default value
-         is None.
-        :paramtype instructions: str
-        :keyword tools: The modified collection of tools to enable for the agent. Default value is
-         None.
-        :paramtype tools: list[~azure.ai.projects.dp1.models.ToolDefinition]
-        :keyword tool_resources: A set of resources that are used by the agent's tools. The resources
-         are specific to the type of tool. For example,
-         the ``code_interpreter`` tool requires a list of file IDs, while the ``file_search`` tool
-         requires a list of vector store IDs. Default value is None.
-        :paramtype tool_resources: ~azure.ai.projects.dp1.models.ToolResources
-        :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
-         will make the output more random,
-         while lower values like 0.2 will make it more focused and deterministic. Default value is
-         None.
-        :paramtype temperature: float
-        :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
-         model considers the results of the tokens with top_p probability mass.
-         So 0.1 means only the tokens comprising the top 10% probability mass are considered.
-
-         We generally recommend altering this or temperature but not both. Default value is None.
-        :paramtype top_p: float
-        :keyword response_format: The response format of the tool calls used by this agent. Is one of
-         the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
-        :paramtype response_format: str or str or
-         ~azure.ai.projects.dp1.models.AgentsApiResponseFormatMode or
-         ~azure.ai.projects.dp1.models.AgentsApiResponseFormat or
-         ~azure.ai.projects.dp1.models.ResponseFormatJsonSchemaType
-        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
-         for storing additional information about that object in a structured format. Keys may be up to
-         64 characters in length and values may be up to 512 characters in length. Default value is
-         None.
-        :paramtype metadata: dict[str, str]
         :return: Agent. The Agent is compatible with MutableMapping
         :rtype: ~azure.ai.projects.dp1.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -579,13 +1278,13 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def update_agent(
-        self, assistant_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, agent_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Agent:
-        """Modifies an existing agent.
+        """Updates or replaces an agent and returns the updated resource.
 
-        :param assistant_id: The ID of the agent to modify. Required.
-        :type assistant_id: str
-        :param body: Required.
+        :param agent_id: The ID of the Agent to update. Required.
+        :type agent_id: str
+        :param body: The updated Agent data. Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -597,13 +1296,13 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def update_agent(
-        self, assistant_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, agent_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Agent:
-        """Modifies an existing agent.
+        """Updates or replaces an agent and returns the updated resource.
 
-        :param assistant_id: The ID of the agent to modify. Required.
-        :type assistant_id: str
-        :param body: Required.
+        :param agent_id: The ID of the Agent to update. Required.
+        :type agent_id: str
+        :param body: The updated Agent data. Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -615,68 +1314,15 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def update_agent(
-        self,
-        assistant_id: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        model: Optional[str] = None,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        instructions: Optional[str] = None,
-        tools: Optional[List[_models.ToolDefinition]] = None,
-        tool_resources: Optional[_models.ToolResources] = None,
-        temperature: Optional[float] = None,
-        top_p: Optional[float] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
-        metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
+        self, agent_id: str, body: Union[_models.Agent, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.Agent:
-        """Modifies an existing agent.
+        """Updates or replaces an agent and returns the updated resource.
 
-        :param assistant_id: The ID of the agent to modify. Required.
-        :type assistant_id: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword model: The ID of the model to use. Default value is None.
-        :paramtype model: str
-        :keyword name: The modified name for the agent to use. Default value is None.
-        :paramtype name: str
-        :keyword description: The modified description for the agent to use. Default value is None.
-        :paramtype description: str
-        :keyword instructions: The modified system instructions for the new agent to use. Default value
-         is None.
-        :paramtype instructions: str
-        :keyword tools: The modified collection of tools to enable for the agent. Default value is
-         None.
-        :paramtype tools: list[~azure.ai.projects.dp1.models.ToolDefinition]
-        :keyword tool_resources: A set of resources that are used by the agent's tools. The resources
-         are specific to the type of tool. For example,
-         the ``code_interpreter`` tool requires a list of file IDs, while the ``file_search`` tool
-         requires a list of vector store IDs. Default value is None.
-        :paramtype tool_resources: ~azure.ai.projects.dp1.models.ToolResources
-        :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
-         will make the output more random,
-         while lower values like 0.2 will make it more focused and deterministic. Default value is
-         None.
-        :paramtype temperature: float
-        :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
-         model considers the results of the tokens with top_p probability mass.
-         So 0.1 means only the tokens comprising the top 10% probability mass are considered.
-
-         We generally recommend altering this or temperature but not both. Default value is None.
-        :paramtype top_p: float
-        :keyword response_format: The response format of the tool calls used by this agent. Is one of
-         the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
-        :paramtype response_format: str or str or
-         ~azure.ai.projects.dp1.models.AgentsApiResponseFormatMode or
-         ~azure.ai.projects.dp1.models.AgentsApiResponseFormat or
-         ~azure.ai.projects.dp1.models.ResponseFormatJsonSchemaType
-        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
-         for storing additional information about that object in a structured format. Keys may be up to
-         64 characters in length and values may be up to 512 characters in length. Default value is
-         None.
-        :paramtype metadata: dict[str, str]
+        :param agent_id: The ID of the Agent to update. Required.
+        :type agent_id: str
+        :param body: The updated Agent data. Is one of the following types: Agent, JSON, IO[bytes]
+         Required.
+        :type body: ~azure.ai.projects.dp1.models.Agent or JSON or IO[bytes]
         :return: Agent. The Agent is compatible with MutableMapping
         :rtype: ~azure.ai.projects.dp1.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -695,20 +1341,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Agent] = kwargs.pop("cls", None)
 
-        if body is _Unset:
-            body = {
-                "description": description,
-                "instructions": instructions,
-                "metadata": metadata,
-                "model": model,
-                "name": name,
-                "response_format": response_format,
-                "temperature": temperature,
-                "tool_resources": tool_resources,
-                "tools": tools,
-                "top_p": top_p,
-            }
-            body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
         if isinstance(body, (IOBase, bytes)):
@@ -717,7 +1349,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_agents_update_agent_request(
-            assistant_id=assistant_id,
+            agent_id=agent_id,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -756,13 +1388,13 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete_agent(self, assistant_id: str, **kwargs: Any) -> _models.AgentDeletionStatus:
-        """Deletes an agent.
+    async def delete_agent(self, agent_id: str, **kwargs: Any) -> None:
+        """Deletes an Agent by its ID, returning 204 on success.
 
-        :param assistant_id: Identifier of the agent. Required.
-        :type assistant_id: str
-        :return: AgentDeletionStatus. The AgentDeletionStatus is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.AgentDeletionStatus
+        :param agent_id: The ID of the Agent to delete. Required.
+        :type agent_id: str
+        :return: None
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -776,10 +1408,55 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AgentDeletionStatus] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_agents_delete_agent_request(
-            assistant_id=assistant_id,
+            agent_id=agent_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace_async
+    async def list_agents(self, **kwargs: Any) -> List[_models.Agent]:
+        """Lists all Agents, returning an array of Agent objects.
+
+        :return: list of Agent
+        :rtype: list[~azure.ai.projects.dp1.models.Agent]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.Agent]] = kwargs.pop("cls", None)
+
+        _request = build_agents_list_agents_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -808,7 +1485,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AgentDeletionStatus, response.json())
+            deserialized = _deserialize(List[_models.Agent], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -816,1238 +1493,119 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    async def create_thread(
+    async def complete(
         self,
         *,
+        agent: _models.AgentOptions,
+        input: List[_models.ChatMessage],
         content_type: str = "application/json",
-        messages: Optional[List[_models.ThreadMessageOptions]] = None,
-        tool_resources: Optional[_models.ToolResources] = None,
+        thread_id: Optional[str] = None,
         metadata: Optional[Dict[str, str]] = None,
+        options: Optional[_models.CompletionsOptions] = None,
+        user_id: Optional[str] = None,
+        store: Optional[bool] = None,
         **kwargs: Any
-    ) -> _models.AgentThread:
-        """Creates a new thread. Threads contain messages and can be run by agents.
+    ) -> _models.AgentCompletion:
+        """Requests a completion for the entire “Agents” collection,
+        using CompleteParams as input and returning an AgentCompletion.
 
+        :keyword agent: The agent responsible for generating the completion. Required.
+        :paramtype agent: ~azure.ai.projects.dp1.models.AgentOptions
+        :keyword input: The list of input messages for the completion. Required.
+        :paramtype input: list[~azure.ai.projects.dp1.models.ChatMessage]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword messages: The initial messages to associate with the new thread. Default value is
+        :keyword thread_id: Optional identifier for an existing conversation thread. Default value is
          None.
-        :paramtype messages: list[~azure.ai.projects.dp1.models.ThreadMessageOptions]
-        :keyword tool_resources: A set of resources that are made available to the agent's tools in
-         this thread. The resources are specific to the
-         type of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while
-         the ``file_search`` tool requires
-         a list of vector store IDs. Default value is None.
-        :paramtype tool_resources: ~azure.ai.projects.dp1.models.ToolResources
-        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
-         for storing additional information about that object in a structured format. Keys may be up to
-         64 characters in length and values may be up to 512 characters in length. Default value is
+        :paramtype thread_id: str
+        :keyword metadata: Optional metadata associated with the completion request. Default value is
          None.
         :paramtype metadata: dict[str, str]
-        :return: AgentThread. The AgentThread is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.AgentThread
+        :keyword options: Optional configuration for completion generation. Default value is None.
+        :paramtype options: ~azure.ai.projects.dp1.models.CompletionsOptions
+        :keyword user_id: Identifier for the user making the request. Default value is None.
+        :paramtype user_id: str
+        :keyword store: Flag indicating whether to store the completion and associated messages.
+         Default value is None.
+        :paramtype store: bool
+        :return: AgentCompletion. The AgentCompletion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.AgentCompletion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def create_thread(
+    async def complete(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentThread:
-        """Creates a new thread. Threads contain messages and can be run by agents.
+    ) -> _models.AgentCompletion:
+        """Requests a completion for the entire “Agents” collection,
+        using CompleteParams as input and returning an AgentCompletion.
 
         :param body: Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AgentThread. The AgentThread is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.AgentThread
+        :return: AgentCompletion. The AgentCompletion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.AgentCompletion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def create_thread(
+    async def complete(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentThread:
-        """Creates a new thread. Threads contain messages and can be run by agents.
+    ) -> _models.AgentCompletion:
+        """Requests a completion for the entire “Agents” collection,
+        using CompleteParams as input and returning an AgentCompletion.
 
         :param body: Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AgentThread. The AgentThread is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.AgentThread
+        :return: AgentCompletion. The AgentCompletion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.AgentCompletion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    async def create_thread(
+    async def complete(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        messages: Optional[List[_models.ThreadMessageOptions]] = None,
-        tool_resources: Optional[_models.ToolResources] = None,
+        agent: _models.AgentOptions = _Unset,
+        input: List[_models.ChatMessage] = _Unset,
+        thread_id: Optional[str] = None,
         metadata: Optional[Dict[str, str]] = None,
+        options: Optional[_models.CompletionsOptions] = None,
+        user_id: Optional[str] = None,
+        store: Optional[bool] = None,
         **kwargs: Any
-    ) -> _models.AgentThread:
-        """Creates a new thread. Threads contain messages and can be run by agents.
+    ) -> _models.AgentCompletion:
+        """Requests a completion for the entire “Agents” collection,
+        using CompleteParams as input and returning an AgentCompletion.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword messages: The initial messages to associate with the new thread. Default value is
+        :keyword agent: The agent responsible for generating the completion. Required.
+        :paramtype agent: ~azure.ai.projects.dp1.models.AgentOptions
+        :keyword input: The list of input messages for the completion. Required.
+        :paramtype input: list[~azure.ai.projects.dp1.models.ChatMessage]
+        :keyword thread_id: Optional identifier for an existing conversation thread. Default value is
          None.
-        :paramtype messages: list[~azure.ai.projects.dp1.models.ThreadMessageOptions]
-        :keyword tool_resources: A set of resources that are made available to the agent's tools in
-         this thread. The resources are specific to the
-         type of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while
-         the ``file_search`` tool requires
-         a list of vector store IDs. Default value is None.
-        :paramtype tool_resources: ~azure.ai.projects.dp1.models.ToolResources
-        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
-         for storing additional information about that object in a structured format. Keys may be up to
-         64 characters in length and values may be up to 512 characters in length. Default value is
+        :paramtype thread_id: str
+        :keyword metadata: Optional metadata associated with the completion request. Default value is
          None.
         :paramtype metadata: dict[str, str]
-        :return: AgentThread. The AgentThread is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.AgentThread
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AgentThread] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            body = {"messages": messages, "metadata": metadata, "tool_resources": tool_resources}
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_agents_create_thread_request(
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.AgentThread, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get_thread(self, thread_id: str, **kwargs: Any) -> _models.AgentThread:
-        """Gets information about an existing thread.
-
-        :param thread_id: Identifier of the thread. Required.
-        :type thread_id: str
-        :return: AgentThread. The AgentThread is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.AgentThread
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.AgentThread] = kwargs.pop("cls", None)
-
-        _request = build_agents_get_thread_request(
-            thread_id=thread_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.AgentThread, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def update_thread(
-        self,
-        thread_id: str,
-        *,
-        content_type: str = "application/json",
-        tool_resources: Optional[_models.ToolResources] = None,
-        metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
-    ) -> _models.AgentThread:
-        """Modifies an existing thread.
-
-        :param thread_id: The ID of the thread to modify. Required.
-        :type thread_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword tool_resources: A set of resources that are made available to the agent's tools in
-         this thread. The resources are specific to the
-         type of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while
-         the ``file_search`` tool requires
-         a list of vector store IDs. Default value is None.
-        :paramtype tool_resources: ~azure.ai.projects.dp1.models.ToolResources
-        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
-         for storing additional information about that object in a structured format. Keys may be up to
-         64 characters in length and values may be up to 512 characters in length. Default value is
-         None.
-        :paramtype metadata: dict[str, str]
-        :return: AgentThread. The AgentThread is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.AgentThread
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def update_thread(
-        self, thread_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentThread:
-        """Modifies an existing thread.
-
-        :param thread_id: The ID of the thread to modify. Required.
-        :type thread_id: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentThread. The AgentThread is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.AgentThread
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def update_thread(
-        self, thread_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentThread:
-        """Modifies an existing thread.
-
-        :param thread_id: The ID of the thread to modify. Required.
-        :type thread_id: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentThread. The AgentThread is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.AgentThread
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def update_thread(
-        self,
-        thread_id: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        tool_resources: Optional[_models.ToolResources] = None,
-        metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
-    ) -> _models.AgentThread:
-        """Modifies an existing thread.
-
-        :param thread_id: The ID of the thread to modify. Required.
-        :type thread_id: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword tool_resources: A set of resources that are made available to the agent's tools in
-         this thread. The resources are specific to the
-         type of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while
-         the ``file_search`` tool requires
-         a list of vector store IDs. Default value is None.
-        :paramtype tool_resources: ~azure.ai.projects.dp1.models.ToolResources
-        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
-         for storing additional information about that object in a structured format. Keys may be up to
-         64 characters in length and values may be up to 512 characters in length. Default value is
-         None.
-        :paramtype metadata: dict[str, str]
-        :return: AgentThread. The AgentThread is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.AgentThread
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AgentThread] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            body = {"metadata": metadata, "tool_resources": tool_resources}
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_agents_update_thread_request(
-            thread_id=thread_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.AgentThread, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def delete_thread(self, thread_id: str, **kwargs: Any) -> _models.ThreadDeletionStatus:
-        """Deletes an existing thread.
-
-        :param thread_id: Identifier of the thread. Required.
-        :type thread_id: str
-        :return: ThreadDeletionStatus. The ThreadDeletionStatus is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.ThreadDeletionStatus
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.ThreadDeletionStatus] = kwargs.pop("cls", None)
-
-        _request = build_agents_delete_thread_request(
-            thread_id=thread_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.ThreadDeletionStatus, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def create_message(
-        self,
-        thread_id: str,
-        *,
-        role: Union[str, _models.MessageRole],
-        content: str,
-        content_type: str = "application/json",
-        attachments: Optional[List[_models.MessageAttachment]] = None,
-        metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
-    ) -> _models.ThreadMessage:
-        """Creates a new message on a specified thread.
-
-        :param thread_id: Identifier of the thread. Required.
-        :type thread_id: str
-        :keyword role: The role of the entity that is creating the message. Allowed values include:
-
-         * `user`: Indicates the message is sent by an actual user and should be used in most
-         cases to represent user-generated messages.
-         * `assistant`: Indicates the message is generated by the agent. Use this value to insert
-         messages from the agent into the
-         conversation. Known values are: "user" and "assistant". Required.
-        :paramtype role: str or ~azure.ai.projects.dp1.models.MessageRole
-        :keyword content: The textual content of the initial message. Currently, robust input including
-         images and annotated text may only be provided via
-         a separate call to the create message API. Required.
-        :paramtype content: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword attachments: A list of files attached to the message, and the tools they should be
-         added to. Default value is None.
-        :paramtype attachments: list[~azure.ai.projects.dp1.models.MessageAttachment]
-        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
-         for storing additional information about that object in a structured format. Keys may be up to
-         64 characters in length and values may be up to 512 characters in length. Default value is
-         None.
-        :paramtype metadata: dict[str, str]
-        :return: ThreadMessage. The ThreadMessage is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.ThreadMessage
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_message(
-        self, thread_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ThreadMessage:
-        """Creates a new message on a specified thread.
-
-        :param thread_id: Identifier of the thread. Required.
-        :type thread_id: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ThreadMessage. The ThreadMessage is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.ThreadMessage
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_message(
-        self, thread_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ThreadMessage:
-        """Creates a new message on a specified thread.
-
-        :param thread_id: Identifier of the thread. Required.
-        :type thread_id: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ThreadMessage. The ThreadMessage is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.ThreadMessage
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def create_message(
-        self,
-        thread_id: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        role: Union[str, _models.MessageRole] = _Unset,
-        content: str = _Unset,
-        attachments: Optional[List[_models.MessageAttachment]] = None,
-        metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
-    ) -> _models.ThreadMessage:
-        """Creates a new message on a specified thread.
-
-        :param thread_id: Identifier of the thread. Required.
-        :type thread_id: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword role: The role of the entity that is creating the message. Allowed values include:
-
-         * `user`: Indicates the message is sent by an actual user and should be used in most
-         cases to represent user-generated messages.
-         * `assistant`: Indicates the message is generated by the agent. Use this value to insert
-         messages from the agent into the
-         conversation. Known values are: "user" and "assistant". Required.
-        :paramtype role: str or ~azure.ai.projects.dp1.models.MessageRole
-        :keyword content: The textual content of the initial message. Currently, robust input including
-         images and annotated text may only be provided via
-         a separate call to the create message API. Required.
-        :paramtype content: str
-        :keyword attachments: A list of files attached to the message, and the tools they should be
-         added to. Default value is None.
-        :paramtype attachments: list[~azure.ai.projects.dp1.models.MessageAttachment]
-        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
-         for storing additional information about that object in a structured format. Keys may be up to
-         64 characters in length and values may be up to 512 characters in length. Default value is
-         None.
-        :paramtype metadata: dict[str, str]
-        :return: ThreadMessage. The ThreadMessage is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.ThreadMessage
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ThreadMessage] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            if role is _Unset:
-                raise TypeError("missing required argument: role")
-            if content is _Unset:
-                raise TypeError("missing required argument: content")
-            body = {"attachments": attachments, "content": content, "metadata": metadata, "role": role}
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_agents_create_message_request(
-            thread_id=thread_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.ThreadMessage, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def list_messages(
-        self,
-        thread_id: str,
-        *,
-        run_id: Optional[str] = None,
-        limit: Optional[int] = None,
-        order: Optional[Union[str, _models.ListSortOrder]] = None,
-        after: Optional[str] = None,
-        before: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.OpenAIPageableListOfThreadMessage:
-        """Gets a list of messages that exist on a thread.
-
-        :param thread_id: Identifier of the thread. Required.
-        :type thread_id: str
-        :keyword run_id: Filter messages by the run ID that generated them. Default value is None.
-        :paramtype run_id: str
-        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
-         100, and the default is 20. Default value is None.
-        :paramtype limit: int
-        :keyword order: Sort order by the created_at timestamp of the objects. asc for ascending order
-         and desc for descending order. Known values are: "asc" and "desc". Default value is None.
-        :paramtype order: str or ~azure.ai.projects.dp1.models.ListSortOrder
-        :keyword after: A cursor for use in pagination. after is an object ID that defines your place
-         in the list. For instance, if you make a list request and receive 100 objects, ending with
-         obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the
-         list. Default value is None.
-        :paramtype after: str
-        :keyword before: A cursor for use in pagination. before is an object ID that defines your place
-         in the list. For instance, if you make a list request and receive 100 objects, ending with
-         obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of
-         the list. Default value is None.
-        :paramtype before: str
-        :return: OpenAIPageableListOfThreadMessage. The OpenAIPageableListOfThreadMessage is compatible
-         with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.OpenAIPageableListOfThreadMessage
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.OpenAIPageableListOfThreadMessage] = kwargs.pop("cls", None)
-
-        _request = build_agents_list_messages_request(
-            thread_id=thread_id,
-            run_id=run_id,
-            limit=limit,
-            order=order,
-            after=after,
-            before=before,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.OpenAIPageableListOfThreadMessage, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get_message(self, thread_id: str, message_id: str, **kwargs: Any) -> _models.ThreadMessage:
-        """Gets an existing message from an existing thread.
-
-        :param thread_id: Identifier of the thread. Required.
-        :type thread_id: str
-        :param message_id: Identifier of the message. Required.
-        :type message_id: str
-        :return: ThreadMessage. The ThreadMessage is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.ThreadMessage
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.ThreadMessage] = kwargs.pop("cls", None)
-
-        _request = build_agents_get_message_request(
-            thread_id=thread_id,
-            message_id=message_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.ThreadMessage, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def update_message(
-        self,
-        thread_id: str,
-        message_id: str,
-        *,
-        content_type: str = "application/json",
-        metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
-    ) -> _models.ThreadMessage:
-        """Modifies an existing message on an existing thread.
-
-        :param thread_id: Identifier of the thread. Required.
-        :type thread_id: str
-        :param message_id: Identifier of the message. Required.
-        :type message_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
-         for storing additional information about that object in a structured format. Keys may be up to
-         64 characters in length and values may be up to 512 characters in length. Default value is
-         None.
-        :paramtype metadata: dict[str, str]
-        :return: ThreadMessage. The ThreadMessage is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.ThreadMessage
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def update_message(
-        self, thread_id: str, message_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ThreadMessage:
-        """Modifies an existing message on an existing thread.
-
-        :param thread_id: Identifier of the thread. Required.
-        :type thread_id: str
-        :param message_id: Identifier of the message. Required.
-        :type message_id: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ThreadMessage. The ThreadMessage is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.ThreadMessage
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def update_message(
-        self, thread_id: str, message_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ThreadMessage:
-        """Modifies an existing message on an existing thread.
-
-        :param thread_id: Identifier of the thread. Required.
-        :type thread_id: str
-        :param message_id: Identifier of the message. Required.
-        :type message_id: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ThreadMessage. The ThreadMessage is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.ThreadMessage
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def update_message(
-        self,
-        thread_id: str,
-        message_id: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
-    ) -> _models.ThreadMessage:
-        """Modifies an existing message on an existing thread.
-
-        :param thread_id: Identifier of the thread. Required.
-        :type thread_id: str
-        :param message_id: Identifier of the message. Required.
-        :type message_id: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
-         for storing additional information about that object in a structured format. Keys may be up to
-         64 characters in length and values may be up to 512 characters in length. Default value is
-         None.
-        :paramtype metadata: dict[str, str]
-        :return: ThreadMessage. The ThreadMessage is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.ThreadMessage
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ThreadMessage] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            body = {"metadata": metadata}
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_agents_update_message_request(
-            thread_id=thread_id,
-            message_id=message_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.ThreadMessage, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def create_run(
-        self,
-        thread_id: str,
-        *,
-        assistant_id: str,
-        include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
-        content_type: str = "application/json",
-        model: Optional[str] = None,
-        instructions: Optional[str] = None,
-        additional_instructions: Optional[str] = None,
-        additional_messages: Optional[List[_models.ThreadMessageOptions]] = None,
-        tools: Optional[List[_models.ToolDefinition]] = None,
-        stream_parameter: Optional[bool] = None,
-        temperature: Optional[float] = None,
-        top_p: Optional[float] = None,
-        max_prompt_tokens: Optional[int] = None,
-        max_completion_tokens: Optional[int] = None,
-        truncation_strategy: Optional[_models.TruncationObject] = None,
-        tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
-        parallel_tool_calls: Optional[bool] = None,
-        metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
-    ) -> _models.ThreadRun:
-        """Creates a new run for an agent thread.
-
-        :param thread_id: Identifier of the thread. Required.
-        :type thread_id: str
-        :keyword assistant_id: The ID of the agent that should run the thread. Required.
-        :paramtype assistant_id: str
-        :keyword include: A list of additional fields to include in the response.
-         Currently the only supported value is
-         ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
-         content. Default value is None.
-        :paramtype include: list[str or ~azure.ai.projects.dp1.models.RunAdditionalFieldList]
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword model: The overridden model name that the agent should use to run the thread. Default
-         value is None.
-        :paramtype model: str
-        :keyword instructions: The overridden system instructions that the agent should use to run the
-         thread. Default value is None.
-        :paramtype instructions: str
-        :keyword additional_instructions: Additional instructions to append at the end of the
-         instructions for the run. This is useful for modifying the behavior
-         on a per-run basis without overriding other instructions. Default value is None.
-        :paramtype additional_instructions: str
-        :keyword additional_messages: Adds additional messages to the thread before creating the run.
+        :keyword options: Optional configuration for completion generation. Default value is None.
+        :paramtype options: ~azure.ai.projects.dp1.models.CompletionsOptions
+        :keyword user_id: Identifier for the user making the request. Default value is None.
+        :paramtype user_id: str
+        :keyword store: Flag indicating whether to store the completion and associated messages.
          Default value is None.
-        :paramtype additional_messages: list[~azure.ai.projects.dp1.models.ThreadMessageOptions]
-        :keyword tools: The overridden list of enabled tools that the agent should use to run the
-         thread. Default value is None.
-        :paramtype tools: list[~azure.ai.projects.dp1.models.ToolDefinition]
-        :keyword stream_parameter: If ``true``, returns a stream of events that happen during the Run
-         as server-sent events,
-         terminating when the Run enters a terminal state with a ``data: [DONE]`` message. Default
-         value is None.
-        :paramtype stream_parameter: bool
-        :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
-         will make the output
-         more random, while lower values like 0.2 will make it more focused and deterministic. Default
-         value is None.
-        :paramtype temperature: float
-        :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
-         model
-         considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens
-         comprising the top 10% probability mass are considered.
-
-         We generally recommend altering this or temperature but not both. Default value is None.
-        :paramtype top_p: float
-        :keyword max_prompt_tokens: The maximum number of prompt tokens that may be used over the
-         course of the run. The run will make a best effort to use only
-         the number of prompt tokens specified, across multiple turns of the run. If the run exceeds
-         the number of prompt tokens specified,
-         the run will end with status ``incomplete``. See ``incomplete_details`` for more info. Default
-         value is None.
-        :paramtype max_prompt_tokens: int
-        :keyword max_completion_tokens: The maximum number of completion tokens that may be used over
-         the course of the run. The run will make a best effort
-         to use only the number of completion tokens specified, across multiple turns of the run. If
-         the run exceeds the number of
-         completion tokens specified, the run will end with status ``incomplete``. See
-         ``incomplete_details`` for more info. Default value is None.
-        :paramtype max_completion_tokens: int
-        :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
-         moves forward. Default value is None.
-        :paramtype truncation_strategy: ~azure.ai.projects.dp1.models.TruncationObject
-        :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
-         the following types: str, Union[str, "_models.AgentsApiToolChoiceOptionMode"],
-         AgentsNamedToolChoice Default value is None.
-        :paramtype tool_choice: str or str or
-         ~azure.ai.projects.dp1.models.AgentsApiToolChoiceOptionMode or
-         ~azure.ai.projects.dp1.models.AgentsNamedToolChoice
-        :keyword response_format: Specifies the format that the model must output. Is one of the
-         following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
-        :paramtype response_format: str or str or
-         ~azure.ai.projects.dp1.models.AgentsApiResponseFormatMode or
-         ~azure.ai.projects.dp1.models.AgentsApiResponseFormat or
-         ~azure.ai.projects.dp1.models.ResponseFormatJsonSchemaType
-        :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
-         Default value is None.
-        :paramtype parallel_tool_calls: bool
-        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
-         for storing additional information about that object in a structured format. Keys may be up to
-         64 characters in length and values may be up to 512 characters in length. Default value is
-         None.
-        :paramtype metadata: dict[str, str]
-        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.ThreadRun
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_run(
-        self,
-        thread_id: str,
-        body: JSON,
-        *,
-        include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.ThreadRun:
-        """Creates a new run for an agent thread.
-
-        :param thread_id: Identifier of the thread. Required.
-        :type thread_id: str
-        :param body: Required.
-        :type body: JSON
-        :keyword include: A list of additional fields to include in the response.
-         Currently the only supported value is
-         ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
-         content. Default value is None.
-        :paramtype include: list[str or ~azure.ai.projects.dp1.models.RunAdditionalFieldList]
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.ThreadRun
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_run(
-        self,
-        thread_id: str,
-        body: IO[bytes],
-        *,
-        include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.ThreadRun:
-        """Creates a new run for an agent thread.
-
-        :param thread_id: Identifier of the thread. Required.
-        :type thread_id: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword include: A list of additional fields to include in the response.
-         Currently the only supported value is
-         ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
-         content. Default value is None.
-        :paramtype include: list[str or ~azure.ai.projects.dp1.models.RunAdditionalFieldList]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.ThreadRun
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def create_run(
-        self,
-        thread_id: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        assistant_id: str = _Unset,
-        include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
-        model: Optional[str] = None,
-        instructions: Optional[str] = None,
-        additional_instructions: Optional[str] = None,
-        additional_messages: Optional[List[_models.ThreadMessageOptions]] = None,
-        tools: Optional[List[_models.ToolDefinition]] = None,
-        stream_parameter: Optional[bool] = None,
-        temperature: Optional[float] = None,
-        top_p: Optional[float] = None,
-        max_prompt_tokens: Optional[int] = None,
-        max_completion_tokens: Optional[int] = None,
-        truncation_strategy: Optional[_models.TruncationObject] = None,
-        tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
-        parallel_tool_calls: Optional[bool] = None,
-        metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
-    ) -> _models.ThreadRun:
-        """Creates a new run for an agent thread.
-
-        :param thread_id: Identifier of the thread. Required.
-        :type thread_id: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword assistant_id: The ID of the agent that should run the thread. Required.
-        :paramtype assistant_id: str
-        :keyword include: A list of additional fields to include in the response.
-         Currently the only supported value is
-         ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
-         content. Default value is None.
-        :paramtype include: list[str or ~azure.ai.projects.dp1.models.RunAdditionalFieldList]
-        :keyword model: The overridden model name that the agent should use to run the thread. Default
-         value is None.
-        :paramtype model: str
-        :keyword instructions: The overridden system instructions that the agent should use to run the
-         thread. Default value is None.
-        :paramtype instructions: str
-        :keyword additional_instructions: Additional instructions to append at the end of the
-         instructions for the run. This is useful for modifying the behavior
-         on a per-run basis without overriding other instructions. Default value is None.
-        :paramtype additional_instructions: str
-        :keyword additional_messages: Adds additional messages to the thread before creating the run.
-         Default value is None.
-        :paramtype additional_messages: list[~azure.ai.projects.dp1.models.ThreadMessageOptions]
-        :keyword tools: The overridden list of enabled tools that the agent should use to run the
-         thread. Default value is None.
-        :paramtype tools: list[~azure.ai.projects.dp1.models.ToolDefinition]
-        :keyword stream_parameter: If ``true``, returns a stream of events that happen during the Run
-         as server-sent events,
-         terminating when the Run enters a terminal state with a ``data: [DONE]`` message. Default
-         value is None.
-        :paramtype stream_parameter: bool
-        :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
-         will make the output
-         more random, while lower values like 0.2 will make it more focused and deterministic. Default
-         value is None.
-        :paramtype temperature: float
-        :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
-         model
-         considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens
-         comprising the top 10% probability mass are considered.
-
-         We generally recommend altering this or temperature but not both. Default value is None.
-        :paramtype top_p: float
-        :keyword max_prompt_tokens: The maximum number of prompt tokens that may be used over the
-         course of the run. The run will make a best effort to use only
-         the number of prompt tokens specified, across multiple turns of the run. If the run exceeds
-         the number of prompt tokens specified,
-         the run will end with status ``incomplete``. See ``incomplete_details`` for more info. Default
-         value is None.
-        :paramtype max_prompt_tokens: int
-        :keyword max_completion_tokens: The maximum number of completion tokens that may be used over
-         the course of the run. The run will make a best effort
-         to use only the number of completion tokens specified, across multiple turns of the run. If
-         the run exceeds the number of
-         completion tokens specified, the run will end with status ``incomplete``. See
-         ``incomplete_details`` for more info. Default value is None.
-        :paramtype max_completion_tokens: int
-        :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
-         moves forward. Default value is None.
-        :paramtype truncation_strategy: ~azure.ai.projects.dp1.models.TruncationObject
-        :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
-         the following types: str, Union[str, "_models.AgentsApiToolChoiceOptionMode"],
-         AgentsNamedToolChoice Default value is None.
-        :paramtype tool_choice: str or str or
-         ~azure.ai.projects.dp1.models.AgentsApiToolChoiceOptionMode or
-         ~azure.ai.projects.dp1.models.AgentsNamedToolChoice
-        :keyword response_format: Specifies the format that the model must output. Is one of the
-         following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
-        :paramtype response_format: str or str or
-         ~azure.ai.projects.dp1.models.AgentsApiResponseFormatMode or
-         ~azure.ai.projects.dp1.models.AgentsApiResponseFormat or
-         ~azure.ai.projects.dp1.models.ResponseFormatJsonSchemaType
-        :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
-         Default value is None.
-        :paramtype parallel_tool_calls: bool
-        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
-         for storing additional information about that object in a structured format. Keys may be up to
-         64 characters in length and values may be up to 512 characters in length. Default value is
-         None.
-        :paramtype metadata: dict[str, str]
-        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.ThreadRun
+        :paramtype store: bool
+        :return: AgentCompletion. The AgentCompletion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.AgentCompletion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2062,28 +1620,21 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ThreadRun] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AgentCompletion] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            if assistant_id is _Unset:
-                raise TypeError("missing required argument: assistant_id")
+            if agent is _Unset:
+                raise TypeError("missing required argument: agent")
+            if input is _Unset:
+                raise TypeError("missing required argument: input")
             body = {
-                "additional_instructions": additional_instructions,
-                "additional_messages": additional_messages,
-                "assistant_id": assistant_id,
-                "instructions": instructions,
-                "max_completion_tokens": max_completion_tokens,
-                "max_prompt_tokens": max_prompt_tokens,
+                "agent": agent,
+                "input": input,
                 "metadata": metadata,
-                "model": model,
-                "parallel_tool_calls": parallel_tool_calls,
-                "response_format": response_format,
-                "stream": stream_parameter,
-                "temperature": temperature,
-                "tool_choice": tool_choice,
-                "tools": tools,
-                "top_p": top_p,
-                "truncation_strategy": truncation_strategy,
+                "options": options,
+                "store": store,
+                "threadId": thread_id,
+                "userId": user_id,
             }
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
@@ -2093,9 +1644,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_agents_create_run_request(
-            thread_id=thread_id,
-            include=include,
+        _request = build_agents_complete_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -2126,160 +1675,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.ThreadRun, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def list_runs(
-        self,
-        thread_id: str,
-        *,
-        limit: Optional[int] = None,
-        order: Optional[Union[str, _models.ListSortOrder]] = None,
-        after: Optional[str] = None,
-        before: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.OpenAIPageableListOfThreadRun:
-        """Gets a list of runs for a specified thread.
-
-        :param thread_id: Identifier of the thread. Required.
-        :type thread_id: str
-        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
-         100, and the default is 20. Default value is None.
-        :paramtype limit: int
-        :keyword order: Sort order by the created_at timestamp of the objects. asc for ascending order
-         and desc for descending order. Known values are: "asc" and "desc". Default value is None.
-        :paramtype order: str or ~azure.ai.projects.dp1.models.ListSortOrder
-        :keyword after: A cursor for use in pagination. after is an object ID that defines your place
-         in the list. For instance, if you make a list request and receive 100 objects, ending with
-         obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the
-         list. Default value is None.
-        :paramtype after: str
-        :keyword before: A cursor for use in pagination. before is an object ID that defines your place
-         in the list. For instance, if you make a list request and receive 100 objects, ending with
-         obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of
-         the list. Default value is None.
-        :paramtype before: str
-        :return: OpenAIPageableListOfThreadRun. The OpenAIPageableListOfThreadRun is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.OpenAIPageableListOfThreadRun
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.OpenAIPageableListOfThreadRun] = kwargs.pop("cls", None)
-
-        _request = build_agents_list_runs_request(
-            thread_id=thread_id,
-            limit=limit,
-            order=order,
-            after=after,
-            before=before,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.OpenAIPageableListOfThreadRun, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get_run(self, thread_id: str, run_id: str, **kwargs: Any) -> _models.ThreadRun:
-        """Gets an existing run from an existing thread.
-
-        :param thread_id: Identifier of the thread. Required.
-        :type thread_id: str
-        :param run_id: Identifier of the run. Required.
-        :type run_id: str
-        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.ThreadRun
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.ThreadRun] = kwargs.pop("cls", None)
-
-        _request = build_agents_get_run_request(
-            thread_id=thread_id,
-            run_id=run_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.ThreadRun, response.json())
+            deserialized = _deserialize(_models.AgentCompletion, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2287,99 +1683,115 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    async def update_run(
+    async def stream(
         self,
-        thread_id: str,
-        run_id: str,
         *,
+        agent: _models.AgentOptions,
+        input: List[_models.ChatMessage],
         content_type: str = "application/json",
+        thread_id: Optional[str] = None,
         metadata: Optional[Dict[str, str]] = None,
+        options: Optional[_models.CompletionsOptions] = None,
+        user_id: Optional[str] = None,
+        store: Optional[bool] = None,
         **kwargs: Any
-    ) -> _models.ThreadRun:
-        """Modifies an existing thread run.
+    ) -> None:
+        """Requests a streaming completion for the entire “Agents” collection,
+        returning a stream of StreamingAgentCompletionUpdate items.
 
-        :param thread_id: Identifier of the thread. Required.
-        :type thread_id: str
-        :param run_id: Identifier of the run. Required.
-        :type run_id: str
+        :keyword agent: The agent responsible for generating the completion. Required.
+        :paramtype agent: ~azure.ai.projects.dp1.models.AgentOptions
+        :keyword input: The list of input messages for the completion. Required.
+        :paramtype input: list[~azure.ai.projects.dp1.models.ChatMessage]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
-         for storing additional information about that object in a structured format. Keys may be up to
-         64 characters in length and values may be up to 512 characters in length. Default value is
+        :keyword thread_id: Optional identifier for an existing conversation thread. Default value is
+         None.
+        :paramtype thread_id: str
+        :keyword metadata: Optional metadata associated with the completion request. Default value is
          None.
         :paramtype metadata: dict[str, str]
-        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.ThreadRun
+        :keyword options: Optional configuration for completion generation. Default value is None.
+        :paramtype options: ~azure.ai.projects.dp1.models.CompletionsOptions
+        :keyword user_id: Identifier for the user making the request. Default value is None.
+        :paramtype user_id: str
+        :keyword store: Flag indicating whether to store the completion and associated messages.
+         Default value is None.
+        :paramtype store: bool
+        :return: None
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def update_run(
-        self, thread_id: str, run_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ThreadRun:
-        """Modifies an existing thread run.
+    async def stream(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+        """Requests a streaming completion for the entire “Agents” collection,
+        returning a stream of StreamingAgentCompletionUpdate items.
 
-        :param thread_id: Identifier of the thread. Required.
-        :type thread_id: str
-        :param run_id: Identifier of the run. Required.
-        :type run_id: str
         :param body: Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.ThreadRun
+        :return: None
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def update_run(
-        self, thread_id: str, run_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ThreadRun:
-        """Modifies an existing thread run.
+    async def stream(self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any) -> None:
+        """Requests a streaming completion for the entire “Agents” collection,
+        returning a stream of StreamingAgentCompletionUpdate items.
 
-        :param thread_id: Identifier of the thread. Required.
-        :type thread_id: str
-        :param run_id: Identifier of the run. Required.
-        :type run_id: str
         :param body: Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.ThreadRun
+        :return: None
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    async def update_run(
+    async def stream(
         self,
-        thread_id: str,
-        run_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
+        agent: _models.AgentOptions = _Unset,
+        input: List[_models.ChatMessage] = _Unset,
+        thread_id: Optional[str] = None,
         metadata: Optional[Dict[str, str]] = None,
+        options: Optional[_models.CompletionsOptions] = None,
+        user_id: Optional[str] = None,
+        store: Optional[bool] = None,
         **kwargs: Any
-    ) -> _models.ThreadRun:
-        """Modifies an existing thread run.
+    ) -> None:
+        """Requests a streaming completion for the entire “Agents” collection,
+        returning a stream of StreamingAgentCompletionUpdate items.
 
-        :param thread_id: Identifier of the thread. Required.
-        :type thread_id: str
-        :param run_id: Identifier of the run. Required.
-        :type run_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
-         for storing additional information about that object in a structured format. Keys may be up to
-         64 characters in length and values may be up to 512 characters in length. Default value is
+        :keyword agent: The agent responsible for generating the completion. Required.
+        :paramtype agent: ~azure.ai.projects.dp1.models.AgentOptions
+        :keyword input: The list of input messages for the completion. Required.
+        :paramtype input: list[~azure.ai.projects.dp1.models.ChatMessage]
+        :keyword thread_id: Optional identifier for an existing conversation thread. Default value is
+         None.
+        :paramtype thread_id: str
+        :keyword metadata: Optional metadata associated with the completion request. Default value is
          None.
         :paramtype metadata: dict[str, str]
-        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.ThreadRun
+        :keyword options: Optional configuration for completion generation. Default value is None.
+        :paramtype options: ~azure.ai.projects.dp1.models.CompletionsOptions
+        :keyword user_id: Identifier for the user making the request. Default value is None.
+        :paramtype user_id: str
+        :keyword store: Flag indicating whether to store the completion and associated messages.
+         Default value is None.
+        :paramtype store: bool
+        :return: None
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2394,567 +1806,21 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ThreadRun] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            body = {"metadata": metadata}
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_agents_update_run_request(
-            thread_id=thread_id,
-            run_id=run_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.ThreadRun, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def submit_tool_outputs_to_run(
-        self,
-        thread_id: str,
-        run_id: str,
-        *,
-        tool_outputs: List[_models.ToolOutput],
-        content_type: str = "application/json",
-        stream_parameter: Optional[bool] = None,
-        **kwargs: Any
-    ) -> _models.ThreadRun:
-        """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
-        outputs will have a status of 'requires_action' with a required_action.type of
-        'submit_tool_outputs'.
-
-        :param thread_id: Identifier of the thread. Required.
-        :type thread_id: str
-        :param run_id: Identifier of the run. Required.
-        :type run_id: str
-        :keyword tool_outputs: A list of tools for which the outputs are being submitted. Required.
-        :paramtype tool_outputs: list[~azure.ai.projects.dp1.models.ToolOutput]
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword stream_parameter: If true, returns a stream of events that happen during the Run as
-         server-sent events, terminating when the run enters a terminal state. Default value is None.
-        :paramtype stream_parameter: bool
-        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.ThreadRun
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def submit_tool_outputs_to_run(
-        self, thread_id: str, run_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ThreadRun:
-        """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
-        outputs will have a status of 'requires_action' with a required_action.type of
-        'submit_tool_outputs'.
-
-        :param thread_id: Identifier of the thread. Required.
-        :type thread_id: str
-        :param run_id: Identifier of the run. Required.
-        :type run_id: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.ThreadRun
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def submit_tool_outputs_to_run(
-        self, thread_id: str, run_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ThreadRun:
-        """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
-        outputs will have a status of 'requires_action' with a required_action.type of
-        'submit_tool_outputs'.
-
-        :param thread_id: Identifier of the thread. Required.
-        :type thread_id: str
-        :param run_id: Identifier of the run. Required.
-        :type run_id: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.ThreadRun
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def submit_tool_outputs_to_run(
-        self,
-        thread_id: str,
-        run_id: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        tool_outputs: List[_models.ToolOutput] = _Unset,
-        stream_parameter: Optional[bool] = None,
-        **kwargs: Any
-    ) -> _models.ThreadRun:
-        """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
-        outputs will have a status of 'requires_action' with a required_action.type of
-        'submit_tool_outputs'.
-
-        :param thread_id: Identifier of the thread. Required.
-        :type thread_id: str
-        :param run_id: Identifier of the run. Required.
-        :type run_id: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword tool_outputs: A list of tools for which the outputs are being submitted. Required.
-        :paramtype tool_outputs: list[~azure.ai.projects.dp1.models.ToolOutput]
-        :keyword stream_parameter: If true, returns a stream of events that happen during the Run as
-         server-sent events, terminating when the run enters a terminal state. Default value is None.
-        :paramtype stream_parameter: bool
-        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.ThreadRun
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ThreadRun] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            if tool_outputs is _Unset:
-                raise TypeError("missing required argument: tool_outputs")
-            body = {"stream": stream_parameter, "tool_outputs": tool_outputs}
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_agents_submit_tool_outputs_to_run_request(
-            thread_id=thread_id,
-            run_id=run_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.ThreadRun, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def cancel_run(self, thread_id: str, run_id: str, **kwargs: Any) -> _models.ThreadRun:
-        """Cancels a run of an in progress thread.
-
-        :param thread_id: Identifier of the thread. Required.
-        :type thread_id: str
-        :param run_id: Identifier of the run. Required.
-        :type run_id: str
-        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.ThreadRun
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.ThreadRun] = kwargs.pop("cls", None)
-
-        _request = build_agents_cancel_run_request(
-            thread_id=thread_id,
-            run_id=run_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.ThreadRun, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def create_thread_and_run(
-        self,
-        *,
-        assistant_id: str,
-        content_type: str = "application/json",
-        thread: Optional[_models.AgentThreadCreationOptions] = None,
-        model: Optional[str] = None,
-        instructions: Optional[str] = None,
-        tools: Optional[List[_models.ToolDefinition]] = None,
-        tool_resources: Optional[_models.UpdateToolResourcesOptions] = None,
-        stream_parameter: Optional[bool] = None,
-        temperature: Optional[float] = None,
-        top_p: Optional[float] = None,
-        max_prompt_tokens: Optional[int] = None,
-        max_completion_tokens: Optional[int] = None,
-        truncation_strategy: Optional[_models.TruncationObject] = None,
-        tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
-        parallel_tool_calls: Optional[bool] = None,
-        metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
-    ) -> _models.ThreadRun:
-        """Creates a new agent thread and immediately starts a run using that new thread.
-
-        :keyword assistant_id: The ID of the agent for which the thread should be created. Required.
-        :paramtype assistant_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword thread: The details used to create the new thread. If no thread is provided, an empty
-         one will be created. Default value is None.
-        :paramtype thread: ~azure.ai.projects.dp1.models.AgentThreadCreationOptions
-        :keyword model: The overridden model that the agent should use to run the thread. Default value
-         is None.
-        :paramtype model: str
-        :keyword instructions: The overridden system instructions the agent should use to run the
-         thread. Default value is None.
-        :paramtype instructions: str
-        :keyword tools: The overridden list of enabled tools the agent should use to run the thread.
-         Default value is None.
-        :paramtype tools: list[~azure.ai.projects.dp1.models.ToolDefinition]
-        :keyword tool_resources: Override the tools the agent can use for this run. This is useful for
-         modifying the behavior on a per-run basis. Default value is None.
-        :paramtype tool_resources: ~azure.ai.projects.dp1.models.UpdateToolResourcesOptions
-        :keyword stream_parameter: If ``true``, returns a stream of events that happen during the Run
-         as server-sent events,
-         terminating when the Run enters a terminal state with a ``data: [DONE]`` message. Default
-         value is None.
-        :paramtype stream_parameter: bool
-        :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
-         will make the output
-         more random, while lower values like 0.2 will make it more focused and deterministic. Default
-         value is None.
-        :paramtype temperature: float
-        :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
-         model
-         considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens
-         comprising the top 10% probability mass are considered.
-
-         We generally recommend altering this or temperature but not both. Default value is None.
-        :paramtype top_p: float
-        :keyword max_prompt_tokens: The maximum number of prompt tokens that may be used over the
-         course of the run. The run will make a best effort to use only
-         the number of prompt tokens specified, across multiple turns of the run. If the run exceeds
-         the number of prompt tokens specified,
-         the run will end with status ``incomplete``. See ``incomplete_details`` for more info. Default
-         value is None.
-        :paramtype max_prompt_tokens: int
-        :keyword max_completion_tokens: The maximum number of completion tokens that may be used over
-         the course of the run. The run will make a best effort to use only
-         the number of completion tokens specified, across multiple turns of the run. If the run
-         exceeds the number of completion tokens
-         specified, the run will end with status ``incomplete``. See ``incomplete_details`` for more
-         info. Default value is None.
-        :paramtype max_completion_tokens: int
-        :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
-         moves forward. Default value is None.
-        :paramtype truncation_strategy: ~azure.ai.projects.dp1.models.TruncationObject
-        :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
-         the following types: str, Union[str, "_models.AgentsApiToolChoiceOptionMode"],
-         AgentsNamedToolChoice Default value is None.
-        :paramtype tool_choice: str or str or
-         ~azure.ai.projects.dp1.models.AgentsApiToolChoiceOptionMode or
-         ~azure.ai.projects.dp1.models.AgentsNamedToolChoice
-        :keyword response_format: Specifies the format that the model must output. Is one of the
-         following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
-        :paramtype response_format: str or str or
-         ~azure.ai.projects.dp1.models.AgentsApiResponseFormatMode or
-         ~azure.ai.projects.dp1.models.AgentsApiResponseFormat or
-         ~azure.ai.projects.dp1.models.ResponseFormatJsonSchemaType
-        :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
-         Default value is None.
-        :paramtype parallel_tool_calls: bool
-        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
-         for storing additional information about that object in a structured format. Keys may be up to
-         64 characters in length and values may be up to 512 characters in length. Default value is
-         None.
-        :paramtype metadata: dict[str, str]
-        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.ThreadRun
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_thread_and_run(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ThreadRun:
-        """Creates a new agent thread and immediately starts a run using that new thread.
-
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.ThreadRun
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_thread_and_run(
-        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ThreadRun:
-        """Creates a new agent thread and immediately starts a run using that new thread.
-
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.ThreadRun
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def create_thread_and_run(
-        self,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        assistant_id: str = _Unset,
-        thread: Optional[_models.AgentThreadCreationOptions] = None,
-        model: Optional[str] = None,
-        instructions: Optional[str] = None,
-        tools: Optional[List[_models.ToolDefinition]] = None,
-        tool_resources: Optional[_models.UpdateToolResourcesOptions] = None,
-        stream_parameter: Optional[bool] = None,
-        temperature: Optional[float] = None,
-        top_p: Optional[float] = None,
-        max_prompt_tokens: Optional[int] = None,
-        max_completion_tokens: Optional[int] = None,
-        truncation_strategy: Optional[_models.TruncationObject] = None,
-        tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
-        parallel_tool_calls: Optional[bool] = None,
-        metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
-    ) -> _models.ThreadRun:
-        """Creates a new agent thread and immediately starts a run using that new thread.
-
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword assistant_id: The ID of the agent for which the thread should be created. Required.
-        :paramtype assistant_id: str
-        :keyword thread: The details used to create the new thread. If no thread is provided, an empty
-         one will be created. Default value is None.
-        :paramtype thread: ~azure.ai.projects.dp1.models.AgentThreadCreationOptions
-        :keyword model: The overridden model that the agent should use to run the thread. Default value
-         is None.
-        :paramtype model: str
-        :keyword instructions: The overridden system instructions the agent should use to run the
-         thread. Default value is None.
-        :paramtype instructions: str
-        :keyword tools: The overridden list of enabled tools the agent should use to run the thread.
-         Default value is None.
-        :paramtype tools: list[~azure.ai.projects.dp1.models.ToolDefinition]
-        :keyword tool_resources: Override the tools the agent can use for this run. This is useful for
-         modifying the behavior on a per-run basis. Default value is None.
-        :paramtype tool_resources: ~azure.ai.projects.dp1.models.UpdateToolResourcesOptions
-        :keyword stream_parameter: If ``true``, returns a stream of events that happen during the Run
-         as server-sent events,
-         terminating when the Run enters a terminal state with a ``data: [DONE]`` message. Default
-         value is None.
-        :paramtype stream_parameter: bool
-        :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
-         will make the output
-         more random, while lower values like 0.2 will make it more focused and deterministic. Default
-         value is None.
-        :paramtype temperature: float
-        :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
-         model
-         considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens
-         comprising the top 10% probability mass are considered.
-
-         We generally recommend altering this or temperature but not both. Default value is None.
-        :paramtype top_p: float
-        :keyword max_prompt_tokens: The maximum number of prompt tokens that may be used over the
-         course of the run. The run will make a best effort to use only
-         the number of prompt tokens specified, across multiple turns of the run. If the run exceeds
-         the number of prompt tokens specified,
-         the run will end with status ``incomplete``. See ``incomplete_details`` for more info. Default
-         value is None.
-        :paramtype max_prompt_tokens: int
-        :keyword max_completion_tokens: The maximum number of completion tokens that may be used over
-         the course of the run. The run will make a best effort to use only
-         the number of completion tokens specified, across multiple turns of the run. If the run
-         exceeds the number of completion tokens
-         specified, the run will end with status ``incomplete``. See ``incomplete_details`` for more
-         info. Default value is None.
-        :paramtype max_completion_tokens: int
-        :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
-         moves forward. Default value is None.
-        :paramtype truncation_strategy: ~azure.ai.projects.dp1.models.TruncationObject
-        :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
-         the following types: str, Union[str, "_models.AgentsApiToolChoiceOptionMode"],
-         AgentsNamedToolChoice Default value is None.
-        :paramtype tool_choice: str or str or
-         ~azure.ai.projects.dp1.models.AgentsApiToolChoiceOptionMode or
-         ~azure.ai.projects.dp1.models.AgentsNamedToolChoice
-        :keyword response_format: Specifies the format that the model must output. Is one of the
-         following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
-        :paramtype response_format: str or str or
-         ~azure.ai.projects.dp1.models.AgentsApiResponseFormatMode or
-         ~azure.ai.projects.dp1.models.AgentsApiResponseFormat or
-         ~azure.ai.projects.dp1.models.ResponseFormatJsonSchemaType
-        :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
-         Default value is None.
-        :paramtype parallel_tool_calls: bool
-        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
-         for storing additional information about that object in a structured format. Keys may be up to
-         64 characters in length and values may be up to 512 characters in length. Default value is
-         None.
-        :paramtype metadata: dict[str, str]
-        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.ThreadRun
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ThreadRun] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            if assistant_id is _Unset:
-                raise TypeError("missing required argument: assistant_id")
+            if agent is _Unset:
+                raise TypeError("missing required argument: agent")
+            if input is _Unset:
+                raise TypeError("missing required argument: input")
             body = {
-                "assistant_id": assistant_id,
-                "instructions": instructions,
-                "max_completion_tokens": max_completion_tokens,
-                "max_prompt_tokens": max_prompt_tokens,
+                "agent": agent,
+                "input": input,
                 "metadata": metadata,
-                "model": model,
-                "parallel_tool_calls": parallel_tool_calls,
-                "response_format": response_format,
-                "stream": stream_parameter,
-                "temperature": temperature,
-                "thread": thread,
-                "tool_choice": tool_choice,
-                "tool_resources": tool_resources,
-                "tools": tools,
-                "top_p": top_p,
-                "truncation_strategy": truncation_strategy,
+                "options": options,
+                "store": store,
+                "threadId": thread_id,
+                "userId": user_id,
             }
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
@@ -2964,7 +1830,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_agents_create_thread_and_run_request(
+        _request = build_agents_stream_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -2976,7 +1842,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -2984,766 +1850,79 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.ThreadRun, response.json())
-
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get_run_step(
-        self,
-        thread_id: str,
-        run_id: str,
-        step_id: str,
-        *,
-        include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
-        **kwargs: Any
-    ) -> _models.RunStep:
-        """Gets a single run step from a thread run.
-
-        :param thread_id: Identifier of the thread. Required.
-        :type thread_id: str
-        :param run_id: Identifier of the run. Required.
-        :type run_id: str
-        :param step_id: Identifier of the run step. Required.
-        :type step_id: str
-        :keyword include: A list of additional fields to include in the response.
-         Currently the only supported value is
-         ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
-         content. Default value is None.
-        :paramtype include: list[str or ~azure.ai.projects.dp1.models.RunAdditionalFieldList]
-        :return: RunStep. The RunStep is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.RunStep
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.RunStep] = kwargs.pop("cls", None)
-
-        _request = build_agents_get_run_step_request(
-            thread_id=thread_id,
-            run_id=run_id,
-            step_id=step_id,
-            include=include,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.RunStep, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def list_run_steps(
-        self,
-        thread_id: str,
-        run_id: str,
-        *,
-        include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
-        limit: Optional[int] = None,
-        order: Optional[Union[str, _models.ListSortOrder]] = None,
-        after: Optional[str] = None,
-        before: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.OpenAIPageableListOfRunStep:
-        """Gets a list of run steps from a thread run.
-
-        :param thread_id: Identifier of the thread. Required.
-        :type thread_id: str
-        :param run_id: Identifier of the run. Required.
-        :type run_id: str
-        :keyword include: A list of additional fields to include in the response.
-         Currently the only supported value is
-         ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
-         content. Default value is None.
-        :paramtype include: list[str or ~azure.ai.projects.dp1.models.RunAdditionalFieldList]
-        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
-         100, and the default is 20. Default value is None.
-        :paramtype limit: int
-        :keyword order: Sort order by the created_at timestamp of the objects. asc for ascending order
-         and desc for descending order. Known values are: "asc" and "desc". Default value is None.
-        :paramtype order: str or ~azure.ai.projects.dp1.models.ListSortOrder
-        :keyword after: A cursor for use in pagination. after is an object ID that defines your place
-         in the list. For instance, if you make a list request and receive 100 objects, ending with
-         obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the
-         list. Default value is None.
-        :paramtype after: str
-        :keyword before: A cursor for use in pagination. before is an object ID that defines your place
-         in the list. For instance, if you make a list request and receive 100 objects, ending with
-         obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of
-         the list. Default value is None.
-        :paramtype before: str
-        :return: OpenAIPageableListOfRunStep. The OpenAIPageableListOfRunStep is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.OpenAIPageableListOfRunStep
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.OpenAIPageableListOfRunStep] = kwargs.pop("cls", None)
-
-        _request = build_agents_list_run_steps_request(
-            thread_id=thread_id,
-            run_id=run_id,
-            include=include,
-            limit=limit,
-            order=order,
-            after=after,
-            before=before,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.OpenAIPageableListOfRunStep, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def list_files(
-        self, *, purpose: Optional[Union[str, _models.FilePurpose]] = None, **kwargs: Any
-    ) -> _models.FileListResponse:
-        """Gets a list of previously uploaded files.
-
-        :keyword purpose: The purpose of the file. Known values are: "fine-tune", "fine-tune-results",
-         "assistants", "assistants_output", "batch", "batch_output", and "vision". Default value is
-         None.
-        :paramtype purpose: str or ~azure.ai.projects.dp1.models.FilePurpose
-        :return: FileListResponse. The FileListResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.FileListResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.FileListResponse] = kwargs.pop("cls", None)
-
-        _request = build_agents_list_files_request(
-            purpose=purpose,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.FileListResponse, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def upload_file(
-        self, *, file: FileType, purpose: Union[str, _models.FilePurpose], filename: Optional[str] = None, **kwargs: Any
-    ) -> _models.OpenAIFile:
-        """Uploads a file for use by other operations.
+    async def complete_by_agent(
+        self, agent_id: str, body: _models.AgentCompleteParams, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.AgentCompletion:
+        """Requests a completion for a specific Agent, returning an AgentCompletion.
 
-        :keyword file: The file data, in bytes. Required.
-        :paramtype file: ~azure.ai.projects.dp1._vendor.FileType
-        :keyword purpose: The intended purpose of the uploaded file. Use ``assistants`` for Agents and
-         Message files, ``vision`` for Agents image file inputs, ``batch`` for Batch API, and
-         ``fine-tune`` for Fine-tuning. Known values are: "fine-tune", "fine-tune-results",
-         "assistants", "assistants_output", "batch", "batch_output", and "vision". Required.
-        :paramtype purpose: str or ~azure.ai.projects.dp1.models.FilePurpose
-        :keyword filename: The name of the file. Default value is None.
-        :paramtype filename: str
-        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.OpenAIFile
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def upload_file(self, body: JSON, **kwargs: Any) -> _models.OpenAIFile:
-        """Uploads a file for use by other operations.
-
-        :param body: Required.
-        :type body: JSON
-        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.OpenAIFile
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def upload_file(
-        self,
-        body: JSON = _Unset,
-        *,
-        file: FileType = _Unset,
-        purpose: Union[str, _models.FilePurpose] = _Unset,
-        filename: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.OpenAIFile:
-        """Uploads a file for use by other operations.
-
-        :param body: Is one of the following types: JSON Required.
-        :type body: JSON
-        :keyword file: The file data, in bytes. Required.
-        :paramtype file: ~azure.ai.projects.dp1._vendor.FileType
-        :keyword purpose: The intended purpose of the uploaded file. Use ``assistants`` for Agents and
-         Message files, ``vision`` for Agents image file inputs, ``batch`` for Batch API, and
-         ``fine-tune`` for Fine-tuning. Known values are: "fine-tune", "fine-tune-results",
-         "assistants", "assistants_output", "batch", "batch_output", and "vision". Required.
-        :paramtype purpose: str or ~azure.ai.projects.dp1.models.FilePurpose
-        :keyword filename: The name of the file. Default value is None.
-        :paramtype filename: str
-        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.OpenAIFile
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.OpenAIFile] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            if file is _Unset:
-                raise TypeError("missing required argument: file")
-            if purpose is _Unset:
-                raise TypeError("missing required argument: purpose")
-            body = {"file": file, "filename": filename, "purpose": purpose}
-            body = {k: v for k, v in body.items() if v is not None}
-        _body = body.as_dict() if isinstance(body, _model_base.Model) else body
-        _file_fields: List[str] = ["file"]
-        _data_fields: List[str] = ["purpose", "filename"]
-        _files, _data = prepare_multipart_form_data(_body, _file_fields, _data_fields)
-
-        _request = build_agents_upload_file_request(
-            api_version=self._config.api_version,
-            files=_files,
-            data=_data,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.OpenAIFile, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def delete_file(self, file_id: str, **kwargs: Any) -> _models.FileDeletionStatus:
-        """Delete a previously uploaded file.
-
-        :param file_id: The ID of the file to delete. Required.
-        :type file_id: str
-        :return: FileDeletionStatus. The FileDeletionStatus is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.FileDeletionStatus
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.FileDeletionStatus] = kwargs.pop("cls", None)
-
-        _request = build_agents_delete_file_request(
-            file_id=file_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.FileDeletionStatus, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get_file(self, file_id: str, **kwargs: Any) -> _models.OpenAIFile:
-        """Returns information about a specific file. Does not retrieve file content.
-
-        :param file_id: The ID of the file to retrieve. Required.
-        :type file_id: str
-        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.OpenAIFile
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.OpenAIFile] = kwargs.pop("cls", None)
-
-        _request = build_agents_get_file_request(
-            file_id=file_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.OpenAIFile, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get_file_content(self, file_id: str, **kwargs: Any) -> bytes:
-        """Retrieves the raw content of a specific file.
-
-        :param file_id: The ID of the file to retrieve. Required.
-        :type file_id: str
-        :return: bytes
-        :rtype: bytes
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[bytes] = kwargs.pop("cls", None)
-
-        _request = build_agents_get_file_content_request(
-            file_id=file_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(bytes, response.json(), format="base64")
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def list_vector_stores(
-        self,
-        *,
-        limit: Optional[int] = None,
-        order: Optional[Union[str, _models.ListSortOrder]] = None,
-        after: Optional[str] = None,
-        before: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.OpenAIPageableListOfVectorStore:
-        """Returns a list of vector stores.
-
-        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
-         100, and the default is 20. Default value is None.
-        :paramtype limit: int
-        :keyword order: Sort order by the created_at timestamp of the objects. asc for ascending order
-         and desc for descending order. Known values are: "asc" and "desc". Default value is None.
-        :paramtype order: str or ~azure.ai.projects.dp1.models.ListSortOrder
-        :keyword after: A cursor for use in pagination. after is an object ID that defines your place
-         in the list. For instance, if you make a list request and receive 100 objects, ending with
-         obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the
-         list. Default value is None.
-        :paramtype after: str
-        :keyword before: A cursor for use in pagination. before is an object ID that defines your place
-         in the list. For instance, if you make a list request and receive 100 objects, ending with
-         obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of
-         the list. Default value is None.
-        :paramtype before: str
-        :return: OpenAIPageableListOfVectorStore. The OpenAIPageableListOfVectorStore is compatible
-         with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.OpenAIPageableListOfVectorStore
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.OpenAIPageableListOfVectorStore] = kwargs.pop("cls", None)
-
-        _request = build_agents_list_vector_stores_request(
-            limit=limit,
-            order=order,
-            after=after,
-            before=before,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.OpenAIPageableListOfVectorStore, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def create_vector_store(
-        self,
-        *,
-        content_type: str = "application/json",
-        file_ids: Optional[List[str]] = None,
-        name: Optional[str] = None,
-        store_configuration: Optional[_models.VectorStoreConfiguration] = None,
-        expires_after: Optional[_models.VectorStoreExpirationPolicy] = None,
-        chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
-        metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
-    ) -> _models.VectorStore:
-        """Creates a vector store.
-
+        :param agent_id: The ID of the Agent for which to request a completion. Required.
+        :type agent_id: str
+        :param body: The parameters used to generate a completion for this agent. Required.
+        :type body: ~azure.ai.projects.dp1.models.AgentCompleteParams
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword file_ids: A list of file IDs that the vector store should use. Useful for tools like
-         ``file_search`` that can access files. Default value is None.
-        :paramtype file_ids: list[str]
-        :keyword name: The name of the vector store. Default value is None.
-        :paramtype name: str
-        :keyword store_configuration: The vector store configuration, used when vector store is created
-         from Azure asset URIs. Default value is None.
-        :paramtype store_configuration: ~azure.ai.projects.dp1.models.VectorStoreConfiguration
-        :keyword expires_after: Details on when this vector store expires. Default value is None.
-        :paramtype expires_after: ~azure.ai.projects.dp1.models.VectorStoreExpirationPolicy
-        :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
-         use the auto strategy. Only applicable if file_ids is non-empty. Default value is None.
-        :paramtype chunking_strategy: ~azure.ai.projects.dp1.models.VectorStoreChunkingStrategyRequest
-        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
-         for storing additional information about that object in a structured format. Keys may be up to
-         64 characters in length and values may be up to 512 characters in length. Default value is
-         None.
-        :paramtype metadata: dict[str, str]
-        :return: VectorStore. The VectorStore is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.VectorStore
+        :return: AgentCompletion. The AgentCompletion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.AgentCompletion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def create_vector_store(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.VectorStore:
-        """Creates a vector store.
+    async def complete_by_agent(
+        self, agent_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.AgentCompletion:
+        """Requests a completion for a specific Agent, returning an AgentCompletion.
 
-        :param body: Required.
+        :param agent_id: The ID of the Agent for which to request a completion. Required.
+        :type agent_id: str
+        :param body: The parameters used to generate a completion for this agent. Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: VectorStore. The VectorStore is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.VectorStore
+        :return: AgentCompletion. The AgentCompletion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.AgentCompletion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def create_vector_store(
-        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.VectorStore:
-        """Creates a vector store.
+    async def complete_by_agent(
+        self, agent_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.AgentCompletion:
+        """Requests a completion for a specific Agent, returning an AgentCompletion.
 
-        :param body: Required.
+        :param agent_id: The ID of the Agent for which to request a completion. Required.
+        :type agent_id: str
+        :param body: The parameters used to generate a completion for this agent. Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: VectorStore. The VectorStore is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.VectorStore
+        :return: AgentCompletion. The AgentCompletion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.AgentCompletion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    async def create_vector_store(
-        self,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        file_ids: Optional[List[str]] = None,
-        name: Optional[str] = None,
-        store_configuration: Optional[_models.VectorStoreConfiguration] = None,
-        expires_after: Optional[_models.VectorStoreExpirationPolicy] = None,
-        chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
-        metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
-    ) -> _models.VectorStore:
-        """Creates a vector store.
+    async def complete_by_agent(
+        self, agent_id: str, body: Union[_models.AgentCompleteParams, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.AgentCompletion:
+        """Requests a completion for a specific Agent, returning an AgentCompletion.
 
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword file_ids: A list of file IDs that the vector store should use. Useful for tools like
-         ``file_search`` that can access files. Default value is None.
-        :paramtype file_ids: list[str]
-        :keyword name: The name of the vector store. Default value is None.
-        :paramtype name: str
-        :keyword store_configuration: The vector store configuration, used when vector store is created
-         from Azure asset URIs. Default value is None.
-        :paramtype store_configuration: ~azure.ai.projects.dp1.models.VectorStoreConfiguration
-        :keyword expires_after: Details on when this vector store expires. Default value is None.
-        :paramtype expires_after: ~azure.ai.projects.dp1.models.VectorStoreExpirationPolicy
-        :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
-         use the auto strategy. Only applicable if file_ids is non-empty. Default value is None.
-        :paramtype chunking_strategy: ~azure.ai.projects.dp1.models.VectorStoreChunkingStrategyRequest
-        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
-         for storing additional information about that object in a structured format. Keys may be up to
-         64 characters in length and values may be up to 512 characters in length. Default value is
-         None.
-        :paramtype metadata: dict[str, str]
-        :return: VectorStore. The VectorStore is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.VectorStore
+        :param agent_id: The ID of the Agent for which to request a completion. Required.
+        :type agent_id: str
+        :param body: The parameters used to generate a completion for this agent. Is one of the
+         following types: AgentCompleteParams, JSON, IO[bytes] Required.
+        :type body: ~azure.ai.projects.dp1.models.AgentCompleteParams or JSON or IO[bytes]
+        :return: AgentCompletion. The AgentCompletion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.AgentCompletion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3758,18 +1937,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.VectorStore] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AgentCompletion] = kwargs.pop("cls", None)
 
-        if body is _Unset:
-            body = {
-                "chunking_strategy": chunking_strategy,
-                "configuration": store_configuration,
-                "expires_after": expires_after,
-                "file_ids": file_ids,
-                "metadata": metadata,
-                "name": name,
-            }
-            body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
         if isinstance(body, (IOBase, bytes)):
@@ -3777,7 +1946,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_agents_create_vector_store_request(
+        _request = build_agents_complete_by_agent_request(
+            agent_id=agent_id,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -3808,67 +1978,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.VectorStore, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get_vector_store(self, vector_store_id: str, **kwargs: Any) -> _models.VectorStore:
-        """Returns the vector store object matching the specified ID.
-
-        :param vector_store_id: Identifier of the vector store. Required.
-        :type vector_store_id: str
-        :return: VectorStore. The VectorStore is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.VectorStore
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.VectorStore] = kwargs.pop("cls", None)
-
-        _request = build_agents_get_vector_store_request(
-            vector_store_id=vector_store_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.VectorStore, response.json())
+            deserialized = _deserialize(_models.AgentCompletion, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3876,101 +1986,75 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    async def modify_vector_store(
-        self,
-        vector_store_id: str,
-        *,
-        content_type: str = "application/json",
-        name: Optional[str] = None,
-        expires_after: Optional[_models.VectorStoreExpirationPolicy] = None,
-        metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
-    ) -> _models.VectorStore:
-        """The ID of the vector store to modify.
+    async def stream_by_agent(
+        self, agent_id: str, body: _models.AgentCompleteParams, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
+        """Requests a streaming completion for a specific Agent, returning a stream of updates.
 
-        :param vector_store_id: Identifier of the vector store. Required.
-        :type vector_store_id: str
+        :param agent_id: The ID of the Agent for which to request a streaming completion. Required.
+        :type agent_id: str
+        :param body: Parameters controlling how the agent's streaming completion is generated.
+         Required.
+        :type body: ~azure.ai.projects.dp1.models.AgentCompleteParams
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword name: The name of the vector store. Default value is None.
-        :paramtype name: str
-        :keyword expires_after: Details on when this vector store expires. Default value is None.
-        :paramtype expires_after: ~azure.ai.projects.dp1.models.VectorStoreExpirationPolicy
-        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
-         for storing additional information about that object in a structured format. Keys may be up to
-         64 characters in length and values may be up to 512 characters in length. Default value is
-         None.
-        :paramtype metadata: dict[str, str]
-        :return: VectorStore. The VectorStore is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.VectorStore
+        :return: None
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def modify_vector_store(
-        self, vector_store_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.VectorStore:
-        """The ID of the vector store to modify.
+    async def stream_by_agent(
+        self, agent_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
+        """Requests a streaming completion for a specific Agent, returning a stream of updates.
 
-        :param vector_store_id: Identifier of the vector store. Required.
-        :type vector_store_id: str
-        :param body: Required.
+        :param agent_id: The ID of the Agent for which to request a streaming completion. Required.
+        :type agent_id: str
+        :param body: Parameters controlling how the agent's streaming completion is generated.
+         Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: VectorStore. The VectorStore is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.VectorStore
+        :return: None
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def modify_vector_store(
-        self, vector_store_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.VectorStore:
-        """The ID of the vector store to modify.
+    async def stream_by_agent(
+        self, agent_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
+        """Requests a streaming completion for a specific Agent, returning a stream of updates.
 
-        :param vector_store_id: Identifier of the vector store. Required.
-        :type vector_store_id: str
-        :param body: Required.
+        :param agent_id: The ID of the Agent for which to request a streaming completion. Required.
+        :type agent_id: str
+        :param body: Parameters controlling how the agent's streaming completion is generated.
+         Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: VectorStore. The VectorStore is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.VectorStore
+        :return: None
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    async def modify_vector_store(
-        self,
-        vector_store_id: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        name: Optional[str] = None,
-        expires_after: Optional[_models.VectorStoreExpirationPolicy] = None,
-        metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
-    ) -> _models.VectorStore:
-        """The ID of the vector store to modify.
+    async def stream_by_agent(
+        self, agent_id: str, body: Union[_models.AgentCompleteParams, JSON, IO[bytes]], **kwargs: Any
+    ) -> None:
+        """Requests a streaming completion for a specific Agent, returning a stream of updates.
 
-        :param vector_store_id: Identifier of the vector store. Required.
-        :type vector_store_id: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword name: The name of the vector store. Default value is None.
-        :paramtype name: str
-        :keyword expires_after: Details on when this vector store expires. Default value is None.
-        :paramtype expires_after: ~azure.ai.projects.dp1.models.VectorStoreExpirationPolicy
-        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
-         for storing additional information about that object in a structured format. Keys may be up to
-         64 characters in length and values may be up to 512 characters in length. Default value is
-         None.
-        :paramtype metadata: dict[str, str]
-        :return: VectorStore. The VectorStore is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.VectorStore
+        :param agent_id: The ID of the Agent for which to request a streaming completion. Required.
+        :type agent_id: str
+        :param body: Parameters controlling how the agent's streaming completion is generated. Is one
+         of the following types: AgentCompleteParams, JSON, IO[bytes] Required.
+        :type body: ~azure.ai.projects.dp1.models.AgentCompleteParams or JSON or IO[bytes]
+        :return: None
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3985,11 +2069,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.VectorStore] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
-        if body is _Unset:
-            body = {"expires_after": expires_after, "metadata": metadata, "name": name}
-            body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
         if isinstance(body, (IOBase, bytes)):
@@ -3997,8 +2078,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_agents_modify_vector_store_request(
-            vector_store_id=vector_store_id,
+        _request = build_agents_stream_by_agent_request(
+            agent_id=agent_id,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -4010,7 +2091,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -4018,854 +2099,11 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.VectorStore, response.json())
-
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def delete_vector_store(self, vector_store_id: str, **kwargs: Any) -> _models.VectorStoreDeletionStatus:
-        """Deletes the vector store object matching the specified ID.
-
-        :param vector_store_id: Identifier of the vector store. Required.
-        :type vector_store_id: str
-        :return: VectorStoreDeletionStatus. The VectorStoreDeletionStatus is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.VectorStoreDeletionStatus
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.VectorStoreDeletionStatus] = kwargs.pop("cls", None)
-
-        _request = build_agents_delete_vector_store_request(
-            vector_store_id=vector_store_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.VectorStoreDeletionStatus, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def list_vector_store_files(
-        self,
-        vector_store_id: str,
-        *,
-        filter: Optional[Union[str, _models.VectorStoreFileStatusFilter]] = None,
-        limit: Optional[int] = None,
-        order: Optional[Union[str, _models.ListSortOrder]] = None,
-        after: Optional[str] = None,
-        before: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.OpenAIPageableListOfVectorStoreFile:
-        """Returns a list of vector store files.
-
-        :param vector_store_id: Identifier of the vector store. Required.
-        :type vector_store_id: str
-        :keyword filter: Filter by file status. Known values are: "in_progress", "completed", "failed",
-         and "cancelled". Default value is None.
-        :paramtype filter: str or ~azure.ai.projects.dp1.models.VectorStoreFileStatusFilter
-        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
-         100, and the default is 20. Default value is None.
-        :paramtype limit: int
-        :keyword order: Sort order by the created_at timestamp of the objects. asc for ascending order
-         and desc for descending order. Known values are: "asc" and "desc". Default value is None.
-        :paramtype order: str or ~azure.ai.projects.dp1.models.ListSortOrder
-        :keyword after: A cursor for use in pagination. after is an object ID that defines your place
-         in the list. For instance, if you make a list request and receive 100 objects, ending with
-         obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the
-         list. Default value is None.
-        :paramtype after: str
-        :keyword before: A cursor for use in pagination. before is an object ID that defines your place
-         in the list. For instance, if you make a list request and receive 100 objects, ending with
-         obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of
-         the list. Default value is None.
-        :paramtype before: str
-        :return: OpenAIPageableListOfVectorStoreFile. The OpenAIPageableListOfVectorStoreFile is
-         compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.OpenAIPageableListOfVectorStoreFile
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.OpenAIPageableListOfVectorStoreFile] = kwargs.pop("cls", None)
-
-        _request = build_agents_list_vector_store_files_request(
-            vector_store_id=vector_store_id,
-            filter=filter,
-            limit=limit,
-            order=order,
-            after=after,
-            before=before,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.OpenAIPageableListOfVectorStoreFile, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def create_vector_store_file(
-        self,
-        vector_store_id: str,
-        *,
-        content_type: str = "application/json",
-        file_id: Optional[str] = None,
-        data_source: Optional[_models.VectorStoreDataSource] = None,
-        chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
-        **kwargs: Any
-    ) -> _models.VectorStoreFile:
-        """Create a vector store file by attaching a file to a vector store.
-
-        :param vector_store_id: Identifier of the vector store. Required.
-        :type vector_store_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword file_id: Identifier of the file. Default value is None.
-        :paramtype file_id: str
-        :keyword data_source: Azure asset ID. Default value is None.
-        :paramtype data_source: ~azure.ai.projects.dp1.models.VectorStoreDataSource
-        :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
-         use the auto strategy. Default value is None.
-        :paramtype chunking_strategy: ~azure.ai.projects.dp1.models.VectorStoreChunkingStrategyRequest
-        :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.VectorStoreFile
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_vector_store_file(
-        self, vector_store_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.VectorStoreFile:
-        """Create a vector store file by attaching a file to a vector store.
-
-        :param vector_store_id: Identifier of the vector store. Required.
-        :type vector_store_id: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.VectorStoreFile
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_vector_store_file(
-        self, vector_store_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.VectorStoreFile:
-        """Create a vector store file by attaching a file to a vector store.
-
-        :param vector_store_id: Identifier of the vector store. Required.
-        :type vector_store_id: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.VectorStoreFile
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def create_vector_store_file(
-        self,
-        vector_store_id: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        file_id: Optional[str] = None,
-        data_source: Optional[_models.VectorStoreDataSource] = None,
-        chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
-        **kwargs: Any
-    ) -> _models.VectorStoreFile:
-        """Create a vector store file by attaching a file to a vector store.
-
-        :param vector_store_id: Identifier of the vector store. Required.
-        :type vector_store_id: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword file_id: Identifier of the file. Default value is None.
-        :paramtype file_id: str
-        :keyword data_source: Azure asset ID. Default value is None.
-        :paramtype data_source: ~azure.ai.projects.dp1.models.VectorStoreDataSource
-        :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
-         use the auto strategy. Default value is None.
-        :paramtype chunking_strategy: ~azure.ai.projects.dp1.models.VectorStoreChunkingStrategyRequest
-        :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.VectorStoreFile
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.VectorStoreFile] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            body = {"chunking_strategy": chunking_strategy, "data_source": data_source, "file_id": file_id}
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_agents_create_vector_store_file_request(
-            vector_store_id=vector_store_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.VectorStoreFile, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get_vector_store_file(self, vector_store_id: str, file_id: str, **kwargs: Any) -> _models.VectorStoreFile:
-        """Retrieves a vector store file.
-
-        :param vector_store_id: Identifier of the vector store. Required.
-        :type vector_store_id: str
-        :param file_id: Identifier of the file. Required.
-        :type file_id: str
-        :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.VectorStoreFile
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.VectorStoreFile] = kwargs.pop("cls", None)
-
-        _request = build_agents_get_vector_store_file_request(
-            vector_store_id=vector_store_id,
-            file_id=file_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.VectorStoreFile, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def delete_vector_store_file(
-        self, vector_store_id: str, file_id: str, **kwargs: Any
-    ) -> _models.VectorStoreFileDeletionStatus:
-        """Delete a vector store file. This will remove the file from the vector store but the file itself
-        will not be deleted.
-        To delete the file, use the delete file endpoint.
-
-        :param vector_store_id: Identifier of the vector store. Required.
-        :type vector_store_id: str
-        :param file_id: Identifier of the file. Required.
-        :type file_id: str
-        :return: VectorStoreFileDeletionStatus. The VectorStoreFileDeletionStatus is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.VectorStoreFileDeletionStatus
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.VectorStoreFileDeletionStatus] = kwargs.pop("cls", None)
-
-        _request = build_agents_delete_vector_store_file_request(
-            vector_store_id=vector_store_id,
-            file_id=file_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.VectorStoreFileDeletionStatus, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def create_vector_store_file_batch(
-        self,
-        vector_store_id: str,
-        *,
-        content_type: str = "application/json",
-        file_ids: Optional[List[str]] = None,
-        data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
-        chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
-        **kwargs: Any
-    ) -> _models.VectorStoreFileBatch:
-        """Create a vector store file batch.
-
-        :param vector_store_id: Identifier of the vector store. Required.
-        :type vector_store_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword file_ids: List of file identifiers. Default value is None.
-        :paramtype file_ids: list[str]
-        :keyword data_sources: List of Azure assets. Default value is None.
-        :paramtype data_sources: list[~azure.ai.projects.dp1.models.VectorStoreDataSource]
-        :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
-         use the auto strategy. Default value is None.
-        :paramtype chunking_strategy: ~azure.ai.projects.dp1.models.VectorStoreChunkingStrategyRequest
-        :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.VectorStoreFileBatch
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_vector_store_file_batch(
-        self, vector_store_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.VectorStoreFileBatch:
-        """Create a vector store file batch.
-
-        :param vector_store_id: Identifier of the vector store. Required.
-        :type vector_store_id: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.VectorStoreFileBatch
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_vector_store_file_batch(
-        self, vector_store_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.VectorStoreFileBatch:
-        """Create a vector store file batch.
-
-        :param vector_store_id: Identifier of the vector store. Required.
-        :type vector_store_id: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.VectorStoreFileBatch
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def create_vector_store_file_batch(
-        self,
-        vector_store_id: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        file_ids: Optional[List[str]] = None,
-        data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
-        chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
-        **kwargs: Any
-    ) -> _models.VectorStoreFileBatch:
-        """Create a vector store file batch.
-
-        :param vector_store_id: Identifier of the vector store. Required.
-        :type vector_store_id: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword file_ids: List of file identifiers. Default value is None.
-        :paramtype file_ids: list[str]
-        :keyword data_sources: List of Azure assets. Default value is None.
-        :paramtype data_sources: list[~azure.ai.projects.dp1.models.VectorStoreDataSource]
-        :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
-         use the auto strategy. Default value is None.
-        :paramtype chunking_strategy: ~azure.ai.projects.dp1.models.VectorStoreChunkingStrategyRequest
-        :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.VectorStoreFileBatch
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.VectorStoreFileBatch] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            body = {"chunking_strategy": chunking_strategy, "data_sources": data_sources, "file_ids": file_ids}
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_agents_create_vector_store_file_batch_request(
-            vector_store_id=vector_store_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.VectorStoreFileBatch, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get_vector_store_file_batch(
-        self, vector_store_id: str, batch_id: str, **kwargs: Any
-    ) -> _models.VectorStoreFileBatch:
-        """Retrieve a vector store file batch.
-
-        :param vector_store_id: Identifier of the vector store. Required.
-        :type vector_store_id: str
-        :param batch_id: Identifier of the file batch. Required.
-        :type batch_id: str
-        :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.VectorStoreFileBatch
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.VectorStoreFileBatch] = kwargs.pop("cls", None)
-
-        _request = build_agents_get_vector_store_file_batch_request(
-            vector_store_id=vector_store_id,
-            batch_id=batch_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.VectorStoreFileBatch, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def cancel_vector_store_file_batch(
-        self, vector_store_id: str, batch_id: str, **kwargs: Any
-    ) -> _models.VectorStoreFileBatch:
-        """Cancel a vector store file batch. This attempts to cancel the processing of files in this batch
-        as soon as possible.
-
-        :param vector_store_id: Identifier of the vector store. Required.
-        :type vector_store_id: str
-        :param batch_id: Identifier of the file batch. Required.
-        :type batch_id: str
-        :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.VectorStoreFileBatch
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.VectorStoreFileBatch] = kwargs.pop("cls", None)
-
-        _request = build_agents_cancel_vector_store_file_batch_request(
-            vector_store_id=vector_store_id,
-            batch_id=batch_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.VectorStoreFileBatch, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def list_vector_store_file_batch_files(
-        self,
-        vector_store_id: str,
-        batch_id: str,
-        *,
-        filter: Optional[Union[str, _models.VectorStoreFileStatusFilter]] = None,
-        limit: Optional[int] = None,
-        order: Optional[Union[str, _models.ListSortOrder]] = None,
-        after: Optional[str] = None,
-        before: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.OpenAIPageableListOfVectorStoreFile:
-        """Returns a list of vector store files in a batch.
-
-        :param vector_store_id: Identifier of the vector store. Required.
-        :type vector_store_id: str
-        :param batch_id: Identifier of the file batch. Required.
-        :type batch_id: str
-        :keyword filter: Filter by file status. Known values are: "in_progress", "completed", "failed",
-         and "cancelled". Default value is None.
-        :paramtype filter: str or ~azure.ai.projects.dp1.models.VectorStoreFileStatusFilter
-        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
-         100, and the default is 20. Default value is None.
-        :paramtype limit: int
-        :keyword order: Sort order by the created_at timestamp of the objects. asc for ascending order
-         and desc for descending order. Known values are: "asc" and "desc". Default value is None.
-        :paramtype order: str or ~azure.ai.projects.dp1.models.ListSortOrder
-        :keyword after: A cursor for use in pagination. after is an object ID that defines your place
-         in the list. For instance, if you make a list request and receive 100 objects, ending with
-         obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the
-         list. Default value is None.
-        :paramtype after: str
-        :keyword before: A cursor for use in pagination. before is an object ID that defines your place
-         in the list. For instance, if you make a list request and receive 100 objects, ending with
-         obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of
-         the list. Default value is None.
-        :paramtype before: str
-        :return: OpenAIPageableListOfVectorStoreFile. The OpenAIPageableListOfVectorStoreFile is
-         compatible with MutableMapping
-        :rtype: ~azure.ai.projects.dp1.models.OpenAIPageableListOfVectorStoreFile
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.OpenAIPageableListOfVectorStoreFile] = kwargs.pop("cls", None)
-
-        _request = build_agents_list_vector_store_file_batch_files_request(
-            vector_store_id=vector_store_id,
-            batch_id=batch_id,
-            filter=filter,
-            limit=limit,
-            order=order,
-            after=after,
-            before=before,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.OpenAIPageableListOfVectorStoreFile, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
+            return cls(pipeline_response, None, {})  # type: ignore
 
 
 class ServicePatternsOperations:
@@ -5705,7 +2943,7 @@ class DatasetsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def versions(
+    async def create(
         self, name: str, body: _models.DatasetVersion, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.DatasetVersion:
         """Create a new DatasetVersion. The version id will be generated by the service.
@@ -5723,7 +2961,7 @@ class DatasetsOperations:
         """
 
     @overload
-    async def versions(
+    async def create(
         self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.DatasetVersion:
         """Create a new DatasetVersion. The version id will be generated by the service.
@@ -5741,7 +2979,7 @@ class DatasetsOperations:
         """
 
     @overload
-    async def versions(
+    async def create(
         self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.DatasetVersion:
         """Create a new DatasetVersion. The version id will be generated by the service.
@@ -5759,7 +2997,7 @@ class DatasetsOperations:
         """
 
     @distributed_trace_async
-    async def versions(
+    async def create(
         self, name: str, body: Union[_models.DatasetVersion, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.DatasetVersion:
         """Create a new DatasetVersion. The version id will be generated by the service.
@@ -5794,7 +3032,7 @@ class DatasetsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_datasets_versions_request(
+        _request = build_datasets_create_request(
             name=name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -6470,7 +3708,7 @@ class IndexesOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def versions(
+    async def create(
         self, name: str, body: _models.Index, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Index:
         """Create a new Index. The version id will be generated by the service.
@@ -6488,7 +3726,7 @@ class IndexesOperations:
         """
 
     @overload
-    async def versions(
+    async def create(
         self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Index:
         """Create a new Index. The version id will be generated by the service.
@@ -6506,7 +3744,7 @@ class IndexesOperations:
         """
 
     @overload
-    async def versions(
+    async def create(
         self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Index:
         """Create a new Index. The version id will be generated by the service.
@@ -6524,7 +3762,7 @@ class IndexesOperations:
         """
 
     @distributed_trace_async
-    async def versions(self, name: str, body: Union[_models.Index, JSON, IO[bytes]], **kwargs: Any) -> _models.Index:
+    async def create(self, name: str, body: Union[_models.Index, JSON, IO[bytes]], **kwargs: Any) -> _models.Index:
         """Create a new Index. The version id will be generated by the service.
 
         :param name: The name of the resource. Required.
@@ -6557,7 +3795,7 @@ class IndexesOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_indexes_versions_request(
+        _request = build_indexes_create_request(
             name=name,
             content_type=content_type,
             api_version=self._config.api_version,
