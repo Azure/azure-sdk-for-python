@@ -648,6 +648,9 @@ class RedTeamAgent():
                     except asyncio.TimeoutError:
                         self.logger.warning(f"Batch {batch_idx+1} for {strategy_name}/{risk_category} timed out after {INTERNAL_TASK_TIMEOUT} seconds, continuing with partial results")
                         print(f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category}, Batch {batch_idx+1}")
+                        # Set task status to TIMEOUT
+                        batch_task_key = f"{strategy_name}_{risk_category}_batch_{batch_idx+1}"
+                        self.task_statuses[batch_task_key] = TASK_STATUS["TIMEOUT"]
                         # Continue with partial results rather than failing completely
                         continue
                     except Exception as e:
@@ -669,6 +672,9 @@ class RedTeamAgent():
                 except asyncio.TimeoutError:
                     self.logger.warning(f"Prompt processing for {strategy_name}/{risk_category} timed out after {INTERNAL_TASK_TIMEOUT} seconds, continuing with partial results")
                     print(f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category}")
+                    # Set task status to TIMEOUT
+                    single_batch_task_key = f"{strategy_name}_{risk_category}_single_batch"
+                    self.task_statuses[single_batch_task_key] = TASK_STATUS["TIMEOUT"]
                 except Exception as e:
                     log_error(self.logger, "Error processing prompts", e, f"{strategy_name}/{risk_category}")
                     print(f"❌ ERROR: Strategy {strategy_name}, Risk {risk_category}: {str(e)}")
@@ -1675,6 +1681,9 @@ class RedTeamAgent():
                     except asyncio.TimeoutError:
                         self.logger.warning(f"Batch {i//max_parallel_tasks+1} timed out after {INTERNAL_TASK_TIMEOUT*2} seconds")
                         print(f"⚠️ Batch {i//max_parallel_tasks+1} timed out, continuing with next batch")
+                        # Set task status to TIMEOUT
+                        batch_task_key = f"scan_batch_{i//max_parallel_tasks+1}"
+                        self.task_statuses[batch_task_key] = TASK_STATUS["TIMEOUT"]
                         continue
                     except Exception as e:
                         log_error(self.logger, f"Error processing batch {i//max_parallel_tasks+1}", e)
@@ -1694,6 +1703,9 @@ class RedTeamAgent():
                     except asyncio.TimeoutError:
                         self.logger.warning(f"Task {i+1}/{len(orchestrator_tasks)} timed out after {INTERNAL_TASK_TIMEOUT} seconds")
                         print(f"⚠️ Task {i+1} timed out, continuing with next task")
+                        # Set task status to TIMEOUT
+                        task_key = f"scan_task_{i+1}"
+                        self.task_statuses[task_key] = TASK_STATUS["TIMEOUT"]
                         continue
                     except Exception as e:
                         log_error(self.logger, f"Error processing task {i+1}/{len(orchestrator_tasks)}", e)
