@@ -87,12 +87,15 @@ class RedTeamAgent():
     :type timeout: int
     :param output_dir: Directory to store all output files. If None, files are created in the current working directory.
     :type output_dir: Optional[str]
+    :param max_parallel_tasks: Maximum number of parallel tasks to run when scanning (default: 5)
+    :type max_parallel_tasks: int
     """
-    def __init__(self, azure_ai_project, credential, timeout=120, output_dir=None):
+    def __init__(self, azure_ai_project, credential, timeout=120, output_dir=None, max_parallel_tasks=5):
         self.azure_ai_project = validate_azure_ai_project(azure_ai_project)
         self.credential = credential
         self.api_timeout = timeout
         self.output_dir = output_dir
+        self.max_parallel_tasks = max_parallel_tasks
         
         # Initialize logger without output directory (will be updated during scan)
         self.logger = setup_logger()
@@ -114,10 +117,6 @@ class RedTeamAgent():
         
         self.rai_client = RAIClient(azure_ai_project=self.azure_ai_project, token_manager=self.token_manager)
         self.generated_rai_client = GeneratedRAIClient(azure_ai_project=self.azure_ai_project, token_manager=self.token_manager.get_aad_credential()) #type: ignore
-
-        self.adversarial_template_handler = AdversarialTemplateHandler(
-            azure_ai_project=self.azure_ai_project, rai_client=self.rai_client
-        )
 
         # Initialize a cache for attack objectives by risk category and strategy
         self.attack_objectives = {}
@@ -317,7 +316,7 @@ class RedTeamAgent():
         application_scenario: Optional[str] = None,
         strategy: Optional[str] = None
     ) -> List[str]:
-        """Get attack objectives from the RAI client for a specific risk category.
+        """Get attack objectives from the RAI client for a specific risk category or from a custom dataset.
         
         :param attack_objective_generator: The generator with risk categories to get attack objectives for
         :type attack_objective_generator: ~azure.ai.evaluation.redteam.AttackObjectiveGenerator
@@ -348,110 +347,188 @@ class RedTeamAgent():
         baseline_objectives_exist = baseline_key in self.attack_objectives
         current_key = ((risk_cat_value,), strategy)
         
-        # Always make the API call to get objectives for this strategy
-        try:
-            self.logger.debug(f"API call: get_attack_objectives({risk_cat_value}, app: {application_scenario}, strategy: {strategy})")
-            objectives_response = await self.generated_rai_client.get_attack_objectives(
-                risk_category=risk_cat_value,
-                application_scenario=application_scenario or "",
-                strategy=strategy
-            )
-            if isinstance(objectives_response, list):
-                self.logger.debug(f"API returned {len(objectives_response)} objectives")
+        # Check if custom attack seed prompts are provided in the generator
+        if attack_objective_generator.custom_attack_seed_prompts and attack_objective_generator.validated_prompts:
+            self.logger.info(f"Using custom attack seed prompts from {attack_objective_generator.custom_attack_seed_prompts}")
+            
+            # Get the prompts for this risk category
+            custom_objectives = attack_objective_generator.valid_prompts_by_category.get(risk_cat_value, [])
+            
+            if not custom_objectives:
+                self.logger.warning(f"No custom objectives found for risk category {risk_cat_value}")
+                return []
+            
+            self.logger.info(f"Found {len(custom_objectives)} custom objectives for {risk_cat_value}")
+            
+            # Sample if we have more than needed
+            if len(custom_objectives) > num_objectives:
+                selected_cat_objectives = random.sample(custom_objectives, num_objectives)
+                self.logger.info(f"Sampled {num_objectives} objectives from {len(custom_objectives)} available for {risk_cat_value}")
+                # Log ids of selected objectives for traceability
+                selected_ids = [obj.get("id", "unknown-id") for obj in selected_cat_objectives]
+                self.logger.debug(f"Selected objective IDs for {risk_cat_value}: {selected_ids}")
             else:
-                self.logger.debug(f"API returned response of type: {type(objectives_response)}")
+                selected_cat_objectives = custom_objectives
+                self.logger.info(f"Using all {len(custom_objectives)} available objectives for {risk_cat_value}")
                 
             # Handle jailbreak strategy - need to apply jailbreak prefixes to messages
             if strategy == "jailbreak":
-                self.logger.debug("Applying jailbreak prefixes to objectives")
-                jailbreak_prefixes = await self.generated_rai_client.get_jailbreak_prefixes()
-                for objective in objectives_response:
-                    if "messages" in objective and len(objective["messages"]) > 0:
-                        message = objective["messages"][0]
-                        if isinstance(message, dict) and "content" in message:
-                            message["content"] = f"{random.choice(jailbreak_prefixes)} {message['content']}"
-        except Exception as e:
-            log_error(self.logger, "Error calling get_attack_objectives", e)
-            self.logger.warning("API call failed, returning empty objectives list")
-            return []
+                self.logger.debug("Applying jailbreak prefixes to custom objectives")
+                try:
+                    jailbreak_prefixes = await self.generated_rai_client.get_jailbreak_prefixes()
+                    for objective in selected_cat_objectives:
+                        if "messages" in objective and len(objective["messages"]) > 0:
+                            message = objective["messages"][0]
+                            if isinstance(message, dict) and "content" in message:
+                                message["content"] = f"{random.choice(jailbreak_prefixes)} {message['content']}"
+                except Exception as e:
+                    log_error(self.logger, "Error applying jailbreak prefixes to custom objectives", e)
+                    # Continue with unmodified prompts instead of failing completely
             
-        # Check if the response is valid
-        if not objectives_response or (isinstance(objectives_response, dict) and not objectives_response.get("objectives")):
-            self.logger.warning("Empty or invalid response, returning empty list")
-            return []
+            # Extract content from selected objectives
+            selected_prompts = []
+            for obj in selected_cat_objectives:
+                if "messages" in obj and len(obj["messages"]) > 0:
+                    message = obj["messages"][0]
+                    if isinstance(message, dict) and "content" in message:
+                        selected_prompts.append(message["content"])
             
-        # For non-baseline strategies, filter by baseline IDs if they exist
-        if strategy != "baseline" and baseline_objectives_exist:
-            self.logger.debug(f"Found existing baseline objectives for {risk_cat_value}, will filter {strategy} by baseline IDs")
-            baseline_selected_objectives = self.attack_objectives[baseline_key].get("selected_objectives", [])
-            baseline_objective_ids = []
+            # Process the selected objectives for caching
+            objectives_by_category = {risk_cat_value: []}
             
-            # Extract IDs from baseline objectives
-            for obj in baseline_selected_objectives:
-                if "id" in obj:
-                    baseline_objective_ids.append(obj["id"])
-            
-            if baseline_objective_ids:
-                self.logger.debug(f"Filtering by {len(baseline_objective_ids)} baseline objective IDs for {strategy}")
+            for obj in selected_cat_objectives:
+                obj_id = obj.get("id", f"obj-{uuid.uuid4()}")
+                target_harms = obj.get("metadata", {}).get("target_harms", [])
+                content = ""
+                if "messages" in obj and len(obj["messages"]) > 0:
+                    content = obj["messages"][0].get("content", "")
                 
-                # Filter objectives by baseline IDs
-                selected_cat_objectives = []
-                for obj in objectives_response:
-                    if obj.get("id") in baseline_objective_ids:
-                        selected_cat_objectives.append(obj)
+                if not content:
+                    continue
+                    
+                obj_data = {
+                    "id": obj_id,
+                    "content": content
+                }
+                objectives_by_category[risk_cat_value].append(obj_data)
+            
+            # Store in cache
+            self.attack_objectives[current_key] = {
+                "objectives_by_category": objectives_by_category,
+                "strategy": strategy,
+                "risk_category": risk_cat_value,
+                "selected_prompts": selected_prompts,
+                "selected_objectives": selected_cat_objectives
+            }
+            
+            self.logger.info(f"Using {len(selected_prompts)} custom objectives for {risk_cat_value}")
+            return selected_prompts
+            
+        else:
+            # Use the RAI service to get attack objectives
+            try:
+                self.logger.debug(f"API call: get_attack_objectives({risk_cat_value}, app: {application_scenario}, strategy: {strategy})")
+                objectives_response = await self.generated_rai_client.get_attack_objectives(
+                    risk_category=risk_cat_value,
+                    application_scenario=application_scenario or "",
+                    strategy=strategy
+                )
+                if isinstance(objectives_response, list):
+                    self.logger.debug(f"API returned {len(objectives_response)} objectives")
+                else:
+                    self.logger.debug(f"API returned response of type: {type(objectives_response)}")
+                    
+                # Handle jailbreak strategy - need to apply jailbreak prefixes to messages
+                if strategy == "jailbreak":
+                    self.logger.debug("Applying jailbreak prefixes to objectives")
+                    jailbreak_prefixes = await self.generated_rai_client.get_jailbreak_prefixes()
+                    for objective in objectives_response:
+                        if "messages" in objective and len(objective["messages"]) > 0:
+                            message = objective["messages"][0]
+                            if isinstance(message, dict) and "content" in message:
+                                message["content"] = f"{random.choice(jailbreak_prefixes)} {message['content']}"
+            except Exception as e:
+                log_error(self.logger, "Error calling get_attack_objectives", e)
+                self.logger.warning("API call failed, returning empty objectives list")
+                return []
                 
-                self.logger.debug(f"Found {len(selected_cat_objectives)} matching objectives with baseline IDs")
-                # If we couldn't find all the baseline IDs, log a warning
-                if len(selected_cat_objectives) < len(baseline_objective_ids):
-                    self.logger.warning(f"Only found {len(selected_cat_objectives)} objectives matching baseline IDs, expected {len(baseline_objective_ids)}")
+            # Check if the response is valid
+            if not objectives_response or (isinstance(objectives_response, dict) and not objectives_response.get("objectives")):
+                self.logger.warning("Empty or invalid response, returning empty list")
+                return []
+                
+            # For non-baseline strategies, filter by baseline IDs if they exist
+            if strategy != "baseline" and baseline_objectives_exist:
+                self.logger.debug(f"Found existing baseline objectives for {risk_cat_value}, will filter {strategy} by baseline IDs")
+                baseline_selected_objectives = self.attack_objectives[baseline_key].get("selected_objectives", [])
+                baseline_objective_ids = []
+                
+                # Extract IDs from baseline objectives
+                for obj in baseline_selected_objectives:
+                    if "id" in obj:
+                        baseline_objective_ids.append(obj["id"])
+                
+                if baseline_objective_ids:
+                    self.logger.debug(f"Filtering by {len(baseline_objective_ids)} baseline objective IDs for {strategy}")
+                    
+                    # Filter objectives by baseline IDs
+                    selected_cat_objectives = []
+                    for obj in objectives_response:
+                        if obj.get("id") in baseline_objective_ids:
+                            selected_cat_objectives.append(obj)
+                    
+                    self.logger.debug(f"Found {len(selected_cat_objectives)} matching objectives with baseline IDs")
+                    # If we couldn't find all the baseline IDs, log a warning
+                    if len(selected_cat_objectives) < len(baseline_objective_ids):
+                        self.logger.warning(f"Only found {len(selected_cat_objectives)} objectives matching baseline IDs, expected {len(baseline_objective_ids)}")
+                else:
+                    self.logger.warning("No baseline objective IDs found, using random selection")
+                    # If we don't have baseline IDs for some reason, default to random selection
+                    if len(objectives_response) > num_objectives:
+                        selected_cat_objectives = random.sample(objectives_response, num_objectives)
+                    else:
+                        selected_cat_objectives = objectives_response
             else:
-                self.logger.warning("No baseline objective IDs found, using random selection")
-                # If we don't have baseline IDs for some reason, default to random selection
+                # This is the baseline strategy or we don't have baseline objectives yet
+                self.logger.debug(f"Using random selection for {strategy} strategy")
                 if len(objectives_response) > num_objectives:
+                    self.logger.debug(f"Selecting {num_objectives} objectives from {len(objectives_response)} available")
                     selected_cat_objectives = random.sample(objectives_response, num_objectives)
                 else:
                     selected_cat_objectives = objectives_response
-        else:
-            # This is the baseline strategy or we don't have baseline objectives yet
-            self.logger.debug(f"Using random selection for {strategy} strategy")
-            if len(objectives_response) > num_objectives:
-                self.logger.debug(f"Selecting {num_objectives} objectives from {len(objectives_response)} available")
-                selected_cat_objectives = random.sample(objectives_response, num_objectives)
-            else:
-                selected_cat_objectives = objectives_response
-                
-        if len(selected_cat_objectives) < num_objectives:
-            self.logger.warning(f"Only found {len(selected_cat_objectives)} objectives for {risk_cat_value}, fewer than requested {num_objectives}")
-        
-        # Extract content from selected objectives
-        selected_prompts = []
-        for obj in selected_cat_objectives:
-            if "messages" in obj and len(obj["messages"]) > 0:
-                message = obj["messages"][0]
-                if isinstance(message, dict) and "content" in message:
-                    selected_prompts.append(message["content"])
-        
-        # Process the response - organize by category and extract content/IDs
-        objectives_by_category = {risk_cat_value: []}
-        
-        # Process list format and organize by category for caching
-        for obj in selected_cat_objectives:
-            obj_id = obj.get("id", f"obj-{uuid.uuid4()}")
-            target_harms = obj.get("metadata", {}).get("target_harms", [])
-            content = ""
-            if "messages" in obj and len(obj["messages"]) > 0:
-                content = obj["messages"][0].get("content", "")
+                    
+            if len(selected_cat_objectives) < num_objectives:
+                self.logger.warning(f"Only found {len(selected_cat_objectives)} objectives for {risk_cat_value}, fewer than requested {num_objectives}")
             
-            if not content:
-                continue
-            if target_harms:
-                for harm in target_harms:
-                    obj_data = {
-                        "id": obj_id,
-                        "content": content
-                    }
-                    objectives_by_category[risk_cat_value].append(obj_data)
-                    break
+            # Extract content from selected objectives
+            selected_prompts = []
+            for obj in selected_cat_objectives:
+                if "messages" in obj and len(obj["messages"]) > 0:
+                    message = obj["messages"][0]
+                    if isinstance(message, dict) and "content" in message:
+                        selected_prompts.append(message["content"])
+            
+            # Process the response - organize by category and extract content/IDs
+            objectives_by_category = {risk_cat_value: []}
+            
+            # Process list format and organize by category for caching
+            for obj in selected_cat_objectives:
+                obj_id = obj.get("id", f"obj-{uuid.uuid4()}")
+                target_harms = obj.get("metadata", {}).get("target_harms", [])
+                content = ""
+                if "messages" in obj and len(obj["messages"]) > 0:
+                    content = obj["messages"][0].get("content", "")
+                
+                if not content:
+                    continue
+                if target_harms:
+                    for harm in target_harms:
+                        obj_data = {
+                            "id": obj_id,
+                            "content": content
+                        }
+                        objectives_by_category[risk_cat_value].append(obj_data)
+                        break  # Just use the first harm for categorization
         
         # Store in cache - now including the full selected objectives with IDs
         self.attack_objectives[current_key] = {
@@ -1264,7 +1341,7 @@ class RedTeamAgent():
             attack_objective_generator: Optional[AttackObjectiveGenerator] = None,
             application_scenario: Optional[str] = None,
             parallel_execution: bool = True,
-            max_parallel_tasks: int = 5,
+            max_parallel_tasks: Optional[int] = None,
             debug_mode: bool = False) -> RedTeamAgentOutput:
         """Run a red team scan against the target using the specified strategies.
         
@@ -1286,8 +1363,8 @@ class RedTeamAgent():
         :type application_scenario: Optional[str]
         :param parallel_execution: Whether to execute orchestrator tasks in parallel
         :type parallel_execution: bool
-        :param max_parallel_tasks: Maximum number of parallel orchestrator tasks to run
-        :type max_parallel_tasks: int
+        :param max_parallel_tasks: Maximum number of parallel orchestrator tasks to run (default: use the value set in initialization)
+        :type max_parallel_tasks: Optional[int]
         :param debug_mode: Whether to run in debug mode (more verbose output)
         :type debug_mode: bool
         :return: The output from the red team scan
@@ -1390,6 +1467,43 @@ class RedTeamAgent():
             attack_strategies.insert(0, AttackStrategy.Baseline)
             self.logger.debug("Added Baseline to attack strategies")
             
+        # When using custom attack objectives, check for incompatible strategies
+        using_custom_objectives = attack_objective_generator and attack_objective_generator.custom_attack_seed_prompts
+        if using_custom_objectives:
+            # Maintain a list of converters to avoid duplicates
+            used_converter_types = set()
+            strategies_to_remove = []
+            
+            for i, strategy in enumerate(attack_strategies):
+                if isinstance(strategy, list):
+                    # Skip composite strategies for now
+                    continue
+                    
+                if strategy == AttackStrategy.Jailbreak:
+                    self.logger.warning("Jailbreak strategy with custom attack objectives may not work as expected. The strategy will be run, but results may vary.")
+                    print("⚠️ Warning: Jailbreak strategy with custom attack objectives may not work as expected.")
+                    
+                if strategy == AttackStrategy.Tense:
+                    self.logger.warning("Tense strategy requires specific formatting in objectives and may not work correctly with custom attack objectives.")
+                    print("⚠️ Warning: Tense strategy requires specific formatting in objectives and may not work correctly with custom attack objectives.")
+                
+                # Check for redundant converters
+                converter = self._get_converter_for_strategy(strategy)
+                if converter is not None:
+                    converter_type = type(converter).__name__ if not isinstance(converter, list) else ','.join([type(c).__name__ for c in converter])
+                    
+                    if converter_type in used_converter_types and strategy != AttackStrategy.Baseline:
+                        self.logger.warning(f"Strategy {strategy.name} uses a converter type that has already been used. Skipping redundant strategy.")
+                        print(f"ℹ️ Skipping redundant strategy: {strategy.name} (uses same converter as another strategy)")
+                        strategies_to_remove.append(strategy)
+                    else:
+                        used_converter_types.add(converter_type)
+            
+            # Remove redundant strategies
+            if strategies_to_remove:
+                attack_strategies = [s for s in attack_strategies if s not in strategies_to_remove]
+                self.logger.info(f"Removed {len(strategies_to_remove)} redundant strategies: {[s.name for s in strategies_to_remove]}")
+            
         with self._start_redteam_mlflow_run(self.azure_ai_project, evaluation_name) as eval_run:
             self.ai_studio_url = _get_ai_studio_url(trace_destination=self.trace_destination, evaluation_id=eval_run.info.run_id)
             # todo: temp change to show the URL in int and with flight info
@@ -1442,7 +1556,14 @@ class RedTeamAgent():
             
             # Process all API calls sequentially to respect dependencies between objectives
             log_section_header(self.logger, "Fetching attack objectives")
-            # Removed console output
+            
+            # Log the objective source mode
+            if using_custom_objectives:
+                self.logger.info(f"Using custom attack objectives from {attack_objective_generator.custom_attack_seed_prompts}")
+                print(f"📚 Using custom attack objectives from {attack_objective_generator.custom_attack_seed_prompts}")
+            else:
+                self.logger.info("Using attack objectives from Azure RAI service")
+                print("📚 Using attack objectives from Azure RAI service")
             
             # Dictionary to store all objectives
             all_objectives = {}
@@ -1529,6 +1650,10 @@ class RedTeamAgent():
                     )
                 )
             
+            # Use class max_parallel_tasks if not specified in method call
+            if max_parallel_tasks is None:
+                max_parallel_tasks = self.max_parallel_tasks
+                
             # Process tasks in parallel with optimized batching
             if parallel_execution and orchestrator_tasks:
                 print(f"⚙️ Processing {len(orchestrator_tasks)} tasks in parallel (max {max_parallel_tasks} at a time)")

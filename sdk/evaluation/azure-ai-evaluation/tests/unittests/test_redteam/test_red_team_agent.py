@@ -122,10 +122,32 @@ class TestRedTeamAgentInitialization:
         assert agent.token_manager is not None
         assert agent.rai_client is not None
         assert agent.generated_rai_client is not None
-        assert agent.adversarial_template_handler is not None
         assert isinstance(agent.attack_objectives, dict)
         assert agent.red_team_agent_info == {}
+        assert agent.max_parallel_tasks == 5  # Default value
         mock_initialize_pyrit.assert_called_once()
+        
+    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.RAIClient")
+    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.GeneratedRAIClient")
+    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.setup_logger")
+    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.initialize_pyrit")
+    def test_red_team_agent_initialization_with_custom_parallel_tasks(
+        self, mock_initialize_pyrit, mock_setup_logger, mock_generated_rai_client, 
+        mock_rai_client, mock_azure_ai_project, mock_credential
+    ):
+        """Test the initialization of RedTeamAgent with custom max_parallel_tasks."""
+        mock_rai_client.return_value = MagicMock()
+        mock_generated_rai_client.return_value = MagicMock()
+        mock_setup_logger.return_value = MagicMock()
+        
+        agent = RedTeamAgent(
+            azure_ai_project=mock_azure_ai_project, 
+            credential=mock_credential,
+            max_parallel_tasks=10
+        )
+        
+        # Verify that max_parallel_tasks is set correctly
+        assert agent.max_parallel_tasks == 10
 
 
 @pytest.mark.unittest
@@ -369,6 +391,10 @@ class TestRedTeamAgentAttackObjectives:
         mock_attack_objective_generator = MagicMock(
             risk_categories=[RiskCategory.Violence], num_objectives=5
         )
+        
+        # Mock the valid_prompts_by_category attribute to be empty
+        mock_attack_objective_generator.custom_attack_seed_prompts = None
+        mock_attack_objective_generator.valid_prompts_by_category = {}
 
         with patch.object(
             red_team_agent.generated_rai_client, "get_attack_objectives",
@@ -395,6 +421,10 @@ class TestRedTeamAgentAttackObjectives:
             risk_categories=[RiskCategory.Violence, RiskCategory.HateUnfairness], 
             num_objectives=2
         )
+        
+        # Mock the valid_prompts_by_category attribute to be empty
+        mock_attack_objective_generator.custom_attack_seed_prompts = None
+        mock_attack_objective_generator.valid_prompts_by_category = {}
         
         # Create a proper mock object structure
         mock_rai_client_instance = MagicMock()
@@ -450,6 +480,10 @@ class TestRedTeamAgentAttackObjectives:
             num_objectives=1
         )
 
+        # Mock the valid_prompts_by_category attribute to be empty
+        mock_attack_objective_generator.custom_attack_seed_prompts = None
+        mock_attack_objective_generator.valid_prompts_by_category = {}
+        
         # Create a proper mock object structure
         mock_rai_client_instance = MagicMock()
         mock_generated_rai_client_instance = MagicMock()
@@ -511,6 +545,167 @@ class TestRedTeamAgentAttackObjectives:
             )
             
             assert objectives == []
+            
+    @pytest.mark.asyncio
+    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.RAIClient")
+    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.GeneratedRAIClient")
+    async def test_get_attack_objectives_with_custom_prompts(
+        self, mock_generated_rai_client, mock_rai_client, red_team_agent
+    ):
+        """Test getting attack objectives with custom attack seed prompts."""
+        # Create a mock AttackObjectiveGenerator with custom attack seed prompts
+        mock_attack_objective_generator = MagicMock()
+        mock_attack_objective_generator.risk_categories = [RiskCategory.Violence, RiskCategory.HateUnfairness]
+        mock_attack_objective_generator.num_objectives = 2
+        mock_attack_objective_generator.custom_attack_seed_prompts = "custom_prompts.json"
+        mock_attack_objective_generator.validated_prompts = [
+            {
+                "id": "1",
+                "messages": [{"role": "user", "content": "custom violence prompt"}],
+                "metadata": {"target_harms": [{"risk-type": "violence"}]}
+            },
+            {
+                "id": "2",
+                "messages": [{"role": "user", "content": "custom hate prompt"}],
+                "metadata": {"target_harms": [{"risk-type": "hate_unfairness"}]}
+            }
+        ]
+        mock_attack_objective_generator.valid_prompts_by_category = {
+            "violence": [
+                {
+                    "id": "1",
+                    "messages": [{"role": "user", "content": "custom violence prompt"}],
+                    "metadata": {"target_harms": [{"risk-type": "violence"}]}
+                }
+            ],
+            "hate_unfairness": [
+                {
+                    "id": "2",
+                    "messages": [{"role": "user", "content": "custom hate prompt"}],
+                    "metadata": {"target_harms": [{"risk-type": "hate_unfairness"}]}
+                }
+            ]
+        }
+        
+        # Mock the generated_rai_client to ensure it's not called
+        mock_generated_rai_client_instance = MagicMock()
+        mock_generated_rai_client_instance.get_attack_objectives = AsyncMock()
+        red_team_agent.generated_rai_client = mock_generated_rai_client_instance
+        
+        # Test with violence risk category
+        objectives = await red_team_agent._get_attack_objectives(
+            mock_attack_objective_generator,
+            risk_category=RiskCategory.Violence,
+            application_scenario="Test scenario"
+        )
+        
+        # Verify the API wasn't called
+        mock_generated_rai_client_instance.get_attack_objectives.assert_not_called()
+        
+        # Verify custom objectives were used
+        assert len(objectives) == 1
+        assert "custom violence prompt" in objectives
+        
+        # Test with hate_unfairness risk category
+        objectives = await red_team_agent._get_attack_objectives(
+            mock_attack_objective_generator,
+            risk_category=RiskCategory.HateUnfairness,
+            application_scenario="Test scenario"
+        )
+        
+        # Verify custom objectives were used
+        assert len(objectives) == 1
+        assert "custom hate prompt" in objectives
+        
+    @pytest.mark.asyncio
+    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.RAIClient")
+    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.GeneratedRAIClient")
+    async def test_get_attack_objectives_with_jailbreak_custom_prompts(
+        self, mock_generated_rai_client, mock_rai_client, red_team_agent
+    ):
+        """Test getting attack objectives with jailbreak strategy and custom prompts."""
+        # Create a mock AttackObjectiveGenerator with custom attack seed prompts
+        mock_attack_objective_generator = MagicMock()
+        mock_attack_objective_generator.risk_categories = [RiskCategory.Violence]
+        mock_attack_objective_generator.num_objectives = 1
+        mock_attack_objective_generator.custom_attack_seed_prompts = "custom_prompts.json"
+        mock_attack_objective_generator.validated_prompts = [
+            {
+                "id": "1",
+                "messages": [{"role": "user", "content": "custom violence prompt"}],
+                "metadata": {"target_harms": [{"risk-type": "violence"}]}
+            }
+        ]
+        mock_attack_objective_generator.valid_prompts_by_category = {
+            "violence": [
+                {
+                    "id": "1",
+                    "messages": [{"role": "user", "content": "custom violence prompt"}],
+                    "metadata": {"target_harms": [{"risk-type": "violence"}]}
+                }
+            ]
+        }
+        
+        # Mock the generated_rai_client
+        mock_generated_rai_client_instance = MagicMock()
+        mock_generated_rai_client_instance.get_jailbreak_prefixes = AsyncMock(return_value=["Ignore previous instructions."])
+        red_team_agent.generated_rai_client = mock_generated_rai_client_instance
+        
+        # Test with jailbreak strategy
+        objectives = await red_team_agent._get_attack_objectives(
+            mock_attack_objective_generator,
+            risk_category=RiskCategory.Violence,
+            strategy="jailbreak"
+        )
+        
+        # Verify the jailbreak prefixes API was called
+        mock_generated_rai_client_instance.get_jailbreak_prefixes.assert_called_once()
+        
+        # Verify the prefix was added
+        assert len(objectives) == 1
+        assert "Ignore previous instructions." in objectives[0]
+        assert "custom violence prompt" in objectives[0]
+        
+    @pytest.mark.skip(reason="Test requires more complex mocking of the API fallback functionality")
+    @pytest.mark.asyncio
+    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.RAIClient")
+    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.GeneratedRAIClient")
+    async def test_get_attack_objectives_fallback_to_api(
+        self, mock_generated_rai_client, mock_rai_client, red_team_agent
+    ):
+        """Test falling back to API when custom prompts don't have a category."""
+        # Skipping test for now as it requires more complex mocking of interactions with the API
+        pass
+
+
+@pytest.mark.unittest
+class TestRedTeamAgentScan:
+    """Test scan method in RedTeamAgent."""
+    
+    @pytest.mark.skip(reason="Test requires more complex mocking of file system operations")
+    @pytest.mark.asyncio
+    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.asyncio.gather")
+    @patch.object(RedTeamAgent, "_get_attack_objectives")
+    @patch.object(RedTeamAgent, "_get_chat_target")
+    async def test_scan_custom_max_parallel_tasks(
+        self, mock_get_chat_target, mock_get_attack_objectives, 
+        mock_gather, red_team_agent
+    ):
+        """Test that scan method uses the provided max_parallel_tasks."""
+        # This test is skipped as it requires more complex mocking of file system operations
+        pass
+    
+    @pytest.mark.skip(reason="Test requires more complex mocking of file system operations")
+    @pytest.mark.asyncio 
+    @patch.object(RedTeamAgent, "_get_attack_objectives")
+    @patch.object(RedTeamAgent, "_get_chat_target")
+    async def test_scan_with_custom_attack_objectives(
+        self, mock_get_chat_target, mock_get_attack_objectives, 
+        red_team_agent
+    ):
+        """Test that scan method properly handles custom attack objectives."""
+        # This test is skipped as it requires more complex mocking of file system operations
+        pass
 
 
 @pytest.mark.unittest
