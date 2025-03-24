@@ -1,8 +1,7 @@
 import unittest
 
 from azure.ai.evaluation._converters._ai_services import AIAgentConverter
-from azure.ai.evaluation._converters._models import Message, ToolCall
-from azure.ai.projects.models import RunStepFunctionToolCall
+from azure.ai.evaluation._converters._models import Message
 
 
 class TestAIAgentConverter(unittest.TestCase):
