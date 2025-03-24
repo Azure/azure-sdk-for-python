@@ -243,7 +243,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 :caption: Getting account information for the blob service.
         """
         try:
-            return self._client.service.get_account_info(cls=return_response_headers, **kwargs) # type: ignore
+            return self._client.service.get_account_info(cls=return_response_headers, **kwargs)  # type: ignore
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -287,7 +287,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            stats = self._client.service.get_statistics( # type: ignore
+            stats = self._client.service.get_statistics(  # type: ignore
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
             return service_stats_deserialize(stats)
         except HttpResponseError as error:
@@ -394,7 +394,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             logging=analytics_logging,
             hour_metrics=hour_metrics,
             minute_metrics=minute_metrics,
-            cors=CorsRule._to_generated(cors), # pylint: disable=protected-access
+            cors=CorsRule._to_generated(cors),  # pylint: disable=protected-access
             default_service_version=target_version,
             delete_retention_policy=delete_retention_policy,
             static_website=static_website
@@ -651,7 +651,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         except AttributeError:
             kwargs['source_lease_id'] = lease
         try:
-            renamed_container._client.container.rename(name, **kwargs)  # pylint: disable = protected-access
+            renamed_container._client.container.rename(name, **kwargs)  # pylint: disable=protected-access
             return renamed_container
         except HttpResponseError as error:
             process_storage_error(error)
@@ -688,7 +688,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             warnings.warn("`new_name` is no longer supported.", DeprecationWarning)
         container = self.get_container_client(new_name or deleted_container_name)
         try:
-            container._client.container.restore(deleted_container_name=deleted_container_name,  # pylint: disable = protected-access
+            container._client.container.restore(deleted_container_name=deleted_container_name,  # pylint: disable=protected-access
                                                 deleted_container_version=deleted_container_version,
                                                 timeout=kwargs.pop('timeout', None), **kwargs)
             return container
@@ -721,8 +721,8 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         else:
             container_name = container
         _pipeline = Pipeline(
-            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+            transport=TransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies  # pylint: disable=protected-access
         )
         return ContainerClient(
             self.url, container_name=container_name,
@@ -779,8 +779,8 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         else:
             container_name = container
         _pipeline = Pipeline(
-            transport=TransportWrapper(self._pipeline._transport),  # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies  # pylint: disable = protected-access
+            transport=TransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies  # pylint: disable=protected-access
         )
         return BlobClient(
             self.url, container_name=container_name, blob_name=blob_name, snapshot=snapshot,
