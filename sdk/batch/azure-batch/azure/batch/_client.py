@@ -26,7 +26,8 @@ class BatchClient(BatchClientOperationsMixin):
     """BatchClient.
 
     :param endpoint: Batch account endpoint (for example:
-     https://batchaccount.eastus2.batch.azure.com). Required.
+     `https://batchaccount.eastus2.batch.azure.com
+     <https://batchaccount.eastus2.batch.azure.com>`_). Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential

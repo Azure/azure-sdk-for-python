@@ -1316,6 +1316,181 @@ def build_batch_get_job_task_counts_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_batch_create_certificate_request(
+    *, timeout: Optional[int] = None, ocpdate: Optional[datetime.datetime] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: str = kwargs.pop("content_type")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/certificates"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_list_certificates_request(
+    *,
+    timeout: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    max_results: Optional[int] = None,
+    filter: Optional[str] = None,
+    select: Optional[List[str]] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/certificates"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if max_results is not None:
+        _params["maxresults"] = _SERIALIZER.query("max_results", max_results, "int")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "[str]", div=",")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_cancel_certificate_deletion_request(  # pylint: disable=name-too-long
+    thumbprint_algorithm: str,
+    thumbprint: str,
+    *,
+    timeout: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})/canceldelete"
+    path_format_arguments = {
+        "thumbprintAlgorithm": _SERIALIZER.url("thumbprint_algorithm", thumbprint_algorithm, "str"),
+        "thumbprint": _SERIALIZER.url("thumbprint", thumbprint, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_delete_certificate_request(
+    thumbprint_algorithm: str,
+    thumbprint: str,
+    *,
+    timeout: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})"
+    path_format_arguments = {
+        "thumbprintAlgorithm": _SERIALIZER.url("thumbprint_algorithm", thumbprint_algorithm, "str"),
+        "thumbprint": _SERIALIZER.url("thumbprint", thumbprint, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_get_certificate_request(
+    thumbprint_algorithm: str,
+    thumbprint: str,
+    *,
+    timeout: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    select: Optional[List[str]] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01.20.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})"
+    path_format_arguments = {
+        "thumbprintAlgorithm": _SERIALIZER.url("thumbprint_algorithm", thumbprint_algorithm, "str"),
+        "thumbprint": _SERIALIZER.url("thumbprint", thumbprint, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if timeout is not None:
+        _params["timeOut"] = _SERIALIZER.query("timeout", timeout, "int")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "[str]", div=",")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_batch_job_schedule_exists_request(
     job_schedule_id: str,
     *,
@@ -3369,7 +3544,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          last aggregation interval currently available. Default value is None.
         :paramtype endtime: ~datetime.datetime
         :keyword filter: An OData $filter clause. For more information on constructing this filter, see
-        https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-account-usage-metrics.
+        `https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-account-usage-metrics
+         <https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-account-usage-metrics>`_.
          Default value is None.
         :paramtype filter: str
         :return: An iterator like instance of BatchPoolUsageMetrics
@@ -3568,8 +3744,9 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          applications can be returned. Default value is None.
         :paramtype max_results: int
         :keyword filter: An OData $filter clause. For more information on constructing this filter, see
-         https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-pools. Default
-         value is None.
+         `https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-pools
+         <https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-pools>`_.
+         Default value is None.
         :paramtype filter: str
         :keyword select: An OData $select clause. Default value is None.
         :paramtype select: list[str]
@@ -4860,7 +5037,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          applications can be returned. Default value is None.
         :paramtype max_results: int
         :keyword filter: An OData $filter clause. For more information on constructing this filter, see
-         https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-support-images.
+         `https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-support-images
+         <https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-support-images>`_.
          Default value is None.
         :paramtype filter: str
         :return: An iterator like instance of BatchSupportedImage
@@ -4972,7 +5150,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          applications can be returned. Default value is None.
         :paramtype max_results: int
         :keyword filter: An OData $filter clause. For more information on constructing this filter, see
-         https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-support-images.
+         `https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-support-images
+         <https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-support-images>`_.
          Default value is None.
         :paramtype filter: str
         :return: An iterator like instance of BatchPoolNodeCounts
@@ -6000,7 +6179,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          applications can be returned. Default value is None.
         :paramtype max_results: int
         :keyword filter: An OData $filter clause. For more information on constructing this filter, see
-         https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-jobs. Default
+         `https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-jobs
+         <https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-jobs>`_. Default
          value is None.
         :paramtype filter: str
         :keyword select: An OData $select clause. Default value is None.
@@ -6124,7 +6304,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          applications can be returned. Default value is None.
         :paramtype max_results: int
         :keyword filter: An OData $filter clause. For more information on constructing this filter, see
-        https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-jobs-in-a-job-schedule.
+        `https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-jobs-in-a-job-schedule
+         <https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-jobs-in-a-job-schedule>`_.
          Default value is None.
         :paramtype filter: str
         :keyword select: An OData $select clause. Default value is None.
@@ -6253,7 +6434,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          applications can be returned. Default value is None.
         :paramtype max_results: int
         :keyword filter: An OData $filter clause. For more information on constructing this filter, see
-        https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-job-preparation-and-release-status.
+        `https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-job-preparation-and-release-status
+         <https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-job-preparation-and-release-status>`_.
          Default value is None.
         :paramtype filter: str
         :keyword select: An OData $select clause. Default value is None.
@@ -6422,6 +6604,470 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(_models.BatchTaskCountsResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def create_certificate(  # pylint: disable=inconsistent-return-statements
+        self,
+        certificate: _models.BatchCertificate,
+        *,
+        timeout: Optional[int] = None,
+        ocpdate: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> None:
+        """Creates a Certificate to the specified Account.
+
+        Creates a Certificate to the specified Account.
+
+        :param certificate: The Certificate to be created. Required.
+        :type certificate: ~azure.batch.models.BatchCertificate
+        :keyword timeout: The maximum time that the server can spend processing the request, in
+         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
+         instead.". Default value is None.
+        :paramtype timeout: int
+        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+         current system clock time; set it explicitly if you are calling the REST API
+         directly. Default value is None.
+        :paramtype ocpdate: ~datetime.datetime
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: str = kwargs.pop(
+            "content_type", _headers.pop("content-type", "application/json; odata=minimalmetadata")
+        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _content = json.dumps(certificate, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_batch_create_certificate_request(
+            timeout=timeout,
+            ocpdate=ocpdate,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace
+    def list_certificates(
+        self,
+        *,
+        timeout: Optional[int] = None,
+        ocpdate: Optional[datetime.datetime] = None,
+        max_results: Optional[int] = None,
+        filter: Optional[str] = None,
+        select: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.BatchCertificate"]:
+        """Lists all of the Certificates that have been added to the specified Account.
+
+        Lists all of the Certificates that have been added to the specified Account.
+
+        :keyword timeout: The maximum time that the server can spend processing the request, in
+         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
+         instead.". Default value is None.
+        :paramtype timeout: int
+        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+         current system clock time; set it explicitly if you are calling the REST API
+         directly. Default value is None.
+        :paramtype ocpdate: ~datetime.datetime
+        :keyword max_results: The maximum number of items to return in the response. A maximum of 1000
+         applications can be returned. Default value is None.
+        :paramtype max_results: int
+        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
+        `https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-certificates
+         <https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-certificates>`_.
+         Default value is None.
+        :paramtype filter: str
+        :keyword select: An OData $select clause. Default value is None.
+        :paramtype select: list[str]
+        :return: An iterator like instance of BatchCertificate
+        :rtype: ~azure.core.paging.ItemPaged[~azure.batch.models.BatchCertificate]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.BatchCertificate]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_batch_list_certificates_request(
+                    timeout=timeout,
+                    ocpdate=ocpdate,
+                    max_results=max_results,
+                    filter=filter,
+                    select=select,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.BatchCertificate], deserialized["value"])
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(_models.BatchError, response.json())
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def cancel_certificate_deletion(  # pylint: disable=inconsistent-return-statements
+        self,
+        thumbprint_algorithm: str,
+        thumbprint: str,
+        *,
+        timeout: Optional[int] = None,
+        ocpdate: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> None:
+        """Cancels a failed deletion of a Certificate from the specified Account.
+
+        If you try to delete a Certificate that is being used by a Pool or Compute
+        Node, the status of the Certificate changes to deleteFailed. If you decide that
+        you want to continue using the Certificate, you can use this operation to set
+        the status of the Certificate back to active. If you intend to delete the
+        Certificate, you do not need to run this operation after the deletion failed.
+        You must make sure that the Certificate is not being used by any resources, and
+        then you can try again to delete the Certificate.
+
+        :param thumbprint_algorithm: The algorithm used to derive the thumbprint parameter. This must
+         be sha1. Required.
+        :type thumbprint_algorithm: str
+        :param thumbprint: The thumbprint of the Certificate being deleted. Required.
+        :type thumbprint: str
+        :keyword timeout: The maximum time that the server can spend processing the request, in
+         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
+         instead.". Default value is None.
+        :paramtype timeout: int
+        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+         current system clock time; set it explicitly if you are calling the REST API
+         directly. Default value is None.
+        :paramtype ocpdate: ~datetime.datetime
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_batch_cancel_certificate_deletion_request(
+            thumbprint_algorithm=thumbprint_algorithm,
+            thumbprint=thumbprint,
+            timeout=timeout,
+            ocpdate=ocpdate,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace
+    def delete_certificate(  # pylint: disable=inconsistent-return-statements
+        self,
+        thumbprint_algorithm: str,
+        thumbprint: str,
+        *,
+        timeout: Optional[int] = None,
+        ocpdate: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> None:
+        """Deletes a Certificate from the specified Account.
+
+        You cannot delete a Certificate if a resource (Pool or Compute Node) is using
+        it. Before you can delete a Certificate, you must therefore make sure that the
+        Certificate is not associated with any existing Pools, the Certificate is not
+        installed on any Nodes (even if you remove a Certificate from a Pool, it is not
+        removed from existing Compute Nodes in that Pool until they restart), and no
+        running Tasks depend on the Certificate. If you try to delete a Certificate
+        that is in use, the deletion fails. The Certificate status changes to
+        deleteFailed. You can use Cancel Delete Certificate to set the status back to
+        active if you decide that you want to continue using the Certificate.
+
+        :param thumbprint_algorithm: The algorithm used to derive the thumbprint parameter. This must
+         be sha1. Required.
+        :type thumbprint_algorithm: str
+        :param thumbprint: The thumbprint of the Certificate to be deleted. Required.
+        :type thumbprint: str
+        :keyword timeout: The maximum time that the server can spend processing the request, in
+         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
+         instead.". Default value is None.
+        :paramtype timeout: int
+        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+         current system clock time; set it explicitly if you are calling the REST API
+         directly. Default value is None.
+        :paramtype ocpdate: ~datetime.datetime
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_batch_delete_certificate_request(
+            thumbprint_algorithm=thumbprint_algorithm,
+            thumbprint=thumbprint,
+            timeout=timeout,
+            ocpdate=ocpdate,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace
+    def get_certificate(
+        self,
+        thumbprint_algorithm: str,
+        thumbprint: str,
+        *,
+        timeout: Optional[int] = None,
+        ocpdate: Optional[datetime.datetime] = None,
+        select: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> _models.GetCertificateResponse:
+        """Gets information about the specified Certificate.
+
+        :param thumbprint_algorithm: The algorithm used to derive the thumbprint parameter. This must
+         be sha1. Required.
+        :type thumbprint_algorithm: str
+        :param thumbprint: The thumbprint of the Certificate to get. Required.
+        :type thumbprint: str
+        :keyword timeout: The maximum time that the server can spend processing the request, in
+         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
+         instead.". Default value is None.
+        :paramtype timeout: int
+        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+         current system clock time; set it explicitly if you are calling the REST API
+         directly. Default value is None.
+        :paramtype ocpdate: ~datetime.datetime
+        :keyword select: An OData $select clause. Default value is None.
+        :paramtype select: list[str]
+        :return: GetCertificateResponse. The GetCertificateResponse is compatible with MutableMapping
+        :rtype: ~azure.batch.models.GetCertificateResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.GetCertificateResponse] = kwargs.pop("cls", None)
+
+        _request = build_batch_get_certificate_request(
+            thumbprint_algorithm=thumbprint_algorithm,
+            thumbprint=thumbprint,
+            timeout=timeout,
+            ocpdate=ocpdate,
+            select=select,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.GetCertificateResponse, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -7427,7 +8073,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          applications can be returned. Default value is None.
         :paramtype max_results: int
         :keyword filter: An OData $filter clause. For more information on constructing this filter, see
-         https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-job-schedules.
+         `https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-job-schedules
+         <https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-job-schedules>`_.
          Default value is None.
         :paramtype filter: str
         :keyword select: An OData $select clause. Default value is None.
@@ -7639,8 +8286,9 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          applications can be returned. Default value is None.
         :paramtype max_results: int
         :keyword filter: An OData $filter clause. For more information on constructing this filter, see
-         https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-tasks. Default
-         value is None.
+         `https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-tasks
+         <https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-tasks>`_.
+         Default value is None.
         :paramtype filter: str
         :keyword select: An OData $select clause. Default value is None.
         :paramtype select: list[str]
@@ -8876,7 +9524,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          applications can be returned. Default value is None.
         :paramtype max_results: int
         :keyword filter: An OData $filter clause. For more information on constructing this filter, see
-         https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-task-files.
+         `https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-task-files
+         <https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-task-files>`_.
          Default value is None.
         :paramtype filter: str
         :keyword recursive: Whether to list children of the Task directory. This parameter can be used
@@ -10092,7 +10741,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          applications can be returned. Default value is None.
         :paramtype max_results: int
         :keyword filter: An OData $filter clause. For more information on constructing this filter, see
-         https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-nodes-in-a-pool.
+         `https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-nodes-in-a-pool
+         <https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-nodes-in-a-pool>`_.
          Default value is None.
         :paramtype filter: str
         :keyword select: An OData $select clause. Default value is None.
@@ -10739,7 +11389,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          applications can be returned. Default value is None.
         :paramtype max_results: int
         :keyword filter: An OData $filter clause. For more information on constructing this filter, see
-        https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-compute-node-files.
+        `https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-compute-node-files
+         <https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-compute-node-files>`_.
          Default value is None.
         :paramtype filter: str
         :keyword recursive: Whether to list children of a directory. Default value is None.
