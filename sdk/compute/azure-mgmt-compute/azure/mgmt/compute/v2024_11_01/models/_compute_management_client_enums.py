@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -17,6 +18,7 @@ class AllocationStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     LOWEST_PRICE = "LowestPrice"
     CAPACITY_OPTIMIZED = "CapacityOptimized"
+    PRIORITIZED = "Prioritized"
 
 
 class AlternativeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -197,6 +199,12 @@ class ExecutionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELED = "Canceled"
 
 
+class Expand(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Expand."""
+
+    PROPERTIES = "Properties"
+
+
 class ExpandTypeForListVMs(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ExpandTypeForListVMs."""
 
@@ -262,6 +270,7 @@ class InstanceViewTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     INSTANCE_VIEW = "instanceView"
     USER_DATA = "userData"
+    RESILIENCY_VIEW = "resiliencyView"
 
 
 class IntervalInMins(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -337,14 +346,24 @@ class MaintenanceOperationResultCodeTypes(str, Enum, metaclass=CaseInsensitiveEn
 
 
 class Mode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the mode that ProxyAgent will execute on if the feature is enabled. ProxyAgent will
-    start to audit or monitor but not enforce access control over requests to host endpoints in
-    Audit mode, while in Enforce mode it will enforce access control. The default value is Enforce
-    mode.
+    """Specifies the mode that ProxyAgent will execute on. Warning: this property has been deprecated,
+    please specify 'mode' under particular hostendpoint setting.
     """
 
     AUDIT = "Audit"
     ENFORCE = "Enforce"
+
+
+class Modes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the execution mode. In Audit mode, the system acts as if it is enforcing the access
+    control policy, including emitting access denial entries in the logs but it does not actually
+    deny any requests to host endpoints. In Enforce mode, the system will enforce the access
+    control and it is the recommended mode of operation.
+    """
+
+    AUDIT = "Audit"
+    ENFORCE = "Enforce"
+    DISABLED = "Disabled"
 
 
 class NetworkApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -353,6 +372,7 @@ class NetworkApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     TWO_THOUSAND_TWENTY11_01 = "2020-11-01"
+    TWO_THOUSAND_TWENTY_TWO11_01 = "2022-11-01"
 
 
 class NetworkInterfaceAuxiliaryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -496,6 +516,22 @@ class PublicIPAllocationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     STATIC = "Static"
 
 
+class RebalanceBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of rebalance behavior that will be used for recreating virtual machines in the scale set
+    across availability zones. Default and only supported value for now is CreateBeforeDelete.
+    """
+
+    CREATE_BEFORE_DELETE = "CreateBeforeDelete"
+
+
+class RebalanceStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of rebalance strategy that will be used for rebalancing virtual machines in the scale set
+    across availability zones. Default and only supported value for now is Recreate.
+    """
+
+    RECREATE = "Recreate"
+
+
 class RepairAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of repair action (replace, restart, reimage) that will be used for repairing unhealthy
     virtual machines in the scale set. Default value is replace.
@@ -504,6 +540,15 @@ class RepairAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     REPLACE = "Replace"
     RESTART = "Restart"
     REIMAGE = "Reimage"
+
+
+class ResilientVMDeletionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the resilient VM deletion status for the virtual machine."""
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+    IN_PROGRESS = "InProgress"
+    FAILED = "Failed"
 
 
 class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -982,3 +1027,12 @@ class ZonalPlatformFaultDomainAlignMode(str, Enum, metaclass=CaseInsensitiveEnum
 
     ALIGNED = "Aligned"
     UNALIGNED = "Unaligned"
+
+
+class ZonePlacementPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the policy for virtual machine's placement in availability zone. Possible values are:
+    **Any** - An availability zone will be automatically picked by system as part of virtual
+    machine creation.
+    """
+
+    ANY = "Any"
