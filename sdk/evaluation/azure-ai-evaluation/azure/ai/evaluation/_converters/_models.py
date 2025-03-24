@@ -176,14 +176,9 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
     tool_call_id = tool_call.details.id
     content_tool_call = {
         "type": _TOOL_CALL,
-        _TOOL_CALL: {
-            "id": tool_call_id,
-            "type": _FUNCTION,
-            _FUNCTION: {
-                "name": tool_call.details.function.name,
-                "arguments": safe_loads(tool_call.details.function.arguments),
-            },
-        },
+        "tool_call_id": tool_call_id,
+        "name": tool_call.details.function.name,
+        "arguments": safe_loads(tool_call.details.function.arguments),
     }
 
     # We format it into an assistant message, where the content is a singleton list of the content object.
