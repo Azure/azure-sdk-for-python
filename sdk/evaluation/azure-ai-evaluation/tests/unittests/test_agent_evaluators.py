@@ -10,24 +10,25 @@ class TestEvaluate:
         tool_call_accuracy = ToolCallAccuracyEvaluator(model_config=mock_model_config)
 
         # Test tool_calls provided but missing response
-        tool_call_accuracy(
-            query="Where is the Eiffel Tower?",
-            response="The Eiffel Tower is in Paris.",
-            tool_calls="Test",
-            tool_definitions={
-                "name": "fetch_weather",
-                "description": "Fetches the weather information for the specified location.",
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "location": {
-                            "type": "string",
-                            "description": "The location to fetch weather for."
+        with pytest.raises(EvaluationException) as exc_info:
+            tool_call_accuracy(
+                query="Where is the Eiffel Tower?",
+                response="The Eiffel Tower is in Paris.",
+                tool_calls="Test",
+                tool_definitions={
+                    "name": "fetch_weather",
+                    "description": "Fetches the weather information for the specified location.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "location": {
+                                "type": "string",
+                                "description": "The location to fetch weather for."
+                            }
                         }
                     }
                 }
-            }
-        )
+            )
 
         # Test with missing tool_definitions
         with pytest.raises(EvaluationException) as exc_info:
@@ -93,21 +94,24 @@ class TestEvaluate:
         assert "response does not have tool calls. Either provide tool_calls or response with tool calls." in str(exc_info.value)
 
         # Test tool_calls provided but missing response
-        tool_call_accuracy(
-            query="Where is the Eiffel Tower?",
-            response="The Eiffel Tower is in Paris.",
-            tool_calls="Test",
-            tool_definitions={
-                "name": "fetch_weather",
-                "description": "Fetches the weather information for the specified location.",
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "location": {
-                            "type": "string",
-                            "description": "The location to fetch weather for."
+        with pytest.raises(EvaluationException) as exc_info:
+            tool_call_accuracy(
+                query="Where is the Eiffel Tower?",
+                response="The Eiffel Tower is in Paris.",
+                tool_calls="Test",
+                tool_definitions={
+                    "name": "fetch_weather",
+                    "description": "Fetches the weather information for the specified location.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "location": {
+                                "type": "string",
+                                "description": "The location to fetch weather for."
+                            }
                         }
                     }
                 }
-            }
-        )
+            )
+
+            assert "Tool definition not found" in str(exc_info.value)
