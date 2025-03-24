@@ -39,13 +39,14 @@ class TestCompletenessEvaluator:
         response = "The capital of Japan"
         result = completeness_evaluator(ground_truth=ground_truth, response=response)
 
+        key = CompletenessEvaluator._RESULT_KEY
         assert result is not None
-        assert ("completeness" in result and "completeness_result" in result and "completeness_threshold" in result
-                and "completeness_reason" in result)
-        assert result["response_completeness"] == 1
-        assert result["response_completeness_result"] == "fail"
-        assert result["response_completeness_threshold"] == CompletenessEvaluator.DEFAULT_COMPLETENESS_THRESHOLD
-        assert "The response is fully incomplete " in result["response_completeness_reason"]
+        assert (key in result and f"{key}_result" in result and f"{key}_threshold" in result
+                and f"{key}_reason" in result)
+        assert result[key] == 1
+        assert result[f"{key}_result"] == "fail"
+        assert result[f"{key}_threshold"] == CompletenessEvaluator.DEFAULT_COMPLETENESS_THRESHOLD
+        assert "The response is fully incomplete " in result[f"{key}_reason"]
 
     def test_evaluate_completeness_valid2(self, mock_model_config):
         completeness_evaluator = CompletenessEvaluator(model_config=mock_model_config)
@@ -56,13 +57,15 @@ class TestCompletenessEvaluator:
         response = "The capital of Japan is Tokyo."
         result = completeness_evaluator(ground_truth=ground_truth, response=response)
 
+        key = CompletenessEvaluator._RESULT_KEY
         assert result is not None
-        assert ("completeness" in result and "completeness_result" in result and "completeness_threshold" in result
-                and "completeness_reason" in result)
-        assert result["response_completeness"] == 5
-        assert result["response_completeness_result"] == "pass"
-        assert result["response_completeness_threshold"] == CompletenessEvaluator.DEFAULT_COMPLETENESS_THRESHOLD
-        assert "The response perfectly matches " in result["response_completeness_reason"]
+
+        assert (key in result and f"{key}_result" in result and f"{key}_threshold" in result and
+                f"{key}_reason" in result)
+        assert result[key] == 5
+        assert result[f"{key}_result"] == "pass"
+        assert result[f"{key}_threshold"] == CompletenessEvaluator.DEFAULT_COMPLETENESS_THRESHOLD
+        assert "The response perfectly matches " in result[f"{key}_reason"]
 
     def test_evaluate_completeness_missing_ground_truth(self, mock_model_config):
         completeness_evaluator = CompletenessEvaluator(model_config=mock_model_config)
