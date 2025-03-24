@@ -28,7 +28,7 @@ def _get_client_args(**kwargs: Any) -> Optional[Dict]:
     return dict(
         kwargs,
         base_headers={"Secret": secret},
-        connection_verify=False,
+        connection_verify=False,  # pylint: disable=do-not-hardcode-connection-verify
         request_factory=functools.partial(_get_request, url),
     )
 
