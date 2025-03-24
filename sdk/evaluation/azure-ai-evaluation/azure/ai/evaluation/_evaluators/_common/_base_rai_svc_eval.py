@@ -125,8 +125,8 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         return result
 
     async def _evaluate_query_response(self, eval_input: Dict) -> Dict[str, T]:
-        query = eval_input.get("query", None)
-        response = eval_input.get("response", None)
+        query = str(eval_input.get("query", None))
+        response = str(eval_input.get("response", None))
         if query is None or response is None:
             raise EvaluationException(
                 message="Not implemented",
