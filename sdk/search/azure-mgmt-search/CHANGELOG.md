@@ -25,8 +25,8 @@
   - Added model `SkuOffering`
   - Added model `SkuOfferingLimits`
   - Added model `SystemData`
-  - Added model `OfferingsOperations`
-  - Added model `ServiceOperations`
+  - Added operation group `OfferingsOperations`
+  - Added operation group `ServiceOperations`
 
 ## 9.2.0b2 (2024-07-18)
 
