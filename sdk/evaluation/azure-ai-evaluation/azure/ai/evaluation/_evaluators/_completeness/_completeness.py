@@ -12,8 +12,9 @@ from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, Err
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._common.utils import parse_quality_evaluator_reason_score
 from azure.ai.evaluation._model_configurations import Conversation, Message
+from azure.ai.evaluation._common._experimental import experimental
 
-
+@experimental
 class CompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
     Evaluates the extent to which a given response contains all necessary and relevant information with respect to the

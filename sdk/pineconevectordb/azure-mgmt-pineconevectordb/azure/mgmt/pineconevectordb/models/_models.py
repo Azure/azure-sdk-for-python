@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -20,8 +21,6 @@ if TYPE_CHECKING:
 class ErrorAdditionalInfo(_model_base.Model):
     """The resource management error additional info.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
@@ -36,8 +35,6 @@ class ErrorAdditionalInfo(_model_base.Model):
 
 class ErrorDetail(_model_base.Model):
     """The error detail.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar code: The error code.
     :vartype code: str
@@ -73,7 +70,7 @@ class ErrorResponse(_model_base.Model):
     :vartype error: ~azure.mgmt.pineconevectordb.models.ErrorDetail
     """
 
-    error: Optional["_models.ErrorDetail"] = rest_field()
+    error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The error object."""
 
     @overload
@@ -97,9 +94,6 @@ class ErrorResponse(_model_base.Model):
 class ManagedServiceIdentity(_model_base.Model):
     """Managed service identity (system assigned and/or user assigned identities).
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar principal_id: The service principal ID of the system assigned identity. This property
      will only be provided for a system assigned identity.
     :vartype principal_id: str
@@ -120,11 +114,13 @@ class ManagedServiceIdentity(_model_base.Model):
     tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read"])
     """The tenant ID of the system assigned identity. This property will only be provided for a system
      assigned identity."""
-    type: Union[str, "_models.ManagedServiceIdentityType"] = rest_field()
+    type: Union[str, "_models.ManagedServiceIdentityType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The type of managed identity assigned to this resource. Required. Known values are: \"None\",
      \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned,UserAssigned\"."""
     user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = rest_field(
-        name="userAssignedIdentities"
+        name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
     )
     """The identities assigned to this resource by the user."""
 
@@ -150,11 +146,7 @@ class ManagedServiceIdentity(_model_base.Model):
 class MarketplaceDetails(_model_base.Model):
     """Marketplace details for an organization.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar subscription_id: Azure subscription id for the the marketplace offer is purchased from.
-     Required.
     :vartype subscription_id: str
     :ivar subscription_status: Marketplace subscription status. Known values are:
      "PendingFulfillmentStart", "Subscribed", "Suspended", and "Unsubscribed".
@@ -164,22 +156,26 @@ class MarketplaceDetails(_model_base.Model):
     :vartype offer_details: ~azure.mgmt.pineconevectordb.models.OfferDetails
     """
 
-    subscription_id: str = rest_field(name="subscriptionId")
-    """Azure subscription id for the the marketplace offer is purchased from. Required."""
+    subscription_id: Optional[str] = rest_field(
+        name="subscriptionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Azure subscription id for the the marketplace offer is purchased from."""
     subscription_status: Optional[Union[str, "_models.MarketplaceSubscriptionStatus"]] = rest_field(
         name="subscriptionStatus", visibility=["read"]
     )
     """Marketplace subscription status. Known values are: \"PendingFulfillmentStart\", \"Subscribed\",
      \"Suspended\", and \"Unsubscribed\"."""
-    offer_details: "_models.OfferDetails" = rest_field(name="offerDetails")
+    offer_details: "_models.OfferDetails" = rest_field(
+        name="offerDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Offer details for the marketplace that is selected by the user. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        subscription_id: str,
         offer_details: "_models.OfferDetails",
+        subscription_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -196,7 +192,6 @@ class MarketplaceDetails(_model_base.Model):
 class OfferDetails(_model_base.Model):
     """Offer details for the marketplace that is selected by the user.
 
-
     :ivar publisher_id: Publisher Id for the marketplace offer. Required.
     :vartype publisher_id: str
     :ivar offer_id: Offer Id for the marketplace offer. Required.
@@ -211,17 +206,17 @@ class OfferDetails(_model_base.Model):
     :vartype term_id: str
     """
 
-    publisher_id: str = rest_field(name="publisherId")
+    publisher_id: str = rest_field(name="publisherId", visibility=["read", "create", "update", "delete", "query"])
     """Publisher Id for the marketplace offer. Required."""
-    offer_id: str = rest_field(name="offerId")
+    offer_id: str = rest_field(name="offerId", visibility=["read", "create", "update", "delete", "query"])
     """Offer Id for the marketplace offer. Required."""
-    plan_id: str = rest_field(name="planId")
+    plan_id: str = rest_field(name="planId", visibility=["read", "create", "update", "delete", "query"])
     """Plan Id for the marketplace offer. Required."""
-    plan_name: Optional[str] = rest_field(name="planName")
+    plan_name: Optional[str] = rest_field(name="planName", visibility=["read", "create", "update", "delete", "query"])
     """Plan Name for the marketplace offer."""
-    term_unit: Optional[str] = rest_field(name="termUnit")
+    term_unit: Optional[str] = rest_field(name="termUnit", visibility=["read", "create", "update", "delete", "query"])
     """Plan Display Name for the marketplace offer."""
-    term_id: Optional[str] = rest_field(name="termId")
+    term_id: Optional[str] = rest_field(name="termId", visibility=["read", "create", "update", "delete", "query"])
     """Plan Display Name for the marketplace offer."""
 
     @overload
@@ -250,8 +245,6 @@ class OfferDetails(_model_base.Model):
 class Operation(_model_base.Model):
     """Details of a REST API operation, returned from the Resource Provider Operations API.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
      "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
     :vartype name: str
@@ -276,7 +269,9 @@ class Operation(_model_base.Model):
     is_data_action: Optional[bool] = rest_field(name="isDataAction", visibility=["read"])
     """Whether the operation applies to data-plane. This is \"true\" for data-plane operations and
      \"false\" for Azure Resource Manager/control-plane operations."""
-    display: Optional["_models.OperationDisplay"] = rest_field()
+    display: Optional["_models.OperationDisplay"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Localized display information for this particular operation."""
     origin: Optional[Union[str, "_models.Origin"]] = rest_field(visibility=["read"])
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
@@ -306,8 +301,6 @@ class Operation(_model_base.Model):
 
 class OperationDisplay(_model_base.Model):
     """Localized display information for and operation.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
@@ -340,9 +333,6 @@ class OperationDisplay(_model_base.Model):
 class OrganizationProperties(_model_base.Model):
     """Properties specific to Organization.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar marketplace: Marketplace details of the resource. Required.
     :vartype marketplace: ~azure.mgmt.pineconevectordb.models.MarketplaceDetails
     :ivar user: Details of the user. Required.
@@ -360,16 +350,20 @@ class OrganizationProperties(_model_base.Model):
 
     marketplace: "_models.MarketplaceDetails" = rest_field(visibility=["read", "create", "update"])
     """Marketplace details of the resource. Required."""
-    user: "_models.UserDetails" = rest_field()
+    user: "_models.UserDetails" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Details of the user. Required."""
     provisioning_state: Optional[Union[str, "_models.ResourceProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
     """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", and
      \"Canceled\"."""
-    partner_properties: Optional["_models.PartnerProperties"] = rest_field(name="partnerProperties")
+    partner_properties: Optional["_models.PartnerProperties"] = rest_field(
+        name="partnerProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
     """partner properties."""
-    single_sign_on_properties: Optional["_models.SingleSignOnPropertiesV2"] = rest_field(name="singleSignOnProperties")
+    single_sign_on_properties: Optional["_models.SingleSignOnPropertiesV2"] = rest_field(
+        name="singleSignOnProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Single sign-on properties."""
 
     @overload
@@ -396,10 +390,8 @@ class OrganizationProperties(_model_base.Model):
 class Resource(_model_base.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -413,7 +405,7 @@ class Resource(_model_base.Model):
 
     id: Optional[str] = rest_field(visibility=["read"])
     """Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long"""
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
     name: Optional[str] = rest_field(visibility=["read"])
     """The name of the resource."""
     type: Optional[str] = rest_field(visibility=["read"])
@@ -427,11 +419,8 @@ class TrackedResource(Resource):
     """The resource model definition for an Azure Resource Manager tracked top level resource which
     has 'tags' and a 'location'.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -447,7 +436,7 @@ class TrackedResource(Resource):
     :vartype location: str
     """
 
-    tags: Optional[Dict[str, str]] = rest_field()
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     location: str = rest_field(visibility=["read", "create"])
     """The geo-location where the resource lives. Required."""
@@ -475,11 +464,8 @@ class OrganizationResource(TrackedResource):
     """Concrete tracked resource types can be created by aliasing this type using a specific property
     type.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -499,9 +485,13 @@ class OrganizationResource(TrackedResource):
     :vartype identity: ~azure.mgmt.pineconevectordb.models.ManagedServiceIdentity
     """
 
-    properties: Optional["_models.OrganizationProperties"] = rest_field()
+    properties: Optional["_models.OrganizationProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The resource-specific properties for this resource."""
-    identity: Optional["_models.ManagedServiceIdentity"] = rest_field()
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The managed service identities assigned to this resource."""
 
     @overload
@@ -534,9 +524,11 @@ class OrganizationResourceUpdate(_model_base.Model):
     :vartype identity: ~azure.mgmt.pineconevectordb.models.ManagedServiceIdentity
     """
 
-    tags: Optional[Dict[str, str]] = rest_field()
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
-    identity: Optional["_models.ManagedServiceIdentity"] = rest_field()
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The managed service identities assigned to this resource."""
 
     @overload
@@ -561,12 +553,11 @@ class OrganizationResourceUpdate(_model_base.Model):
 class PartnerProperties(_model_base.Model):
     """Partner's specific Properties.
 
-
     :ivar display_name: Pinecone Organization Name. Required.
     :vartype display_name: str
     """
 
-    display_name: str = rest_field(name="displayName")
+    display_name: str = rest_field(name="displayName", visibility=["read", "create", "update", "delete", "query"])
     """Pinecone Organization Name. Required."""
 
     @overload
@@ -590,7 +581,6 @@ class PartnerProperties(_model_base.Model):
 class SingleSignOnPropertiesV2(_model_base.Model):
     """Properties specific to Single Sign On Resource.
 
-
     :ivar type: Type of Single Sign-On mechanism being used. Required. Known values are: "Saml" and
      "OpenId".
     :vartype type: str or ~azure.mgmt.pineconevectordb.models.SingleSignOnType
@@ -605,17 +595,25 @@ class SingleSignOnPropertiesV2(_model_base.Model):
     :vartype aad_domains: list[str]
     """
 
-    type: Union[str, "_models.SingleSignOnType"] = rest_field()
+    type: Union[str, "_models.SingleSignOnType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Type of Single Sign-On mechanism being used. Required. Known values are: \"Saml\" and
      \"OpenId\"."""
-    state: Optional[Union[str, "_models.SingleSignOnStates"]] = rest_field()
+    state: Optional[Union[str, "_models.SingleSignOnStates"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """State of the Single Sign On for the resource. Known values are: \"Initial\", \"Enable\", and
      \"Disable\"."""
-    enterprise_app_id: Optional[str] = rest_field(name="enterpriseAppId")
+    enterprise_app_id: Optional[str] = rest_field(
+        name="enterpriseAppId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """AAD enterprise application Id used to setup SSO."""
-    url: Optional[str] = rest_field()
+    url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """URL for SSO to be used by the partner to redirect the user to their system."""
-    aad_domains: Optional[List[str]] = rest_field(name="aadDomains")
+    aad_domains: Optional[List[str]] = rest_field(
+        name="aadDomains", visibility=["read", "create", "update", "delete", "query"]
+    )
     """List of AAD domains fetched from Microsoft Graph for user."""
 
     @overload
@@ -659,19 +657,29 @@ class SystemData(_model_base.Model):
     :vartype last_modified_at: ~datetime.datetime
     """
 
-    created_by: Optional[str] = rest_field(name="createdBy")
+    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read", "create", "update", "delete", "query"])
     """The identity that created the resource."""
-    created_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(name="createdByType")
+    created_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(
+        name="createdByType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The type of identity that created the resource. Known values are: \"User\", \"Application\",
      \"ManagedIdentity\", and \"Key\"."""
-    created_at: Optional[datetime.datetime] = rest_field(name="createdAt", format="rfc3339")
+    created_at: Optional[datetime.datetime] = rest_field(
+        name="createdAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The timestamp of resource creation (UTC)."""
-    last_modified_by: Optional[str] = rest_field(name="lastModifiedBy")
+    last_modified_by: Optional[str] = rest_field(
+        name="lastModifiedBy", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The identity that last modified the resource."""
-    last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(name="lastModifiedByType")
+    last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(
+        name="lastModifiedByType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The type of identity that last modified the resource. Known values are: \"User\",
      \"Application\", \"ManagedIdentity\", and \"Key\"."""
-    last_modified_at: Optional[datetime.datetime] = rest_field(name="lastModifiedAt", format="rfc3339")
+    last_modified_at: Optional[datetime.datetime] = rest_field(
+        name="lastModifiedAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The timestamp of resource last modification (UTC)."""
 
     @overload
@@ -700,29 +708,26 @@ class SystemData(_model_base.Model):
 class UserAssignedIdentity(_model_base.Model):
     """User assigned identity properties.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar principal_id: The principal ID of the assigned identity.
-    :vartype principal_id: str
     :ivar client_id: The client ID of the assigned identity.
     :vartype client_id: str
+    :ivar principal_id: The principal ID of the assigned identity.
+    :vartype principal_id: str
     """
 
-    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
-    """The principal ID of the assigned identity."""
     client_id: Optional[str] = rest_field(name="clientId", visibility=["read"])
     """The client ID of the assigned identity."""
+    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
+    """The principal ID of the assigned identity."""
 
 
 class UserDetails(_model_base.Model):
     """User details for an organization.
 
-
-    :ivar first_name: First name of the user. Required.
+    :ivar first_name: First name of the user.
     :vartype first_name: str
-    :ivar last_name: Last name of the user. Required.
+    :ivar last_name: Last name of the user.
     :vartype last_name: str
-    :ivar email_address: Email address of the user. Required.
+    :ivar email_address: Email address of the user.
     :vartype email_address: str
     :ivar upn: User's principal name.
     :vartype upn: str
@@ -730,24 +735,28 @@ class UserDetails(_model_base.Model):
     :vartype phone_number: str
     """
 
-    first_name: str = rest_field(name="firstName")
-    """First name of the user. Required."""
-    last_name: str = rest_field(name="lastName")
-    """Last name of the user. Required."""
-    email_address: str = rest_field(name="emailAddress")
-    """Email address of the user. Required."""
-    upn: Optional[str] = rest_field()
+    first_name: Optional[str] = rest_field(name="firstName", visibility=["read", "create", "update", "delete", "query"])
+    """First name of the user."""
+    last_name: Optional[str] = rest_field(name="lastName", visibility=["read", "create", "update", "delete", "query"])
+    """Last name of the user."""
+    email_address: Optional[str] = rest_field(
+        name="emailAddress", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Email address of the user."""
+    upn: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """User's principal name."""
-    phone_number: Optional[str] = rest_field(name="phoneNumber")
+    phone_number: Optional[str] = rest_field(
+        name="phoneNumber", visibility=["read", "create", "update", "delete", "query"]
+    )
     """User's phone number."""
 
     @overload
     def __init__(
         self,
         *,
-        first_name: str,
-        last_name: str,
-        email_address: str,
+        first_name: Optional[str] = None,
+        last_name: Optional[str] = None,
+        email_address: Optional[str] = None,
         upn: Optional[str] = None,
         phone_number: Optional[str] = None,
     ) -> None: ...

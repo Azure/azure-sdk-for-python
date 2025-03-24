@@ -12,16 +12,28 @@ class KeyWrapAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     aes_128 = "A128KW"
     aes_192 = "A192KW"
     aes_256 = "A256KW"
+    # [Not recommended] Microsoft recommends using RSA_OAEP_256 or stronger algorithms for enhanced security.
+    # Microsoft does *not* recommend RSA_OAEP, which is included solely for backwards compatibility.
+    # RSA_OAEP utilizes SHA1, which has known collision problems.
     rsa_oaep = "RSA-OAEP"
     rsa_oaep_256 = "RSA-OAEP-256"
+    # [Not recommended] Microsoft recommends using RSA_OAEP_256 or stronger algorithms for enhanced security.
+    # Microsoft does *not* recommend RSA_1_5, which is included solely for backwards compatibility.
+    # Cryptographic standards no longer consider RSA with the PKCS#1 v1.5 padding scheme secure for encryption.
     rsa1_5 = "RSA1_5"
 
 
 class EncryptionAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Encryption algorithms"""
 
+    # [Not recommended] Microsoft recommends using RSA_OAEP_256 or stronger algorithms for enhanced security.
+    # Microsoft does *not* recommend RSA_OAEP, which is included solely for backwards compatibility.
+    # RSA_OAEP utilizes SHA1, which has known collision problems.
     rsa_oaep = "RSA-OAEP"
     rsa_oaep_256 = "RSA-OAEP-256"
+    # [Not recommended] Microsoft recommends using RSA_OAEP_256 or stronger algorithms for enhanced security.
+    # Microsoft does *not* recommend RSA_1_5, which is included solely for backwards compatibility.
+    # Cryptographic standards no longer consider RSA with the PKCS#1 v1.5 padding scheme secure for encryption.
     rsa1_5 = "RSA1_5"
     a128_gcm = "A128GCM"
     a192_gcm = "A192GCM"
@@ -32,6 +44,8 @@ class EncryptionAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     a128_cbcpad = "A128CBCPAD"
     a192_cbcpad = "A192CBCPAD"
     a256_cbcpad = "A256CBCPAD"
+    ckm_aes_key_wrap = "CKM_AES_KEY_WRAP"
+    ckm_aes_key_wrap_pad = "CKM_AES_KEY_WRAP_PAD"
 
 
 class SignatureAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -47,3 +61,6 @@ class SignatureAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     es384 = "ES384"  #: ECDSA using P-384 and SHA-384
     es512 = "ES512"  #: ECDSA using P-521 and SHA-512
     es256_k = "ES256K"  #: ECDSA using P-256K and SHA-256
+    hs256 = "HS256"  #: HMAC using SHA-256
+    hs384 = "HS384"  #: HMAC using SHA-384
+    hs512 = "HS512"  #: HMAC using SHA-512

@@ -122,7 +122,7 @@
 
 # ServiceLabel: %Communication - Phone Numbers
 # PRLabel: %Communication - Phone Numbers
-/sdk/communication/azure-communication-phonenumbers/                 @miguhern @whisper6284 @danielav7
+/sdk/communication/azure-communication-phonenumbers/                 @Arazan @whisper6284 @danielortega-msft @sofiar-msft
 
 # ServiceLabel: %Communication - Rooms
 # PRLabel: %Communication - Rooms

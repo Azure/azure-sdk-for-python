@@ -98,11 +98,15 @@ def _build_connection_policy(kwargs: Dict[str, Any]) -> ConnectionPolicy:
     # Retry config
     retry_options = policy.RetryOptions
     total_retries = kwargs.pop('retry_total', None)
-    retry_options._max_retry_attempt_count = total_retries or retry_options._max_retry_attempt_count
+    total_throttle_retries = kwargs.pop('retry_throttle_total', None)
+    retry_options._max_retry_attempt_count = \
+        total_throttle_retries or total_retries or retry_options._max_retry_attempt_count
     retry_options._fixed_retry_interval_in_milliseconds = \
         kwargs.pop('retry_fixed_interval', retry_options._fixed_retry_interval_in_milliseconds)
-    max_backoff = kwargs.pop('retry_backoff_max', policy.MaxBackoff)
-    retry_options._max_wait_time_in_seconds = max_backoff or retry_options._max_wait_time_in_seconds
+    max_backoff = kwargs.pop('retry_backoff_max', None)
+    max_throttle_backoff = kwargs.pop('retry_throttle_backoff_max', None)
+    retry_options._max_wait_time_in_seconds = \
+        max_throttle_backoff or max_backoff or retry_options._max_wait_time_in_seconds
     policy.RetryOptions = retry_options
     connection_retry = policy.ConnectionRetryConfiguration
     if not connection_retry:
@@ -111,7 +115,7 @@ def _build_connection_policy(kwargs: Dict[str, Any]) -> ConnectionPolicy:
             retry_connect=kwargs.pop('retry_connect', None),
             retry_read=kwargs.pop('retry_read', None),
             retry_status=kwargs.pop('retry_status', None),
-            retry_backoff_max=max_backoff,
+            retry_backoff_max=max_backoff or retry_options._max_wait_time_in_seconds,
             retry_mode=kwargs.pop('retry_mode', RetryMode.Fixed),
             retry_on_status_codes=kwargs.pop('retry_on_status_codes', []),
             retry_backoff_factor=kwargs.pop('retry_backoff_factor', 1),
@@ -203,6 +207,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         return self
 
     async def __aexit__(self, *args) -> None:
+        await self.client_connection._global_endpoint_manager.close() # pylint: disable=protected-access
         return await self.client_connection.pipeline_client.__aexit__(*args)
 
     async def close(self) -> None:

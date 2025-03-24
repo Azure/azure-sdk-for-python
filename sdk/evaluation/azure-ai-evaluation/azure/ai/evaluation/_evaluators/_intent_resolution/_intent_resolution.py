@@ -11,7 +11,9 @@ from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, Err
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._model_configurations import Conversation, Message
 from ..._common.utils import check_score_is_valid
+from azure.ai.evaluation._common._experimental import experimental
 
+@experimental
 class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
     Evaluates intent resolution for a given query and response or a multi-turn conversation, including reasoning.
@@ -54,9 +56,9 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     def __call__(
         self,
         *,
-        query            : Union[str, List[Message]],
-        response         : Union[str, List[Message]],
-        tool_definitions : Optional[Union[str, List[Message]]] = None,
+        query            : Union[str, List[dict]],
+        response         : Union[str, List[dict]],
+        tool_definitions : Optional[Union[dict, List[dict]]] = None,
     ) -> Dict[str, Union[str, float]]:
         """Evaluate intent resolution for a given query, response and optional tool definitions.
         The query and response can be either a string or a list of messages.
@@ -78,11 +80,11 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         :keyword query: The query to be evaluated which is either a string or a list of messages.
             The list of messages is the previous conversation history of the user and agent, including system messages and tool calls.
-        :paramtype query: Union[str, List[Message]]
+        :paramtype query: Union[str, List[dict]]
         :keyword response: The response to be evaluated, which is either a string or a list of messages (full agent response potentially including tool calls)
-        :paramtype response: Union[str, List[Message]]
+        :paramtype response: Union[str, List[dict]]
         :keyword tool_definitions: An optional list of messages containing the tool definitions the agent is aware of.
-        :paramtype tool_definitions: Optional[Union[str, List[Message]]]
+        :paramtype tool_definitions: Optional[Union[dict, List[dict]]]
         :return: A dictionary with the intent resolution evaluation
         :rtype: Dict[str, Union[str, float]]
         """

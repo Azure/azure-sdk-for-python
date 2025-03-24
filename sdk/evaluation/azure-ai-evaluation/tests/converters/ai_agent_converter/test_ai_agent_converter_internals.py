@@ -1,7 +1,8 @@
 import unittest
 
 from azure.ai.evaluation._converters._ai_services import AIAgentConverter
-from azure.ai.evaluation._converters._models import Message
+from azure.ai.evaluation._converters._models import Message, ToolCall
+from azure.ai.projects.models import RunStepFunctionToolCall
 
 
 class TestAIAgentConverter(unittest.TestCase):
@@ -37,6 +38,17 @@ class TestAIAgentConverter(unittest.TestCase):
             createdAt="2023-01-01T00:00:00Z"
         )
         self.assertFalse(AIAgentConverter._is_agent_tool_call(message))
+
+    # def test_tool_call_format(self):
+    #     tool_call = ToolCall(created=, completed=, details=RunStepFunctionToolCall())
+    #     break_tool_call_into_messages(tool_call: ToolCall, run_id: str)
+    #     # Test case where message is an agent tool call
+    #     message = Message(
+    #         role='assistant',
+    #         content=[{"type": "tool_call", "details": "some details"}],
+    #         createdAt="2023-01-01T00:00:00Z"
+    #     )
+    #     self.assertTrue(AIAgentConverter._is_agent_tool_call(message))
 
 if __name__ == '__main__':
     unittest.main()
