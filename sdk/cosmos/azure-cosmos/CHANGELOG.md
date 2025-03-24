@@ -7,6 +7,7 @@
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed too many health checks happening when skipping the recommended client startup. See [PR ]().
 
 #### Other Changes
 

@@ -116,6 +116,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                     return
                 try:
                     await self._refresh_endpoint_list_private(database_account, **kwargs)
+                    self.startup = False
                 except Exception as e:
                     raise e
 
