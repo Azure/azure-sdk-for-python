@@ -124,30 +124,7 @@ class TestRedTeamAgentInitialization:
         assert agent.generated_rai_client is not None
         assert isinstance(agent.attack_objectives, dict)
         assert agent.red_team_agent_info == {}
-        assert agent.max_parallel_tasks == 5  # Default value
         mock_initialize_pyrit.assert_called_once()
-        
-    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.RAIClient")
-    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.GeneratedRAIClient")
-    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.setup_logger")
-    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.initialize_pyrit")
-    def test_red_team_agent_initialization_with_custom_parallel_tasks(
-        self, mock_initialize_pyrit, mock_setup_logger, mock_generated_rai_client, 
-        mock_rai_client, mock_azure_ai_project, mock_credential
-    ):
-        """Test the initialization of RedTeamAgent with custom max_parallel_tasks."""
-        mock_rai_client.return_value = MagicMock()
-        mock_generated_rai_client.return_value = MagicMock()
-        mock_setup_logger.return_value = MagicMock()
-        
-        agent = RedTeamAgent(
-            azure_ai_project=mock_azure_ai_project, 
-            credential=mock_credential,
-            max_parallel_tasks=10
-        )
-        
-        # Verify that max_parallel_tasks is set correctly
-        assert agent.max_parallel_tasks == 10
 
 
 @pytest.mark.unittest

@@ -90,12 +90,11 @@ class RedTeamAgent():
     :param max_parallel_tasks: Maximum number of parallel tasks to run when scanning (default: 5)
     :type max_parallel_tasks: int
     """
-    def __init__(self, azure_ai_project, credential, timeout=120, output_dir=None, max_parallel_tasks=5):
+    def __init__(self, azure_ai_project, credential, timeout=120, output_dir=None):
         self.azure_ai_project = validate_azure_ai_project(azure_ai_project)
         self.credential = credential
         self.api_timeout = timeout
         self.output_dir = output_dir
-        self.max_parallel_tasks = max_parallel_tasks
         
         # Initialize logger without output directory (will be updated during scan)
         self.logger = setup_logger()
@@ -126,6 +125,7 @@ class RedTeamAgent():
 
         initialize_pyrit(memory_db_type=DUCK_DB)
         self.logger.debug("RedTeamAgent initialized successfully")
+        # TODO: add attack objective generator init here
 
     def _start_redteam_mlflow_run(
         self,
@@ -329,6 +329,7 @@ class RedTeamAgent():
         :return: A list of attack objective prompts
         :rtype: List[str]
         """
+        # TODO: is this necessary?
         if not risk_category:
             self.logger.warning("No risk category provided, using the first category from the generator")
             risk_category = attack_objective_generator.risk_categories[0] if attack_objective_generator.risk_categories else None
@@ -1347,7 +1348,7 @@ class RedTeamAgent():
             attack_objective_generator: Optional[AttackObjectiveGenerator] = None,
             application_scenario: Optional[str] = None,
             parallel_execution: bool = True,
-            max_parallel_tasks: Optional[int] = None,
+            max_parallel_tasks: int = 5,
             debug_mode: bool = False) -> RedTeamAgentOutput:
         """Run a red team scan against the target using the specified strategies.
         
@@ -1493,7 +1494,8 @@ class RedTeamAgent():
                     self.logger.warning("Tense strategy requires specific formatting in objectives and may not work correctly with custom attack objectives.")
                     print("⚠️ Warning: Tense strategy requires specific formatting in objectives and may not work correctly with custom attack objectives.")
                 
-                # Check for redundant converters
+                # Check for redundant converters 
+                # TODO: should this be in flattening logic?
                 converter = self._get_converter_for_strategy(strategy)
                 if converter is not None:
                     converter_type = type(converter).__name__ if not isinstance(converter, list) else ','.join([type(c).__name__ for c in converter])
@@ -1655,10 +1657,6 @@ class RedTeamAgent():
                         risk_category=risk_category
                     )
                 )
-            
-            # Use class max_parallel_tasks if not specified in method call
-            if max_parallel_tasks is None:
-                max_parallel_tasks = self.max_parallel_tasks
                 
             # Process tasks in parallel with optimized batching
             if parallel_execution and orchestrator_tasks:
