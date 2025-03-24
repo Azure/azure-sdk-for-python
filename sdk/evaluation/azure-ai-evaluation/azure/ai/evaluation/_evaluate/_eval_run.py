@@ -13,7 +13,7 @@ import uuid
 from typing import Any, Dict, List, Optional, Set, Type
 from urllib.parse import urlparse
 
-from azure.ai.evaluation.legacy._adapters.entities import Run
+from azure.ai.evaluation._legacy._adapters.entities import Run
 from typing_extensions import Self
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException

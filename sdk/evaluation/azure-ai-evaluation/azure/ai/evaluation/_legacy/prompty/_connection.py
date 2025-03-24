@@ -8,8 +8,8 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any, ClassVar, Mapping, Optional, Set, Union
 
-from azure.ai.evaluation.legacy.prompty._exceptions import MissingRequiredInputError
-from azure.ai.evaluation.legacy.prompty._utils import dataclass_from_dict
+from azure.ai.evaluation._legacy.prompty._exceptions import MissingRequiredInputError
+from azure.ai.evaluation._legacy.prompty._utils import dataclass_from_dict
 
 
 ENV_VAR_PATTERN = re.compile(r"^\$\{env:(.*)\}$")

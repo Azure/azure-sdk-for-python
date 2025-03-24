@@ -5,9 +5,9 @@ import os
 import types
 from typing import Optional, Type, Union
 
-from azure.ai.evaluation.legacy._adapters._constants import PF_FLOW_ENTRY_IN_TMP, PF_FLOW_META_LOAD_IN_SUBPROCESS
-from azure.ai.evaluation.legacy._adapters.utils import ClientUserAgentUtil
-from azure.ai.evaluation.legacy._adapters.tracing import inject_openai_api, recover_openai_api
+from azure.ai.evaluation._legacy._adapters._constants import PF_FLOW_ENTRY_IN_TMP, PF_FLOW_META_LOAD_IN_SUBPROCESS
+from azure.ai.evaluation._legacy._adapters.utils import ClientUserAgentUtil
+from azure.ai.evaluation._legacy._adapters.tracing import inject_openai_api, recover_openai_api
 
 from azure.ai.evaluation._constants import (
     OTEL_EXPORTER_OTLP_TRACES_TIMEOUT,

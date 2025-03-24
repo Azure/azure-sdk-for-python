@@ -13,16 +13,16 @@ from openai import AsyncAzureOpenAI, AsyncOpenAI, NotGiven, OpenAIError
 
 from azure.ai.evaluation._exceptions import ErrorTarget
 from azure.ai.evaluation._constants import DefaultOpenEncoding
-from azure.ai.evaluation.legacy.prompty._exceptions import (
+from azure.ai.evaluation._legacy.prompty._exceptions import (
     InvalidInputError,
     PromptyException,
     MissingRequiredInputError,
     NotSupportedError,
     WrappedOpenAIError,
 )
-from azure.ai.evaluation.legacy.prompty._connection import AzureOpenAIConnection, Connection, OpenAIConnection
-from azure.ai.evaluation.legacy.prompty._yaml_utils import load_yaml_string
-from azure.ai.evaluation.legacy.prompty._utils import (
+from azure.ai.evaluation._legacy.prompty._connection import AzureOpenAIConnection, Connection, OpenAIConnection
+from azure.ai.evaluation._legacy.prompty._yaml_utils import load_yaml_string
+from azure.ai.evaluation._legacy.prompty._utils import (
     dataclass_from_dict,
     PromptyModelConfiguration,
     OpenAIChatResponseType,
@@ -33,7 +33,7 @@ from azure.ai.evaluation.legacy.prompty._utils import (
     resolve_references,
     update_dict_recursively,
 )
-from azure.ai.evaluation.legacy._common._logging import get_logger
+from azure.ai.evaluation._legacy._common._logging import get_logger
 
 
 PROMPTY_EXTENSION: Final[str] = ".prompty"
@@ -72,7 +72,7 @@ class AsyncPrompty:
 
     .. code-block:: python
 
-        from azure.ai.evaluation.legacy.prompty import AsyncPrompty
+        from azure.ai.evaluation._legacy.prompty import AsyncPrompty
         prompty = Prompty(path="path/to/prompty.prompty")
         result = prompty(input_a=1, input_b=2)
 
@@ -94,7 +94,7 @@ class AsyncPrompty:
         result = prompty(input_a=1, input_b=2)
 
         # Override model config with configuration
-        from azure.ai.evaluation.legacy.prompty._connection import AzureOpenAIConnection
+        from azure.ai.evaluation._legacy.prompty._connection import AzureOpenAIConnection
         model_config = {
             "api": "chat",
             "configuration": AzureOpenAIModelConfiguration(
@@ -111,7 +111,7 @@ class AsyncPrompty:
         result = prompty(input_a=1, input_b=2)
 
         # Override model config with created connection
-        from azure.ai.evaluation.legacy.prompty._connection import AzureOpenAIConnection
+        from azure.ai.evaluation._legacy.prompty._connection import AzureOpenAIConnection
         model_config = {
             "api": "chat",
             "configuration": AzureOpenAIModelConfiguration(

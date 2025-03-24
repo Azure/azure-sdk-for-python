@@ -34,13 +34,13 @@ from openai.types.chat import ChatCompletion, ChatCompletionChunk
 from openai import APIConnectionError, APIStatusError, APITimeoutError, OpenAIError
 
 from azure.ai.evaluation._constants import DefaultOpenEncoding
-from azure.ai.evaluation.legacy.prompty._exceptions import (
+from azure.ai.evaluation._legacy.prompty._exceptions import (
     InvalidInputError,
     JinjaTemplateError,
     PromptyException,
 )
 
-from azure.ai.evaluation.legacy.prompty._yaml_utils import load_yaml
+from azure.ai.evaluation._legacy.prompty._yaml_utils import load_yaml
 
 
 # region: Resolving references

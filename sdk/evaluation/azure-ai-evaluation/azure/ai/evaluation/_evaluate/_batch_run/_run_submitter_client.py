@@ -11,9 +11,9 @@ from os import PathLike
 from typing import Any, Callable, Dict, Final, List, Mapping, Optional, Sequence, Union, cast
 
 from .batch_clients import BatchClientRun, HasAsyncCallable
-from ...legacy._batch_engine._run_submitter import RunSubmitter
-from ...legacy._batch_engine._config import BatchEngineConfig
-from ...legacy._batch_engine._run import Run
+from ..._legacy._batch_engine._run_submitter import RunSubmitter
+from ..._legacy._batch_engine._config import BatchEngineConfig
+from ..._legacy._batch_engine._run import Run
 
 
 LOGGER = logging.getLogger(__name__)

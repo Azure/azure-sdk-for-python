@@ -29,7 +29,7 @@ from devtools_testutils.fake_credentials import FakeTokenCredential
 from devtools_testutils.helpers import get_recording_id
 from devtools_testutils.proxy_testcase import transform_request
 from filelock import FileLock
-from azure.ai.evaluation.legacy._adapters.client import PFClient
+from azure.ai.evaluation._legacy._adapters.client import PFClient
 from pytest_mock import MockerFixture
 
 from azure.ai.evaluation import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
@@ -552,7 +552,7 @@ def pytest_sessionfinish() -> None:
             On Windows, this causes the cleanup step to fail with a permission issue
             since the OS disallows deletion of files in use by a process.
         """
-        from azure.ai.evaluation.legacy._adapters._service import stop_service
+        from azure.ai.evaluation._legacy._adapters._service import stop_service
 
         stop_service()
 

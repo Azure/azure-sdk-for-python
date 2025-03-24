@@ -15,11 +15,11 @@ try:
     from promptflow.tracing import _start_trace
 except ImportError:
     from concurrent.futures import ThreadPoolExecutor as _ThreadPoolExecutorWithContext
-    from azure.ai.evaluation.legacy._batch_engine._openai_injector import (
+    from azure.ai.evaluation._legacy._batch_engine._openai_injector import (
         inject_openai_api as _inject,
         recover_openai_api as _recover,
     )
-    from azure.ai.evaluation.legacy._batch_engine._trace import start_trace as _start_trace
+    from azure.ai.evaluation._legacy._batch_engine._trace import start_trace as _start_trace
 
 
 ThreadPoolExecutorWithContext: TypeAlias = _ThreadPoolExecutorWithContext
