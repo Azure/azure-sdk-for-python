@@ -53,7 +53,7 @@ class OpenTelemetrySchema:
 
     @classmethod
     def get_attribute_mappings(cls, version: OpenTelemetrySchemaVersion) -> Dict[str, str]:
-        return cls._ATTRIBUTE_MAPPINGS[version]
+        return cls._ATTRIBUTE_MAPPINGS.get(version, {})
 
     @classmethod
     def get_schema_url(cls, version: OpenTelemetrySchemaVersion) -> str:
