@@ -12,7 +12,7 @@ from azure.developer.loadtesting import LoadTestAdministrationClient, LoadTestRu
 
 class LoadTestingTest(AzureRecordedTestCase):
 
-    def create_administration_client(self, endpoint):
+    def create_administration_client(self, endpoint) -> LoadTestAdministrationClient:
         credential = self.get_credential(LoadTestAdministrationClient)
         return self.create_client_from_credential(
             LoadTestAdministrationClient,
@@ -20,7 +20,7 @@ class LoadTestingTest(AzureRecordedTestCase):
             endpoint=endpoint,
         )
 
-    def create_run_client(self, endpoint):
+    def create_run_client(self, endpoint) -> LoadTestRunClient:
         credential = self.get_credential(LoadTestRunClient)
         return self.create_client_from_credential(
             LoadTestRunClient,

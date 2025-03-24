@@ -9,7 +9,7 @@ from devtools_testutils import AzureRecordedTestCase
 
 
 class LoadTestingAsyncTest(AzureRecordedTestCase):
-    def create_administration_client(self, endpoint):
+    def create_administration_client(self, endpoint) -> LoadTestAdministrationClient:
         self.admin_credential = self.get_credential(LoadTestAdministrationClient, is_async=True)
         self.admin_client = self.create_client_from_credential(
             LoadTestAdministrationClient,
@@ -19,7 +19,7 @@ class LoadTestingAsyncTest(AzureRecordedTestCase):
         
         return self.admin_client
 
-    def create_run_client(self, endpoint):
+    def create_run_client(self, endpoint) -> LoadTestRunClient:
         self.run_credential = self.get_credential(LoadTestRunClient, is_async=True)
         self.run_client = self.create_client_from_credential(
             LoadTestRunClient,
