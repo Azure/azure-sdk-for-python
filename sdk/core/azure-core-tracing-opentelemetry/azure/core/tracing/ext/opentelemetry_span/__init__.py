@@ -27,7 +27,7 @@ except ImportError:
 
 from azure.core.tracing import SpanKind, HttpSpanMixin, Link as CoreLink  # type: ignore[attr-defined] # pylint: disable=no-name-in-module
 
-from ._schema import OpenTelemetrySchema
+from ._schema import OpenTelemetrySchema, OpenTelemetrySchemaVersion as _OpenTelemetrySchemaVersion
 from ._version import VERSION
 
 AttributeValue = Union[
@@ -47,6 +47,23 @@ __version__ = VERSION
 _SUPPRESSED_SPAN_FLAG = "SUPPRESSED_SPAN_FLAG"
 _LAST_UNSUPPRESSED_SPAN = "LAST_UNSUPPRESSED_SPAN"
 _ERROR_SPAN_ATTRIBUTE = "error.type"
+
+_OTEL_KIND_MAPPINGS = {
+    OpenTelemetrySpanKind.CLIENT: SpanKind.CLIENT,
+    OpenTelemetrySpanKind.CONSUMER: SpanKind.CONSUMER,
+    OpenTelemetrySpanKind.PRODUCER: SpanKind.PRODUCER,
+    OpenTelemetrySpanKind.SERVER: SpanKind.SERVER,
+    OpenTelemetrySpanKind.INTERNAL: SpanKind.INTERNAL,
+}
+
+_SPAN_KIND_MAPPINGS = {
+    SpanKind.CLIENT: OpenTelemetrySpanKind.CLIENT,
+    SpanKind.CONSUMER: OpenTelemetrySpanKind.CONSUMER,
+    SpanKind.PRODUCER: OpenTelemetrySpanKind.PRODUCER,
+    SpanKind.SERVER: OpenTelemetrySpanKind.SERVER,
+    SpanKind.INTERNAL: OpenTelemetrySpanKind.INTERNAL,
+    SpanKind.UNSPECIFIED: OpenTelemetrySpanKind.INTERNAL,
+}
 
 
 class _SuppressionContextManager(ContextManager):
@@ -96,6 +113,8 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
     :paramtype links: list[~azure.core.tracing.Link]
     :keyword context: Context headers of parent span that should be used when creating a new span.
     :paramtype context: Dict[str, str]
+    :keyword schema_version: The OpenTelemetry schema version to use for the span.
+    :paramtype schema_version: str
     """
 
     def __init__(
@@ -108,9 +127,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         **kwargs: Any,
     ) -> None:
         self._current_ctxt_manager: Optional[_SuppressionContextManager] = None
-
-        # TODO: Once we have additional supported versions, we should add a way to specify the version.
-        self._schema_version = OpenTelemetrySchema.get_latest_version()
+        self._schema_version = kwargs.pop("schema_version", _OpenTelemetrySchemaVersion.V1_23_1)
         self._attribute_mappings = OpenTelemetrySchema.get_attribute_mappings(self._schema_version)
 
         if span:
@@ -119,27 +136,8 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
 
         ## kind
         span_kind = kind
-        otel_kind = (
-            OpenTelemetrySpanKind.CLIENT
-            if span_kind == SpanKind.CLIENT
-            else (
-                OpenTelemetrySpanKind.PRODUCER
-                if span_kind == SpanKind.PRODUCER
-                else (
-                    OpenTelemetrySpanKind.SERVER
-                    if span_kind == SpanKind.SERVER
-                    else (
-                        OpenTelemetrySpanKind.CONSUMER
-                        if span_kind == SpanKind.CONSUMER
-                        else (
-                            OpenTelemetrySpanKind.INTERNAL
-                            if span_kind == SpanKind.INTERNAL
-                            else OpenTelemetrySpanKind.INTERNAL if span_kind == SpanKind.UNSPECIFIED else None
-                        )
-                    )
-                )
-            )
-        )
+        otel_kind = _SPAN_KIND_MAPPINGS.get(span_kind)
+
         if span_kind and otel_kind is None:
             raise ValueError("Kind {} is not supported in OpenTelemetry".format(span_kind))
 
@@ -210,23 +208,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
             value = self.span_instance.kind  # type: ignore[attr-defined]
         except AttributeError:
             return None
-        return (
-            SpanKind.CLIENT
-            if value == OpenTelemetrySpanKind.CLIENT
-            else (
-                SpanKind.PRODUCER
-                if value == OpenTelemetrySpanKind.PRODUCER
-                else (
-                    SpanKind.SERVER
-                    if value == OpenTelemetrySpanKind.SERVER
-                    else (
-                        SpanKind.CONSUMER
-                        if value == OpenTelemetrySpanKind.CONSUMER
-                        else SpanKind.INTERNAL if value == OpenTelemetrySpanKind.INTERNAL else None
-                    )
-                )
-            )
-        )
+        return _OTEL_KIND_MAPPINGS.get(value)
 
     @kind.setter
     def kind(self, value: SpanKind) -> None:
@@ -235,27 +217,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         :param value: The span kind to set.
         :type value: ~azure.core.tracing.SpanKind
         """
-        kind = (
-            OpenTelemetrySpanKind.CLIENT
-            if value == SpanKind.CLIENT
-            else (
-                OpenTelemetrySpanKind.PRODUCER
-                if value == SpanKind.PRODUCER
-                else (
-                    OpenTelemetrySpanKind.SERVER
-                    if value == SpanKind.SERVER
-                    else (
-                        OpenTelemetrySpanKind.CONSUMER
-                        if value == SpanKind.CONSUMER
-                        else (
-                            OpenTelemetrySpanKind.INTERNAL
-                            if value == SpanKind.INTERNAL
-                            else OpenTelemetrySpanKind.INTERNAL if value == SpanKind.UNSPECIFIED else None
-                        )
-                    )
-                )
-            )
-        )
+        kind = _SPAN_KIND_MAPPINGS.get(value)
         if kind is None:
             raise ValueError("Kind {} is not supported in OpenTelemetry".format(value))
         try:
@@ -302,8 +264,10 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         self.span_instance.end()
 
     def to_header(self) -> Dict[str, str]:
-        """
-        Returns a dictionary with the header labels and values.
+        """Returns a dictionary with the context header labels and values.
+
+        These are generally the W3C Trace Context headers (i.e. "traceparent" and "tracestate").
+
         :return: A key value pair dictionary
         :rtype: dict[str, str]
         """
@@ -312,8 +276,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         return temp_headers
 
     def add_attribute(self, key: str, value: Union[str, int]) -> None:
-        """
-        Add attribute (key value pair) to the current span.
+        """Add attribute (key value pair) to the current span.
 
         :param key: The key of the key value pair
         :type key: str
