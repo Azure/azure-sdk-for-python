@@ -31,7 +31,7 @@ from azure.storage.filedatalake.aio import (
 
 async def directory_sample(filesystem_client):
     # create a parent directory
-    dir_name = "testdir"
+    dir_name = "testdirasync"
     print("Creating a directory named '{}'.".format(dir_name))
 
     # Create directory from file system client
@@ -51,7 +51,7 @@ async def directory_sample(filesystem_client):
 
     # rename the directory
     # [START rename_directory]
-    new_dir_name = "testdir2"
+    new_dir_name = "testdir2async"
     print("Renaming the directory named '{}' to '{}'.".format(dir_name, new_dir_name))
     new_directory = await directory_client\
         .rename_directory(new_name=directory_client.file_system_name + '/' + new_dir_name)
