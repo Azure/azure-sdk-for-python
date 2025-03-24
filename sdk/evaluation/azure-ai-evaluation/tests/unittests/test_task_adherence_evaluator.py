@@ -65,13 +65,18 @@ class TestTaskAdherenceEvaluator:
         assert "The response partially aligns with the query but has significant gaps in detail, making it barely adherent." in result[
             "task_adherence_reason"
         ]
-    
 
     def test_task_adherence_evaluator_missing_query(self, mock_model_config):
         task_adherence = TaskAdherenceEvaluator(model_config=mock_model_config)
         task_adherence._flow = MagicMock(return_value=task_adherence_mock())
         with pytest.raises(EvaluationException) as exc_info:
             task_adherence(response="The weather is sunny.")
-        print(exc_info)
         assert ("Either 'conversation' or individual inputs must be provided." in str(exc_info.value))
             
+    def test_task_adherence_evaluator_missing_response(self, mock_model_config):
+        task_adherence = TaskAdherenceEvaluator(model_config=mock_model_config)
+        task_adherence._flow = MagicMock(return_value=task_adherence_mock())
+        with pytest.raises(EvaluationException) as exc_info:
+            task_adherence(query="How is the weather today?")
+        assert ("Either 'conversation' or individual inputs must be provided." in str(exc_info.value))
+        
