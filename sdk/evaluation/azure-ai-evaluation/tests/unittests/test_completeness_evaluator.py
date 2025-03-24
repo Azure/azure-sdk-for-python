@@ -42,10 +42,10 @@ class TestCompletenessEvaluator:
         assert result is not None
         assert ("completeness" in result and "completeness_result" in result and "completeness_threshold" in result
                 and "completeness_reason" in result)
-        assert result["completeness"] == 1
-        assert result["completeness_result"] == "fail"
-        assert result["completeness_threshold"] == CompletenessEvaluator.DEFAULT_COMPLETENESS_THRESHOLD
-        assert "The response is fully incomplete " in result["completeness_reason"]
+        assert result["response_completeness"] == 1
+        assert result["response_completeness_result"] == "fail"
+        assert result["response_completeness_threshold"] == CompletenessEvaluator.DEFAULT_COMPLETENESS_THRESHOLD
+        assert "The response is fully incomplete " in result["response_completeness_reason"]
 
     def test_evaluate_completeness_valid2(self, mock_model_config):
         completeness_evaluator = CompletenessEvaluator(model_config=mock_model_config)
@@ -59,10 +59,10 @@ class TestCompletenessEvaluator:
         assert result is not None
         assert ("completeness" in result and "completeness_result" in result and "completeness_threshold" in result
                 and "completeness_reason" in result)
-        assert result["completeness"] == 5
-        assert result["completeness_result"] == "pass"
-        assert result["completeness_threshold"] == CompletenessEvaluator.DEFAULT_COMPLETENESS_THRESHOLD
-        assert "The response perfectly matches " in result["completeness_reason"]
+        assert result["response_completeness"] == 5
+        assert result["response_completeness_result"] == "pass"
+        assert result["response_completeness_threshold"] == CompletenessEvaluator.DEFAULT_COMPLETENESS_THRESHOLD
+        assert "The response perfectly matches " in result["response_completeness_reason"]
 
     def test_evaluate_completeness_missing_ground_truth(self, mock_model_config):
         completeness_evaluator = CompletenessEvaluator(model_config=mock_model_config)

@@ -48,7 +48,7 @@ class CompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     # Constants must be defined within eval's directory to be save/loadable
 
     _PROMPTY_FILE = "completeness.prompty"
-    _RESULT_KEY = "completeness"
+    _RESULT_KEY = "response_completeness"
 
     id = "completeness"
 
