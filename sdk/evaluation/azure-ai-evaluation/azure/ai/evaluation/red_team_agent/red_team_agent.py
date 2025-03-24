@@ -23,7 +23,7 @@ from tqdm import tqdm
 from azure.ai.evaluation._evaluate._eval_run import EvalRun
 from azure.ai.evaluation._evaluate._utils import _trace_destination_from_project_scope
 from azure.ai.evaluation._model_configurations import AzureAIProject
-from azure.ai.evaluation._constants import EvaluationRunProperties, DefaultOpenEncoding
+from azure.ai.evaluation._constants import EvaluationRunProperties, DefaultOpenEncoding, EVALUATION_PASS_FAIL_MAPPING
 from azure.ai.evaluation._evaluate._utils import _get_ai_studio_url
 from azure.ai.evaluation._evaluate._utils import extract_workspace_triad_from_trace_provider
 from azure.ai.evaluation._version import VERSION
@@ -31,17 +31,13 @@ from azure.ai.evaluation._azure._clients import LiteMLClient
 from azure.ai.evaluation._evaluate._utils import _write_output
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._model_configurations import  EvaluationResult
-from azure.ai.evaluation.simulator._model_tools import ManagedIdentityAPITokenManager, TokenScope, RAIClient, AdversarialTemplateHandler
+from azure.ai.evaluation.simulator._model_tools import ManagedIdentityAPITokenManager, TokenScope, RAIClient
 from azure.ai.evaluation.simulator._model_tools._generated_rai_client import GeneratedRAIClient
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._common.math import list_mean_nan_safe, is_none_or_nan
 from azure.ai.evaluation._common.utils import validate_azure_ai_project
-# Update direct imports from azure.ai.evaluation for evaluators
-from azure.ai.evaluation import ViolenceEvaluator, HateUnfairnessEvaluator, SexualEvaluator, SelfHarmEvaluator
 from azure.ai.evaluation import evaluate
-from azure.ai.evaluation.simulator._utils import JsonLineList
-from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 
 # Azure Core imports
 from azure.core.credentials import TokenCredential
@@ -91,8 +87,6 @@ class RedTeamAgent():
     :type application_scenario: Optional[str]
     :param custom_attack_seed_prompts: Path to a JSON file containing custom attack seed prompts (can be absolute or relative path)
     :type custom_attack_seed_prompts: Optional[str]
-    :param timeout: The timeout in seconds for API calls (default: 120)
-    :type timeout: int
     :param output_dir: Directory to store all output files. If None, files are created in the current working directory.
     :type output_dir: Optional[str]
     :param max_parallel_tasks: Maximum number of parallel tasks to run when scanning (default: 5)
@@ -105,12 +99,10 @@ class RedTeamAgent():
         num_objectives: int = 10,
         application_scenario: Optional[str] = None,
         custom_attack_seed_prompts: Optional[str] = None,
-        timeout=120, 
         output_dir=None):
 
         self.azure_ai_project = validate_azure_ai_project(azure_ai_project)
         self.credential = credential
-        self.api_timeout = timeout
         self.output_dir = output_dir
         
         # Initialize logger without output directory (will be updated during scan)
@@ -589,7 +581,8 @@ class RedTeamAgent():
         all_prompts: List[str], 
         converter: Union[PromptConverter, List[PromptConverter]], 
         strategy_name: str = "unknown", 
-        risk_category: str = "unknown"
+        risk_category: str = "unknown",
+        timeout: int = 120
     ) -> Orchestrator:
         """Send prompts via the PromptSendingOrchestrator with optimized performance.
         
@@ -603,6 +596,8 @@ class RedTeamAgent():
         :type strategy_name: str
         :param risk_category: Name of the risk category being evaluated (for logging)
         :type risk_category: str
+        :param timeout: The timeout in seconds for API calls
+        :type timeout: int
         :return: The orchestrator instance with processed results
         :rtype: Orchestrator
         """
@@ -657,7 +652,7 @@ class RedTeamAgent():
                         # Use wait_for to implement a timeout
                         await asyncio.wait_for(
                             orchestrator.send_prompts_async(prompt_list=batch),
-                            timeout=INTERNAL_TASK_TIMEOUT  # 2 minute timeout per batch
+                            timeout=timeout  # Use provided timeout
                         )
                         batch_duration = (datetime.now() - batch_start_time).total_seconds()
                         self.logger.debug(f"Successfully processed batch {batch_idx+1} for {strategy_name}/{risk_category} in {batch_duration:.2f} seconds")
@@ -667,7 +662,7 @@ class RedTeamAgent():
                             print(f"Strategy {strategy_name}, Risk {risk_category}: Processed batch {batch_idx+1}/{len(batches)}")
                             
                     except asyncio.TimeoutError:
-                        self.logger.warning(f"Batch {batch_idx+1} for {strategy_name}/{risk_category} timed out after {INTERNAL_TASK_TIMEOUT} seconds, continuing with partial results")
+                        self.logger.warning(f"Batch {batch_idx+1} for {strategy_name}/{risk_category} timed out after {timeout} seconds, continuing with partial results")
                         print(f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category}, Batch {batch_idx+1}")
                         # Set task status to TIMEOUT
                         batch_task_key = f"{strategy_name}_{risk_category}_batch_{batch_idx+1}"
@@ -686,12 +681,12 @@ class RedTeamAgent():
                 try:
                     await asyncio.wait_for(
                         orchestrator.send_prompts_async(prompt_list=all_prompts),
-                        timeout=INTERNAL_TASK_TIMEOUT  # 2 minute timeout 
+                        timeout=timeout  # Use provided timeout
                     )
                     batch_duration = (datetime.now() - batch_start_time).total_seconds()
                     self.logger.debug(f"Successfully processed single batch for {strategy_name}/{risk_category} in {batch_duration:.2f} seconds")
                 except asyncio.TimeoutError:
-                    self.logger.warning(f"Prompt processing for {strategy_name}/{risk_category} timed out after {INTERNAL_TASK_TIMEOUT} seconds, continuing with partial results")
+                    self.logger.warning(f"Prompt processing for {strategy_name}/{risk_category} timed out after {timeout} seconds, continuing with partial results")
                     print(f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category}")
                     # Set task status to TIMEOUT
                     single_batch_task_key = f"{strategy_name}_{risk_category}_single_batch"
@@ -1264,6 +1259,7 @@ class RedTeamAgent():
             scan_name: Optional[str] = None,
             data_only: bool = False, 
             output_path: Optional[Union[str, os.PathLike]] = None,
+            timeout: int = 120,
         ) -> Optional[EvaluationResult]:
         """Process a red team scan with the given orchestrator, converter, and prompts.
         
@@ -1277,6 +1273,7 @@ class RedTeamAgent():
         :param scan_name: Optional name for the evaluation
         :param data_only: Whether to return only data without evaluation
         :param output_path: Optional path for output
+        :param timeout: The timeout in seconds for API calls
         """
         strategy_name = self._get_strategy_name(strategy)
         task_key = f"{strategy_name}_{risk_category.value}_attack"
@@ -1290,7 +1287,7 @@ class RedTeamAgent():
             converter = self._get_converter_for_strategy(strategy)
             try:
                 self.logger.debug(f"Calling orchestrator for {strategy_name} strategy")
-                orchestrator = await call_orchestrator(self.chat_target, all_prompts, converter, strategy_name, risk_category.value)
+                orchestrator = await call_orchestrator(self.chat_target, all_prompts, converter, strategy_name, risk_category.value, timeout)
             except PyritException as e:
                 log_error(self.logger, f"Error calling orchestrator for {strategy_name} strategy", e)
                 print(f"❌ Orchestrator error for {strategy_name}/{risk_category.value}: {str(e)}")
@@ -1368,7 +1365,8 @@ class RedTeamAgent():
             application_scenario: Optional[str] = None,
             parallel_execution: bool = True,
             max_parallel_tasks: int = 5,
-            debug_mode: bool = False) -> RedTeamAgentOutput:
+            debug_mode: bool = False,
+            timeout: int = 120) -> RedTeamAgentOutput:
         """Run a red team scan against the target using the specified strategies.
         
         :param target: The target model or function to scan
@@ -1387,10 +1385,12 @@ class RedTeamAgent():
         :type application_scenario: Optional[str]
         :param parallel_execution: Whether to execute orchestrator tasks in parallel
         :type parallel_execution: bool
-        :param max_parallel_tasks: Maximum number of parallel orchestrator tasks to run (default: use the value set in initialization)
-        :type max_parallel_tasks: Optional[int]
+        :param max_parallel_tasks: Maximum number of parallel orchestrator tasks to run (default: 5)
+        :type max_parallel_tasks: int
         :param debug_mode: Whether to run in debug mode (more verbose output)
         :type debug_mode: bool
+        :param timeout: The timeout in seconds for API calls (default: 120)
+        :type timeout: int
         :return: The output from the red team scan
         :rtype: RedTeamAgentOutput
         """
@@ -1453,6 +1453,7 @@ class RedTeamAgent():
         self.logger.info(f"Scan output directory: {self.scan_output_dir}")
         self.logger.debug(f"Attack strategies: {attack_strategies}")
         self.logger.debug(f"data_only: {data_only}, output_path: {output_path}")
+        self.logger.debug(f"Timeout: {timeout} seconds")
         
         # Clear, minimal output for start of scan
         print(f"🚀 STARTING RED TEAM SCAN: {scan_name}")
@@ -1669,7 +1670,8 @@ class RedTeamAgent():
                         scan_name=scan_name,
                         data_only=data_only,
                         output_path=output_path,
-                        risk_category=risk_category
+                        risk_category=risk_category,
+                        timeout=timeout
                     )
                 )
                 
@@ -1689,10 +1691,10 @@ class RedTeamAgent():
                         # Add timeout to each batch
                         await asyncio.wait_for(
                             asyncio.gather(*batch),
-                            timeout=INTERNAL_TASK_TIMEOUT * 2  # Double timeout for batches
+                            timeout=timeout * 2  # Double timeout for batches
                         )
                     except asyncio.TimeoutError:
-                        self.logger.warning(f"Batch {i//max_parallel_tasks+1} timed out after {INTERNAL_TASK_TIMEOUT*2} seconds")
+                        self.logger.warning(f"Batch {i//max_parallel_tasks+1} timed out after {timeout*2} seconds")
                         print(f"⚠️ Batch {i//max_parallel_tasks+1} timed out, continuing with next batch")
                         # Set task status to TIMEOUT
                         batch_task_key = f"scan_batch_{i//max_parallel_tasks+1}"
@@ -1712,9 +1714,9 @@ class RedTeamAgent():
                     
                     try:
                         # Add timeout to each task
-                        await asyncio.wait_for(task, timeout=INTERNAL_TASK_TIMEOUT)
+                        await asyncio.wait_for(task, timeout=timeout)
                     except asyncio.TimeoutError:
-                        self.logger.warning(f"Task {i+1}/{len(orchestrator_tasks)} timed out after {INTERNAL_TASK_TIMEOUT} seconds")
+                        self.logger.warning(f"Task {i+1}/{len(orchestrator_tasks)} timed out after {timeout} seconds")
                         print(f"⚠️ Task {i+1} timed out, continuing with next task")
                         # Set task status to TIMEOUT
                         task_key = f"scan_task_{i+1}"

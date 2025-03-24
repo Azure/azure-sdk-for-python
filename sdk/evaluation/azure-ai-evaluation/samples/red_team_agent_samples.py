@@ -49,6 +49,11 @@ class RedTeamAgentSamples(object):
         }
 
     async def basic_callback_example(self):
+        """
+        This example demonstrates the most basic usage of the Red Team Agent with a
+        simple callback function. It shows how to initialize the agent with specific risk
+        categories and then use it to scan a target function with basic attack strategies.
+        """
         # [START red_team_agent_basic_callback]
         from azure.ai.evaluation.red_team_agent import (
             RedTeamAgent, 
@@ -84,6 +89,11 @@ class RedTeamAgentSamples(object):
         return results
 
     async def advanced_callback_example(self):
+        """
+        This example demonstrates a more advanced usage with a complex callback function
+        that handles conversation state and formatting. It shows how to use the Red Team Agent
+        with an asynchronous callback that processes message history in a chat format.
+        """
         # [START red_team_agent_advanced_callback]
         from azure.ai.evaluation.red_team_agent import (
             RedTeamAgent, 
@@ -143,6 +153,11 @@ class RedTeamAgentSamples(object):
         return results
 
     async def direct_model_testing_example(self):
+        """
+        This example demonstrates how to test an Azure OpenAI model directly using the
+        Red Team Agent. Rather than providing a callback function, it shows how to 
+        set up and pass configuration for a model to be tested directly.
+        """
         # [START red_team_agent_direct_model]
         from azure.ai.evaluation.red_team_agent import (
             RedTeamAgent, 
@@ -184,6 +199,11 @@ class RedTeamAgentSamples(object):
         return model_results
 
     async def strategy_complexity_levels_example(self):
+        """
+        This example demonstrates how to use different complexity levels of attack strategies.
+        It shows how to use the predefined complexity groups (EASY, MODERATE, DIFFICULT) to
+        test a target with attacks of varying sophistication.
+        """
         # [START red_team_agent_complexity_levels]
         from azure.ai.evaluation.red_team_agent import (
             RedTeamAgent, 
@@ -222,6 +242,11 @@ class RedTeamAgentSamples(object):
         return results
 
     async def specific_attack_strategies_example(self):
+        """
+        This example demonstrates how to use specific attack strategies rather than
+        complexity groups. It shows how to select individual attack techniques to test
+        a target's resilience against particular evasion methods.
+        """
         # [START red_team_agent_specific_strategies]
         from azure.ai.evaluation.red_team_agent import (
             RedTeamAgent, 
@@ -267,6 +292,11 @@ class RedTeamAgentSamples(object):
         return results
 
     async def data_only_mode_example(self):
+        """
+        This example demonstrates the data-only mode which collects conversation data
+        without performing evaluations. This is useful for gathering attack attempts and
+        responses for later analysis or when you want to implement your own evaluation.
+        """
         # [START red_team_agent_data_only]
         from azure.ai.evaluation.red_team_agent import (
             RedTeamAgent, 
@@ -309,6 +339,11 @@ class RedTeamAgentSamples(object):
         return results
 
     async def output_path_example(self):
+        """
+        This example demonstrates how to specify a custom output path for saving scan results.
+        It shows how to create a timestamped directory and save the results to a specific
+        location for later analysis.
+        """
         # [START red_team_agent_output_path]
         import os
         from datetime import datetime
@@ -357,6 +392,11 @@ class RedTeamAgentSamples(object):
         return results
 
     async def custom_application_example(self):
+        """
+        This example demonstrates testing a more complex custom application with built-in
+        content moderation capabilities. It shows how to create and test a more sophisticated
+        target with its own guardrails and conversation tracking.
+        """
         # [START red_team_agent_custom_application]
         from azure.ai.evaluation.red_team_agent import (
             RedTeamAgent, 
@@ -431,6 +471,11 @@ class RedTeamAgentSamples(object):
         return results
 
     async def pyrit_prompt_chat_target_example(self):
+        """
+        This example demonstrates how to use the Red Team Agent with a PyRIT PromptChatTarget.
+        It shows integration with the PyRIT library for testing Azure OpenAI models using
+        the more sophisticated target interfaces provided by PyRIT.
+        """
         # [START red_team_agent_pyrit_target]
         from azure.ai.evaluation.red_team_agent import (
             RedTeamAgent, 

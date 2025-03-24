@@ -8,6 +8,7 @@ import math
 from datetime import datetime
 from typing import Dict, List, Union, Any, Optional, cast
 from ..attack_strategy import AttackStrategy
+from ..red_team_agent_result import RedTeamAgentResult
 from pyrit.models import ChatMessage
 
 
@@ -107,7 +108,7 @@ def get_attack_success(result: str) -> bool:
     return result == EVALUATION_PASS_FAIL_MAPPING.get(False, "true")
 
 
-def format_scorecard(redteam_result: Dict[str, Any]) -> str:
+def format_scorecard(redteam_result: RedTeamAgentResult) -> str:
     """Format the RedTeamAgentResult into a human-readable scorecard.
     
     The scorecard presents a summary of attack success rates across different risk categories
