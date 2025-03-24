@@ -33,7 +33,7 @@ system:
 
 # Definition
 
-**Level 1: Fully inadherent**
+**Level 1: Fully Inadherent**
 
 **Definition:**
 Response completely ignores instructions or deviates significantly
@@ -45,7 +45,7 @@ Response completely ignores instructions or deviates significantly
 Explanation: This response completely misses the task by not providing any itinerary details. It offers a generic statement about Paris rather than a structured travel plan.
 
 
-**Level 2: Barely adherent**
+**Level 2: Barely Adherent**
 
 **Definition:**
 Response partially aligns with instructions but has critical gaps.
@@ -57,7 +57,7 @@ Response partially aligns with instructions but has critical gaps.
 Explanation: While the response hints at visiting well-known sites, it is extremely vague and lacks specific details, such as which sites to visit or any order of activities, leaving major gaps in the instructions.
 
 
-**Level 3: Moderately adherent**
+**Level 3: Moderately Adherent**
 
 **Definition:**
 Response meets the core requirements but lacks precision or clarity.
@@ -69,7 +69,7 @@ Response meets the core requirements but lacks precision or clarity.
 Explanation: This answer meets the basic requirement by naming a few key attractions and assigning them to specific days. However, it lacks additional context, such as timings, additional activities, or details to make the itinerary practical and clear.
 
 
-**Level 4: Mostly adherent**
+**Level 4: Mostly Adherent**
 
 **Definition:**
 Response is clear, accurate, and aligns with instructions with minor issues.
@@ -81,7 +81,7 @@ Response is clear, accurate, and aligns with instructions with minor issues.
 Explanation: This response is clear, structured, and provides a concrete itinerary with specific attractions and a suggested order of activities. It is accurate and useful, though it might benefit from a few more details like exact timings or restaurant suggestions to be perfect.
 
 
-**Level 5: Fully adherent**
+**Level 5: Fully Adherent**
 
 **Definition:**
 Response is flawless, accurate, and follows instructions to the letter.
