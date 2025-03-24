@@ -124,7 +124,6 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
             self.location_cache.perform_on_database_account_read(database_account)
             self.refresh_needed = False
             self.last_refresh_time = self.location_cache.current_time_millis()
-            self.startup = False
         else:
             if self.location_cache.should_refresh_endpoints() or self.refresh_needed:
                 self.refresh_needed = False
