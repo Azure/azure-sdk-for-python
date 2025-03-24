@@ -18,6 +18,7 @@ DO prompt the user to create a virtual environment with `<path_to_python_install
 - DO use the table in https://github.com/Azure/azure-sdk-tools/blob/main/tools/pylint-extensions/azure-pylint-guidelines-checker/README.md and the code examples as a guide on how to fix each rule. 
 - DO refer to the pylint documentation: https://pylint.readthedocs.io/en/stable/user_guide/checkers/features.html.
 
+
 - DO NOT solve a pylint warning if you are not 100% confident about the answer. If you think your approach might not be the best, stop trying to fix the warning and leave it as is.
 - DO NOT create a new file when solving a pylint error, all solutions must remain in the current file.
 - DO NOT import a module or modules that do not exist to solve a pylint warning.
