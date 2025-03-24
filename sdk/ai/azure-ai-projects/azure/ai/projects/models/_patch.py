@@ -1386,6 +1386,31 @@ class BaseAsyncAgentEventHandler(AsyncIterator[T]):
 
         return await self._process_event(event_bytes.decode("utf-8"))
 
+    async def __anext_no_process_event__(self) -> bytes:
+        self.buffer = b"" if self.buffer is None else self.buffer
+        if self.response_iterator is None:
+            raise ValueError("The response handler was not initialized.")
+
+        if not b"\n\n" in self.buffer:
+            async for chunk in self.response_iterator:
+                self.buffer += chunk
+                if b"\n\n" in self.buffer:
+                    break
+
+        if self.buffer == b"":
+            raise StopAsyncIteration()
+
+        event_bytes = b""
+        if b"\n\n" in self.buffer:
+            event_end_index = self.buffer.index(b"\n\n")
+            event_bytes = self.buffer[:event_end_index]
+            self.buffer = self.buffer[event_end_index:].lstrip()
+        else:
+            event_bytes = self.buffer
+            self.buffer = b""
+
+        return event_bytes
+
     async def _process_event(self, event_data_str: str) -> T:
         raise NotImplementedError("This method needs to be implemented.")
 
@@ -1442,6 +1467,31 @@ class BaseAgentEventHandler(Iterator[T]):
             self.buffer = b""
 
         return self._process_event(event_bytes.decode("utf-8"))
+
+    def __next_no_process_event__(self) -> bytes:
+        self.buffer = b"" if self.buffer is None else self.buffer
+        if self.response_iterator is None:
+            raise ValueError("The response handler was not initialized.")
+
+        if not b"\n\n" in self.buffer:
+            for chunk in self.response_iterator:
+                self.buffer += chunk
+                if b"\n\n" in self.buffer:
+                    break
+
+        if self.buffer == b"":
+            raise StopIteration()
+
+        event_bytes = b""
+        if b"\n\n" in self.buffer:
+            event_end_index = self.buffer.index(b"\n\n")
+            event_bytes = self.buffer[:event_end_index]
+            self.buffer = self.buffer[event_end_index:].lstrip()
+        else:
+            event_bytes = self.buffer
+            self.buffer = b""
+
+        return event_bytes
 
     def _process_event(self, event_data_str: str) -> T:
         raise NotImplementedError("This method needs to be implemented.")

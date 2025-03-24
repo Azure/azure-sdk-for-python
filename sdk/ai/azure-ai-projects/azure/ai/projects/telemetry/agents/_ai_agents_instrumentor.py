@@ -1701,6 +1701,20 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
         self.last_message: Optional[ThreadMessage] = None
         self.instrumentor = instrumentor
 
+    def initialize(
+        self,
+        response_iterator,
+        submit_tool_outputs,
+    ) -> None:
+        self.submit_tool_outputs = submit_tool_outputs
+        if self.inner_handler:
+            self.inner_handler.initialize(response_iterator=response_iterator, submit_tool_outputs=submit_tool_outputs)
+
+    def __next__(self) -> Any:
+        if self.inner_handler:
+            event_bytes = self.inner_handler.__next_no_process_event__()
+            return self._process_event(event_bytes.decode("utf-8"))
+
     # pylint: disable=R1710
     def on_message_delta(self, delta: "MessageDeltaChunk") -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
@@ -1791,6 +1805,20 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
         self.last_run: Optional[ThreadRun] = None
         self.last_message: Optional[ThreadMessage] = None
         self.instrumentor = instrumentor
+
+    def initialize(
+        self,
+        response_iterator,
+        submit_tool_outputs,
+    ) -> None:
+        self.submit_tool_outputs = submit_tool_outputs
+        if self.inner_handler:
+            self.inner_handler.initialize(response_iterator=response_iterator, submit_tool_outputs=submit_tool_outputs)
+
+    async def __anext__(self) -> Any:
+        if self.inner_handler:
+            event_bytes = await self.inner_handler.__anext_no_process_event__()
+            return await self._process_event(event_bytes.decode("utf-8"))
 
     # pylint: disable=R1710
     async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:  # type: ignore[func-returns-value]
