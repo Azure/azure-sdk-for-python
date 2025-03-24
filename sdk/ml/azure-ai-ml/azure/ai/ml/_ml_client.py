@@ -21,6 +21,7 @@ from azure.ai.ml._azure_environments import (
     _set_cloud,
 )
 from azure.ai.ml._file_utils.file_utils import traverse_up_path_and_find_file
+from azure.ai.ml._restclient.model_dataplane import AzureMachineLearningWorkspaces as ServiceClientModelDataPlane
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient092020DataplanePreview,
 )
@@ -503,6 +504,17 @@ class MLClient:
             **kwargs,
         )
 
+        self._service_client_model_dataplane = ServiceClientModelDataPlane(
+            credential=self._credential,
+            subscription_id=(
+                self._ws_operation_scope._subscription_id
+                if registry_reference
+                else self._operation_scope._subscription_id
+            ),
+            base_url=base_url,
+            **kwargs,
+        )
+
         self._workspaces = WorkspaceOperations(
             self._ws_operation_scope if registry_reference else self._operation_scope,
             self._service_client_10_2024_preview,
@@ -577,6 +589,7 @@ class MLClient:
                 else self._service_client_08_2023_preview
             ),
             self._datastores,
+            self._service_client_model_dataplane,
             self._operation_container,
             requests_pipeline=self._requests_pipeline,
             control_plane_client=self._service_client_08_2023_preview,

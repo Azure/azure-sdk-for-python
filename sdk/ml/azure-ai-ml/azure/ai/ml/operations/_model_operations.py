@@ -22,13 +22,11 @@ from azure.ai.ml._artifacts._constants import (
     CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
 )
 from azure.ai.ml._exception_helper import log_and_raise_error
+
+from azure.ai.ml._restclient.model_dataplane import AzureMachineLearningWorkspaces as ServiceClientModelDataPlane
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
-from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.operations._model_versions_operations import (
-    build_create_or_update_request_initial,
-)
-from azure.ai.ml._restclient.v2021_10_01_dataplanepreview._vendor import _convert_request
 
 from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
 from azure.ai.ml._restclient.v2023_08_01_preview.models import ListViewType, ModelVersion
@@ -70,16 +68,7 @@ from azure.ai.ml.exceptions import (
     ValidationException,
 )
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
-from azure.core.exceptions import (
-    ClientAuthenticationError,
-    HttpResponseError,
-    ResourceExistsError,
-    ResourceNotFoundError,
-    map_error,
-)
-from azure.core.polling import LROPoller, NoPolling
-from azure.mgmt.core.exceptions import ARMErrorFormat
-from azure.mgmt.core.polling.arm_polling import ARMPolling
+from azure.core.exceptions import ResourceNotFoundError
 
 from ._operation_orchestrator import OperationOrchestrator
 
@@ -119,6 +108,7 @@ class ModelOperations(_ScopeDependentOperations):
         operation_config: OperationConfig,
         service_client: Union[ServiceClient082023Preview, ServiceClient102021Dataplane],
         datastore_operations: DatastoreOperations,
+        service_client_model_dataplane: ServiceClientModelDataPlane = None,
         all_operations: Optional[OperationsContainer] = None,
         **kwargs,
     ):
@@ -126,6 +116,8 @@ class ModelOperations(_ScopeDependentOperations):
         ops_logger.update_filter()
         self._model_versions_operation = service_client.model_versions
         self._model_container_operation = service_client.model_containers
+        if service_client_model_dataplane is not None:
+            self._model_extensive_operation = service_client_model_dataplane.extensive_model
         self._service_client = service_client
         self._datastore_operation = datastore_operations
         self._all_operations = all_operations
@@ -313,7 +305,8 @@ class ModelOperations(_ScopeDependentOperations):
         # if continuation token is None and system_metadata attribute found
         # we need to send the system_metadata values in the request
         return (
-            self._begin_create_or_update_model_with_system_metadata(
+            self._model_extensive_operation.begin_create_or_update_model_with_system_metadata(
+                subscription_id=self._operation_scope._subscription_id,
                 name=str(name),
                 version=str(version),
                 body=model_version_resource,
@@ -323,6 +316,7 @@ class ModelOperations(_ScopeDependentOperations):
             if self._registry_name
             and cont_token is None
             and hasattr(model_version_resource.properties, "system_metadata")
+            and self._model_extensive_operation is not None
             else self._model_versions_operation.begin_create_or_update(
                 name=name,
                 version=version,
@@ -330,72 +324,6 @@ class ModelOperations(_ScopeDependentOperations):
                 registry_name=self._registry_name,
                 **self._scope_kwargs,
             ).result()
-        )
-
-    # this method is only used for model create/update with system metadata
-    def _begin_create_or_update_model_with_system_metadata(
-        self,
-        name,  # type: str
-        version,  # type: str
-        resource_group_name,  # type: str
-        registry_name,  # type: str
-        body,  # type: "ModelVersion"
-        **kwargs,  # type: Any
-    ):
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
-
-        _json = self._model_versions_operation._serialize.body(body, "ModelVersionData")
-        _json["properties"]["system_metadata"] = body.properties.system_metadata
-
-        request = build_create_or_update_request_initial(
-            name=name,
-            version=version,
-            subscription_id=self._model_versions_operation._config.subscription_id,
-            resource_group_name=resource_group_name,
-            registry_name=registry_name,
-            json=_json,
-            template_url=self._model_versions_operation._create_or_update_initial.metadata["url"],
-        )
-        request = _convert_request(request)
-        request.url = self._model_versions_operation._client.format_url(request.url)
-
-        pipeline_response = self._model_versions_operation._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        response_headers["x-ms-async-operation-timeout"] = self._model_versions_operation._deserialize(
-            "duration", response.headers.get("x-ms-async-operation-timeout")
-        )
-        response_headers["Location"] = self._model_versions_operation._deserialize(
-            "str", response.headers.get("Location")
-        )
-        response_headers["Retry-After"] = self._model_versions_operation._deserialize(
-            "int", response.headers.get("Retry-After")
-        )
-
-        cls = kwargs.pop("cls", None)
-
-        def get_long_running_output(pipeline_response):
-            if cls:
-                return cls(pipeline_response, None, {})
-            return None
-
-        polling = kwargs.pop("polling", True)
-        if polling is True:
-            lro_delay = kwargs.pop("polling_interval", self._model_versions_operation._config.polling_interval)
-            polling_method = ARMPolling(lro_delay, **kwargs)
-        elif polling is False:
-            polling_method = NoPolling()
-        else:
-            polling_method = polling
-
-        return LROPoller(
-            self._model_versions_operation._client, pipeline_response, get_long_running_output, polling_method
         )
 
     def _get(self, name: str, version: Optional[str] = None) -> ModelVersion:  # name:latest
