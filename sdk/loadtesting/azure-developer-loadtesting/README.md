@@ -11,7 +11,7 @@ Various documentation is available to help you get started
 
 ## Getting started
 
-#### Prequisites
+### Prequisites
 
 - Python 3.7 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
@@ -23,7 +23,7 @@ Various documentation is available to help you get started
 python -m pip install azure-developer-loadtesting
 ```
 
-#### Create with an Azure Active Directory Credential
+### Create with an Azure Active Directory Credential
 
 To use an [Azure Active Directory (AAD) token credential][authenticate_with_token],
 provide an instance of the desired credential type obtained from the
@@ -37,7 +37,7 @@ As an example, sign in via the Azure CLI `az login` command and [DefaultAzureCre
 
 Use the returned token credential to authenticate the client.
 
-#### Create the client
+### Create the client
 
 Azure Developer LoadTesting SDK has 2 sub-clients of the main client (`LoadTestingClient`) to interact with the service, 'LoadTestAdministrationClient' for administrative operations and 'LoadTestRunClient' to run tests/test-profiles.
 

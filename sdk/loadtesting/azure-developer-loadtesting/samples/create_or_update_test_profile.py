@@ -18,7 +18,7 @@ USAGE:
     2)  AZURE_CLIENT_SECRET - client secret
     3)  AZURE_TENANT_ID - tenant id for your Azure
     4)  LOADTESTSERVICE_ENDPOINT - Data Plane endpoint for Loadtestservice
-    5)  LOADTESTSERVICE_FLEXFUNCTIONSRESOURCEID - ResourceID of a Flex Consumptions Function
+    5)  LOADTESTSERVICE_TARGET_RESOURCE_ID - ResourceID of a Flex Consumptions Function
 """
 from azure.developer.loadtesting import LoadTestAdministrationClient
 
@@ -31,7 +31,7 @@ from uuid import uuid4
 
 load_dotenv()
 LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]
-FLEXFUNCTIONS_RESOURCEID = os.environ["LOADTESTSERVICE_FLEXFUNCTIONSRESOURCEID"]
+TARGET_RESOURCE_ID = os.environ["LOADTESTSERVICE_TARGET_RESOURCE_ID"]
 
 # Build a client through AAD and resource endpoint
 client = LoadTestAdministrationClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
@@ -48,7 +48,7 @@ result = client.create_or_update_test_profile(
         "description": "",
         "displayName": "My New Test Profile",
         "testId": TEST_ID,
-        "targetResourceId": FLEXFUNCTIONS_RESOURCEID,
+        "targetResourceId": TARGET_RESOURCE_ID,
         "targetResourceConfigurations": {
             "kind": "FunctionsFlexConsumption",
             "configurations": {
