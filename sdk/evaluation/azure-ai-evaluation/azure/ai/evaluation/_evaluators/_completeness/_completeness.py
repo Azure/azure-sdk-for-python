@@ -146,10 +146,11 @@ class CompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
             score_result = 'pass' if score >= self.threshold else 'fail'
 
+            # updating the result key and threshold to int based on the schema
             return {
-                f"{self._result_key}": score,
+                f"{self._result_key}": int(score),
                 f"{self._result_key}_result": score_result,
-                f"{self._result_key}_threshold": self.threshold,
+                f"{self._result_key}_threshold": int(self.threshold),
                 f"{self._result_key}_reason": reason,
             }
         
