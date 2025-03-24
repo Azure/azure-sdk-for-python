@@ -62,6 +62,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         self._azure_ai_project = validate_azure_ai_project(azure_ai_project)
         self._credential = credential
         self._threshold = threshold
+        self._higher_is_better = _higher_is_better
 
     @override
     def __call__(  # pylint: disable=docstring-missing-param
