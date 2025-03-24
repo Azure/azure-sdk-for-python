@@ -74,7 +74,7 @@ class AttackObjectiveGenerator:
                 
             # Validate that it's a list
             if not isinstance(self.custom_prompts, list):
-                raise ValueError(f"Custom attack seed prompts must be a JSON array, got {type(self.custom_prompts)}")
+                raise ValueError(f"Custom attack seed prompts must be a JSON array, got {type(self.custom_prompts)}, see https://aka.ms/airedteamingagent-howtodoc for more information")
                 
             self.logger.info(f"Loaded {len(self.custom_prompts)} prompts from {self.custom_attack_seed_prompts}")
                 
@@ -103,11 +103,11 @@ class AttackObjectiveGenerator:
                     # Check metadata structure
                     metadata = prompt["metadata"]
                     if not isinstance(metadata, dict):
-                        self.logger.warning(f"Skipping prompt {i}: 'metadata' is not a JSON object")
+                        self.logger.warning(f"Skipping prompt {i}: 'metadata' is not a JSON object, see https://aka.ms/airedteamingagent-howtodoc for more information")
                         continue
                         
                     if "target_harms" not in metadata or not metadata["target_harms"]:
-                        self.logger.warning(f"Skipping prompt {i}: missing or empty 'target_harms' in metadata")
+                        self.logger.warning(f"Skipping prompt {i}: missing or empty 'target_harms' in metadata, see https://aka.ms/airedteamingagent-howtodoc for more information")
                         continue
                         
                     # Check target_harms structure
@@ -117,42 +117,42 @@ class AttackObjectiveGenerator:
                     
                     for harm in metadata["target_harms"]:
                         if not isinstance(harm, dict):
-                            self.logger.warning(f"Skipping harm in prompt {i}: not a JSON object")
+                            self.logger.warning(f"Skipping harm in prompt {i}: not a JSON object, see https://aka.ms/airedteamingagent-howtodoc for more information")
                             continue
                             
                         if "risk-type" not in harm:
-                            self.logger.warning(f"Skipping harm in prompt {i}: missing 'risk-type'")
+                            self.logger.warning(f"Skipping harm in prompt {i}: missing 'risk-type' field, see https://aka.ms/airedteamingagent-howtodoc for more information")
                             continue
                             
                         risk_type = harm.get("risk-type", "")
                         if risk_type not in valid_risk_types:
-                            self.logger.warning(f"Skipping harm in prompt {i}: invalid risk-type '{risk_type}'. Valid types: {valid_risk_types}")
+                            self.logger.warning(f"Skipping harm in prompt {i}: invalid risk-type '{risk_type}'. Valid types: {valid_risk_types}. see https://aka.ms/airedteamingagent-howtodoc for more information")
                             continue
                             
                         prompt_categories.append(risk_type)
                         valid_risk_found = True
                     
                     if not valid_risk_found:
-                        self.logger.warning(f"Skipping prompt {i}: no valid risk types found")
+                        self.logger.warning(f"Skipping prompt {i}: no valid risk types found. See https://aka.ms/airedteamingagent-howtodoc for more information")
                         continue
                     
                     # Check messages structure
                     messages = prompt["messages"]
                     if not isinstance(messages, list) or not messages:
-                        self.logger.warning(f"Skipping prompt {i}: 'messages' is not a list or is empty")
+                        self.logger.warning(f"Skipping prompt {i}: 'messages' is not a list or is empty, see https://aka.ms/airedteamingagent-howtodoc for more information")
                         continue
                         
                     message = messages[0]
                     if not isinstance(message, dict):
-                        self.logger.warning(f"Skipping prompt {i}: first message is not a JSON object")
+                        self.logger.warning(f"Skipping prompt {i}: first message is not a JSON object, see https://aka.ms/airedteamingagent-howtodoc for more information")
                         continue
                         
                     if "role" not in message or message["role"] != "user":
-                        self.logger.warning(f"Skipping prompt {i}: first message must have role='user'")
+                        self.logger.warning(f"Skipping prompt {i}: first message must have role='user', see https://aka.ms/airedteamingagent-howtodoc for more information")
                         continue
                         
                     if "content" not in message or not message["content"]:
-                        self.logger.warning(f"Skipping prompt {i}: first message missing or empty 'content'")
+                        self.logger.warning(f"Skipping prompt {i}: first message missing or empty 'content', see https://aka.ms/airedteamingagent-howtodoc for more information")
                         continue
                     
                     # If we got here, the prompt is valid
@@ -169,7 +169,7 @@ class AttackObjectiveGenerator:
                     
             # Check if we have at least one valid prompt
             if valid_prompts_count == 0:
-                raise ValueError("No valid prompts found in custom attack seed prompts file")
+                raise ValueError("No valid prompts found in custom attack seed prompts file. See https://aka.ms/airedteamingagent-howtodoc for more information")
                 
             self.logger.info(f"Loaded {valid_prompts_count} valid prompts from custom attack seed prompts file")
             
@@ -187,6 +187,6 @@ class AttackObjectiveGenerator:
                 self.logger.info(f"Automatically set risk categories based on valid prompts: {[cat.value for cat in self.risk_categories]}")
             
         except json.JSONDecodeError as e:
-            raise ValueError(f"Failed to parse custom attack seed prompts file: {str(e)}")
+            raise ValueError(f"Failed to parse custom attack seed prompts file: {str(e)}. See https://aka.ms/airedteamingagent-howtodoc for more information")
         except Exception as e:
-            raise ValueError(f"Error loading custom attack seed prompts: {str(e)}")
+            raise ValueError(f"Error loading custom attack seed prompts: {str(e)}. See https://aka.ms/airedteamingagent-howtodoc for more information")

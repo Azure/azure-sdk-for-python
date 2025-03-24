@@ -48,6 +48,7 @@ def red_team_agent(mock_azure_ai_project, mock_credential):
          patch("azure.ai.evaluation.red_team_agent.red_team_agent.setup_logger") as mock_setup_logger, \
          patch("azure.ai.evaluation.red_team_agent.red_team_agent.initialize_pyrit"), \
          patch("os.makedirs"), \
+         patch("azure.ai.evaluation.red_team_agent.red_team_agent.AttackObjectiveGenerator"), \
          patch("logging.FileHandler", MagicMock()):
          
         # Create a proper mock logger that doesn't crash when used
@@ -61,12 +62,23 @@ def red_team_agent(mock_azure_ai_project, mock_credential):
         # Make setup_logger return our mock logger
         mock_setup_logger.return_value = mock_logger
          
+        # Create agent with the updated initialization parameters
         agent = RedTeamAgent(
-            azure_ai_project=mock_azure_ai_project, credential=mock_credential, output_dir="/test/output"
+            azure_ai_project=mock_azure_ai_project, 
+            credential=mock_credential, 
+            output_dir="/test/output",
+            # Add attack objective generator params
+            risk_categories=[RiskCategory.Violence, RiskCategory.HateUnfairness],
+            num_objectives=10,
+            application_scenario="Test scenario",
+            custom_attack_seed_prompts=None
         )
         
         # Ensure our mock logger is used
         agent.logger = mock_logger
+        
+        # Set risk_categories attribute directly for compatibility with tests
+        agent.risk_categories = [RiskCategory.Violence, RiskCategory.HateUnfairness]
         
         return agent
 
@@ -75,7 +87,9 @@ def red_team_agent(mock_azure_ai_project, mock_credential):
 def mock_attack_objective_generator():
     return MagicMock(
         risk_categories=[RiskCategory.Violence, RiskCategory.HateUnfairness],
-        num_objectives=5
+        num_objectives=5,
+        custom_attack_seed_prompts=None,
+        application_scenario="Test scenario"
     )
 
 
@@ -365,13 +379,8 @@ class TestRedTeamAgentAttackObjectives:
     ):
         """Test getting attack objectives without specifying risk category."""
         mock_rai_client.return_value = MagicMock()
-        mock_attack_objective_generator = MagicMock(
-            risk_categories=[RiskCategory.Violence], num_objectives=5
-        )
-        
-        # Mock the valid_prompts_by_category attribute to be empty
-        mock_attack_objective_generator.custom_attack_seed_prompts = None
-        mock_attack_objective_generator.valid_prompts_by_category = {}
+
+        red_team_agent.attack_objective_generator.num_objectives = 1
 
         with patch.object(
             red_team_agent.generated_rai_client, "get_attack_objectives",
@@ -380,9 +389,9 @@ class TestRedTeamAgentAttackObjectives:
             mock_get_attack_objectives.return_value = [
                 {"messages": [{"content": "test-objective"}]}
             ]
-            objectives = await red_team_agent._get_attack_objectives(
-                mock_attack_objective_generator
-            )
+            objectives = await red_team_agent._get_attack_objectives()
+            print(f"DEBUG: objectives={objectives}, mock return={mock_get_attack_objectives.return_value}")
+        
             assert len(objectives) == 1
             assert objectives[0] == "test-objective"
 
@@ -394,19 +403,13 @@ class TestRedTeamAgentAttackObjectives:
     ):
         """Test getting attack objectives for a specific risk category."""
         mock_rai_client.return_value = MagicMock()
-        mock_attack_objective_generator = MagicMock(
-            risk_categories=[RiskCategory.Violence, RiskCategory.HateUnfairness], 
-            num_objectives=2
-        )
-        
-        # Mock the valid_prompts_by_category attribute to be empty
-        mock_attack_objective_generator.custom_attack_seed_prompts = None
-        mock_attack_objective_generator.valid_prompts_by_category = {}
         
         # Create a proper mock object structure
         mock_rai_client_instance = MagicMock()
         mock_generated_rai_client_instance = MagicMock()
         mock_generated_rai_client_instance.get_attack_objectives = AsyncMock()
+
+        red_team_agent.attack_objective_generator.num_objectives = 2
         
         # Set up the mock return values
         mock_generated_rai_client_instance.get_attack_objectives.return_value = [
@@ -430,11 +433,10 @@ class TestRedTeamAgentAttackObjectives:
         red_team_agent.generated_rai_client = mock_generated_rai_client_instance
 
         objectives = await red_team_agent._get_attack_objectives(
-            mock_attack_objective_generator,
             risk_category=RiskCategory.Violence,
             application_scenario="Test scenario"
         )
-        
+        import pdb; pdb.set_trace()
         mock_generated_rai_client_instance.get_attack_objectives.assert_called_with(
             risk_category="violence",
             application_scenario="Test scenario",
@@ -452,20 +454,14 @@ class TestRedTeamAgentAttackObjectives:
     ):
         """Test getting attack objectives with jailbreak strategy."""
         mock_rai_client.return_value = MagicMock()
-        mock_attack_objective_generator = MagicMock(
-            risk_categories=[RiskCategory.Violence], 
-            num_objectives=1
-        )
-
-        # Mock the valid_prompts_by_category attribute to be empty
-        mock_attack_objective_generator.custom_attack_seed_prompts = None
-        mock_attack_objective_generator.valid_prompts_by_category = {}
         
         # Create a proper mock object structure
         mock_rai_client_instance = MagicMock()
         mock_generated_rai_client_instance = MagicMock()
         mock_generated_rai_client_instance.get_attack_objectives = AsyncMock()
         mock_generated_rai_client_instance.get_jailbreak_prefixes = AsyncMock()
+
+        red_team_agent.attack_objective_generator.num_objectives = 1
         
         # Set up the mock return values
         mock_generated_rai_client_instance.get_attack_objectives.return_value = [
@@ -485,7 +481,6 @@ class TestRedTeamAgentAttackObjectives:
         red_team_agent.generated_rai_client = mock_generated_rai_client_instance
         
         objectives = await red_team_agent._get_attack_objectives(
-            mock_attack_objective_generator,
             risk_category=RiskCategory.Violence,
             strategy="jailbreak"
         )
@@ -506,10 +501,8 @@ class TestRedTeamAgentAttackObjectives:
     ):
         """Test getting attack objectives when API call fails."""
         mock_rai_client.return_value = MagicMock()
-        mock_attack_objective_generator = MagicMock(
-            risk_categories=[RiskCategory.Violence], 
-            num_objectives=5
-        )
+
+        red_team_agent.attack_objective_generator.num_objectives = 2
 
         with patch.object(
             red_team_agent.generated_rai_client, "get_attack_objectives",
@@ -517,7 +510,6 @@ class TestRedTeamAgentAttackObjectives:
         ) as mock_get_attack_objectives:
             mock_get_attack_objectives.side_effect = Exception("API call failed")
             objectives = await red_team_agent._get_attack_objectives(
-                mock_attack_objective_generator,
                 risk_category=RiskCategory.Violence
             )
             
@@ -531,7 +523,7 @@ class TestRedTeamAgentAttackObjectives:
     ):
         """Test getting attack objectives with custom attack seed prompts."""
         # Create a mock AttackObjectiveGenerator with custom attack seed prompts
-        mock_attack_objective_generator = MagicMock()
+        mock_attack_objective_generator =red_team_agent.attack_objective_generator
         mock_attack_objective_generator.risk_categories = [RiskCategory.Violence, RiskCategory.HateUnfairness]
         mock_attack_objective_generator.num_objectives = 2
         mock_attack_objective_generator.custom_attack_seed_prompts = "custom_prompts.json"
@@ -571,7 +563,6 @@ class TestRedTeamAgentAttackObjectives:
         
         # Test with violence risk category
         objectives = await red_team_agent._get_attack_objectives(
-            mock_attack_objective_generator,
             risk_category=RiskCategory.Violence,
             application_scenario="Test scenario"
         )
@@ -585,7 +576,6 @@ class TestRedTeamAgentAttackObjectives:
         
         # Test with hate_unfairness risk category
         objectives = await red_team_agent._get_attack_objectives(
-            mock_attack_objective_generator,
             risk_category=RiskCategory.HateUnfairness,
             application_scenario="Test scenario"
         )
@@ -602,7 +592,7 @@ class TestRedTeamAgentAttackObjectives:
     ):
         """Test getting attack objectives with jailbreak strategy and custom prompts."""
         # Create a mock AttackObjectiveGenerator with custom attack seed prompts
-        mock_attack_objective_generator = MagicMock()
+        mock_attack_objective_generator = red_team_agent.attack_objective_generator
         mock_attack_objective_generator.risk_categories = [RiskCategory.Violence]
         mock_attack_objective_generator.num_objectives = 1
         mock_attack_objective_generator.custom_attack_seed_prompts = "custom_prompts.json"
@@ -630,7 +620,6 @@ class TestRedTeamAgentAttackObjectives:
         
         # Test with jailbreak strategy
         objectives = await red_team_agent._get_attack_objectives(
-            mock_attack_objective_generator,
             risk_category=RiskCategory.Violence,
             strategy="jailbreak"
         )
@@ -842,7 +831,7 @@ class TestRedTeamAgentProcessing:
                 data_path="/path/to/data.jsonl",
                 risk_category=RiskCategory.Violence,
                 strategy=AttackStrategy.Base64,
-                evaluation_name="test_eval",
+                scan_name="test_eval",
                 data_only=False,
                 output_path="/path/to/output.json"
             )
@@ -1051,7 +1040,7 @@ class TestRedTeamAgentOutputCreation:
                 target=MagicMock(),
                 attack_objective_generator=mock_attack_objective_generator,
                 attack_strategies=[AttackStrategy.Base64],
-                evaluation_name="test_eval",
+                scan_name="test_eval",
                 output_path="/path/to/output.json"
             )
             
@@ -1062,7 +1051,7 @@ class TestRedTeamAgentOutputCreation:
                 target=mock_scan.call_args[1]["target"],
                 attack_objective_generator=mock_attack_objective_generator,
                 attack_strategies=[AttackStrategy.Base64],
-                evaluation_name="test_eval",
+                scan_name="test_eval",
                 output_path="/path/to/output.json"
             )
 

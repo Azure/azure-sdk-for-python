@@ -83,6 +83,14 @@ class RedTeamAgent():
     :type azure_ai_project: dict
     :param credential: The credential to authenticate with Azure services
     :type credential: TokenCredential
+    :param risk_categories: List of risk categories to generate attack objectives for (optional if custom_attack_seed_prompts is provided)
+    :type risk_categories: Optional[List[RiskCategory]]
+    :param num_objectives: Number of objectives to generate per risk category
+    :type num_objectives: int
+    :param application_scenario: Description of the application scenario for context
+    :type application_scenario: Optional[str]
+    :param custom_attack_seed_prompts: Path to a JSON file containing custom attack seed prompts (can be absolute or relative path)
+    :type custom_attack_seed_prompts: Optional[str]
     :param timeout: The timeout in seconds for API calls (default: 120)
     :type timeout: int
     :param output_dir: Directory to store all output files. If None, files are created in the current working directory.
@@ -90,7 +98,16 @@ class RedTeamAgent():
     :param max_parallel_tasks: Maximum number of parallel tasks to run when scanning (default: 5)
     :type max_parallel_tasks: int
     """
-    def __init__(self, azure_ai_project, credential, timeout=120, output_dir=None):
+    def __init__(self, 
+        azure_ai_project, 
+        credential,
+        risk_categories: Optional[List[RiskCategory]] = None,
+        num_objectives: int = 10,
+        application_scenario: Optional[str] = None,
+        custom_attack_seed_prompts: Optional[str] = None,
+        timeout=120, 
+        output_dir=None):
+
         self.azure_ai_project = validate_azure_ai_project(azure_ai_project)
         self.credential = credential
         self.api_timeout = timeout
@@ -124,8 +141,11 @@ class RedTeamAgent():
         self.red_team_agent_info = {}
 
         initialize_pyrit(memory_db_type=DUCK_DB)
+
+        self.attack_objective_generator = AttackObjectiveGenerator(risk_categories=risk_categories, num_objectives=num_objectives, application_scenario=application_scenario, custom_attack_seed_prompts=custom_attack_seed_prompts)
+
         self.logger.debug("RedTeamAgent initialized successfully")
-        # TODO: add attack objective generator init here
+        
 
     def _start_redteam_mlflow_run(
         self,
@@ -311,7 +331,6 @@ class RedTeamAgent():
     
     async def _get_attack_objectives(
         self,
-        attack_objective_generator,
         risk_category: Optional[RiskCategory] = None,  # Now accepting a single risk category
         application_scenario: Optional[str] = None,
         strategy: Optional[str] = None
@@ -329,6 +348,7 @@ class RedTeamAgent():
         :return: A list of attack objective prompts
         :rtype: List[str]
         """
+        attack_objective_generator = self.attack_objective_generator
         # TODO: is this necessary?
         if not risk_category:
             self.logger.warning("No risk category provided, using the first category from the generator")
@@ -1087,14 +1107,14 @@ class RedTeamAgent():
         data_path: Union[str, os.PathLike],
         risk_category: RiskCategory,
         strategy: Union[AttackStrategy, List[AttackStrategy]],
-        evaluation_name: Optional[str] = None,
+        scan_name: Optional[str] = None,
         data_only: bool = False,
         output_path: Optional[Union[str, os.PathLike]] = None
     ) -> None:
         """Call the evaluate method if not data_only.
 
-        :param evaluation_name: Optional name for the evaluation.
-        :type evaluation_name: Optional[str]
+        :param scan_name: Optional name for the evaluation.
+        :type scan_name: Optional[str]
         :param data_only: Whether to return only data paths instead of evaluation results.
         :type data_only: bool
         :param data_path: Path to the input data.
@@ -1105,7 +1125,7 @@ class RedTeamAgent():
         :rtype: Union[Dict[str, EvaluationResult], Dict[str, List[str]]]
         """
         strategy_name = self._get_strategy_name(strategy)
-        self.logger.debug(f"Evaluate called with data_path={data_path}, risk_category={risk_category.value}, strategy={strategy_name}, output_path={output_path}, data_only={data_only}, evaluation_name={evaluation_name}")
+        self.logger.debug(f"Evaluate called with data_path={data_path}, risk_category={risk_category.value}, strategy={strategy_name}, output_path={output_path}, data_only={data_only}, scan_name={scan_name}")
         if data_only:
             return None
             
@@ -1241,7 +1261,7 @@ class RedTeamAgent():
             all_prompts: List[str],
             progress_bar: tqdm,
             progress_bar_lock: asyncio.Lock,
-            evaluation_name: Optional[str] = None,
+            scan_name: Optional[str] = None,
             data_only: bool = False, 
             output_path: Optional[Union[str, os.PathLike]] = None,
         ) -> Optional[EvaluationResult]:
@@ -1254,7 +1274,7 @@ class RedTeamAgent():
         :param all_prompts: List of prompts to use for the scan
         :param progress_bar: Progress bar to update
         :param progress_bar_lock: Lock for the progress bar
-        :param evaluation_name: Optional name for the evaluation
+        :param scan_name: Optional name for the evaluation
         :param data_only: Whether to return only data without evaluation
         :param output_path: Optional path for output
         """
@@ -1289,7 +1309,7 @@ class RedTeamAgent():
             
             try:
                 await self._evaluate(
-                    evaluation_name=evaluation_name,
+                    scan_name=scan_name,
                     risk_category=risk_category,
                     strategy=strategy,
                     data_only=data_only,
@@ -1340,12 +1360,11 @@ class RedTeamAgent():
     async def scan(
             self,             
             target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration, PromptChatTarget],
-            evaluation_name: Optional[str] = None,
+            scan_name: Optional[str] = None,
             num_turns : int = 1,
             attack_strategies: List[Union[AttackStrategy, List[AttackStrategy]]] = [],
             data_only: bool = False, 
             output_path: Optional[Union[str, os.PathLike]] = None,
-            attack_objective_generator: Optional[AttackObjectiveGenerator] = None,
             application_scenario: Optional[str] = None,
             parallel_execution: bool = True,
             max_parallel_tasks: int = 5,
@@ -1354,8 +1373,8 @@ class RedTeamAgent():
         
         :param target: The target model or function to scan
         :type target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration, PromptChatTarget]
-        :param evaluation_name: Optional name for the evaluation
-        :type evaluation_name: Optional[str]
+        :param scan_name: Optional name for the evaluation
+        :type scan_name: Optional[str]
         :param num_turns: Number of conversation turns to use in the scan
         :type num_turns: int
         :param attack_strategies: List of attack strategies to use
@@ -1364,8 +1383,6 @@ class RedTeamAgent():
         :type data_only: bool
         :param output_path: Optional path for output
         :type output_path: Optional[Union[str, os.PathLike]]
-        :param attack_objective_generator: Generator for attack objectives
-        :type attack_objective_generator: Optional[AttackObjectiveGenerator]
         :param application_scenario: Optional description of the application scenario
         :type application_scenario: Optional[str]
         :param parallel_execution: Whether to execute orchestrator tasks in parallel
@@ -1386,7 +1403,7 @@ class RedTeamAgent():
         self.failed_tasks = 0
         
         # Generate a unique scan ID for this run
-        self.scan_id = f"scan_{evaluation_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}" if evaluation_name else f"scan_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        self.scan_id = f"scan_{scan_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}" if scan_name else f"scan_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
         self.scan_id = self.scan_id.replace(" ", "_")
         
         # Create output directory for this scan
@@ -1431,23 +1448,23 @@ class RedTeamAgent():
             handler.addFilter(log_filter)
             
         log_section_header(self.logger, "Starting red team scan")
-        self.logger.info(f"Scan started with evaluation_name: {evaluation_name}")
+        self.logger.info(f"Scan started with scan_name: {scan_name}")
         self.logger.info(f"Scan ID: {self.scan_id}")
         self.logger.info(f"Scan output directory: {self.scan_output_dir}")
         self.logger.debug(f"Attack strategies: {attack_strategies}")
         self.logger.debug(f"data_only: {data_only}, output_path: {output_path}")
         
         # Clear, minimal output for start of scan
-        print(f"🚀 STARTING RED TEAM SCAN: {evaluation_name}")
+        print(f"🚀 STARTING RED TEAM SCAN: {scan_name}")
         print(f"📂 Output directory: {self.scan_output_dir}")
-        self.logger.info(f"Starting RED TEAM SCAN: {evaluation_name}")
+        self.logger.info(f"Starting RED TEAM SCAN: {scan_name}")
         self.logger.info(f"Output directory: {self.scan_output_dir}")
         
         chat_target = self._get_chat_target(target)
         self.chat_target = chat_target
         self.application_scenario = application_scenario or ""
         
-        if not attack_objective_generator:
+        if not self.attack_objective_generator:
             error_msg = "Attack objective generator is required for red team agent."
             log_error(self.logger, error_msg)
             print(f"❌ {error_msg}")
@@ -1460,11 +1477,11 @@ class RedTeamAgent():
             )
             
         # If risk categories aren't specified, use all available categories
-        if not attack_objective_generator.risk_categories:
+        if not self.attack_objective_generator.risk_categories:
             self.logger.info("No risk categories specified, using all available categories")
-            attack_objective_generator.risk_categories = list(RiskCategory)
+            self.attack_objective_generator.risk_categories = list(RiskCategory)
             
-        self.risk_categories = attack_objective_generator.risk_categories
+        self.risk_categories = self.attack_objective_generator.risk_categories
         # Show risk categories to user
         print(f"📊 Risk categories: {[rc.value for rc in self.risk_categories]}")
         self.logger.info(f"Risk categories to process: {[rc.value for rc in self.risk_categories]}")
@@ -1475,7 +1492,7 @@ class RedTeamAgent():
             self.logger.debug("Added Baseline to attack strategies")
             
         # When using custom attack objectives, check for incompatible strategies
-        using_custom_objectives = attack_objective_generator and attack_objective_generator.custom_attack_seed_prompts
+        using_custom_objectives = self.attack_objective_generator and self.attack_objective_generator.custom_attack_seed_prompts
         if using_custom_objectives:
             # Maintain a list of converters to avoid duplicates
             used_converter_types = set()
@@ -1512,7 +1529,7 @@ class RedTeamAgent():
                 attack_strategies = [s for s in attack_strategies if s not in strategies_to_remove]
                 self.logger.info(f"Removed {len(strategies_to_remove)} redundant strategies: {[s.name for s in strategies_to_remove]}")
             
-        with self._start_redteam_mlflow_run(self.azure_ai_project, evaluation_name) as eval_run:
+        with self._start_redteam_mlflow_run(self.azure_ai_project, scan_name) as eval_run:
             self.ai_studio_url = _get_ai_studio_url(trace_destination=self.trace_destination, evaluation_id=eval_run.info.run_id)
             # todo: temp change to show the URL in int and with flight info
             self.ai_studio_url = self.ai_studio_url.replace("ai.azure.com", "int.ai.azure.com")
@@ -1567,8 +1584,8 @@ class RedTeamAgent():
             
             # Log the objective source mode
             if using_custom_objectives:
-                self.logger.info(f"Using custom attack objectives from {attack_objective_generator.custom_attack_seed_prompts}")
-                print(f"📚 Using custom attack objectives from {attack_objective_generator.custom_attack_seed_prompts}")
+                self.logger.info(f"Using custom attack objectives from {self.attack_objective_generator.custom_attack_seed_prompts}")
+                print(f"📚 Using custom attack objectives from {self.attack_objective_generator.custom_attack_seed_prompts}")
             else:
                 self.logger.info("Using attack objectives from Azure RAI service")
                 print("📚 Using attack objectives from Azure RAI service")
@@ -1583,7 +1600,6 @@ class RedTeamAgent():
                 progress_bar.set_postfix({"current": f"fetching baseline/{risk_category.value}"})
                 self.logger.debug(f"Fetching baseline objectives for {risk_category.value}")
                 baseline_objectives = await self._get_attack_objectives(
-                    attack_objective_generator=attack_objective_generator,
                     risk_category=risk_category,
                     application_scenario=application_scenario,
                     strategy="baseline"
@@ -1609,7 +1625,6 @@ class RedTeamAgent():
                     self.logger.debug(f"Fetching objectives for {strategy_name} strategy and {risk_category.value} risk category")
                     
                     objectives = await self._get_attack_objectives(
-                        attack_objective_generator=attack_objective_generator,
                         risk_category=risk_category,
                         application_scenario=application_scenario,
                         strategy=strategy_name
@@ -1651,7 +1666,7 @@ class RedTeamAgent():
                         strategy=strategy,
                         progress_bar=progress_bar,
                         progress_bar_lock=progress_bar_lock,
-                        evaluation_name=evaluation_name,
+                        scan_name=scan_name,
                         data_only=data_only,
                         output_path=output_path,
                         risk_category=risk_category
