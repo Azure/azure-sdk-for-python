@@ -121,6 +121,9 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     def __init__(
         self, account_url: str,
         credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        *,
+        api_version: Optional[str] = None,
+        # TODO
         **kwargs: Any
     ) -> None:
         parsed_url, sas_token = _parse_url(account_url=account_url)
@@ -128,7 +131,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(BlobServiceClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
-        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
+        self._client._config.version = get_api_version(api_version)  # type: ignore [assignment]
         self._configure_encryption(kwargs)
 
     def _format_url(self, hostname):
@@ -776,8 +779,8 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         else:
             container_name = container
         _pipeline = Pipeline(
-            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+            transport=TransportWrapper(self._pipeline._transport),  # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies  # pylint: disable = protected-access
         )
         return BlobClient(
             self.url, container_name=container_name, blob_name=blob_name, snapshot=snapshot,
