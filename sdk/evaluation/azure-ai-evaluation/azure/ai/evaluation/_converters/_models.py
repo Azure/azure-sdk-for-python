@@ -169,25 +169,46 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
     # all in most of the cases, and bing would only show the API URL, without arguments or results.
     # Bing grounding would have "bing_grounding" in details with "requesturl" that will just be the API path with query.
     # TODO: Work with AI Services to add converter support for BingGrounding and CodeInterpreter.
-    if not hasattr(tool_call.details, _FUNCTION):
-        return messages
-
-    # This is the internals of the content object that will be included with the tool call.
-    tool_call_id = tool_call.details.id
-    content_tool_call = {
-        "type": _TOOL_CALL,
-        "tool_call_id": tool_call_id,
-        "name": tool_call.details.function.name,
-        "arguments": safe_loads(tool_call.details.function.arguments),
-    }
+    if hasattr(tool_call.details, _FUNCTION):
+        # This is the internals of the content object that will be included with the tool call.
+        tool_call_id = tool_call.details.id
+        content_tool_call = {
+            "type": _TOOL_CALL,
+            "tool_call_id": tool_call_id,
+            "name": tool_call.details.function.name,
+            "arguments": safe_loads(tool_call.details.function.arguments),
+        }
+    else:
+        # treat built-in tools separately, but formatting may be unique
+        # don't fail if we run into a newly seen tool, just skip
+        try:
+            tool_call_id = tool_call.details.id
+            content_tool_call = {
+                "type": _TOOL_CALL,
+                "tool_call_id": tool_call_id,
+                "name": tool_call.details.type,
+                "arguments": tool_call.details[tool_call.details.type],
+            }
+        except:
+            return messages
 
     # We format it into an assistant message, where the content is a singleton list of the content object.
     # It should be a tool message, since this is the call, but the given schema treats this message as
     # assistant's action of calling the tool.
     messages.append(AssistantMessage(run_id=run_id, content=[to_dict(content_tool_call)], createdAt=tool_call.created))
 
+    if hasattr(tool_call.details, _FUNCTION):
+        output = safe_loads(tool_call.details.function.output)
+    else:
+        try:
+            # Some built-ins may have output, others may not
+            # Try to retrieve it, but if we don't find anything, skip adding the message
+            output = tool_call.details[tool_call.details.type].outputs
+        except:
+            return messages
+
     # Now, onto the tool result, which only includes the result of the function call.
-    content_tool_call_result = {"type": _TOOL_RESULT, _TOOL_RESULT: safe_loads(tool_call.details.function.output)}
+    content_tool_call_result = {"type": _TOOL_RESULT, _TOOL_RESULT: output}
 
     # Since this is a tool's action of returning, we put it as a tool message.
     messages.append(

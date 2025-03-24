@@ -163,6 +163,16 @@ class AIAgentConverter:
                         parameters=parameters,
                     )
                 )
+            else:
+                # add limited support for built-in tools.  Descriptions and parameters
+                # are not published, but we'll include placeholders.
+                final_tools.append(
+                    ToolDefinition(
+                        name=tool.type,
+                        description="",
+                        parameters={}
+                    )
+                )
         return final_tools
 
     @staticmethod
