@@ -43,6 +43,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
         self.created_container = self.created_database.get_container_client(self.TEST_CONTAINER_ID)
 
     async def asyncTearDown(self):
+        self.connectionPolicy.ConnectionRetryConfiguration = None
         await self.client.close()
 
     async def test_service_request_retry_policy_async(self):
