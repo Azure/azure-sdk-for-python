@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
+from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
@@ -20,28 +21,29 @@ from ._serialization import Deserializer, Serializer
 from .operations import (
     AdminKeysOperations,
     NetworkSecurityPerimeterConfigurationsOperations,
+    OfferingsOperations,
     Operations,
     PrivateEndpointConnectionsOperations,
     PrivateLinkResourcesOperations,
     QueryKeysOperations,
     SearchManagementClientOperationsMixin,
+    ServiceOperations,
     ServicesOperations,
     SharedPrivateLinkResourcesOperations,
     UsagesOperations,
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class SearchManagementClient(
-    SearchManagementClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class SearchManagementClient(SearchManagementClientOperationsMixin):  # pylint: disable=too-many-instance-attributes
     """Client that can be used to manage Azure AI Search services and API keys.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.search.operations.Operations
+    :ivar offerings: OfferingsOperations operations
+    :vartype offerings: azure.mgmt.search.operations.OfferingsOperations
     :ivar admin_keys: AdminKeysOperations operations
     :vartype admin_keys: azure.mgmt.search.operations.AdminKeysOperations
     :ivar query_keys: QueryKeysOperations operations
@@ -62,6 +64,8 @@ class SearchManagementClient(
      NetworkSecurityPerimeterConfigurationsOperations operations
     :vartype network_security_perimeter_configurations:
      azure.mgmt.search.operations.NetworkSecurityPerimeterConfigurationsOperations
+    :ivar service: ServiceOperations operations
+    :vartype service: azure.mgmt.search.operations.ServiceOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The unique identifier for a Microsoft Azure subscription. You can
@@ -69,7 +73,7 @@ class SearchManagementClient(
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2024-06-01-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2025-02-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -111,6 +115,7 @@ class SearchManagementClient(
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.offerings = OfferingsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.admin_keys = AdminKeysOperations(self._client, self._config, self._serialize, self._deserialize)
         self.query_keys = QueryKeysOperations(self._client, self._config, self._serialize, self._deserialize)
         self.services = ServicesOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -127,6 +132,7 @@ class SearchManagementClient(
         self.network_security_perimeter_configurations = NetworkSecurityPerimeterConfigurationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.service = ServiceOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
@@ -153,7 +159,7 @@ class SearchManagementClient(
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "SearchManagementClient":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 

@@ -1,5 +1,33 @@
 # Release History
 
+## 9.2.0b3 (2025-03-24)
+
+### Features Added
+
+  - Client `SearchManagementClient` added operation group `offerings`
+  - Client `SearchManagementClient` added operation group `service`
+  - Model `SearchService` added property `system_data`
+  - Model `SearchService` added property `endpoint`
+  - Model `SearchService` added property `compute_type`
+  - Model `SearchService` added property `upgrade_available`
+  - Model `SearchService` added property `service_upgrade_date`
+  - Model `SearchServiceUpdate` added property `system_data`
+  - Model `SearchServiceUpdate` added property `endpoint`
+  - Model `SearchServiceUpdate` added property `compute_type`
+  - Model `SearchServiceUpdate` added property `upgrade_available`
+  - Model `SearchServiceUpdate` added property `service_upgrade_date`
+  - Added enum `ComputeType`
+  - Added enum `CreatedByType`
+  - Added enum `FeatureName`
+  - Added model `FeatureOffering`
+  - Added model `OfferingsByRegion`
+  - Added model `OfferingsListResult`
+  - Added model `SkuOffering`
+  - Added model `SkuOfferingLimits`
+  - Added model `SystemData`
+  - Added operation group `OfferingsOperations`
+  - Added operation group `ServiceOperations`
+
 ## 9.2.0b2 (2024-07-18)
 
 ### Other Changes
