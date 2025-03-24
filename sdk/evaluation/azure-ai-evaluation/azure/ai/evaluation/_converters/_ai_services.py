@@ -30,6 +30,50 @@ _AI_SERVICES_API_MAX_LIMIT = 100
 # Maximum number of workers allowed to make API calls at the same time.
 _MAX_WORKERS = 10
 
+# Built-in tool descriptions and parameters are hidden, but we include basic descriptions
+# for evaluation purposes
+_BUILT_IN_DESCRIPTIONS = {"code_interpreter": "Use code interpreter to read and interpret information from datasets, "
+                                              "generate code, and create graphs and charts using your data. Supports "
+                                              "up to 20 files.",
+                            "bing_grounding": "Enhance model output with web data.",
+                            "file_search": "Search for data across uploaded files.",
+                          }
+
+_BUILT_IN_PARAMS = {"code_interpreter": {"type": "object",
+                                         "properties": {
+                                             "input": {
+                                                "type": "string",
+                                                "description": "Generated code to be executed."
+                                                }
+                                             }
+                                         },
+                    "bing_grounding": {"type": "object",
+                                         "properties": {
+                                             "requesturl": {
+                                                "type": "string",
+                                                "description": "URL used in Bing Search API."
+                                                }
+                                             }
+                                         },
+                    "file_search": {"type": "object",
+                                       "properties": {
+                                           "ranking_options": {
+                                               "type": "object",
+                                               "properties": {
+                                                    "ranker": {
+                                                         "type": "string",
+                                                         "description": "Ranking algorithm to use."
+                                                         },
+                                                    "score_threshold": {
+                                                         "type": "number",
+                                                         "description": "Threshold for search results."
+                                                         }
+                                                    },
+                                               "description": "Ranking options for search results."
+                                           }
+                                       }
+                                    },
+                    }
 class AIAgentConverter:
     """
     A converter for AI agent data.
@@ -166,13 +210,17 @@ class AIAgentConverter:
             else:
                 # add limited support for built-in tools.  Descriptions and parameters
                 # are not published, but we'll include placeholders.
-                final_tools.append(
-                    ToolDefinition(
-                        name=tool.type,
-                        description="",
-                        parameters={}
+                try:
+                    final_tools.append(
+                        ToolDefinition(
+                            name=tool.type,
+                            description=_BUILT_IN_DESCRIPTIONS[tool.type],
+                            parameters=_BUILT_IN_PARAMS[tool.type]
+                        )
                     )
-                )
+                except:
+                    # if we run into an unknown tool, don't fail
+                    pass
         return final_tools
 
     @staticmethod

@@ -179,15 +179,26 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
             "arguments": safe_loads(tool_call.details.function.arguments),
         }
     else:
-        # treat built-in tools separately, but formatting may be unique
-        # don't fail if we run into a newly seen tool, just skip
+        # Treat built-in tools separately.  Object models may be unique so handle each case separately
+        # Just converting to dicts here rather than custom serializers for simplicity for now.
+        # Don't fail if we run into a newly seen tool, just skip
+        if tool_call.details.type == "code_interpreter":
+            arguments = {"input": tool_call.details.code_interpreter.input}
+        elif tool_call.details.type == "bing_grounding":
+            arguments = {"requesturl": tool_call.details.bing_grounding.requesturl}
+        elif tool_call.details.type == "file_search":
+            options = tool_call.details.file_search.ranking_options
+            arguments = {"ranking_options": {"ranker": options.ranker, "score_threshold": options.score_threshold}}
+        else:
+            # unsupported tool type, skip
+            return messages
         try:
             tool_call_id = tool_call.details.id
             content_tool_call = {
                 "type": _TOOL_CALL,
                 "tool_call_id": tool_call_id,
                 "name": tool_call.details.type,
-                "arguments": tool_call.details[tool_call.details.type],
+                "arguments": arguments,
             }
         except:
             return messages
@@ -203,7 +214,13 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
         try:
             # Some built-ins may have output, others may not
             # Try to retrieve it, but if we don't find anything, skip adding the message
-            output = tool_call.details[tool_call.details.type].outputs
+            # Just manually converting to dicts for easy serialization for now rather than custom serializers
+            if tool_call.details.type == "code_interpreter":
+                output = tool_call.details.code_interpreter.outputs
+            elif tool_call.details.type == "bing_grounding":
+                return messages # not supported yet from bing grounding tool
+            elif tool_call.details.type == "file_search":
+                output = [{"file_id": result.file_id, "file_name": result.file_name, "score": result.score, "content": result.content} for result in tool_call.details.file_search.results]
         except:
             return messages
 
