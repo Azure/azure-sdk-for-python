@@ -41,6 +41,55 @@ class AutoUserScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     Node in a Pool."""
 
 
+class BatchCertificateFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchCertificateFormat enums."""
+
+    PFX = "pfx"
+    """The Certificate is a PFX (PKCS#12) formatted Certificate or Certificate chain."""
+    CER = "cer"
+    """The Certificate is a base64-encoded X.509 Certificate."""
+
+
+class BatchCertificateState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchCertificateState enums."""
+
+    ACTIVE = "active"
+    """The Certificate is available for use in Pools."""
+    DELETING = "deleting"
+    """The user has requested that the Certificate be deleted, but the delete operation has not yet
+    completed. You may not reference the Certificate when creating or updating Pools."""
+    DELETE_FAILED = "deletefailed"
+    """The user requested that the Certificate be deleted, but there are Pools that still have
+    references to the Certificate, or it is still installed on one or more Nodes. (The latter can
+    occur if the Certificate has been removed from the Pool, but the Compute Node has not yet
+    restarted. Compute Nodes refresh their Certificates only when they restart.) You may use the
+    cancel Certificate delete operation to cancel the delete, or the delete Certificate operation
+    to retry the delete."""
+
+
+class BatchCertificateStoreLocation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchCertificateStoreLocation enums."""
+
+    CURRENT_USER = "currentuser"
+    """Certificates should be installed to the CurrentUser Certificate store."""
+    LOCAL_MACHINE = "localmachine"
+    """Certificates should be installed to the LocalMachine Certificate store."""
+
+
+class BatchCertificateVisibility(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchCertificateVisibility enums."""
+
+    START_TASK = "starttask"
+    """The Certificate should be visible to the user account under which the StartTask is run. Note
+    that if AutoUser Scope is Pool for both the StartTask and a Task, this certificate will be
+    visible to the Task as well."""
+    TASK = "task"
+    """The Certificate should be visible to the user accounts under which Job Tasks are run."""
+    REMOTE_USER = "remoteuser"
+    """The Certificate should be visible to the user accounts under which users remotely access the
+    Compute Node."""
+
+
 class BatchJobAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """BatchJobAction enums."""
 
@@ -458,9 +507,11 @@ class DiffDiskPlacement(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     operating system should be in. e.g., cache disk space for Ephemeral OS disk provisioning. For
     more information on Ephemeral OS disk size requirements, please refer to Ephemeral OS disk size
     requirements for Windows VMs at
-    https://learn.microsoft.com/azure/virtual-machines/windows/ephemeral-os-disks#size-requirements
+    `https://learn.microsoft.com/azure/virtual-machines/windows/ephemeral-os-disks#size-requirements
+    <https://learn.microsoft.com/azure/virtual-machines/windows/ephemeral-os-disks#size-requirements>`_
     and Linux VMs at
-    https://learn.microsoft.com/azure/virtual-machines/linux/ephemeral-os-disks#size-requirements.
+    `https://learn.microsoft.com/azure/virtual-machines/linux/ephemeral-os-disks#size-requirements
+    <https://learn.microsoft.com/azure/virtual-machines/linux/ephemeral-os-disks#size-requirements>`_.
     """
 
     CACHE_DISK = "cachedisk"
