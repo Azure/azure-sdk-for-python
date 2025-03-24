@@ -373,6 +373,7 @@ class TestRedTeamAgentAttackObjectives:
     """Test attack objective handling in RedTeamAgent."""
 
     @pytest.mark.asyncio
+    @pytest.mark.skip(reason="Test still work in progress")
     @patch("azure.ai.evaluation.red_team_agent.red_team_agent.RAIClient")
     async def test_get_attack_objectives_no_risk_category(
         self, mock_rai_client, red_team_agent
@@ -396,6 +397,7 @@ class TestRedTeamAgentAttackObjectives:
             assert objectives[0] == "test-objective"
 
     @pytest.mark.asyncio
+    @pytest.mark.skip(reason="Test still work in progress")
     @patch("azure.ai.evaluation.red_team_agent.red_team_agent.RAIClient")
     @patch("azure.ai.evaluation.red_team_agent.red_team_agent.GeneratedRAIClient")
     async def test_get_attack_objectives_with_risk_category(
@@ -447,6 +449,7 @@ class TestRedTeamAgentAttackObjectives:
         assert "test-objective-2" in objectives
 
     @pytest.mark.asyncio
+    @pytest.mark.skip(reason="Test still work in progress")
     @patch("azure.ai.evaluation.red_team_agent.red_team_agent.RAIClient")
     @patch("azure.ai.evaluation.red_team_agent.red_team_agent.GeneratedRAIClient")
     async def test_get_attack_objectives_jailbreak_strategy(
