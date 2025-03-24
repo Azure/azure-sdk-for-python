@@ -11,11 +11,13 @@ from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._common.utils import remove_optional_singletons, parse_quality_evaluator_reason_score
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._common.constants import PROMPT_BASED_REASON_EVALUATORS
+from azure.ai.evaluation._common._experimental import experimental
 
 logger = logging.getLogger(__name__)
 
 T_EvalValue = TypeVar("T_EvalValue")
 
+@experimental
 class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """The Tool Call Accuracy evaluator assesses how accurately an AI uses tools by examining:
         - Relevance to the conversation
@@ -68,32 +70,31 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         self.threshold = threshold
         super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY)
 
-    # Types are the closet from Agent 1.0 I could find since Agent 2.0 python classes does not exist
     @overload
     def __call__(
         self,
         *,
-        query: Union[str, List["Message"]], # Chat history upto the message that has the tool call being evaluated. Not including the message that has tool call. -- chat history
-        tool_definitions: Union["FunctionToolDefinition", List["FunctionToolDefinition"]], # Definition of tool whose call is being evaluated
-        tool_calls: Union["FunctionToolCall", List["FunctionToolCall"]]  = None,
-        response: Union[str, List["Message"]] = None
+        query: Union[str, List[dict]],
+        tool_definitions: Union[dict, List[dict]],
+        tool_calls: Union[dict, List[dict]]  = None,
+        response: Union[str, List[dict]] = None
     ) -> Dict[str, Union[str, float]]:
         """
         Evaluate tool call accuracy. Accepts a query, tool definitions, and tool calls for evaluation.
 
         :keyword query: Query or Chat history up to the message that has the tool call being evaluated.
-        :paramtype query: Union[str, List[Message]]
+        :paramtype query: Union[str, List[dict]]
         :keyword tool_definitions: List of tool definitions whose calls are being evaluated.
-        :paramtype tool_definitions: Union[FunctionToolDefinition, List[FunctionToolDefinition]]
+        :paramtype tool_definitions: Union[dict, List[dict]]
         :keyword tool_calls: Optional List of tool calls to evaluate. If not provided response should be provided and should have
             tool call(s) in it.
-        :paramtype tool_calls: Union[FunctionToolCall, List[FunctionToolCall]]
+        :paramtype tool_calls: Union[dict, List[dict]]
         :keyword response: Optional response to be evaluated alongside the tool calls.
             If provided all tool calls in response will be evaluated when tool_calls parameter is not provided.
             If provided and tool_calls parameter is provided, only the tool calls in tool_calls parameter will be evaluated.
                 If response has extra tool calls they will not be evaluated, response will be used to extract any tool calls that are needed for evaluating a certain tool call.
             Recommended to provide it when there are tool calls that depend on output of a previous tool call.
-        :paramtype response: Union[str, List[Message]]
+        :paramtype response: Union[str, List[dict]]
         :return: The tool selection evaluation results.
         :rtype: Dict[str, Union[str, float]]
         """

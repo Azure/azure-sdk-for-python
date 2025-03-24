@@ -11,7 +11,9 @@ from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, Err
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._common.utils import parse_quality_evaluator_reason_score
 from azure.ai.evaluation._model_configurations import Message
+from azure.ai.evaluation._common._experimental import experimental
 
+@experimental
 class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """The Task Adherence evaluator assesses how well an AI-generated response follows the assigned task based on:
 
@@ -62,9 +64,9 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     def __call__(
         self,
         *,
-        query: Union[str, List[Message]],
-        response: Union[str, List[Message]],
-        tool_definitions: Optional[Union[str, List[Message]]] = None,
+        query: Union[str, List[dict]],
+        response: Union[str, List[dict]],
+        tool_definitions: Optional[Union[dict, List[dict]]] = None,
     ) -> Dict[str, Union[str, float]]:
         """Evaluate task adherence for a given query, response, and optional tool defintions.
         The query and response can be either a string or a list of messages.
@@ -86,13 +88,13 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
         :keyword query: The query being evaluated, either a string or a list of messages.
-        :paramtype query: Union[str, List[Message]]
+        :paramtype query: Union[str, List[dict]]
         :keyword response: The response being evaluated, either a string or a list of messages (full agent response potentially including tool calls)
-        :paramtype response: Union[str, List[Message]]
+        :paramtype response: Union[str, List[dict]]
         :keyword tool_definitions: An optional list of messages containing the tool definitions the agent is aware of.
-        :paramtype tool_definitions: Optional[Union[str, List[Message]]]
+        :paramtype tool_definitions: Optional[Union[dict, List[dict]]]
         :return: A dictionary with the task adherence evaluation results.
-        :rtype: Dict[str, Union[str, bool, float]]
+        :rtype: Dict[str, Union[str, float]]
         """
 
     @override
