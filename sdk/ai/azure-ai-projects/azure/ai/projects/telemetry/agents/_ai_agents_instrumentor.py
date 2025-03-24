@@ -1301,6 +1301,10 @@ class _AIAgentsInstrumentorPreview:
     def wrap_handler(
         self, handler: "Optional[AgentEventHandler]" = None, span: "Optional[AbstractSpan]" = None
     ) -> "Optional[AgentEventHandler]":
+        # Do not create a handler wrapper if we do not have handler in the first place.
+        if not handler:
+            return None
+
         if isinstance(handler, _AgentEventHandlerTraceWrapper):
             return handler
 
