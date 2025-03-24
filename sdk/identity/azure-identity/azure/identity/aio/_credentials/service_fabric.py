@@ -10,7 +10,6 @@ from azure.core.exceptions import ClientAuthenticationError
 from .._internal.managed_identity_base import AsyncManagedIdentityBase
 from .._internal.managed_identity_client import AsyncManagedIdentityClient
 from ..._credentials.service_fabric import _get_client_args, SERVICE_FABRIC_ERROR_MESSAGE
-from ... import CredentialUnavailableError
 
 
 class ServiceFabricCredential(AsyncManagedIdentityBase):
