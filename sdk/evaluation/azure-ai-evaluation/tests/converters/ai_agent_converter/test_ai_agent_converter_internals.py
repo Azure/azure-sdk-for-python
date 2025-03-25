@@ -33,11 +33,11 @@ class TestAIAgentConverter(unittest.TestCase):
 
         # Test case where message is not an agent tool call (role is not agent)
         message = Message(
-            role="assistant",
+            role="not_assistant",
             content=[{"type": "tool_call", "details": "some details"}],
             createdAt="2023-01-01T00:00:00Z",
         )
-        self.assertTrue(AIAgentConverter._is_agent_tool_call(message))
+        self.assertFalse(AIAgentConverter._is_agent_tool_call(message))
 
         # Test case where message is not an agent tool call (content type is not tool_call)
         message = Message(
