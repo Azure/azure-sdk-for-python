@@ -182,13 +182,14 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
         # Treat built-in tools separately.  Object models may be unique so handle each case separately
         # Just converting to dicts here rather than custom serializers for simplicity for now.
         # Don't fail if we run into a newly seen tool, just skip
-        if tool_call.details.type == "code_interpreter":
+        if tool_call.details["type"] == "code_interpreter":
             arguments = {"input": tool_call.details.code_interpreter.input}
-        elif tool_call.details.type == "bing_grounding":
-            arguments = {"requesturl": tool_call.details.bing_grounding.requesturl}
-        elif tool_call.details.type == "file_search":
-            options = tool_call.details.file_search.ranking_options
-            arguments = {"ranking_options": {"ranker": options.ranker, "score_threshold": options.score_threshold}}
+        elif tool_call.details["type"] == "bing_grounding":
+            print(tool_call.details["bing_grounding"])
+            arguments = {"requesturl": tool_call.details["bing_grounding"]["requesturl"]}
+        elif tool_call.details["type"] == "file_search":
+            options = tool_call.details["file_search"]["ranking_options"]
+            arguments = {"ranking_options": {"ranker": options["ranker"], "score_threshold": options["score_threshold"]}}
         else:
             # unsupported tool type, skip
             return messages
