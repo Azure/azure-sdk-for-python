@@ -1,93 +1,70 @@
 import json
-import os
 import unittest
 from datetime import datetime
 
 from azure.ai.evaluation._converters._ai_services import AIAgentConverter
-from azure.ai.evaluation._converters._models import Message, AssistantMessage, ToolMessage, ToolCall, \
-    break_tool_call_into_messages
-from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import RunStepCodeInterpreterToolCall, RunStepCodeInterpreterToolCallDetails, \
-    RunStepFileSearchToolCall, RunStepFileSearchToolCallResults, RunStepFileSearchToolCallResult
-from azure.identity import DefaultAzureCredential
+from azure.ai.evaluation._converters._models import (
+    Message,
+    AssistantMessage,
+    ToolMessage,
+    ToolCall,
+    break_tool_call_into_messages,
+)
+from azure.ai.projects.models import (
+    RunStepCodeInterpreterToolCall,
+    RunStepCodeInterpreterToolCallDetails,
+    RunStepFileSearchToolCall,
+    RunStepFileSearchToolCallResults,
+    RunStepFileSearchToolCallResult,
+)
 
-from serialization_helper import ToolEncoder, ToolDecoder
+from serialization_helper import ToolDecoder
 
 
 class TestAIAgentConverter(unittest.TestCase):
     def test_is_agent_tool_call(self):
         # Test case where message is an agent tool call
         message = Message(
-            role='assistant',
+            role="assistant",
             content=[{"type": "tool_call", "details": "some details"}],
-            createdAt="2023-01-01T00:00:00Z"
+            createdAt="2023-01-01T00:00:00Z",
         )
         self.assertTrue(AIAgentConverter._is_agent_tool_call(message))
 
         # Test case where message is not an agent tool call (role is not agent)
         message = Message(
-            role='assistant',
+            role="assistant",
             content=[{"type": "tool_call", "details": "some details"}],
-            createdAt="2023-01-01T00:00:00Z"
+            createdAt="2023-01-01T00:00:00Z",
         )
         self.assertTrue(AIAgentConverter._is_agent_tool_call(message))
 
         # Test case where message is not an agent tool call (content type is not tool_call)
         message = Message(
-            role='assistant',
-            content=[{"type": "text", "details": "some details"}],
-            createdAt="2023-01-01T00:00:00Z"
+            role="assistant", content=[{"type": "text", "details": "some details"}], createdAt="2023-01-01T00:00:00Z"
         )
         self.assertFalse(AIAgentConverter._is_agent_tool_call(message))
 
         # Test case where message is not an agent tool call (content is empty)
-        message = Message(
-            role='assistant',
-            content=[],
-            createdAt="2023-01-01T00:00:00Z"
-        )
+        message = Message(role="assistant", content=[], createdAt="2023-01-01T00:00:00Z")
         self.assertFalse(AIAgentConverter._is_agent_tool_call(message))
-
-    def test_code_interpreter_tools(self):
-        messages = [AssistantMessage(createdAt=datetime.datetime(2025, 3, 24, 18, 45, 54, tzinfo=datetime.timezone.utc), run_id='run_2XtFg5KIeJoWi3GF1OWfkFoU', tool_call_id=None, role='assistant', content=[{'type': 'tool_call', 'tool_call_id': 'call_CNw8VOVOBxKF3ggZM2Fif1V0', 'name': 'code_interpreter', 'arguments': {'input': 'import math\r\n\r\n# Calculate the square root of 139485\r\nsquare_root = math.sqrt(139485)\r\nsquare_root'}}]), ToolMessage(createdAt=datetime.datetime(2025, 3, 24, 18, 45, 57, tzinfo=datetime.timezone.utc), run_id='run_2XtFg5KIeJoWi3GF1OWfkFoU', tool_call_id='call_CNw8VOVOBxKF3ggZM2Fif1V0', role='tool', content=[{'type': 'tool_result', 'tool_result': []}])]
 
     class CustomEncoder(json.JSONEncoder):
         def default(self, obj):
             if isinstance(obj, datetime):
                 return obj.isoformat()
             if isinstance(obj, ToolCall):
-                return {
-                    "completed": obj.completed,
-                    "created": obj.created,
-                    "details": obj.details
-                }
+                return {"completed": obj.completed, "created": obj.created, "details": obj.details}
             if isinstance(obj, RunStepCodeInterpreterToolCall):
-                return {
-                    "id": obj.id,
-                    "type": obj.type,
-                    "code_interpreter": obj.code_interpreter
-                }
+                return {"id": obj.id, "type": obj.type, "code_interpreter": obj.code_interpreter}
             if isinstance(obj, RunStepCodeInterpreterToolCallDetails):
-                return {
-                    "input": obj.input,
-                    "outputs": obj.outputs
-                }
+                return {"input": obj.input, "outputs": obj.outputs}
             if isinstance(obj, RunStepFileSearchToolCall):
-                return {
-                    "id": obj.id,
-                    "type": obj.type,
-                    "file_search": obj.file_search
-                }
+                return {"id": obj.id, "type": obj.type, "file_search": obj.file_search}
             if isinstance(obj, RunStepFileSearchToolCallResults):
-                return {
-                    "results": obj.results
-                }
+                return {"results": obj.results}
             if isinstance(obj, RunStepFileSearchToolCallResult):
-                return {
-                    "file_name": obj.file_name,
-                    "file_path": obj.file_path,
-                    "file_size": obj.file_size
-                }
+                return {"file_name": obj.file_name, "file_path": obj.file_path, "file_size": obj.file_size}
             return super().default(obj)
 
     def test_code_interpreter_tool_calls(self):
@@ -109,11 +86,16 @@ class TestAIAgentConverter(unittest.TestCase):
         self.assertTrue(len(messages) == 2)
         self.assertTrue(isinstance(messages[0], AssistantMessage))
         tool_call_content = messages[0].content[0]
-        self.assertTrue(tool_call_content['type'] == "tool_call")
-        self.assertTrue(tool_call_content['tool_call_id'] == "call_CNw8VOVOBxKF3ggZM2Fif1V0")
-        self.assertTrue(tool_call_content['name'] == "code_interpreter")
-        self.assertTrue(tool_call_content['arguments'] == {"input": "import math\n\n# Calculate the square root of 139485"
-                                                                 "\nsquare_root = math.sqrt(139485)\nsquare_root"})
+        self.assertTrue(tool_call_content["type"] == "tool_call")
+        self.assertTrue(tool_call_content["tool_call_id"] == "call_CNw8VOVOBxKF3ggZM2Fif1V0")
+        self.assertTrue(tool_call_content["name"] == "code_interpreter")
+        self.assertTrue(
+            tool_call_content["arguments"]
+            == {
+                "input": "import math\n\n# Calculate the square root of 139485"
+                "\nsquare_root = math.sqrt(139485)\nsquare_root"
+            }
+        )
         self.assertTrue(isinstance(messages[1], ToolMessage))
         # TODO: example with outputs populated
 
@@ -151,14 +133,32 @@ class TestAIAgentConverter(unittest.TestCase):
         self.assertTrue(len(messages) == 2)
         self.assertTrue(isinstance(messages[0], AssistantMessage))
         tool_call_content = messages[0].content[0]
-        self.assertTrue(tool_call_content['type'] == "tool_call")
-        self.assertTrue(tool_call_content['tool_call_id'] == "call_sot1fUR9Pazh3enT2E6EjX5g")
-        self.assertTrue(tool_call_content['name'] == "file_search")
-        self.assertTrue(tool_call_content['arguments'] == {"ranking_options": {"ranker": "default_2024_08_21", "score_threshold": 0.0}})
+        self.assertTrue(tool_call_content["type"] == "tool_call")
+        self.assertTrue(tool_call_content["tool_call_id"] == "call_sot1fUR9Pazh3enT2E6EjX5g")
+        self.assertTrue(tool_call_content["name"] == "file_search")
+        self.assertTrue(
+            tool_call_content["arguments"]
+            == {"ranking_options": {"ranker": "default_2024_08_21", "score_threshold": 0.0}}
+        )
         self.assertTrue(isinstance(messages[1], ToolMessage))
-        self.assertTrue(messages[1].content[0]['type'] == "tool_result")
-        self.assertTrue(messages[1].content[0]['tool_result'] == [{"file_name": "dragons.txt", "file_id": "assistant-BsRfTatRwQzF96Uz4EhhqT", "score": 0.03201844170689583, "content": None},
-                                                                 {"file_name": "dragons.txt", "file_id": "assistant-BsRfTatRwQzF96Uz4EhhqT", "score": 0.02539682574570179, "content": None}])
+        self.assertTrue(messages[1].content[0]["type"] == "tool_result")
+        self.assertTrue(
+            messages[1].content[0]["tool_result"]
+            == [
+                {
+                    "file_name": "dragons.txt",
+                    "file_id": "assistant-BsRfTatRwQzF96Uz4EhhqT",
+                    "score": 0.03201844170689583,
+                    "content": None,
+                },
+                {
+                    "file_name": "dragons.txt",
+                    "file_id": "assistant-BsRfTatRwQzF96Uz4EhhqT",
+                    "score": 0.02539682574570179,
+                    "content": None,
+                },
+            ]
+        )
 
     def test_bing_grounding_tool_calls(self):
         tool_call_data = """{
@@ -177,10 +177,13 @@ class TestAIAgentConverter(unittest.TestCase):
         self.assertTrue(len(messages) == 1)  # we don't have results from bing
         self.assertTrue(isinstance(messages[0], AssistantMessage))
         tool_call_content = messages[0].content[0]
-        self.assertTrue(tool_call_content['type'] == "tool_call")
-        self.assertTrue(tool_call_content['tool_call_id'] == "call_PG9cYqLGAVO30BWBwgHMcvJQ")
-        self.assertTrue(tool_call_content['name'] == "bing_grounding")
-        self.assertTrue(tool_call_content['arguments'] == {"requesturl": "https://api.bing.microsoft.com/v7.0/search?q="})
+        self.assertTrue(tool_call_content["type"] == "tool_call")
+        self.assertTrue(tool_call_content["tool_call_id"] == "call_PG9cYqLGAVO30BWBwgHMcvJQ")
+        self.assertTrue(tool_call_content["name"] == "bing_grounding")
+        self.assertTrue(
+            tool_call_content["arguments"] == {"requesturl": "https://api.bing.microsoft.com/v7.0/search?q="}
+        )
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

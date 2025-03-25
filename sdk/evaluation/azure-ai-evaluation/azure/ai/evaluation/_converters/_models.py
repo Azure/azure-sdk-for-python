@@ -188,7 +188,9 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
             arguments = {"requesturl": tool_call.details["bing_grounding"]["requesturl"]}
         elif tool_call.details["type"] == "file_search":
             options = tool_call.details["file_search"]["ranking_options"]
-            arguments = {"ranking_options": {"ranker": options["ranker"], "score_threshold": options["score_threshold"]}}
+            arguments = {
+                "ranking_options": {"ranker": options["ranker"], "score_threshold": options["score_threshold"]}
+            }
         else:
             # unsupported tool type, skip
             return messages
@@ -218,9 +220,17 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
             if tool_call.details.type == "code_interpreter":
                 output = tool_call.details.code_interpreter.outputs
             elif tool_call.details.type == "bing_grounding":
-                return messages # not supported yet from bing grounding tool
+                return messages  # not supported yet from bing grounding tool
             elif tool_call.details.type == "file_search":
-                output = [{"file_id": result.file_id, "file_name": result.file_name, "score": result.score, "content": result.content} for result in tool_call.details.file_search.results]
+                output = [
+                    {
+                        "file_id": result.file_id,
+                        "file_name": result.file_name,
+                        "score": result.score,
+                        "content": result.content,
+                    }
+                    for result in tool_call.details.file_search.results
+                ]
         except:
             return messages
 
