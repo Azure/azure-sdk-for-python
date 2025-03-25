@@ -12,6 +12,8 @@ from azure.ai.projects.models import (
 
 from typing import List, Union
 
+from semantic_kernel.utils.feature_stage_decorator import experimental
+
 # Constants.
 from ._models import _USER, _AGENT, _TOOL, _TOOL_CALL, _TOOL_CALLS, _FUNCTION
 
@@ -70,7 +72,7 @@ _BUILT_IN_PARAMS = {
     },
 }
 
-
+@experimental
 class AIAgentConverter:
     """
     A converter for AI agent data.
