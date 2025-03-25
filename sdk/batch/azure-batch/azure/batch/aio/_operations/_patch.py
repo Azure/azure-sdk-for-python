@@ -10,7 +10,7 @@ import asyncio
 import datetime
 import collections
 import logging
-from typing import Any, AsyncIterator, List, Optional
+from typing import Any, AsyncIterator, List, Iterable, Optional, Union
 
 from azure.batch import models as _models
 from azure.core import MatchConditions
@@ -32,7 +32,7 @@ __all__: List[str] = [
 class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
     """Customize generated code"""
 
-    async def create_task_collection(
+    async def create_tasks(
         self,
         job_id: str,
         task_collection: List[_models.BatchTaskCreateContent],
@@ -88,7 +88,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         results_queue = collections.deque()
         task_workflow_manager = _TaskWorkflowManager(
-            super().create_task_collection, job_id=job_id, task_collection=task_collection, **kwargs
+            self, job_id=job_id, task_collection=task_collection, **kwargs
         )
 
         if concurrencies:
@@ -185,7 +185,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> HttpResponse:
+    ) -> bool:
         """Gets the properties of the specified Compute Node file.
 
         :param pool_id: The ID of the Pool that contains the Compute Node. Required.
@@ -213,8 +213,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :paramtype if_unmodified_since: ~datetime.datetime
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: HttpResponse
-        :rtype: HttpResponse
+        :return: bool
+        :rtype: bool
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -235,7 +235,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         )
         get_response = await super().get_node_file_properties(*args, **kwargs)
 
-        return get_response[0].http_response
+        return get_response
 
     async def get_task_file_properties(
         self,
@@ -248,7 +248,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> HttpResponse:
+    ) -> bool:
         """Gets the properties of the specified Task file.
 
         :param job_id: The ID of the Job that contains the Task. Required.
@@ -276,8 +276,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :paramtype if_unmodified_since: ~datetime.datetime
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: HttpResponse
-        :rtype: HttpResponse
+        :return: bool
+        :rtype: bool
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -298,7 +298,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         )
         get_response = await super().get_task_file_properties(*args, **kwargs)
 
-        return get_response[0].http_response
+        return get_response
 
     async def get_task_file(
         self,
@@ -366,12 +366,10 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 class _TaskWorkflowManager:
     """Worker class for one create_task_collection request
 
-    :param ~TaskOperations task_operations: Parent object which instantiated this
     :param str job_id: The ID of the job to which the task collection is to be
         added.
-    :param tasks_to_add: The collection of tasks to add.
-    :type tasks_to_add: list of :class:`TaskAddParameter
-        <azure.batch.models.TaskAddParameter>`
+    :ivar tasks_to_add: The collection of tasks to add.
+    :vartype tasks_to_add: Iterable[~azure.batch.models.BatchTaskCreateContent]
     :param task_create_task_collection_options: Additional parameters for the
         operation
     :type task_create_task_collection_options: :class:`TaskAddCollectionOptions
@@ -380,9 +378,9 @@ class _TaskWorkflowManager:
 
     def __init__(
         self,
-        original_create_task_collection,
+        batch_client: BatchClientOperationsMixin,
         job_id: str,
-        task_collection: _models.BatchTaskAddCollectionResult or List[_models.BatchTaskCreateContent],
+        task_collection: Iterable[_models.BatchTaskCreateContent],
         **kwargs
     ):
         # List of tasks which failed to add due to a returned client error
@@ -392,16 +390,10 @@ class _TaskWorkflowManager:
 
         # synchronized through lock variables
         self._max_tasks_per_request = MAX_TASKS_PER_REQUEST
-        # check if collection is list or _models.BatchTaskAddCollectionResult
-        if isinstance(task_collection, _models.BatchTaskAddCollectionResult):
-            self.tasks_to_add = collections.deque(task_collection.value)
-        elif isinstance(task_collection, list):
-            self.tasks_to_add = collections.deque(task_collection)
-        else:
-            raise TypeError("Expected collection to be of type list or BatchTaskAddCollectionResult")
+        self.tasks_to_add = collections.deque(task_collection)
 
         # Variables to be used for task create_task_collection requests
-        self._original_create_task_collection = original_create_task_collection
+        self._batch_client = batch_client
         self._job_id = job_id
 
         self._kwargs = kwargs
@@ -418,15 +410,15 @@ class _TaskWorkflowManager:
 
         :param results_queue: Queue to place the return value of the request
         :type results_queue: collections.deque
-        :param chunk_tasks_to_add: Chunk of at most 100 tasks with retry details
-        :type chunk_tasks_to_add: list[~TrackedCloudTask]
+        :ivar chunk_tasks_to_add: Chunk of at most 100 tasks with retry details
+        :vartype chunk_tasks_to_add: list[~azure.batch.models.BatchTaskCreateContent]
         """
 
         try:
             create_task_collection_response: _models.BatchTaskAddCollectionResult = (
-                await self._original_create_task_collection(
+                await self._batch_client.create_task_collection(
                     job_id=self._job_id,
-                    task_collection=_models.BatchTaskAddCollectionResult(value=chunk_tasks_to_add),
+                    task_collection=_models.BatchTaskGroup(value=chunk_tasks_to_add),
                     **self._kwargs
                 )
             )
@@ -480,20 +472,21 @@ class _TaskWorkflowManager:
             # Unknown State - don't know if tasks failed to add or were successful
             self.errors.appendleft(e)
         else:
-            for task_result in create_task_collection_response.value:
-                if task_result.status == _models.BatchTaskAddStatus.SERVER_ERROR:
-                    # Server error will be retried
-                    for task in chunk_tasks_to_add:
-                        if task.id == task_result.task_id:
-                            self.tasks_to_add.appendleft(task)
-                elif (
-                    task_result.status == _models.BatchTaskAddStatus.CLIENT_ERROR
-                    and not task_result.error.code == "TaskExists"
-                ):
-                    # Client error will be recorded unless Task already exists
-                    self.failure_tasks.appendleft(task_result)
-                else:
-                    results_queue.appendleft(task_result)
+            if create_task_collection_response.value:
+                for task_result in create_task_collection_response.value:
+                    if task_result.status == _models.BatchTaskAddStatus.SERVER_ERROR:
+                        # Server error will be retried
+                        for task in chunk_tasks_to_add:
+                            if task.id == task_result.task_id:
+                                self.tasks_to_add.appendleft(task)
+                    elif (
+                        task_result.status == _models.BatchTaskAddStatus.CLIENT_ERROR
+                        and not (task_result.error and task_result.error.code == "TaskExists")
+                    ):
+                        # Client error will be recorded unless Task already exists
+                        self.failure_tasks.appendleft(task_result)
+                    else:
+                        results_queue.appendleft(task_result)
 
     async def task_collection_handler(self, results_queue):
         """Main method for worker to run

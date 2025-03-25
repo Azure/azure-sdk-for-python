@@ -7,7 +7,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import datetime
-from typing import Any, List, Optional, Iterator
+from typing import Any, List, Optional, Iterable, Iterator
 import collections
 import logging
 import threading
@@ -32,7 +32,7 @@ __all__: List[str] = [
 class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
     """Customize generated code"""
 
-    def create_task_collection(
+    def create_tasks(
         self,
         job_id: str,
         task_collection: List[_models.BatchTaskCreateContent],
@@ -88,7 +88,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         results_queue = collections.deque()  # deque operations(append/pop) are thread-safe
         task_workflow_manager = _TaskWorkflowManager(
-            super().create_task_collection, job_id=job_id, task_collection=task_collection, **kwargs
+            self, job_id=job_id, task_collection=task_collection, **kwargs
         )
 
         # multi-threaded behavior
@@ -194,7 +194,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> HttpResponse:
+    ) -> bool:
         """Gets the properties of the specified Compute Node file.
 
         :param pool_id: The ID of the Pool that contains the Compute Node. Required.
@@ -222,8 +222,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :paramtype if_unmodified_since: ~datetime.datetime
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: HttpResponse
-        :rtype: HttpResponse
+        :return: bool
+        :rtype: bool
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -244,7 +244,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         )
         get_response = super().get_node_file_properties(*args, **kwargs)
 
-        return get_response[0].http_response
+        return get_response
 
     def get_task_file_properties(
         self,
@@ -257,7 +257,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> HttpResponse:
+    ) -> bool:
         """Gets the properties of the specified Task file.
 
         :param job_id: The ID of the Job that contains the Task. Required.
@@ -285,8 +285,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :paramtype if_unmodified_since: ~datetime.datetime
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: HttpResponse
-        :rtype: HttpResponse
+        :return: bool
+        :rtype: bool
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -307,7 +307,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         )
         get_response = super().get_task_file_properties(*args, **kwargs)
 
-        return get_response[0].http_response
+        return get_response
 
     def get_task_file(
         self,
@@ -398,9 +398,9 @@ class _TaskWorkflowManager:
 
     def __init__(
         self,
-        original_create_task_collection,
+        batch_client: BatchClientOperationsMixin,
         job_id: str,
-        task_collection: _models.BatchTaskAddCollectionResult,
+        task_collection: Iterable[_models.BatchTaskCreateContent],
         **kwargs
     ):
         # Append operations thread safe - Only read once all threads have completed
@@ -417,7 +417,7 @@ class _TaskWorkflowManager:
         self._pending_queue_lock = threading.Lock()
 
         # Variables to be used for task create_task_collection requests
-        self._original_create_task_collection = original_create_task_collection
+        self._batch_client = batch_client
         self._job_id = job_id
 
         self._kwargs = kwargs
@@ -431,14 +431,14 @@ class _TaskWorkflowManager:
         :param results_queue: Queue to place the return value of the request
         :type results_queue: collections.deque
         :param chunk_tasks_to_add: Chunk of at most 100 tasks with retry details
-        :type chunk_tasks_to_add: list[~TrackedCloudTask]
+        :type chunk_tasks_to_add: list[~BatchTaskAddResult]
         """
 
         try:
             create_task_collection_response: _models.BatchTaskAddCollectionResult = (
-                self._original_create_task_collection(
+                self._batch_client.create_task_collection(
                     job_id=self._job_id,
-                    task_collection=_models.BatchTaskAddCollectionResult(value=chunk_tasks_to_add),
+                    task_collection=_models.BatchTaskGroup(value=chunk_tasks_to_add),
                     **self._kwargs
                 )
             )
@@ -499,22 +499,22 @@ class _TaskWorkflowManager:
                 create_task_collection_response = create_task_collection_response.output
             except AttributeError:
                 pass
-
-            for task_result in create_task_collection_response.value:  # pylint: disable=no-member
-                if task_result.status == _models.BatchTaskAddStatus.SERVER_ERROR:
-                    # Server error will be retried
-                    with self._pending_queue_lock:
-                        for task in chunk_tasks_to_add:
-                            if task.id == task_result.task_id:
-                                self.tasks_to_add.appendleft(task)
-                elif (
-                    task_result.status == _models.BatchTaskAddStatus.CLIENT_ERROR
-                    and not task_result.error.code == "TaskExists"
-                ):
-                    # Client error will be recorded unless Task already exists
-                    self.failure_tasks.appendleft(task_result)
-                else:
-                    results_queue.appendleft(task_result)
+            if create_task_collection_response.value:
+                for task_result in create_task_collection_response.value:  # pylint: disable=no-member
+                    if task_result.status == _models.BatchTaskAddStatus.SERVER_ERROR:
+                        # Server error will be retried
+                        with self._pending_queue_lock:
+                            for task in chunk_tasks_to_add:
+                                if task.id == task_result.task_id:
+                                    self.tasks_to_add.appendleft(task)
+                    elif (
+                        task_result.status == _models.BatchTaskAddStatus.CLIENT_ERROR
+                        and not (task_result.error and task_result.error.code == "TaskExists")
+                    ):
+                        # Client error will be recorded unless Task already exists
+                        self.failure_tasks.appendleft(task_result)
+                    else:
+                        results_queue.appendleft(task_result)
 
     def task_collection_thread_handler(self, results_queue):
         """Main method for worker to run
