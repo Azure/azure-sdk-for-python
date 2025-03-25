@@ -765,8 +765,23 @@ class AzureAISearchTool(Tool[AzureAISearchToolDefinition]):
     A tool that searches for information using Azure AI Search.
     """
 
-    def __init__(self, index_connection_id: str, index_name: str, query_type: AzureAISearchQueryType = AzureAISearchQueryType.SIMPLE, filter: str = "", top_k: int = 5):
-        self.index_list = [AISearchIndexResource(index_connection_id=index_connection_id, index_name=index_name, query_type=query_type, filter=filter, top_k=top_k)]
+    def __init__(
+        self,
+        index_connection_id: str,
+        index_name: str,
+        query_type: AzureAISearchQueryType = AzureAISearchQueryType.SIMPLE,
+        filter: str = "",
+        top_k: int = 5,
+    ):
+        self.index_list = [
+            AISearchIndexResource(
+                index_connection_id=index_connection_id,
+                index_name=index_name,
+                query_type=query_type,
+                filter=filter,
+                top_k=top_k,
+            )
+        ]
 
     @property
     def definitions(self) -> List[AzureAISearchToolDefinition]:
