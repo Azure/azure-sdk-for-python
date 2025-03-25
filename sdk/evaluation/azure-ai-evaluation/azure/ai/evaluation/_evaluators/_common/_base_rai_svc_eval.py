@@ -62,6 +62,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         self._azure_ai_project = validate_azure_ai_project(azure_ai_project)
         self._credential = credential
         self._threshold = threshold
+        self._higher_is_better = _higher_is_better
 
     @override
     def __call__(  # pylint: disable=docstring-missing-param
@@ -125,8 +126,8 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         return result
 
     async def _evaluate_query_response(self, eval_input: Dict) -> Dict[str, T]:
-        query = eval_input.get("query", None)
-        response = eval_input.get("response", None)
+        query = str(eval_input.get("query", None))
+        response = str(eval_input.get("response", None))
         if query is None or response is None:
             raise EvaluationException(
                 message="Not implemented",

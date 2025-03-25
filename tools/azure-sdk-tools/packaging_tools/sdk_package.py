@@ -9,7 +9,7 @@ from typing import Any
 import multiprocessing
 from functools import partial
 
-from .package_utils import create_package, change_log_generate, extract_breaking_change, get_version_info
+from .package_utils import create_package, change_log_generate, extract_breaking_change, get_version_info, check_file
 
 logging.basicConfig(
     stream=sys.stdout,
@@ -98,6 +98,9 @@ def main(generate_input, generate_output):
                 break
         package["packageFolder"] = package["path"][0]
         result["packages"].append(package)
+
+        # check generated files
+        check_file(package)
 
     with open(generate_output, "w") as writer:
         json.dump(result, writer)
