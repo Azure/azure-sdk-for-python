@@ -91,10 +91,10 @@ stages:
               GH_TOKEN: $(azuresdk-github-pat)
 
           - task: PythonScript@0
-            displayName: 'Get vNext Issues'
+            displayName: 'Update vNext Issues with build info'
             continueOnError: true
             inputs:
-              scriptPath: 'tools/azure-sdk-tools/gh_tools/call_issue_creator.py'
+              scriptPath: 'tools/azure-sdk-tools/gh_tools/update_issue.py'
               arguments: >-
                 ${{ parameters.BuildTargetingString }}
                 --service="${{ parameters.ServiceDirectory }}"
