@@ -68,6 +68,7 @@
     "sdk/digitaltwins/azure-digitaltwins-core/**",
     "sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/_vendor/**",
     "sdk/evaluation/azure-ai-evaluation/tests/**",
+    "sdk/evaluation/azure-ai-evaluation/samples/agent_evaluators/**",
     "sdk/eventhub/azure-eventhub-checkpointstoretable/**",
     "sdk/eventhub/azure-eventhub-checkpointstoreblob-aio/**",
     "sdk/eventhub/azure-eventhub/**",
@@ -1400,7 +1401,10 @@
         "upia",
         "xpia",
         "expirable",
-        "ralphe"
+        "ralphe",
+        "Inadherent",
+        "nbformat",
+        "nbconvert",
       ]
     },
     {

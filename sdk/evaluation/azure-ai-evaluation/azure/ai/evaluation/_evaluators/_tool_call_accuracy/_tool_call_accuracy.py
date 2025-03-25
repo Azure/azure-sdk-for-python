@@ -57,14 +57,15 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     _RESULT_KEY = "tool_call_accurate"
     _AGGREGATE_RESULT_KEY = "tool_call_accuracy"
 
-    MAX_TOOL_CALL_ACCURACY_SCORE = 1.0
-    MIN_TOOL_CALL_ACCURACY_SCORE = 0.0
+    _MAX_TOOL_CALL_ACCURACY_SCORE = 1.0
+    _MIN_TOOL_CALL_ACCURACY_SCORE = 0.0
+    _DEFAULT_TOOL_CALL_ACCURACY_SCORE = 0.8
 
     id = "id"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, threshold=MAX_TOOL_CALL_ACCURACY_SCORE):
+    def __init__(self, model_config, threshold=_DEFAULT_TOOL_CALL_ACCURACY_SCORE):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self.threshold = threshold
@@ -152,7 +153,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 for message in response:
                     if message.get("role") == "assistant":
                         tool_calls.extend([content for content in message.get("content")
-                                        if content.get("type") == "tool_call" and content.get("tool_call").get("type") == "function"])
+                                        if content.get("type") == "tool_call"])
             if len(tool_calls) == 0:
                 raise EvaluationException(
                     message="response does not have tool calls. Either provide tool_calls or response with tool calls.",
@@ -171,8 +172,8 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         # TODO : When evaluating an agent tool that depends on the output of a previous tool call,
         # we need to provide the output of the previous tool call as part of messages.
         for tool_call in tool_calls:
-            if isinstance(tool_call, dict) and tool_call.get("type") == "tool_call" and tool_call.get("tool_call").get("type") == "function":  # TODO assuming dict here but it can be a class
-                function_name = tool_call.get("tool_call").get("function").get("name")
+            if isinstance(tool_call, dict) and tool_call.get("type") == "tool_call":  # TODO assuming dict here but it can be a class
+                function_name = tool_call.get("name")
                 tool_definition = [tool for tool in tool_definitions if tool.get("name") == function_name]
                 if len(tool_definition) > 0:
                     tool_definition = tool_definition
@@ -213,7 +214,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             return {
                 self._result_key: bool(float(score)),
                 f"{self._result_key}_reason": reason,
-                "tool_call_id" : eval_input.get("tool_call").get("tool_call").get("id"),
+                "tool_call_id" : eval_input.get("tool_call").get("tool_call_id"),
             }
         return {self._result_key: float(score)}
 

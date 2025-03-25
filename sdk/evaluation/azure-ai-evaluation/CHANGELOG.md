@@ -47,7 +47,7 @@
     - groundedness
 - New Built-in evaluators for Agent Evaluation (Preview)
   - IntentResolutionEvaluator - Evaluates the intent resolution of an agent's response to a user query.
-  - CompletenessEvaluator - Evaluates the completeness of an agent's response to a user query.
+  - ResponseCompletenessEvaluator - Evaluates the response completeness of an agent's response to a user query.
   - TaskAdherenceEvaluator - Evaluates the task adherence of an agent's response to a user query.
   - ToolCallAccuracyEvaluator - Evaluates the accuracy of tool calls made by an agent in response to a user query.
 
