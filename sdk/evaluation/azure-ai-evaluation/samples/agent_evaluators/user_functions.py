@@ -46,6 +46,25 @@ def fetch_weather(location: str) -> str:
     weather_json = json.dumps({"weather": weather})
     return weather_json
 
+def opening_hours(tourist_destination: str) -> str:
+    """
+    Fetches the opening hours of a tourist destination in Seattle.
+
+    :param tourist_destination (str): The tourist destination to fetch opening hours for.
+    :return: Opening hours as a JSON string.
+    :rtype: str
+    """
+    # In a real-world scenario, you'd integrate with an API or database.
+    # Here, we'll mock the response.
+    mock_opening_hours_data = {
+        "Space Needle": "9 AM - 11 PM",
+        "Pike Place Market": "9 AM - 6 PM",
+        "Museum of Pop Culture": "10 AM - 5 PM",
+        "Seattle Aquarium": "9:30 AM - 6 PM"
+    }
+    opening_hours = mock_opening_hours_data.get(tourist_destination, "Opening hours not available for this location.")
+    opening_hours_json = json.dumps({"opening_hours": opening_hours})
+    return opening_hours_json
 
 def send_email(recipient: str, subject: str, body: str) -> str:
     """
@@ -245,4 +264,5 @@ user_functions: Set[Callable[..., Any]] = {
     get_user_info,
     longest_word_in_sentences,
     process_records,
+    opening_hours,
 }
