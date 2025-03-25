@@ -40,14 +40,10 @@ extends:
     - name: azure-ai-evaluation
       safeName: azureaievaluation
     
-    # Add a new optional stage for red team tests
-    OptionalTestStages:
-      - Template: /sdk/evaluation/azure-ai-evaluation/tests/unittests/test_redteam/redteam_tests_stage.yml
-        StageDisplayName: RedTeam Tests
-    
-    # Exclude red team tests from the regular test stages
+    # Install package with redteam extra for tests
     TestPipeline:
       TestSetupSteps:
         - script: |
-            echo "##vso[task.setvariable variable=PYTEST_ADDOPTS]--ignore=sdk/evaluation/azure-ai-evaluation/tests/unittests/test_redteam"
-          displayName: 'Exclude RedTeam Tests From Regular Test Runs'
+            pip install -e ".[redteam]"
+          displayName: 'Install package with redteam extra'
+          workingDirectory: $(Build.SourcesDirectory)/sdk/evaluation/azure-ai-evaluation

@@ -1532,9 +1532,7 @@ class RedTeamAgent():
             
         with self._start_redteam_mlflow_run(self.azure_ai_project, scan_name) as eval_run:
             self.ai_studio_url = _get_ai_studio_url(trace_destination=self.trace_destination, evaluation_id=eval_run.info.run_id)
-            # todo: temp change to show the URL in int and with flight info
-            self.ai_studio_url = self.ai_studio_url.replace("ai.azure.com", "int.ai.azure.com")
-            self.ai_studio_url = f"{self.ai_studio_url}&flight=AIRedTeaming=true,EvalConvergence"
+
             # Show URL for tracking progress
             print(f"🔗 Track your red team scan in AI Foundry: {self.ai_studio_url}")
             self.logger.info(f"Started MLFlow run: {self.ai_studio_url}")
