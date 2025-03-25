@@ -1,7 +1,7 @@
 from unittest.mock import MagicMock
 
 import pytest
-from azure.ai.evaluation import CompletenessEvaluator
+from azure.ai.evaluation import ResponseCompletenessEvaluator
 from azure.ai.evaluation._exceptions import EvaluationException
 
 
@@ -23,70 +23,70 @@ async def completeness_response2_async_mock():
 
 @pytest.mark.usefixtures("mock_model_config")
 @pytest.mark.unittest
-class TestCompletenessEvaluator:
+class TestResponseCompletenessEvaluator:
     def test_initialization(self, mock_model_config):
-        completeness_evaluator = CompletenessEvaluator(model_config=mock_model_config)
-        # Test initialization of CompletenessEvaluator
-        assert completeness_evaluator.threshold == CompletenessEvaluator.DEFAULT_COMPLETENESS_THRESHOLD
-        assert completeness_evaluator._result_key == CompletenessEvaluator._RESULT_KEY
+        response_completeness_evaluator = ResponseCompletenessEvaluator(model_config=mock_model_config)
+        # Test initialization of ResponseCompletenessEvaluator
+        assert response_completeness_evaluator.threshold == ResponseCompletenessEvaluator.DEFAULT_COMPLETENESS_THRESHOLD
+        assert response_completeness_evaluator._result_key == ResponseCompletenessEvaluator._RESULT_KEY
 
     def test_evaluate_completeness_valid1(self, mock_model_config):
-        completeness_evaluator = CompletenessEvaluator(model_config=mock_model_config)
-        completeness_evaluator._flow = MagicMock(return_value=completeness_response1_async_mock())
+        response_completeness_evaluator = ResponseCompletenessEvaluator(model_config=mock_model_config)
+        response_completeness_evaluator._flow = MagicMock(return_value=completeness_response1_async_mock())
 
         # Test evaluation with valid ground truth and response
         ground_truth = "The capital of Japan is Tokyo."
         response = "The capital of Japan"
-        result = completeness_evaluator(ground_truth=ground_truth, response=response)
+        result = response_completeness_evaluator(ground_truth=ground_truth, response=response)
 
-        key = CompletenessEvaluator._RESULT_KEY
+        key = ResponseCompletenessEvaluator._RESULT_KEY
         assert result is not None
         assert (key in result and f"{key}_result" in result and f"{key}_threshold" in result
                 and f"{key}_reason" in result)
         assert result[key] == 1
         assert result[f"{key}_result"] == "fail"
-        assert result[f"{key}_threshold"] == CompletenessEvaluator.DEFAULT_COMPLETENESS_THRESHOLD
+        assert result[f"{key}_threshold"] == ResponseCompletenessEvaluator.DEFAULT_COMPLETENESS_THRESHOLD
         assert "The response is fully incomplete " in result[f"{key}_reason"]
 
     def test_evaluate_completeness_valid2(self, mock_model_config):
-        completeness_evaluator = CompletenessEvaluator(model_config=mock_model_config)
-        completeness_evaluator._flow = MagicMock(return_value=completeness_response2_async_mock())
+        response_completeness_evaluator = ResponseCompletenessEvaluator(model_config=mock_model_config)
+        response_completeness_evaluator._flow = MagicMock(return_value=completeness_response2_async_mock())
 
         # Test evaluation with valid ground truth and response
         ground_truth = "The capital of Japan is Tokyo."
         response = "The capital of Japan is Tokyo."
-        result = completeness_evaluator(ground_truth=ground_truth, response=response)
+        result = response_completeness_evaluator(ground_truth=ground_truth, response=response)
 
-        key = CompletenessEvaluator._RESULT_KEY
+        key = ResponseCompletenessEvaluator._RESULT_KEY
         assert result is not None
 
         assert (key in result and f"{key}_result" in result and f"{key}_threshold" in result and
                 f"{key}_reason" in result)
         assert result[key] == 5
         assert result[f"{key}_result"] == "pass"
-        assert result[f"{key}_threshold"] == CompletenessEvaluator.DEFAULT_COMPLETENESS_THRESHOLD
+        assert result[f"{key}_threshold"] == ResponseCompletenessEvaluator.DEFAULT_COMPLETENESS_THRESHOLD
         assert "The response perfectly matches " in result[f"{key}_reason"]
 
     def test_evaluate_completeness_missing_ground_truth(self, mock_model_config):
-        completeness_evaluator = CompletenessEvaluator(model_config=mock_model_config)
-        completeness_evaluator._flow = MagicMock(return_value=completeness_response1_async_mock())
+        response_completeness_evaluator = ResponseCompletenessEvaluator(model_config=mock_model_config)
+        response_completeness_evaluator._flow = MagicMock(return_value=completeness_response1_async_mock())
 
         # Test evaluation with missing ground truth
         response = "The capital of China is Beijing."
         with pytest.raises(EvaluationException) as exc_info:
-            completeness_evaluator(response=response)
+            response_completeness_evaluator(response=response)
 
-        assert ("CompletenessEvaluator: Either 'conversation' or individual inputs must be provided."
+        assert ("ResponseCompletenessEvaluator: Either 'conversation' or individual inputs must be provided."
                 in exc_info.value.args[0])
 
     def test_evaluate_completeness_missing_response(self, mock_model_config):
-        completeness_evaluator = CompletenessEvaluator(model_config=mock_model_config)
-        completeness_evaluator._flow = MagicMock(return_value=completeness_response1_async_mock())
+        response_completeness_evaluator = ResponseCompletenessEvaluator(model_config=mock_model_config)
+        response_completeness_evaluator._flow = MagicMock(return_value=completeness_response1_async_mock())
 
         # Test evaluation with missing ground truth
         ground_truth = "The capital of China is Beijing."
         with pytest.raises(EvaluationException) as exc_info:
-            completeness_evaluator(ground_truth=ground_truth)
+            response_completeness_evaluator(ground_truth=ground_truth)
 
-        assert ("CompletenessEvaluator: Either 'conversation' or individual inputs must be provided."
+        assert ("ResponseCompletenessEvaluator: Either 'conversation' or individual inputs must be provided."
                 in exc_info.value.args[0])

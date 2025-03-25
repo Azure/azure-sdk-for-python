@@ -14,8 +14,8 @@ from azure.ai.evaluation._common.utils import parse_quality_evaluator_reason_sco
 from azure.ai.evaluation._model_configurations import Conversation, Message
 from azure.ai.evaluation._common._experimental import experimental
 
-@experimental
-class CompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
+
+class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
     Evaluates the extent to which a given response contains all necessary and relevant information with respect to the
      provided ground truth.
@@ -47,7 +47,7 @@ class CompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     # Constants must be defined within eval's directory to be save/loadable
 
-    _PROMPTY_FILE = "completeness.prompty"
+    _PROMPTY_FILE = "response_completeness.prompty"
     _RESULT_KEY = "response_completeness"
 
     id = "completeness"
@@ -128,7 +128,7 @@ class CompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         """
         # we override the _do_eval method as we want the output to be a dictionary,
         # which is a different schema than _base_prompty_eval.py
-        if "ground_truth" not in eval_input and "response" not in eval_input:
+        if "ground_truth" not in eval_input or "response" not in eval_input:
             raise EvaluationException(
                 message=f"Both ground_truth and response must be provided as input to the completeness evaluator.",
                 internal_message=f"Both ground_truth and response must be provided as input to the completeness"

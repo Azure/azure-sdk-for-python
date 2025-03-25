@@ -2,6 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from ._completeness import CompletenessEvaluator
+from ._response_completeness import ResponseCompletenessEvaluator
 
-__all__ = ["CompletenessEvaluator"]
+__all__ = ["ResponseCompletenessEvaluator"]
