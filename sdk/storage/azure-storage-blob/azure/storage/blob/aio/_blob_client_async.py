@@ -9,7 +9,7 @@ import warnings
 from datetime import datetime
 from functools import partial
 from typing import (
-    Any, AnyStr, AsyncIterable, cast, Dict, IO, Iterable, List, Optional, overload, Tuple, Union,
+    Any, AnyStr, AsyncIterable, Callable, cast, Dict, IO, Iterable, List, Optional, overload, Tuple, Union,
     TYPE_CHECKING
 )
 from typing_extensions import Self
@@ -518,6 +518,27 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         blob_type: Union[str, BlobType] = BlobType.BLOCKBLOB,
         length: Optional[int] = None,
         metadata: Optional[Dict[str, str]] = None,
+        tags: Optional[Dict[str, str]] = None,
+        overwrite: Optional[bool] = None,
+        content_settings: Optional["ContentSettings"] = None,
+        validate_content: Optional[bool] = None,
+        lease: Optional[BlobLeaseClient] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_conditions: Optional["MatchConditions"] = None,
+        if_tags_match_condition: Optional[str] = None,
+        premium_page_blob_tier: Optional["PremiumPageBlobTier"] = None,
+        immutability_policy: Optional["ImmutabilityPolicy"] = None,
+        legal_hold: Optional[bool] = None,
+        standard_blob_tier: Optional["StandardBlobTier"] = None,
+        maxsize_condition: Optional[int] = None,
+        max_concurrency: Optional[int] = None,
+        cpk: Optional["CustomerProvidedEncryptionKey"] = None,
+        encryption_scope: Optional[str] = None,
+        encoding: Optional[str] = None,
+        progress_hook: Optional[Callable[[int, Optional[int]], Awaitable[None]]] = None,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Creates a new blob from a data source with automatic chunking.
@@ -662,7 +683,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         """
         if self.require_encryption and not self.key_encryption_key:
             raise ValueError("Encryption required but no key was provided.")
-        if kwargs.get('cpk') and self.scheme.lower() != 'https':
+        if cpk and self.scheme.lower() != 'https':
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
         options = _upload_blob_options(
             data=data,
@@ -678,7 +699,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             config=self._config,
             sdk_moniker=self._sdk_moniker,
             client=self._client,
-            **kwargs)
+            **kwargs
+        )
         if blob_type == BlobType.BlockBlob:
             return cast(Dict[str, Any], await upload_block_blob(**options))
         if blob_type == BlobType.PageBlob:
@@ -827,7 +849,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             config=self._config,
             sdk_moniker=self._sdk_moniker,
             client=self._client,
-            **kwargs)
+            **kwargs
+        )
         downloader = StorageStreamDownloader(**options)
         await downloader._setup()  # pylint: disable=protected-access
         return downloader
