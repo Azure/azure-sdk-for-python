@@ -86,7 +86,7 @@ with project_client:
 
     # [START create_stream]
     with project_client.agents.create_stream(
-        thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
+        thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler()
     ) as stream:
         for event_type, event_data, func_return in stream:
             print(f"Received data.")

@@ -16,7 +16,7 @@ import pytest
 
 from helpers import build_aad_response, mock_response, Request, GET_TOKEN_METHODS
 from helpers_async import async_validating_transport, AsyncMockTransport
-from test_certificate_credential import ALL_CERTS, EC_CERT_PATH, PEM_CERT_PATH, validate_jwt
+from test_certificate_credential import ALL_CERTS, EC_CERT_PATH, PEM_CERT_PATH, validate_jwt, validate_jwt_ps256
 
 
 def test_non_rsa_key():
@@ -174,19 +174,22 @@ def test_requires_certificate():
 @pytest.mark.asyncio
 @pytest.mark.parametrize("cert_path,cert_password", ALL_CERTS)
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
-async def test_request_body(cert_path, cert_password, get_token_method):
+@pytest.mark.parametrize("tenant_id", ("adfs", "tenant"))
+async def test_request_body(cert_path, cert_password, get_token_method, tenant_id):
     access_token = "***"
     authority = "authority.com"
     client_id = "client-id"
     expected_scope = "scope"
-    tenant_id = "tenant"
 
     async def mock_send(request, **kwargs):
         assert request.body["grant_type"] == "client_credentials"
         assert request.body["scope"] == expected_scope
 
         with open(cert_path, "rb") as cert_file:
-            validate_jwt(request, client_id, cert_file.read(), cert_password)
+            if tenant_id == "adfs":
+                validate_jwt(request, client_id, cert_file.read(), cert_password)
+            else:
+                validate_jwt_ps256(request, client_id, cert_file.read(), cert_password)
 
         return mock_response(json_payload={"token_type": "Bearer", "expires_in": 42, "access_token": access_token})
 
