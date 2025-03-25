@@ -53,7 +53,7 @@ def main(targeted_packages):
         g = Github(auth=auth)
         repo = g.get_repo("Azure/azure-sdk-for-python")
 
-        package_name = package.name
+        package_name = package.split("/")[-1]
         logging.info(f"Searching for issues in repo {repo.name} for package {package_name}")
         
         for issue in repo.get_issues(state="open"):
