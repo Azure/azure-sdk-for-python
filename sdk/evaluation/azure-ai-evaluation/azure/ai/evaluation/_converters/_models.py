@@ -185,7 +185,6 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
         if tool_call.details["type"] == "code_interpreter":
             arguments = {"input": tool_call.details.code_interpreter.input}
         elif tool_call.details["type"] == "bing_grounding":
-            print(tool_call.details["bing_grounding"])
             arguments = {"requesturl": tool_call.details["bing_grounding"]["requesturl"]}
         elif tool_call.details["type"] == "file_search":
             options = tool_call.details["file_search"]["ranking_options"]
