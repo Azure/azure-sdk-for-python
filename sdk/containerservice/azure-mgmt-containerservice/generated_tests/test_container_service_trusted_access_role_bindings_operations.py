@@ -24,7 +24,7 @@ class TestContainerServiceTrustedAccessRoleBindingsOperations(AzureMgmtRecordedT
         response = self.client.trusted_access_role_bindings.list(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2024-10-01",
+            api_version="2025-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestContainerServiceTrustedAccessRoleBindingsOperations(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             resource_name="str",
             trusted_access_role_binding_name="str",
-            api_version="2024-10-01",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -66,7 +66,7 @@ class TestContainerServiceTrustedAccessRoleBindingsOperations(AzureMgmtRecordedT
                 },
                 "type": "str",
             },
-            api_version="2024-10-01",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -79,7 +79,7 @@ class TestContainerServiceTrustedAccessRoleBindingsOperations(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             resource_name="str",
             trusted_access_role_binding_name="str",
-            api_version="2024-10-01",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

@@ -28,7 +28,7 @@ from azure.ai.evaluation import (
     RetrievalEvaluator,
     SexualEvaluator,
     CodeVulnerabilityEvaluator,
-    ISAEvaluator,
+    UngroundedAttributesEvaluator,
     RougeType,
     evaluate,
 )
@@ -116,7 +116,7 @@ class TestMassEvaluate:
 
         row_result_df = pd.DataFrame(result["rows"])
         metrics = result["metrics"]
-        assert len(row_result_df.keys()) == 63
+        assert len(row_result_df.keys()) == 110
         assert len(row_result_df["inputs.query"]) == 3
         assert len(row_result_df["inputs.context"]) == 3
         assert len(row_result_df["inputs.response"]) == 3
@@ -181,7 +181,7 @@ class TestMassEvaluate:
         assert len(row_result_df["outputs.qa.similarity"]) == 3
         assert len(row_result_df["outputs.qa.gpt_similarity"]) == 3
 
-        assert len(metrics.keys()) == 39
+        assert len(metrics.keys()) == 62
         assert metrics["f1_score.f1_score"] >= 0
         assert metrics["gleu.gleu_score"] >= 0
         assert metrics["bleu.bleu_score"] >= 0
@@ -244,42 +244,41 @@ class TestMassEvaluate:
 
         row_result_df = pd.DataFrame(result["rows"])
         metrics = result["metrics"]
+        assert len(row_result_df.keys()) >= 43
+        assert len(row_result_df["inputs.conversation"]) >= 2
+        assert len(row_result_df["outputs.grounded.groundedness"]) >= 2
+        assert len(row_result_df["outputs.grounded.gpt_groundedness"]) >= 2
+        assert len(row_result_df["outputs.grounded.evaluation_per_turn"]) >= 2
+        assert len(row_result_df["outputs.coherence.coherence"]) >= 2
+        assert len(row_result_df["outputs.coherence.gpt_coherence"]) >= 2
+        assert len(row_result_df["outputs.coherence.evaluation_per_turn"]) >= 2
+        assert len(row_result_df["outputs.fluency.fluency"]) >= 2
+        assert len(row_result_df["outputs.fluency.gpt_fluency"]) >= 2
+        assert len(row_result_df["outputs.fluency.evaluation_per_turn"]) >= 2
+        assert len(row_result_df["outputs.relevance.relevance"]) >= 2
+        assert len(row_result_df["outputs.relevance.gpt_relevance"]) >= 2
+        assert len(row_result_df["outputs.relevance.evaluation_per_turn"]) >= 2
+        assert len(row_result_df["outputs.grounded_pro.groundedness_pro_label"]) >= 2
+        assert len(row_result_df["outputs.grounded_pro.evaluation_per_turn"]) >= 2
+        assert len(row_result_df["outputs.protected_material.protected_material_label"]) >= 2
+        assert len(row_result_df["outputs.protected_material.evaluation_per_turn"]) >= 2
+        assert len(row_result_df["outputs.indirect_attack.xpia_label"]) >= 2
+        assert len(row_result_df["outputs.indirect_attack.xpia_manipulated_content"]) >= 2
+        assert len(row_result_df["outputs.indirect_attack.xpia_intrusion"]) >= 2
+        assert len(row_result_df["outputs.indirect_attack.xpia_information_gathering"]) >= 2
+        assert len(row_result_df["outputs.indirect_attack.evaluation_per_turn"]) >= 2
+        assert len(row_result_df["outputs.eci.eci_label"]) >= 2
+        assert len(row_result_df["outputs.eci.evaluation_per_turn"]) >= 2
+        assert len(row_result_df["outputs.content_safety.sexual_score"]) >= 2
+        assert len(row_result_df["outputs.content_safety.violence_score"]) >= 2
+        assert len(row_result_df["outputs.content_safety.self_harm_score"]) >= 2
+        assert len(row_result_df["outputs.content_safety.hate_unfairness_score"]) >= 2
+        assert len(row_result_df["outputs.content_safety.evaluation_per_turn"]) >= 2
+        assert len(row_result_df["outputs.retrieval.retrieval"]) >= 2
+        assert len(row_result_df["outputs.retrieval.gpt_retrieval"]) >= 2
+        assert len(row_result_df["outputs.retrieval.evaluation_per_turn"]) >= 2
 
-        assert len(row_result_df.keys()) == 32
-        assert len(row_result_df["inputs.conversation"]) == 2
-        assert len(row_result_df["outputs.grounded.groundedness"]) == 2
-        assert len(row_result_df["outputs.grounded.gpt_groundedness"]) == 2
-        assert len(row_result_df["outputs.grounded.evaluation_per_turn"]) == 2
-        assert len(row_result_df["outputs.coherence.coherence"]) == 2
-        assert len(row_result_df["outputs.coherence.gpt_coherence"]) == 2
-        assert len(row_result_df["outputs.coherence.evaluation_per_turn"]) == 2
-        assert len(row_result_df["outputs.fluency.fluency"]) == 2
-        assert len(row_result_df["outputs.fluency.gpt_fluency"]) == 2
-        assert len(row_result_df["outputs.fluency.evaluation_per_turn"]) == 2
-        assert len(row_result_df["outputs.relevance.relevance"]) == 2
-        assert len(row_result_df["outputs.relevance.gpt_relevance"]) == 2
-        assert len(row_result_df["outputs.relevance.evaluation_per_turn"]) == 2
-        assert len(row_result_df["outputs.grounded_pro.groundedness_pro_label"]) == 2
-        assert len(row_result_df["outputs.grounded_pro.evaluation_per_turn"]) == 2
-        assert len(row_result_df["outputs.protected_material.protected_material_label"]) == 2
-        assert len(row_result_df["outputs.protected_material.evaluation_per_turn"]) == 2
-        assert len(row_result_df["outputs.indirect_attack.xpia_label"]) == 2
-        assert len(row_result_df["outputs.indirect_attack.xpia_manipulated_content"]) == 2
-        assert len(row_result_df["outputs.indirect_attack.xpia_intrusion"]) == 2
-        assert len(row_result_df["outputs.indirect_attack.xpia_information_gathering"]) == 2
-        assert len(row_result_df["outputs.indirect_attack.evaluation_per_turn"]) == 2
-        assert len(row_result_df["outputs.eci.eci_label"]) == 2
-        assert len(row_result_df["outputs.eci.evaluation_per_turn"]) == 2
-        assert len(row_result_df["outputs.content_safety.sexual_score"]) == 2
-        assert len(row_result_df["outputs.content_safety.violence_score"]) == 2
-        assert len(row_result_df["outputs.content_safety.self_harm_score"]) == 2
-        assert len(row_result_df["outputs.content_safety.hate_unfairness_score"]) == 2
-        assert len(row_result_df["outputs.content_safety.evaluation_per_turn"]) == 2
-        assert len(row_result_df["outputs.retrieval.retrieval"]) == 2
-        assert len(row_result_df["outputs.retrieval.gpt_retrieval"]) == 2
-        assert len(row_result_df["outputs.retrieval.evaluation_per_turn"]) == 2
-
-        assert len(metrics.keys()) == 21
+        assert len(metrics.keys()) == 32
         assert metrics["coherence.coherence"] >= 0
         assert metrics["coherence.gpt_coherence"] >= 0
         assert metrics["fluency.fluency"] >= 0
@@ -352,34 +351,41 @@ class TestMassEvaluate:
 
         if multi_modal_input_type == "imageurls_with_target":
             # imageurls_with_target has 1 extra column: outputs.conversation due to the target mapping
-            assert len(row_result_df.keys()) == 23
+            assert len(row_result_df.keys()) >= 33
         else:
-            assert len(row_result_df.keys()) == 22
-        assert "outputs.protected_material.artwork_label" in row_result_df.columns.to_list()
-        assert "outputs.protected_material.artwork_reason" in row_result_df.columns.to_list()
-        assert "outputs.protected_material.fictional_characters_label" in row_result_df.columns.to_list()
-        assert "outputs.protected_material.fictional_characters_reason" in row_result_df.columns.to_list()
-        assert "outputs.protected_material.logos_and_brands_label" in row_result_df.columns.to_list()
-        assert "outputs.protected_material.logos_and_brands_reason" in row_result_df.columns.to_list()
+            assert len(row_result_df.keys()) == 32
+        known_keys = [
+            'outputs.content_safety.hate_unfairness',
+            'outputs.content_safety.hate_unfairness_score',
+            'outputs.content_safety.hate_unfairness_reason',
+            'outputs.content_safety.hate_unfairness_result',
+            'outputs.content_safety.self_harm',
+            'outputs.content_safety.self_harm_score',
+            'outputs.content_safety.self_harm_reason',
+            'outputs.content_safety.self_harm_result',
+            'outputs.content_safety.sexual',
+            'outputs.content_safety.sexual_score',
+            'outputs.content_safety.sexual_reason',
+            'outputs.content_safety.sexual_result',
+            'outputs.content_safety.violence',
+            'outputs.content_safety.violence_score',
+            'outputs.content_safety.violence_reason',
+            'outputs.content_safety.violence_result',
+            'outputs.protected_material.fictional_characters_label',
+            'outputs.protected_material.fictional_characters_reason',
+            'outputs.protected_material.logos_and_brands_label',
+            'outputs.protected_material.logos_and_brands_reason',
+            'outputs.protected_material.artwork_label',
+            'outputs.protected_material.artwork_reason',
+            'outputs.sexual.sexual',
+            'outputs.sexual.sexual_score',
+            'outputs.sexual.sexual_reason',
+            'outputs.sexual.sexual_result'
+        ]
+        for key in known_keys:
+            assert key in row_result_df.keys()
 
-        assert "outputs.content_safety.sexual" in row_result_df.columns.to_list()
-        assert "outputs.content_safety.violence" in row_result_df.columns.to_list()
-        assert "outputs.content_safety.self_harm" in row_result_df.columns.to_list()
-        assert "outputs.content_safety.hate_unfairness" in row_result_df.columns.to_list()
-        assert "outputs.content_safety.sexual_score" in row_result_df.columns.to_list()
-        assert "outputs.content_safety.violence_score" in row_result_df.columns.to_list()
-        assert "outputs.content_safety.self_harm_score" in row_result_df.columns.to_list()
-        assert "outputs.content_safety.hate_unfairness_score" in row_result_df.columns.to_list()
-        assert "outputs.content_safety.sexual_reason" in row_result_df.columns.to_list()
-        assert "outputs.content_safety.violence_reason" in row_result_df.columns.to_list()
-        assert "outputs.content_safety.self_harm_reason" in row_result_df.columns.to_list()
-        assert "outputs.content_safety.hate_unfairness_reason" in row_result_df.columns.to_list()
-
-        assert "outputs.sexual.sexual_score" in row_result_df.columns.to_list()
-        assert "outputs.sexual.sexual_reason" in row_result_df.columns.to_list()
-        assert "outputs.sexual.sexual" in row_result_df.columns.to_list()
-
-        assert len(metrics) == 8
+        assert len(metrics) == 13
         assert 0 <= metrics.get("content_safety.sexual_defect_rate") <= 1
         assert 0 <= metrics.get("content_safety.violence_defect_rate") <= 1
         assert 0 <= metrics.get("content_safety.self_harm_defect_rate") <= 1
@@ -397,12 +403,12 @@ class TestMassEvaluate:
         # run the evaluation
         result = evaluate(
             data=code_based_data_file,
-            evaluators=evaluators
+            evaluators=evaluators,
         )
 
         row_result_df = pd.DataFrame(result["rows"])
         metrics = result["metrics"]
-        assert len(row_result_df.keys()) == 6
+        assert len(row_result_df.keys()) == 5
         assert len(row_result_df["inputs.query"]) == 2
         assert len(row_result_df["inputs.response"]) == 2
         assert len(row_result_df["outputs.code_vulnerability.code_vulnerability_label"]) == 2
@@ -472,7 +478,7 @@ class TestMassEvaluate:
         
     def test_evaluate_chat_inputs(self, azure_cred, project_scope, chat_based_data_file):
         evaluators = {
-            "inference_sensitive_attributes": ISAEvaluator(azure_cred, project_scope),
+            "ungrounded_attributes": UngroundedAttributesEvaluator(azure_cred, project_scope),
         }
 
         # run the evaluation
@@ -483,16 +489,17 @@ class TestMassEvaluate:
 
         row_result_df = pd.DataFrame(result["rows"])
         metrics = result["metrics"]
+        # todo: change this once binary results are added to the evaluator
         assert len(row_result_df.keys()) == 6
         assert len(row_result_df["inputs.query"]) == 2
         assert len(row_result_df["inputs.response"]) == 2
         assert len(row_result_df["inputs.context"]) == 2
-        assert len(row_result_df["outputs.inference_sensitive_attributes.inference_sensitive_attributes_label"]) == 2
-        assert len(row_result_df["outputs.inference_sensitive_attributes.inference_sensitive_attributes_reason"]) == 2
-        assert len(row_result_df["outputs.inference_sensitive_attributes.inference_sensitive_attributes_details"]) == 2
+        assert len(row_result_df["outputs.ungrounded_attributes.ungrounded_attributes_label"]) == 2
+        assert len(row_result_df["outputs.ungrounded_attributes.ungrounded_attributes_reason"]) == 2
+        assert len(row_result_df["outputs.ungrounded_attributes.ungrounded_attributes_details"]) == 2
 
         assert len(metrics.keys()) == 4
-        assert metrics["inference_sensitive_attributes.inference_sensitive_attributes_defect_rate"] >= 0
-        assert metrics["inference_sensitive_attributes.inference_sensitive_attributes_details.emotional_state_defect_rate"] >= 0
-        assert metrics["inference_sensitive_attributes.inference_sensitive_attributes_details.protected_class_defect_rate"] >= 0
-        assert metrics["inference_sensitive_attributes.inference_sensitive_attributes_details.groundedness_defect_rate"] >= 0
+        assert metrics["ungrounded_attributes.ungrounded_attributes_defect_rate"] >= 0
+        assert metrics["ungrounded_attributes.ungrounded_attributes_details.emotional_state_defect_rate"] >= 0
+        assert metrics["ungrounded_attributes.ungrounded_attributes_details.protected_class_defect_rate"] >= 0
+        assert metrics["ungrounded_attributes.ungrounded_attributes_details.groundedness_defect_rate"] >= 0

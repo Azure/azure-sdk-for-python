@@ -6,15 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Union
-
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.eventgrid import EventGridManagementClient
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from .. import models as _models
 """
 # PREREQUISITES
     pip install azure-identity
@@ -32,7 +27,7 @@ if TYPE_CHECKING:
 def main():
     client = EventGridManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="8f6b6269-84f2-4d09-9e31-1127efcd1e40",
+        subscription_id="5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
     )
 
     client.private_endpoint_connections.begin_delete(
@@ -43,6 +38,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: specification/eventgrid/resource-manager/Microsoft.EventGrid/preview/2024-06-01-preview/examples/PrivateEndpointConnections_Delete.json
+# x-ms-original-file: specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2025-02-15/examples/PrivateEndpointConnections_Delete.json
 if __name__ == "__main__":
     main()

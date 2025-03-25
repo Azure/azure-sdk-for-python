@@ -403,6 +403,7 @@
     "rtsp",
     "rtype",
     "rwdlacu",
+    "sansiohttppolicy",
     "scbedd",
     "sdist",
     "sdpath",
@@ -1400,6 +1401,7 @@
         "upia",
         "xpia",
         "expirable",
+        "ralphe"
       ]
     },
     {

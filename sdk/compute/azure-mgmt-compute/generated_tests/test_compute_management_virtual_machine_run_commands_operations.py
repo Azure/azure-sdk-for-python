@@ -23,7 +23,7 @@ class TestComputeManagementVirtualMachineRunCommandsOperations(AzureMgmtRecorded
     def test_virtual_machine_run_commands_list(self, resource_group):
         response = self.client.virtual_machine_run_commands.list(
             location="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -35,7 +35,7 @@ class TestComputeManagementVirtualMachineRunCommandsOperations(AzureMgmtRecorded
         response = self.client.virtual_machine_run_commands.get(
             location="str",
             command_id="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -91,7 +91,7 @@ class TestComputeManagementVirtualMachineRunCommandsOperations(AzureMgmtRecorded
                 "treatFailureAsDeploymentFailure": False,
                 "type": "str",
             },
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -143,7 +143,7 @@ class TestComputeManagementVirtualMachineRunCommandsOperations(AzureMgmtRecorded
                 "timeoutInSeconds": 0,
                 "treatFailureAsDeploymentFailure": False,
             },
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -156,7 +156,7 @@ class TestComputeManagementVirtualMachineRunCommandsOperations(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             vm_name="str",
             run_command_name="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -169,7 +169,7 @@ class TestComputeManagementVirtualMachineRunCommandsOperations(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             vm_name="str",
             run_command_name="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -181,7 +181,7 @@ class TestComputeManagementVirtualMachineRunCommandsOperations(AzureMgmtRecorded
         response = self.client.virtual_machine_run_commands.list_by_virtual_machine(
             resource_group_name=resource_group.name,
             vm_name="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
