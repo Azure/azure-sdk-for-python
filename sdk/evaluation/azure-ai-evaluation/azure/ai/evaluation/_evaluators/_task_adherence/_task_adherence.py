@@ -48,13 +48,13 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     _RESULT_KEY = "task_adherence"
     _OPTIONAL_PARAMS = ["tool_definitions"]
 
-    DEFAULT_TASK_ADHERENCE_SCORE = 5
+    _DEFAULT_TASK_ADHERENCE_SCORE = 3
 
     id = None
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, threshold=DEFAULT_TASK_ADHERENCE_SCORE):
+    def __init__(self, model_config, threshold=_DEFAULT_TASK_ADHERENCE_SCORE):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self.threshold = threshold

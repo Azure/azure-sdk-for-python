@@ -39,14 +39,15 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     _RESULT_KEY = "intent_resolution"
     _OPTIONAL_PARAMS = ["tool_definitions"]
 
-    MIN_INTENT_RESOLUTION_SCORE = 1
-    MAX_INTENT_RESOLUTION_SCORE = 5
+    _MIN_INTENT_RESOLUTION_SCORE = 1
+    _MAX_INTENT_RESOLUTION_SCORE = 5
+    _DEFAULT_INTENT_RESOLUTION_THRESHOLD = 3
 
     id = None
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, threshold = MAX_INTENT_RESOLUTION_SCORE):
+    def __init__(self, model_config, threshold = _DEFAULT_INTENT_RESOLUTION_THRESHOLD):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self.threshold = threshold
