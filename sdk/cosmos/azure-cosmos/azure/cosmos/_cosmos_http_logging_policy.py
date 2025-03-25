@@ -70,31 +70,18 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
             database_account: Optional[DatabaseAccount] = None,
             *,
             enable_diagnostics_logging: bool = False,
-            diagnostics_handler: Optional[Union[Callable, Mapping]] = None,
             **kwargs
     ):
         self._enable_diagnostics_logging = enable_diagnostics_logging
-        self.diagnostics_handler = diagnostics_handler
-        if self.diagnostics_handler and callable(self.diagnostics_handler):
-            if hasattr(self.diagnostics_handler, '__get__'):
-                self._should_log = types.MethodType(diagnostics_handler, self)  # type: ignore
-            else:
-                self._should_log = self.diagnostics_handler  # type: ignore
-        elif isinstance(self.diagnostics_handler, Mapping):
-            self._should_log = self._dict_should_log  # type: ignore
-        else:
-            self._should_log = self._default_should_log  # type: ignore
         self.__global_endpoint_manager = global_endpoint_manager
         self.__database_account_settings: Optional[DatabaseAccount] = (database_account or
                                                                        self.__get_database_account_settings())
-        self._resource_map = {
-            'docs': 'document',
-            'colls': 'container',
-            'dbs': 'database'
-        }
 
-        super().__init__(logger, **kwargs)
-        cosmos_disallow_list = ["Authorization", "ProxyAuthorization"]
+        self.logger: logging.Logger = logger or logging.getLogger("azure.cosmos.cosmos_http_logging_policy")
+        self.allowed_query_params: Set[str] = set()
+        self.allowed_header_names: Set[str] = set(self.__class__.DEFAULT_HEADERS_ALLOWLIST)
+
+        cosmos_disallow_list = ["Authorization", "ProxyAuthorization", "Transfer-Encoding"]
         cosmos_allow_list = [
             v for k, v in HttpHeaders.__dict__.items() if not k.startswith("_") and k not in cosmos_disallow_list
         ]
@@ -111,7 +98,8 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
             return value
         return HttpLoggingPolicy.REDACTED_PLACEHOLDER
 
-    def on_request(  # pylint: disable=too-many-return-statements, too-many-statements, too-many-nested-blocks, too-many-branches
+    def on_request(
+            # pylint: disable=too-many-return-statements, too-many-statements, too-many-nested-blocks, too-many-branches
             self, request: PipelineRequest[HTTPRequestType]
     ) -> None:
         """Logs HTTP method, url and headers.
@@ -122,15 +110,14 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
 
             http_request = request.http_request
             request.context["start_time"] = time.time()
-            operation_type = http_request.headers['x-ms-thinclient-proxy-operation-type'] \
-                if 'x-ms-thinclient-proxy-operation-type' in http_request.headers else None
-            url = None
-            if self.diagnostics_handler:
+            operation_type = http_request.headers.get('x-ms-thinclient-proxy-operation-type')
+            try:
                 url = request.http_request.url
+            except AttributeError:
+                url = None
             database_name = None
             collection_name = None
-            resource_type = http_request.headers['x-ms-thinclient-proxy-resource-type'] \
-                if 'x-ms-thinclient-proxy-resource-type' in http_request.headers else None
+            resource_type = http_request.headers.get('x-ms-thinclient-proxy-resource-type')
             if url:
                 url_parts = url.split('/')
                 if 'dbs' in url_parts:
@@ -161,8 +148,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                 if 'logger_attributes' in request.context:
                     cosmos_logger_attributes = request.context['logger_attributes']
                     cosmos_logger_attributes['is_request'] = True
-                elif ((self.diagnostics_handler is not None)
-                      or any(isinstance(f, logging.Filter) for f in logger.filters)):
+                elif (logger.filters):
                     return
                 else:
                     cosmos_logger_attributes = {
@@ -177,58 +163,58 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                         'operation_type': operation_type,
                         'is_request': True}
 
-                if self._should_log(**cosmos_logger_attributes):
-
-                    client_settings = self._log_client_settings()
-                    db_settings = self._log_database_account_settings()
-                    if multi_record:
-                        logger.info(client_settings, extra=cosmos_logger_attributes)
-                        logger.info(db_settings, extra=cosmos_logger_attributes)
-                        logger.info("Request URL: %r", redacted_url, extra=cosmos_logger_attributes)
-                        logger.info("Request method: %r", http_request.method, extra=cosmos_logger_attributes)
-                        logger.info("Request headers:", extra=cosmos_logger_attributes)
-                        for header, value in http_request.headers.items():
-                            value = self._redact_header(header, value)
-                            logger.info("    %r: %r", header, value, extra=cosmos_logger_attributes)
-                        if isinstance(http_request.body, types.GeneratorType):
-                            logger.info("File upload", extra=cosmos_logger_attributes)
-                            return
-                        try:
-                            if isinstance(http_request.body, types.AsyncGeneratorType):
-                                logger.info("File upload", extra=cosmos_logger_attributes)
-                                return
-                        except AttributeError:
-                            pass
-                        if http_request.body:
-                            logger.info("A body is sent with the request", extra=cosmos_logger_attributes)
-                            return
-                        logger.info("No body was attached to the request", extra=cosmos_logger_attributes)
-                        return
-                    log_string = client_settings
-                    log_string += db_settings
-                    log_string += "\nRequest URL: '{}'".format(redacted_url)
-                    log_string += "\nRequest method: '{}'".format(http_request.method)
-                    log_string += "\nRequest headers:"
+                client_settings = self._log_client_settings()
+                db_settings = self._log_database_account_settings()
+                if multi_record:
+                    logger.info(client_settings, extra=cosmos_logger_attributes)
+                    logger.info(db_settings, extra=cosmos_logger_attributes)
+                    logger.info("Request URL: %r", redacted_url, extra=cosmos_logger_attributes)
+                    logger.info("Request method: %r", http_request.method, extra=cosmos_logger_attributes)
+                    logger.info("Request headers:", extra=cosmos_logger_attributes)
                     for header, value in http_request.headers.items():
                         value = self._redact_header(header, value)
-                        log_string += "\n    '{}': '{}'".format(header, value)
+                        if value and value != HttpLoggingPolicy.REDACTED_PLACEHOLDER:
+                            logger.info("    %r: %r", header, value, extra=cosmos_logger_attributes)
                     if isinstance(http_request.body, types.GeneratorType):
-                        log_string += "\nFile upload"
-                        logger.info(log_string, extra=cosmos_logger_attributes)
+                        logger.info("File upload", extra=cosmos_logger_attributes)
                         return
                     try:
                         if isinstance(http_request.body, types.AsyncGeneratorType):
-                            log_string += "\nFile upload"
-                            logger.info(log_string, extra=cosmos_logger_attributes)
+                            logger.info("File upload", extra=cosmos_logger_attributes)
                             return
                     except AttributeError:
                         pass
                     if http_request.body:
-                        log_string += "\nA body is sent with the request"
+                        logger.info("A body is sent with the request", extra=cosmos_logger_attributes)
+                        return
+                    logger.info("No body was attached to the request", extra=cosmos_logger_attributes)
+                    return
+                log_string = client_settings
+                log_string += db_settings
+                log_string += "\nRequest URL: '{}'".format(redacted_url)
+                log_string += "\nRequest method: '{}'".format(http_request.method)
+                log_string += "\nRequest headers:"
+                for header, value in http_request.headers.items():
+                    value = self._redact_header(header, value)
+                    if value and value != HttpLoggingPolicy.REDACTED_PLACEHOLDER:
+                        log_string += "\n    '{}': '{}'".format(header, value)
+                if isinstance(http_request.body, types.GeneratorType):
+                    log_string += "\nFile upload"
+                    logger.info(log_string, extra=cosmos_logger_attributes)
+                    return
+                try:
+                    if isinstance(http_request.body, types.AsyncGeneratorType):
+                        log_string += "\nFile upload"
                         logger.info(log_string, extra=cosmos_logger_attributes)
                         return
-                    log_string += "\nNo body was attached to the request"
+                except AttributeError:
+                    pass
+                if http_request.body:
+                    log_string += "\nA body is sent with the request"
                     logger.info(log_string, extra=cosmos_logger_attributes)
+                    return
+                log_string += "\nNo body was attached to the request"
+                logger.info(log_string, extra=cosmos_logger_attributes)
 
             except Exception as err:  # pylint: disable=broad-except
                 logger.warning("Failed to log request: %s", repr(err))
@@ -248,8 +234,12 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
             sub_status_str = http_response.headers.get("x-ms-substatus")
             sub_status_code: Optional[int] = int(sub_status_str) if sub_status_str else None
             url_obj = http_response.internal_response.url  # type: ignore[attr-defined, union-attr]
+            try:
+                duration = float(http_response.headers.get("x-ms-request-duration-ms"))
+            except (ValueError, TypeError) as e:
+                duration = (time.time() - context["start_time"]) * 1000 if "start_time" in context else None
 
-            log_data = {"duration": time.time() - context["start_time"] if "start_time" in context else None,
+            log_data = {"duration": duration,
                         "status_code": http_response.status_code, "sub_status_code": sub_status_code,
                         "verb": request.http_request.method,
                         "operation_type": headers.get('x-ms-thinclient-proxy-operation-type'),
@@ -270,69 +260,49 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
             options = context.options
             logger = context.setdefault("logger", options.pop("logger", self.logger))
 
-            if self._should_log(**log_data):
-                context["logger_attributes"] = log_data.copy()
-                self.on_request(request)
+            context["logger_attributes"] = log_data.copy()
+            self.on_request(request)
 
-                try:
-                    if not logger.isEnabledFor(logging.INFO):
-                        return
+            try:
+                if not logger.isEnabledFor(logging.INFO):
+                    return
 
-                    multi_record = os.environ.get(HttpLoggingPolicy.MULTI_RECORD_LOG, False)
-                    if multi_record:
-                        logger.info("Response status: %r", log_data["status_code"], extra=log_data)
-                        logger.info("Response headers:", extra=log_data)
-                        for res_header, value in http_response.headers.items():
-                            value = self._redact_header(res_header, value)
-                            logger.info("    %r: %r", res_header, value, extra=log_data)
-                        if "start_time" in context:
-                            logger.info("Elapsed time in seconds: {}".format(log_data["duration"]), extra=log_data)
-                        else:
-                            logger.info("Elapsed time in seconds: unknown", extra=log_data)
-                        if isinstance(log_data["status_code"], int)  and log_data["status_code"] >= 400:
-                            logger.info("\nResponse error message: %r", _format_error(http_response.text()),
-                                        extra=log_data)
-                        return
-                    log_string = "\nResponse status: {}".format(log_data["status_code"])
-                    log_string += "\nResponse headers:"
+                multi_record = os.environ.get(HttpLoggingPolicy.MULTI_RECORD_LOG, False)
+                if multi_record:
+                    logger.info("Response status: %r", log_data["status_code"], extra=log_data)
+                    logger.info("Response headers:", extra=log_data)
                     for res_header, value in http_response.headers.items():
                         value = self._redact_header(res_header, value)
-                        log_string += "\n    '{}': '{}'".format(res_header, value)
+                        if value and value != HttpLoggingPolicy.REDACTED_PLACEHOLDER:
+                            logger.info("    %r: %r", res_header, value, extra=log_data)
                     if "start_time" in context:
-                        log_string += "\nElapsed time in seconds: {}".format(log_data["duration"])
+                        seconds = duration / 1000
+                        logger.info(f"Elapsed time in seconds: {seconds:.6f}".rstrip('0').rstrip('.'),
+                                    extra=log_data)
                     else:
-                        log_string += "\nElapsed time in seconds: unknown"
+                        logger.info("Elapsed time in seconds: unknown", extra=log_data)
                     if isinstance(log_data["status_code"], int) and log_data["status_code"] >= 400:
-                        log_string += "\nResponse error message: {}".format(_format_error(http_response.text()))
-                    logger.info(log_string, extra=log_data)
-                except Exception as err:  # pylint: disable=broad-except
-                    logger.warning("Failed to log response: %s", repr(err), extra=log_data)
+                        logger.info("\nResponse error message: %r", _format_error(http_response.text()),
+                                    extra=log_data)
+                    return
+                log_string = "\nResponse status: {}".format(log_data["status_code"])
+                log_string += "\nResponse headers:"
+                for res_header, value in http_response.headers.items():
+                    value = self._redact_header(res_header, value)
+                    if value and value != HttpLoggingPolicy.REDACTED_PLACEHOLDER:
+                        log_string += "\n    '{}': '{}'".format(res_header, value)
+                if "start_time" in context:
+                    seconds = duration / 1000
+                    log_string += f"\nElapsed time in seconds: {seconds:.6f}".rstrip('0').rstrip('.')
+                else:
+                    log_string += "\nElapsed time in seconds: unknown"
+                if isinstance(log_data["status_code"], int) and log_data["status_code"] >= 400:
+                    log_string += "\nResponse error message: {}".format(_format_error(http_response.text()))
+                logger.info(log_string, extra=log_data)
+            except Exception as err:  # pylint: disable=broad-except
+                logger.warning("Failed to log response: %s", repr(err), extra=log_data)
             return
         super().on_response(request, response)
-
-    # pylint: disable=unused-argument
-    def _default_should_log(
-            self,
-            **kwargs
-    ) -> bool:
-        return True
-
-    def _dict_should_log(self, **kwargs) -> bool:
-        params = {
-            'duration': kwargs.get('duration', None),
-            'status code': kwargs.get('status_code', None),
-            'verb': kwargs.get('verb', None),
-            'database name': kwargs.get('database_name', None),
-            'collection name': kwargs.get('collection_name', None),
-            'resource type': kwargs.get('resource_type', None),
-            'operation type': kwargs.get('operation_type', None)
-        }
-        for key, param in params.items():
-            if (param and isinstance(self.diagnostics_handler, Mapping) and key in self.diagnostics_handler
-                    and self.diagnostics_handler[key] is not None):
-                if self.diagnostics_handler[key](param):
-                    return True
-        return False
 
     def __get_client_settings(self) -> Optional[Dict[str, Any]]:
         # Place any client settings we want to log here

@@ -950,59 +950,26 @@ However, if you desire to use the CosmosHttpLoggingPolicy to obtain additional i
 client = CosmosClient(URL, credential=KEY, enable_diagnostics_logging=True)
 database = client.create_database(DATABASE_NAME, logger=logger)
 ```
-**NOTICE: The Following is a Preview Feature that is subject to significant change.**
-To further customize what gets logged, you can use a  **PREVIEW** diagnostics handler to filter out the logs you don't want to see.
-There are several ways to use the diagnostics handler, you can take a look at the samples [here][cosmos_diagnostics_handler_sample] or take a look at the following:
-- Using the "CosmosDiagnosticsHandler" class, which has default behaviour that can be modified.
-    **NOTE: The diagnostics handler will only be used if the `enable_diagnostics_logging` argument is passed in at the client constructor.
-      The CosmosDiagnosticsHandler is also a special type of dictionary that is callable and that has preset keys. The values it expects are functions related to it's relevant diagnostic data. (e.g. ```diagnostics_handler["duration"]``` expects a function that takes in an int and returns a boolean as it relates to the duration of an operation to complete).**
-    ```python
-    from azure.cosmos import CosmosClient, CosmosDiagnosticsHandler
-    import logging
-    # Initialize the logger
-    logger = logging.getLogger('azure.cosmos')
-    logger.setLevel(logging.INFO)
-    file_handler = logging.FileHandler('diagnostics1.output')
-    logger.addHandler(file_handler)
-    diagnostics_handler = cosmos_diagnostics_handler.CosmosDiagnosticsHandler()
-    diagnostics_handler["duration"] = lambda x: x > 2000
-    client = CosmosClient(URL, credential=KEY,logger=logger, diagnostics_handler=diagnostics_handler, enable_diagnostics_logging=True)
-    
-    ```
-- Using a dictionary with the relevant functions to filter out the logs you don't want to see.
-    ```python
-    # Initialize the logger
-    logger = logging.getLogger('azure.cosmos')
-    logger.setLevel(logging.INFO)
-    file_handler = logging.FileHandler('diagnostics2.output')
-    logger.addHandler(file_handler)
-    diagnostics_handler = {
-        "duration": lambda x: x > 2000
-    }
-    client = CosmosClient(URL, credential=KEY,logger=logger, diagnostics_handler=diagnostics_handler, enable_diagnostics_logging=True)
-    ```
-- Using a function that will replace the should_log function in the CosmosHttpLoggingPolicy which expects certain paramameters and returns a boolean. **Note: the parameters of the custom should_log must match the parameters of the original should_log function as shown in the sample.**
-  ```python
-  # Custom should_log method
-  def should_log(self, **kwargs):
-      return kwargs.get('duration') and kwargs['duration'] > 2000
-  
-  # Initialize the logger
-  logger = logging.getLogger('azure.cosmos')
-  logger.setLevel(logging.INFO)
-  file_handler = logging.FileHandler('diagnostics3.output')
-  logger.addHandler(file_handler)
-  
-  # Initialize the Cosmos client with custom diagnostics handler
-  client = CosmosClient(endpoint, key,logger=logger, diagnostics_handler=should_log, enable_diagnostics_logging=True)
-    ```
-- Using **filters** from the **logging** library, it is also possible to filter the diagnostics logs. All the filterable parameters available in the diagnostics handler is also avaiable in the log record when using logging filters. In this case you do not need to pass in a diagnostic handler. **Note** With large volumes of requests, the diagnostic handler is more performative than the filter, but using the filter allows one to fully leverage the logging library.
+**NOTICE: The Following is a Preview Feature.**
+To further customize what gets logged, you can use logger filters to filter out the logs you don't want to see. You are able to filter based on the following attributes in the log record of cosmos diagnostics logs:
+- `status_code`
+- `duration`
+- `verb`
+- `database_name`
+- `collection_name`
+- `operation_type`
+- `url`
+- `resource_type`
+- `is_request`
+
+You can take a look at the samples [here][cosmos_diagnostics_filter_sample] or take a quick look at this snippet:
+- Using **filters** from the **logging** library, it is possible to filter the diagnostics logs. Several filterable attributes are made available to the log record of the diagnostics logs when using logging filters.
 ```python
   import logging
   from azure.cosmos import CosmosClient
   logger = logging.getLogger('azure.cosmos')
   logger.setLevel(logging.INFO)
-  file_handler = logging.FileHandler('diagnostics4.output')
+  file_handler = logging.FileHandler('diagnostics.output')
   logger.addHandler(file_handler)
   # Create a filter to filter out logs
   class CustomFilter(logging.Filter):
@@ -1075,7 +1042,7 @@ For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos
 [BM25]: https://learn.microsoft.com/azure/search/index-similarity-and-scoring
 [cosmos_fts]: https://aka.ms/cosmosfulltextsearch
 [cosmos_index_policy_change]: https://learn.microsoft.com/azure/cosmos-db/index-policy#modifying-the-indexing-policy
-[cosmos_diagnostics_handler_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/samples/diagnostics_handler_sample.py
+[cosmos_diagnostics_filter_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/samples/diagnostics_filter_sample.py
 
 ## Contributing
 
