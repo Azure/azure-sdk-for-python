@@ -435,7 +435,6 @@ def gen_typespec(
     head_sha: str,
     rest_repo_url: str,
     run_in_pipeline: bool,
-    first_run: bool,
 ) -> Dict[str, Any]:
     typespec_python = "@azure-tools/typespec-python"
     # call scirpt to generate sdk
@@ -446,7 +445,7 @@ def gen_typespec(
             f"tsp-client init --tsp-config {tsp_dir} --local-spec-repo {tsp_dir} --commit {head_sha} --repo {repo_url}"
         )
         if run_in_pipeline:
-            if first_run:
+            if not os.path.exists("node_modules/@azure-tools/typespec-python"):
                 _LOGGER.info("install dependencies only for the first run")
                 check_output("tsp-client install-dependencies", stderr=STDOUT, shell=True)
             cmd += " --skip-install --debug"
