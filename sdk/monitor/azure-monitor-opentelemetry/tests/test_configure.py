@@ -378,6 +378,7 @@ class TestConfigure(unittest.TestCase):
         elp_mock.assert_called_once_with(lp_init_mock)
         set_elp_mock.assert_called_once_with(elp_init_mock, False)
 
+
     @patch(
         "azure.monitor.opentelemetry._configure.getLogger",
     )
