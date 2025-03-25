@@ -53,8 +53,9 @@ def main(targeted_packages):
         g = Github(auth=auth)
         repo = g.get_repo("Azure/azure-sdk-for-python")
 
+        logging.info(f"Searching for issues in repo {repo.name} for package {package}")
         for issue in repo.get_issues(state="open"):
-            if f"{package} needs linting for pylint version" in issue.title:
+            if f"{package} needs linting updates for pylint version" in issue.title:
                 logging.info(f"Found issue for package {package}: {issue.title}")
                 build_info = get_build_info(package)
 
@@ -68,7 +69,6 @@ def main(targeted_packages):
                 if issue.body:
                     first_section = issue.body.split("**How to fix:**")[0]
                     new_body = first_section + template + "\n" + issue.body.split("**How to fix:**")[1]
-
                     issue.edit(body=new_body)
                 logging.info(f"Updated issue #{issue.number} for package {package}")
 
