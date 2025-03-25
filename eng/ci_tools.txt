@@ -32,4 +32,3 @@ six==1.17.0
 
 # local dev packages
 ./tools/azure-sdk-tools[build]
-./tools/azure-sdk-tools[ghtools]

@@ -90,6 +90,10 @@ stages:
             env:
               GH_TOKEN: $(azuresdk-github-pat)
 
+          - script: |
+              python -m pip install PyGithub>=1.59.0
+              python -m pip install requests>=2.0
+            displayName: 'Prep Environment'
           - task: PythonScript@0
             displayName: 'Update vNext Issues with build info'
             continueOnError: true
