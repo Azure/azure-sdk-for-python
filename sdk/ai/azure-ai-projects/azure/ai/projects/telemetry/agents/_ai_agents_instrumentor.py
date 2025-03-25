@@ -1827,6 +1827,7 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
     # cspell:disable-next-line
     async def __anext__(self) -> Any:
         if self.inner_handler:
+            # cspell:disable-next-line
             event_bytes = await self.inner_handler.__anext_impl__()
             return await self._process_event(event_bytes.decode("utf-8"))
 
