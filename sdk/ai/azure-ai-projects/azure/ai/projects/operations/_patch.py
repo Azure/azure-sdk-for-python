@@ -807,7 +807,9 @@ class TelemetryOperations(TelemetryOperationsGenerated):
 
             if not get_workspace_response.properties.application_insights:
                 # raise ResourceNotFoundError("Application Insights resource was not enabled for this Project.")
-                # pur in 
+                # instead or raising resource not found, create resource. may need to refactor depending on if
+                # we want this to be client choice to create the app insights in case resource doesnt exist 
+                # or just do this automatically
                 self._outer_instance.telemetry.create_application_insights_if_not_exists(
                     resource_group_name=get_workspace_response.properties.resourceGroupName,
                     resource_name="your_resource_name",
