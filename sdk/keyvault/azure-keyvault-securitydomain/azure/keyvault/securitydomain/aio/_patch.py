@@ -145,7 +145,7 @@ class SecurityDomainClient(KeyVaultClient):
                 lro_algorithms=[SecurityDomainDownloadPolling()], timeout=delay
             )
         )
-        return await super().begin_download(  # type: ignore[return-value]
+        return await super()._begin_download(  # type: ignore[return-value]
             certificate_info_object,
             content_type=content_type,
             polling=polling_method,
@@ -184,7 +184,7 @@ class SecurityDomainClient(KeyVaultClient):
             if polling is False
             else AsyncSecurityDomainUploadPollingMethod(lro_algorithms=[SecurityDomainUploadPolling()], timeout=delay)
         )
-        return await super().begin_upload(
+        return await super()._begin_upload(
             security_domain,
             content_type=content_type,
             polling=polling_method,

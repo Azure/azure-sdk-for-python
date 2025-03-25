@@ -28,7 +28,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
-from .._model_base import SdkJSONEncoder, _deserialize
+from .._model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._serialization import Serializer
 from .._vendor import KeyVaultClientMixinABC
 
@@ -195,7 +195,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -258,7 +259,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["Azure-AsyncOperation"] = self._deserialize(
@@ -274,77 +276,32 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         return deserialized  # type: ignore
 
     @overload
-    def begin_download(
+    def _begin_download(
         self,
         certificate_info_object: _models.CertificateInfoObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]:
-        """Retrieves the Security Domain from the managed HSM. Calling this endpoint can
-        be used to activate a provisioned managed HSM resource.
-
-        :param certificate_info_object: The Security Domain download operation requires customer to
-         provide N certificates (minimum 3 and maximum 10)
-         containing a public key in JWK format. Required.
-        :type certificate_info_object: ~azure.keyvault.securitydomain.models.CertificateInfoObject
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> LROPoller[None]: ...
     @overload
-    def begin_download(
+    def _begin_download(
         self, certificate_info_object: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]:
-        """Retrieves the Security Domain from the managed HSM. Calling this endpoint can
-        be used to activate a provisioned managed HSM resource.
-
-        :param certificate_info_object: The Security Domain download operation requires customer to
-         provide N certificates (minimum 3 and maximum 10)
-         containing a public key in JWK format. Required.
-        :type certificate_info_object: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> LROPoller[None]: ...
     @overload
-    def begin_download(
+    def _begin_download(
         self, certificate_info_object: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]:
-        """Retrieves the Security Domain from the managed HSM. Calling this endpoint can
-        be used to activate a provisioned managed HSM resource.
-
-        :param certificate_info_object: The Security Domain download operation requires customer to
-         provide N certificates (minimum 3 and maximum 10)
-         containing a public key in JWK format. Required.
-        :type certificate_info_object: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> LROPoller[None]: ...
 
     @distributed_trace
-    def begin_download(
+    def _begin_download(
         self, certificate_info_object: Union[_models.CertificateInfoObject, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[None]:
-        """Retrieves the Security Domain from the managed HSM. Calling this endpoint can
-        be used to activate a provisioned managed HSM resource.
+        """Retrieves the Security Domain from the managed HSM. Calling this endpoint can be used to
+        activate a provisioned managed HSM resource.
 
         :param certificate_info_object: The Security Domain download operation requires customer to
-         provide N certificates (minimum 3 and maximum 10)
-         containing a public key in JWK format. Is one of the following types: CertificateInfoObject,
-         JSON, IO[bytes] Required.
+         provide N certificates (minimum 3 and maximum 10) containing a public key in JWK format. Is one
+         of the following types: CertificateInfoObject, JSON, IO[bytes] Required.
         :type certificate_info_object: ~azure.keyvault.securitydomain.models.CertificateInfoObject or
          JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
@@ -446,7 +403,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -509,7 +467,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         if response.status_code == 202:
@@ -526,61 +485,20 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         return deserialized  # type: ignore
 
     @overload
-    def begin_upload(
+    def _begin_upload(
         self, security_domain: _models.SecurityDomainObject, *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[_models.SecurityDomainOperationStatus]:
-        """Restore the provided Security Domain.
-
-        :param security_domain: The Security Domain to be restored. Required.
-        :type security_domain: ~azure.keyvault.securitydomain.models.SecurityDomainObject
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns SecurityDomainOperationStatus. The
-         SecurityDomainOperationStatus is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.keyvault.securitydomain.models.SecurityDomainOperationStatus]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> LROPoller[_models.SecurityDomainOperationStatus]: ...
     @overload
-    def begin_upload(
+    def _begin_upload(
         self, security_domain: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[_models.SecurityDomainOperationStatus]:
-        """Restore the provided Security Domain.
-
-        :param security_domain: The Security Domain to be restored. Required.
-        :type security_domain: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns SecurityDomainOperationStatus. The
-         SecurityDomainOperationStatus is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.keyvault.securitydomain.models.SecurityDomainOperationStatus]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> LROPoller[_models.SecurityDomainOperationStatus]: ...
     @overload
-    def begin_upload(
+    def _begin_upload(
         self, security_domain: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[_models.SecurityDomainOperationStatus]:
-        """Restore the provided Security Domain.
-
-        :param security_domain: The Security Domain to be restored. Required.
-        :type security_domain: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns SecurityDomainOperationStatus. The
-         SecurityDomainOperationStatus is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.keyvault.securitydomain.models.SecurityDomainOperationStatus]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> LROPoller[_models.SecurityDomainOperationStatus]: ...
 
     @distributed_trace
-    def begin_upload(
+    def _begin_upload(
         self, security_domain: Union[_models.SecurityDomainObject, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[_models.SecurityDomainOperationStatus]:
         """Restore the provided Security Domain.
@@ -700,7 +618,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
