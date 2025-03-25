@@ -32,8 +32,6 @@ class KeyVaultClient(KeyVaultClientOperationsMixin):
     :keyword api_version: The API version to use for this operation. Default value is "7.5". Note
      that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-     Retry-After header is present.
     """
 
     def __init__(self, vault_base_url: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:

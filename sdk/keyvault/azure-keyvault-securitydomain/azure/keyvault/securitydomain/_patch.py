@@ -93,8 +93,6 @@ class SecurityDomainClient(KeyVaultClient):
         this default value may result in unsupported behavior.
     :keyword bool verify_challenge_resource: Whether to verify the authentication challenge resource matches the Key
         Vault or Managed HSM domain. Defaults to True.
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-        Retry-After header is present.
     """
 
     def __init__(self, vault_url: str, credential: TokenCredential, **kwargs: Any) -> None:
@@ -182,7 +180,7 @@ class SecurityDomainClient(KeyVaultClient):
             if polling is False
             else SecurityDomainDownloadPollingMethod(lro_algorithms=[SecurityDomainDownloadPolling()], timeout=delay)
         )
-        return super().begin_download(  # type: ignore[return-value]
+        return super()._begin_download(  # type: ignore[return-value]
             certificate_info_object,
             content_type=content_type,
             polling=polling_method,
@@ -221,7 +219,7 @@ class SecurityDomainClient(KeyVaultClient):
             if polling is False
             else SecurityDomainUploadPollingMethod(lro_algorithms=[SecurityDomainUploadPolling()], timeout=delay)
         )
-        return super().begin_upload(
+        return super()._begin_upload(
             security_domain,
             content_type=content_type,
             polling=polling_method,
