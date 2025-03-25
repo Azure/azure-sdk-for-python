@@ -1720,7 +1720,7 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
 
     def __next__(self) -> Any:
         if self.inner_handler:
-            event_bytes = self.inner_handler.__next_no_process_event__()
+            event_bytes = self.inner_handler.__next_impl__()
             return self._process_event(event_bytes.decode("utf-8"))
 
     # pylint: disable=R1710
@@ -1825,7 +1825,7 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
 
     async def __anext__(self) -> Any:
         if self.inner_handler:
-            event_bytes = await self.inner_handler.__anext_no_process_event__()
+            event_bytes = await self.inner_handler.__anext_impl__()
             return await self._process_event(event_bytes.decode("utf-8"))
 
     # pylint: disable=R1710

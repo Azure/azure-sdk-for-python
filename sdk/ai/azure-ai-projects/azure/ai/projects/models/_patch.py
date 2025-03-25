@@ -1362,31 +1362,10 @@ class BaseAsyncAgentEventHandler(AsyncIterator[T]):
         self.submit_tool_outputs = submit_tool_outputs
 
     async def __anext__(self) -> T:
-        self.buffer = b"" if self.buffer is None else self.buffer
-        if self.response_iterator is None:
-            raise ValueError("The response handler was not initialized.")
-
-        if not b"\n\n" in self.buffer:
-            async for chunk in self.response_iterator:
-                self.buffer += chunk
-                if b"\n\n" in self.buffer:
-                    break
-
-        if self.buffer == b"":
-            raise StopAsyncIteration()
-
-        event_bytes = b""
-        if b"\n\n" in self.buffer:
-            event_end_index = self.buffer.index(b"\n\n")
-            event_bytes = self.buffer[:event_end_index]
-            self.buffer = self.buffer[event_end_index:].lstrip()
-        else:
-            event_bytes = self.buffer
-            self.buffer = b""
-
+        event_bytes = await self.__anext_impl__()
         return await self._process_event(event_bytes.decode("utf-8"))
 
-    async def __anext_no_process_event__(self) -> bytes:
+    async def __anext_impl__(self) -> bytes:
         self.buffer = b"" if self.buffer is None else self.buffer
         if self.response_iterator is None:
             raise ValueError("The response handler was not initialized.")
@@ -1444,31 +1423,10 @@ class BaseAgentEventHandler(Iterator[T]):
         self.submit_tool_outputs = submit_tool_outputs
 
     def __next__(self) -> T:
-        self.buffer = b"" if self.buffer is None else self.buffer
-        if self.response_iterator is None:
-            raise ValueError("The response handler was not initialized.")
-
-        if not b"\n\n" in self.buffer:
-            for chunk in self.response_iterator:
-                self.buffer += chunk
-                if b"\n\n" in self.buffer:
-                    break
-
-        if self.buffer == b"":
-            raise StopIteration()
-
-        event_bytes = b""
-        if b"\n\n" in self.buffer:
-            event_end_index = self.buffer.index(b"\n\n")
-            event_bytes = self.buffer[:event_end_index]
-            self.buffer = self.buffer[event_end_index:].lstrip()
-        else:
-            event_bytes = self.buffer
-            self.buffer = b""
-
+        event_bytes = self.__next_impl__()
         return self._process_event(event_bytes.decode("utf-8"))
 
-    def __next_no_process_event__(self) -> bytes:
+    def __next_impl__(self) -> bytes:
         self.buffer = b"" if self.buffer is None else self.buffer
         if self.response_iterator is None:
             raise ValueError("The response handler was not initialized.")
