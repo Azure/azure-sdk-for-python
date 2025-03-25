@@ -1824,6 +1824,7 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
         if self.inner_handler:
             self.inner_handler.initialize(response_iterator=response_iterator, submit_tool_outputs=submit_tool_outputs)
 
+    # cspell:disable-next-line
     async def __anext__(self) -> Any:
         if self.inner_handler:
             event_bytes = await self.inner_handler.__anext_impl__()
