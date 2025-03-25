@@ -1376,10 +1376,12 @@ class BaseAsyncAgentEventHandler(AsyncIterator[T]):
         )
         self.submit_tool_outputs = submit_tool_outputs
 
+    # cspell:disable-next-line
     async def __anext__(self) -> T:
         event_bytes = await self.__anext_impl__()
         return await self._process_event(event_bytes.decode("utf-8"))
 
+    # cspell:disable-next-line
     async def __anext_impl__(self) -> bytes:
         self.buffer = b"" if self.buffer is None else self.buffer
         if self.response_iterator is None:
