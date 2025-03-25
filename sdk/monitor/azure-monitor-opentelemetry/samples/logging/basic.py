@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from logging import INFO, getLogger
+from logging import INFO, Formatter, getLogger
 
 from azure.monitor.opentelemetry import configure_azure_monitor
 
@@ -15,11 +15,9 @@ configure_azure_monitor(
     # Set logger_name to the name of the logger you want to capture logging telemetry with
     # This is imperative so you do not collect logging telemetry from the SDK itself.
     logger_name="my_app_logger",
-    # You can specify the logging format of your collected logs
-    logging_format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    # You can specify the logging format of your collected logs by passing in a logging.Formatter
+    logging_formatter=Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 )
-
-# formatter = Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 # Logging telemetry will be collected from logging calls made with this logger and all of it's children loggers.
 logger = getLogger("my_app_logger")

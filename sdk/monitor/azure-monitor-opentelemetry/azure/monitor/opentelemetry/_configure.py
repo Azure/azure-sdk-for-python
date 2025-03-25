@@ -42,7 +42,7 @@ from azure.monitor.opentelemetry._constants import (
     DISABLE_TRACING_ARG,
     ENABLE_LIVE_METRICS_ARG,
     LOGGER_NAME_ARG,
-    LOGGING_FORMAT_ARG,
+    LOGGING_FORMATTER_ARG,
     RESOURCE_ARG,
     SAMPLING_RATIO_ARG,
     SPAN_PROCESSORS_ARG,
@@ -173,23 +173,20 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
     logger_provider.add_log_record_processor(log_record_processor)
     set_logger_provider(logger_provider)
     logger_name: str = configurations[LOGGER_NAME_ARG]  # type: ignore
-    logging_format: str = configurations[LOGGING_FORMAT_ARG]  # type: ignore
+    logging_formatter: Formatter | None = configurations[LOGGING_FORMATTER_ARG]  # type: ignore
     logger = getLogger(logger_name)
     # Only add OpenTelemetry LoggingHandler if logger does not already have the handler
     # This is to prevent most duplicate logging telemetry
     if not any(isinstance(handler, LoggingHandler) for handler in logger.handlers):
         handler = LoggingHandler(logger_provider=logger_provider)
-        if logging_format:
-            formatter = None
+        if logging_formatter:
             try:
-                formatter = Formatter(logging_format)
+                handler.setFormatter(logging_formatter)
             except Exception as ex:  # pylint: disable=broad-except
                 _logger.warning(
-                    "Exception occurred when constructing logging Formatter: %s.",
+                    "Exception occurred when adding logging Formatter: %s.",
                     ex,
                 )
-            if formatter:
-                handler.setFormatter(formatter)
         logger.addHandler(handler)
 
     # Setup EventLoggerProvider

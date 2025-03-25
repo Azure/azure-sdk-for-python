@@ -312,9 +312,6 @@ class TestConfigure(unittest.TestCase):
         autospec=True,
     )
     @patch(
-        "azure.monitor.opentelemetry._configure.Formatter",
-    )
-    @patch(
         "azure.monitor.opentelemetry._configure.getLogger",
     )
     @patch(
@@ -341,7 +338,6 @@ class TestConfigure(unittest.TestCase):
         blrp_mock,
         logging_handler_mock,
         get_logger_mock,
-        formatter_mock,
         elp_mock,
         set_elp_mock,
     ):
@@ -359,13 +355,12 @@ class TestConfigure(unittest.TestCase):
         logger_mock.handlers = []
         get_logger_mock.return_value = logger_mock
         formatter_init_mock = Mock()
-        formatter_mock.return_value = formatter_init_mock
 
         configurations = {
             "connection_string": "test_cs",
             "logger_name": "test",
             "resource": TEST_RESOURCE,
-            "logging_format": "test_format"
+            "logging_formatter": formatter_init_mock
         }
         _setup_logging(configurations)
 
@@ -422,7 +417,7 @@ class TestConfigure(unittest.TestCase):
             "connection_string": "test_cs",
             "logger_name": "test",
             "resource": TEST_RESOURCE,
-            "logging_format": ""
+            "logging_formatter": None,
         }
         _setup_logging(configurations)
 
@@ -433,7 +428,6 @@ class TestConfigure(unittest.TestCase):
             log_exp_init_mock,
         )
         lp_init_mock.add_log_record_processor.assert_called_once_with(blrp_init_mock)
-        # logging_handler_mock.assert_not_called()
         get_logger_mock.assert_called_once_with("test")
         logger_mock.addHandler.assert_not_called()
 
