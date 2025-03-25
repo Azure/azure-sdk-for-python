@@ -12,7 +12,7 @@ from azure.ai.projects.models import (
 
 from typing import List, Union
 
-from semantic_kernel.utils.feature_stage_decorator import experimental
+from azure.ai.evaluation._common._experimental import experimental
 
 # Constants.
 from ._models import _USER, _AGENT, _TOOL, _TOOL_CALL, _TOOL_CALLS, _FUNCTION
