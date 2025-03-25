@@ -302,7 +302,7 @@ def parse_quality_evaluator_reason_score(llm_output: str, valid_score_range: str
         - Retrieval
         - Groundedness
         - Coherence
-        - Completeness
+        - ResponseCompleteness
         - TaskAdherence
 
     :param llm_output: The output of the prompt-based quality evaluator.
