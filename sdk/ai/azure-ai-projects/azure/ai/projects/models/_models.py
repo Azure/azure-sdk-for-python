@@ -234,7 +234,7 @@ class AgentsNamedToolChoice(_model_base.Model):
     type: Union[str, "_models.AgentsNamedToolChoiceType"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """the type of tool. If type is ``function``\ , the function name must be set. Required. Known
+    """the type of tool. If type is \"function\" , the function name must be set. Required. Known
      values are: \"function\", \"code_interpreter\", \"file_search\", \"bing_grounding\",
      \"fabric_dataagent\", \"sharepoint_grounding\", and \"azure_ai_search\"."""
     function: Optional["_models.FunctionName"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -6373,7 +6373,7 @@ class ThreadRun(_model_base.Model):
     """Details on why the run is incomplete. Will be ``null`` if the run is not incomplete. Required."""
     usage: "_models.RunCompletionUsage" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Usage statistics related to the run. This value will be ``null`` if the run is not in a
-     terminal state (i.e. ``in_progress``\ , ``queued``\ , etc.). Required."""
+     terminal state (i.e. ``in_progress``, ``queued``, etc.). Required."""
     temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The sampling temperature used for this run. If not set, defaults to 1."""
     top_p: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])

@@ -1378,6 +1378,7 @@ class BaseAsyncAgentEventHandler(AsyncIterator[T]):
 
     # cspell:disable-next-line
     async def __anext__(self) -> T:
+        # cspell:disable-next-line
         event_bytes = await self.__anext_impl__()
         return await self._process_event(event_bytes.decode("utf-8"))
 
