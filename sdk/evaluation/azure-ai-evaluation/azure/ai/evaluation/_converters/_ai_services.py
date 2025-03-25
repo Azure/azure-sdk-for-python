@@ -12,6 +12,8 @@ from azure.ai.projects.models import (
 
 from typing import List, Union
 
+from azure.ai.evaluation._common._experimental import experimental
+
 # Constants.
 from ._models import _USER, _AGENT, _TOOL, _TOOL_CALL, _TOOL_CALLS, _FUNCTION
 
@@ -30,50 +32,47 @@ _AI_SERVICES_API_MAX_LIMIT = 100
 # Maximum number of workers allowed to make API calls at the same time.
 _MAX_WORKERS = 10
 
-# Built-in tool descriptions and parameters are hidden, but we include basic descriptions
-# for evaluation purposes
-_BUILT_IN_DESCRIPTIONS = {"code_interpreter": "Use code interpreter to read and interpret information from datasets, "
-                                              "generate code, and create graphs and charts using your data. Supports "
-                                              "up to 20 files.",
-                            "bing_grounding": "Enhance model output with web data.",
-                            "file_search": "Search for data across uploaded files.",
-                          }
+# Constants to only be used internally in this file for the built-in tools.
+_CODE_INTERPRETER = "code_interpreter"
+_BING_GROUNDING = "bing_grounding"
+_FILE_SEARCH = "file_search"
 
-_BUILT_IN_PARAMS = {"code_interpreter": {"type": "object",
-                                         "properties": {
-                                             "input": {
-                                                "type": "string",
-                                                "description": "Generated code to be executed."
-                                                }
-                                             }
-                                         },
-                    "bing_grounding": {"type": "object",
-                                         "properties": {
-                                             "requesturl": {
-                                                "type": "string",
-                                                "description": "URL used in Bing Search API."
-                                                }
-                                             }
-                                         },
-                    "file_search": {"type": "object",
-                                       "properties": {
-                                           "ranking_options": {
-                                               "type": "object",
-                                               "properties": {
-                                                    "ranker": {
-                                                         "type": "string",
-                                                         "description": "Ranking algorithm to use."
-                                                         },
-                                                    "score_threshold": {
-                                                         "type": "number",
-                                                         "description": "Threshold for search results."
-                                                         }
-                                                    },
-                                               "description": "Ranking options for search results."
-                                           }
-                                       }
-                                    },
-                    }
+# Built-in tool descriptions and parameters are hidden, but we include basic descriptions
+# for evaluation purposes.
+_BUILT_IN_DESCRIPTIONS = {
+    _CODE_INTERPRETER: "Use code interpreter to read and interpret information from datasets, "
+    + "generate code, and create graphs and charts using your data. Supports "
+    + "up to 20 files.",
+    _BING_GROUNDING: "Enhance model output with web data.",
+    _FILE_SEARCH: "Search for data across uploaded files.",
+}
+
+# Built-in tool parameters are hidden, but we include basic parameters for evaluation purposes.
+_BUILT_IN_PARAMS = {
+    _CODE_INTERPRETER: {
+        "type": "object",
+        "properties": {"input": {"type": "string", "description": "Generated code to be executed."}},
+    },
+    _BING_GROUNDING: {
+        "type": "object",
+        "properties": {"requesturl": {"type": "string", "description": "URL used in Bing Search API."}},
+    },
+    _FILE_SEARCH: {
+        "type": "object",
+        "properties": {
+            "ranking_options": {
+                "type": "object",
+                "properties": {
+                    "ranker": {"type": "string", "description": "Ranking algorithm to use."},
+                    "score_threshold": {"type": "number", "description": "Threshold for search results."},
+                },
+                "description": "Ranking options for search results.",
+            }
+        },
+    },
+}
+
+@experimental
 class AIAgentConverter:
     """
     A converter for AI agent data.
@@ -192,6 +191,7 @@ class AIAgentConverter:
         """
         final_tools: List[ToolDefinition] = []
         for tool in thread_run.tools:
+            # Here we handle the custom functions and create tool definitions out of them.
             if tool.type == _FUNCTION:
                 tool_function: FunctionDefinition = tool.function
                 parameters = tool_function.parameters
@@ -208,19 +208,16 @@ class AIAgentConverter:
                     )
                 )
             else:
-                # add limited support for built-in tools.  Descriptions and parameters
+                # Add limited support for built-in tools. Descriptions and parameters
                 # are not published, but we'll include placeholders.
-                try:
+                if tool.type in _BUILT_IN_DESCRIPTIONS and tool.type in _BUILT_IN_PARAMS:
                     final_tools.append(
                         ToolDefinition(
                             name=tool.type,
                             description=_BUILT_IN_DESCRIPTIONS[tool.type],
-                            parameters=_BUILT_IN_PARAMS[tool.type]
+                            parameters=_BUILT_IN_PARAMS[tool.type],
                         )
                     )
-                except:
-                    # if we run into an unknown tool, don't fail
-                    pass
         return final_tools
 
     @staticmethod
