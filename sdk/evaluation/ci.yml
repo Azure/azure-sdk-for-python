@@ -39,3 +39,15 @@ extends:
     Artifacts:
     - name: azure-ai-evaluation
       safeName: azureaievaluation
+    
+    # Add a new optional stage for red team tests
+    OptionalTestStages:
+      - Template: /sdk/evaluation/azure-ai-evaluation/tests/unittests/test_redteam/redteam_tests_stage.yml
+        StageDisplayName: RedTeam Tests
+    
+    # Exclude red team tests from the regular test stages
+    TestPipeline:
+      TestSetupSteps:
+        - script: |
+            echo "##vso[task.setvariable variable=PYTEST_ADDOPTS]--ignore=sdk/evaluation/azure-ai-evaluation/tests/unittests/test_redteam"
+          displayName: 'Exclude RedTeam Tests From Regular Test Runs'

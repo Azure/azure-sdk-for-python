@@ -1,0 +1,64 @@
+parameters:
+  - name: ServiceDirectory
+    type: string
+    default: 'evaluation'
+  
+  - name: BuildTargetingString
+    type: string
+    default: 'azure-ai-evaluation'
+  
+  - name: TestMarkArgument
+    type: string
+    default: 'not cosmosEmulator'
+  
+  - name: MatrixConfigs
+    type: object
+
+  - name: MatrixFilters
+    type: object
+    default: []
+
+  - name: MatrixReplace
+    type: object
+    default: []
+
+  - name: PythonVersion
+    type: string
+    default: '3.10'
+
+stages:
+  - stage: RedTeam_Tests
+    displayName: RedTeam Tests Stage
+    dependsOn: []
+    jobs:
+      - job: 'Test'
+        displayName: 'Run RedTeam Tests'
+        timeoutInMinutes: 120
+        variables:
+          - template: /eng/pipelines/templates/variables/globals.yml
+          - name: BuildTargetingString
+            value: ${{ parameters.BuildTargetingString }}
+        pool:
+          vmImage: 'ubuntu-latest'
+
+        steps:
+          - task: UsePythonVersion@0
+            displayName: 'Use Python ${{ parameters.PythonVersion }}'
+            inputs:
+              versionSpec: '>=3.10'
+
+          - script: |
+              python -m pip install -U pip setuptools wheel
+              python -m pip install pytest pytest-asyncio pytest-cov
+              # Install the package with the redteam extra
+              python -m pip install -e ".[redteam]"
+            displayName: 'Install dependencies and package with redteam extra'
+            workingDirectory: $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}/azure-ai-evaluation
+
+          - script: |
+              # Only run tests in the test_redteam directory
+              python -m pytest tests/unittests/test_redteam/ -v
+            displayName: 'Run RedTeam Tests'
+            workingDirectory: $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}/azure-ai-evaluation
+            env:
+              PYTHONPATH: $(Build.SourcesDirectory)
