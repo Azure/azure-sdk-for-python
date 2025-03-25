@@ -220,6 +220,8 @@ def main(generate_input, generate_output):
     python_tag = data.get("python_tag")
     package_total = set()
     readme_and_tsp = data.get("relatedReadmeMdFiles", []) + data.get("relatedTypeSpecProjectFolder", [])
+    run_in_pipeline = data.get("runInPipeline", False)
+    first_run = True
     for readme_or_tsp in readme_and_tsp:
         _LOGGER.info(f"[CODEGEN]({readme_or_tsp})codegen begin")
         try:
@@ -243,7 +245,10 @@ def main(generate_input, generate_output):
                 config = gen_dpg(readme_or_tsp, data.get("autorestConfig", ""), dpg_relative_folder(spec_folder))
             else:
                 del_outdated_generated_files(str(Path(spec_folder, readme_or_tsp)))
-                config = gen_typespec(readme_or_tsp, spec_folder, data["headSha"], data["repoHttpsUrl"])
+                config = gen_typespec(
+                    readme_or_tsp, spec_folder, data["headSha"], data["repoHttpsUrl"], run_in_pipeline, first_run
+                )
+                first_run = False
         except Exception as e:
             _LOGGER.error(f"fail to generate sdk for {readme_or_tsp}: {str(e)}")
             for hint_message in [
