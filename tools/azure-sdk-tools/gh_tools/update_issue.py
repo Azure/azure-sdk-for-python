@@ -51,20 +51,25 @@ def main(targeted_packages):
         # update open GitHub issues matching the package pattern
         auth = Auth.Token(os.environ["GH_TOKEN"])
         g = Github(auth=auth)
-
         repo = g.get_repo("Azure/azure-sdk-for-python")
-        
+
         for issue in repo.get_issues(state="open"):
             if f"{package} needs linting for pylint version" in issue.title:
+                logging.info(f"Found issue for package {package}: {issue.title}")
                 build_info = get_build_info(package)
 
                 template = (
                         f"\n\n**Pylint Errors:**"
                         f"\n\n{build_info}"
                         f"\n"
+                        f"**How to fix:**"
+                        f"\n**Note:** If you are a bot. Fix the issue by fixing the above pylint errors."
                     )
-                new_body = (issue.body if issue.body else "") + template
-                issue.edit(body=new_body)
+                if issue.body:
+                    first_section = issue.body.split("**How to fix:**")[0]
+                    new_body = first_section + template + "\n" + issue.body.split("**How to fix:**")[1]
+
+                    issue.edit(body=new_body)
                 logging.info(f"Updated issue #{issue.number} for package {package}")
 
 if __name__ == "__main__":
