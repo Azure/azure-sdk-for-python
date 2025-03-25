@@ -8,65 +8,64 @@ import argparse
 import requests
 import json
 import logging
-from vnext_issue_creator import create_vnext_issue, close_vnext_issue  # Import the issue creator function
+from github import Github, Auth
 from ci_tools.functions import discover_targeted_packages
 
 logging.getLogger().setLevel(logging.INFO)
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "..", ".."))
 
-
-def find_failures(package_dir):
+def get_build_info(package_name: str) -> str:
+    """Get the build info from the build link."""
     build_id = os.getenv("BUILD_BUILDID")
-    timeline_link = f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds/{build_id}/timeline?api-version=6.0"
+    timeline_link =f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds/{build_id}/timeline?api-version=6.0"
 
     token = os.environ["SYSTEM_ACCESSTOKEN"]
     AUTH_HEADERS = {"Authorization": f"Bearer {token}"}
 
-    package_name = os.path.basename(package_dir)
-
-    logging.info(f"Package name: {package_name}")
-
     try:
+        # Make the API request
         response = requests.get(timeline_link, headers=AUTH_HEADERS)
+        logging.info(f"Response: {response.text}")
         response_json = json.loads(response.text)
     
         for task in response_json["records"]:
             if "Run Pylint Next" in task["name"]:
                 log_link = task['log']['url'] + "?api-version=6.0"
+                # Get the log file from the build link
                 log_output = requests.get(log_link, headers=AUTH_HEADERS)
                 build_output = log_output.content.decode("utf-8")
-                # Get the version of pylint from the build output
-                version = build_output.split("'pylint':")[1].split("'")[1]
-
-                # Check if the build output contains the error message
-                if f"ERROR:root:{package_name} exited with linting error" in build_output:
-                    logging.info(f"Found failure in task: {task['name']}")
-                    return package_dir, "pylint", version, True
-                else:
-                    logging.info(f"No failure found in task: {task['name']}")
-                    return package_dir, "pylint", version, False
+                new_output = (build_output.split(f"next-pylint: commands[3]> python /mnt/vss/_work/1/s/eng/tox/run_pylint.py -t /mnt/vss/_work/1/s/sdk/{service_directory}/{package_name} --next=True")[1]).split(f"ERROR:root:{package_name} exited with linting error")[0]
+                return new_output
     except Exception as e:
-        logging.info(f"Exception occurred while getting build info: {e}")
+        logging.error(f"Exception occurred while getting build info: {e}")
+        return "Error getting build info"
 
-    return None, None, None, None
+    
 
 def main(targeted_packages):
     for package in targeted_packages:
-        # iterate through the packages and find failures
+        # iterate through the packages and find if there is an issue associated with the package
         # there may be multiple packages in the targeted_packages list
         logging.info(f"Processing package: {package}")
-        file, type_check, version, failure = find_failures(package)
-        if failure:
-            # Create an issue for the failure
-            logging.info(f"Creating issue for {file} with failure: {failure}")
-            create_vnext_issue(file, type_check, version)
-        elif failure is False:
-            logging.info(f"No failures found for {file}. Closing issue if exists.")
-            close_vnext_issue(file, type_check)
-        else:
-            # If failure is None, there was an error in the process
-            logging.info(f"No action taken.")
+
+        # update open GitHub issues matching the package pattern
+        auth = Auth.Token(os.environ["GH_TOKEN"])
+        g = Github(auth=auth)
+
+        repo = g.get_repo("Azure/azure-sdk-for-python")
         
+        for issue in repo.get_issues(state="open"):
+            if f"{package} needs linting for pylint version" in issue.title:
+                build_info = get_build_info(package)
+
+                template = (
+                        f"\n\n**Pylint Errors:**"
+                        f"\n\n{build_info}"
+                        f"\n"
+                    )
+                new_body = (issue.body if issue.body else "") + template
+                issue.edit(body=new_body)
+                logging.info(f"Updated issue #{issue.number} for package {package}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
