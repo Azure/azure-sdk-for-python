@@ -1,16 +1,10 @@
 # Release History
 
-## 11.6.0b11 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 11.6.0b11 (2025-03-25)
 
 ### Bugs Fixed
 
 - Fixed the issue that could not deserialize `document_debug_info`.    #40138
-
-### Other Changes
 
 ## 11.6.0b10 (2025-03-11)
 
