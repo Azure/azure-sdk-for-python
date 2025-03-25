@@ -1611,7 +1611,7 @@ class _AIAgentsInstrumentorPreview:
                         str(e),
                     )
                 except Exception as e:  # pylint: disable=broad-except
-                    # Log other exceptions as a warning, as we're not sure what they might be
+                    # Log other exceptions as a warning, as we are not sure what they might be
                     logging.warning("An unexpected error occurred: '%s'", str(e))
 
     def _available_agents_apis_and_injectors(self):
