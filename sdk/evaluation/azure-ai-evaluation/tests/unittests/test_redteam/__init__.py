@@ -1,3 +1,3 @@
 """
-Tests for the Red Team Agent module including utility modules.
+Tests for the Red Team module including utility modules.
 """

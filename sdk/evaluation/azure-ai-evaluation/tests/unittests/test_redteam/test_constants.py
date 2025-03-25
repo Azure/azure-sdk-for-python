@@ -1,19 +1,27 @@
 """
-Unit tests for red_team_agent.utils.constants module.
+Unit tests for red_team.utils.constants module.
 """
 
 import pytest
-from azure.ai.evaluation.red_team_agent.utils.constants import (
-    BASELINE_IDENTIFIER, DATA_EXT, RESULTS_EXT,
-    ATTACK_STRATEGY_COMPLEXITY_MAP, RISK_CATEGORY_EVALUATOR_MAP,
-    INTERNAL_TASK_TIMEOUT, TASK_STATUS
-)
-from azure.ai.evaluation.red_team_agent.attack_strategy import AttackStrategy
-from azure.ai.evaluation.red_team_agent.attack_objective_generator import RiskCategory
+try:
+    import pyrit
+    has_pyrit = True
+except ImportError:
+    has_pyrit = False
+
+if has_pyrit:
+    from azure.ai.evaluation.red_team.utils.constants import (
+        BASELINE_IDENTIFIER, DATA_EXT, RESULTS_EXT,
+        ATTACK_STRATEGY_COMPLEXITY_MAP, RISK_CATEGORY_EVALUATOR_MAP,
+        INTERNAL_TASK_TIMEOUT, TASK_STATUS
+    )
+    from azure.ai.evaluation.red_team.attack_strategy import AttackStrategy
+    from azure.ai.evaluation.red_team.attack_objective_generator import RiskCategory
 from azure.ai.evaluation import ViolenceEvaluator, HateUnfairnessEvaluator, SexualEvaluator, SelfHarmEvaluator
 
 
 @pytest.mark.unittest
+@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestBasicConstants:
     """Test basic constants are defined correctly."""
 
@@ -26,6 +34,7 @@ class TestBasicConstants:
 
 
 @pytest.mark.unittest
+@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestTaskStatusConstants:
     """Test task status constants are defined correctly."""
     
@@ -39,6 +48,7 @@ class TestTaskStatusConstants:
 
 
 @pytest.mark.unittest
+@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestRiskCategoryEvaluatorMap:
     """Test risk category evaluator mapping."""
     

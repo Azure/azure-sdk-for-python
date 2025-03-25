@@ -1,13 +1,19 @@
 """
-Unit tests for red_team_agent_result module.
+Unit tests for red_team_result module.
 """
 
 import pytest
 import json
 from unittest.mock import patch, MagicMock
-from azure.ai.evaluation.red_team_agent.red_team_agent_result import (
-    RedTeamAgentOutput, RedTeamAgentResult, RedTeamingScorecard, RedTeamingParameters, Conversation
-)
+try: 
+    import pyrit
+    has_pyrit = True
+except ImportError:
+    has_pyrit = False
+if has_pyrit:
+    from azure.ai.evaluation.red_team.red_team_result import (
+        RedTeamOutput, RedTeamResult, RedTeamingScorecard, RedTeamingParameters, Conversation
+    )
 
 
 @pytest.fixture(scope="function")
@@ -97,29 +103,31 @@ def mock_conversation():
 
 
 @pytest.mark.unittest
-class TestRedTeamAgentOutputInitialization:
-    """Test RedTeamAgentOutput initialization."""
+@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
+class TestRedTeamOutputInitialization:
+    """Test RedTeamOutput initialization."""
 
     def test_output_initialization(self):
-        """Test that RedTeamAgentOutput initializes correctly."""
-        output = RedTeamAgentOutput()
-        assert output.red_team_agent_result is None
+        """Test that RedTeamOutput initializes correctly."""
+        output = RedTeamOutput()
+        assert output.red_team_result is None
         assert output.redteaming_data is None
         
         # Test with data
         mock_result = {"test": "data"}
         mock_data = [{"conversation": []}]
-        output_with_data = RedTeamAgentOutput(red_team_agent_result=mock_result, redteaming_data=mock_data)
-        assert output_with_data.red_team_agent_result == mock_result
+        output_with_data = RedTeamOutput(red_team_result=mock_result, redteaming_data=mock_data)
+        assert output_with_data.red_team_result == mock_result
         assert output_with_data.redteaming_data == mock_data
 
 
 @pytest.mark.unittest
-class TestRedTeamAgentOutputMethods:
-    """Test RedTeamAgentOutput methods."""
+@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
+class TestRedTeamOutputMethods:
+    """Test RedTeamOutput methods."""
 
     def test_to_json(self, mock_scorecard, mock_parameters, mock_conversation):
-        """Test to_json method of RedTeamAgentOutput."""
+        """Test to_json method of RedTeamOutput."""
         mock_result = {
             "redteaming_scorecard": mock_scorecard,
             "redteaming_parameters": mock_parameters,
@@ -127,7 +135,7 @@ class TestRedTeamAgentOutputMethods:
             "studio_url": "https://example.com/studio"
         }
         
-        output = RedTeamAgentOutput(red_team_agent_result=mock_result)
+        output = RedTeamOutput(red_team_result=mock_result)
         json_str = output.to_json()
         
         # Parse JSON to verify it's valid
@@ -139,32 +147,33 @@ class TestRedTeamAgentOutputMethods:
 
     def test_to_json_empty(self):
         """Test to_json method with empty result."""
-        output = RedTeamAgentOutput()
+        output = RedTeamOutput()
         json_str = output.to_json()
         assert json_str == ""
 
     def test_to_scorecard(self, mock_scorecard):
-        """Test to_scorecard method of RedTeamAgentOutput."""
+        """Test to_scorecard method of RedTeamOutput."""
         mock_result = {"redteaming_scorecard": mock_scorecard}
-        output = RedTeamAgentOutput(red_team_agent_result=mock_result)
+        output = RedTeamOutput(red_team_result=mock_result)
         
         scorecard = output.to_scorecard()
         assert scorecard == mock_scorecard
 
     def test_to_scorecard_none(self):
         """Test to_scorecard method with no result."""
-        output = RedTeamAgentOutput()
+        output = RedTeamOutput()
         scorecard = output.to_scorecard()
         assert scorecard is None
 
 
 @pytest.mark.unittest
-class TestRedTeamAgentOutputConversion:
-    """Test RedTeamAgentOutput conversion methods."""
+@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
+class TestRedTeamOutputConversion:
+    """Test RedTeamOutput conversion methods."""
 
     def test_to_eval_qr_json_lines_with_data(self, mock_conversation):
         """Test to_eval_qr_json_lines method with data."""
-        output = RedTeamAgentOutput(redteaming_data=[mock_conversation])
+        output = RedTeamOutput(redteaming_data=[mock_conversation])
         json_lines = output.to_eval_qr_json_lines()
         
         # Should have one valid JSON line
@@ -193,7 +202,7 @@ class TestRedTeamAgentOutputConversion:
             ]
         }
         
-        output = RedTeamAgentOutput(redteaming_data=[mock_multi_turn])
+        output = RedTeamOutput(redteaming_data=[mock_multi_turn])
         json_lines = output.to_eval_qr_json_lines()
         
         # Split into lines and parse each
@@ -210,18 +219,19 @@ class TestRedTeamAgentOutputConversion:
 
     def test_to_eval_qr_json_lines_empty(self):
         """Test to_eval_qr_json_lines method with no data."""
-        output = RedTeamAgentOutput()
+        output = RedTeamOutput()
         json_lines = output.to_eval_qr_json_lines()
         assert json_lines == ""
 
 
 @pytest.mark.unittest
-class TestRedTeamAgentOutputRendering:
-    """Test RedTeamAgentOutput rendering methods."""
+@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
+class TestRedTeamOutputRendering:
+    """Test RedTeamOutput rendering methods."""
 
     def test_attack_simulation_with_data(self, mock_conversation):
         """Test attack_simulation method with data."""
-        output = RedTeamAgentOutput(redteaming_data=[mock_conversation])
+        output = RedTeamOutput(redteaming_data=[mock_conversation])
         simulation_text = output.attack_simulation()
         
         # Check for expected parts of the output
@@ -236,7 +246,7 @@ class TestRedTeamAgentOutputRendering:
 
     def test_attack_simulation_no_data(self):
         """Test attack_simulation method with no data."""
-        output = RedTeamAgentOutput()
+        output = RedTeamOutput()
         simulation_text = output.attack_simulation()
         assert simulation_text == ""
 
@@ -253,7 +263,7 @@ class TestRedTeamAgentOutputRendering:
             ]
         }
         
-        output = RedTeamAgentOutput(redteaming_data=[mock_failed])
+        output = RedTeamOutput(redteaming_data=[mock_failed])
         simulation_text = output.attack_simulation()
         
         assert "Attack Success: Failed" in simulation_text

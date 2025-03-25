@@ -10,7 +10,7 @@ import os
 from datetime import datetime
 
 
-def setup_logger(logger_name="RedTeamAgentLogger", output_dir=None):
+def setup_logger(logger_name="RedTeamLogger", output_dir=None):
     """Configure and return a logger instance for the Red Team Agent.
     
     Creates two handlers:
@@ -25,7 +25,7 @@ def setup_logger(logger_name="RedTeamAgentLogger", output_dir=None):
     :rtype: logging.Logger
     """
     # Format matches what's expected in test_setup_logger
-    log_filename = "redteam_agent.log"
+    log_filename = "redteam.log"
     
     # If output directory is specified, create path with that directory
     if output_dir:

@@ -80,7 +80,7 @@ class ErrorTarget(Enum):
     MODELS = "Models"
     UNKNOWN = "Unknown"
     CONVERSATION = "Conversation"
-    RED_TEAM_AGENT = "RedTeamAgent"
+    RED_TEAM = "RedTeam"
 
 
 class EvaluationException(AzureError):

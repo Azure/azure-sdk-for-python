@@ -9,22 +9,29 @@ import numpy as np
 from unittest.mock import AsyncMock, MagicMock, patch, call, mock_open
 from datetime import datetime
 
-from azure.ai.evaluation.red_team_agent.red_team_agent import (
-    RedTeamAgent, RiskCategory, AttackStrategy
-)
-from azure.ai.evaluation.red_team_agent.red_team_agent_result import (
-    RedTeamAgentResult, RedTeamAgentOutput, RedTeamingScorecard, RedTeamingParameters, Conversation
-)
-from azure.ai.evaluation.red_team_agent.attack_objective_generator import AttackObjectiveGenerator
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
-from azure.core.credentials import TokenCredential
+try:
+    import pyrit
+    has_pyrit = True
+except ImportError:
+    has_pyrit = False
 
-# PyRIT related imports to mock
-from pyrit.prompt_converter import PromptConverter
-from pyrit.orchestrator import Orchestrator
-from pyrit.common import DUCK_DB
-from pyrit.exceptions import PyritException
-from pyrit.models import ChatMessage
+if has_pyrit:
+    from azure.ai.evaluation.red_team.red_team import (
+        RedTeam, RiskCategory, AttackStrategy
+    )
+    from azure.ai.evaluation.red_team.red_team_result import (
+        RedTeamResult, RedTeamOutput, RedTeamingScorecard, RedTeamingParameters, Conversation
+    )
+    from azure.ai.evaluation.red_team.attack_objective_generator import AttackObjectiveGenerator
+    from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+    from azure.core.credentials import TokenCredential
+
+    # PyRIT related imports to mock
+    from pyrit.prompt_converter import PromptConverter
+    from pyrit.orchestrator import Orchestrator
+    from pyrit.common import DUCK_DB
+    from pyrit.exceptions import PyritException
+    from pyrit.models import ChatMessage
 
 
 @pytest.fixture
@@ -42,13 +49,13 @@ def mock_credential():
 
 
 @pytest.fixture
-def red_team_agent(mock_azure_ai_project, mock_credential):
-    with patch("azure.ai.evaluation.red_team_agent.red_team_agent.RAIClient"), \
-         patch("azure.ai.evaluation.red_team_agent.red_team_agent.GeneratedRAIClient"), \
-         patch("azure.ai.evaluation.red_team_agent.red_team_agent.setup_logger") as mock_setup_logger, \
-         patch("azure.ai.evaluation.red_team_agent.red_team_agent.initialize_pyrit"), \
+def red_team(mock_azure_ai_project, mock_credential):
+    with patch("azure.ai.evaluation.red_team.red_team.RAIClient"), \
+         patch("azure.ai.evaluation.red_team.red_team.GeneratedRAIClient"), \
+         patch("azure.ai.evaluation.red_team.red_team.setup_logger") as mock_setup_logger, \
+         patch("azure.ai.evaluation.red_team.red_team.initialize_pyrit"), \
          patch("os.makedirs"), \
-         patch("azure.ai.evaluation.red_team_agent.red_team_agent.AttackObjectiveGenerator"), \
+         patch("azure.ai.evaluation.red_team.red_team.AttackObjectiveGenerator"), \
          patch("logging.FileHandler", MagicMock()):
          
         # Create a proper mock logger that doesn't crash when used
@@ -63,7 +70,7 @@ def red_team_agent(mock_azure_ai_project, mock_credential):
         mock_setup_logger.return_value = mock_logger
          
         # Create agent with the updated initialization parameters
-        agent = RedTeamAgent(
+        agent = RedTeam(
             azure_ai_project=mock_azure_ai_project, 
             credential=mock_credential, 
             output_dir="/test/output",
@@ -109,23 +116,24 @@ def mock_orchestrator():
 
 
 @pytest.mark.unittest
-class TestRedTeamAgentInitialization:
-    """Test the initialization of RedTeamAgent."""
+@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
+class TestRedTeamInitialization:
+    """Test the initialization of RedTeam."""
 
-    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.RAIClient")
-    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.GeneratedRAIClient")
-    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.setup_logger")
-    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.initialize_pyrit")
-    def test_red_team_agent_initialization(
+    @patch("azure.ai.evaluation.red_team.red_team.RAIClient")
+    @patch("azure.ai.evaluation.red_team.red_team.GeneratedRAIClient")
+    @patch("azure.ai.evaluation.red_team.red_team.setup_logger")
+    @patch("azure.ai.evaluation.red_team.red_team.initialize_pyrit")
+    def test_red_team_initialization(
         self, mock_initialize_pyrit, mock_setup_logger, mock_generated_rai_client, 
         mock_rai_client, mock_azure_ai_project, mock_credential
     ):
-        """Test the initialization of RedTeamAgent with proper configuration."""
+        """Test the initialization of RedTeam with proper configuration."""
         mock_rai_client.return_value = MagicMock()
         mock_generated_rai_client.return_value = MagicMock()
         mock_setup_logger.return_value = MagicMock()
         
-        agent = RedTeamAgent(
+        agent = RedTeam(
             azure_ai_project=mock_azure_ai_project, credential=mock_credential
         )
         
@@ -137,33 +145,34 @@ class TestRedTeamAgentInitialization:
         assert agent.rai_client is not None
         assert agent.generated_rai_client is not None
         assert isinstance(agent.attack_objectives, dict)
-        assert agent.red_team_agent_info == {}
+        assert agent.red_team_info == {}
         mock_initialize_pyrit.assert_called_once()
 
 
 @pytest.mark.unittest
-class TestRedTeamAgentMlflowIntegration:
-    """Test MLflow integration in RedTeamAgent."""
+@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
+class TestRedTeamMlflowIntegration:
+    """Test MLflow integration in RedTeam."""
 
-    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.RAIClient")
-    def test_start_redteam_mlflow_run_no_project(self, mock_rai_client, red_team_agent):
+    @patch("azure.ai.evaluation.red_team.red_team.RAIClient")
+    def test_start_redteam_mlflow_run_no_project(self, mock_rai_client, red_team):
         """Test _start_redteam_mlflow_run with no project."""
         mock_rai_client.return_value = MagicMock()
         with pytest.raises(EvaluationException) as exc_info:
-            red_team_agent._start_redteam_mlflow_run(azure_ai_project=None)
+            red_team._start_redteam_mlflow_run(azure_ai_project=None)
         assert "No azure_ai_project provided" in str(exc_info.value)
 
-    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.RAIClient")
+    @patch("azure.ai.evaluation.red_team.red_team.RAIClient")
     @patch(
-        "azure.ai.evaluation.red_team_agent.red_team_agent._trace_destination_from_project_scope"
+        "azure.ai.evaluation.red_team.red_team._trace_destination_from_project_scope"
     )
-    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.LiteMLClient")
-    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.extract_workspace_triad_from_trace_provider")
-    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.EvalRun")
+    @patch("azure.ai.evaluation.red_team.red_team.LiteMLClient")
+    @patch("azure.ai.evaluation.red_team.red_team.extract_workspace_triad_from_trace_provider")
+    @patch("azure.ai.evaluation.red_team.red_team.EvalRun")
     def test_start_redteam_mlflow_run(
         self, mock_eval_run, mock_extract_triad, mock_lite_ml_client, 
         mock_trace_destination, mock_rai_client,
-        red_team_agent, mock_azure_ai_project
+        red_team, mock_azure_ai_project
     ):
         """Test _start_redteam_mlflow_run with valid project."""
         mock_rai_client.return_value = MagicMock()
@@ -186,14 +195,14 @@ class TestRedTeamAgentMlflowIntegration:
         mock_eval_run.return_value = mock_eval_run_instance
 
         # Call the method
-        eval_run = red_team_agent._start_redteam_mlflow_run(
+        eval_run = red_team._start_redteam_mlflow_run(
             azure_ai_project=mock_azure_ai_project, run_name="test-run"
         )
         
         # Assert the results and mock calls
         assert eval_run is not None
         assert eval_run == mock_eval_run_instance
-        assert red_team_agent.trace_destination == trace_destination
+        assert red_team.trace_destination == trace_destination
         mock_extract_triad.assert_called_once()
         mock_lite_ml_client.return_value.workspace_get_info.assert_called_once()
         
@@ -207,9 +216,9 @@ class TestRedTeamAgentMlflowIntegration:
         assert call_args.kwargs.get("workspace_name") == "test-ws"
 
     @pytest.mark.asyncio
-    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.RAIClient")
+    @patch("azure.ai.evaluation.red_team.red_team.RAIClient")
     @patch("logging.getLogger")
-    async def test_log_redteam_results_to_mlflow_data_only(self, mock_get_logger, mock_rai_client, red_team_agent):
+    async def test_log_redteam_results_to_mlflow_data_only(self, mock_get_logger, mock_rai_client, red_team):
         """Test _log_redteam_results_to_mlflow with data_only=True."""
         mock_rai_client.return_value = MagicMock()
         
@@ -227,12 +236,12 @@ class TestRedTeamAgentMlflowIntegration:
         mock_get_logger.return_value = mock_logger
         
         # Override the agent's logger
-        red_team_agent.logger = mock_logger
+        red_team.logger = mock_logger
         
         # Test with data_only=True
         mock_redteam_output = MagicMock()
         mock_redteam_output.redteaming_data = [{"conversation": {"messages": [{"role": "user", "content": "test"}]}}]
-        mock_redteam_output.red_team_agent_result = None
+        mock_redteam_output.red_team_result = None
         
         mock_eval_run = MagicMock()
         mock_eval_run.log_artifact = MagicMock()
@@ -249,8 +258,8 @@ class TestRedTeamAgentMlflowIntegration:
              patch("os.path.join", lambda *args: "/".join(args)), \
              patch("pathlib.Path", return_value=mock_path), \
              patch("json.dump"), \
-             patch.object(red_team_agent, "_to_scorecard", return_value="Generated scorecard"), \
-             patch.object(red_team_agent, "scan_output_dir", None):
+             patch.object(red_team, "_to_scorecard", return_value="Generated scorecard"), \
+             patch.object(red_team, "scan_output_dir", None):
              
             # Mock the implementation to avoid tempfile dependency
             async def mock_impl(redteam_output, eval_run, data_only=False):
@@ -262,9 +271,9 @@ class TestRedTeamAgentMlflowIntegration:
                 return None
                 
             # Replace the method with our simplified mock implementation
-            red_team_agent._log_redteam_results_to_mlflow = AsyncMock(side_effect=mock_impl)
+            red_team._log_redteam_results_to_mlflow = AsyncMock(side_effect=mock_impl)
             
-            result = await red_team_agent._log_redteam_results_to_mlflow(
+            result = await red_team._log_redteam_results_to_mlflow(
                 redteam_output=mock_redteam_output,
                 eval_run=mock_eval_run,
                 data_only=True
@@ -275,9 +284,9 @@ class TestRedTeamAgentMlflowIntegration:
         assert result is None
 
     @pytest.mark.asyncio
-    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.RAIClient")
+    @patch("azure.ai.evaluation.red_team.red_team.RAIClient")
     @patch("logging.getLogger")
-    async def test_log_redteam_results_with_metrics(self, mock_get_logger, mock_rai_client, red_team_agent):
+    async def test_log_redteam_results_with_metrics(self, mock_get_logger, mock_rai_client, red_team):
         """Test _log_redteam_results_to_mlflow with metrics."""
         mock_rai_client.return_value = MagicMock()
         
@@ -295,11 +304,11 @@ class TestRedTeamAgentMlflowIntegration:
         mock_get_logger.return_value = mock_logger
         
         # Override the agent's logger
-        red_team_agent.logger = mock_logger
+        red_team.logger = mock_logger
         
         # Test with actual result data
         mock_redteam_output = MagicMock()
-        mock_redteam_output.red_team_agent_result = {
+        mock_redteam_output.red_team_result = {
             "redteaming_scorecard": {
                 "joint_risk_attack_summary": [
                     {
@@ -327,14 +336,14 @@ class TestRedTeamAgentMlflowIntegration:
              patch("os.path.join", lambda *args: "/".join(args)), \
              patch("pathlib.Path", return_value=mock_path), \
              patch("json.dump"), \
-             patch.object(red_team_agent, "_to_scorecard", return_value="Generated scorecard"), \
-             patch.object(red_team_agent, "scan_output_dir", None):
+             patch.object(red_team, "_to_scorecard", return_value="Generated scorecard"), \
+             patch.object(red_team, "scan_output_dir", None):
              
             # Mock the implementation to avoid tempfile dependency but still log metrics
             async def mock_impl(redteam_output, eval_run, data_only=False):
                 # Call log_metric with the expected values
-                if redteam_output.red_team_agent_result:
-                    scorecard = redteam_output.red_team_agent_result["redteaming_scorecard"]
+                if redteam_output.red_team_result:
+                    scorecard = redteam_output.red_team_result["redteaming_scorecard"]
                     joint_attack_summary = scorecard["joint_risk_attack_summary"]
                     
                     if joint_attack_summary:
@@ -353,9 +362,9 @@ class TestRedTeamAgentMlflowIntegration:
                 return None
                 
             # Replace the method with our custom mock implementation
-            red_team_agent._log_redteam_results_to_mlflow = AsyncMock(side_effect=mock_impl)
+            red_team._log_redteam_results_to_mlflow = AsyncMock(side_effect=mock_impl)
             
-            result = await red_team_agent._log_redteam_results_to_mlflow(
+            result = await red_team._log_redteam_results_to_mlflow(
                 redteam_output=mock_redteam_output,
                 eval_run=mock_eval_run,
                 data_only=False
@@ -369,28 +378,29 @@ class TestRedTeamAgentMlflowIntegration:
 
 
 @pytest.mark.unittest
-class TestRedTeamAgentAttackObjectives:
-    """Test attack objective handling in RedTeamAgent."""
+@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
+class TestRedTeamAttackObjectives:
+    """Test attack objective handling in RedTeam."""
 
     @pytest.mark.asyncio
     @pytest.mark.skip(reason="Test still work in progress")
-    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.RAIClient")
+    @patch("azure.ai.evaluation.red_team.red_team.RAIClient")
     async def test_get_attack_objectives_no_risk_category(
-        self, mock_rai_client, red_team_agent
+        self, mock_rai_client, red_team
     ):
         """Test getting attack objectives without specifying risk category."""
         mock_rai_client.return_value = MagicMock()
 
-        red_team_agent.attack_objective_generator.num_objectives = 1
+        red_team.attack_objective_generator.num_objectives = 1
 
         with patch.object(
-            red_team_agent.generated_rai_client, "get_attack_objectives",
+            red_team.generated_rai_client, "get_attack_objectives",
             new_callable=AsyncMock
         ) as mock_get_attack_objectives:
             mock_get_attack_objectives.return_value = [
                 {"messages": [{"content": "test-objective"}]}
             ]
-            objectives = await red_team_agent._get_attack_objectives()
+            objectives = await red_team._get_attack_objectives()
             print(f"DEBUG: objectives={objectives}, mock return={mock_get_attack_objectives.return_value}")
         
             assert len(objectives) == 1
@@ -398,10 +408,10 @@ class TestRedTeamAgentAttackObjectives:
 
     @pytest.mark.asyncio
     @pytest.mark.skip(reason="Test still work in progress")
-    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.RAIClient")
-    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.GeneratedRAIClient")
+    @patch("azure.ai.evaluation.red_team.red_team.RAIClient")
+    @patch("azure.ai.evaluation.red_team.red_team.GeneratedRAIClient")
     async def test_get_attack_objectives_with_risk_category(
-        self, mock_generated_rai_client, mock_rai_client, red_team_agent
+        self, mock_generated_rai_client, mock_rai_client, red_team
     ):
         """Test getting attack objectives for a specific risk category."""
         mock_rai_client.return_value = MagicMock()
@@ -411,7 +421,7 @@ class TestRedTeamAgentAttackObjectives:
         mock_generated_rai_client_instance = MagicMock()
         mock_generated_rai_client_instance.get_attack_objectives = AsyncMock()
 
-        red_team_agent.attack_objective_generator.num_objectives = 2
+        red_team.attack_objective_generator.num_objectives = 2
         
         # Set up the mock return values
         mock_generated_rai_client_instance.get_attack_objectives.return_value = [
@@ -432,9 +442,9 @@ class TestRedTeamAgentAttackObjectives:
         mock_generated_rai_client.return_value = mock_generated_rai_client_instance
         
         # Replace the generated_rai_client with our mock
-        red_team_agent.generated_rai_client = mock_generated_rai_client_instance
+        red_team.generated_rai_client = mock_generated_rai_client_instance
 
-        objectives = await red_team_agent._get_attack_objectives(
+        objectives = await red_team._get_attack_objectives(
             risk_category=RiskCategory.Violence,
             application_scenario="Test scenario"
         )
@@ -450,10 +460,10 @@ class TestRedTeamAgentAttackObjectives:
 
     @pytest.mark.asyncio
     @pytest.mark.skip(reason="Test still work in progress")
-    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.RAIClient")
-    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.GeneratedRAIClient")
+    @patch("azure.ai.evaluation.red_team.red_team.RAIClient")
+    @patch("azure.ai.evaluation.red_team.red_team.GeneratedRAIClient")
     async def test_get_attack_objectives_jailbreak_strategy(
-        self, mock_generated_rai_client, mock_rai_client, red_team_agent
+        self, mock_generated_rai_client, mock_rai_client, red_team
     ):
         """Test getting attack objectives with jailbreak strategy."""
         mock_rai_client.return_value = MagicMock()
@@ -464,7 +474,7 @@ class TestRedTeamAgentAttackObjectives:
         mock_generated_rai_client_instance.get_attack_objectives = AsyncMock()
         mock_generated_rai_client_instance.get_jailbreak_prefixes = AsyncMock()
 
-        red_team_agent.attack_objective_generator.num_objectives = 1
+        red_team.attack_objective_generator.num_objectives = 1
         
         # Set up the mock return values
         mock_generated_rai_client_instance.get_attack_objectives.return_value = [
@@ -481,9 +491,9 @@ class TestRedTeamAgentAttackObjectives:
         mock_generated_rai_client.return_value = mock_generated_rai_client_instance
         
         # Replace the generated_rai_client with our mock
-        red_team_agent.generated_rai_client = mock_generated_rai_client_instance
+        red_team.generated_rai_client = mock_generated_rai_client_instance
         
-        objectives = await red_team_agent._get_attack_objectives(
+        objectives = await red_team._get_attack_objectives(
             risk_category=RiskCategory.Violence,
             strategy="jailbreak"
         )
@@ -498,35 +508,35 @@ class TestRedTeamAgentAttackObjectives:
         assert "Ignore previous instructions." in objectives[0]
 
     @pytest.mark.asyncio
-    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.RAIClient")
+    @patch("azure.ai.evaluation.red_team.red_team.RAIClient")
     async def test_get_attack_objectives_api_error(
-        self, mock_rai_client, red_team_agent
+        self, mock_rai_client, red_team
     ):
         """Test getting attack objectives when API call fails."""
         mock_rai_client.return_value = MagicMock()
 
-        red_team_agent.attack_objective_generator.num_objectives = 2
+        red_team.attack_objective_generator.num_objectives = 2
 
         with patch.object(
-            red_team_agent.generated_rai_client, "get_attack_objectives",
+            red_team.generated_rai_client, "get_attack_objectives",
             new_callable=AsyncMock
         ) as mock_get_attack_objectives:
             mock_get_attack_objectives.side_effect = Exception("API call failed")
-            objectives = await red_team_agent._get_attack_objectives(
+            objectives = await red_team._get_attack_objectives(
                 risk_category=RiskCategory.Violence
             )
             
             assert objectives == []
             
     @pytest.mark.asyncio
-    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.RAIClient")
-    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.GeneratedRAIClient")
+    @patch("azure.ai.evaluation.red_team.red_team.RAIClient")
+    @patch("azure.ai.evaluation.red_team.red_team.GeneratedRAIClient")
     async def test_get_attack_objectives_with_custom_prompts(
-        self, mock_generated_rai_client, mock_rai_client, red_team_agent
+        self, mock_generated_rai_client, mock_rai_client, red_team
     ):
         """Test getting attack objectives with custom attack seed prompts."""
         # Create a mock AttackObjectiveGenerator with custom attack seed prompts
-        mock_attack_objective_generator =red_team_agent.attack_objective_generator
+        mock_attack_objective_generator =red_team.attack_objective_generator
         mock_attack_objective_generator.risk_categories = [RiskCategory.Violence, RiskCategory.HateUnfairness]
         mock_attack_objective_generator.num_objectives = 2
         mock_attack_objective_generator.custom_attack_seed_prompts = "custom_prompts.json"
@@ -562,10 +572,10 @@ class TestRedTeamAgentAttackObjectives:
         # Mock the generated_rai_client to ensure it's not called
         mock_generated_rai_client_instance = MagicMock()
         mock_generated_rai_client_instance.get_attack_objectives = AsyncMock()
-        red_team_agent.generated_rai_client = mock_generated_rai_client_instance
+        red_team.generated_rai_client = mock_generated_rai_client_instance
         
         # Test with violence risk category
-        objectives = await red_team_agent._get_attack_objectives(
+        objectives = await red_team._get_attack_objectives(
             risk_category=RiskCategory.Violence,
             application_scenario="Test scenario"
         )
@@ -578,7 +588,7 @@ class TestRedTeamAgentAttackObjectives:
         assert "custom violence prompt" in objectives
         
         # Test with hate_unfairness risk category
-        objectives = await red_team_agent._get_attack_objectives(
+        objectives = await red_team._get_attack_objectives(
             risk_category=RiskCategory.HateUnfairness,
             application_scenario="Test scenario"
         )
@@ -588,14 +598,14 @@ class TestRedTeamAgentAttackObjectives:
         assert "custom hate prompt" in objectives
         
     @pytest.mark.asyncio
-    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.RAIClient")
-    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.GeneratedRAIClient")
+    @patch("azure.ai.evaluation.red_team.red_team.RAIClient")
+    @patch("azure.ai.evaluation.red_team.red_team.GeneratedRAIClient")
     async def test_get_attack_objectives_with_jailbreak_custom_prompts(
-        self, mock_generated_rai_client, mock_rai_client, red_team_agent
+        self, mock_generated_rai_client, mock_rai_client, red_team
     ):
         """Test getting attack objectives with jailbreak strategy and custom prompts."""
         # Create a mock AttackObjectiveGenerator with custom attack seed prompts
-        mock_attack_objective_generator = red_team_agent.attack_objective_generator
+        mock_attack_objective_generator = red_team.attack_objective_generator
         mock_attack_objective_generator.risk_categories = [RiskCategory.Violence]
         mock_attack_objective_generator.num_objectives = 1
         mock_attack_objective_generator.custom_attack_seed_prompts = "custom_prompts.json"
@@ -619,10 +629,10 @@ class TestRedTeamAgentAttackObjectives:
         # Mock the generated_rai_client
         mock_generated_rai_client_instance = MagicMock()
         mock_generated_rai_client_instance.get_jailbreak_prefixes = AsyncMock(return_value=["Ignore previous instructions."])
-        red_team_agent.generated_rai_client = mock_generated_rai_client_instance
+        red_team.generated_rai_client = mock_generated_rai_client_instance
         
         # Test with jailbreak strategy
-        objectives = await red_team_agent._get_attack_objectives(
+        objectives = await red_team._get_attack_objectives(
             risk_category=RiskCategory.Violence,
             strategy="jailbreak"
         )
@@ -637,10 +647,10 @@ class TestRedTeamAgentAttackObjectives:
         
     @pytest.mark.skip(reason="Test requires more complex mocking of the API fallback functionality")
     @pytest.mark.asyncio
-    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.RAIClient")
-    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.GeneratedRAIClient")
+    @patch("azure.ai.evaluation.red_team.red_team.RAIClient")
+    @patch("azure.ai.evaluation.red_team.red_team.GeneratedRAIClient")
     async def test_get_attack_objectives_fallback_to_api(
-        self, mock_generated_rai_client, mock_rai_client, red_team_agent
+        self, mock_generated_rai_client, mock_rai_client, red_team
     ):
         """Test falling back to API when custom prompts don't have a category."""
         # Skipping test for now as it requires more complex mocking of interactions with the API
@@ -648,17 +658,18 @@ class TestRedTeamAgentAttackObjectives:
 
 
 @pytest.mark.unittest
-class TestRedTeamAgentScan:
-    """Test scan method in RedTeamAgent."""
+@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
+class TestRedTeamScan:
+    """Test scan method in RedTeam."""
     
     @pytest.mark.skip(reason="Test requires more complex mocking of file system operations")
     @pytest.mark.asyncio
-    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.asyncio.gather")
-    @patch.object(RedTeamAgent, "_get_attack_objectives")
-    @patch.object(RedTeamAgent, "_get_chat_target")
+    # @patch("azure.ai.evaluation.red_team.red_team.asyncio.gather")
+    # @patch.object(RedTeam, "_get_attack_objectives")
+    # @patch.object(RedTeam, "_get_chat_target")
     async def test_scan_custom_max_parallel_tasks(
         self, mock_get_chat_target, mock_get_attack_objectives, 
-        mock_gather, red_team_agent
+        mock_gather, red_team
     ):
         """Test that scan method uses the provided max_parallel_tasks."""
         # This test is skipped as it requires more complex mocking of file system operations
@@ -666,38 +677,38 @@ class TestRedTeamAgentScan:
     
     @pytest.mark.skip(reason="Test requires more complex mocking of file system operations")
     @pytest.mark.asyncio 
-    @patch.object(RedTeamAgent, "_get_attack_objectives")
-    @patch.object(RedTeamAgent, "_get_chat_target")
+    # @patch.object(RedTeam, "_get_attack_objectives")
+    # @patch.object(RedTeam, "_get_chat_target")
     async def test_scan_with_custom_attack_objectives(
         self, mock_get_chat_target, mock_get_attack_objectives, 
-        red_team_agent
+        red_team
     ):
         """Test that scan method properly handles custom attack objectives."""
         # This test is skipped as it requires more complex mocking of file system operations
         pass
         
     @pytest.mark.asyncio
-    async def test_scan_timeout_tracking(self, red_team_agent):
+    async def test_scan_timeout_tracking(self, red_team):
         """Test that timeouts are correctly tracked in the scan method."""
         # Set up the agent with necessary attributes
-        red_team_agent.task_statuses = {}
+        red_team.task_statuses = {}
         
         # Add a timeout task status
-        red_team_agent.task_statuses["test_strategy_test_risk_batch_1"] = "timeout"
-        red_team_agent.task_statuses["test_strategy_test_risk_orchestrator"] = "completed"
-        red_team_agent.task_statuses["successful_task"] = "completed"
-        red_team_agent.task_statuses["another_timeout"] = "timeout"
-        red_team_agent.task_statuses["failed_task"] = "failed"
+        red_team.task_statuses["test_strategy_test_risk_batch_1"] = "timeout"
+        red_team.task_statuses["test_strategy_test_risk_orchestrator"] = "completed"
+        red_team.task_statuses["successful_task"] = "completed"
+        red_team.task_statuses["another_timeout"] = "timeout"
+        red_team.task_statuses["failed_task"] = "failed"
         
         # Mock the time calculation
-        red_team_agent.start_time = datetime.now().timestamp() - 60  # 60 seconds ago
+        red_team.start_time = datetime.now().timestamp() - 60  # 60 seconds ago
         
         # Call the code that calculates the summary
-        with patch.object(red_team_agent, "logger") as mock_logger:
+        with patch.object(red_team, "logger") as mock_logger:
             # Call the private method that calculates stats
-            tasks_completed = sum(1 for status in red_team_agent.task_statuses.values() if status == "completed")
-            tasks_failed = sum(1 for status in red_team_agent.task_statuses.values() if status == "failed")
-            tasks_timeout = sum(1 for status in red_team_agent.task_statuses.values() if status == "timeout")
+            tasks_completed = sum(1 for status in red_team.task_statuses.values() if status == "completed")
+            tasks_failed = sum(1 for status in red_team.task_statuses.values() if status == "failed")
+            tasks_timeout = sum(1 for status in red_team.task_statuses.values() if status == "timeout")
             
             # Verify the counts
             assert tasks_completed == 2
@@ -706,25 +717,26 @@ class TestRedTeamAgentScan:
 
 
 @pytest.mark.unittest
-class TestRedTeamAgentOrchestrator:
-    """Test orchestrator functionality in RedTeamAgent."""
+@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
+class TestRedTeamOrchestrator:
+    """Test orchestrator functionality in RedTeam."""
 
     @pytest.mark.asyncio
-    async def test_prompt_sending_orchestrator(self, red_team_agent):
+    async def test_prompt_sending_orchestrator(self, red_team):
         """Test _prompt_sending_orchestrator method."""
         mock_chat_target = MagicMock()
         mock_prompts = ["test prompt 1", "test prompt 2"]
         mock_converter = MagicMock(spec=PromptConverter)
         
-        with patch.object(red_team_agent, "task_statuses", {}), \
-             patch("azure.ai.evaluation.red_team_agent.red_team_agent.PromptSendingOrchestrator") as mock_orch_class, \
-             patch("azure.ai.evaluation.red_team_agent.red_team_agent.log_strategy_start") as mock_log_start:
+        with patch.object(red_team, "task_statuses", {}), \
+             patch("azure.ai.evaluation.red_team.red_team.PromptSendingOrchestrator") as mock_orch_class, \
+             patch("azure.ai.evaluation.red_team.red_team.log_strategy_start") as mock_log_start:
             
             mock_orchestrator = MagicMock()
             mock_orchestrator.send_prompts_async = AsyncMock()
             mock_orch_class.return_value = mock_orchestrator
             
-            result = await red_team_agent._prompt_sending_orchestrator(
+            result = await red_team._prompt_sending_orchestrator(
                 chat_target=mock_chat_target,
                 all_prompts=mock_prompts,
                 converter=mock_converter,
@@ -741,22 +753,22 @@ class TestRedTeamAgentOrchestrator:
             assert result == mock_orchestrator
 
     @pytest.mark.asyncio
-    async def test_prompt_sending_orchestrator_timeout(self, red_team_agent):
+    async def test_prompt_sending_orchestrator_timeout(self, red_team):
         """Test _prompt_sending_orchestrator method with timeout."""
         mock_chat_target = MagicMock()
         mock_prompts = ["test prompt 1", "test prompt 2"]
         mock_converter = MagicMock(spec=PromptConverter)
         
-        with patch.object(red_team_agent, "task_statuses", {}), \
-             patch("azure.ai.evaluation.red_team_agent.red_team_agent.PromptSendingOrchestrator") as mock_orch_class, \
-             patch("azure.ai.evaluation.red_team_agent.red_team_agent.log_strategy_start") as mock_log_start, \
-             patch("azure.ai.evaluation.red_team_agent.red_team_agent.asyncio.wait_for", side_effect=asyncio.TimeoutError()):
+        with patch.object(red_team, "task_statuses", {}), \
+             patch("azure.ai.evaluation.red_team.red_team.PromptSendingOrchestrator") as mock_orch_class, \
+             patch("azure.ai.evaluation.red_team.red_team.log_strategy_start") as mock_log_start, \
+             patch("azure.ai.evaluation.red_team.red_team.asyncio.wait_for", side_effect=asyncio.TimeoutError()):
             
             mock_orchestrator = MagicMock()
             mock_orchestrator.send_prompts_async = AsyncMock()
             mock_orch_class.return_value = mock_orchestrator
             
-            result = await red_team_agent._prompt_sending_orchestrator(
+            result = await red_team._prompt_sending_orchestrator(
                 chat_target=mock_chat_target,
                 all_prompts=mock_prompts,
                 converter=mock_converter,
@@ -770,35 +782,36 @@ class TestRedTeamAgentOrchestrator:
             assert result == mock_orchestrator
             
             # Verify that timeout status is set for the task
-            assert "test_strategy_test_risk_single_batch" in red_team_agent.task_statuses
-            assert red_team_agent.task_statuses["test_strategy_test_risk_single_batch"] == "timeout"
-            assert red_team_agent.task_statuses["test_strategy_test_risk_orchestrator"] == "completed"
+            assert "test_strategy_test_risk_single_batch" in red_team.task_statuses
+            assert red_team.task_statuses["test_strategy_test_risk_single_batch"] == "timeout"
+            assert red_team.task_statuses["test_strategy_test_risk_orchestrator"] == "completed"
 
 
 @pytest.mark.unittest
-class TestRedTeamAgentProcessing:
-    """Test processing functionality in RedTeamAgent."""
+@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
+class TestRedTeamProcessing:
+    """Test processing functionality in RedTeam."""
 
     @pytest.mark.asyncio  # Mark as asyncio test
-    async def test_write_pyrit_outputs_to_file(self, red_team_agent, mock_orchestrator):
+    async def test_write_pyrit_outputs_to_file(self, red_team, mock_orchestrator):
         """Test _write_pyrit_outputs_to_file method."""
         # Create a synchronous mock for _message_to_dict to avoid any async behavior
         message_to_dict_mock = MagicMock(return_value={"role": "user", "content": "test content"})
         
         with patch("uuid.uuid4", return_value="test-uuid"), \
              patch("pathlib.Path.open", mock_open()), \
-             patch.object(red_team_agent, "_message_to_dict", message_to_dict_mock):
+             patch.object(red_team, "_message_to_dict", message_to_dict_mock):
             
-            output_path = red_team_agent._write_pyrit_outputs_to_file(mock_orchestrator)
+            output_path = red_team._write_pyrit_outputs_to_file(mock_orchestrator)
             
             assert output_path == "test-uuid.jsonl"
             mock_orchestrator.get_memory.assert_called_once()
             mock_orchestrator.dispose_db_engine.assert_called_once()
 
     @pytest.mark.asyncio
-    @patch("azure.ai.evaluation.red_team_agent.red_team_agent.RISK_CATEGORY_EVALUATOR_MAP")
+    @patch("azure.ai.evaluation.red_team.red_team.RISK_CATEGORY_EVALUATOR_MAP")
     @patch("logging.getLogger")
-    async def test_evaluate_method(self, mock_get_logger, mock_risk_category_map, red_team_agent):
+    async def test_evaluate_method(self, mock_get_logger, mock_risk_category_map, red_team):
         """Test _evaluate method."""
         # Create a proper mock logger that doesn't crash when used
         mock_logger = MagicMock()
@@ -813,7 +826,7 @@ class TestRedTeamAgentProcessing:
         # Make all loggers use our mock
         mock_get_logger.return_value = mock_logger
         
-        with patch("azure.ai.evaluation.red_team_agent.red_team_agent.evaluate") as mock_evaluate, \
+        with patch("azure.ai.evaluation.red_team.red_team.evaluate") as mock_evaluate, \
              patch("uuid.uuid4", return_value="test-uuid"), \
              patch("os.path.join", lambda *args: "/".join(args)), \
              patch("os.makedirs", return_value=None), \
@@ -825,12 +838,12 @@ class TestRedTeamAgentProcessing:
             mock_risk_category_map.__getitem__.return_value = lambda **kwargs: mock_evaluator
             
             mock_evaluate.return_value = {"some": "result"}
-            red_team_agent.red_team_agent_info = {"base64": {"violence": {}}}
+            red_team.red_team_info = {"base64": {"violence": {}}}
             
             # Set scan_output_dir to trigger path join logic
-            red_team_agent.scan_output_dir = "/test/output"
+            red_team.scan_output_dir = "/test/output"
             
-            await red_team_agent._evaluate(
+            await red_team._evaluate(
                 data_path="/path/to/data.jsonl",
                 risk_category=RiskCategory.Violence,
                 strategy=AttackStrategy.Base64,
@@ -849,10 +862,10 @@ class TestRedTeamAgentProcessing:
             assert call_args.kwargs["output_path"] == "/path/to/output.json"
             
             # Verify the result was stored correctly
-            assert red_team_agent.red_team_agent_info["base64"]["violence"]["evaluation_result"] == {"some": "result"}
+            assert red_team.red_team_info["base64"]["violence"]["evaluation_result"] == {"some": "result"}
 
     @pytest.mark.asyncio
-    async def test_process_attack(self, red_team_agent, mock_orchestrator):
+    async def test_process_attack(self, red_team, mock_orchestrator):
         """Test _process_attack method."""
         mock_target = MagicMock()
         mock_call_orchestrator = AsyncMock(return_value=mock_orchestrator)
@@ -865,24 +878,24 @@ class TestRedTeamAgentProcessing:
         mock_progress_bar_lock.__aenter__ = AsyncMock(return_value=None)
         mock_progress_bar_lock.__aexit__ = AsyncMock(return_value=None)
         
-        red_team_agent.red_team_agent_info = {"base64": {"violence": {}}}
-        red_team_agent.chat_target = MagicMock()
-        red_team_agent.scan_output_dir = "/test/output"
+        red_team.red_team_info = {"base64": {"violence": {}}}
+        red_team.chat_target = MagicMock()
+        red_team.scan_output_dir = "/test/output"
         
         # Mock the converter strategy function
         mock_converter = MagicMock(spec=PromptConverter)
         
-        with patch.object(red_team_agent, "_write_pyrit_outputs_to_file", return_value="/path/to/data.jsonl"), \
-             patch.object(red_team_agent, "_evaluate", new_callable=AsyncMock) as mock_evaluate, \
-             patch.object(red_team_agent, "task_statuses", {}), \
-             patch.object(red_team_agent, "completed_tasks", 0), \
-             patch.object(red_team_agent, "total_tasks", 5), \
-             patch.object(red_team_agent, "start_time", datetime.now().timestamp()), \
-             patch.object(red_team_agent, "_get_converter_for_strategy", return_value=mock_converter), \
+        with patch.object(red_team, "_write_pyrit_outputs_to_file", return_value="/path/to/data.jsonl"), \
+             patch.object(red_team, "_evaluate", new_callable=AsyncMock) as mock_evaluate, \
+             patch.object(red_team, "task_statuses", {}), \
+             patch.object(red_team, "completed_tasks", 0), \
+             patch.object(red_team, "total_tasks", 5), \
+             patch.object(red_team, "start_time", datetime.now().timestamp()), \
+             patch.object(red_team, "_get_converter_for_strategy", return_value=mock_converter), \
              patch("os.path.join", lambda *args: "/".join(args)):
             
             # Await the async process_attack method
-            await red_team_agent._process_attack(
+            await red_team._process_attack(
                 target=mock_target,
                 call_orchestrator=mock_call_orchestrator,
                 strategy=mock_strategy,
@@ -894,20 +907,21 @@ class TestRedTeamAgentProcessing:
             
             # Assert that call_orchestrator was called with the right args (no await)
             mock_call_orchestrator.assert_called_once_with(
-                red_team_agent.chat_target, mock_prompts, 
+                red_team.chat_target, mock_prompts, 
                 mock_converter,
-                "base64", "violence"
+                "base64", "violence", 
+                120
             )
             
-            red_team_agent._write_pyrit_outputs_to_file.assert_called_once_with(mock_orchestrator)
+            red_team._write_pyrit_outputs_to_file.assert_called_once_with(mock_orchestrator)
             
             # Check evaluate was called (no await)
             mock_evaluate.assert_called_once()
-            assert red_team_agent.task_statuses["base64_violence_attack"] == "completed"
-            assert red_team_agent.completed_tasks == 1
+            assert red_team.task_statuses["base64_violence_attack"] == "completed"
+            assert red_team.completed_tasks == 1
 
     @pytest.mark.asyncio
-    async def test_process_attack_orchestrator_error(self, red_team_agent):
+    async def test_process_attack_orchestrator_error(self, red_team):
         """Test _process_attack method with orchestrator error."""
         mock_target = MagicMock()
         # Create a generic exception instead of PyritException
@@ -922,19 +936,19 @@ class TestRedTeamAgentProcessing:
         mock_progress_bar_lock.__aexit__ = AsyncMock(return_value=None)
         
         # Initialize attributes needed by the method
-        red_team_agent.red_team_agent_info = {"base64": {"violence": {}}}
-        red_team_agent.chat_target = MagicMock()
+        red_team.red_team_info = {"base64": {"violence": {}}}
+        red_team.chat_target = MagicMock()
         
         # Create mock converter
         mock_converter = MagicMock(spec=PromptConverter)
         
-        with patch.object(red_team_agent, "task_statuses", {}), \
-             patch.object(red_team_agent, "failed_tasks", 0), \
-             patch.object(red_team_agent, "_get_converter_for_strategy", return_value=mock_converter), \
+        with patch.object(red_team, "task_statuses", {}), \
+             patch.object(red_team, "failed_tasks", 0), \
+             patch.object(red_team, "_get_converter_for_strategy", return_value=mock_converter), \
              patch("builtins.print"):  # Suppress print statements
             
             # Await the async method
-            await red_team_agent._process_attack(
+            await red_team._process_attack(
                 target=mock_target,
                 call_orchestrator=mock_call_orchestrator,
                 strategy=mock_strategy,
@@ -946,23 +960,24 @@ class TestRedTeamAgentProcessing:
             
             # Assert without await
             mock_call_orchestrator.assert_called_once_with(
-                red_team_agent.chat_target, mock_prompts, 
-                mock_converter, "base64", "violence"
+                red_team.chat_target, mock_prompts, 
+                mock_converter, "base64", "violence", 120
             )
                 
-            assert red_team_agent.task_statuses["base64_violence_attack"] == "failed"
-            assert red_team_agent.failed_tasks == 1
+            assert red_team.task_statuses["base64_violence_attack"] == "failed"
+            assert red_team.failed_tasks == 1
 
 
 @pytest.mark.unittest
-class TestRedTeamAgentOutputCreation:
-    """Test RedTeamAgentResult and RedTeamAgentOutput creation."""
+@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
+class TestRedTeamOutputCreation:
+    """Test RedTeamResult and RedTeamOutput creation."""
 
-    def test_to_red_team_agent_result(self):
-        """Test creating a RedTeamAgentResult."""
-        # Since RedTeamAgentResult is a TypedDict, we're just testing its dictionary-like behavior
+    def test_to_red_team_result(self):
+        """Test creating a RedTeamResult."""
+        # Since RedTeamResult is a TypedDict, we're just testing its dictionary-like behavior
         # without using isinstance checks or mocking
-        result = RedTeamAgentResult(
+        result = RedTeamResult(
             redteaming_scorecard={},
             redteaming_parameters={},
             redteaming_data=[],
@@ -976,11 +991,11 @@ class TestRedTeamAgentOutputCreation:
         assert "studio_url" in result
         assert result["studio_url"] == "https://test-studio.com"
 
-    def test_to_red_team_agent_result_no_data(self):
-        """Test creating a RedTeamAgentResult with minimal data."""
-        # Since RedTeamAgentResult is a TypedDict, we're just testing its dictionary-like behavior
+    def test_to_red_team_result_no_data(self):
+        """Test creating a RedTeamResult with minimal data."""
+        # Since RedTeamResult is a TypedDict, we're just testing its dictionary-like behavior
         # with minimal data
-        result = RedTeamAgentResult(
+        result = RedTeamResult(
             redteaming_scorecard={"risk_category_summary": [{"overall_asr": 0.0}]},
             redteaming_parameters={},
             redteaming_data=[],
@@ -1007,7 +1022,7 @@ class TestRedTeamAgentOutputCreation:
         exception = EvaluationException(
             message="Attack objective generator is required for red team agent",
             internal_message="Attack objective generator is not provided.",
-            target=ErrorTarget.RED_TEAM_AGENT,
+            target=ErrorTarget.RED_TEAM,
             category=ErrorCategory.MISSING_FIELD,
             blame=ErrorBlame.USER_ERROR
         )
@@ -1016,14 +1031,14 @@ class TestRedTeamAgentOutputCreation:
         assert "Attack objective generator is required for red team agent" in str(exception)
 
     @pytest.mark.asyncio
-    async def test_scan_success_path(self, red_team_agent, mock_attack_objective_generator):
+    async def test_scan_success_path(self, red_team, mock_attack_objective_generator):
         """Test scan method successful path with mocks."""
         # Rather than trying to fix this complex test with so many layers of mocking,
         # we'll just mock the scan method entirely to return a simple result
         
-        # Create a mock RedTeamAgentOutput
-        mock_result = RedTeamAgentOutput(
-            red_team_agent_result=RedTeamAgentResult(
+        # Create a mock RedTeamOutput
+        mock_result = RedTeamOutput(
+            red_team_result=RedTeamResult(
                 redteaming_scorecard={"risk_category_summary": []},
                 redteaming_parameters={},
                 redteaming_data=[],
@@ -1033,13 +1048,13 @@ class TestRedTeamAgentOutputCreation:
         )
         
         # Mock the scan method to directly return our mock result
-        with patch.object(red_team_agent, 'scan', new_callable=AsyncMock) as mock_scan, \
+        with patch.object(red_team, 'scan', new_callable=AsyncMock) as mock_scan, \
              patch("os.makedirs"), \
              patch("os.path.join"):
             mock_scan.return_value = mock_result
             
             # Call the mocked scan method
-            result = await red_team_agent.scan(
+            result = await red_team.scan(
                 target=MagicMock(),
                 attack_objective_generator=mock_attack_objective_generator,
                 attack_strategies=[AttackStrategy.Base64],
@@ -1049,7 +1064,7 @@ class TestRedTeamAgentOutputCreation:
             
             # Verify we got the expected result
             assert result == mock_result
-            assert isinstance(result, RedTeamAgentOutput)
+            assert isinstance(result, RedTeamOutput)
             mock_scan.assert_called_once_with(
                 target=mock_scan.call_args[1]["target"],
                 attack_objective_generator=mock_attack_objective_generator,
@@ -1060,41 +1075,42 @@ class TestRedTeamAgentOutputCreation:
 
 
 @pytest.mark.unittest
-class TestRedTeamAgentOutput:
-    """Test RedTeamAgentOutput functionality."""
+@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
+class TestRedTeamOutput:
+    """Test RedTeamOutput functionality."""
 
-    def test_red_team_agent_output_initialization(self):
-        """Test RedTeamAgentOutput initialization."""
-        result = RedTeamAgentOutput()
-        assert result.red_team_agent_result is None
+    def test_red_team_output_initialization(self):
+        """Test RedTeamOutput initialization."""
+        result = RedTeamOutput()
+        assert result.red_team_result is None
         assert result.redteaming_data is None
         
         mock_result = {"redteaming_scorecard": {}}
         mock_data = [{"conversation": []}]
         
-        result_with_data = RedTeamAgentOutput(red_team_agent_result=mock_result, redteaming_data=mock_data)
-        assert result_with_data.red_team_agent_result == mock_result
+        result_with_data = RedTeamOutput(red_team_result=mock_result, redteaming_data=mock_data)
+        assert result_with_data.red_team_result == mock_result
         assert result_with_data.redteaming_data == mock_data
 
-    def test_red_team_agent_output_to_json(self):
-        """Test RedTeamAgentOutput to_json method."""
+    def test_red_team_output_to_json(self):
+        """Test RedTeamOutput to_json method."""
         mock_result = {"redteaming_scorecard": {"risk_category_summary": []}}
-        result = RedTeamAgentOutput(red_team_agent_result=mock_result)
+        result = RedTeamOutput(red_team_result=mock_result)
         
         json_str = result.to_json()
         assert "redteaming_scorecard" in json_str
 
-    def test_red_team_agent_output_to_scorecard(self):
-        """Test RedTeamAgentOutput to_scorecard method."""
+    def test_red_team_output_to_scorecard(self):
+        """Test RedTeamOutput to_scorecard method."""
         mock_scorecard = {"risk_category_summary": []}
         mock_result = {"redteaming_scorecard": mock_scorecard}
-        result = RedTeamAgentOutput(red_team_agent_result=mock_result)
+        result = RedTeamOutput(red_team_result=mock_result)
         
         scorecard = result.to_scorecard()
         assert scorecard == mock_scorecard
 
-    def test_red_team_agent_output_to_eval_qr_json_lines(self):
-        """Test RedTeamAgentOutput to_eval_qr_json_lines method."""
+    def test_red_team_output_to_eval_qr_json_lines(self):
+        """Test RedTeamOutput to_eval_qr_json_lines method."""
         mock_conversation = {
             "attack_success": True,
             "attack_technique": "base64",
@@ -1112,7 +1128,7 @@ class TestRedTeamAgentOutput:
             }
         }
         
-        result = RedTeamAgentOutput(redteaming_data=[mock_conversation])
+        result = RedTeamOutput(redteaming_data=[mock_conversation])
         
         json_lines = result.to_eval_qr_json_lines()
         
@@ -1124,8 +1140,8 @@ class TestRedTeamAgentOutput:
         assert "base64" in json_lines
         assert "easy" in json_lines
 
-    def test_red_team_agent_output_attack_simulation(self):
-        """Test RedTeamAgentOutput attack_simulation method."""
+    def test_red_team_output_attack_simulation(self):
+        """Test RedTeamOutput attack_simulation method."""
         mock_conversation = {
             "attack_success": True,
             "attack_technique": "base64",
@@ -1143,7 +1159,7 @@ class TestRedTeamAgentOutput:
             }
         }
         
-        result = RedTeamAgentOutput(redteaming_data=[mock_conversation])
+        result = RedTeamOutput(redteaming_data=[mock_conversation])
         
         simulation_text = result.attack_simulation()
         

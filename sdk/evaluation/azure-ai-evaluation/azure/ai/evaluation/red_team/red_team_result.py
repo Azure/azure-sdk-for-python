@@ -105,7 +105,7 @@ class Conversation(TypedDict):
     conversation: List[Dict[str, str]]
     risk_assessment: Optional[RiskAssessment]
 
-class RedTeamAgentResult(TypedDict):
+class RedTeamResult(TypedDict):
     """TypedDict representation of a Red Team Agent evaluation result with the updated structure.
 
     This class defines the structure for capturing the results of a red team evaluation, including:
@@ -118,18 +118,18 @@ class RedTeamAgentResult(TypedDict):
     redteaming_data: List[Conversation]
     studio_url: Optional[str]
 
-class RedTeamAgentOutput():
-    def __init__(self, red_team_agent_result: Optional[RedTeamAgentResult] = None, redteaming_data: Optional[List[Conversation]] = None):
-        self.red_team_agent_result = red_team_agent_result
+class RedTeamOutput():
+    def __init__(self, red_team_result: Optional[RedTeamResult] = None, redteaming_data: Optional[List[Conversation]] = None):
+        self.red_team_result = red_team_result
         self.redteaming_data = redteaming_data
 
     def to_json(self) -> str:
-        """Converts a RedTeamAgentResult object to a JSON-serializable dictionary."""
-        return json.dumps(self.red_team_agent_result) if self.red_team_agent_result else ""
+        """Converts a RedTeamResult object to a JSON-serializable dictionary."""
+        return json.dumps(self.red_team_result) if self.red_team_result else ""
 
     def to_scorecard(self) -> Optional[RedTeamingScorecard]:
-        """Extracts the scorecard from a RedTeamAgentResult object."""
-        return self.red_team_agent_result.get("redteaming_scorecard", None) if self.red_team_agent_result else None
+        """Extracts the scorecard from a RedTeamResult object."""
+        return self.red_team_result.get("redteaming_scorecard", None) if self.red_team_result else None
     
     def to_eval_qr_json_lines(self) -> str:
         """

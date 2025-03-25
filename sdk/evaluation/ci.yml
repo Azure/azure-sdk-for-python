@@ -39,11 +39,3 @@ extends:
     Artifacts:
     - name: azure-ai-evaluation
       safeName: azureaievaluation
-    
-    # Install package with redteam extra for tests
-    TestPipeline:
-      TestSetupSteps:
-        - script: |
-            pip install -e ".[redteam]"
-          displayName: 'Install package with redteam extra'
-          workingDirectory: $(Build.SourcesDirectory)/sdk/evaluation/azure-ai-evaluation

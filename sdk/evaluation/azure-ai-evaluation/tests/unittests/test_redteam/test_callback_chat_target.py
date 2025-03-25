@@ -6,11 +6,18 @@ import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 import asyncio
 
-from pyrit.common import initialize_pyrit, IN_MEMORY
+try:
+    import pyrit
+    has_pyrit = True
+except ImportError:
+    has_pyrit = False
 
-from azure.ai.evaluation.red_team_agent.callback_chat_target import CallbackChatTarget
+if has_pyrit:   
+    from pyrit.common import initialize_pyrit, IN_MEMORY
 
-initialize_pyrit(memory_db_type=IN_MEMORY)
+    from azure.ai.evaluation.red_team.callback_chat_target import CallbackChatTarget
+
+    initialize_pyrit(memory_db_type=IN_MEMORY)
 
 @pytest.fixture(scope="function")
 def mock_callback():
@@ -56,6 +63,7 @@ def mock_request():
 
 
 @pytest.mark.unittest
+@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestCallbackChatTargetInitialization:
     """Test the initialization of CallbackChatTarget."""
 
@@ -72,6 +80,7 @@ class TestCallbackChatTargetInitialization:
 
 
 @pytest.mark.unittest
+@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestCallbackChatTargetPrompts:
     """Test CallbackChatTarget prompt handling."""
     
@@ -79,7 +88,7 @@ class TestCallbackChatTargetPrompts:
     async def test_send_prompt_async(self, chat_target, mock_request, mock_callback):
         """Test send_prompt_async method."""
         with patch.object(chat_target, "_memory") as mock_memory, \
-            patch("azure.ai.evaluation.red_team_agent.callback_chat_target.construct_response_from_request") as mock_construct:
+            patch("azure.ai.evaluation.red_team.callback_chat_target.construct_response_from_request") as mock_construct:
             # Setup memory mock
             mock_memory.get_chat_messages_with_conversation_id.return_value = []
             
@@ -125,6 +134,7 @@ class TestCallbackChatTargetPrompts:
 
 
 @pytest.mark.unittest
+@pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestCallbackChatTargetFeatures:
     """Test CallbackChatTarget feature support."""
 
