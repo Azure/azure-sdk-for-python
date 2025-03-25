@@ -441,11 +441,20 @@ class RedTeam():
             # Use the RAI service to get attack objectives
             try:
                 self.logger.debug(f"API call: get_attack_objectives({risk_cat_value}, app: {application_scenario}, strategy: {strategy})")
-                objectives_response = await self.generated_rai_client.get_attack_objectives(
-                    risk_category=risk_cat_value,
-                    application_scenario=application_scenario or "",
-                    strategy=strategy
-                )
+                # strategy param specifies whether to get a strategy-specific dataset from the RAI service
+                # right now, only tense requires strategy-specific dataset
+                if strategy == "tense":
+                    objectives_response = await self.generated_rai_client.get_attack_objectives(
+                        risk_category=risk_cat_value,
+                        application_scenario=application_scenario or "",
+                        strategy=strategy
+                    )
+                else: 
+                    objectives_response = await self.generated_rai_client.get_attack_objectives(
+                        risk_category=risk_cat_value,
+                        application_scenario=application_scenario or "",
+                        strategy=None
+                    )
                 if isinstance(objectives_response, list):
                     self.logger.debug(f"API returned {len(objectives_response)} objectives")
                 else:
@@ -663,6 +672,7 @@ class RedTeam():
                             
                     except asyncio.TimeoutError:
                         self.logger.warning(f"Batch {batch_idx+1} for {strategy_name}/{risk_category} timed out after {timeout} seconds, continuing with partial results")
+                        self.logger.debug(f"❌ Timeout: Strategy {strategy_name}, Risk {risk_category}, Batch {batch_idx+1} after {timeout} seconds.", exc_info=True)
                         print(f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category}, Batch {batch_idx+1}")
                         # Set task status to TIMEOUT
                         batch_task_key = f"{strategy_name}_{risk_category}_batch_{batch_idx+1}"

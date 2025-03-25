@@ -6,11 +6,11 @@
 
 """
 DESCRIPTION:
-    These samples demonstrate usage of various classes and methods used in the Red Team Agent
+    These samples demonstrate usage of various classes and methods used in Red Team
     functionality within the azure-ai-evaluation library.
     
 USAGE:
-    python evaluation_samples_red_team_agent.py
+    python red_team_samples.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_SUBSCRIPTION_ID - your Azure subscription ID
@@ -23,15 +23,15 @@ USAGE:
 
 import os
 import asyncio
-from azure.ai.evaluation.red_team_agent import (
-    RedTeamAgent, 
+from azure.ai.evaluation.red_team import (
+    RedTeam, 
     AttackStrategy, 
     RiskCategory
 )
 from azure.identity import DefaultAzureCredential
 
 
-class RedTeamAgentSamples(object):
+class RedTeamSamples(object):
     def __init__(self):
         # Setup Azure AI Project connection
         self.azure_ai_project = {
@@ -50,26 +50,26 @@ class RedTeamAgentSamples(object):
 
     async def basic_callback_example(self):
         """
-        This example demonstrates the most basic usage of the Red Team Agent with a
+        This example demonstrates the most basic usage of Red Team with a
         simple callback function. It shows how to initialize the agent with specific risk
         categories and then use it to scan a target function with basic attack strategies.
         """
-        # [START red_team_agent_basic_callback]
-        from azure.ai.evaluation.red_team_agent import (
-            RedTeamAgent, 
+        # [START red_team_basic_callback]
+        from azure.ai.evaluation.red_team import (
+            RedTeam, 
             AttackStrategy,
             RiskCategory
         )
         from azure.identity import DefaultAzureCredential
 
-        # Initialize the Red Team Agent
+        # Initialize Red Team
         azure_ai_project = {
             "subscription_id": os.environ.get("AZURE_SUBSCRIPTION_ID"),
             "resource_group_name": os.environ.get("AZURE_RESOURCE_GROUP_NAME"),
             "project_name": os.environ.get("AZURE_PROJECT_NAME"),
         }
         credential = DefaultAzureCredential()
-        agent = RedTeamAgent(azure_ai_project=azure_ai_project, credential=credential, risk_categories=[RiskCategory.Violence, RiskCategory.HateUnfairness], num_objectives=2) 
+        agent = RedTeam(azure_ai_project=azure_ai_project, credential=credential, risk_categories=[RiskCategory.Violence, RiskCategory.HateUnfairness], num_objectives=2) 
 
         # Define a simple callback function that simulates a chatbot
         def simple_callback(query: str) -> str:
@@ -85,31 +85,31 @@ class RedTeamAgentSamples(object):
         )
 
         print(f"Scan completed with {len(results.redteaming_data) if results.redteaming_data else 0} conversations")
-        # [END red_team_agent_basic_callback]
+        # [END red_team_basic_callback]
         return results
 
     async def advanced_callback_example(self):
         """
         This example demonstrates a more advanced usage with a complex callback function
-        that handles conversation state and formatting. It shows how to use the Red Team Agent
+        that handles conversation state and formatting. It shows how to use Red Team
         with an asynchronous callback that processes message history in a chat format.
         """
-        # [START red_team_agent_advanced_callback]
-        from azure.ai.evaluation.red_team_agent import (
-            RedTeamAgent, 
+        # [START red_team_advanced_callback]
+        from azure.ai.evaluation.red_team import (
+            RedTeam, 
             AttackStrategy,
             RiskCategory
         )
         from azure.identity import DefaultAzureCredential
 
-        # Initialize the Red Team Agent
+        # Initialize Red Team
         azure_ai_project = {
             "subscription_id": os.environ.get("AZURE_SUBSCRIPTION_ID"),
             "resource_group_name": os.environ.get("AZURE_RESOURCE_GROUP_NAME"),
             "project_name": os.environ.get("AZURE_PROJECT_NAME"),
         }
         credential = DefaultAzureCredential()
-        agent = RedTeamAgent(azure_ai_project=azure_ai_project, credential=credential, risk_categories=[
+        agent = RedTeam(azure_ai_project=azure_ai_project, credential=credential, risk_categories=[
                 RiskCategory.Violence, 
                 RiskCategory.Sexual, 
                 RiskCategory.SelfHarm, 
@@ -149,31 +149,31 @@ class RedTeamAgentSamples(object):
         )
 
         print(f"Advanced scan completed with {len(results.redteaming_data) if results.redteaming_data else 0} conversations")
-        # [END red_team_agent_advanced_callback]
+        # [END red_team_advanced_callback]
         return results
 
     async def direct_model_testing_example(self):
         """
         This example demonstrates how to test an Azure OpenAI model directly using the
-        Red Team Agent. Rather than providing a callback function, it shows how to 
+        Red Team. Rather than providing a callback function, it shows how to 
         set up and pass configuration for a model to be tested directly.
         """
-        # [START red_team_agent_direct_model]
-        from azure.ai.evaluation.red_team_agent import (
-            RedTeamAgent, 
+        # [START red_team_direct_model]
+        from azure.ai.evaluation.red_team import (
+            RedTeam, 
             AttackStrategy,
             RiskCategory
         )
         from azure.identity import DefaultAzureCredential
 
-        # Initialize the Red Team Agent
+        # Initialize Red Team
         azure_ai_project = {
             "subscription_id": os.environ.get("AZURE_SUBSCRIPTION_ID"),
             "resource_group_name": os.environ.get("AZURE_RESOURCE_GROUP_NAME"),
             "project_name": os.environ.get("AZURE_PROJECT_NAME"),
         }
         credential = DefaultAzureCredential()
-        agent = RedTeamAgent(azure_ai_project=azure_ai_project, credential=credential, risk_categories=[RiskCategory.Violence, RiskCategory.HateUnfairness],
+        agent = RedTeam(azure_ai_project=azure_ai_project, credential=credential, risk_categories=[RiskCategory.Violence, RiskCategory.HateUnfairness],
             num_objectives=3,)
 
         # Configuration for Azure OpenAI model
@@ -195,7 +195,7 @@ class RedTeamAgentSamples(object):
         )
 
         print(f"Model test completed with {len(model_results.redteaming_data) if model_results.redteaming_data else 0} conversations")
-        # [END red_team_agent_direct_model]
+        # [END red_team_direct_model]
         return model_results
 
     async def strategy_complexity_levels_example(self):
@@ -204,22 +204,22 @@ class RedTeamAgentSamples(object):
         It shows how to use the predefined complexity groups (EASY, MODERATE, DIFFICULT) to
         test a target with attacks of varying sophistication.
         """
-        # [START red_team_agent_complexity_levels]
-        from azure.ai.evaluation.red_team_agent import (
-            RedTeamAgent, 
+        # [START red_team_complexity_levels]
+        from azure.ai.evaluation.red_team import (
+            RedTeam, 
             AttackStrategy,
             RiskCategory
         )
         from azure.identity import DefaultAzureCredential
 
-        # Initialize the Red Team Agent
+        # Initialize Red Team
         azure_ai_project = {
             "subscription_id": os.environ.get("AZURE_SUBSCRIPTION_ID"),
             "resource_group_name": os.environ.get("AZURE_RESOURCE_GROUP_NAME"),
             "project_name": os.environ.get("AZURE_PROJECT_NAME"),
         }
         credential = DefaultAzureCredential()
-        agent = RedTeamAgent(azure_ai_project=azure_ai_project, credential=credential,risk_categories=[RiskCategory.Violence, RiskCategory.SelfHarm], num_objectives=2)
+        agent = RedTeam(azure_ai_project=azure_ai_project, credential=credential,risk_categories=[RiskCategory.Violence, RiskCategory.SelfHarm], num_objectives=2)
 
         # Create a simple callback function
         def callback(query: str) -> str:
@@ -238,7 +238,7 @@ class RedTeamAgentSamples(object):
         )
 
         print(f"Complexity levels test completed with {len(results.redteaming_data) if results.redteaming_data else 0} conversations")
-        # [END red_team_agent_complexity_levels]
+        # [END red_team_complexity_levels]
         return results
 
     async def specific_attack_strategies_example(self):
@@ -247,22 +247,22 @@ class RedTeamAgentSamples(object):
         complexity groups. It shows how to select individual attack techniques to test
         a target's resilience against particular evasion methods.
         """
-        # [START red_team_agent_specific_strategies]
-        from azure.ai.evaluation.red_team_agent import (
-            RedTeamAgent, 
+        # [START red_team_specific_strategies]
+        from azure.ai.evaluation.red_team import (
+            RedTeam, 
             AttackStrategy,
             RiskCategory
         )
         from azure.identity import DefaultAzureCredential
 
-        # Initialize the Red Team Agent
+        # Initialize Red Team
         azure_ai_project = {
             "subscription_id": os.environ.get("AZURE_SUBSCRIPTION_ID"),
             "resource_group_name": os.environ.get("AZURE_RESOURCE_GROUP_NAME"),
             "project_name": os.environ.get("AZURE_PROJECT_NAME"),
         }
         credential = DefaultAzureCredential()
-        agent = RedTeamAgent(
+        agent = RedTeam(
             azure_ai_project=azure_ai_project, 
             credential=credential,
             risk_categories=[RiskCategory.SelfHarm, RiskCategory.HateUnfairness],
@@ -288,7 +288,7 @@ class RedTeamAgentSamples(object):
         )
 
         print(f"Specific strategies test completed with {len(results.redteaming_data) if results.redteaming_data else 0} conversations")
-        # [END red_team_agent_specific_strategies]
+        # [END red_team_specific_strategies]
         return results
 
     async def data_only_mode_example(self):
@@ -297,22 +297,22 @@ class RedTeamAgentSamples(object):
         without performing evaluations. This is useful for gathering attack attempts and
         responses for later analysis or when you want to implement your own evaluation.
         """
-        # [START red_team_agent_data_only]
-        from azure.ai.evaluation.red_team_agent import (
-            RedTeamAgent, 
+        # [START red_team_data_only]
+        from azure.ai.evaluation.red_team import (
+            RedTeam, 
             AttackStrategy,
             RiskCategory
         )
         from azure.identity import DefaultAzureCredential
 
-        # Initialize the Red Team Agent
+        # Initialize Red Team
         azure_ai_project = {
             "subscription_id": os.environ.get("AZURE_SUBSCRIPTION_ID"),
             "resource_group_name": os.environ.get("AZURE_RESOURCE_GROUP_NAME"),
             "project_name": os.environ.get("AZURE_PROJECT_NAME"),
         }
         credential = DefaultAzureCredential()
-        agent = RedTeamAgent(
+        agent = RedTeam(
             azure_ai_project=azure_ai_project, 
             credential=credential,
             risk_categories=[RiskCategory.Sexual, RiskCategory.HateUnfairness],
@@ -335,7 +335,7 @@ class RedTeamAgentSamples(object):
         # Access the collected conversation data
         conversations = results.redteaming_data
         print(f"Collected {len(conversations) if conversations else 0} conversations without evaluation")
-        # [END red_team_agent_data_only]
+        # [END red_team_data_only]
         return results
 
     async def output_path_example(self):
@@ -344,24 +344,24 @@ class RedTeamAgentSamples(object):
         It shows how to create a timestamped directory and save the results to a specific
         location for later analysis.
         """
-        # [START red_team_agent_output_path]
+        # [START red_team_output_path]
         import os
         from datetime import datetime
-        from azure.ai.evaluation.red_team_agent import (
-            RedTeamAgent, 
+        from azure.ai.evaluation.red_team import (
+            RedTeam, 
             AttackStrategy,
             RiskCategory
         )
         from azure.identity import DefaultAzureCredential
 
-        # Initialize the Red Team Agent
+        # Initialize Red Team
         azure_ai_project = {
             "subscription_id": os.environ.get("AZURE_SUBSCRIPTION_ID"),
             "resource_group_name": os.environ.get("AZURE_RESOURCE_GROUP_NAME"),
             "project_name": os.environ.get("AZURE_PROJECT_NAME"),
         }
         credential = DefaultAzureCredential()
-        agent = RedTeamAgent(
+        agent = RedTeam(
             azure_ai_project=azure_ai_project, 
             credential=credential,
             risk_categories=[RiskCategory.HateUnfairness, RiskCategory.Violence],
@@ -388,7 +388,7 @@ class RedTeamAgentSamples(object):
         )
 
         print(f"Results saved to: {output_path}")
-        # [END red_team_agent_output_path]
+        # [END red_team_output_path]
         return results
 
     async def custom_application_example(self):
@@ -397,22 +397,22 @@ class RedTeamAgentSamples(object):
         content moderation capabilities. It shows how to create and test a more sophisticated
         target with its own guardrails and conversation tracking.
         """
-        # [START red_team_agent_custom_application]
-        from azure.ai.evaluation.red_team_agent import (
-            RedTeamAgent, 
+        # [START red_team_custom_application]
+        from azure.ai.evaluation.red_team import (
+            RedTeam, 
             AttackStrategy,
             RiskCategory
         )
         from azure.identity import DefaultAzureCredential
 
-        # Initialize the Red Team Agent
+        # Initialize Red Team
         azure_ai_project = {
             "subscription_id": os.environ.get("AZURE_SUBSCRIPTION_ID"),
             "resource_group_name": os.environ.get("AZURE_RESOURCE_GROUP_NAME"),
             "project_name": os.environ.get("AZURE_PROJECT_NAME"),
         }
         credential = DefaultAzureCredential()
-        agent = RedTeamAgent(
+        agent = RedTeam(
             azure_ai_project=azure_ai_project, 
             credential=credential,
             risk_categories=[RiskCategory.HateUnfairness, RiskCategory.Violence],
@@ -449,7 +449,7 @@ class RedTeamAgentSamples(object):
         # Create an instance of the assistant
         assistant = ContentCreationAssistant()
 
-        # Wrapper function for the RedTeamAgent
+        # Wrapper function for RedTeam
         def content_assistant_callback(query):
             return assistant.generate_response(query)
 
@@ -467,32 +467,32 @@ class RedTeamAgentSamples(object):
         )
 
         print(f"Custom application test completed with {len(results.redteaming_data) if results.redteaming_data else 0} conversations")
-        # [END red_team_agent_custom_application]
+        # [END red_team_custom_application]
         return results
 
     async def pyrit_prompt_chat_target_example(self):
         """
-        This example demonstrates how to use the Red Team Agent with a PyRIT PromptChatTarget.
+        This example demonstrates how to use Red Team with a PyRIT PromptChatTarget.
         It shows integration with the PyRIT library for testing Azure OpenAI models using
         the more sophisticated target interfaces provided by PyRIT.
         """
-        # [START red_team_agent_pyrit_target]
-        from azure.ai.evaluation.red_team_agent import (
-            RedTeamAgent, 
+        # [START red_team_pyrit_target]
+        from azure.ai.evaluation.red_team import (
+            RedTeam, 
             AttackStrategy,
             RiskCategory
         )
         from azure.identity import DefaultAzureCredential
         from pyrit.prompt_target import OpenAIChatTarget, PromptChatTarget
         
-        # Initialize the Red Team Agent
+        # Initialize Red Team
         azure_ai_project = {
             "subscription_id": os.environ.get("AZURE_SUBSCRIPTION_ID"),
             "resource_group_name": os.environ.get("AZURE_RESOURCE_GROUP_NAME"),
             "project_name": os.environ.get("AZURE_PROJECT_NAME"),
         }
         credential = DefaultAzureCredential()
-        agent = RedTeamAgent(
+        agent = RedTeam(
             azure_ai_project=azure_ai_project, 
             credential=credential,
             risk_categories=[RiskCategory.SelfHarm, RiskCategory.HateUnfairness],
@@ -519,15 +519,15 @@ class RedTeamAgentSamples(object):
         )
         
         print(f"PyRIT target scan completed with {len(results.redteaming_data) if results.redteaming_data else 0} conversations")
-        # [END red_team_agent_pyrit_target]
+        # [END red_team_pyrit_target]
         return results
 
 
 async def run_samples():
-    """Run all Red Team Agent samples."""
-    print("Running Red Team Agent samples...")
+    """Run all Red Team samples."""
+    print("Running Red Team samples...")
     
-    samples = RedTeamAgentSamples()
+    samples = RedTeamSamples()
     
     # Uncomment the samples you want to run
     sample_runners = [
@@ -549,7 +549,7 @@ async def run_samples():
 
 
 if __name__ == "__main__":
-    print("Azure AI Evaluation Red Team Agent Samples")
+    print("Azure AI Evaluation Red Team Samples")
     print("==========================================")
     print("Set the following environment variables before running:")
     print("  AZURE_SUBSCRIPTION_ID")
