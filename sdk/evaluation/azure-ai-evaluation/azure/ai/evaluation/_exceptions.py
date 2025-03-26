@@ -84,6 +84,7 @@ class ErrorTarget(Enum):
     UNKNOWN = "Unknown"
     CONVERSATION = "Conversation"
     TOOL_CALL_ACCURACY_EVALUATOR = "ToolCallAccuracyEvaluator"
+    RED_TEAM = "RedTeam"
 
 
 class EvaluationException(AzureError):
