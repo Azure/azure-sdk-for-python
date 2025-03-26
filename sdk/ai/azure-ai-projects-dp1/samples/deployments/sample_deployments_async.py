@@ -43,13 +43,13 @@ async def sample_deployments_async() -> None:
     async for deployment in project_client.deployments.list():
         print(deployment)
 
-    print("Get a single deployment named `f{deployment_name}`:")
-    deployment = await project_client.deployments.get(deployment_name)
-    print(deployment)
-
     print(f"List all deployments by the model publisher `{model_publisher}`:")
     async for deployment in project_client.deployments.list(model_publisher=model_publisher):
         print(deployment)
+
+    print("Get a single deployment named `f{deployment_name}`:")
+    deployment = await project_client.deployments.get(deployment_name)
+    print(deployment)
 
 
 async def main():

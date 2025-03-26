@@ -67,7 +67,6 @@ setup(
         "isodate>=0.6.1",
         "azure-core>=1.30.0",
         "typing-extensions>=4.6.0",
-        "azure-storage-blob>=12.15.0",
     ],
     python_requires=">=3.8",
 )
