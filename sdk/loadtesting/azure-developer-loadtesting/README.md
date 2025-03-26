@@ -233,7 +233,13 @@ except HttpResponseError as e:
 
 ### Logging
 
-This SDK uses Python standard logging library. You can configure logging to print out debugging information to the stdout or anywhere you want.
+This SDK uses Python standard [logging][python_logging] library for logging.
+Basic information about HTTP sessions (URLs, headers, etc.) is logged at INFO
+level.
+
+Detailed DEBUG level logging, including request/response bodies and unredacted
+headers, can be enabled on a client with the `logging_enable` keyword argument.
+Do note that DEBUG level logging can contain sensitive information:
 
 ```python
 import sys
@@ -257,8 +263,6 @@ Similarly, `logging_enable` can enable detailed logging for a single call, even 
 ```python
 client.create_or_update_test(..., logging_enable=True)
 ```
-
-HTTP request and response details are printed to stdout with this logging config.
 
 ## Next steps
 
@@ -292,3 +296,4 @@ additional questions or comments.
 [api_reference_doc]: https://docs.microsoft.com/rest/api/loadtesting/
 [product_documentation]: https://azure.microsoft.com/services/load-testing/
 [obtaining_data_plane_uri]: https://learn.microsoft.com/rest/api/loadtesting/data-plane-uri
+[python_logging]: https://docs.python.org/3/library/logging.html
