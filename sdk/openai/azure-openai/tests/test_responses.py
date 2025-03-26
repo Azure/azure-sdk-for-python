@@ -557,6 +557,7 @@ class TestResponses(AzureRecordedTestCase):
         assert_required(response)
         assert response.usage.output_tokens <= 20
 
+    @pytest.mark.skip("Not working for Azure yet")
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
@@ -580,6 +581,7 @@ class TestResponses(AzureRecordedTestCase):
 
         assert_required(response)
 
+    @pytest.mark.skip("Not working for Azure yet")
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
@@ -611,6 +613,7 @@ class TestResponses(AzureRecordedTestCase):
         finally:
             client.files.delete(file.id)
 
+    @pytest.mark.skip("Not working for Azure yet")
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
@@ -642,7 +645,7 @@ class TestResponses(AzureRecordedTestCase):
 
         assert_required(response)
 
-
+    @pytest.mark.skip("Not working for Azure yet")
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
@@ -692,6 +695,7 @@ class TestResponses(AzureRecordedTestCase):
         assert response.text.format.type == "json_schema"
         assert response.text.format.name == "calendar_event"
 
+    @pytest.mark.skip("Not working for Azure yet")
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",

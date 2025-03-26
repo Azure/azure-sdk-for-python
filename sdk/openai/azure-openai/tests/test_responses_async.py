@@ -571,6 +571,7 @@ class TestResponsesAsync(AzureRecordedTestCase):
         assert_required(response)
         assert response.usage.output_tokens <= 20
 
+    @pytest.mark.skip("Not working for Azure yet")
     @configure_async
     @pytest.mark.asyncio
     @pytest.mark.parametrize(
@@ -595,6 +596,7 @@ class TestResponsesAsync(AzureRecordedTestCase):
 
         assert_required(response)
 
+    @pytest.mark.skip("Not working for Azure yet")
     @configure_async
     @pytest.mark.asyncio
     @pytest.mark.parametrize(
@@ -627,6 +629,7 @@ class TestResponsesAsync(AzureRecordedTestCase):
         finally:
             await client_async.files.delete(file.id)
 
+    @pytest.mark.skip("Not working for Azure yet")
     @configure_async
     @pytest.mark.asyncio
     @pytest.mark.parametrize(
@@ -659,6 +662,7 @@ class TestResponsesAsync(AzureRecordedTestCase):
 
         assert_required(response)
 
+    @pytest.mark.skip("Not working for Azure yet")
     @configure_async
     @pytest.mark.asyncio
     @pytest.mark.parametrize(
@@ -709,6 +713,7 @@ class TestResponsesAsync(AzureRecordedTestCase):
         assert response.text.format.type == "json_schema"
         assert response.text.format.name == "calendar_event"
 
+    @pytest.mark.skip("Not working for Azure yet")
     @configure_async
     @pytest.mark.asyncio
     @pytest.mark.parametrize(

@@ -18,7 +18,7 @@ class TestVectorStoresAsync(AzureRecordedTestCase):
     @configure_async
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type, api_version", [(ASST_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
-    async def test_assistants_vector_stores_crud(self, client_async: openai.AsyncAzureOpenAI | openai.AsyncOpenAI, api_type, api_version, **kwargs):
+    async def test_vector_stores_crud(self, client_async: openai.AsyncAzureOpenAI | openai.AsyncOpenAI, api_type, api_version, **kwargs):
         file_name = f"test{uuid.uuid4()}.txt"
         with open(file_name, "w") as f:
             f.write("Contoso company policy requires that all employees take at least 10 vacation days a year.")
@@ -118,7 +118,7 @@ class TestVectorStoresAsync(AzureRecordedTestCase):
     @configure_async
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type, api_version", [(ASST_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
-    async def test_assistants_vector_stores_batch_crud(self, client_async: openai.AsyncAzureOpenAI | openai.AsyncOpenAI, api_type, api_version, **kwargs):
+    async def test_vector_stores_batch_crud(self, client_async: openai.AsyncAzureOpenAI | openai.AsyncOpenAI, api_type, api_version, **kwargs):
         file_name = f"test{uuid.uuid4()}.txt"
         file_name_2 = f"test{uuid.uuid4()}.txt"
         with open(file_name, "w") as f:
