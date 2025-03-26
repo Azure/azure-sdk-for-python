@@ -27,7 +27,7 @@ class TestResponseCompletenessEvaluator:
     def test_initialization(self, mock_model_config):
         response_completeness_evaluator = ResponseCompletenessEvaluator(model_config=mock_model_config)
         # Test initialization of ResponseCompletenessEvaluator
-        assert response_completeness_evaluator.threshold == ResponseCompletenessEvaluator.DEFAULT_COMPLETENESS_THRESHOLD
+        assert response_completeness_evaluator.threshold == ResponseCompletenessEvaluator._DEFAULT_COMPLETENESS_THRESHOLD
         assert response_completeness_evaluator._result_key == ResponseCompletenessEvaluator._RESULT_KEY
 
     def test_evaluate_completeness_valid1(self, mock_model_config):
@@ -45,7 +45,7 @@ class TestResponseCompletenessEvaluator:
                 and f"{key}_reason" in result)
         assert result[key] == 1
         assert result[f"{key}_result"] == "fail"
-        assert result[f"{key}_threshold"] == ResponseCompletenessEvaluator.DEFAULT_COMPLETENESS_THRESHOLD
+        assert result[f"{key}_threshold"] == ResponseCompletenessEvaluator._DEFAULT_COMPLETENESS_THRESHOLD
         assert "The response is fully incomplete " in result[f"{key}_reason"]
 
     def test_evaluate_completeness_valid2(self, mock_model_config):
@@ -64,7 +64,7 @@ class TestResponseCompletenessEvaluator:
                 f"{key}_reason" in result)
         assert result[key] == 5
         assert result[f"{key}_result"] == "pass"
-        assert result[f"{key}_threshold"] == ResponseCompletenessEvaluator.DEFAULT_COMPLETENESS_THRESHOLD
+        assert result[f"{key}_threshold"] == ResponseCompletenessEvaluator._DEFAULT_COMPLETENESS_THRESHOLD
         assert "The response perfectly matches " in result[f"{key}_reason"]
 
     def test_evaluate_completeness_missing_ground_truth(self, mock_model_config):
