@@ -125,7 +125,7 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         # llm_output should always be a dictionary because the response_format of prompty is set to json_object, but checking anyway
         if isinstance(llm_output, dict):
             score  = llm_output.get("resolution_score", math.nan)
-            if not check_score_is_valid(score, IntentResolutionEvaluator._MIN_INTENT_RESOLUTION_SCORE, IntentResolutionEvaluator.MAX_INTENT_RESOLUTION_SCORE):
+            if not check_score_is_valid(score, IntentResolutionEvaluator._MIN_INTENT_RESOLUTION_SCORE, IntentResolutionEvaluator._MAX_INTENT_RESOLUTION_SCORE):
                 raise EvaluationException(
                     message=f"Invalid score value: {score}. Expected a number in range [{IntentResolutionEvaluator._MIN_INTENT_RESOLUTION_SCORE}, {IntentResolutionEvaluator._MAX_INTENT_RESOLUTION_SCORE}].",
                     internal_message="Invalid score value.",
