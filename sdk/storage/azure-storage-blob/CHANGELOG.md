@@ -1,6 +1,6 @@
 # Release History
 
-## 12.25.1 (Unreleased)
+## 12.25.1 (2025-03-27)
 
 ### Other Changes
 - Updated dependency for `azure-storage-file-datalake` type hints.
