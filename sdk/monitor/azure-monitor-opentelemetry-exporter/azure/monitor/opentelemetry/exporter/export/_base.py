@@ -15,6 +15,7 @@ from azure.core.pipeline.policies import (
     RedirectPolicy,
     RequestIdPolicy,
 )
+from azure.identity import ManagedIdentityCredential
 from azure.monitor.opentelemetry.exporter._generated import AzureMonitorClient
 from azure.monitor.opentelemetry.exporter._generated._configuration import AzureMonitorClientConfiguration
 from azure.monitor.opentelemetry.exporter._generated.models import (
@@ -29,6 +30,7 @@ from azure.monitor.opentelemetry.exporter._generated.models import (
 )
 from azure.monitor.opentelemetry.exporter._constants import (
     _AZURE_MONITOR_DISTRO_VERSION_ARG,
+    _APPLICATIONINSIGHTS_AUTHENTICATION_STRING,
     _INVALID_STATUS_CODES,
     _REACHED_INGESTION_STATUS_CODES,
     _REDIRECT_STATUS_CODES,
@@ -85,7 +87,7 @@ class BaseExporter:
         parsed_connection_string = ConnectionStringParser(kwargs.get("connection_string"))
 
         self._api_version = kwargs.get("api_version") or _SERVICE_API_LATEST
-        self._credential = kwargs.get("credential")
+        self._credential = _get_authentication_credential(**kwargs)
         self._consecutive_redirects = 0  # To prevent circular redirects
         self._disable_offline_storage = kwargs.get("disable_offline_storage", False)
         self._endpoint = parsed_connection_string.endpoint
@@ -433,3 +435,34 @@ def _format_storage_telemetry_item(item: TelemetryItem) -> TelemetryItem:
                     item.data.base_data = base_type.from_dict(item.data.base_data.additional_properties)  # type: ignore
                     item.data.base_data.additional_properties = None  # type: ignore
     return item
+
+#TODO: Method signature
+def _get_authentication_credential(**kwargs: Any) -> ManagedIdentityCredential:
+    if "credential" in kwargs:
+        return kwargs.get("credential")
+    try:
+        if _APPLICATIONINSIGHTS_AUTHENTICATION_STRING in os.environ:
+            print("IN ENVIRON")
+            auth_string = os.getenv(_APPLICATIONINSIGHTS_AUTHENTICATION_STRING)
+            kv_pairs = auth_string.split(";")
+            auth_string_d = {}
+            for kv_pair in kv_pairs:
+                key_value = kv_pair.split("=")
+                if len(key_value) == 2:
+                    (key, value) = key_value
+                    auth_string_d[key.lower()] = value
+                else:
+                    logger.error("Invalid APPLICATIONINSIGHTS_AUTHENTICATION_STRING format: %s" % auth_string)
+            if "authorization" in auth_string_d and auth_string_d["authorization"] == "AAD":
+                if "clientid" in auth_string_d:
+                    logger.info("ClientId found, trying to authenticate using Managed Identity.")
+                    credential = ManagedIdentityCredential(auth_string_d["clientid"])
+                    return credential
+                else:
+                    logger.info("Trying to authenticate using System assigned Managed Identity.")
+                    credential = ManagedIdentityCredential()
+                    return credential
+    except Exception as e:
+        logger.error("Failed to get authentication credential and enable AAD: %s" % e)
+        #TODO: Diagnostic logs
+    return None
