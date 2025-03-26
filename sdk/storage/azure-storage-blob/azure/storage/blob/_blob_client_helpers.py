@@ -209,8 +209,11 @@ def _upload_blob_from_url_options(source_url: str, **kwargs: Any) -> Dict[str, A
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
-        cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                            encryption_algorithm=cpk.algorithm)
+        cpk_info = CpkInfo(
+            encryption_key=cpk.key_value,
+            encryption_key_sha256=cpk.key_hash,
+            ncryption_algorithm=cpk.algorithm
+        )
 
     options = {
         'copy_source_authorization': source_authorization,
