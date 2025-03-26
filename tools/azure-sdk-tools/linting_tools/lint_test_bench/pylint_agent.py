@@ -56,7 +56,7 @@ def get_test_cases():
     """
     try:
         test_cases = []
-        test_files_dir = Path(__file__).parent / 'test_files_without_comment'
+        test_files_dir = Path(__file__).parent / 'test_files'
         
         # Create test_files directory if it doesn't exist
         test_files_dir.mkdir(exist_ok=True)
@@ -231,6 +231,7 @@ if __name__ == "__main__":
             file_path = Path(__file__).parent / 'test_files' / test_case['name']
             # file_path = Path(__file__).parent / 'test_files_without_comment' / test_case['name']
         
+            print(f"Processing file: {file_path}")
                 
             # Run pylint on both original file
             logger.debug("Running pylint on original file...")
