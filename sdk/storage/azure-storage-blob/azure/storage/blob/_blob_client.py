@@ -9,7 +9,8 @@ import warnings
 from datetime import datetime
 from functools import partial
 from typing import (
-    Any, AnyStr, Callable, cast, Dict, IO, Iterable, List, Optional, overload, Tuple, Union,
+    Any, AnyStr, Callable, cast, Dict, IO, Iterable,
+    List, Optional, overload, Tuple, Union,
     TYPE_CHECKING
 )
 from typing_extensions import Self
@@ -501,6 +502,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             source_content_md5=source_content_md5,
             source_if_modified_since=source_if_modified_since,
             source_if_unmodified_since=source_if_unmodified_since,
+            source_etag=source_etag,
             source_match_condition=source_match_condition,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
@@ -697,6 +699,27 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             blob_type=blob_type,
             length=length,
             metadata=metadata,
+            tags=tags,
+            overwrite=overwrite,
+            content_settings=content_settings,
+            validate_content=validate_content,
+            lease=lease,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_conditions=match_conditions,
+            if_tags_match_condition=if_tags_match_condition,
+            premium_page_blob_tier=premium_page_blob_tier,
+            immutability_policy=immutability_policy,
+            legal_hold=legal_hold,
+            standard_blob_tier=standard_blob_tier,
+            maxsize_condition=maxsize_condition,
+            max_concurrency=max_concurrency,
+            cpk=cpk,
+            encryption_scope=encryption_scope,
+            encoding=encoding,
+            progress_hook=progress_hook,
+            timeout=timeout,
             encryption_options={
                 'required': self.require_encryption,
                 'version': self.encryption_version,

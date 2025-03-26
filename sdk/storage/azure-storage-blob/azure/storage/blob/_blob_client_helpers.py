@@ -228,7 +228,7 @@ def _upload_blob_from_url_options(source_url: str, **kwargs: Any) -> Dict[str, A
         'cpk_scope_info': get_cpk_scope_info(kwargs),
         'headers': headers,
     }
-    options.update(kwargs)
+    options.update({k: v for k, v in kwargs.items() if v is not None})
     if not overwrite and not _any_conditions(**options):
         options['modified_access_conditions'].if_none_match = '*'
     return options
