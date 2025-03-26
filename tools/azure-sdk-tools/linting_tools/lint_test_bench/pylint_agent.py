@@ -91,7 +91,7 @@ def fix_file(file_path: str, logger) -> dict:
         file_name = Path(file_path).name
         
         # Define output paths
-        fixed_path = base_dir / 'fixed_files' / f"{file_name}_fixed.{datetime.now().strftime('%Y%m%d_%H%M%S')}.py"
+        fixed_path = base_dir / 'fixed_files' / f"{file_name}_fixed_{datetime.now().strftime('%Y%m%d_%H%M%S')}.py"
         # fixed_path = base_dir / 'fixed_files_without_comments' / f"{file_name}_fixed.{datetime.now().strftime('%Y%m%d_%H%M%S')}.py"
 
         # Read the original content
@@ -181,7 +181,6 @@ def run_pylint(file_path: str, logger) -> dict:
         from pylint.lint import Run
         from pylint.reporters import JSONReporter
         from io import StringIO
-        import json
 
         # Get path to pylintrc
         pylintrc_path = Path(__file__).parent / '.pylintrc'
