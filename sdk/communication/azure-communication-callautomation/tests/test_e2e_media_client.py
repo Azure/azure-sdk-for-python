@@ -839,9 +839,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         
         random_unique_id = self._unique_key_gen(caller, target)
 
-        play_hold_source = [
-            FileSource(url=self.file_source_url)
-        ]
+        play_hold_source = FileSource(url=self.file_source_url)
 
         # Hold participant
         call_connection.hold(target, play_source=play_hold_source, 
@@ -860,13 +858,11 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         if get_participant_result.is_on_hold is False:
             raise ValueError("Failed to hold participant")
 
-        play_multiple_file_source = [
-            FileSource(url=self.file_source_url)
-        ]
+        play_file_source = FileSource(url=self.file_source_url)
 
         # play media
         call_connection.play_media(
-            play_source=play_multiple_file_source,
+            play_source=play_file_source,
             play_to=[target],
             interrupt_hold_audio=True,
             operation_callback_url=(self.dispatcher_callback + "?q={}".format(random_unique_id))

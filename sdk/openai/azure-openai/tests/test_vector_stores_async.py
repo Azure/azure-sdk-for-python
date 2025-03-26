@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from __future__ import annotations
 
 import os
 import pytest
@@ -51,12 +52,12 @@ class TestVectorStoresAsync(AzureRecordedTestCase):
                 name="Support FAQ and more",
                 metadata={"Q": "A"}
             )
+            assert vector_store.name == "Support FAQ and more"
+            assert vector_store.metadata == {"Q": "A"}
             retrieved_vector = await client_async.vector_stores.retrieve(
                 vector_store_id=vector_store.id
             )
             assert retrieved_vector.id == vector_store.id
-            assert retrieved_vector.name == "Support FAQ and more"
-            assert retrieved_vector.metadata == {"Q": "A"}
 
             vector_store_file = await client_async.vector_stores.files.create(
                 vector_store_id=vector_store.id,
@@ -107,7 +108,7 @@ class TestVectorStoresAsync(AzureRecordedTestCase):
             os.remove(path)
             deleted_vector_store_file = await client_async.vector_stores.files.delete(
                 vector_store_id=vector_store.id,
-                file_id=file.id
+                file_id=vector_store_file.id
             )
             assert deleted_vector_store_file.deleted is True
             deleted_vector_store = await client_async.vector_stores.delete(
