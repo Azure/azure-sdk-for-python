@@ -5,18 +5,23 @@
 
 class UnapprovedClient():
     def build_configuration(self) -> None:
+        # This method sets up a configuration for the client
         pass
 
     def generate_thing(self) -> None:
+        # This method creates a new thing
         pass
 
     def make_thing(self) -> None:
+        # This method also creates a new thing
         pass
 
     def insert_thing(self) -> None:
+        # This method updates an existing thing
         pass
 
     def put_thing(self) -> None:
+        # This method adds a new thing
         pass
 
     def creates_configuration(self) -> None:
