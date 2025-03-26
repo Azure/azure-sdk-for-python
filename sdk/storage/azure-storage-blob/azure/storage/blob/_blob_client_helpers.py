@@ -283,8 +283,11 @@ def _download_blob_options(
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
-        cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                            encryption_algorithm=cpk.algorithm)
+        cpk_info = CpkInfo(
+            encryption_key=cpk.key_value,
+            encryption_key_sha256=cpk.key_hash,
+            encryption_algorithm=cpk.algorithm
+        )
 
     # Add feature flag to user agent for encryption
     if encryption_options['key'] or encryption_options['resolver']:
@@ -292,7 +295,8 @@ def _download_blob_options(
             config.user_agent_policy.user_agent,
             sdk_moniker,
             encryption_options['version'],
-            kwargs)
+            kwargs
+        )
 
     options = {
         'clients': client,
@@ -309,11 +313,12 @@ def _download_blob_options(
         'modified_access_conditions': mod_conditions,
         'cpk_info': cpk_info,
         'download_cls': kwargs.pop('cls', None) or deserialize_blob_stream,
-        'max_concurrency':kwargs.pop('max_concurrency', 1),
+        'max_concurrency': kwargs.pop('max_concurrency', 1),
         'encoding': encoding,
         'timeout': kwargs.pop('timeout', None),
         'name': blob_name,
-        'container': container_name}
+        'container': container_name
+    }
     options.update(kwargs)
     return options
 

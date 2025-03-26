@@ -743,6 +743,18 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         length: Optional[int] = None,
         *,
         encoding: str,
+        version_id: Optional[str] = None,
+        validate_content: Optional[bool] = None,
+        lease: Optional[Union[BlobLeaseClient, str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional["MatchConditions"] = None,
+        if_tags_match_condition: Optional[str] = None,
+        cpk: Optional["CustomerProvidedEncryptionKey"] = None,
+        max_concurrency: Optional[int] = None,
+        progress_hook: Optional[Callable[[int, int], None]] = None,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> StorageStreamDownloader[str]:
         ...
@@ -753,6 +765,18 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         length: Optional[int] = None,
         *,
         encoding: None = None,
+        version_id: Optional[str] = None,
+        validate_content: Optional[bool] = None,
+        lease: Optional[Union[BlobLeaseClient, str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional["MatchConditions"] = None,
+        if_tags_match_condition: Optional[str] = None,
+        cpk: Optional["CustomerProvidedEncryptionKey"] = None,
+        max_concurrency: Optional[int] = None,
+        progress_hook: Optional[Callable[[int, int], None]] = None,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> StorageStreamDownloader[bytes]:
         ...
@@ -762,7 +786,19 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         self, offset: Optional[int] = None,
         length: Optional[int] = None,
         *,
-        encoding: Union[str, None] = None,
+        version_id: Optional[str] = None,
+        validate_content: Optional[bool] = None,
+        lease: Optional[Union[BlobLeaseClient, str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional["MatchConditions"] = None,
+        if_tags_match_condition: Optional[str] = None,
+        cpk: Optional["CustomerProvidedEncryptionKey"] = None,
+        max_concurrency: Optional[int] = None,
+        encoding: Optional[str] = None,
+        progress_hook: Optional[Callable[[int, int], None]] = None,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Union[StorageStreamDownloader[str], StorageStreamDownloader[bytes]]:
         """Downloads a blob to the StorageStreamDownloader. The readall() method must
@@ -861,15 +897,26 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             raise ValueError("Encryption required but no key was provided.")
         if length is not None and offset is None:
             raise ValueError("Offset value must not be None if length is set.")
-        if kwargs.get('cpk') and self.scheme.lower() != 'https':
+        if cpk and self.scheme.lower() != 'https':
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
         options = _download_blob_options(
             blob_name=self.blob_name,
             container_name=self.container_name,
-            version_id=get_version_id(self.version_id, kwargs),
+            version_id=version_id or self.version_id,
             offset=offset,
             length=length,
             encoding=encoding,
+            validate_content=validate_content,
+            lease=lease,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_condition=match_condition,
+            if_tags_match_condition=if_tags_match_condition,
+            cpk=cpk,
+            max_concurrency=max_concurrency,
+            progress_hook=progress_hook,
+            timeout=timeout,
             encryption_options={
                 'required': self.require_encryption,
                 'version': self.encryption_version,
