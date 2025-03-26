@@ -33,7 +33,7 @@ class _BearerTokenCredentialPolicyBase:
     :type credential: ~corehttp.credentials.TokenCredential
     :param str scopes: Lets you specify the type of access needed.
     :keyword auth_flows: A list of authentication flows to use for the credential.
-    :paramtype auth_flows: list[dict[str, Union[str, Any]]]
+    :paramtype auth_flows: list[dict[str, Union[str, list[dict[str, str]]]]]
     """
 
     # pylint: disable=unused-argument
@@ -41,7 +41,7 @@ class _BearerTokenCredentialPolicyBase:
         self,
         credential: "TokenCredential",
         *scopes: str,
-        auth_flows: Optional[list[dict[str, Union[str, Any]]]] = None,
+        auth_flows: Optional[list[dict[str, Union[str, list[dict[str, str]]]]]] = None,
         **kwargs: Any,
     ) -> None:
         super(_BearerTokenCredentialPolicyBase, self).__init__()
@@ -92,7 +92,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
     :type credential: ~corehttp.TokenCredential
     :param str scopes: Lets you specify the type of access needed.
     :keyword auth_flows: A list of authentication flows to use for the credential.
-    :paramtype auth_flows: list[dict[str, Union[str, Any]]]
+    :paramtype auth_flows: list[dict[str, Union[str, list[dict[str, str]]]]]
     :raises: :class:`~corehttp.exceptions.ServiceRequestError`
     """
 
@@ -100,7 +100,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
         self,
         request: PipelineRequest[HTTPRequestType],
         *,
-        auth_flows: Optional[list[dict[str, Union[str, Any]]]] = None,
+        auth_flows: Optional[list[dict[str, Union[str, list[dict[str, str]]]]]] = None,
     ) -> None:
         """Called before the policy sends a request.
 
@@ -108,7 +108,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
 
         :param ~corehttp.runtime.pipeline.PipelineRequest request: the request
         :keyword auth_flows: A list of authentication flows to use for the credential.
-        :paramtype auth_flows: list[dict[str, Union[str, Any]]]
+        :paramtype auth_flows: list[dict[str, Union[str, list[dict[str, str]]]]]
         """
         self._enforce_https(request)
 
