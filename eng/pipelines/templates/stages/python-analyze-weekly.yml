@@ -95,7 +95,7 @@ stages:
               python -m pip install requests>=2.0
             displayName: 'Prep Environment'
           - task: PythonScript@0
-            displayName: 'Update vNext Issues with build info'
+            displayName: 'Update vNext Issues with build errors'
             continueOnError: true
             inputs:
               scriptPath: 'tools/azure-sdk-tools/gh_tools/update_issue.py'

@@ -25,7 +25,6 @@ def get_build_info(service_directory: str, package_name: str) -> str:
     try:
         # Make the API request
         response = requests.get(timeline_link, headers=AUTH_HEADERS)
-        logging.info(f"Response: {response.text}")
         response_json = json.loads(response.text)
     
         for task in response_json["records"]:
@@ -56,7 +55,7 @@ def main(targeted_packages):
         package_name = package.split("/")[-1]
         logging.info(f"Searching for issues in repo {repo.name} for package {package_name}")
         
-        for issue in repo.get_issues(state="open"):
+        for issue in repo.get_issues(state="open", labels=["pylint"], creator="azure-sdk"):
             if f"{package_name} needs linting updates for pylint version" in issue.title:
                 logging.info(f"Found issue for package {package_name}: {issue.title}")
                 build_info = get_build_info(package, package_name)
