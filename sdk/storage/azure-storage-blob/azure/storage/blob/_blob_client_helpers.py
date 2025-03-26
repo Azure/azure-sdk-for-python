@@ -142,6 +142,9 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
                             encryption_algorithm=cpk.algorithm)
     kwargs['cpk_info'] = cpk_info
 
+    if kwargs['etag'] is None:
+        kwargs.pop('etag')
+
     headers = kwargs.pop('headers', {})
     headers.update(add_metadata_headers(metadata))
     kwargs['lease_access_conditions'] = get_access_conditions(kwargs.pop('lease', None))
@@ -171,7 +174,8 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
             config.user_agent_policy.user_agent,
             sdk_moniker,
             encryption_options['version'],
-            kwargs)
+            kwargs
+        )
 
     if blob_type == BlobType.BlockBlob:
         kwargs['client'] = client.block_blob
@@ -291,6 +295,9 @@ def _download_blob_options(
             encryption_key_sha256=cpk.key_hash,
             encryption_algorithm=cpk.algorithm
         )
+
+    if kwargs['etag'] is None:
+        kwargs.pop('etag')
 
     # Add feature flag to user agent for encryption
     if encryption_options['key'] or encryption_options['resolver']:
