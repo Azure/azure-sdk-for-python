@@ -4,7 +4,7 @@
 
 - [How to generate client libraries](https://azure.github.io/typespec-azure/docs/howtos/generate-client-libraries/00howtogen/)
 
-# Getting Started
+# Getting started
 
 ## Typespec setup
 
@@ -31,7 +31,7 @@ options:
 - Replace the contents of `azure-sdk-for-python/sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/autogen/raiclient` with the newly generated code.
 - Cleanup lingering files and revert the config changed.
 
-# Key Concepts
+# Key concepts
 # Examples
 # Troubleshooting
 # Next steps
