@@ -3,8 +3,15 @@
 ## 1.4.0 (Unreleased)
 
 ### Features Added
+- Enhanced binary evaluation results with customizable thresholds
+  - Added threshold support for QA and ContentSafety evaluators
+  - Evaluation results now include both the score and threshold values
+  - Configurable threshold parameter allows custom binary classification boundaries
+  - Default thresholds provided for backward compatibility
+  - Quality evaluators use "higher is better" scoring (score ≥ threshold is positive)
+  - Content safety evaluators use "lower is better" scoring (score ≤ threshold is positive)
 - New Built-in evaluator called CodeVulnerabilityEvaluator is added. 
-  - It provides a capabilities to identify the following code vulnerabilities.
+  - It provides capabilities to identify the following code vulnerabilities.
     - path-injection
     - sql-injection
     - code-injection
@@ -38,11 +45,18 @@
     - emotional_state
     - protected_class
     - groundedness
+- New Built-in evaluators for Agent Evaluation (Preview)
+  - IntentResolutionEvaluator - Evaluates the intent resolution of an agent's response to a user query.
+  - ResponseCompletenessEvaluator - Evaluates the response completeness of an agent's response to a user query.
+  - TaskAdherenceEvaluator - Evaluates the task adherence of an agent's response to a user query.
+  - ToolCallAccuracyEvaluator - Evaluates the accuracy of tool calls made by an agent in response to a user query.
+
 
 ### Breaking Changes
 
 ### Bugs Fixed
 - Fixed error in `GroundednessProEvaluator` when handling non-numeric values like "n/a" returned from the service.
+- Uploading local evaluation results from `evaluate` with the same run name will no longer result in each online run sharing (and bashing) result files.
 
 ### Other Changes
 

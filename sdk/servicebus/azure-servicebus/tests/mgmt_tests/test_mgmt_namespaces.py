@@ -8,7 +8,7 @@ import pytest
 from azure.servicebus.management import ServiceBusAdministrationClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, CachedResourceGroupPreparer, recorded_by_proxy, get_credential
-from tests.sb_env_loader import ServiceBusPreparer
+from sb_env_loader import ServiceBusPreparer
 
 
 class TestServiceBusManagementClientNamespace(AzureMgmtRecordedTestCase):
