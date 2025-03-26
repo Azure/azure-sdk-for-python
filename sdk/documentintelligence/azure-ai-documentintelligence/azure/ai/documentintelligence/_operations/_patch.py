@@ -14,7 +14,7 @@ from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, Mapp
 
 from azure.core.pipeline import PipelineResponse
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
-from azure.core.polling.base_polling import LROBasePolling, OperationResourcePolling
+from azure.core.polling.base_polling import LROBasePolling
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
