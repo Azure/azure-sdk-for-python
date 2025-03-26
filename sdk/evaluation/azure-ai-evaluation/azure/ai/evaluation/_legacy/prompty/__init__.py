@@ -2,9 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from azure.ai.evaluation.legacy.prompty._prompty import AsyncPrompty
-from azure.ai.evaluation.legacy.prompty._connection import Connection, OpenAIConnection, AzureOpenAIConnection
-from azure.ai.evaluation.legacy.prompty._exceptions import (
+from azure.ai.evaluation._legacy.prompty._prompty import AsyncPrompty
+from azure.ai.evaluation._legacy.prompty._connection import Connection, OpenAIConnection, AzureOpenAIConnection
+from azure.ai.evaluation._legacy.prompty._exceptions import (
     PromptyException,
     MissingRequiredInputError,
     InvalidInputError,
