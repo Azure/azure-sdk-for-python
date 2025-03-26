@@ -765,8 +765,23 @@ class AzureAISearchTool(Tool[AzureAISearchToolDefinition]):
     A tool that searches for information using Azure AI Search.
     """
 
-    def __init__(self, index_connection_id: str, index_name: str, query_type: AzureAISearchQueryType = AzureAISearchQueryType.SIMPLE, filter: str = "", top_k: int = 5):
-        self.index_list = [AISearchIndexResource(index_connection_id=index_connection_id, index_name=index_name, query_type=query_type, filter=filter, top_k=top_k)]
+    def __init__(
+        self,
+        index_connection_id: str,
+        index_name: str,
+        query_type: AzureAISearchQueryType = AzureAISearchQueryType.SIMPLE,
+        filter: str = "",
+        top_k: int = 5,
+    ):
+        self.index_list = [
+            AISearchIndexResource(
+                index_connection_id=index_connection_id,
+                index_name=index_name,
+                query_type=query_type,
+                filter=filter,
+                top_k=top_k,
+            )
+        ]
 
     @property
     def definitions(self) -> List[AzureAISearchToolDefinition]:
@@ -1001,7 +1016,7 @@ class FabricTool(ConnectionTool[MicrosoftFabricToolDefinition]):
 
         :rtype: List[ToolDefinition]
         """
-        return [MicrosoftFabricToolDefinition(fabric_aiskill=ToolConnectionList(connection_list=self.connection_ids))]
+        return [MicrosoftFabricToolDefinition(fabric_dataagent=ToolConnectionList(connection_list=self.connection_ids))]
 
 
 class SharepointTool(ConnectionTool[SharepointToolDefinition]):
@@ -1361,7 +1376,14 @@ class BaseAsyncAgentEventHandler(AsyncIterator[T]):
         )
         self.submit_tool_outputs = submit_tool_outputs
 
+    # cspell:disable-next-line
     async def __anext__(self) -> T:
+        # cspell:disable-next-line
+        event_bytes = await self.__anext_impl__()
+        return await self._process_event(event_bytes.decode("utf-8"))
+
+    # cspell:disable-next-line
+    async def __anext_impl__(self) -> bytes:
         self.buffer = b"" if self.buffer is None else self.buffer
         if self.response_iterator is None:
             raise ValueError("The response handler was not initialized.")
@@ -1384,7 +1406,7 @@ class BaseAsyncAgentEventHandler(AsyncIterator[T]):
             event_bytes = self.buffer
             self.buffer = b""
 
-        return await self._process_event(event_bytes.decode("utf-8"))
+        return event_bytes
 
     async def _process_event(self, event_data_str: str) -> T:
         raise NotImplementedError("This method needs to be implemented.")
@@ -1419,6 +1441,10 @@ class BaseAgentEventHandler(Iterator[T]):
         self.submit_tool_outputs = submit_tool_outputs
 
     def __next__(self) -> T:
+        event_bytes = self.__next_impl__()
+        return self._process_event(event_bytes.decode("utf-8"))
+
+    def __next_impl__(self) -> bytes:
         self.buffer = b"" if self.buffer is None else self.buffer
         if self.response_iterator is None:
             raise ValueError("The response handler was not initialized.")
@@ -1441,7 +1467,7 @@ class BaseAgentEventHandler(Iterator[T]):
             event_bytes = self.buffer
             self.buffer = b""
 
-        return self._process_event(event_bytes.decode("utf-8"))
+        return event_bytes
 
     def _process_event(self, event_data_str: str) -> T:
         raise NotImplementedError("This method needs to be implemented.")
