@@ -24,7 +24,7 @@ from ._operations import (
 )
 from ... import models as _models
 from ..._model_base import _deserialize
-from ..._operations._patch import PollingReturnType_co, _parse_operation_id, DocumentModelAdministrationPolling
+from ..._operations._patch import PollingReturnType_co, _parse_operation_id
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
