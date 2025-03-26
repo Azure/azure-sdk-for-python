@@ -452,9 +452,34 @@ class TestOpentelemetryWrapper:
             assert wrapped_class.span_instance.attributes["test"] == "test2"
             assert parent.attributes["test"] == "test2"
 
-    def test_set_http_attributes(self, tracing_helper):
+    def test_set_http_attributes_v1_19_0(self, tracing_helper):
         with tracing_helper.tracer.start_as_current_span("Root", kind=OpenTelemetrySpanKind.CLIENT) as parent:
-            wrapped_class = OpenTelemetrySpan(span=parent)
+            wrapped_class = OpenTelemetrySpan(span=parent, schema_version="1.19.0")
+            request = mock.Mock()
+            setattr(request, "method", "GET")
+            setattr(request, "url", "https://foo.bar/path")
+            response = mock.Mock()
+            setattr(request, "headers", {})
+            setattr(response, "status_code", 200)
+            wrapped_class.set_http_attributes(request)
+            assert wrapped_class.span_instance.kind == OpenTelemetrySpanKind.CLIENT
+            assert wrapped_class.span_instance.attributes.get("http.method") == request.method
+            assert wrapped_class.span_instance.attributes.get("component") == "http"
+            assert wrapped_class.span_instance.attributes.get("http.url") == request.url
+            assert wrapped_class.span_instance.attributes.get("http.status_code") == 504
+            assert wrapped_class.span_instance.attributes.get("user_agent.original") is None
+
+            request.headers["User-Agent"] = "some user agent"
+            request.url = "http://foo.bar:8080/path"
+            wrapped_class.set_http_attributes(request, response)
+            assert wrapped_class.span_instance.attributes.get("http.status_code") == response.status_code
+            assert wrapped_class.span_instance.attributes.get("user_agent.original") == request.headers.get(
+                "User-Agent"
+            )
+
+    def test_set_http_attributes_v1_23_1(self, tracing_helper):
+        with tracing_helper.tracer.start_as_current_span("Root", kind=OpenTelemetrySpanKind.CLIENT) as parent:
+            wrapped_class = OpenTelemetrySpan(span=parent, schema_version="1.23.1")
             request = mock.Mock()
             setattr(request, "method", "GET")
             setattr(request, "url", "https://foo.bar/path")

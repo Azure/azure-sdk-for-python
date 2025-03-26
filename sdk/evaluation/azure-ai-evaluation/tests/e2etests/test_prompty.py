@@ -11,7 +11,7 @@ from typing import Any, AsyncGenerator, DefaultDict, Dict, Final, Mapping, Optio
 
 from openai.types.chat import ChatCompletion
 
-from azure.ai.evaluation.legacy.prompty import AsyncPrompty, InvalidInputError
+from azure.ai.evaluation._legacy.prompty import AsyncPrompty, InvalidInputError
 from azure.ai.evaluation import AzureOpenAIModelConfiguration
 
 

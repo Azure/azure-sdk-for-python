@@ -44,7 +44,7 @@ class BatchClient(Protocol):
         :param name: The name of the run.
         :type name: Optional[str]
         :param kwargs: Additional keyword arguments to pass to the flow.
-        :return: The resulint run.
+        :return: The result of the batch client run.
         :rtype: BatchClientRun
         """
         ...

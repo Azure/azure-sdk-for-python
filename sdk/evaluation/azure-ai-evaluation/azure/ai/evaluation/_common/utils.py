@@ -274,8 +274,26 @@ def _validate_typed_dict(o: object, t: Type[T_TypedDict]) -> T_TypedDict:
 
     return cast(T_TypedDict, o)
 
+def check_score_is_valid(score: Union[str, float], min_score = 1, max_score = 5) -> bool:
+    """Check if the score is valid, i.e. is convertable to number and is in the range [min_score, max_score].
 
-def parse_quality_evaluator_reason_score(llm_output: str) -> Tuple[float, str]:
+    :param score: The score to check.
+    :type score: Union[str, float]
+    :param min_score: The minimum score. Default is 1.
+    :type min_score: int
+    :param max_score: The maximum score. Default is 5.
+    :type max_score: int
+    :return: True if the score is valid, False otherwise.
+    :rtype: bool
+    """
+    try:
+        numeric_score = float(score)
+    except (ValueError, TypeError):
+        return False
+
+    return min_score <= numeric_score <= max_score
+
+def parse_quality_evaluator_reason_score(llm_output: str, valid_score_range: str = "[1-5]") -> Tuple[float, str]:
     """Parse the output of prompt-based quality evaluators that return a score and reason.
 
     Current supported evaluators:
@@ -284,6 +302,8 @@ def parse_quality_evaluator_reason_score(llm_output: str) -> Tuple[float, str]:
         - Retrieval
         - Groundedness
         - Coherence
+        - ResponseCompleteness
+        - TaskAdherence
 
     :param llm_output: The output of the prompt-based quality evaluator.
     :type llm_output: str
@@ -294,7 +314,7 @@ def parse_quality_evaluator_reason_score(llm_output: str) -> Tuple[float, str]:
     reason = ""
     if llm_output:
         try:
-            score_pattern = r"<S2>\D*?([1-5]).*?</S2>"
+            score_pattern = rf"<S2>\D*?({valid_score_range}).*?</S2>"
             reason_pattern = r"<S1>(.*?)</S1>"
             score_match = re.findall(score_pattern, llm_output, re.DOTALL)
             reason_match = re.findall(reason_pattern, llm_output, re.DOTALL)
