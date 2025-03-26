@@ -15,7 +15,7 @@ from azure.mgmt.sql import SqlManagementClient
     pip install azure-identity
     pip install azure-mgmt-sql
 # USAGE
-    python server_communication_link_list.py
+    python elastic_pool_create_or_update_serverless_properties.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +30,23 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.server_communication_links.list_by_server(
-        resource_group_name="sqlcrudtest-7398",
-        server_name="sqlcrudtest-4645",
-    )
-    for item in response:
-        print(item)
+    response = client.elastic_pools.begin_create_or_update(
+        resource_group_name="sqlcrudtest-2369",
+        server_name="sqlcrudtest-8069",
+        elastic_pool_name="sqlcrudtest-8102",
+        parameters={
+            "location": "Japan East",
+            "properties": {
+                "autoPauseDelay": 60,
+                "minCapacity": 0.5,
+                "perDatabaseSettings": {"autoPauseDelay": 80, "maxCapacity": 2, "minCapacity": 0},
+            },
+            "sku": {"capacity": 2, "name": "GP_S_Gen5_2", "tier": "GeneralPurpose"},
+        },
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/stable/2014-04-01/examples/ServerCommunicationLinkList.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2024-05-01-preview/examples/ElasticPoolCreateOrUpdateServerlessProperties.json
 if __name__ == "__main__":
     main()

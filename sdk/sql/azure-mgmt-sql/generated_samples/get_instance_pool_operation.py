@@ -15,7 +15,7 @@ from azure.mgmt.sql import SqlManagementClient
     pip install azure-identity
     pip install azure-mgmt-sql
 # USAGE
-    python database_metrics_definitions_list.py
+    python get_instance_pool_operation.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,15 +30,14 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.databases.list_metric_definitions(
-        resource_group_name="sqlcrudtest-6730",
-        server_name="sqlcrudtest-9007",
-        database_name="3481",
+    response = client.instance_pool_operations.get(
+        resource_group_name="resource-group",
+        instance_pool_name="test-instance-pool",
+        operation_id="c218773b-203f-4c7a-b174-6bd71fe20f72",
     )
-    for item in response:
-        print(item)
+    print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/stable/2014-04-01/examples/DatabaseMetricsDefinitionsList.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2024-05-01-preview/examples/GetInstancePoolOperation.json
 if __name__ == "__main__":
     main()

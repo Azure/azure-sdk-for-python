@@ -20,27 +20,27 @@ class TestSqlManagementElasticPoolOperationsOperations(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_cancel(self, resource_group):
-        response = self.client.elastic_pool_operations.cancel(
+    def test_elastic_pool_operations_list_by_elastic_pool(self, resource_group):
+        response = self.client.elastic_pool_operations.list_by_elastic_pool(
             resource_group_name=resource_group.name,
             server_name="str",
             elastic_pool_name="str",
-            operation_id="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
-
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_elastic_pool(self, resource_group):
-        response = self.client.elastic_pool_operations.list_by_elastic_pool(
+    def test_elastic_pool_operations_cancel(self, resource_group):
+        response = self.client.elastic_pool_operations.cancel(
             resource_group_name=resource_group.name,
             server_name="str",
             elastic_pool_name="str",
-            api_version="2020-11-01-preview",
+            operation_id="str",
+            api_version="2024-05-01-preview",
         )
-        result = [r for r in response]
+
         # please add some check logic here by yourself
         # ...
