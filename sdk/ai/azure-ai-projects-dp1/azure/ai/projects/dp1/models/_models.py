@@ -13,9 +13,11 @@ from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, U
 
 from .. import _model_base
 from .._model_base import rest_discriminator, rest_field
+from .._vendor import FileType
 from ._enums import (
     CredentialType,
     DatasetType,
+    DeploymentType,
     IndexType,
     OpenApiAuthType,
     PendingUploadType,
@@ -229,7 +231,7 @@ class AgentsNamedToolChoice(_model_base.Model):
 
     :ivar type: the type of tool. If type is ``function``, the function name must be set. Required.
      Known values are: "function", "code_interpreter", "file_search", "bing_grounding",
-     "fabric_aiskill", "sharepoint_grounding", and "azure_ai_search".
+     "fabric_dataagent", "sharepoint_grounding", and "azure_ai_search".
     :vartype type: str or ~azure.ai.projects.dp1.models.AgentsNamedToolChoiceType
     :ivar function: The name of the function to call.
     :vartype function: ~azure.ai.projects.dp1.models.FunctionName
@@ -240,7 +242,7 @@ class AgentsNamedToolChoice(_model_base.Model):
     )
     """the type of tool. If type is ``function``, the function name must be set. Required. Known
      values are: \"function\", \"code_interpreter\", \"file_search\", \"bing_grounding\",
-     \"fabric_aiskill\", \"sharepoint_grounding\", and \"azure_ai_search\"."""
+     \"fabric_dataagent\", \"sharepoint_grounding\", and \"azure_ai_search\"."""
     function: Optional["_models.FunctionName"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the function to call."""
 
@@ -380,15 +382,68 @@ class AgentThreadCreationOptions(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class AISearchIndexResource(_model_base.Model):
+    """A AI Search Index resource.
+
+    :ivar index_connection_id: An index connection id in an IndexResource attached to this agent.
+     Required.
+    :vartype index_connection_id: str
+    :ivar index_name: The name of an index in an IndexResource attached to this agent. Required.
+    :vartype index_name: str
+    :ivar query_type: Type of query in an AIIndexResource attached to this agent. Known values are:
+     "simple", "semantic", "vector", "vector_simple_hybrid", and "vector_semantic_hybrid".
+    :vartype query_type: str or ~azure.ai.projects.dp1.models.AzureAISearchQueryType
+    :ivar top_k: Number of documents to retrieve from search and present to the model.
+    :vartype top_k: int
+    :ivar filter: Odata filter string for search resource.
+    :vartype filter: str
+    """
+
+    index_connection_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An index connection id in an IndexResource attached to this agent. Required."""
+    index_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of an index in an IndexResource attached to this agent. Required."""
+    query_type: Optional[Union[str, "_models.AzureAISearchQueryType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Type of query in an AIIndexResource attached to this agent. Known values are: \"simple\",
+     \"semantic\", \"vector\", \"vector_simple_hybrid\", and \"vector_semantic_hybrid\"."""
+    top_k: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Number of documents to retrieve from search and present to the model."""
+    filter: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Odata filter string for search resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index_connection_id: str,
+        index_name: str,
+        query_type: Optional[Union[str, "_models.AzureAISearchQueryType"]] = None,
+        top_k: Optional[int] = None,
+        filter: Optional[str] = None,  # pylint: disable=redefined-builtin
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class Index(_model_base.Model):
     """Index resource Definition.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureAISearchIndex, CosmosDBIndex, ManagedAzureAISearchIndex
 
-    :ivar index_type: Type of index. Required. Known values are: "AzureSearch",
+    :ivar type: Type of index. Required. Known values are: "AzureSearch",
      "CosmosDBNoSqlVectorStore", and "ManagedAzureSearch".
-    :vartype index_type: str or ~azure.ai.projects.dp1.models.IndexType
+    :vartype type: str or ~azure.ai.projects.dp1.models.IndexType
     :ivar stage: Asset stage.
     :vartype stage: str
     :ivar id: A unique identifier for the asset, assetId probably?.
@@ -401,12 +456,10 @@ class Index(_model_base.Model):
     :vartype description: str
     :ivar tags: Tag dictionary. Tags can be added, removed, and updated.
     :vartype tags: dict[str, str]
-    :ivar system_data: System data of the resource.
-    :vartype system_data: ~azure.ai.projects.dp1.models.SystemData
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    index_type: str = rest_discriminator(name="indexType", visibility=["read", "create", "update", "delete", "query"])
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Type of index. Required. Known values are: \"AzureSearch\", \"CosmosDBNoSqlVectorStore\", and
      \"ManagedAzureSearch\"."""
     stage: Optional[str] = rest_field(visibility=["read", "create", "update"])
@@ -421,14 +474,12 @@ class Index(_model_base.Model):
     """The asset description text."""
     tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Tag dictionary. Tags can be added, removed, and updated."""
-    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
-    """System data of the resource."""
 
     @overload
     def __init__(
         self,
         *,
-        index_type: str,
+        type: str,
         stage: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
@@ -460,20 +511,18 @@ class AzureAISearchIndex(Index, discriminator="AzureSearch"):
     :vartype description: str
     :ivar tags: Tag dictionary. Tags can be added, removed, and updated.
     :vartype tags: dict[str, str]
-    :ivar system_data: System data of the resource.
-    :vartype system_data: ~azure.ai.projects.dp1.models.SystemData
-    :ivar index_type: Type of index. Required. Azure search
-    :vartype index_type: str or ~azure.ai.projects.dp1.models.AZURE_SEARCH
-    :ivar connection_id: Connection id to Azure AI Search. Required.
-    :vartype connection_id: str
+    :ivar type: Type of index. Required. Azure search
+    :vartype type: str or ~azure.ai.projects.dp1.models.AZURE_SEARCH
+    :ivar connection_name: Name of connection to Azure AI Search. Required.
+    :vartype connection_name: str
     :ivar index_name: Name of index in Azure AI Search resource to attach. Required.
     :vartype index_name: str
     """
 
-    index_type: Literal[IndexType.AZURE_SEARCH] = rest_discriminator(name="indexType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    type: Literal[IndexType.AZURE_SEARCH] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Type of index. Required. Azure search"""
-    connection_id: str = rest_field(name="connectionId", visibility=["read", "create", "update", "delete", "query"])
-    """Connection id to Azure AI Search. Required."""
+    connection_name: str = rest_field(name="connectionName", visibility=["read", "create", "update", "delete", "query"])
+    """Name of connection to Azure AI Search. Required."""
     index_name: str = rest_field(name="indexName", visibility=["read", "create", "update", "delete", "query"])
     """Name of index in Azure AI Search resource to attach. Required."""
 
@@ -481,7 +530,7 @@ class AzureAISearchIndex(Index, discriminator="AzureSearch"):
     def __init__(
         self,
         *,
-        connection_id: str,
+        connection_name: str,
         index_name: str,
         stage: Optional[str] = None,
         description: Optional[str] = None,
@@ -496,7 +545,7 @@ class AzureAISearchIndex(Index, discriminator="AzureSearch"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, index_type=IndexType.AZURE_SEARCH, **kwargs)
+        super().__init__(*args, type=IndexType.AZURE_SEARCH, **kwargs)
 
 
 class AzureAISearchResource(_model_base.Model):
@@ -504,10 +553,10 @@ class AzureAISearchResource(_model_base.Model):
 
     :ivar index_list: The indices attached to this agent. There can be a maximum of 1 index
      resource attached to the agent.
-    :vartype index_list: list[~azure.ai.projects.dp1.models.IndexResource]
+    :vartype index_list: list[~azure.ai.projects.dp1.models.AISearchIndexResource]
     """
 
-    index_list: Optional[List["_models.IndexResource"]] = rest_field(
+    index_list: Optional[List["_models.AISearchIndexResource"]] = rest_field(
         name="indexes", visibility=["read", "create", "update", "delete", "query"]
     )
     """The indices attached to this agent. There can be a maximum of 1 index
@@ -517,7 +566,7 @@ class AzureAISearchResource(_model_base.Model):
     def __init__(
         self,
         *,
-        index_list: Optional[List["_models.IndexResource"]] = None,
+        index_list: Optional[List["_models.AISearchIndexResource"]] = None,
     ) -> None: ...
 
     @overload
@@ -941,8 +990,8 @@ class Connection(_model_base.Model):
     :vartype type: str or ~azure.ai.projects.dp1.models.ConnectionType
     :ivar target: The connection URL to be used for this service. Required.
     :vartype target: str
-    :ivar properties: A collection of properties of the connection. Required.
-    :vartype properties: dict[str, str]
+    :ivar metadata: Metadata of the connection. Required.
+    :vartype metadata: dict[str, str]
     """
 
     name: str = rest_field(visibility=["read"])
@@ -952,14 +1001,14 @@ class Connection(_model_base.Model):
      \"CognitiveSearch\", \"CosmosDB\", \"ApiKey\", \"AppInsights\", and \"CustomKeys\"."""
     target: str = rest_field(visibility=["read"])
     """The connection URL to be used for this service. Required."""
-    properties: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """A collection of properties of the connection. Required."""
+    metadata: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Metadata of the connection. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        properties: Dict[str, str],
+        metadata: Dict[str, str],
     ) -> None: ...
 
     @overload
@@ -988,12 +1037,10 @@ class CosmosDBIndex(Index, discriminator="CosmosDBNoSqlVectorStore"):
     :vartype description: str
     :ivar tags: Tag dictionary. Tags can be added, removed, and updated.
     :vartype tags: dict[str, str]
-    :ivar system_data: System data of the resource.
-    :vartype system_data: ~azure.ai.projects.dp1.models.SystemData
-    :ivar index_type: Type of index. Required. CosmosDB
-    :vartype index_type: str or ~azure.ai.projects.dp1.models.COSMOS_DB
-    :ivar connection_id: Connection id to CosmosDB. Required.
-    :vartype connection_id: str
+    :ivar type: Type of index. Required. CosmosDB
+    :vartype type: str or ~azure.ai.projects.dp1.models.COSMOS_DB
+    :ivar connection_name: Name of connection to CosmosDB. Required.
+    :vartype connection_name: str
     :ivar database_name: Name of the CosmosDB Database. Required.
     :vartype database_name: str
     :ivar container_name: Name of CosmosDB Container. Required.
@@ -1002,10 +1049,10 @@ class CosmosDBIndex(Index, discriminator="CosmosDBNoSqlVectorStore"):
     :vartype embedding_configuration: ~azure.ai.projects.dp1.models.EmbeddingConfiguration
     """
 
-    index_type: Literal[IndexType.COSMOS_DB] = rest_discriminator(name="indexType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    type: Literal[IndexType.COSMOS_DB] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Type of index. Required. CosmosDB"""
-    connection_id: str = rest_field(name="connectionId", visibility=["read", "create", "update", "delete", "query"])
-    """Connection id to CosmosDB. Required."""
+    connection_name: str = rest_field(name="connectionName", visibility=["read", "create", "update", "delete", "query"])
+    """Name of connection to CosmosDB. Required."""
     database_name: str = rest_field(name="databaseName", visibility=["read", "create", "update", "delete", "query"])
     """Name of the CosmosDB Database. Required."""
     container_name: str = rest_field(name="containerName", visibility=["read", "create", "update", "delete", "query"])
@@ -1019,7 +1066,7 @@ class CosmosDBIndex(Index, discriminator="CosmosDBNoSqlVectorStore"):
     def __init__(
         self,
         *,
-        connection_id: str,
+        connection_name: str,
         database_name: str,
         container_name: str,
         embedding_configuration: "_models.EmbeddingConfiguration",
@@ -1036,7 +1083,7 @@ class CosmosDBIndex(Index, discriminator="CosmosDBNoSqlVectorStore"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, index_type=IndexType.COSMOS_DB, **kwargs)
+        super().__init__(*args, type=IndexType.COSMOS_DB, **kwargs)
 
 
 class DatasetVersion(_model_base.Model):
@@ -1066,8 +1113,6 @@ class DatasetVersion(_model_base.Model):
     :vartype description: str
     :ivar tags: Tag dictionary. Tags can be added, removed, and updated.
     :vartype tags: dict[str, str]
-    :ivar system_data: System data of the resource.
-    :vartype system_data: ~azure.ai.projects.dp1.models.SystemData
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
@@ -1091,8 +1136,6 @@ class DatasetVersion(_model_base.Model):
     """The asset description text."""
     tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Tag dictionary. Tags can be added, removed, and updated."""
-    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
-    """System data of the resource."""
 
     @overload
     def __init__(
@@ -1119,55 +1162,54 @@ class DatasetVersion(_model_base.Model):
 class Deployment(_model_base.Model):
     """Model Deployment Definition.
 
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ModelDeployment
+
+    :ivar type: The type of the deployment. Required. "ModelDeployment"
+    :vartype type: str or ~azure.ai.projects.dp1.models.DeploymentType
     :ivar name: Name of the deployment. Required.
     :vartype name: str
-    :ivar model_name: Publisher-specific name of the deployed model. Required.
-    :vartype model_name: str
-    :ivar model_version: Publisher-specific version of the deployed model. Required.
-    :vartype model_version: str
-    :ivar model_publisher: Name of the deployed model's publisher. Required.
-    :vartype model_publisher: str
-    :ivar capabilities: Capabilities of deployed model. Required.
-    :vartype capabilities: dict[str, str]
-    :ivar sku: Sku of the model deployment. Required.
-    :vartype sku: ~azure.ai.projects.dp1.models.Sku
-    :ivar connection_name: Name of the connection the deployment comes from.
-    :vartype connection_name: str
     """
 
+    __mapping__: Dict[str, _model_base.Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """The type of the deployment. Required. \"ModelDeployment\""""
     name: str = rest_field(visibility=["read"])
     """Name of the deployment. Required."""
-    model_name: str = rest_field(name="modelName", visibility=["read"])
-    """Publisher-specific name of the deployed model. Required."""
-    model_version: str = rest_field(name="modelVersion", visibility=["read"])
-    """Publisher-specific version of the deployed model. Required."""
-    model_publisher: str = rest_field(name="modelPublisher", visibility=["read"])
-    """Name of the deployed model's publisher. Required."""
-    capabilities: Dict[str, str] = rest_field(visibility=["read"])
-    """Capabilities of deployed model. Required."""
-    sku: "_models.Sku" = rest_field(visibility=["read"])
-    """Sku of the model deployment. Required."""
-    connection_name: Optional[str] = rest_field(name="connectionName", visibility=["read"])
-    """Name of the connection the deployment comes from."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class EmbeddingConfiguration(_model_base.Model):
     """Embedding configuration class.
 
-    :ivar connection_id: Connection id to embedding model.
-    :vartype connection_id: str
-    :ivar deployment_name: Deployment name of embedding model. Required.
-    :vartype deployment_name: str
+    :ivar model_deployment_name: Deployment name of embedding model. It can point to a model
+     deployment either in the parent AIServices or a connection. Required.
+    :vartype model_deployment_name: str
     :ivar embedding_field: Embedding field. Required.
     :vartype embedding_field: str
     """
 
-    connection_id: Optional[str] = rest_field(
-        name="connectionId", visibility=["read", "create", "update", "delete", "query"]
+    model_deployment_name: str = rest_field(
+        name="modelDeploymentName", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Connection id to embedding model."""
-    deployment_name: str = rest_field(name="deploymentName", visibility=["read", "create", "update", "delete", "query"])
-    """Deployment name of embedding model. Required."""
+    """Deployment name of embedding model. It can point to a model deployment either in the parent
+     AIServices or a connection. Required."""
     embedding_field: str = rest_field(name="embeddingField", visibility=["read", "create", "update", "delete", "query"])
     """Embedding field. Required."""
 
@@ -1175,9 +1217,8 @@ class EmbeddingConfiguration(_model_base.Model):
     def __init__(
         self,
         *,
-        deployment_name: str,
+        model_deployment_name: str,
         embedding_field: str,
-        connection_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -1204,8 +1245,6 @@ class Evaluation(_model_base.Model):
     :ivar description: Description of the evaluation. It can be used to store additional
      information about the evaluation and is mutable.
     :vartype description: str
-    :ivar system_data: Metadata containing createdBy and modifiedBy information.
-    :vartype system_data: ~azure.ai.projects.dp1.models.SystemData
     :ivar status: Status of the evaluation. It is set by service and is read-only.
     :vartype status: str
     :ivar tags: Evaluation's tags. Unlike properties, tags are fully mutable.
@@ -1229,8 +1268,6 @@ class Evaluation(_model_base.Model):
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Description of the evaluation. It can be used to store additional information about the
      evaluation and is mutable."""
-    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
-    """Metadata containing createdBy and modifiedBy information."""
     status: Optional[str] = rest_field(visibility=["read"])
     """Status of the evaluation. It is set by service and is read-only."""
     tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1330,8 +1367,6 @@ class FileDatasetVersion(DatasetVersion, discriminator="uri_file"):
     :vartype description: str
     :ivar tags: Tag dictionary. Tags can be added, removed, and updated.
     :vartype tags: dict[str, str]
-    :ivar system_data: System data of the resource.
-    :vartype system_data: ~azure.ai.projects.dp1.models.SystemData
     :ivar type: Dataset type. Required. URI file.
     :vartype type: str or ~azure.ai.projects.dp1.models.URI_FILE
     :ivar open_ai_purpose: Indicates OpenAI Purpose. FileDatasets created with this field will be
@@ -1647,8 +1682,6 @@ class FolderDatasetVersion(DatasetVersion, discriminator="uri_folder"):
     :vartype description: str
     :ivar tags: Tag dictionary. Tags can be added, removed, and updated.
     :vartype tags: dict[str, str]
-    :ivar system_data: System data of the resource.
-    :vartype system_data: ~azure.ai.projects.dp1.models.SystemData
     :ivar type: Dataset type. Required. URI folder.
     :vartype type: str or ~azure.ai.projects.dp1.models.URI_FOLDER
     """
@@ -1813,40 +1846,6 @@ class IncompleteRunDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class IndexResource(_model_base.Model):
-    """A Index resource.
-
-    :ivar index_connection_id: An index connection id in an IndexResource attached to this agent.
-     Required.
-    :vartype index_connection_id: str
-    :ivar index_name: The name of an index in an IndexResource attached to this agent. Required.
-    :vartype index_name: str
-    """
-
-    index_connection_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """An index connection id in an IndexResource attached to this agent. Required."""
-    index_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The name of an index in an IndexResource attached to this agent. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        index_connection_id: str,
-        index_name: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class InputData(_model_base.Model):
     """Abstract data class.
 
@@ -1926,15 +1925,13 @@ class ManagedAzureAISearchIndex(Index, discriminator="ManagedAzureSearch"):
     :vartype description: str
     :ivar tags: Tag dictionary. Tags can be added, removed, and updated.
     :vartype tags: dict[str, str]
-    :ivar system_data: System data of the resource.
-    :vartype system_data: ~azure.ai.projects.dp1.models.SystemData
-    :ivar index_type: Type of index. Required. Managed Azure Search
-    :vartype index_type: str or ~azure.ai.projects.dp1.models.MANAGED_AZURE_SEARCH
+    :ivar type: Type of index. Required. Managed Azure Search
+    :vartype type: str or ~azure.ai.projects.dp1.models.MANAGED_AZURE_SEARCH
     :ivar vector_store_id: Vector store id of managed index. Required.
     :vartype vector_store_id: str
     """
 
-    index_type: Literal[IndexType.MANAGED_AZURE_SEARCH] = rest_discriminator(name="indexType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    type: Literal[IndexType.MANAGED_AZURE_SEARCH] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Type of index. Required. Managed Azure Search"""
     vector_store_id: str = rest_field(name="vectorStoreId", visibility=["read", "create", "update", "delete", "query"])
     """Vector store id of managed index. Required."""
@@ -1957,7 +1954,7 @@ class ManagedAzureAISearchIndex(Index, discriminator="ManagedAzureSearch"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, index_type=IndexType.MANAGED_AZURE_SEARCH, **kwargs)
+        super().__init__(*args, type=IndexType.MANAGED_AZURE_SEARCH, **kwargs)
 
 
 class MessageAttachment(_model_base.Model):
@@ -2136,7 +2133,8 @@ class MessageTextAnnotation(_model_base.Model):
     """An abstract representation of an annotation to text thread message content.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    MessageTextFileCitationAnnotation, MessageTextFilePathAnnotation
+    MessageTextFileCitationAnnotation, MessageTextFilePathAnnotation,
+    MessageTextUrlCitationAnnotation
 
     :ivar type: The object type. Required. Default value is None.
     :vartype type: str
@@ -2401,29 +2399,42 @@ class MessageTextFilePathDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MicrosoftFabricToolDefinition(ToolDefinition, discriminator="fabric_aiskill"):
-    """The input definition information for a Microsoft Fabric tool as used to configure an agent.
+class MessageTextUrlCitationAnnotation(MessageTextAnnotation, discriminator="url_citation"):
+    """A citation within the message that points to a specific URL associated with the message.
+    Generated when the agent uses tools such as 'bing_grounding' to search the Internet.
 
-    :ivar type: The object type, which is always 'fabric_aiskill'. Required. Default value is
-     "fabric_aiskill".
+    :ivar text: The textual content associated with this text annotation item. Required.
+    :vartype text: str
+    :ivar type: The object type, which is always 'url_citation'. Required. Default value is
+     "url_citation".
     :vartype type: str
-    :ivar fabric_aiskill: The list of connections used by the Microsoft Fabric tool. Required.
-    :vartype fabric_aiskill: ~azure.ai.projects.dp1.models.ToolConnectionList
+    :ivar url_citation: The details of the URL citation. Required.
+    :vartype url_citation: ~azure.ai.projects.dp1.models.MessageTextUrlCitationDetails
+    :ivar start_index: The first text index associated with this text annotation.
+    :vartype start_index: int
+    :ivar end_index: The last text index associated with this text annotation.
+    :vartype end_index: int
     """
 
-    type: Literal["fabric_aiskill"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The object type, which is always 'fabric_aiskill'. Required. Default value is
-     \"fabric_aiskill\"."""
-    fabric_aiskill: "_models.ToolConnectionList" = rest_field(
+    type: Literal["url_citation"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'url_citation'. Required. Default value is \"url_citation\"."""
+    url_citation: "_models.MessageTextUrlCitationDetails" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The list of connections used by the Microsoft Fabric tool. Required."""
+    """The details of the URL citation. Required."""
+    start_index: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The first text index associated with this text annotation."""
+    end_index: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The last text index associated with this text annotation."""
 
     @overload
     def __init__(
         self,
         *,
-        fabric_aiskill: "_models.ToolConnectionList",
+        text: str,
+        url_citation: "_models.MessageTextUrlCitationDetails",
+        start_index: Optional[int] = None,
+        end_index: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -2434,7 +2445,128 @@ class MicrosoftFabricToolDefinition(ToolDefinition, discriminator="fabric_aiskil
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="fabric_aiskill", **kwargs)
+        super().__init__(*args, type="url_citation", **kwargs)
+
+
+class MessageTextUrlCitationDetails(_model_base.Model):
+    """A representation of a URL citation, as used in text thread message content.
+
+    :ivar url: The URL associated with this citation. Required.
+    :vartype url: str
+    :ivar title: The title of the URL.
+    :vartype title: str
+    """
+
+    url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The URL associated with this citation. Required."""
+    title: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The title of the URL."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        url: str,
+        title: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MicrosoftFabricToolDefinition(ToolDefinition, discriminator="fabric_dataagent"):
+    """The input definition information for a Microsoft Fabric tool as used to configure an agent.
+
+    :ivar type: The object type, which is always 'fabric_dataagent'. Required. Default value is
+     "fabric_dataagent".
+    :vartype type: str
+    :ivar fabric_dataagent: The list of connections used by the Microsoft Fabric tool. Required.
+    :vartype fabric_dataagent: ~azure.ai.projects.dp1.models.ToolConnectionList
+    """
+
+    type: Literal["fabric_dataagent"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'fabric_dataagent'. Required. Default value is
+     \"fabric_dataagent\"."""
+    fabric_dataagent: "_models.ToolConnectionList" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of connections used by the Microsoft Fabric tool. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        fabric_dataagent: "_models.ToolConnectionList",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="fabric_dataagent", **kwargs)
+
+
+class ModelDeployment(Deployment, discriminator="ModelDeployment"):
+    """Model Deployment Definition.
+
+    :ivar name: Name of the deployment. Required.
+    :vartype name: str
+    :ivar type: The type of the deployment. Required. Model deployment
+    :vartype type: str or ~azure.ai.projects.dp1.models.MODEL_DEPLOYMENT
+    :ivar model_name: Publisher-specific name of the deployed model. Required.
+    :vartype model_name: str
+    :ivar model_version: Publisher-specific version of the deployed model. Required.
+    :vartype model_version: str
+    :ivar model_publisher: Name of the deployed model's publisher. Required.
+    :vartype model_publisher: str
+    :ivar capabilities: Capabilities of deployed model. Required.
+    :vartype capabilities: dict[str, str]
+    :ivar sku: Sku of the model deployment. Required.
+    :vartype sku: ~azure.ai.projects.dp1.models.Sku
+    :ivar connection_name: Name of the connection the deployment comes from.
+    :vartype connection_name: str
+    """
+
+    type: Literal[DeploymentType.MODEL_DEPLOYMENT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the deployment. Required. Model deployment"""
+    model_name: str = rest_field(name="modelName", visibility=["read"])
+    """Publisher-specific name of the deployed model. Required."""
+    model_version: str = rest_field(name="modelVersion", visibility=["read"])
+    """Publisher-specific version of the deployed model. Required."""
+    model_publisher: str = rest_field(name="modelPublisher", visibility=["read"])
+    """Name of the deployed model's publisher. Required."""
+    capabilities: Dict[str, str] = rest_field(visibility=["read"])
+    """Capabilities of deployed model. Required."""
+    sku: "_models.Sku" = rest_field(visibility=["read"])
+    """Sku of the model deployment. Required."""
+    connection_name: Optional[str] = rest_field(name="connectionName", visibility=["read"])
+    """Name of the connection the deployment comes from."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type=DeploymentType.MODEL_DEPLOYMENT, **kwargs)
 
 
 class OpenAIFile(_model_base.Model):
@@ -4316,7 +4448,7 @@ class RunStepMessageCreationReference(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="fabric_aiskill"):
+class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="fabric_dataagent"):
     """A record of a call to a Microsoft Fabric tool, issued by the model in evaluation of a defined
     tool, that represents
     executed Microsoft Fabric operations.
@@ -4324,18 +4456,18 @@ class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="fabric_aisk
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
     :vartype id: str
-    :ivar type: The object type, which is always 'fabric_aiskill'. Required. Default value is
-     "fabric_aiskill".
+    :ivar type: The object type, which is always 'fabric_dataagent'. Required. Default value is
+     "fabric_dataagent".
     :vartype type: str
     :ivar microsoft_fabric: Reserved for future use. Required.
     :vartype microsoft_fabric: dict[str, str]
     """
 
-    type: Literal["fabric_aiskill"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The object type, which is always 'fabric_aiskill'. Required. Default value is
-     \"fabric_aiskill\"."""
+    type: Literal["fabric_dataagent"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'fabric_dataagent'. Required. Default value is
+     \"fabric_dataagent\"."""
     microsoft_fabric: Dict[str, str] = rest_field(
-        name="fabric_aiskill", visibility=["read", "create", "update", "delete", "query"]
+        name="fabric_dataagent", visibility=["read", "create", "update", "delete", "query"]
     )
     """Reserved for future use. Required."""
 
@@ -4355,7 +4487,7 @@ class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="fabric_aisk
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="fabric_aiskill", **kwargs)
+        super().__init__(*args, type="fabric_dataagent", **kwargs)
 
 
 class RunStepSharepointToolCall(RunStepToolCall, discriminator="sharepoint_grounding"):
@@ -4614,31 +4746,6 @@ class SubmitToolOutputsDetails(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class SystemData(_model_base.Model):
-    """Metadata pertaining to creation and last modification of the resource.
-
-    :ivar created_at: The timestamp the resource was created at.
-    :vartype created_at: ~datetime.datetime
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The identity type that created the resource.
-    :vartype created_by_type: str
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: ~datetime.datetime
-    """
-
-    created_at: Optional[datetime.datetime] = rest_field(name="createdAt", visibility=["read"], format="rfc3339")
-    """The timestamp the resource was created at."""
-    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read"])
-    """The identity that created the resource."""
-    created_by_type: Optional[str] = rest_field(name="createdByType", visibility=["read"])
-    """The identity type that created the resource."""
-    last_modified_at: Optional[datetime.datetime] = rest_field(
-        name="lastModifiedAt", visibility=["read"], format="rfc3339"
-    )
-    """The timestamp of resource last modification (UTC)."""
 
 
 class ThreadDeletionStatus(_model_base.Model):
@@ -5121,7 +5228,7 @@ class ToolConnection(_model_base.Model):
 
 class ToolConnectionList(_model_base.Model):
     """A set of connection resources currently used by either the ``bing_grounding``,
-    ``fabric_aiskill``, or ``sharepoint_grounding`` tools.
+    ``fabric_dataagent``, or ``sharepoint_grounding`` tools.
 
     :ivar connection_list: The connections attached to this tool. There can be a maximum of 1
      connection
@@ -5387,6 +5494,52 @@ class UpdateToolResourcesOptions(_model_base.Model):
         code_interpreter: Optional["_models.UpdateCodeInterpreterToolResourceOptions"] = None,
         file_search: Optional["_models.UpdateFileSearchToolResourceOptions"] = None,
         azure_ai_search: Optional["_models.AzureAISearchResource"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class UploadFileRequest(_model_base.Model):
+    """UploadFileRequest.
+
+    :ivar file: The file data, in bytes. Required.
+    :vartype file: ~azure.ai.projects.dp1._vendor.FileType
+    :ivar purpose: The intended purpose of the uploaded file. Use ``assistants`` for Agents and
+     Message files, ``vision`` for Agents image file inputs, ``batch`` for Batch API, and
+     ``fine-tune`` for Fine-tuning. Required. Known values are: "fine-tune", "fine-tune-results",
+     "assistants", "assistants_output", "batch", "batch_output", and "vision".
+    :vartype purpose: str or ~azure.ai.projects.dp1.models.FilePurpose
+    :ivar filename: The name of the file.
+    :vartype filename: str
+    """
+
+    file: FileType = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], is_multipart_file_input=True
+    )
+    """The file data, in bytes. Required."""
+    purpose: Union[str, "_models.FilePurpose"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The intended purpose of the uploaded file. Use ``assistants`` for Agents and Message files,
+     ``vision`` for Agents image file inputs, ``batch`` for Batch API, and ``fine-tune`` for
+     Fine-tuning. Required. Known values are: \"fine-tune\", \"fine-tune-results\", \"assistants\",
+     \"assistants_output\", \"batch\", \"batch_output\", and \"vision\"."""
+    filename: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the file."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        file: FileType,
+        purpose: Union[str, "_models.FilePurpose"],
+        filename: Optional[str] = None,
     ) -> None: ...
 
     @overload

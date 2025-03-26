@@ -17,7 +17,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from .._serialization import Deserializer, Serializer
 from ._configuration import AIProjectClientConfiguration
 from .operations import (
-    AgentsOperations,
+    AssistantsOperations,
     ConnectionsOperations,
     DatasetsOperations,
     DeploymentsOperations,
@@ -33,8 +33,8 @@ if TYPE_CHECKING:
 class AIProjectClient:  # pylint: disable=too-many-instance-attributes
     """AIProjectClient.
 
-    :ivar agents: AgentsOperations operations
-    :vartype agents: azure.ai.projects.dp1.aio.operations.AgentsOperations
+    :ivar assistants: AssistantsOperations operations
+    :vartype assistants: azure.ai.projects.dp1.aio.operations.AssistantsOperations
     :ivar service_patterns: ServicePatternsOperations operations
     :vartype service_patterns: azure.ai.projects.dp1.aio.operations.ServicePatternsOperations
     :ivar connections: ConnectionsOperations operations
@@ -48,7 +48,7 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
     :ivar deployments: DeploymentsOperations operations
     :vartype deployments: azure.ai.projects.dp1.aio.operations.DeploymentsOperations
     :param endpoint: Project endpoint in the form of:
-     https://<aiservices-id>.services.ai.azure.com/projects/<project-name>. Required.
+     https://<aiservices-id>.services.ai.azure.com/api/projects/<project-name>. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
@@ -83,7 +83,7 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.agents = AgentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.assistants = AssistantsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.service_patterns = ServicePatternsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

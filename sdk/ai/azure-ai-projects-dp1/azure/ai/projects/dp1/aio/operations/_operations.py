@@ -9,7 +9,21 @@
 from io import IOBase
 import json
 import sys
-from typing import Any, AsyncIterable, Callable, Dict, IO, List, Optional, TYPE_CHECKING, TypeVar, Union, overload
+from typing import (
+    Any,
+    AsyncIterable,
+    AsyncIterator,
+    Callable,
+    Dict,
+    IO,
+    List,
+    Literal,
+    Optional,
+    TYPE_CHECKING,
+    TypeVar,
+    Union,
+    overload,
+)
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -33,68 +47,70 @@ from azure.core.utils import case_insensitive_dict
 from ... import _model_base, models as _models
 from ..._model_base import SdkJSONEncoder, _deserialize
 from ..._serialization import Deserializer, Serializer
-from ..._vendor import FileType, prepare_multipart_form_data
+from ..._vendor import prepare_multipart_form_data
+from ...models._enums import PendingUploadType
 from ...operations._operations import (
-    build_agents_cancel_run_request,
-    build_agents_cancel_vector_store_file_batch_request,
-    build_agents_create_agent_request,
-    build_agents_create_message_request,
-    build_agents_create_run_request,
-    build_agents_create_thread_and_run_request,
-    build_agents_create_thread_request,
-    build_agents_create_vector_store_file_batch_request,
-    build_agents_create_vector_store_file_request,
-    build_agents_create_vector_store_request,
-    build_agents_delete_agent_request,
-    build_agents_delete_file_request,
-    build_agents_delete_thread_request,
-    build_agents_delete_vector_store_file_request,
-    build_agents_delete_vector_store_request,
-    build_agents_get_agent_request,
-    build_agents_get_file_content_request,
-    build_agents_get_file_request,
-    build_agents_get_message_request,
-    build_agents_get_run_request,
-    build_agents_get_run_step_request,
-    build_agents_get_thread_request,
-    build_agents_get_vector_store_file_batch_request,
-    build_agents_get_vector_store_file_request,
-    build_agents_get_vector_store_request,
-    build_agents_list_agents_request,
-    build_agents_list_files_request,
-    build_agents_list_messages_request,
-    build_agents_list_run_steps_request,
-    build_agents_list_runs_request,
-    build_agents_list_vector_store_file_batch_files_request,
-    build_agents_list_vector_store_files_request,
-    build_agents_list_vector_stores_request,
-    build_agents_modify_vector_store_request,
-    build_agents_submit_tool_outputs_to_run_request,
-    build_agents_update_agent_request,
-    build_agents_update_message_request,
-    build_agents_update_run_request,
-    build_agents_update_thread_request,
-    build_agents_upload_file_request,
+    build_assistants_cancel_run_request,
+    build_assistants_cancel_vector_store_file_batch_request,
+    build_assistants_create_agent_request,
+    build_assistants_create_message_request,
+    build_assistants_create_run_request,
+    build_assistants_create_thread_and_run_request,
+    build_assistants_create_thread_request,
+    build_assistants_create_vector_store_file_batch_request,
+    build_assistants_create_vector_store_file_request,
+    build_assistants_create_vector_store_request,
+    build_assistants_delete_agent_request,
+    build_assistants_delete_file_request,
+    build_assistants_delete_thread_request,
+    build_assistants_delete_vector_store_file_request,
+    build_assistants_delete_vector_store_request,
+    build_assistants_get_agent_request,
+    build_assistants_get_file_content_request,
+    build_assistants_get_file_request,
+    build_assistants_get_message_request,
+    build_assistants_get_run_request,
+    build_assistants_get_run_step_request,
+    build_assistants_get_thread_request,
+    build_assistants_get_vector_store_file_batch_request,
+    build_assistants_get_vector_store_file_request,
+    build_assistants_get_vector_store_request,
+    build_assistants_list_agents_request,
+    build_assistants_list_files_request,
+    build_assistants_list_messages_request,
+    build_assistants_list_run_steps_request,
+    build_assistants_list_runs_request,
+    build_assistants_list_vector_store_file_batch_files_request,
+    build_assistants_list_vector_store_files_request,
+    build_assistants_list_vector_stores_request,
+    build_assistants_modify_vector_store_request,
+    build_assistants_submit_tool_outputs_to_run_request,
+    build_assistants_update_agent_request,
+    build_assistants_update_message_request,
+    build_assistants_update_run_request,
+    build_assistants_update_thread_request,
+    build_assistants_upload_file_request,
     build_connections_get_request,
     build_connections_list_request,
+    build_datasets_create_request,
     build_datasets_create_version_request,
     build_datasets_delete_version_request,
     build_datasets_get_version_request,
     build_datasets_list_latest_request,
     build_datasets_list_versions_request,
+    build_datasets_start_pending_upload_auto_increment_request,
     build_datasets_start_pending_upload_request,
-    build_datasets_versions_request,
     build_deployments_get_request,
     build_deployments_list_request,
     build_evaluations_create_run_request,
     build_evaluations_get_request,
     build_evaluations_list_request,
+    build_indexes_create_request,
     build_indexes_create_version_request,
     build_indexes_delete_version_request,
     build_indexes_get_version_request,
     build_indexes_list_latest_request,
     build_indexes_list_versions_request,
-    build_indexes_versions_request,
 )
 from .._configuration import AIProjectClientConfiguration
 
@@ -111,14 +127,14 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class AgentsOperations:  # pylint: disable=too-many-public-methods
+class AssistantsOperations:  # pylint: disable=too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.ai.projects.dp1.aio.AIProjectClient`'s
-        :attr:`agents` attribute.
+        :attr:`assistants` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -323,7 +339,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_agents_create_agent_request(
+        _request = build_assistants_create_agent_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -407,7 +423,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.OpenAIPageableListOfAgent] = kwargs.pop("cls", None)
 
-        _request = build_agents_list_agents_request(
+        _request = build_assistants_list_agents_request(
             limit=limit,
             order=order,
             after=after,
@@ -470,7 +486,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.Agent] = kwargs.pop("cls", None)
 
-        _request = build_agents_get_agent_request(
+        _request = build_assistants_get_agent_request(
             assistant_id=assistant_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -716,7 +732,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_agents_update_agent_request(
+        _request = build_assistants_update_agent_request(
             assistant_id=assistant_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -778,7 +794,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.AgentDeletionStatus] = kwargs.pop("cls", None)
 
-        _request = build_agents_delete_agent_request(
+        _request = build_assistants_delete_agent_request(
             assistant_id=assistant_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -937,7 +953,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_agents_create_thread_request(
+        _request = build_assistants_create_thread_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -998,7 +1014,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.AgentThread] = kwargs.pop("cls", None)
 
-        _request = build_agents_get_thread_request(
+        _request = build_assistants_get_thread_request(
             thread_id=thread_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1159,7 +1175,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_agents_update_thread_request(
+        _request = build_assistants_update_thread_request(
             thread_id=thread_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1221,7 +1237,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.ThreadDeletionStatus] = kwargs.pop("cls", None)
 
-        _request = build_agents_delete_thread_request(
+        _request = build_assistants_delete_thread_request(
             thread_id=thread_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1408,7 +1424,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_agents_create_message_request(
+        _request = build_assistants_create_message_request(
             thread_id=thread_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1499,7 +1515,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.OpenAIPageableListOfThreadMessage] = kwargs.pop("cls", None)
 
-        _request = build_agents_list_messages_request(
+        _request = build_assistants_list_messages_request(
             thread_id=thread_id,
             run_id=run_id,
             limit=limit,
@@ -1566,7 +1582,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.ThreadMessage] = kwargs.pop("cls", None)
 
-        _request = build_agents_get_message_request(
+        _request = build_assistants_get_message_request(
             thread_id=thread_id,
             message_id=message_id,
             api_version=self._config.api_version,
@@ -1724,7 +1740,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_agents_update_message_request(
+        _request = build_assistants_update_message_request(
             thread_id=thread_id,
             message_id=message_id,
             content_type=content_type,
@@ -2093,7 +2109,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_agents_create_run_request(
+        _request = build_assistants_create_run_request(
             thread_id=thread_id,
             include=include,
             content_type=content_type,
@@ -2182,7 +2198,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.OpenAIPageableListOfThreadRun] = kwargs.pop("cls", None)
 
-        _request = build_agents_list_runs_request(
+        _request = build_assistants_list_runs_request(
             thread_id=thread_id,
             limit=limit,
             order=order,
@@ -2248,7 +2264,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.ThreadRun] = kwargs.pop("cls", None)
 
-        _request = build_agents_get_run_request(
+        _request = build_assistants_get_run_request(
             thread_id=thread_id,
             run_id=run_id,
             api_version=self._config.api_version,
@@ -2406,7 +2422,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_agents_update_run_request(
+        _request = build_assistants_update_run_request(
             thread_id=thread_id,
             run_id=run_id,
             content_type=content_type,
@@ -2578,7 +2594,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_agents_submit_tool_outputs_to_run_request(
+        _request = build_assistants_submit_tool_outputs_to_run_request(
             thread_id=thread_id,
             run_id=run_id,
             content_type=content_type,
@@ -2643,7 +2659,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.ThreadRun] = kwargs.pop("cls", None)
 
-        _request = build_agents_cancel_run_request(
+        _request = build_assistants_cancel_run_request(
             thread_id=thread_id,
             run_id=run_id,
             api_version=self._config.api_version,
@@ -2964,7 +2980,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_agents_create_thread_and_run_request(
+        _request = build_assistants_create_thread_and_run_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -3042,7 +3058,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.RunStep] = kwargs.pop("cls", None)
 
-        _request = build_agents_get_run_step_request(
+        _request = build_assistants_get_run_step_request(
             thread_id=thread_id,
             run_id=run_id,
             step_id=step_id,
@@ -3140,7 +3156,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.OpenAIPageableListOfRunStep] = kwargs.pop("cls", None)
 
-        _request = build_agents_list_run_steps_request(
+        _request = build_assistants_list_run_steps_request(
             thread_id=thread_id,
             run_id=run_id,
             include=include,
@@ -3210,7 +3226,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.FileListResponse] = kwargs.pop("cls", None)
 
-        _request = build_agents_list_files_request(
+        _request = build_assistants_list_files_request(
             purpose=purpose,
             api_version=self._config.api_version,
             headers=_headers,
@@ -3248,20 +3264,11 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    async def upload_file(
-        self, *, file: FileType, purpose: Union[str, _models.FilePurpose], filename: Optional[str] = None, **kwargs: Any
-    ) -> _models.OpenAIFile:
+    async def upload_file(self, body: _models.UploadFileRequest, **kwargs: Any) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
-        :keyword file: The file data, in bytes. Required.
-        :paramtype file: ~azure.ai.projects.dp1._vendor.FileType
-        :keyword purpose: The intended purpose of the uploaded file. Use ``assistants`` for Agents and
-         Message files, ``vision`` for Agents image file inputs, ``batch`` for Batch API, and
-         ``fine-tune`` for Fine-tuning. Known values are: "fine-tune", "fine-tune-results",
-         "assistants", "assistants_output", "batch", "batch_output", and "vision". Required.
-        :paramtype purpose: str or ~azure.ai.projects.dp1.models.FilePurpose
-        :keyword filename: The name of the file. Default value is None.
-        :paramtype filename: str
+        :param body: Multipart body. Required.
+        :type body: ~azure.ai.projects.dp1.models.UploadFileRequest
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
         :rtype: ~azure.ai.projects.dp1.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3271,7 +3278,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     async def upload_file(self, body: JSON, **kwargs: Any) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
-        :param body: Required.
+        :param body: Multipart body. Required.
         :type body: JSON
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
         :rtype: ~azure.ai.projects.dp1.models.OpenAIFile
@@ -3279,28 +3286,11 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
-    async def upload_file(
-        self,
-        body: JSON = _Unset,
-        *,
-        file: FileType = _Unset,
-        purpose: Union[str, _models.FilePurpose] = _Unset,
-        filename: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.OpenAIFile:
+    async def upload_file(self, body: Union[_models.UploadFileRequest, JSON], **kwargs: Any) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
-        :param body: Is one of the following types: JSON Required.
-        :type body: JSON
-        :keyword file: The file data, in bytes. Required.
-        :paramtype file: ~azure.ai.projects.dp1._vendor.FileType
-        :keyword purpose: The intended purpose of the uploaded file. Use ``assistants`` for Agents and
-         Message files, ``vision`` for Agents image file inputs, ``batch`` for Batch API, and
-         ``fine-tune`` for Fine-tuning. Known values are: "fine-tune", "fine-tune-results",
-         "assistants", "assistants_output", "batch", "batch_output", and "vision". Required.
-        :paramtype purpose: str or ~azure.ai.projects.dp1.models.FilePurpose
-        :keyword filename: The name of the file. Default value is None.
-        :paramtype filename: str
+        :param body: Multipart body. Is either a UploadFileRequest type or a JSON type. Required.
+        :type body: ~azure.ai.projects.dp1.models.UploadFileRequest or JSON
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
         :rtype: ~azure.ai.projects.dp1.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3318,19 +3308,12 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.OpenAIFile] = kwargs.pop("cls", None)
 
-        if body is _Unset:
-            if file is _Unset:
-                raise TypeError("missing required argument: file")
-            if purpose is _Unset:
-                raise TypeError("missing required argument: purpose")
-            body = {"file": file, "filename": filename, "purpose": purpose}
-            body = {k: v for k, v in body.items() if v is not None}
         _body = body.as_dict() if isinstance(body, _model_base.Model) else body
         _file_fields: List[str] = ["file"]
         _data_fields: List[str] = ["purpose", "filename"]
         _files, _data = prepare_multipart_form_data(_body, _file_fields, _data_fields)
 
-        _request = build_agents_upload_file_request(
+        _request = build_assistants_upload_file_request(
             api_version=self._config.api_version,
             files=_files,
             data=_data,
@@ -3391,7 +3374,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.FileDeletionStatus] = kwargs.pop("cls", None)
 
-        _request = build_agents_delete_file_request(
+        _request = build_assistants_delete_file_request(
             file_id=file_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -3451,7 +3434,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.OpenAIFile] = kwargs.pop("cls", None)
 
-        _request = build_agents_get_file_request(
+        _request = build_assistants_get_file_request(
             file_id=file_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -3489,13 +3472,13 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_file_content(self, file_id: str, **kwargs: Any) -> bytes:
+    async def get_file_content(self, file_id: str, **kwargs: Any) -> AsyncIterator[bytes]:
         """Retrieves the raw content of a specific file.
 
         :param file_id: The ID of the file to retrieve. Required.
         :type file_id: str
-        :return: bytes
-        :rtype: bytes
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3509,9 +3492,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[bytes] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_agents_get_file_content_request(
+        _request = build_assistants_get_file_content_request(
             file_id=file_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -3522,7 +3505,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
+        _stream = kwargs.pop("stream", True)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -3538,10 +3521,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(bytes, response.json(), format="base64")
+        deserialized = response.iter_bytes()
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3594,7 +3574,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.OpenAIPageableListOfVectorStore] = kwargs.pop("cls", None)
 
-        _request = build_agents_list_vector_stores_request(
+        _request = build_assistants_list_vector_stores_request(
             limit=limit,
             order=order,
             after=after,
@@ -3777,7 +3757,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_agents_create_vector_store_request(
+        _request = build_assistants_create_vector_store_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -3838,7 +3818,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.VectorStore] = kwargs.pop("cls", None)
 
-        _request = build_agents_get_vector_store_request(
+        _request = build_assistants_get_vector_store_request(
             vector_store_id=vector_store_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -3997,7 +3977,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_agents_modify_vector_store_request(
+        _request = build_assistants_modify_vector_store_request(
             vector_store_id=vector_store_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -4060,7 +4040,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.VectorStoreDeletionStatus] = kwargs.pop("cls", None)
 
-        _request = build_agents_delete_vector_store_request(
+        _request = build_assistants_delete_vector_store_request(
             vector_store_id=vector_store_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -4150,7 +4130,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.OpenAIPageableListOfVectorStoreFile] = kwargs.pop("cls", None)
 
-        _request = build_agents_list_vector_store_files_request(
+        _request = build_assistants_list_vector_store_files_request(
             vector_store_id=vector_store_id,
             filter=filter,
             limit=limit,
@@ -4310,7 +4290,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_agents_create_vector_store_file_request(
+        _request = build_assistants_create_vector_store_file_request(
             vector_store_id=vector_store_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -4374,7 +4354,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.VectorStoreFile] = kwargs.pop("cls", None)
 
-        _request = build_agents_get_vector_store_file_request(
+        _request = build_assistants_get_vector_store_file_request(
             vector_store_id=vector_store_id,
             file_id=file_id,
             api_version=self._config.api_version,
@@ -4442,7 +4422,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.VectorStoreFileDeletionStatus] = kwargs.pop("cls", None)
 
-        _request = build_agents_delete_vector_store_file_request(
+        _request = build_assistants_delete_vector_store_file_request(
             vector_store_id=vector_store_id,
             file_id=file_id,
             api_version=self._config.api_version,
@@ -4598,7 +4578,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_agents_create_vector_store_file_batch_request(
+        _request = build_assistants_create_vector_store_file_batch_request(
             vector_store_id=vector_store_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -4664,7 +4644,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.VectorStoreFileBatch] = kwargs.pop("cls", None)
 
-        _request = build_agents_get_vector_store_file_batch_request(
+        _request = build_assistants_get_vector_store_file_batch_request(
             vector_store_id=vector_store_id,
             batch_id=batch_id,
             api_version=self._config.api_version,
@@ -4730,7 +4710,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.VectorStoreFileBatch] = kwargs.pop("cls", None)
 
-        _request = build_agents_cancel_vector_store_file_batch_request(
+        _request = build_assistants_cancel_vector_store_file_batch_request(
             vector_store_id=vector_store_id,
             batch_id=batch_id,
             api_version=self._config.api_version,
@@ -4824,7 +4804,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.OpenAIPageableListOfVectorStoreFile] = kwargs.pop("cls", None)
 
-        _request = build_agents_list_vector_store_file_batch_files_request(
+        _request = build_assistants_list_vector_store_file_batch_files_request(
             vector_store_id=vector_store_id,
             batch_id=batch_id,
             filter=filter,
@@ -5052,7 +5032,7 @@ class ConnectionsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Connection], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.Connection], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -5227,7 +5207,7 @@ class EvaluationsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Evaluation], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.Evaluation], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -5392,7 +5372,6 @@ class DatasetsOperations:
         self,
         name: str,
         *,
-        order_by: Optional[str] = None,
         top: Optional[int] = None,
         skip: Optional[str] = None,
         tags: Optional[str] = None,
@@ -5403,9 +5382,6 @@ class DatasetsOperations:
 
         :param name: The name of the resource. Required.
         :type name: str
-        :keyword order_by: Please choose OrderBy value from ['createdtime', 'modifiedtime']. Default
-         value is None.
-        :paramtype order_by: str
         :keyword top: Top count of results, top count cannot be greater than the page size. If topCount
          > page size, results with be default page size count will be returned. Default value is None.
         :paramtype top: int
@@ -5440,7 +5416,6 @@ class DatasetsOperations:
 
                 _request = build_datasets_list_versions_request(
                     name=name,
-                    order_by=order_by,
                     top=top,
                     skip=skip,
                     tags=tags,
@@ -5480,7 +5455,7 @@ class DatasetsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DatasetVersion], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.DatasetVersion], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -5504,12 +5479,27 @@ class DatasetsOperations:
 
     @distributed_trace
     def list_latest(
-        self, *, list_view_type: Optional[Union[str, _models.ListViewType]] = None, **kwargs: Any
+        self,
+        *,
+        top: Optional[int] = None,
+        skip: Optional[str] = None,
+        tags: Optional[str] = None,
+        list_view_type: Optional[Union[str, _models.ListViewType]] = None,
+        **kwargs: Any
     ) -> AsyncIterable["_models.DatasetVersion"]:
         """List the latest version of each DatasetVersion.
 
-        :keyword list_view_type: View type for including/excluding (for example) archived entities.
-         Known values are: "ActiveOnly", "ArchivedOnly", and "All". Default value is None.
+        :keyword top: Top count of results, top count cannot be greater than the page size. If topCount
+         > page size, results with be default page size count will be returned. Default value is None.
+        :paramtype top: int
+        :keyword skip: Continuation token for pagination. Default value is None.
+        :paramtype skip: str
+        :keyword tags: Comma-separated list of tag names (and optionally values). Example:
+         tag1,tag2=value2. Default value is None.
+        :paramtype tags: str
+        :keyword list_view_type: [ListViewType.ActiveOnly, ListViewType.ArchivedOnly, ListViewType.All]
+         View type for including/excluding (for example) archived entities. Known values are:
+         "ActiveOnly", "ArchivedOnly", and "All". Default value is None.
         :paramtype list_view_type: str or ~azure.ai.projects.dp1.models.ListViewType
         :return: An iterator like instance of DatasetVersion
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.dp1.models.DatasetVersion]
@@ -5532,6 +5522,9 @@ class DatasetsOperations:
             if not next_link:
 
                 _request = build_datasets_list_latest_request(
+                    top=top,
+                    skip=skip,
+                    tags=tags,
                     list_view_type=list_view_type,
                     api_version=self._config.api_version,
                     headers=_headers,
@@ -5568,7 +5561,7 @@ class DatasetsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DatasetVersion], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.DatasetVersion], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -5705,7 +5698,7 @@ class DatasetsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def versions(
+    async def create(
         self, name: str, body: _models.DatasetVersion, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.DatasetVersion:
         """Create a new DatasetVersion. The version id will be generated by the service.
@@ -5723,7 +5716,7 @@ class DatasetsOperations:
         """
 
     @overload
-    async def versions(
+    async def create(
         self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.DatasetVersion:
         """Create a new DatasetVersion. The version id will be generated by the service.
@@ -5741,7 +5734,7 @@ class DatasetsOperations:
         """
 
     @overload
-    async def versions(
+    async def create(
         self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.DatasetVersion:
         """Create a new DatasetVersion. The version id will be generated by the service.
@@ -5759,7 +5752,7 @@ class DatasetsOperations:
         """
 
     @distributed_trace_async
-    async def versions(
+    async def create(
         self, name: str, body: Union[_models.DatasetVersion, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.DatasetVersion:
         """Create a new DatasetVersion. The version id will be generated by the service.
@@ -5794,7 +5787,7 @@ class DatasetsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_datasets_versions_request(
+        _request = build_datasets_create_request(
             name=name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -5995,7 +5988,7 @@ class DatasetsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.PendingUploadResponse:
-        """Create or start a pending upload of a dataset.
+        """Create or start a pending upload of a dataset for a specific version.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -6015,7 +6008,7 @@ class DatasetsOperations:
     async def start_pending_upload(
         self, name: str, version: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.PendingUploadResponse:
-        """Create or start a pending upload of a dataset.
+        """Create or start a pending upload of a dataset for a specific version.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -6035,7 +6028,7 @@ class DatasetsOperations:
     async def start_pending_upload(
         self, name: str, version: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.PendingUploadResponse:
-        """Create or start a pending upload of a dataset.
+        """Create or start a pending upload of a dataset for a specific version.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -6055,7 +6048,7 @@ class DatasetsOperations:
     async def start_pending_upload(
         self, name: str, version: str, body: Union[_models.PendingUploadRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.PendingUploadResponse:
-        """Create or start a pending upload of a dataset.
+        """Create or start a pending upload of a dataset for a specific version.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -6129,6 +6122,185 @@ class DatasetsOperations:
 
         return deserialized  # type: ignore
 
+    @overload
+    async def start_pending_upload_auto_increment(
+        self,
+        name: str,
+        *,
+        pending_upload_type: Literal[PendingUploadType.TEMPORARY_BLOB_REFERENCE],
+        content_type: str = "application/json",
+        pending_upload_id: Optional[str] = None,
+        connection_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.PendingUploadResponse:
+        """Create or start a pending upload of a dataset. The dataset version will be generated by
+        service.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :keyword pending_upload_type: TemporaryBlobReference is the only supported type. Temporary Blob
+         Reference is the only supported type. Required.
+        :paramtype pending_upload_type: str or ~azure.ai.projects.dp1.models.TEMPORARY_BLOB_REFERENCE
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword pending_upload_id: If PendingUploadId is not provided, a random GUID will be used.
+         Default value is None.
+        :paramtype pending_upload_id: str
+        :keyword connection_name: Name of Azure blob storage connection to use for generating temporary
+         SAS token. Default value is None.
+        :paramtype connection_name: str
+        :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.PendingUploadResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def start_pending_upload_auto_increment(
+        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.PendingUploadResponse:
+        """Create or start a pending upload of a dataset. The dataset version will be generated by
+        service.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.PendingUploadResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def start_pending_upload_auto_increment(
+        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.PendingUploadResponse:
+        """Create or start a pending upload of a dataset. The dataset version will be generated by
+        service.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.PendingUploadResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def start_pending_upload_auto_increment(
+        self,
+        name: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        pending_upload_type: Literal[PendingUploadType.TEMPORARY_BLOB_REFERENCE] = _Unset,
+        pending_upload_id: Optional[str] = None,
+        connection_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.PendingUploadResponse:
+        """Create or start a pending upload of a dataset. The dataset version will be generated by
+        service.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword pending_upload_type: TemporaryBlobReference is the only supported type. Temporary Blob
+         Reference is the only supported type. Required.
+        :paramtype pending_upload_type: str or ~azure.ai.projects.dp1.models.TEMPORARY_BLOB_REFERENCE
+        :keyword pending_upload_id: If PendingUploadId is not provided, a random GUID will be used.
+         Default value is None.
+        :paramtype pending_upload_id: str
+        :keyword connection_name: Name of Azure blob storage connection to use for generating temporary
+         SAS token. Default value is None.
+        :paramtype connection_name: str
+        :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.PendingUploadResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.PendingUploadResponse] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            if pending_upload_type is _Unset:
+                raise TypeError("missing required argument: pending_upload_type")
+            body = {
+                "connectionName": connection_name,
+                "pendingUploadId": pending_upload_id,
+                "pendingUploadType": pending_upload_type,
+            }
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_datasets_start_pending_upload_auto_increment_request(
+            name=name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["Repeatability-Result"] = self._deserialize(
+            "str", response.headers.get("Repeatability-Result")
+        )
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.PendingUploadResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
 
 class IndexesOperations:
     """
@@ -6152,34 +6324,28 @@ class IndexesOperations:
         self,
         name: str,
         *,
-        list_view_type: str,
-        order_by: Optional[str] = None,
-        orderby: Optional[str] = None,
-        tags: Optional[str] = None,
         top: Optional[int] = None,
-        skip: Optional[int] = None,
+        skip: Optional[str] = None,
+        tags: Optional[str] = None,
+        list_view_type: Optional[Union[str, _models.ListViewType]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.Index"]:
         """List all versions of the given Index.
 
         :param name: The name of the resource. Required.
         :type name: str
-        :keyword list_view_type: View type for including/excluding (for example) archived entities.
-         Required.
-        :paramtype list_view_type: str
-        :keyword order_by: Ordering of list: Please choose orderby value from ['createdAt',
-         'lastModifiedAt']. Default value is None.
-        :paramtype order_by: str
-        :keyword orderby: Ordering of list: Please choose orderby value from ['createdAt',
-         'lastModifiedAt']. Default value is None.
-        :paramtype orderby: str
+        :keyword top: Top count of results, top count cannot be greater than the page size. If topCount
+         > page size, results with be default page size count will be returned. Default value is None.
+        :paramtype top: int
+        :keyword skip: Continuation token for pagination. Default value is None.
+        :paramtype skip: str
         :keyword tags: Comma-separated list of tag names (and optionally values). Example:
          tag1,tag2=value2. Default value is None.
         :paramtype tags: str
-        :keyword top: The number of result items to return. Default value is None.
-        :paramtype top: int
-        :keyword skip: The number of result items to skip. Default value is None.
-        :paramtype skip: int
+        :keyword list_view_type: [ListViewType.ActiveOnly, ListViewType.ArchivedOnly, ListViewType.All]
+         View type for including/excluding (for example) archived entities. Known values are:
+         "ActiveOnly", "ArchivedOnly", and "All". Default value is None.
+        :paramtype list_view_type: str or ~azure.ai.projects.dp1.models.ListViewType
         :return: An iterator like instance of Index
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.dp1.models.Index]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6187,7 +6353,6 @@ class IndexesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        maxpagesize = kwargs.pop("maxpagesize", None)
         cls: ClsType[List[_models.Index]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -6203,13 +6368,10 @@ class IndexesOperations:
 
                 _request = build_indexes_list_versions_request(
                     name=name,
-                    list_view_type=list_view_type,
-                    order_by=order_by,
-                    orderby=orderby,
-                    tags=tags,
                     top=top,
                     skip=skip,
-                    maxpagesize=maxpagesize,
+                    tags=tags,
+                    list_view_type=list_view_type,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -6245,7 +6407,7 @@ class IndexesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Index], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.Index], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -6269,12 +6431,27 @@ class IndexesOperations:
 
     @distributed_trace
     def list_latest(
-        self, *, list_view_type: Optional[Union[str, _models.ListViewType]] = None, **kwargs: Any
+        self,
+        *,
+        top: Optional[int] = None,
+        skip: Optional[str] = None,
+        tags: Optional[str] = None,
+        list_view_type: Optional[Union[str, _models.ListViewType]] = None,
+        **kwargs: Any
     ) -> AsyncIterable["_models.Index"]:
         """List the latest version of each Index.
 
-        :keyword list_view_type: View type for including/excluding (for example) archived entities.
-         Known values are: "ActiveOnly", "ArchivedOnly", and "All". Default value is None.
+        :keyword top: Top count of results, top count cannot be greater than the page size. If topCount
+         > page size, results with be default page size count will be returned. Default value is None.
+        :paramtype top: int
+        :keyword skip: Continuation token for pagination. Default value is None.
+        :paramtype skip: str
+        :keyword tags: Comma-separated list of tag names (and optionally values). Example:
+         tag1,tag2=value2. Default value is None.
+        :paramtype tags: str
+        :keyword list_view_type: [ListViewType.ActiveOnly, ListViewType.ArchivedOnly, ListViewType.All]
+         View type for including/excluding (for example) archived entities. Known values are:
+         "ActiveOnly", "ArchivedOnly", and "All". Default value is None.
         :paramtype list_view_type: str or ~azure.ai.projects.dp1.models.ListViewType
         :return: An iterator like instance of Index
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.dp1.models.Index]
@@ -6297,6 +6474,9 @@ class IndexesOperations:
             if not next_link:
 
                 _request = build_indexes_list_latest_request(
+                    top=top,
+                    skip=skip,
+                    tags=tags,
                     list_view_type=list_view_type,
                     api_version=self._config.api_version,
                     headers=_headers,
@@ -6333,7 +6513,7 @@ class IndexesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Index], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.Index], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -6470,7 +6650,7 @@ class IndexesOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def versions(
+    async def create(
         self, name: str, body: _models.Index, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Index:
         """Create a new Index. The version id will be generated by the service.
@@ -6488,7 +6668,7 @@ class IndexesOperations:
         """
 
     @overload
-    async def versions(
+    async def create(
         self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Index:
         """Create a new Index. The version id will be generated by the service.
@@ -6506,7 +6686,7 @@ class IndexesOperations:
         """
 
     @overload
-    async def versions(
+    async def create(
         self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Index:
         """Create a new Index. The version id will be generated by the service.
@@ -6524,7 +6704,7 @@ class IndexesOperations:
         """
 
     @distributed_trace_async
-    async def versions(self, name: str, body: Union[_models.Index, JSON, IO[bytes]], **kwargs: Any) -> _models.Index:
+    async def create(self, name: str, body: Union[_models.Index, JSON, IO[bytes]], **kwargs: Any) -> _models.Index:
         """Create a new Index. The version id will be generated by the service.
 
         :param name: The name of the resource. Required.
@@ -6557,7 +6737,7 @@ class IndexesOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_indexes_versions_request(
+        _request = build_indexes_create_request(
             name=name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -6913,7 +7093,7 @@ class DeploymentsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Deployment], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.Deployment], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)

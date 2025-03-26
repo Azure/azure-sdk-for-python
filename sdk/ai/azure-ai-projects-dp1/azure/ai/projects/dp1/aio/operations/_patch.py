@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -26,6 +27,7 @@ from ...models._enums import (
 
 logger = logging.getLogger(__name__)
 
+
 class DatasetsOperations(DatasetsOperationsGenerated):
 
     # Internal helper method to create a new dataset and return a ContainerClient from azure-storage-blob package,
@@ -39,9 +41,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         pending_upload_response: PendingUploadResponse = await self.start_pending_upload(
             name=name,
             version=version,
-            body=PendingUploadRequest(
-                pending_upload_type=PendingUploadType.TEMPORARY_BLOB_REFERENCE
-            ),
+            body=PendingUploadRequest(pending_upload_type=PendingUploadType.TEMPORARY_BLOB_REFERENCE),
         )
 
         if not pending_upload_response.blob_reference_for_consumption:
@@ -53,14 +53,38 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         if not pending_upload_response.blob_reference_for_consumption.blob_uri:
             raise ValueError("Blob URI is not present or empty")
 
-        if (logger.getEffectiveLevel() == logging.DEBUG):
+        if logger.getEffectiveLevel() == logging.DEBUG:
             method = inspect.currentframe().f_code.co_name
-            logger.debug("[%s] pending_upload_response.pending_upload_id = %s.", method, pending_upload_response.pending_upload_id)
-            logger.debug("[%s] pending_upload_response.pending_upload_type = %s.", method, pending_upload_response.pending_upload_type) # == PendingUploadType.TEMPORARY_BLOB_REFERENCE
-            logger.debug("[%s] pending_upload_response.blob_reference_for_consumption.blob_uri = %s.", method, pending_upload_response.blob_reference_for_consumption.blob_uri) # Hosted on behalf of (HOBO) not visible to the user. If the form of: "https://<account>.blob.core.windows.net/<container>?<sasToken>"
-            logger.debug("[%s] pending_upload_response.blob_reference_for_consumption.storage_account_arm_id = %s.", method, pending_upload_response.blob_reference_for_consumption.storage_account_arm_id) # /subscriptions/<>/resourceGroups/<>/Microsoft.Storage/accounts/<>
-            logger.debug("[%s] pending_upload_response.blob_reference_for_consumption.credential.sas_token = %s.", method, pending_upload_response.blob_reference_for_consumption.credential.sas_token)
-            logger.debug("[%s] pending_upload_response.blob_reference_for_consumption.credential.type = %s.", method, pending_upload_response.blob_reference_for_consumption.credential.type) # == CredentialType.SAS
+            logger.debug(
+                "[%s] pending_upload_response.pending_upload_id = %s.",
+                method,
+                pending_upload_response.pending_upload_id,
+            )
+            logger.debug(
+                "[%s] pending_upload_response.pending_upload_type = %s.",
+                method,
+                pending_upload_response.pending_upload_type,
+            )  # == PendingUploadType.TEMPORARY_BLOB_REFERENCE
+            logger.debug(
+                "[%s] pending_upload_response.blob_reference_for_consumption.blob_uri = %s.",
+                method,
+                pending_upload_response.blob_reference_for_consumption.blob_uri,
+            )  # Hosted on behalf of (HOBO) not visible to the user. If the form of: "https://<account>.blob.core.windows.net/<container>?<sasToken>"
+            logger.debug(
+                "[%s] pending_upload_response.blob_reference_for_consumption.storage_account_arm_id = %s.",
+                method,
+                pending_upload_response.blob_reference_for_consumption.storage_account_arm_id,
+            )  # /subscriptions/<>/resourceGroups/<>/Microsoft.Storage/accounts/<>
+            logger.debug(
+                "[%s] pending_upload_response.blob_reference_for_consumption.credential.sas_token = %s.",
+                method,
+                pending_upload_response.blob_reference_for_consumption.credential.sas_token,
+            )
+            logger.debug(
+                "[%s] pending_upload_response.blob_reference_for_consumption.credential.type = %s.",
+                method,
+                pending_upload_response.blob_reference_for_consumption.credential.type,
+            )  # == CredentialType.SAS
 
         # For overview on Blob storage SDK in Python see:
         # https://learn.microsoft.com/azure/storage/blobs/storage-quickstart-blobs-python
@@ -68,17 +92,11 @@ class DatasetsOperations(DatasetsOperationsGenerated):
 
         # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.containerclient?view=azure-python#azure-storage-blob-containerclient-from-container-url
         return await ContainerClient.from_container_url(
-            container_url=pending_upload_response.blob_reference_for_consumption.blob_uri, # Of the form: "https://<account>.blob.core.windows.net/<container>?<sasToken>"
+            container_url=pending_upload_response.blob_reference_for_consumption.blob_uri,  # Of the form: "https://<account>.blob.core.windows.net/<container>?<sasToken>"
         )
 
-
     async def upload_file_and_create_version(
-        self,
-        *,
-        name: str,
-        version: Optional[str] = None,
-        file: str,
-        **kwargs: Any
+        self, *, name: str, version: Optional[str] = None, file: str, **kwargs: Any
     ) -> DatasetVersion:
         """Upload file to a blob storage, and create a dataset that references this file.
         This method uses the `ContainerClient.upload_blob` method from the azure-storage-blob package
@@ -106,40 +124,35 @@ class DatasetsOperations(DatasetsOperationsGenerated):
             with open(file=file, mode="rb") as data:
 
                 blob_name = path_file.name  # Extract the file name from the path.
-                logger.debug("[%s] Start uploading file `%s` as blob `%s`.", inspect.currentframe().f_code.co_name, file, blob_name)
+                logger.debug(
+                    "[%s] Start uploading file `%s` as blob `%s`.",
+                    inspect.currentframe().f_code.co_name,
+                    file,
+                    blob_name,
+                )
 
                 # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.containerclient?view=azure-python#azure-storage-blob-containerclient-upload-blob
-                with await container_client.upload_blob(
-                    name=blob_name,
-                    data=data,
-                    **kwargs
-                ) as blob_client:
+                with await container_client.upload_blob(name=blob_name, data=data, **kwargs) as blob_client:
 
                     logger.debug("[%s] Done uploading", inspect.currentframe().f_code.co_name)
 
                     dataset_version = await self.create_version(
                         name=name,
-                        version=version, 
+                        version=version,
                         body=DatasetVersion(
                             # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.blobclient?view=azure-python#azure-storage-blob-blobclient-url
                             # Per above doc the ".url" contains SAS token... should this be stripped away?
-                            dataset_uri=blob_client.url, # "<account>.blob.windows.core.net/<container>/<file_name>"
+                            dataset_uri=blob_client.url,  # "<account>.blob.windows.core.net/<container>/<file_name>"
                             dataset_type=DatasetType.URI_FILE,
                         ),
                     )
 
         return dataset_version
 
-
     async def upload_folder_and_create_version(
-        self,
-        *,
-        name: str,
-        version: Optional[str] = None,
-        folder: str,
-        **kwargs: Any
+        self, *, name: str, version: Optional[str] = None, folder: str, **kwargs: Any
     ) -> DatasetVersion:
-        """Upload all files in a folder and its sub folders to a blob storage, while maintaining 
+        """Upload all files in a folder and its sub folders to a blob storage, while maintaining
         relative paths, and create a dataset that references this folder.
         This method uses the `ContainerClient.upload_blob` method from the azure-storage-blob package
         to upload each file. Any keyword arguments provided will be passed to the `upload_blob` method.
@@ -167,7 +180,12 @@ class DatasetsOperations(DatasetsOperationsGenerated):
             for file_path in path_folder.rglob("*"):  # `rglob` matches all files and folders recursively
                 if file_path.is_file():  # Check if the path is a file. Skip folders.
                     blob_name = file_path.relative_to(path_folder)  # Blob name relative to the folder
-                    logger.debug("[%s] Start uploading file `%s` as blob `%s`.",inspect.currentframe().f_code.co_name, file_path, blob_name)
+                    logger.debug(
+                        "[%s] Start uploading file `%s` as blob `%s`.",
+                        inspect.currentframe().f_code.co_name,
+                        file_path,
+                        blob_name,
+                    )
                     with await file_path.open("rb") as data:  # Open the file for reading in binary mode
                         # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.containerclient?view=azure-python#azure-storage-blob-containerclient-upload-blob
                         container_client.upload_blob(name=str(blob_name), data=data, **kwargs)
@@ -179,11 +197,11 @@ class DatasetsOperations(DatasetsOperationsGenerated):
 
             dataset_version = await self.create_version(
                 name=name,
-                version=version, 
+                version=version,
                 body=DatasetVersion(
                     # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.blobclient?view=azure-python#azure-storage-blob-blobclient-url
                     # Per above doc the ".url" contains SAS token... should this be stripped away?
-                    dataset_uri=container_client.url, # "<account>.blob.windows.core.net/<container> ?"
+                    dataset_uri=container_client.url,  # "<account>.blob.windows.core.net/<container> ?"
                     dataset_type=DatasetType.URI_FOLDER,
                 ),
             )

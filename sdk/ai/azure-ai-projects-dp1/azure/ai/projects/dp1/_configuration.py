@@ -23,7 +23,7 @@ class AIProjectClientConfiguration:  # pylint: disable=too-many-instance-attribu
     attributes.
 
     :param endpoint: Project endpoint in the form of:
-     https://<aiservices-id>.services.ai.azure.com/projects/<project-name>. Required.
+     https://<aiservices-id>.services.ai.azure.com/api/projects/<project-name>. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential

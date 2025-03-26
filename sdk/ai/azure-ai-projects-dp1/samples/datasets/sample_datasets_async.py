@@ -1,4 +1,3 @@
-
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -29,6 +28,7 @@ from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.dp1.aio import AIProjectClient
 from azure.ai.projects.dp1.models import DatasetVersion, ListViewType
 
+
 async def sample_datasets_async() -> None:
 
     endpoint = os.environ["PROJECT_ENDPOINT"]
@@ -47,8 +47,9 @@ async def sample_datasets_async() -> None:
     )
     print(dataset)
 
-
-    print("Upload all files in a folder (including subfolders) and create a new dataset version to reference the folder:")
+    print(
+        "Upload all files in a folder (including subfolders) and create a new dataset version to reference the folder:"
+    )
     dataset = await project_client.datasets.upload_folder_and_create_version(
         name=dataset_name,
         version="2.0",
@@ -56,21 +57,17 @@ async def sample_datasets_async() -> None:
     )
     print(dataset)
 
-
     print("Get the existing dataset version `1.0`:")
     dataset = await project_client.datasets.get_version(name=dataset_name, version="1.0")
     print(dataset)
-
 
     print(f"Listing all versions of the dataset named `{dataset_name}`:")
     async for dataset in project_client.datasets.list_versions(name=dataset_name, list_view_type=ListViewType.ALL):
         print(dataset)
 
-
     print("List latest versions of all datasets:")
     async for dataset in project_client.datasets.list_latest(list_view_type=ListViewType.ALL):
         print(dataset)
-
 
     print("Delete the dataset versions created above:")
     await project_client.datasets.delete_version(name=dataset_name, version="1.0")

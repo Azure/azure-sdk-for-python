@@ -39,12 +39,27 @@ class AgentsNamedToolChoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tool type ``file_search``"""
     BING_GROUNDING = "bing_grounding"
     """Tool type ``bing_grounding``"""
-    MICROSOFT_FABRIC = "fabric_aiskill"
-    """Tool type ``fabric_aiskill``"""
+    MICROSOFT_FABRIC = "fabric_dataagent"
+    """Tool type ``fabric_dataagent``"""
     SHAREPOINT = "sharepoint_grounding"
     """Tool type ``sharepoint_grounding``"""
     AZURE_AI_SEARCH = "azure_ai_search"
     """Tool type ``azure_ai_search``"""
+
+
+class AzureAISearchQueryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Available query types for Azure AI Search tool."""
+
+    SIMPLE = "simple"
+    """Query type ``simple``"""
+    SEMANTIC = "semantic"
+    """Query type ``semantic``"""
+    VECTOR = "vector"
+    """Query type ``vector``"""
+    VECTOR_SIMPLE_HYBRID = "vector_simple_hybrid"
+    """Query type ``vector_simple_hybrid``"""
+    VECTOR_SEMANTIC_HYBRID = "vector_semantic_hybrid"
+    """Query type ``vector_semantic_hybrid``"""
 
 
 class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -81,6 +96,13 @@ class DatasetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """URI file."""
     URI_FOLDER = "uri_folder"
     """URI folder."""
+
+
+class DeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of DeploymentType."""
+
+    MODEL_DEPLOYMENT = "ModelDeployment"
+    """Model deployment"""
 
 
 class FilePurpose(str, Enum, metaclass=CaseInsensitiveEnumMeta):
