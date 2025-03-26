@@ -5,8 +5,11 @@
 ### Features added
 
 * New parameters added for Azure AI Search tool, with corresponding sample update.
+* Fabric tool REST name updated, along with convenience code.
 
 ### Sample updates
+
+* Sample update demonstrating new parameters added for Azure AI Search tool.
 
 ### Bugs Fixed
 
