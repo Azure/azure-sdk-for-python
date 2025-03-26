@@ -763,6 +763,7 @@ class AsyncFunctionTool(BaseFunctionTool):
 class AzureAISearchTool(Tool[AzureAISearchToolDefinition]):
     """
     A tool that searches for information using Azure AI Search.
+    :param connection_id: Connection ID used by tool. All connection tools allow only one connection.
     """
 
     def __init__(
@@ -773,6 +774,21 @@ class AzureAISearchTool(Tool[AzureAISearchToolDefinition]):
         filter: str = "",
         top_k: int = 5,
     ):
+        """
+        Initialize AzureAISearch with an index_connection_id and index_name, with optional params.
+
+        :param index_connection_id: Index Connection ID used by tool. Allows only one connection.
+        :type index_connection_id: str
+        :param index_name: Name of Index in search resource to be used by tool.
+        :type index_name: str
+        :param query_type: Type of query in an AIIndexResource attached to this agent. 
+            Default value is AzureAISearchQueryType.SIMPLE.
+        :type query_type: AzureAISearchQueryType
+        :param filter: Odata filter string for search resource.
+        :type filter: str
+        :param top_k: Number of documents to retrieve from search and present to the model.
+        :type top_k: int
+        """
         self.index_list = [
             AISearchIndexResource(
                 index_connection_id=index_connection_id,
