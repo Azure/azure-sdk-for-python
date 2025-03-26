@@ -41,7 +41,7 @@ def fetch_weather(location: str) -> str:
     """
     # In a real-world scenario, you'd integrate with a weather API.
     # Here, we'll mock the response.
-    mock_weather_data = {"New York": "Sunny, 25°C", "London": "Cloudy, 18°C", "Tokyo": "Rainy, 22°C"}
+    mock_weather_data = {"New York": "Sunny, 25°C", "London": "Cloudy, 18°C", "Tokyo": "Rainy, 22°C", "Seattle": "Rainy, 14°C"}
     weather = mock_weather_data.get(location, "Weather data not available for this location.")
     weather_json = json.dumps({"weather": weather})
     return weather_json
