@@ -142,9 +142,6 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
                             encryption_algorithm=cpk.algorithm)
     kwargs['cpk_info'] = cpk_info
 
-    if kwargs['etag'] is None:
-        kwargs.pop('etag')
-
     headers = kwargs.pop('headers', {})
     headers.update(add_metadata_headers(metadata))
     kwargs['lease_access_conditions'] = get_access_conditions(kwargs.pop('lease', None))
@@ -190,7 +187,7 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
         kwargs['client'] = client.append_blob
     else:
         raise ValueError(f"Unsupported BlobType: {blob_type}")
-    return kwargs
+    return {k: v for k, v in kwargs.items() if v is not None}
 
 def _upload_blob_from_url_options(source_url: str, **kwargs: Any) -> Dict[str, Any]:
     metadata = kwargs.pop('metadata', None)
@@ -235,10 +232,10 @@ def _upload_blob_from_url_options(source_url: str, **kwargs: Any) -> Dict[str, A
         'cpk_scope_info': get_cpk_scope_info(kwargs),
         'headers': headers,
     }
-    options.update({k: v for k, v in kwargs.items() if v is not None})
+    options.update(kwargs)
     if not overwrite and not _any_conditions(**options):
         options['modified_access_conditions'].if_none_match = '*'
-    return options
+    return {k: v for k, v in options.items() if v is not None}
 
 def _download_blob_options(
     blob_name: str,
@@ -296,9 +293,6 @@ def _download_blob_options(
             encryption_algorithm=cpk.algorithm
         )
 
-    if kwargs['etag'] is None:
-        kwargs.pop('etag')
-
     # Add feature flag to user agent for encryption
     if encryption_options['key'] or encryption_options['resolver']:
         modify_user_agent_for_encryption(
@@ -330,7 +324,7 @@ def _download_blob_options(
         'container': container_name
     }
     options.update(kwargs)
-    return options
+    return {k: v for k, v in options.items() if v is not None}
 
 def _quick_query_options(snapshot: Optional[str], query_expression: str, **kwargs: Any ) -> Tuple[Dict[str, Any], str]:
     delimiter = '\n'
