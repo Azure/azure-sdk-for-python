@@ -13,9 +13,10 @@
 
 ### Bugs Fixed
 
-* Fix for a bug in agent tracing causing event handler return values to not be returned when tracing is enabled.
-* Fix for a bug in agent tracing causing tool calls not to be recorded in traces.
-* Fix for a bug in agent tracing causing function tool calls to not work properly when tracing is enabled.
+* Fix for a bug in Agent tracing causing event handler return values to not be returned when tracing is enabled.
+* Fix for a bug in Agent tracing causing tool calls not to be recorded in traces.
+* Fix for a bug in Agent tracing causing function tool calls to not work properly when tracing is enabled.
+* Fix for a bug in Agent streaming, where `agent_id` was not included in the response. This caused the SDK not to make function calls when the thread run status is `requires_action`.
 
 ### Breaking Changes
 
