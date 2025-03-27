@@ -19,7 +19,7 @@ from devtools_testutils.proxy_testcase import (
     stop_record_or_playback,
 )
 
-from async_wrapper import async_wrapper
+from async_wrapper import wrap_result
 
 
 # A modified version of devtools_testutils.aio.recorded_by_proxy_async
@@ -137,17 +137,18 @@ def client_setup(test_func):
         else:
             return "https://" + batch.account_endpoint
 
-    def create_sharedkey_client(BatchClient, batch_account, credential, **kwargs):
+    def create_client(BatchClient, batch_account, credential, **kwargs):
         client = BatchClient(credential=credential, endpoint=_batch_url(batch_account))
         return client
 
     async def wrapper(self, BatchClient, **kwargs):
-        client = create_sharedkey_client(BatchClient, **kwargs)
+        kwargs["credential"] = self.get_credential(BatchClient)  # TODO: look into sharedkey auth to fix this workaround
+        client = create_client(BatchClient, **kwargs)
         try:
             await test_func(self, client, **kwargs)
         except Exception as err:
             raise err
         finally:
-            await async_wrapper(client.close())
+            await wrap_result(client.close())
 
     return wrapper

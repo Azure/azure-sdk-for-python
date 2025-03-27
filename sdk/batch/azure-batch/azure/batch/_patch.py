@@ -44,6 +44,7 @@ if TYPE_CHECKING:
     T = TypeVar("T")
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
+
 class BatchSharedKeyAuthPolicy(SansIOHTTPPolicy):
 
     headers_to_sign = [
@@ -142,15 +143,10 @@ class BatchClient(GenerateBatchClient):
     :paramtype api_version: str
     """
 
-    def __init__(
-        self,
-        endpoint: str,
-        credential: Union[AzureNamedKeyCredential, TokenCredential],
-        **kwargs
-    ):
+    def __init__(self, endpoint: str, credential: Union[AzureNamedKeyCredential, TokenCredential], **kwargs):
         super().__init__(
             endpoint=endpoint,
-            credential=credential,
+            credential=credential, # type: ignore
             authentication_policy=kwargs.pop(
                 "authentication_policy", self._format_shared_key_credential("", credential)
             ),
