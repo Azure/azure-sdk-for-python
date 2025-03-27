@@ -1,4 +1,9 @@
 # Release History
+## 1.26.1 (2025-03-27)
+
+### Bugs Fixed
+ - Handle missing duration value in deployment poller result
+
 ## 1.26.0 (2025-03-11)
 
 ### Features Added
