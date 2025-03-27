@@ -7,7 +7,7 @@
 FILE: sample_agents_fabric.py
 
 DESCRIPTION:
-    This sample demonstrates how to use agent operations with the Microsoft Fabric grounding tool from
+    This sample demonstrates how to use Agent operations with the Microsoft Fabric grounding tool from
     the Azure Agents service using a synchronous client.
 
 USAGE:
@@ -26,11 +26,6 @@ from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects.models import FabricTool
 
-
-# Create an Azure AI Client from a connection string, copied from your AI Studio project.
-# At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
-# Customer needs to login to Azure subscription via Azure CLI and set the environment variables
-
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(),
     conn_str=os.environ["PROJECT_CONNECTION_STRING"],
@@ -42,20 +37,20 @@ conn_id = fabric_connection.id
 
 print(conn_id)
 
-# Initialize agent fabric tool and add the connection id
+# Initialize Agent Fabric tool and add the connection id
 fabric = FabricTool(connection_id=conn_id)
 
-# Create agent with the bing tool and process assistant run
+# Create Agent with the Fabric tool and process Agent run
 with project_client:
     agent = project_client.agents.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
-        name="my-assistant",
-        instructions="You are a helpful assistant",
+        name="my-agent",
+        instructions="You are a helpful agent",
         tools=fabric.definitions,
         headers={"x-ms-enable-preview": "true"},
     )
     # [END create_agent_with_fabric_tool]
-    print(f"Created agent, ID: {agent.id}")
+    print(f"Created Agent, ID: {agent.id}")
 
     # Create thread for communication
     thread = project_client.agents.create_thread()
@@ -65,18 +60,18 @@ with project_client:
     message = project_client.agents.create_message(
         thread_id=thread.id,
         role="user",
-        content="<User query against Fabric data>",
+        content="<User query against Fabric resource>",
     )
     print(f"Created message, ID: {message.id}")
 
-    # Create and process agent run in thread with tools
+    # Create and process Agent run in thread with tools
     run = project_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
     print(f"Run finished with status: {run.status}")
 
     if run.status == "failed":
         print(f"Run failed: {run.last_error}")
 
-    # Delete the assistant when done
+    # Delete the Agent when done
     project_client.agents.delete_agent(agent.id)
     print("Deleted agent")
 
