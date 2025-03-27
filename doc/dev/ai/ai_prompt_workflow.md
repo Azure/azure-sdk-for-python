@@ -3,7 +3,7 @@
 
 1. In Copilot **Agent** mode, click on `add_context` and select `prompt` from the dropdown.
 
-*Note*: Agent mode is currently only available in VSCode Insiders.
+*Note*: Agent mode is currently only available in [VSCode Insiders](https://code.visualstudio.com/insiders/).
 
 ![Agent Mode](step1.png)
 
@@ -12,3 +12,5 @@
 ![Select Prompt](step2.png)
 
 3. Send the prompt to the agent. Follow the instructions provided by the agent to complete the task.
+
+![Hit Enter!](step3.png)
