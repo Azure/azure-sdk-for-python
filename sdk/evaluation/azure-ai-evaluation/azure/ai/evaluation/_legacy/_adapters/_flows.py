@@ -10,7 +10,7 @@ try:
     from promptflow._sdk.entities._flows import FlexFlow as _FlexFlow
     from promptflow._sdk.entities._flows.dag import Flow as _Flow
 except ImportError:
-    from azure.ai.evaluation.legacy.prompty import AsyncPrompty as _AsyncPrompty
+    from azure.ai.evaluation._legacy.prompty import AsyncPrompty as _AsyncPrompty
 
     class _FlexFlow:
         pass

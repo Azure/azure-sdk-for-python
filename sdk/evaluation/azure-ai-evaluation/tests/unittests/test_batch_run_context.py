@@ -2,8 +2,8 @@ import os
 from unittest.mock import MagicMock
 
 import pytest
-from azure.ai.evaluation.legacy._adapters.client import PFClient
-from azure.ai.evaluation._legacy import MISSING_LEGACY_SDK
+from azure.ai.evaluation._legacy._adapters.client import PFClient
+from azure.ai.evaluation._legacy._adapters import MISSING_LEGACY_SDK
 
 from azure.ai.evaluation._constants import PF_BATCH_TIMEOUT_SEC, PF_BATCH_TIMEOUT_SEC_DEFAULT
 from azure.ai.evaluation._evaluate._batch_run import CodeClient, EvalRunContext, ProxyClient

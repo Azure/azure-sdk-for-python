@@ -9,8 +9,8 @@ from concurrent.futures import Future
 from typing import Any, Callable, Dict, Optional, Sequence, Union, cast
 
 import pandas as pd
-from azure.ai.evaluation.legacy._adapters.types import AttrDict
-from azure.ai.evaluation.legacy._adapters.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
+from azure.ai.evaluation._legacy._adapters.types import AttrDict
+from azure.ai.evaluation._legacy._adapters.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 
 from azure.ai.evaluation._evaluate._utils import _apply_column_mapping, _has_aggregator, get_int_env_var, load_jsonl
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException

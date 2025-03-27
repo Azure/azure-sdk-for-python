@@ -8,9 +8,8 @@ import os
 import re
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypedDict, Union, cast
 
-from azure.ai.evaluation.legacy._adapters._constants import LINE_NUMBER
-from azure.ai.evaluation.legacy._adapters._errors import MissingRequiredPackage
-from azure.ai.evaluation.legacy._adapters.entities import Run
+from azure.ai.evaluation._legacy._adapters._constants import LINE_NUMBER
+from azure.ai.evaluation._legacy._adapters.entities import Run
 import pandas as pd
 
 from azure.ai.evaluation._common.math import list_mean_nan_safe, apply_transform_nan_safe
