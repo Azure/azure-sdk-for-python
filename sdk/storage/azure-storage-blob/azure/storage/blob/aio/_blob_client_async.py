@@ -43,6 +43,7 @@ from .._blob_client_helpers import (
     _download_blob_options,
     _format_url,
     _from_blob_url,
+    _get_blob_properties_options,
     _get_blob_tags_options,
     _get_block_list_result,
     _get_page_ranges_options,
@@ -69,7 +70,6 @@ from .._deserialize import (
 )
 from .._encryption import StorageEncryptionMixin, _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
 from .._generated.aio import AzureBlobStorage
-from .._generated.models import CpkInfo
 from .._models import BlobType, BlobBlock, BlobProperties, PageRange
 from .._serialize import get_access_conditions, get_api_version, get_modify_conditions, get_version_id
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
@@ -1029,7 +1029,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             process_storage_error(error)
 
     @distributed_trace_async
-    async def undelete_blob(self, **kwargs: Any) -> None:
+    async def undelete_blob(self, *, timeout: Optional[int] = None, **kwargs: Any) -> None:
         """Restores soft-deleted blobs or snapshots.
 
         Operation will only be successful if used within the specified number of days
@@ -1057,12 +1057,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
                 :caption: Undeleting a blob.
         """
         try:
-            await self._client.blob.undelete(timeout=kwargs.pop('timeout', None), **kwargs)
+            await self._client.blob.undelete(timeout=timeout, **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def exists(self, **kwargs: Any) -> bool:
+    async def exists(self, *, version_id: Optional[str] = None, timeout: Optional[int] = None, **kwargs: Any) -> bool:
         """
         Returns True if a blob exists with the defined parameters, and returns
         False otherwise.
@@ -1079,12 +1079,13 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         :returns: boolean
         :rtype: bool
         """
-        version_id = get_version_id(self.version_id, kwargs)
         try:
             await self._client.blob.get_properties(
                 snapshot=self.snapshot,
-                version_id=version_id,
-                **kwargs)
+                version_id=version_id or self.version_id,
+                timeout=timeout,
+                **kwargs
+            )
             return True
         # Encrypted with CPK
         except ResourceExistsError:
@@ -1096,7 +1097,19 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
                 return False
 
     @distributed_trace_async
-    async def get_blob_properties(self, **kwargs: Any) -> BlobProperties:
+    async def get_blob_properties(
+        self, *,
+        lease: Optional[Union[BlobLeaseClient, str]] = None,
+        version_id: Optional[str] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional["MatchConditions"] = None,
+        if_tags_match_condition: Optional[str] = None,
+        cpk: Optional["CustomerProvidedEncryptionKey"] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> BlobProperties:
         """Returns all user-defined metadata, standard HTTP properties, and
         system properties for the blob. It does not return the content of the blob.
 
@@ -1158,29 +1171,29 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
                 :dedent: 12
                 :caption: Getting the properties for a blob.
         """
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = get_modify_conditions(kwargs)
-        version_id = get_version_id(self.version_id, kwargs)
-        cpk = kwargs.pop('cpk', None)
-        cpk_info = None
-        if cpk:
-            if self.scheme.lower() != 'https':
-                raise ValueError("Customer provided encryption key must be used over HTTPS.")
-            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                               encryption_algorithm=cpk.algorithm)
+        if cpk and self.scheme.lower() != 'https':
+            raise ValueError("Customer provided encryption key must be used over HTTPS.")
+        options = _get_blob_properties_options(
+            lease=lease,
+            version_id=version_id or self.version_id,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_condition=match_condition,
+            if_tags_match_condition=if_tags_match_condition,
+            cpk=cpk,
+            snapshot=self.snapshot,
+            timeout=timeout,
+            **kwargs
+        )
         try:
             cls_method = kwargs.pop('cls', None)
             if cls_method:
                 kwargs['cls'] = partial(deserialize_pipeline_response_into_cls, cls_method)
             blob_props = await self._client.blob.get_properties(
-                timeout=kwargs.pop('timeout', None),
-                version_id=version_id,
-                snapshot=self.snapshot,
-                lease_access_conditions=access_conditions,
-                modified_access_conditions=mod_conditions,
                 cls=kwargs.pop('cls', None) or deserialize_blob_properties,
-                cpk_info=cpk_info,
-                **kwargs)
+                **options
+            )
         except HttpResponseError as error:
             process_storage_error(error)
         blob_props.name = self.blob_name
