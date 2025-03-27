@@ -24,7 +24,7 @@
         "COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST": "false"
       }
     },
-    "PythonVersion": ["pypy3.9", "3.8", "3.10", "3.11"],
+    "PythonVersion": ["env:PYPYVERSION_N0", "env:PYVERSION_N5", "env:PYVERSION_N3", "env:PYVERSION_N2"],
     "CoverageArg": "--disablecov",
     "TestSamples": "false"
   },
@@ -34,7 +34,7 @@
         "ubuntu2004_39_coverage": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
-          "PythonVersion": "3.9",
+          "PythonVersion": "env:PYVERSION_N4",
           "CoverageArg": "",
           "TestSamples": "false",
           "AZURE_TEST_AGENT": "UBUNTU_2004_PYTHON39",
@@ -47,7 +47,7 @@
         "Ubuntu2004_3120": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
-          "PythonVersion": "3.12",
+          "PythonVersion": "env:PYVERSION_N1",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
           "COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST": "true"
