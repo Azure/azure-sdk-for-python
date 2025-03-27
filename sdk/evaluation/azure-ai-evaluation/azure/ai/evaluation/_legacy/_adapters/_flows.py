@@ -14,10 +14,12 @@ except ImportError:
 
     class _FlexFlow:
         pass
+
     _FlexFlow.__name__ = "FlexFlow"
 
     class _Flow:
         name: str
+
     _Flow.__name__ = "Flow"
 
 
