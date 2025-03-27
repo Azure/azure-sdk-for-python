@@ -40,7 +40,7 @@ print(conn_id)
 # Initialize Agent Fabric tool and add the connection id
 fabric = FabricTool(connection_id=conn_id)
 
-# Create Agent with the Fabric tool and process Agent run
+# Create an Agent with the Fabric tool and process an Agent run
 with project_client:
     agent = project_client.agents.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
@@ -64,7 +64,7 @@ with project_client:
     )
     print(f"Created message, ID: {message.id}")
 
-    # Create and process Agent run in thread with tools
+    # Create and process an Agent run in thread with tools
     run = project_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
     print(f"Run finished with status: {run.status}")
 
