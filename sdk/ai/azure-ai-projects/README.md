@@ -825,15 +825,15 @@ conn_id = fabric_connection.id
 
 print(conn_id)
 
-# Initialize an Agent fabric tool and add the connection id
+# Initialize an Agent Fabric tool and add the connection id
 fabric = FabricTool(connection_id=conn_id)
 
 # Create an Agent with the Fabric tool and process an Agent run
 with project_client:
     agent = project_client.agents.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
-        name="my-assistant",
-        instructions="You are a helpful assistant",
+        name="my-agent",
+        instructions="You are a helpful agent",
         tools=fabric.definitions,
         headers={"x-ms-enable-preview": "true"},
     )
