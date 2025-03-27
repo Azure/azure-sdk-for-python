@@ -17,6 +17,7 @@ _TOOL = "tool"
 _TOOL_CALL = "tool_call"
 _TOOL_RESULT = "tool_result"
 _FUNCTION = "function"
+_OPENAPI_FUNCTION = "openapi"
 
 # This is returned by AI services in the API to filter against tool invocations.
 _TOOL_CALLS = "tool_calls"
@@ -169,6 +170,7 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
     # all in most of the cases, and bing would only show the API URL, without arguments or results.
     # Bing grounding would have "bing_grounding" in details with "requesturl" that will just be the API path with query.
     # TODO: Work with AI Services to add converter support for BingGrounding and CodeInterpreter.
+    # TODO: Clean this up once we have stable model objects published and can make this more consistent
     if hasattr(tool_call.details, _FUNCTION):
         # This is the internals of the content object that will be included with the tool call.
         tool_call_id = tool_call.details.id
@@ -177,6 +179,14 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
             "tool_call_id": tool_call_id,
             "name": tool_call.details.function.name,
             "arguments": safe_loads(tool_call.details.function.arguments),
+        }
+    elif tool_call.details.type == "openapi":
+        tool_call_id = tool_call.details.id
+        content_tool_call = {
+            "type": _TOOL_CALL,
+            "tool_call_id": tool_call_id,
+            "name": tool_call.details["function"]["name"],
+            "arguments": safe_loads(tool_call.details["function"]["arguments"]),
         }
     else:
         # Treat built-in tools separately.  Object models may be unique so handle each case separately
@@ -210,8 +220,12 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
     # assistant's action of calling the tool.
     messages.append(AssistantMessage(run_id=run_id, content=[to_dict(content_tool_call)], createdAt=tool_call.created))
 
+    # TODO: clean up once we have stable model objects and can make this more consistent
+    output = None
     if hasattr(tool_call.details, _FUNCTION):
         output = safe_loads(tool_call.details.function.output)
+    elif tool_call.details.type == _OPENAPI_FUNCTION:
+        output = safe_loads(tool_call.details["function"]["output"])
     else:
         try:
             # Some built-ins may have output, others may not
@@ -233,6 +247,9 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
                 ]
         except:
             return messages
+
+    if output is None:
+        return messages
 
     # Now, onto the tool result, which only includes the result of the function call.
     content_tool_call_result = {"type": _TOOL_RESULT, _TOOL_RESULT: output}
