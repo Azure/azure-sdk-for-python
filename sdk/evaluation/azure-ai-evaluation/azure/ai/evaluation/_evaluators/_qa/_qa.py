@@ -70,6 +70,7 @@ class QAEvaluator(MultiEvaluatorBase[Union[str, float]]):
     def __init__(
         self,
         model_config,
+        *,
         groundedness_threshold: int = 3,
         relevance_threshold: int = 3,
         coherence_threshold: int = 3,

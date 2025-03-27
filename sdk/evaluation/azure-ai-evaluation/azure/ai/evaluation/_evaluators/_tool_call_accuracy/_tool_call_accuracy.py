@@ -23,7 +23,6 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         - Relevance to the conversation
         - Parameter correctness according to tool definitions
         - Parameter value extraction from the conversation
-        - Potential usefulness of the tool call
 
     The evaluator uses a binary scoring system (0 or 1):
         - Score 0: The tool call is irrelevant or contains information not in the conversation/definition
@@ -65,7 +64,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, threshold=_DEFAULT_TOOL_CALL_ACCURACY_SCORE):
+    def __init__(self, model_config, *, threshold=_DEFAULT_TOOL_CALL_ACCURACY_SCORE):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self.threshold = threshold
@@ -262,17 +261,6 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         aggregated[f'{self._AGGREGATE_RESULT_KEY}_result'] = 'pass' if score >= self.threshold else 'fail'
         aggregated[f'{self._AGGREGATE_RESULT_KEY}_threshold'] = self.threshold
 
-        # for turn in per_turn_results:
-        #     for metric, value in turn.items():
-        #         if metric not in evaluation_per_turn:
-        #             evaluation_per_turn[metric] = []
-        #         evaluation_per_turn[metric].append(value)
-        #
-        # # Find and average all numeric values
-        # for metric, values in evaluation_per_turn.items():
-        #     if all(isinstance(value, (int, float)) for value in values):
-        #         aggregated[metric] = self._conversation_aggregation_function(cast(List[Union[int, float]], values))
-        # # Slap the per-turn results back in.
         aggregated["per_tool_call_details"] = per_turn_results
         return aggregated
 
@@ -286,18 +274,18 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         Evaluate tool call accuracy. Accepts a query, tool definitions, and tool calls for evaluation.
 
         :keyword query: Query or Chat history up to the message that has the tool call being evaluated.
-        :paramtype query: Union[str, List[ThreadMessage]]
+        :paramtype query: Union[str, List[dict]]
         :keyword tool_definitions: List of tool definitions whose calls are being evaluated.
-        :paramtype tool_definitions: List[ToolDefinition]
+        :paramtype tool_definitions: Union[dict, List[dict]]
         :keyword tool_calls: Optional List of tool calls to evaluate. If not provided response should be provided and should have
             tool call(s) in it.
-        :paramtype tool_calls: List[ToolCall]
+        :paramtype tool_calls: Union[dict, List[dict]]
         :keyword response: Optional response to be evaluated alongside the tool calls.
             If provided all tool calls in response will be evaluated when tool_calls parameter is not provided.
             If provided and tool_calls parameter is provided, only the tool calls in tool_calls parameter will be evaluated.
                 If response has extra tool calls they will not be evaluated, response will be used to extract any tool calls that are needed for evaluating a certain tool call.
             Recommended to provide it when there are tool calls that depend on output of a previous tool call.
-        :paramtype response: Union[str, List[ThreadMessage]]
+        :paramtype response: Union[str, List[dict]]
         :return: The tool selection evaluation results.
         :rtype: Dict[str, Union[str, float]]
         """
