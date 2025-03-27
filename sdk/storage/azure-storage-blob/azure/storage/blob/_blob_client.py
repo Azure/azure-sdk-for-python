@@ -742,7 +742,6 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         self, offset: Optional[int] = None,
         length: Optional[int] = None,
         *,
-        encoding: str,
         version_id: Optional[str] = None,
         validate_content: bool = False,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
@@ -753,6 +752,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         if_tags_match_condition: Optional[str] = None,
         cpk: Optional["CustomerProvidedEncryptionKey"] = None,
         max_concurrency: int = 1,
+        encoding: str,
         progress_hook: Optional[Callable[[int, int], None]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
@@ -764,7 +764,6 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         self, offset: Optional[int] = None,
         length: Optional[int] = None,
         *,
-        encoding: None = None,
         version_id: Optional[str] = None,
         validate_content: bool = False,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
@@ -775,6 +774,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         if_tags_match_condition: Optional[str] = None,
         cpk: Optional["CustomerProvidedEncryptionKey"] = None,
         max_concurrency: int = 1,
+        encoding: None = None,
         progress_hook: Optional[Callable[[int, int], None]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any

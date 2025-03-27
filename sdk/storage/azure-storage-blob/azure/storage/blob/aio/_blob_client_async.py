@@ -77,9 +77,11 @@ from .._shared.policies_async import ExponentialRetry
 from .._shared.response_handlers import process_storage_error, return_response_headers
 
 if TYPE_CHECKING:
+    from azure.core import MatchConditions
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
     from azure.core.pipeline.policies import AsyncHTTPPolicy
+    from azure.storage.blob import CustomerProvidedEncryptionKey
     from azure.storage.blob.aio import ContainerClient
     from .._models import (
         ContentSettings,
@@ -734,7 +736,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         self, offset: Optional[int] = None,
         length: Optional[int] = None,
         *,
-        encoding: str,
         version_id: Optional[str] = None,
         validate_content: bool = False,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
@@ -745,7 +746,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         if_tags_match_condition: Optional[str] = None,
         cpk: Optional["CustomerProvidedEncryptionKey"] = None,
         max_concurrency: int = 1,
-        progress_hook: Optional[Callable[[int, int], None]] = None,
+        encoding: str,
+        progress_hook: Optional[Callable[[int, int], Awaitable[None]]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> StorageStreamDownloader[str]:
@@ -756,7 +758,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         self, offset: Optional[int] = None,
         length: Optional[int] = None,
         *,
-        encoding: None = None,
         version_id: Optional[str] = None,
         validate_content: bool = False,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
@@ -767,7 +768,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         if_tags_match_condition: Optional[str] = None,
         cpk: Optional["CustomerProvidedEncryptionKey"] = None,
         max_concurrency: int = 1,
-        progress_hook: Optional[Callable[[int, int], None]] = None,
+        encoding: None = None,
+        progress_hook: Optional[Callable[[int, int], Awaitable[None]]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> StorageStreamDownloader[bytes]:
