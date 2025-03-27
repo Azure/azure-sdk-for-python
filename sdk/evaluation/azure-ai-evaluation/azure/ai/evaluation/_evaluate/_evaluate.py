@@ -514,7 +514,7 @@ def _apply_target_to_data(
             data=data,
             stream=True,
             name=_run_name,
-            evaluator_name="TARGET",
+            evaluator_name=getattr(target, "__qualname__", "TARGET"),
         )
 
     target_output: pd.DataFrame = batch_client.get_details(run, all_results=True)
