@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=docstring-keyword-should-match-keyword-only
 
 import functools
 from typing import (
@@ -100,6 +99,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         *,
         api_version: Optional[str] = None,
         secondary_hostname: Optional[str] = None,
+        audience: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         parsed_url, sas_token = _parse_url(account_url=account_url, credential=credential)
@@ -109,6 +109,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             service='queue',
             credential=credential,
             secondary_hostname=secondary_hostname,
+            audience=audience,
             **kwargs
         )
         self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline)
@@ -130,6 +131,8 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         cls, conn_str: str,
         credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
         *,
+        api_version: Optional[str] = None,
+        secondary_hostname: Optional[str] = None,
         audience: Optional[str] = None,
         **kwargs: Any
     ) -> Self:
@@ -151,6 +154,11 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             ~azure.core.credentials.AzureSasCredential or
             ~azure.core.credentials.TokenCredential or
             str or dict[str, str] or None
+        :keyword str api_version:
+            The Storage API version to use for requests. Default value is the most recent service version that is
+            compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
+        :keyword str secondary_hostname:
+            The hostname of the secondary endpoint.
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
             authentication. Only has an effect when credential is of type TokenCredential. The value could be
             https://storage.azure.com/ (default) or https://<account>.queue.core.windows.net.
@@ -169,7 +177,14 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         account_url, secondary, credential = parse_connection_str(conn_str, credential, 'queue')
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
-        return cls(account_url, credential=credential, audience=audience, **kwargs)
+        return cls(
+            account_url,
+            credential=credential,
+            api_version=api_version,
+            secondary_hostname=secondary_hostname,
+            audience=audience,
+            **kwargs
+        )
 
     @distributed_trace
     def get_service_stats(self, *, timeout: Optional[int] = None, **kwargs: Any) -> Dict[str, Any]:

@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=docstring-keyword-should-match-keyword-only
 
 import functools
 from typing import (
@@ -99,6 +98,7 @@ class QueueServiceClient(  # type: ignore [misc]
         *,
         api_version: Optional[str] = None,
         secondary_hostname: Optional[str] = None,
+        audience: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
@@ -110,6 +110,7 @@ class QueueServiceClient(  # type: ignore [misc]
             service='queue',
             credential=credential,
             secondary_hostname=secondary_hostname,
+            audience=audience,
             **kwargs
         )
         self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline, loop=loop)
@@ -132,6 +133,8 @@ class QueueServiceClient(  # type: ignore [misc]
         cls, conn_str: str,
         credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
         *,
+        api_version: Optional[str] = None,
+        secondary_hostname: Optional[str] = None,
         audience: Optional[str] = None,
         **kwargs: Any
     ) -> Self:
@@ -150,6 +153,14 @@ class QueueServiceClient(  # type: ignore [misc]
             should be the storage account key.
         :type credential:
             Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]]
+        :keyword str api_version:
+            The Storage API version to use for requests. Default value is the most recent service version that is
+            compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
+        :keyword str secondary_hostname:
+            The hostname of the secondary endpoint.
+        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type TokenCredential. The value could be
+            https://storage.azure.com/ (default) or https://<account>.queue.core.windows.net.
         :returns: A Queue service client.
         :rtype: ~azure.storage.queue.QueueClient
 
@@ -165,7 +176,14 @@ class QueueServiceClient(  # type: ignore [misc]
         account_url, secondary, credential = parse_connection_str(conn_str, credential, 'queue')
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
-        return cls(account_url, credential=credential, audience=audience, **kwargs)
+        return cls(
+            account_url,
+            credential=credential,
+            api_version=api_version,
+            secondary_hostname=secondary_hostname,
+            audience=audience,
+            **kwargs
+        )
 
     @distributed_trace_async
     async def get_service_stats(self, *, timeout: Optional[int] = None, **kwargs: Any) -> Dict[str, Any]:
