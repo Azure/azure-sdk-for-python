@@ -87,7 +87,10 @@ class BaseExporter:
         parsed_connection_string = ConnectionStringParser(kwargs.get("connection_string"))
 
         self._api_version = kwargs.get("api_version") or _SERVICE_API_LATEST
-        self._credential = _get_authentication_credential(**kwargs)
+        if self._is_stats_exporter():
+            self._credential = None
+        else:
+            self._credential = _get_authentication_credential(**kwargs)
         self._consecutive_redirects = 0  # To prevent circular redirects
         self._disable_offline_storage = kwargs.get("disable_offline_storage", False)
         self._endpoint = parsed_connection_string.endpoint
@@ -456,7 +459,7 @@ def _get_authentication_credential(**kwargs: Any) -> ManagedIdentityCredential:
             if "authorization" in auth_string_d and auth_string_d["authorization"] == "AAD":
                 if "clientid" in auth_string_d:
                     logger.info("ClientId found, trying to authenticate using Managed Identity.")
-                    credential = ManagedIdentityCredential(auth_string_d["clientid"])
+                    credential = ManagedIdentityCredential(client_id=auth_string_d["clientid"])
                     return credential
                 else:
                     logger.info("Trying to authenticate using System assigned Managed Identity.")
