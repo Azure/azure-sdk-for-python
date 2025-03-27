@@ -18,6 +18,7 @@ from azure.monitor.opentelemetry.exporter.export._base import (
     ExportResult,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._state import _REQUESTS_MAP
+from azure.monitor.opentelemetry.exporter.statsbeat._exporter import _StatsBeatExporter
 from azure.monitor.opentelemetry.exporter._constants import (
     _DEFAULT_AAD_SCOPE,
     _REQ_DURATION_NAME,
@@ -977,10 +978,20 @@ class TestBaseExporter(unittest.TestCase):
     def test_credential_env_var_and_arg(self, mock_add_credential_policy, mock_get_authentication_credential):
         mock_get_authentication_credential.return_value = "TEST_CREDENTIAL_ENV_VAR"
         base = BaseExporter(authentication_policy=TEST_AUTH_POLICY)
-        # self.assertEqual(base._credential, "TEST_CREDENTIAL_ENV_VAR")
+        self.assertEqual(base._credential, "TEST_CREDENTIAL_ENV_VAR")
         mock_add_credential_policy.assert_called_once_with("TEST_CREDENTIAL_ENV_VAR", TEST_AUTH_POLICY, None)
         mock_get_authentication_credential.assert_called_once_with(authentication_policy=TEST_AUTH_POLICY)
 
+    @mock.patch.dict("os.environ", {
+        "APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "TEST_CREDENTIAL_ENV_VAR"
+    })
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base._get_authentication_credential")
+    def test_statsbeat_no_credential(self, mock_get_authentication_credential):
+        mock_get_authentication_credential.return_value = "TEST_CREDENTIAL_ENV_VAR"
+        statsbeat_exporter = _StatsBeatExporter()
+        self.assertIsNone(statsbeat_exporter._credential)
+        mock_get_authentication_credential.assert_not_called()
+    
     def test_get_auth_policy(self):
         class TestCredential:
             def get_token(self):
@@ -1047,7 +1058,7 @@ class TestBaseExporter(unittest.TestCase):
             foo="bar"
         )
         self.assertEqual(result, MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL)
-        mock_managed_identity.assert_called_once_with("TEST_CLIENT_ID")
+        mock_managed_identity.assert_called_once_with(client_id="TEST_CLIENT_ID")
 
     @mock.patch.dict("os.environ", {
         "APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "Authorization=AAD;ClientId=TEST_CLIENT_ID=bar"
@@ -1114,7 +1125,7 @@ class TestBaseExporter(unittest.TestCase):
             foo="bar"
         )
         self.assertIsNone(result)
-        mock_managed_identity.assert_called_once_with("TEST_CLIENT_ID")
+        mock_managed_identity.assert_called_once_with(client_id="TEST_CLIENT_ID")
 
 
 def validate_telemetry_item(item1, item2):
