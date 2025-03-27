@@ -124,7 +124,12 @@ class RedTeamOutput():
         self.redteaming_data = redteaming_data
 
     def to_json(self) -> str:
-        """Converts a RedTeamResult object to a JSON-serializable dictionary."""
+        """
+        Converts a RedTeamResult object to a JSON-serializable dictionary.
+
+        :returns: A string containing the RedTeamResult in JSON format.
+        :rtype: str
+        """
         return json.dumps(self.red_team_result) if self.red_team_result else ""
 
     def to_scorecard(self) -> Optional[RedTeamingScorecard]:
@@ -148,8 +153,8 @@ class RedTeamOutput():
             "threshold": "threshold value" (if available from evaluation)
         }
         
-        :returns: A string containing query-response pairs in JSONL format.
-        :rtype: str
+        :returns: A list of strings containing query-response pairs in JSONL format.
+        :rtype: List[str]
         """
         if not self.redteaming_data:
             return ""
@@ -192,11 +197,13 @@ class RedTeamOutput():
                         
                         result_lines.append(json.dumps(qr_pair))
             
-        return "\n".join(result_lines)
+        return result_lines
     
     def attack_simulation(self) -> str:
         """
         Returns the attack simulation data in a human-readable format.
+        :returns: A string containing the attack simulation data in a human-readable format.
+        :rtype: str
         """
         if not self.redteaming_data:
             return ""

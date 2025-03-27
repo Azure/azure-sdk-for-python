@@ -10,7 +10,7 @@ except ImportError:
     has_pyrit = False
 
 if has_pyrit:
-    from azure.ai.evaluation.red_team.utils.constants import (
+    from azure.ai.evaluation.red_team._utils.constants import (
         BASELINE_IDENTIFIER, DATA_EXT, RESULTS_EXT,
         ATTACK_STRATEGY_COMPLEXITY_MAP, RISK_CATEGORY_EVALUATOR_MAP,
         INTERNAL_TASK_TIMEOUT, TASK_STATUS

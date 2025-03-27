@@ -22,7 +22,7 @@ if has_pyrit:
     from azure.ai.evaluation.red_team.red_team_result import (
         RedTeamResult, RedTeamOutput, RedTeamingScorecard, RedTeamingParameters, Conversation
     )
-    from azure.ai.evaluation.red_team.attack_objective_generator import AttackObjectiveGenerator
+    from azure.ai.evaluation.red_team.attack_objective_generator import _AttackObjectiveGenerator
     from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
     from azure.core.credentials import TokenCredential
 
@@ -55,7 +55,7 @@ def red_team(mock_azure_ai_project, mock_credential):
          patch("azure.ai.evaluation.red_team.red_team.setup_logger") as mock_setup_logger, \
          patch("azure.ai.evaluation.red_team.red_team.initialize_pyrit"), \
          patch("os.makedirs"), \
-         patch("azure.ai.evaluation.red_team.red_team.AttackObjectiveGenerator"), \
+         patch("azure.ai.evaluation.red_team.red_team._AttackObjectiveGenerator"), \
          patch("logging.FileHandler", MagicMock()):
          
         # Create a proper mock logger that doesn't crash when used
@@ -535,7 +535,7 @@ class TestRedTeamAttackObjectives:
         self, mock_generated_rai_client, mock_rai_client, red_team
     ):
         """Test getting attack objectives with custom attack seed prompts."""
-        # Create a mock AttackObjectiveGenerator with custom attack seed prompts
+        # Create a mock _AttackObjectiveGenerator with custom attack seed prompts
         mock_attack_objective_generator =red_team.attack_objective_generator
         mock_attack_objective_generator.risk_categories = [RiskCategory.Violence, RiskCategory.HateUnfairness]
         mock_attack_objective_generator.num_objectives = 2
@@ -604,7 +604,7 @@ class TestRedTeamAttackObjectives:
         self, mock_generated_rai_client, mock_rai_client, red_team
     ):
         """Test getting attack objectives with jailbreak strategy and custom prompts."""
-        # Create a mock AttackObjectiveGenerator with custom attack seed prompts
+        # Create a mock _AttackObjectiveGenerator with custom attack seed prompts
         mock_attack_objective_generator = red_team.attack_objective_generator
         mock_attack_objective_generator.risk_categories = [RiskCategory.Violence]
         mock_attack_objective_generator.num_objectives = 1
@@ -1130,7 +1130,7 @@ class TestRedTeamOutput:
         
         result = RedTeamOutput(redteaming_data=[mock_conversation])
         
-        json_lines = result.to_eval_qr_json_lines()
+        json_lines = result.to_eval_qr_json_lines()[0]
         
         assert "Test query" in json_lines
         assert "Test response" in json_lines

@@ -13,7 +13,7 @@ from pyrit.prompt_target import PromptChatTarget
 logger = logging.getLogger(__name__)
 
 
-class CallbackChatTarget(PromptChatTarget):
+class _CallbackChatTarget(PromptChatTarget):
     def __init__(
         self,
         *,
@@ -21,11 +21,11 @@ class CallbackChatTarget(PromptChatTarget):
         stream: bool = False,
     ) -> None:
         """
-        Initializes an instance of the CallbackChatTarget class.
+        Initializes an instance of the _CallbackChatTarget class.
 
         It is intended to be used with PyRIT where users define a callback function
         that handles sending a prompt to a target and receiving a response.
-        The CallbackChatTarget class is a wrapper around the callback function that allows it to be used
+        The _CallbackChatTarget class is a wrapper around the callback function that allows it to be used
         as a target in the PyRIT framework.
         For that reason, it merely handles additional functionality such as memory.
 

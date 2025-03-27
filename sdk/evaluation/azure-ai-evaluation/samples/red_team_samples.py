@@ -120,7 +120,7 @@ class RedTeamSamples(object):
         # Create a more complex callback function that handles conversation state
         async def advanced_callback(messages, stream=False, session_state=None, context=None):
             # Extract the latest message from the conversation history
-            messages_list = [{"role": message.get("role"), "content": message.get("content")} 
+            messages_list = [{"role": message.role, "content": message.content} 
                             for message in messages]
             latest_message = messages_list[-1]["content"]
             
