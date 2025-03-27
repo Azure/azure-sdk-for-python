@@ -156,7 +156,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                         'status_code': None,
                         'sub_status_code': None,
                         'verb': http_request.method,
-                        'http_version': None,
+                        'url': redacted_url,
                         'database_name': database_name,
                         'collection_name': collection_name,
                         'resource_type': resource_type,
@@ -235,7 +235,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
             sub_status_code: Optional[int] = int(sub_status_str) if sub_status_str else None
             url_obj = http_response.internal_response.url  # type: ignore[attr-defined, union-attr]
             try:
-                duration = float(http_response.headers.get("x-ms-request-duration-ms"))
+                duration = float(http_response.headers.get("x-ms-request-duration-ms"))  # type: ignore[union-attr]
             except (ValueError, TypeError) as e:
                 duration = (time.time() - context["start_time"]) * 1000 if "start_time" in context else None
 
