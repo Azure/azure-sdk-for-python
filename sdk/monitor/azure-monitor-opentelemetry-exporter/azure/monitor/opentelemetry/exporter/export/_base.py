@@ -445,7 +445,6 @@ def _get_authentication_credential(**kwargs: Any) -> ManagedIdentityCredential:
         return kwargs.get("credential")
     try:
         if _APPLICATIONINSIGHTS_AUTHENTICATION_STRING in os.environ:
-            print("IN ENVIRON")
             auth_string = os.getenv(_APPLICATIONINSIGHTS_AUTHENTICATION_STRING)
             kv_pairs = auth_string.split(";")
             auth_string_d = {}
