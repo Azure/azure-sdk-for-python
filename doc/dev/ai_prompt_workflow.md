@@ -3,6 +3,8 @@
 
 1. In Copilot **Agent** mode, click on `add_context` and select `prompt` from the dropdown.
 
+*Note*: Agent mode is currently only available in VSCode Insiders.
+
 ![Agent Mode](step1.png)
 
 2. Select `next-pylint.prompt.md` or associated prompt for your task.
