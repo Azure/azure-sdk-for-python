@@ -825,7 +825,7 @@ conn_id = fabric_connection.id
 
 print(conn_id)
 
-# Initialize Agent fabric tool and add the connection id
+# Initialize an Agent fabric tool and add the connection id
 fabric = FabricTool(connection_id=conn_id)
 
 # Create an Agent with the Fabric tool and process an Agent run
