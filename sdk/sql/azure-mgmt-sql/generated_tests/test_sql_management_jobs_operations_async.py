@@ -21,12 +21,12 @@ class TestSqlManagementJobsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_agent(self, resource_group):
+    async def test_jobs_list_by_agent(self, resource_group):
         response = self.client.jobs.list_by_agent(
             resource_group_name=resource_group.name,
             server_name="str",
             job_agent_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,13 +34,13 @@ class TestSqlManagementJobsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_jobs_get(self, resource_group):
         response = await self.client.jobs.get(
             resource_group_name=resource_group.name,
             server_name="str",
             job_agent_name="str",
             job_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -48,7 +48,7 @@ class TestSqlManagementJobsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_jobs_create_or_update(self, resource_group):
         response = await self.client.jobs.create_or_update(
             resource_group_name=resource_group.name,
             server_name="str",
@@ -60,15 +60,15 @@ class TestSqlManagementJobsOperationsAsync(AzureMgmtRecordedTestCase):
                 "name": "str",
                 "schedule": {
                     "enabled": bool,
-                    "endTime": "9999-12-31T11:59:59+00:00",
+                    "endTime": "9999-12-31T17:29:59+05:30",
                     "interval": "str",
-                    "startTime": "0001-01-01T00:00:00+00:00",
+                    "startTime": "0001-01-01T05:30:00+05:30",
                     "type": "Once",
                 },
                 "type": "str",
                 "version": 0,
             },
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -76,13 +76,13 @@ class TestSqlManagementJobsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_jobs_delete(self, resource_group):
         response = await self.client.jobs.delete(
             resource_group_name=resource_group.name,
             server_name="str",
             job_agent_name="str",
             job_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
