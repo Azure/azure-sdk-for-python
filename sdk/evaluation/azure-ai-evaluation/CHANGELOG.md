@@ -51,7 +51,6 @@
   - TaskAdherenceEvaluator - Evaluates the task adherence of an agent's response to a user query.
   - ToolCallAccuracyEvaluator - Evaluates the accuracy of tool calls made by an agent in response to a user query.
 
-
 ### Breaking Changes
 
 ### Bugs Fixed
