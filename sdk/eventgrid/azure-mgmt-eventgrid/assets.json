@@ -1,6 +1,0 @@
-{
-    "AssetsRepo": "Azure/azure-sdk-assets",
-    "AssetsRepoPrefixPath": "python",
-    "TagPrefix": "python/eventgrid/azure-mgmt-eventgrid",
-    "Tag": "python/eventgrid/azure-mgmt-eventgrid_cf1f9ef41d"
-}

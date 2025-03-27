@@ -32,10 +32,6 @@ Install the Azure AI Evaluation SDK for Python with [pip][pip_link]:
 ```bash
 pip install azure-ai-evaluation
 ```
-If you want to track results in [AI Studio][ai_studio], install `remote` extra:
-```python
-pip install azure-ai-evaluation[remote]
-```
 
 ## Key concepts
 
