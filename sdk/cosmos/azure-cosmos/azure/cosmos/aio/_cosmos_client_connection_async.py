@@ -730,7 +730,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         # ExecuteStoredProcedure will use WriteEndpoint since it uses POST operation
         request_params = _request_object.RequestObject("sprocs", documents._OperationType.ExecuteJavaScript)
-        request_params.set_excluded_location_from_options(options)
         result, self.last_response_headers = await self.__Post(path, request_params, params, headers, **kwargs)
         return result
 

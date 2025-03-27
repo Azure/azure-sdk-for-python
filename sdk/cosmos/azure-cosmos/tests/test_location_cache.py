@@ -38,10 +38,9 @@ def create_database_account(enable_multiple_writable_locations):
 
 
 def refresh_location_cache(preferred_locations, use_multiple_write_locations, connection_policy=documents.ConnectionPolicy()):
-    lc = LocationCache(preferred_locations=preferred_locations,
-                       default_endpoint=default_endpoint,
-                       enable_endpoint_discovery=True,
-                       use_multiple_write_locations=use_multiple_write_locations,
+    connection_policy.PreferredLocations = preferred_locations
+    connection_policy.UseMultipleWriteLocations = use_multiple_write_locations
+    lc = LocationCache(default_endpoint=default_endpoint,
                        connection_policy=connection_policy)
     return lc
 

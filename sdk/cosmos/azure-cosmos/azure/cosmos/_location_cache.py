@@ -31,6 +31,7 @@ from urllib.parse import urlparse
 from . import documents
 from . import http_constants
 from .documents import _OperationType
+from ._request_object import RequestObject
 
 # pylint: disable=protected-access
 
@@ -173,16 +174,10 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
 
     def __init__(
         self,
-        preferred_locations,
         default_endpoint,
-        enable_endpoint_discovery,
-        use_multiple_write_locations,
         connection_policy,
     ):
-        self.preferred_locations = preferred_locations
         self.default_regional_routing_context = RegionalRoutingContext(default_endpoint, default_endpoint)
-        self.enable_endpoint_discovery = enable_endpoint_discovery
-        self.use_multiple_write_locations = use_multiple_write_locations
         self.enable_multiple_writable_locations = False
         self.write_regional_routing_contexts = [self.default_regional_routing_context]
         self.read_regional_routing_contexts = [self.default_regional_routing_context]
@@ -190,8 +185,8 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         self.last_cache_update_time_stamp = 0
         self.account_read_regional_routing_contexts_by_location = {} # pylint: disable=name-too-long
         self.account_write_regional_routing_contexts_by_location = {} # pylint: disable=name-too-long
-        self.account_locations_by_read_regional_endpoints = {} # pylint: disable=name-too-long
-        self.account_locations_by_write_regional_endpoints = {} # pylint: disable=name-too-long
+        self.account_locations_by_read_regional_routing_context = {} # pylint: disable=name-too-long
+        self.account_locations_by_write_regional_routing_context = {} # pylint: disable=name-too-long
         self.account_write_locations = []
         self.account_read_locations = []
         self.connection_policy = connection_policy
@@ -227,7 +222,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
     def get_ordered_read_locations(self):
         return self.account_read_locations
 
-    def _get_configured_excluded_locations(self, request):
+    def _get_configured_excluded_locations(self, request: RequestObject):
         # If excluded locations were configured on request, use request level excluded locations.
         excluded_locations = request.excluded_locations
         if excluded_locations is None:
@@ -235,7 +230,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             excluded_locations = self.connection_policy.ExcludedLocations
         return excluded_locations
 
-    def get_applicable_read_regional_endpoints(self, request):
+    def get_applicable_read_regional_endpoints(self, request: RequestObject):
         # Get configured excluded locations
         excluded_locations = self._get_configured_excluded_locations(request)
 
@@ -243,14 +238,14 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         if excluded_locations:
             return get_applicable_regional_endpoints(
                 self.get_read_regional_routing_contexts(),
-                self.account_locations_by_read_regional_endpoints,
+                self.account_locations_by_read_regional_routing_context,
                 self.get_write_regional_routing_contexts()[0],
                 excluded_locations)
 
         # Else, return all regional endpoints
         return self.get_read_regional_routing_contexts()
 
-    def get_applicable_write_regional_endpoints(self, request):
+    def get_applicable_write_regional_endpoints(self, request: RequestObject):
         # Get configured excluded locations
         excluded_locations = self._get_configured_excluded_locations(request)
 
@@ -258,7 +253,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         if excluded_locations:
             return get_applicable_regional_endpoints(
                 self.get_write_regional_routing_contexts(),
-                self.account_locations_by_write_regional_endpoints,
+                self.account_locations_by_write_regional_routing_context,
                 self.default_regional_routing_context,
                 excluded_locations)
 
@@ -285,7 +280,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             # For non-document resource types in case of client can use multiple write locations
             # or when client cannot use multiple write locations, flip-flop between the
             # first and the second writable region in DatabaseAccount (for manual failover)
-            if self.enable_endpoint_discovery and self.account_write_locations:
+            if self.connection_policy.EnableEndpointDiscovery and self.account_write_locations:
                 location_index = min(location_index % 2, len(self.account_write_locations) - 1)
                 write_location = self.account_write_locations[location_index]
                 if (self.account_write_regional_routing_contexts_by_location
@@ -321,12 +316,14 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         return regional_routing_context.get_primary()
 
     def should_refresh_endpoints(self):  # pylint: disable=too-many-return-statements
-        most_preferred_location = self.preferred_locations[0] if self.preferred_locations else None
+        most_preferred_location = self.connection_policy.PreferredLocations[0] \
+            if self.connection_policy.PreferredLocations else None
 
         # we should schedule refresh in background if we are unable to target the user's most preferredLocation.
-        if self.enable_endpoint_discovery:
+        if self.connection_policy.EnableEndpointDiscovery:
 
-            should_refresh = self.use_multiple_write_locations and not self.enable_multiple_writable_locations
+            should_refresh = (self.connection_policy.UseMultipleWriteLocations
+                              and not self.enable_multiple_writable_locations)
 
             if (most_preferred_location and most_preferred_location in
                     self.account_read_regional_routing_contexts_by_location):
@@ -416,27 +413,27 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         if enable_multiple_writable_locations:
             self.enable_multiple_writable_locations = enable_multiple_writable_locations
 
-        if self.enable_endpoint_discovery:
+        if self.connection_policy.EnableEndpointDiscovery:
             if read_locations:
                 (self.account_read_regional_routing_contexts_by_location,
-                 self.account_locations_by_read_regional_endpoints,
+                 self.account_locations_by_read_regional_routing_context,
                  self.account_read_locations) = get_endpoints_by_location(
                     read_locations,
                     self.account_read_regional_routing_contexts_by_location,
                     self.default_regional_routing_context,
                     False,
-                    self.use_multiple_write_locations
+                    self.connection_policy.UseMultipleWriteLocations
                 )
 
             if write_locations:
                 (self.account_write_regional_routing_contexts_by_location,
-                 self.account_locations_by_write_regional_endpoints,
+                 self.account_locations_by_write_regional_routing_context,
                  self.account_write_locations) = get_endpoints_by_location(
                     write_locations,
                     self.account_write_regional_routing_contexts_by_location,
                     self.default_regional_routing_context,
                     True,
-                    self.use_multiple_write_locations
+                    self.connection_policy.UseMultipleWriteLocations
                 )
 
         self.write_regional_routing_contexts = self.get_preferred_regional_routing_contexts(
@@ -459,18 +456,18 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         regional_endpoints = []
         # if enableEndpointDiscovery is false, we always use the defaultEndpoint that
         # user passed in during documentClient init
-        if self.enable_endpoint_discovery and endpoints_by_location:  # pylint: disable=too-many-nested-blocks
+        if self.connection_policy.EnableEndpointDiscovery and endpoints_by_location:  # pylint: disable=too-many-nested-blocks
             if (
                 self.can_use_multiple_write_locations()
                 or expected_available_operation == EndpointOperationType.ReadType
             ):
                 unavailable_endpoints = []
-                if self.preferred_locations:
+                if self.connection_policy.PreferredLocations:
                     # When client can not use multiple write locations, preferred locations
                     # list should only be used determining read endpoints order. If client
                     # can use multiple write locations, preferred locations list should be
                     # used for determining both read and write endpoints order.
-                    for location in self.preferred_locations:
+                    for location in self.connection_policy.PreferredLocations:
                         regional_endpoint = endpoints_by_location[location] if location in endpoints_by_location \
                             else None
                         if regional_endpoint:
@@ -496,7 +493,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         return regional_endpoints
 
     def can_use_multiple_write_locations(self):
-        return self.use_multiple_write_locations and self.enable_multiple_writable_locations
+        return self.connection_policy.UseMultipleWriteLocations and self.enable_multiple_writable_locations
 
     def can_use_multiple_write_locations_for_request(self, request):  # pylint: disable=name-too-long
         return self.can_use_multiple_write_locations() and (
