@@ -1,6 +1,6 @@
 # Release History
 
-## 1.4.0 (Unreleased)
+## 1.4.0 (2025-03-27)
 
 ### Features Added
 - Enhanced binary evaluation results with customizable thresholds
