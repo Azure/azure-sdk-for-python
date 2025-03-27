@@ -6,8 +6,8 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to use the asynchronous
-    `.datasets` methods to upload files, create datasets that reference those files,
-    list datasets and delete datasets.
+    `.datasets` methods to upload files, create Datasets that reference those files,
+    list Datasets and delete Datasets.
 
 USAGE:
     python sample_datasets_async.py
@@ -19,7 +19,7 @@ USAGE:
     Set these environment variables with your own values:
     1) PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Azure AI Foundry project.
-    2) DATASET_NAME - Required. The name of the dataset to create and use in this sample.
+    2) DATASET_NAME - Required. The name of the Dataset to create and use in this sample.
 """
 
 import asyncio
@@ -39,7 +39,7 @@ async def sample_datasets_async() -> None:
         credential=DefaultAzureCredential(),
     )
 
-    print("Upload a single file and create a new dataset to reference the file:")
+    print("Upload a single file and create a new Dataset to reference the file:")
     dataset: DatasetVersion = await project_client.datasets.upload_file_and_create_version(
         name=dataset_name,
         version="1.0",
@@ -48,7 +48,7 @@ async def sample_datasets_async() -> None:
     print(dataset)
 
     print(
-        "Upload all files in a folder (including subfolders) and create a new dataset version to reference the folder:"
+        "Upload all files in a folder (including subfolders) and create a new Dataset version to reference the folder:"
     )
     dataset = await project_client.datasets.upload_folder_and_create_version(
         name=dataset_name,
@@ -57,19 +57,19 @@ async def sample_datasets_async() -> None:
     )
     print(dataset)
 
-    print("Get the existing dataset version `1.0`:")
+    print("Get the existing Dataset version `1.0`:")
     dataset = await project_client.datasets.get_version(name=dataset_name, version="1.0")
     print(dataset)
 
-    print(f"Listing all versions of the dataset named `{dataset_name}`:")
+    print(f"Listing all versions of the Dataset named `{dataset_name}`:")
     async for dataset in project_client.datasets.list_versions(name=dataset_name, list_view_type=ListViewType.ALL):
         print(dataset)
 
-    print("List latest versions of all datasets:")
+    print("List latest versions of all Datasets:")
     async for dataset in project_client.datasets.list_latest(list_view_type=ListViewType.ALL):
         print(dataset)
 
-    print("Delete the dataset versions created above:")
+    print("Delete the Dataset versions created above:")
     await project_client.datasets.delete_version(name=dataset_name, version="1.0")
     await project_client.datasets.delete_version(name=dataset_name, version="2.0")
 
