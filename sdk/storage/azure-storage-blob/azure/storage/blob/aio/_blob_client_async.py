@@ -935,7 +935,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         if_modified_since: Optional[datetime] = None,
         if_unmodified_since: Optional[datetime] = None,
         etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
+        match_condition: Optional["MatchConditions"] = None,
         if_tags_match_condition: Optional[str] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
