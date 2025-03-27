@@ -142,7 +142,7 @@ def client_setup(test_func):
         return client
 
     async def wrapper(self, BatchClient, **kwargs):
-        kwargs["credential"] = self.get_credential(BatchClient) # TODO: look into sharedkey auth to fix this workaround
+        kwargs["credential"] = self.get_credential(BatchClient)  # TODO: look into sharedkey auth to fix this workaround
         client = create_client(BatchClient, **kwargs)
         try:
             await test_func(self, client, **kwargs)
