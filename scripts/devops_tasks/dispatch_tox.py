@@ -114,6 +114,10 @@ In the case of an environment invoking `pytest`, results can be collected in a j
 
     args = parser.parse_args()
 
+    # dump environment variables
+    for key, value in os.environ.items():
+        print(f"{key}={value}")
+
     # We need to support both CI builds of everything and individual service
     # folders. This logic allows us to do both.
     if args.service and args.service != "auto":

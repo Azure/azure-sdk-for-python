@@ -1,13 +1,23 @@
 trigger: none
 
+parameters:
+  - name: Services
+    type: object
+    default:
+      - azure-schemaregistry
+      - azure-schemaregistry-avroencoder
+      - azure-schemaregistry-avroserializer
+
 extends:
     template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: schemaregistry
       TestTimeoutInMinutes: 300
-      BuildTargetingString: azure-schemaregistry*
+      Packages: ${{ parameters.Services }}
       EnvVars:
         AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'true'
       MatrixFilters:
         - '"PythonVersion=^(?!pypy3).*"'
+      MatrixReplace:
+        - TestSamples=.*/true
