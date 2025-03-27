@@ -81,8 +81,16 @@ from ._upload_helpers import (
 if TYPE_CHECKING:
     from azure.core import MatchConditions
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
-    from azure.storage.blob import ContainerClient, CustomerProvidedEncryptionKey
+    from azure.storage.blob import (
+        ContainerClient,
+        CustomerProvidedEncryptionKey,
+        DelimitedTextDialect,
+        DelimitedJsonDialect,
+        QuickQueryDialect,
+        ArrowDialect
+)
     from ._models import (
+        BlobQueryError,
         ContentSettings,
         ImmutabilityPolicy,
         PremiumPageBlobTier,
@@ -931,7 +939,22 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         return StorageStreamDownloader(**options)
 
     @distributed_trace
-    def query_blob(self, query_expression: str, **kwargs: Any) -> BlobQueryReader:
+    def query_blob(
+        self, query_expression: str,
+        *,
+        on_error: Optional[Callable[["BlobQueryError"], None]] = None,
+        blob_format: Optional[Union["DelimitedTextDialect", "DelimitedJsonDialect", "QuickQueryDialect", str]] = None,
+        output_format: Optional[Union["DelimitedTextDialect", "DelimitedJsonDialect", "QuickQueryDialect", List["ArrowDialect"], str]] = None,  # pylint: disable=line-too-long
+        lease: Optional[Union[BlobLeaseClient, str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional["MatchConditions"] = None,
+        if_tags_match_condition: Optional[str] = None,
+        cpk: Optional["CustomerProvidedEncryptionKey"] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> BlobQueryReader:
         """Enables users to select/project on blob/or blob snapshot data by providing simple query expressions.
         This operations returns a BlobQueryReader, users need to use readall() or readinto() to get query data.
 
@@ -949,16 +972,23 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             .. note::
                 "ParquetDialect" is in preview, so some features may not work as intended.
 
-        :paramtype blob_format: ~azure.storage.blob.DelimitedTextDialect or ~azure.storage.blob.DelimitedJsonDialect
-            or ~azure.storage.blob.QuickQueryDialect or str
+        :paramtype blob_format:
+            ~azure.storage.blob.DelimitedTextDialect or
+            ~azure.storage.blob.DelimitedJsonDialect or
+            ~azure.storage.blob.QuickQueryDialect or
+            str
         :keyword output_format:
             Optional. Defines the output serialization for the data stream. By default the data will be returned
             as it is represented in the blob (Parquet formats default to DelimitedTextDialect).
             By providing an output format, the blob data will be reformatted according to that profile.
             This value can be a DelimitedTextDialect or a DelimitedJsonDialect or ArrowDialect.
             These dialects can be passed through their respective classes, the QuickQueryDialect enum or as a string
-        :paramtype output_format: ~azure.storage.blob.DelimitedTextDialect or ~azure.storage.blob.DelimitedJsonDialect
-            or List[~azure.storage.blob.ArrowDialect] or ~azure.storage.blob.QuickQueryDialect or str
+        :paramtype output_format:
+            ~azure.storage.blob.DelimitedTextDialect or
+            ~azure.storage.blob.DelimitedJsonDialect or
+            List[~azure.storage.blob.ArrowDialect] or
+            ~azure.storage.blob.QuickQueryDialect or
+            str
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
@@ -1009,12 +1039,24 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 :dedent: 4
                 :caption: select/project on blob/or blob snapshot data by providing simple query expressions.
         """
-        errors = kwargs.pop("on_error", None)
         error_cls = kwargs.pop("error_cls", BlobQueryError)
         encoding = kwargs.pop("encoding", None)
-        if kwargs.get('cpk') and self.scheme.lower() != 'https':
+        if cpk and self.scheme.lower() != 'https':
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
-        options, delimiter = _quick_query_options(self.snapshot, query_expression, **kwargs)
+        options, delimiter = _quick_query_options(
+            self.snapshot,
+            query_expression,
+            blob_format=blob_format,
+            output_format=output_format,
+            lease=lease,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_condition=match_condition,
+            if_tags_match_condition=if_tags_match_condition,
+            timeout=timeout,
+            **kwargs
+        )
         try:
             headers, raw_response_body = self._client.blob.query(**options)
         except HttpResponseError as error:
@@ -1022,12 +1064,13 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         return BlobQueryReader(
             name=self.blob_name,
             container=self.container_name,
-            errors=errors,
+            errors=on_error,
             record_delimiter=delimiter,
             encoding=encoding,
             headers=headers,
             response=raw_response_body,
-            error_cls=error_cls)
+            error_cls=error_cls
+        )
 
     @distributed_trace
     def delete_blob(
