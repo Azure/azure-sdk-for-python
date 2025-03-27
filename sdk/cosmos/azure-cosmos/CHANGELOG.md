@@ -1,10 +1,6 @@
 ## Release History
 
-### 4.10.0b3 (Unreleased)
-
-#### Features Added
-
-#### Breaking Changes
+### 4.10.0b3 (2025-03-27)
 
 #### Bugs Fixed
 * Fixed too many health checks happening when skipping the recommended client startup. See [PR 40203](https://github.com/Azure/azure-sdk-for-python/pull/40203).
@@ -13,7 +9,7 @@
 * Removed excess keyword arguments from methods that did not use them. See [PR 40008](https://github.com/Azure/azure-sdk-for-python/pull/40008).
 * Removed first `response_hook` call for query methods that would utilize wrong response headers. See [PR 40008](https://github.com/Azure/azure-sdk-for-python/pull/40008).
 
-### 4.10.0b2 (2025-04-08)
+### 4.10.0b2 (2025-03-17)
 
 #### Bugs Fixed
 * Fixed bug preventing health check in some scenarios. See [PR 39647](https://github.com/Azure/azure-sdk-for-python/pull/39647)
