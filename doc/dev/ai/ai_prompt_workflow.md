@@ -1,7 +1,7 @@
 # AI Prompt Workflow
 
 
-1. In Copilot **Agent** mode, click on `add_context` and select `prompt` from the dropdown.
+1. In Copilot **Agent** mode, click on `Add Context` and select `prompt` from the dropdown.
 
 *Note*: Agent mode is currently only available in [VSCode Insiders](https://code.visualstudio.com/insiders/).
 
