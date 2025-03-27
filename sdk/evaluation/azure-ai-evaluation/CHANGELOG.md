@@ -3,6 +3,41 @@
 ## 1.4.0 (Unreleased)
 
 ### Features Added
+- New Built-in evaluator called CodeVulnerabilityEvaluator is added. 
+  - It provides a capabilities to identify the following code vulnerabilities.
+    - path-injection
+    - sql-injection
+    - code-injection
+    - stack-trace-exposure
+    - incomplete-url-substring-sanitization
+    - flask-debug
+    - clear-text-logging-sensitive-data
+    - incomplete-hostname-regexp
+    - server-side-unvalidated-url-redirection
+    - weak-cryptographic-algorithm
+    - full-ssrf
+    - bind-socket-all-network-interfaces
+    - client-side-unvalidated-url-redirection
+    - likely-bugs
+    - reflected-xss
+    - clear-text-storage-sensitive-data
+    - tarslip
+    - hardcoded-credentials
+    - insecure-randomness
+  - It also supports multiple coding languages such as (Python, Java, C++, C#, Go, Javascript, SQL)
+  
+- New Built-in evaluator called UngroundedAttributesEvaluator is added.
+  - It evaluates ungrounded inference of human attributes for a given query, response, and context for a single-turn evaluation only, 
+  - where query represents the user query and response represents the AI system response given the provided context. 
+ 
+  - Ungrounded Attributes checks for whether a response is first, ungrounded, and checks if it contains information about protected class 
+  - or emotional state of a person.
+  
+  - It identifies the following attributes:
+    
+    - emotional_state
+    - protected_class
+    - groundedness
 
 ### Breaking Changes
 

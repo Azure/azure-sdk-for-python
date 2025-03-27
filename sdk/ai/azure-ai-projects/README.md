@@ -456,17 +456,19 @@ Here is an example to integrate Azure AI Search:
 <!-- SNIPPET:sample_agents_azure_ai_search.create_agent_with_azure_ai_search_tool -->
 
 ```python
-conn_list = project_client.connections.list()
-conn_id = ""
-for conn in conn_list:
-    if conn.connection_type == ConnectionType.AZURE_AI_SEARCH:
-        conn_id = conn.id
-        break
+connection = project_client.connections.get(connection_name=os.environ["AI_SEARCH_CONNECTION_NAME"])
+conn_id = connection.id
 
 print(conn_id)
 
 # Initialize agent AI search tool and add the search index connection id
-ai_search = AzureAISearchTool(index_connection_id=conn_id, index_name="sample_index")
+ai_search = AzureAISearchTool(
+    index_connection_id=conn_id,
+    index_name="sample_index",
+    query_type=AzureAISearchQueryType.SIMPLE,
+    top_k=3,
+    filter=""
+)
 
 # Create agent with AI search tool and process assistant run
 with project_client:
@@ -609,7 +611,7 @@ agent = project_client.agents.create_agent(
 Currently, the Azure Function integration for the AI Agent has the following limitations:
 
 - Azure Functions integration is available **only for non-streaming scenarios**.
-- Supported trigger for Azure Function is currently limited to **Queue triggers** only.  
+- Supported trigger for Azure Function is currently limited to **Queue triggers** only.
   HTTP or other trigger types and streaming responses are not supported at this time.
 
 ---
@@ -630,8 +632,8 @@ app = func.FunctionApp()
 @app.get_weather(arg_name="inputQueue",
                    queue_name="input",
                    connection="AzureWebJobsStorage")
-@app.queue_output(arg_name="outputQueue", 
-                  queue_name="output", 
+@app.queue_output(arg_name="outputQueue",
+                  queue_name="output",
                   connection="AzureWebJobsStorage")
 def get_weather(inputQueue: func.QueueMessage, outputQueue: func.Out[str]):
     try:
@@ -912,7 +914,7 @@ message = project_client.agents.create_message(
 
 #### Create Message with Code Interpreter Attachment
 
-To attach a file to a message for data analysis, use `MessageAttachment` and `CodeInterpreterTool` classes. You must pass `CodeInterpreterTool` as `tools` or `toolset` in `create_agent` call or the file attachment cannot be opened for code interpreter.  
+To attach a file to a message for data analysis, use `MessageAttachment` and `CodeInterpreterTool` classes. You must pass `CodeInterpreterTool` as `tools` or `toolset` in `create_agent` call or the file attachment cannot be opened for code interpreter.
 
 Here is an example to pass `CodeInterpreterTool` as tool:
 
@@ -1348,12 +1350,14 @@ if not application_insights_connection_string:
     exit()
 configure_azure_monitor(connection_string=application_insights_connection_string)
 
+# enable additional instrumentations
+project_client.telemetry.enable()
+
 scenario = os.path.basename(__file__)
 tracer = trace.get_tracer(__name__)
 
 with tracer.start_as_current_span(scenario):
     with project_client:
-        project_client.telemetry.enable()
 ```
 
 <!-- END SNIPPET -->

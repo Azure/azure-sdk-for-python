@@ -13,8 +13,8 @@ import functools
 from typing import Set, Callable, Any
 from azure.ai.projects.telemetry.agents._ai_agents_instrumentor import _AIAgentsInstrumentorPreview
 from azure.ai.projects.models import AgentsApiResponseFormatMode, AgentsApiResponseFormat
-
 from azure.ai.projects.models import AgentEventHandler
+from azure.ai.projects.telemetry.agents import _utils
 
 from azure.ai.projects.telemetry.agents import AIAgentsInstrumentor
 from azure.core.settings import settings
@@ -41,39 +41,63 @@ from azure.ai.projects.models import (
     ToolSet,
 )
 
+
 agentClientPreparer = functools.partial(
     EnvironmentVariableLoader,
     "azure_ai_projects",
-    azure_ai_projects_connection_string="https://foo.bar.some-domain.ms;00000000-0000-0000-0000-000000000000;rg-resour-cegr-oupfoo1;abcd-abcdabcdabcda-abcdefghijklm",
-    azure_ai_projects_data_path="azureml://subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-resour-cegr-oupfoo1/workspaces/abcd-abcdabcdabcda-abcdefghijklm/datastores/workspaceblobstore/paths/LocalUpload/000000000000/product_info_1.md",
+    azure_ai_projects_agents_tests_project_connection_string="region.api.azureml.ms;00000000-0000-0000-0000-000000000000;rg-resour-cegr-oupfoo1;abcd-abcdabcdabcda-abcdefghijklm",
+    azure_ai_projects_agents_tests_data_path="azureml://subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-resour-cegr-oupfoo1/workspaces/abcd-abcdabcdabcda-abcdefghijklm/datastores/workspaceblobstore/paths/LocalUpload/000000000000/product_info_1.md",
 )
-"""
-agentClientPreparer = functools.partial(
-    EnvironmentVariableLoader,
-    'azure_ai_project',
-    azure_ai_project_host_name="https://foo.bar.some-domain.ms",
-    azure_ai_project_subscription_id="00000000-0000-0000-0000-000000000000",
-    azure_ai_project_resource_group_name="rg-resour-cegr-oupfoo1",
-    azure_ai_project_workspace_name="abcd-abcdabcdabcda-abcdefghijklm",
-)
-"""
 
 CONTENT_TRACING_ENV_VARIABLE = "AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED"
-content_tracing_initial_value = os.getenv(CONTENT_TRACING_ENV_VARIABLE)
+settings.tracing_implementation = "OpenTelemetry"
+_utils._span_impl_type = settings.tracing_implementation()
+
+
+# TODO - remove when https://github.com/Azure/azure-sdk-for-python/issues/40086 is fixed
+class FakeToolSetDict(dict):
+    def __init__(self, toolset=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.toolset = toolset
+
+    def get(self, k, default=None):
+        return self.toolset
 
 
 class TestAiAgentsInstrumentor(AzureRecordedTestCase):
     """Tests for AI agents instrumentor."""
 
-    @classmethod
-    def teardown_class(cls):
-        if content_tracing_initial_value is not None:
-            os.environ[CONTENT_TRACING_ENV_VARIABLE] = content_tracing_initial_value
+    @pytest.fixture(scope="function")
+    def instrument_with_content(self):
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "True"})
+        self.setup_telemetry()
+        yield
+        self.cleanup()
+
+    @pytest.fixture(scope="function")
+    def instrument_without_content(self):
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "False"})
+        self.setup_telemetry()
+        yield
+        self.cleanup()
+
+    def setup_telemetry(self):
+        trace._TRACER_PROVIDER = TracerProvider()
+        self.exporter = MemoryTraceExporter()
+        span_processor = SimpleSpanProcessor(self.exporter)
+        trace.get_tracer_provider().add_span_processor(span_processor)
+        AIAgentsInstrumentor().instrument()
+
+    def cleanup(self):
+        self.exporter.shutdown()
+        AIAgentsInstrumentor().uninstrument()
+        trace._TRACER_PROVIDER = None
+        os.environ.pop(CONTENT_TRACING_ENV_VARIABLE, None)
 
     # helper function: create client and using environment variables
     def create_client(self, **kwargs):
         # fetch environment variables
-        connection_string = kwargs.pop("azure_ai_projects_connection_string")
+        connection_string = kwargs.pop("azure_ai_projects_agents_tests_project_connection_string")
         credential = self.get_credential(AIProjectClient, is_async=False)
 
         # create and return client
@@ -104,171 +128,64 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         actual = _AIAgentsInstrumentorPreview.agent_api_response_to_str(fmt)
         assert actual == expected
 
-    def setup_memory_trace_exporter(self) -> MemoryTraceExporter:
-        # Setup Azure Core settings to use OpenTelemetry tracing
-        settings.tracing_implementation = "OpenTelemetry"
-        trace.set_tracer_provider(TracerProvider())
-        tracer = trace.get_tracer(__name__)
-        memoryExporter = MemoryTraceExporter()
-        span_processor = SimpleSpanProcessor(memoryExporter)
-        trace.get_tracer_provider().add_span_processor(span_processor)
-        return span_processor, memoryExporter
-
-    def modify_env_var(self, name, new_value):
-        current_value = os.getenv(name)
-        os.environ[name] = new_value
-        return current_value
-
-    @pytest.mark.skip
-    @agentClientPreparer()
-    @recorded_by_proxy
     def test_instrumentation(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         AIAgentsInstrumentor().uninstrument()
-        with self.create_client(**kwargs) as client:
-            exception_caught = False
-            try:
-                assert AIAgentsInstrumentor().is_instrumented() == False
-                AIAgentsInstrumentor().instrument()
-                assert AIAgentsInstrumentor().is_instrumented() == True
-                AIAgentsInstrumentor().uninstrument()
-                assert AIAgentsInstrumentor().is_instrumented() == False
-            except RuntimeError as e:
-                exception_caught = True
-                print(e)
-            assert exception_caught == False
+        exception_caught = False
+        try:
+            assert AIAgentsInstrumentor().is_instrumented() == False
+            AIAgentsInstrumentor().instrument()
+            assert AIAgentsInstrumentor().is_instrumented() == True
+            AIAgentsInstrumentor().uninstrument()
+            assert AIAgentsInstrumentor().is_instrumented() == False
+        except RuntimeError as e:
+            exception_caught = True
+            print(e)
+        assert exception_caught == False
 
-    @pytest.mark.skip
-    @agentClientPreparer()
-    @recorded_by_proxy
     def test_instrumenting_twice_does_not_cause_exception(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         AIAgentsInstrumentor().uninstrument()
-        with self.create_client(**kwargs) as client:
-            exception_caught = False
-            try:
-                AIAgentsInstrumentor().instrument()
-                AIAgentsInstrumentor().instrument()
-            except RuntimeError as e:
-                exception_caught = True
-                print(e)
-            AIAgentsInstrumentor().uninstrument()
-            assert exception_caught == False
+        exception_caught = False
+        try:
+            AIAgentsInstrumentor().instrument()
+            AIAgentsInstrumentor().instrument()
+        except RuntimeError as e:
+            exception_caught = True
+            print(e)
+        AIAgentsInstrumentor().uninstrument()
+        assert exception_caught == False
 
-    @pytest.mark.skip
-    @agentClientPreparer()
-    @recorded_by_proxy
     def test_uninstrumenting_uninstrumented_does_not_cause_exception(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         AIAgentsInstrumentor().uninstrument()
-        with self.create_client(**kwargs) as client:
-            exception_caught = False
-            try:
-                AIAgentsInstrumentor().uninstrument()
-            except RuntimeError as e:
-                exception_caught = True
-                print(e)
-            assert exception_caught == False
-
-    @pytest.mark.skip
-    @agentClientPreparer()
-    @recorded_by_proxy
-    def test_uninstrumenting_twice_does_not_cause_exception(self, **kwargs):
-        # Make sure code is not instrumented due to a previous test exception
-        AIAgentsInstrumentor().uninstrument()
-        with self.create_client(**kwargs) as client:
-            exception_caught = False
-            uninstrumented_once = False
-            try:
-                AIAgentsInstrumentor().instrument()
-                AIAgentsInstrumentor().uninstrument()
-                AIAgentsInstrumentor().uninstrument()
-            except RuntimeError as e:
-                exception_caught = True
-                print(e)
-            assert exception_caught == False
-
-    @pytest.mark.skip
-    @agentClientPreparer()
-    @recorded_by_proxy
-    def test_is_content_recording_enabled(self, **kwargs):
-        # Make sure code is not instrumented due to a previous test exception
-        AIAgentsInstrumentor().uninstrument()
-        self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "False")
-        with self.create_client(**kwargs) as client:
-            exception_caught = False
-            uninstrumented_once = False
-            try:
-                # From environment variable instrumenting from uninstrumented
-                AIAgentsInstrumentor().instrument()
-                self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "False")
-                AIAgentsInstrumentor().instrument()
-                content_recording_enabled = AIAgentsInstrumentor().is_content_recording_enabled()
-                assert content_recording_enabled == False
-                AIAgentsInstrumentor().uninstrument()
-                self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "True")
-                AIAgentsInstrumentor().instrument()
-                content_recording_enabled = AIAgentsInstrumentor().is_content_recording_enabled()
-                assert content_recording_enabled == True
-                AIAgentsInstrumentor().uninstrument()
-                self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "invalid")
-                AIAgentsInstrumentor().instrument()
-                content_recording_enabled = AIAgentsInstrumentor().is_content_recording_enabled()
-                assert content_recording_enabled == False
-
-                # From environment variable instrumenting from instrumented
-                self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "True")
-                AIAgentsInstrumentor().instrument()
-                content_recording_enabled = AIAgentsInstrumentor().is_content_recording_enabled()
-                assert content_recording_enabled == True
-                self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "True")
-                AIAgentsInstrumentor().instrument()
-                content_recording_enabled = AIAgentsInstrumentor().is_content_recording_enabled()
-                assert content_recording_enabled == True
-                self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "invalid")
-                AIAgentsInstrumentor().instrument()
-                content_recording_enabled = AIAgentsInstrumentor().is_content_recording_enabled()
-                assert content_recording_enabled == False
-
-                # From parameter instrumenting from uninstrumented
-                AIAgentsInstrumentor().uninstrument()
-                self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "True")
-                AIAgentsInstrumentor().instrument(enable_content_recording=False)
-                content_recording_enabled = AIAgentsInstrumentor().is_content_recording_enabled()
-                assert content_recording_enabled == False
-                AIAgentsInstrumentor().uninstrument()
-                self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "False")
-                AIAgentsInstrumentor().instrument(enable_content_recording=True)
-                content_recording_enabled = AIAgentsInstrumentor().is_content_recording_enabled()
-                assert content_recording_enabled == True
-
-                # From parameter instrumenting from instrumented
-                self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "True")
-                AIAgentsInstrumentor().instrument(enable_content_recording=False)
-                content_recording_enabled = AIAgentsInstrumentor().is_content_recording_enabled()
-                assert content_recording_enabled == False
-                self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "False")
-                AIAgentsInstrumentor().instrument(enable_content_recording=True)
-                content_recording_enabled = AIAgentsInstrumentor().is_content_recording_enabled()
-                assert content_recording_enabled == True
-            except RuntimeError as e:
-                exception_caught = True
-                print(e)
-            assert exception_caught == False
-
-    @pytest.mark.skip
-    @agentClientPreparer()
-    @recorded_by_proxy
-    def test_agent_chat_with_tracing_content_recording_enabled(self, **kwargs):
-        # Make sure code is not instrumented due to a previous test exception
+        exception_caught = False
         try:
             AIAgentsInstrumentor().uninstrument()
         except RuntimeError as e:
-            pass
-        self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "True")
+            exception_caught = True
+            print(e)
+        assert exception_caught == False
 
-        processor, exporter = self.setup_memory_trace_exporter()
-        AIAgentsInstrumentor().instrument()
+    def test_uninstrumenting_twice_does_not_cause_exception(self, **kwargs):
+        # Make sure code is not instrumented due to a previous test exception
+        AIAgentsInstrumentor().uninstrument()
+        exception_caught = False
+        try:
+            AIAgentsInstrumentor().instrument()
+            AIAgentsInstrumentor().uninstrument()
+            AIAgentsInstrumentor().uninstrument()
+        except RuntimeError as e:
+            exception_caught = True
+            print(e)
+        assert exception_caught == False
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_agent_chat_with_tracing_content_recording_enabled(self, **kwargs):
+        assert True == AIAgentsInstrumentor().is_content_recording_enabled()
+        assert True == AIAgentsInstrumentor().is_instrumented()
 
         client = self.create_client(**kwargs)
         agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
@@ -289,8 +206,8 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         messages = client.agents.list_messages(thread_id=thread.id)
         client.close()
 
-        processor.force_flush()
-        spans = exporter.get_spans_by_name("create_agent my-agent")
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name("create_agent my-agent")
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
@@ -316,7 +233,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
 
-        spans = exporter.get_spans_by_name("create_thread")
+        spans = self.exporter.get_spans_by_name("create_thread")
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
@@ -328,7 +245,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
 
-        spans = exporter.get_spans_by_name("create_message")
+        spans = self.exporter.get_spans_by_name("create_message")
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
@@ -354,7 +271,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
 
-        spans = exporter.get_spans_by_name("start_thread_run")
+        spans = self.exporter.get_spans_by_name("start_thread_run")
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
@@ -369,7 +286,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
 
-        spans = exporter.get_spans_by_name("list_messages")
+        spans = self.exporter.get_spans_by_name("list_messages")
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
@@ -391,7 +308,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
                     "gen_ai.agent.id": "*",
                     "gen_ai.thread.run.id": "*",
                     "gen_ai.message.id": "*",
-                    "gen_ai.message.status": "completed",
+                    # "gen_ai.message.status": "completed", - there is not status over-the wire
                     "gen_ai.event.content": '{"content": {"text": {"value": "*"}}, "role": "assistant"}',
                 },
             },
@@ -408,21 +325,11 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
 
-        AIAgentsInstrumentor().uninstrument()
-
-    @pytest.mark.skip
+    @pytest.mark.usefixtures("instrument_without_content")
     @agentClientPreparer()
     @recorded_by_proxy
     def test_agent_chat_with_tracing_content_recording_disabled(self, **kwargs):
-        # Make sure code is not instrumented due to a previous test exception
-        try:
-            AIAgentsInstrumentor().uninstrument()
-        except RuntimeError as e:
-            pass
-        self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "False")
-
-        processor, exporter = self.setup_memory_trace_exporter()
-        AIAgentsInstrumentor().instrument()
+        assert False == AIAgentsInstrumentor().is_content_recording_enabled()
 
         client = self.create_client(**kwargs)
         agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
@@ -443,8 +350,8 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         messages = client.agents.list_messages(thread_id=thread.id)
         client.close()
 
-        processor.force_flush()
-        spans = exporter.get_spans_by_name("create_agent my-agent")
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name("create_agent my-agent")
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
@@ -470,7 +377,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
 
-        spans = exporter.get_spans_by_name("create_thread")
+        spans = self.exporter.get_spans_by_name("create_thread")
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
@@ -482,7 +389,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
 
-        spans = exporter.get_spans_by_name("create_message")
+        spans = self.exporter.get_spans_by_name("create_message")
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
@@ -508,7 +415,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
 
-        spans = exporter.get_spans_by_name("start_thread_run")
+        spans = self.exporter.get_spans_by_name("start_thread_run")
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
@@ -523,7 +430,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
 
-        spans = exporter.get_spans_by_name("list_messages")
+        spans = self.exporter.get_spans_by_name("list_messages")
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
@@ -561,22 +468,10 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
 
-        AIAgentsInstrumentor().uninstrument()
-
-    @pytest.mark.skip
+    @pytest.mark.usefixtures("instrument_with_content")
     @agentClientPreparer()
     @recorded_by_proxy
     def test_agent_streaming_with_toolset_with_tracing_content_recording_enabled(self, **kwargs):
-        # Make sure code is not instrumented due to a previous test exception
-        try:
-            AIAgentsInstrumentor().uninstrument()
-        except RuntimeError as e:
-            pass
-        self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "True")
-
-        processor, exporter = self.setup_memory_trace_exporter()
-        AIAgentsInstrumentor().instrument()
-
         def fetch_weather(location: str) -> str:
             """
             Fetches the weather information for the specified location.
@@ -604,6 +499,10 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         agent = client.agents.create_agent(
             model="gpt-4o", name="my-agent", instructions="You are helpful agent", toolset=toolset
         )
+
+        # workaround for https://github.com/Azure/azure-sdk-for-python/issues/40086
+        client.agents._toolset = FakeToolSetDict(toolset=toolset)
+
         thread = client.agents.create_thread()
         message = client.agents.create_message(
             thread_id=thread.id, role="user", content="What is the weather in New York?"
@@ -620,8 +519,8 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         messages = client.agents.list_messages(thread_id=thread.id)
         client.close()
 
-        processor.force_flush()
-        spans = exporter.get_spans_by_name("create_agent my-agent")
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name("create_agent my-agent")
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
@@ -647,7 +546,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
 
-        spans = exporter.get_spans_by_name("create_thread")
+        spans = self.exporter.get_spans_by_name("create_thread")
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
@@ -659,7 +558,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
 
-        spans = exporter.get_spans_by_name("create_message")
+        spans = self.exporter.get_spans_by_name("create_message")
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
@@ -685,7 +584,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
 
-        spans = exporter.get_spans_by_name("submit_tool_outputs")
+        spans = self.exporter.get_spans_by_name("submit_tool_outputs")
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
@@ -698,7 +597,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
 
-        spans = exporter.get_spans_by_name("process_thread_run")
+        spans = self.exporter.get_spans_by_name("process_thread_run")
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
@@ -727,9 +626,9 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
                     "gen_ai.thread.id": "*",
                     "gen_ai.agent.id": "*",
                     "gen_ai.thread.run.id": "*",
-                    "gen_ai.message.status": "completed",
-                    "gen_ai.usage.input_tokens": "+",
-                    "gen_ai.usage.output_tokens": "+",
+                    "gen_ai.message.status": "requires_action",
+                    # "gen_ai.usage.input_tokens": "+", # not available at the moment
+                    # "gen_ai.usage.output_tokens": "+", # not available at the moment
                     "gen_ai.event.content": '{"tool_calls": [{"id": "*", "type": "function", "function": {"name": "fetch_weather", "arguments": {"location": "New York"}}}]}',
                 },
             },
@@ -751,7 +650,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
 
-        spans = exporter.get_spans_by_name("list_messages")
+        spans = self.exporter.get_spans_by_name("list_messages")
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
@@ -789,22 +688,120 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
 
-        AIAgentsInstrumentor().uninstrument()
+    @pytest.mark.usefixtures("instrument_with_content")
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_agent_streaming_with_toolset_with_tracing_content_recording_enabled_unicode(self, **kwargs):
+        def fetch_weather(location: str) -> str:
+            """
+            Fetches the weather information for the specified location.
 
-    @pytest.mark.skip
+            :param location (str): The location to fetch weather for.
+            :return: Weather information as a JSON string.
+            :rtype: str
+            """
+            # In a real-world scenario, you'd integrate with a weather API.
+            # Here, we'll mock the response.
+            mock_weather_data = {"New York": "Sunny", "London": "Cloudy", "Sofia": "Дъждовно"}
+            weather = mock_weather_data.get(location, f"Weather data not available for this location: {location}")
+            weather_json = json.dumps({"weather": weather}, ensure_ascii=False)
+            return weather_json
+
+        user_functions: Set[Callable[..., Any]] = {
+            fetch_weather,
+        }
+
+        functions = FunctionTool(user_functions)
+        toolset = ToolSet()
+        toolset.add(functions)
+
+        client = self.create_client(**kwargs)
+        agent = client.agents.create_agent(
+            model="gpt-4o",
+            name="my-agent",
+            instructions="You are helpful agent. Translate user message to English before executing tools.",
+            toolset=toolset,
+        )
+
+        # workaround for https://github.com/Azure/azure-sdk-for-python/issues/40086
+        client.agents._toolset = FakeToolSetDict(toolset=toolset)
+
+        thread = client.agents.create_thread()
+        message = client.agents.create_message(thread_id=thread.id, role="user", content="Времето в София?")
+
+        with client.agents.create_stream(
+            thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler()
+        ) as stream:
+            stream.until_done()
+
+        # delete agent and close client
+        client.agents.delete_agent(agent.id)
+        print("Deleted agent")
+        messages = client.agents.list_messages(thread_id=thread.id)
+        client.close()
+
+        self.exporter.force_flush()
+
+        spans = self.exporter.get_spans_by_name("create_message")
+        assert len(spans) == 1
+        span = spans[0]
+
+        expected_events = [
+            {
+                "name": "gen_ai.user.message",
+                "attributes": {
+                    "gen_ai.system": "az.ai.agents",
+                    "gen_ai.thread.id": "*",
+                    "gen_ai.event.content": '{"content": "Времето в София?", "role": "user"}',
+                },
+            }
+        ]
+        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+        assert events_match == True
+
+        spans = self.exporter.get_spans_by_name("process_thread_run")
+        assert len(spans) == 1
+        span = spans[0]
+        expected_events = [
+            {
+                "name": "gen_ai.tool.message",
+                "attributes": {"gen_ai.event.content": '{"content": "{\\"weather\\": \\"Дъждовно\\"}", "id": "*"}'},
+            },
+            {
+                "name": "gen_ai.assistant.message",
+                "attributes": {
+                    "gen_ai.system": "az.ai.agents",
+                    "gen_ai.thread.id": "*",
+                    "gen_ai.agent.id": "*",
+                    "gen_ai.thread.run.id": "*",
+                    "gen_ai.message.status": "requires_action",
+                    # "gen_ai.usage.input_tokens": "+", # not available at the moment
+                    # "gen_ai.usage.output_tokens": "+", # not available at the moment
+                    "gen_ai.event.content": '{"tool_calls": [{"id": "*", "type": "function", "function": {"name": "fetch_weather", "arguments": {"location": "Sofia"}}}]}',
+                },
+            },
+            {
+                "name": "gen_ai.assistant.message",
+                "attributes": {
+                    "gen_ai.system": "az.ai.agents",
+                    "gen_ai.thread.id": "*",
+                    "gen_ai.agent.id": "*",
+                    "gen_ai.thread.run.id": "*",
+                    "gen_ai.message.id": "*",
+                    "gen_ai.message.status": "completed",
+                    "gen_ai.usage.input_tokens": "+",
+                    "gen_ai.usage.output_tokens": "+",
+                    "gen_ai.event.content": '{"content": {"text": {"value": "*"}}, "role": "assistant"}',
+                },
+            },
+        ]
+        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+        assert events_match == True
+
+    @pytest.mark.usefixtures("instrument_without_content")
     @agentClientPreparer()
     @recorded_by_proxy
     def test_agent_streaming_with_toolset_with_tracing_content_recording_disabled(self, **kwargs):
-        # Make sure code is not instrumented due to a previous test exception
-        try:
-            AIAgentsInstrumentor().uninstrument()
-        except RuntimeError as e:
-            pass
-        self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "False")
-
-        processor, exporter = self.setup_memory_trace_exporter()
-        AIAgentsInstrumentor().instrument()
-
         def fetch_weather(location: str) -> str:
             """
             Fetches the weather information for the specified location.
@@ -832,6 +829,9 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         agent = client.agents.create_agent(
             model="gpt-4o", name="my-agent", instructions="You are helpful agent", toolset=toolset
         )
+
+        # workaround for https://github.com/Azure/azure-sdk-for-python/issues/40086
+        client.agents._toolset = FakeToolSetDict(toolset=toolset)
         thread = client.agents.create_thread()
         message = client.agents.create_message(
             thread_id=thread.id, role="user", content="What is the weather in New York?"
@@ -848,8 +848,8 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         messages = client.agents.list_messages(thread_id=thread.id)
         client.close()
 
-        processor.force_flush()
-        spans = exporter.get_spans_by_name("create_agent my-agent")
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name("create_agent my-agent")
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
@@ -875,7 +875,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
 
-        spans = exporter.get_spans_by_name("create_thread")
+        spans = self.exporter.get_spans_by_name("create_thread")
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
@@ -887,7 +887,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
 
-        spans = exporter.get_spans_by_name("create_message")
+        spans = self.exporter.get_spans_by_name("create_message")
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
@@ -913,7 +913,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
 
-        spans = exporter.get_spans_by_name("submit_tool_outputs")
+        spans = self.exporter.get_spans_by_name("submit_tool_outputs")
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
@@ -926,7 +926,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
 
-        spans = exporter.get_spans_by_name("process_thread_run")
+        spans = self.exporter.get_spans_by_name("process_thread_run")
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
@@ -955,9 +955,9 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
                     "gen_ai.thread.id": "*",
                     "gen_ai.agent.id": "*",
                     "gen_ai.thread.run.id": "*",
-                    "gen_ai.message.status": "completed",
-                    "gen_ai.usage.input_tokens": "+",
-                    "gen_ai.usage.output_tokens": "+",
+                    "gen_ai.message.status": "requires_action",
+                    # "gen_ai.usage.input_tokens": "+", # not available at the moment
+                    # "gen_ai.usage.output_tokens": "+", # not available at the moment
                     "gen_ai.event.content": '{"tool_calls": [{"id": "*", "type": "function"}]}',
                 },
             },
@@ -979,7 +979,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
 
-        spans = exporter.get_spans_by_name("list_messages")
+        spans = self.exporter.get_spans_by_name("list_messages")
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
@@ -1001,7 +1001,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
                     "gen_ai.agent.id": "*",
                     "gen_ai.thread.run.id": "*",
                     "gen_ai.message.id": "*",
-                    "gen_ai.message.status": "completed",
+                    # "gen_ai.message.status": "completed", - there is no status over-the wire
                     "gen_ai.event.content": '{"role": "assistant"}',
                 },
             },
@@ -1017,8 +1017,6 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         ]
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
-
-        AIAgentsInstrumentor().uninstrument()
 
 
 class MyEventHandler(AgentEventHandler):

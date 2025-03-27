@@ -360,7 +360,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                         need_refresh, self._refresh_on, configuration_settings = client.refresh_configuration_settings(
                             self._selects, self._refresh_on, headers=headers, **kwargs
                         )
-                        configuration_settings_processed = self._proccess_configurations(configuration_settings)
+                        configuration_settings_processed = self._process_configurations(configuration_settings)
                         if need_refresh:
                             self._dict = configuration_settings_processed
                     if self._feature_flag_refresh_enabled:
@@ -422,7 +422,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 configuration_settings, sentinel_keys = client.load_configuration_settings(
                     self._selects, self._refresh_on, headers=headers, **kwargs
                 )
-                configuration_settings_processed = self._proccess_configurations(configuration_settings)
+                configuration_settings_processed = self._process_configurations(configuration_settings)
                 if self._feature_flag_enabled:
                     feature_flags, feature_flag_sentinel_keys, used_filters = client.load_feature_flags(
                         self._feature_flag_selectors, self._feature_flag_refresh_enabled, headers=headers, **kwargs
@@ -461,7 +461,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 is_failover_request = True
         raise exception
 
-    def _proccess_configurations(self, configuration_settings: List[ConfigurationSetting]) -> Dict[str, Any]:
+    def _process_configurations(self, configuration_settings: List[ConfigurationSetting]) -> Dict[str, Any]:
         configuration_settings_processed = {}
         for config in configuration_settings:
             if isinstance(config, FeatureFlagConfigurationSetting):

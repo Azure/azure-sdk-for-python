@@ -203,6 +203,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         return self
 
     async def __aexit__(self, *args) -> None:
+        await self.client_connection._global_endpoint_manager.close() # pylint: disable=protected-access
         return await self.client_connection.pipeline_client.__aexit__(*args)
 
     async def close(self) -> None:
