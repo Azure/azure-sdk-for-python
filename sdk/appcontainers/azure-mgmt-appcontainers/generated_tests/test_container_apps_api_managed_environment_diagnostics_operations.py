@@ -20,11 +20,11 @@ class TestContainerAppsAPIManagedEnvironmentDiagnosticsOperations(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_detectors(self, resource_group):
+    def test_managed_environment_diagnostics_list_detectors(self, resource_group):
         response = self.client.managed_environment_diagnostics.list_detectors(
             resource_group_name=resource_group.name,
             environment_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -32,12 +32,12 @@ class TestContainerAppsAPIManagedEnvironmentDiagnosticsOperations(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_detector(self, resource_group):
+    def test_managed_environment_diagnostics_get_detector(self, resource_group):
         response = self.client.managed_environment_diagnostics.get_detector(
             resource_group_name=resource_group.name,
             environment_name="str",
             detector_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself

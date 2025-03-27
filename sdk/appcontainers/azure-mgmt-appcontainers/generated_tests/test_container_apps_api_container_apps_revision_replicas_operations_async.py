@@ -21,13 +21,13 @@ class TestContainerAppsAPIContainerAppsRevisionReplicasOperationsAsync(AzureMgmt
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_replica(self, resource_group):
+    async def test_container_apps_revision_replicas_get_replica(self, resource_group):
         response = await self.client.container_apps_revision_replicas.get_replica(
             resource_group_name=resource_group.name,
             container_app_name="str",
             revision_name="str",
             replica_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -35,12 +35,12 @@ class TestContainerAppsAPIContainerAppsRevisionReplicasOperationsAsync(AzureMgmt
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_replicas(self, resource_group):
+    async def test_container_apps_revision_replicas_list_replicas(self, resource_group):
         response = await self.client.container_apps_revision_replicas.list_replicas(
             resource_group_name=resource_group.name,
             container_app_name="str",
             revision_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
