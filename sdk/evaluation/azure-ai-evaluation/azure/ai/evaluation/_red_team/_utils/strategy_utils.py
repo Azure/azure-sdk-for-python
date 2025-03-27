@@ -5,7 +5,7 @@ Utility functions for handling attack strategies and converters in Red Team Agen
 import random
 from typing import Dict, List, Union, Optional, Any, Callable, cast
 
-from ..attack_strategy import AttackStrategy
+from .._attack_strategy import AttackStrategy
 from pyrit.prompt_converter import (
     PromptConverter,
     AnsiAttackConverter, 

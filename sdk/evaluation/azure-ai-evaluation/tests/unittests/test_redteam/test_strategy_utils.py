@@ -11,14 +11,14 @@ try:
 except ImportError:
     has_pyrit = False
 if has_pyrit:
-    from azure.ai.evaluation.red_team._utils.strategy_utils import (
+    from azure.ai.evaluation._red_team._utils.strategy_utils import (
         strategy_converter_map,
         get_converter_for_strategy,
         get_chat_target,
         get_orchestrators_for_attack_strategies
     )
-    from azure.ai.evaluation.red_team.attack_strategy import AttackStrategy
-    from azure.ai.evaluation.red_team._callback_chat_target import _CallbackChatTarget
+    from azure.ai.evaluation._red_team._attack_strategy import AttackStrategy
+    from azure.ai.evaluation._red_team._callback_chat_target import _CallbackChatTarget
     from pyrit.prompt_converter import (
         PromptConverter, Base64Converter, FlipConverter, MorseConverter
     )
@@ -81,7 +81,7 @@ class TestConverterForStrategy:
 class TestChatTargetFunctions:
     """Test chat target related functions."""
 
-    @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
+    @patch("azure.ai.evaluation._red_team._utils.strategy_utils.OpenAIChatTarget")
     def test_get_chat_target_prompt_chat_target(self, mock_openai_chat_target):
         """Test getting chat target from an existing PromptChatTarget."""
         mock_target = MagicMock(spec=PromptChatTarget)
@@ -91,7 +91,7 @@ class TestChatTargetFunctions:
         # Verify that we don't create a new target
         mock_openai_chat_target.assert_not_called()
 
-    @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
+    @patch("azure.ai.evaluation._red_team._utils.strategy_utils.OpenAIChatTarget")
     def test_get_chat_target_azure_openai(self, mock_openai_chat_target):
         """Test getting chat target from an Azure OpenAI configuration."""
         mock_instance = MagicMock()
@@ -130,7 +130,7 @@ class TestChatTargetFunctions:
             use_aad_auth=True
         )
 
-    @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
+    @patch("azure.ai.evaluation._red_team._utils.strategy_utils.OpenAIChatTarget")
     def test_get_chat_target_openai(self, mock_openai_chat_target):
         """Test getting chat target from an OpenAI configuration."""
         mock_instance = MagicMock()
@@ -166,7 +166,7 @@ class TestChatTargetFunctions:
             api_key="test-api-key"
         )
 
-    @patch("azure.ai.evaluation.red_team._utils.strategy_utils._CallbackChatTarget")
+    @patch("azure.ai.evaluation._red_team._utils.strategy_utils._CallbackChatTarget")
     def test_get_chat_target_callback_function(self, mock_callback_chat_target):
         """Test getting chat target from a callback function with proper signature."""
         mock_instance = MagicMock()
@@ -180,7 +180,7 @@ class TestChatTargetFunctions:
         mock_callback_chat_target.assert_called_once_with(callback=callback_fn)
         assert result == mock_instance
 
-    @patch("azure.ai.evaluation.red_team._utils.strategy_utils._CallbackChatTarget")
+    @patch("azure.ai.evaluation._red_team._utils.strategy_utils._CallbackChatTarget")
     def test_get_chat_target_simple_function(self, mock_callback_chat_target):
         """Test getting chat target from a simple function without proper signature."""
         mock_instance = MagicMock()

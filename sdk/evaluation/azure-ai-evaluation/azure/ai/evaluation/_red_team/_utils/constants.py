@@ -5,8 +5,8 @@ Constants used in Red Team Agent.
 import os
 # Update imports to use direct import from azure.ai.evaluation
 from azure.ai.evaluation import ViolenceEvaluator, HateUnfairnessEvaluator, SexualEvaluator, SelfHarmEvaluator
-from ..attack_strategy import AttackStrategy
-from ..attack_objective_generator import RiskCategory
+from .._attack_strategy import AttackStrategy
+from .._attack_objective_generator import RiskCategory
 
 # File extensions
 BASELINE_IDENTIFIER = "baseline"

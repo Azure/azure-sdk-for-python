@@ -13,11 +13,11 @@ except ImportError:
     has_pyrit = False
 
 if has_pyrit:
-    from azure.ai.evaluation.red_team._utils.formatting_utils import (
+    from azure.ai.evaluation._red_team._utils.formatting_utils import (
         message_to_dict, get_strategy_name, get_flattened_attack_strategies,
         get_attack_success, format_scorecard, is_none_or_nan, list_mean_nan_safe
     )
-    from azure.ai.evaluation.red_team.attack_strategy import AttackStrategy
+    from azure.ai.evaluation._red_team._attack_strategy import AttackStrategy
     from pyrit.models import ChatMessage
 
 

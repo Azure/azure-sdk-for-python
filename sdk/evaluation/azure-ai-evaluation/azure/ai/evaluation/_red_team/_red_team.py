@@ -43,9 +43,9 @@ from azure.ai.evaluation import evaluate
 from azure.core.credentials import TokenCredential
 
 # Red Teaming imports
-from .red_team_result import RedTeamResult, RedTeamingScorecard, RedTeamingParameters, RedTeamOutput
-from .attack_strategy import AttackStrategy
-from .attack_objective_generator import RiskCategory, _AttackObjectiveGenerator
+from ._red_team_result import _RedTeamResult, _RedTeamingScorecard, _RedTeamingParameters, RedTeamOutput
+from ._attack_strategy import AttackStrategy
+from ._attack_objective_generator import RiskCategory, _AttackObjectiveGenerator
 
 # PyRIT imports
 from pyrit.common import initialize_pyrit, DUCK_DB
@@ -208,7 +208,7 @@ class RedTeam():
         """Log the Red Team Agent results to MLFlow.
         
         :param redteam_output: The output from the red team agent evaluation
-        :type redteam_output: ~azure.ai.evaluation.red_team.RedTeamOutput
+        :type redteam_output: ~azure.ai.evaluation.RedTeamOutput
         :param eval_run: The MLFlow run object
         :type eval_run: ~azure.ai.evaluation._evaluate._eval_run.EvalRun
         :param data_only: Whether to log only data without evaluation results
@@ -772,13 +772,13 @@ class RedTeam():
         from ._utils.formatting_utils import get_attack_success
         return get_attack_success(result)
 
-    def _to_red_team_result(self) -> RedTeamResult:
-        """Convert tracking data from red_team_info to the RedTeamResult format.
+    def _to_red_team_result(self) -> _RedTeamResult:
+        """Convert tracking data from red_team_info to the _RedTeamResult format.
         
-        Uses only the red_team_info tracking dictionary to build the RedTeamResult.
+        Uses only the red_team_info tracking dictionary to build the _RedTeamResult.
         
         :return: Structured red team agent results
-        :rtype: RedTeamResult
+        :rtype: _RedTeamResult
         """
         converters = []
         complexity_levels = []
@@ -791,7 +791,7 @@ class RedTeam():
             summary_file = os.path.join(self.scan_output_dir, "attack_summary.csv")
             self.logger.debug(f"Creating attack summary CSV file: {summary_file}")
         
-        self.logger.info(f"Building RedTeamResult from red_team_info with {len(self.red_team_info)} strategies")
+        self.logger.info(f"Building _RedTeamResult from red_team_info with {len(self.red_team_info)} strategies")
         
         # Process each strategy and risk category from red_team_info
         for strategy_name, risk_data in self.red_team_info.items():
@@ -1086,12 +1086,12 @@ class RedTeam():
                     complexity_converters = complexity_df["converter"].unique().tolist()
                     redteaming_parameters["techniques_used"][complexity] = complexity_converters
         
-        self.logger.info("RedTeamResult creation completed")
+        self.logger.info("_RedTeamResult creation completed")
         
         # Create the final result
-        red_team_result = RedTeamResult(
-            redteaming_scorecard=cast(RedTeamingScorecard, scorecard),
-            redteaming_parameters=cast(RedTeamingParameters, redteaming_parameters),
+        red_team_result = _RedTeamResult(
+            redteaming_scorecard=cast(_RedTeamingScorecard, scorecard),
+            redteaming_parameters=cast(_RedTeamingParameters, redteaming_parameters),
             redteaming_data=conversations,
             studio_url=self.ai_studio_url or None
         )
@@ -1099,7 +1099,7 @@ class RedTeam():
         return red_team_result
 
     # Replace with utility function
-    def _to_scorecard(self, redteam_result: RedTeamResult) -> str:
+    def _to_scorecard(self, redteam_result: _RedTeamResult) -> str:
         from ._utils.formatting_utils import format_scorecard
         return format_scorecard(redteam_result)
     
@@ -1745,7 +1745,7 @@ class RedTeam():
             # Process results
             log_section_header(self.logger, "Processing results")
             
-            # Convert results to RedTeamResult using only red_team_info
+            # Convert results to _RedTeamResult using only red_team_info
             red_team_result = self._to_red_team_result()
             
             # Create output with either full results or just conversations
