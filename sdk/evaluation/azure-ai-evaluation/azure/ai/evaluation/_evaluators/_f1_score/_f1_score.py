@@ -51,7 +51,7 @@ class F1ScoreEvaluator(EvaluatorBase):
     id = "azureml://registries/azureml/models/F1Score-Evaluator/versions/3"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
-    def __init__(self, threshold=0.5):
+    def __init__(self, *, threshold=0.5):
         self._threshold = threshold
         self._higher_is_better = True
         super().__init__(threshold=threshold, _higher_is_better=self._higher_is_better)
