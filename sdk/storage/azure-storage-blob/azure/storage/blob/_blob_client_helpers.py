@@ -213,7 +213,7 @@ def _upload_blob_from_url_options(source_url: str, **kwargs: Any) -> Dict[str, A
         cpk_info = CpkInfo(
             encryption_key=cpk.key_value,
             encryption_key_sha256=cpk.key_hash,
-            ncryption_algorithm=cpk.algorithm
+            encryption_algorithm=cpk.algorithm
         )
 
     options = {
@@ -232,10 +232,10 @@ def _upload_blob_from_url_options(source_url: str, **kwargs: Any) -> Dict[str, A
         'cpk_scope_info': get_cpk_scope_info(kwargs),
         'headers': headers,
     }
-    options.update(kwargs)
+    options.update({k: v for k, v in kwargs.items() if v is not None})
     if not overwrite and not _any_conditions(**options):
         options['modified_access_conditions'].if_none_match = '*'
-    return {k: v for k, v in options.items() if v is not None}
+    return options
 
 def _download_blob_options(
     blob_name: str,
@@ -323,8 +323,8 @@ def _download_blob_options(
         'name': blob_name,
         'container': container_name
     }
-    options.update(kwargs)
-    return {k: v for k, v in options.items() if v is not None}
+    options.update({k: v for k, v in kwargs.items() if v is not None})
+    return options
 
 def _quick_query_options(snapshot: Optional[str], query_expression: str, **kwargs: Any ) -> Tuple[Dict[str, Any], str]:
     delimiter = '\n'
