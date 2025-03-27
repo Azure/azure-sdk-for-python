@@ -7,7 +7,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import datetime
-from typing import Any, List, Optional, Iterable, Iterator
+from typing import Any, Deque, List, Optional, Iterable, Iterator
 import collections
 import logging
 import threading
@@ -32,6 +32,7 @@ __all__: List[str] = [
 class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
     """Customize generated code"""
 
+    # create_task_collection renamed
     def create_tasks(
         self,
         job_id: str,
@@ -86,7 +87,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         kwargs.update({"timeout": timeout, "ocpdate": ocpdate})
 
-        results_queue = collections.deque()  # deque operations(append/pop) are thread-safe
+        # deque operations(append/pop) are thread-safe
+        results_queue: Deque[_models.BatchTaskAddResult] = collections.deque()
         task_workflow_manager = _TaskWorkflowManager(
             self, job_id=job_id, task_collection=task_collection, **kwargs
         )

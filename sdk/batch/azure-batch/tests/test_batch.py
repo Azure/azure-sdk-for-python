@@ -984,7 +984,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
                     command_line='cmd /c "echo hello world"',
                 )
             )
-        result = await wrap_result(client.create_task_collection(batch_job.id, task_collection=tasks))
+        result = await wrap_result(client.create_tasks(batch_job.id, task_collection=tasks))
         assert isinstance(result, models.BatchTaskAddCollectionResult)
         assert len(result.value) == 3
         assert result.value[0].status.lower() == models.BatchTaskAddStatus.SUCCESS
@@ -1044,13 +1044,13 @@ class TestBatch(AzureMgmtRecordedTestCase):
         tasks_to_add.append(task)
         await self.assertCreateTasksError(
             "RequestBodyTooLarge",
-            client.create_task_collection,
+            client.create_tasks,
             batch_job.id,
             tasks_to_add,
         )
         await self.assertCreateTasksError(
             "RequestBodyTooLarge",
-            client.create_task_collection,
+            client.create_tasks,
             batch_job.id,
             tasks_to_add,
             concurrencies=3,
@@ -1073,7 +1073,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 resource_files=resource_files,
             )
             tasks_to_add.append(task)
-        result = await wrap_result(client.create_task_collection(batch_job.id, tasks_to_add))
+        result = await wrap_result(client.create_tasks(batch_job.id, tasks_to_add))
         assert isinstance(result, models.BatchTaskAddCollectionResult)
         assert len(result.value) == 733
         assert result.value[0].status.lower() == models.BatchTaskAddStatus.SUCCESS

@@ -14,18 +14,8 @@ from ._models import BatchPoolReplaceContent as BatchPoolReplaceContentGenerated
 from .._model_base import rest_field
 
 __all__: List[str] = [
-    "BatchPoolReplaceContent",
     "CreateTasksError",
 ]  # Add all objects you want publicly available to users at this package level
-
-
-class BatchPoolReplaceContent(BatchPoolReplaceContentGenerated):
-    certificate_references: List[str] = rest_field(name="certificateReferences")
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-        self.certificate_references = []
-
 
 class CreateTasksError(HttpResponseError):
     """Aggregate Exception containing details for any failures from a task add operation.
@@ -36,10 +26,10 @@ class CreateTasksError(HttpResponseError):
     :param [~Exception] errors: List of unknown errors forcing early termination
     """
 
-    def __init__(self, pending_tasks=None, failure_tasks=None, errors=None):
-        self.pending_tasks = list(pending_tasks)
-        self.failure_tasks = list(failure_tasks)
-        self.errors = list(errors)
+    def __init__(self, pending_tasks=[], failure_tasks=[], errors=[]):
+        self.pending_tasks = pending_tasks
+        self.failure_tasks = failure_tasks
+        self.errors = errors
         if failure_tasks and errors:
             self.message = (
                 "Multiple errors encountered. Check the `failure_tasks` and "

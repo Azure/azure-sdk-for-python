@@ -146,7 +146,7 @@ class BatchClient(GenerateBatchClient):
     def __init__(self, endpoint: str, credential: Union[AzureNamedKeyCredential, TokenCredential], **kwargs):
         super().__init__(
             endpoint=endpoint,
-            credential=credential,
+            credential=credential, # type: ignore
             authentication_policy=kwargs.pop(
                 "authentication_policy", self._format_shared_key_credential("", credential)
             ),
