@@ -439,8 +439,7 @@ def _format_storage_telemetry_item(item: TelemetryItem) -> TelemetryItem:
                     item.data.base_data.additional_properties = None  # type: ignore
     return item
 
-#TODO: Method signature
-def _get_authentication_credential(**kwargs: Any) -> ManagedIdentityCredential:
+def _get_authentication_credential(**kwargs: Any) -> Optional[ManagedIdentityCredential]:
     if "credential" in kwargs:
         return kwargs.get("credential")
     try:
