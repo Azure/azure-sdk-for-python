@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=docstring-keyword-should-match-keyword-only
 
 import functools
 import warnings
@@ -161,6 +160,10 @@ class QueueClient(  # type: ignore [misc]
         cls, queue_url: str,
         credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
         *,
+        api_version: Optional[str] = None,
+        secondary_hostname: Optional[str] = None,
+        message_encode_policy: Optional[Union["BinaryBase64EncodePolicy", "TextBase64EncodePolicy"]] = None,
+        message_decode_policy: Optional[Union["BinaryBase64DecodePolicy", "TextBase64DecodePolicy"]] = None,
         audience: Optional[str] = None,
         **kwargs: Any
     ) -> Self:
@@ -181,6 +184,19 @@ class QueueClient(  # type: ignore [misc]
             ~azure.core.credentials.AzureSasCredential or
             ~azure.core.credentials_async.AsyncTokenCredential or
             str or dict[str, str] or None
+        :keyword str api_version:
+            The Storage API version to use for requests. Default value is the most recent service version that is
+            compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
+        :keyword str secondary_hostname:
+            The hostname of the secondary endpoint.
+        :keyword message_encode_policy: The encoding policy to use on outgoing messages.
+            Default is not to encode messages. Other options include :class:`TextBase64EncodePolicy`,
+            :class:`BinaryBase64EncodePolicy` or `None`.
+        :paramtype message_encode_policy: BinaryBase64EncodePolicy or TextBase64EncodePolicy or None
+        :keyword message_decode_policy: The decoding policy to use on incoming messages.
+            Default value is not to decode messages. Other options include :class:`TextBase64DecodePolicy`,
+            :class:`BinaryBase64DecodePolicy` or `None`.
+        :paramtype message_decode_policy: BinaryBase64DecodePolicy or TextBase64DecodePolicy or None
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
             authentication. Only has an effect when credential is of type TokenCredential. The value could be
             https://storage.azure.com/ (default) or https://<account>.queue.core.windows.net.
@@ -188,7 +204,17 @@ class QueueClient(  # type: ignore [misc]
         :rtype: ~azure.storage.queue.QueueClient
         """
         account_url, queue_name = _from_queue_url(queue_url=queue_url)
-        return cls(account_url, queue_name=queue_name, credential=credential, audience=audience, **kwargs)
+        return cls(
+            account_url,
+            queue_name=queue_name,
+            credential=credential,
+            api_version=api_version,
+            secondary_hostname=secondary_hostname,
+            message_encode_policy=message_encode_policy,
+            message_decode_policy=message_decode_policy,
+            audience=audience,
+            **kwargs
+        )
 
     @classmethod
     def from_connection_string(
@@ -196,6 +222,10 @@ class QueueClient(  # type: ignore [misc]
         queue_name: str,
         credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
         *,
+        api_version: Optional[str] = None,
+        secondary_hostname: Optional[str] = None,
+        message_encode_policy: Optional[Union["BinaryBase64EncodePolicy", "TextBase64EncodePolicy"]] = None,
+        message_decode_policy: Optional[Union["BinaryBase64DecodePolicy", "TextBase64DecodePolicy"]] = None,
         audience: Optional[str] = None,
         **kwargs: Any
     ) -> Self:
@@ -219,6 +249,19 @@ class QueueClient(  # type: ignore [misc]
             ~azure.core.credentials.AzureSasCredential or
             ~azure.core.credentials_async.AsyncTokenCredential or
             str or dict[str, str] or None
+        :keyword str api_version:
+            The Storage API version to use for requests. Default value is the most recent service version that is
+            compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
+        :keyword str secondary_hostname:
+            The hostname of the secondary endpoint.
+        :keyword message_encode_policy: The encoding policy to use on outgoing messages.
+            Default is not to encode messages. Other options include :class:`TextBase64EncodePolicy`,
+            :class:`BinaryBase64EncodePolicy` or `None`.
+        :paramtype message_encode_policy: BinaryBase64EncodePolicy or TextBase64EncodePolicy or None
+        :keyword message_decode_policy: The decoding policy to use on incoming messages.
+            Default value is not to decode messages. Other options include :class:`TextBase64DecodePolicy`,
+            :class:`BinaryBase64DecodePolicy` or `None`.
+        :paramtype message_decode_policy: BinaryBase64DecodePolicy or TextBase64DecodePolicy or None
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
             authentication. Only has an effect when credential is of type TokenCredential. The value could be
             https://storage.azure.com/ (default) or https://<account>.queue.core.windows.net.
@@ -237,7 +280,17 @@ class QueueClient(  # type: ignore [misc]
         account_url, secondary, credential = parse_connection_str(conn_str, credential, 'queue')
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
-        return cls(account_url, queue_name=queue_name, credential=credential, audience=audience, **kwargs)
+        return cls(
+            account_url,
+            queue_name=queue_name,
+            credential=credential,
+            api_version=api_version,
+            secondary_hostname=secondary_hostname,
+            message_encode_policy=message_encode_policy,
+            message_decode_policy=message_decode_policy,
+            audience=audience,
+            **kwargs
+        )
 
     @distributed_trace_async
     async def create_queue(
