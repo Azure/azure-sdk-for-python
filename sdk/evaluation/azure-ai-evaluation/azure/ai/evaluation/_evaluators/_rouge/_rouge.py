@@ -86,7 +86,8 @@ class RougeScoreEvaluator(EvaluatorBase):
     @override
     def __init__(
         self, 
-        rouge_type: RougeType, 
+        rouge_type: RougeType,
+        *,
         precision_threshold: float = 0.5,
         recall_threshold: float = 0.5,
         f1_score_threshold: float = 0.5
