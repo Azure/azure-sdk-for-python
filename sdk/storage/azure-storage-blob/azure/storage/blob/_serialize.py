@@ -91,11 +91,13 @@ def _get_match_headers(
 
 
 def get_access_conditions(lease: Optional[Union["BlobLeaseClient", str]]) -> Optional[LeaseAccessConditions]:
-    try:
-        lease_id = lease.id # type: ignore
-    except AttributeError:
-        lease_id = lease # type: ignore
-    return LeaseAccessConditions(lease_id=lease_id) if lease_id else None
+    if lease is None:
+        return None
+    if hasattr(lease, "id"):
+        lease_id = lease.id  # type: ignore
+    else:
+        lease_id = lease  # type: ignore
+    return LeaseAccessConditions(lease_id=lease_id)
 
 
 def get_modify_conditions(kwargs: Dict[str, Any]) -> ModifiedAccessConditions:

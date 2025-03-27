@@ -1030,7 +1030,19 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             error_cls=error_cls)
 
     @distributed_trace
-    def delete_blob(self, delete_snapshots: Optional[str] = None, **kwargs: Any) -> None:
+    def delete_blob(
+        self, delete_snapshots: Optional[str] = None,
+        *,
+        version_id: Optional[str] = None,
+        lease: Optional[Union[BlobLeaseClient, str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional["MatchConditions"] = None,
+        if_tags_match_condition: Optional[str] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
         """Marks the specified blob for deletion.
 
         The blob is later deleted during garbage collection.
@@ -1103,9 +1115,17 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         """
         options = _delete_blob_options(
             snapshot=self.snapshot,
-            version_id=get_version_id(self.version_id, kwargs),
+            version_id=version_id or self.version_id,
             delete_snapshots=delete_snapshots,
-            **kwargs)
+            lease=lease,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_condition=match_condition,
+            if_tags_match_condition=if_tags_match_condition,
+            timeout=timeout,
+            **kwargs
+        )
         try:
             self._client.blob.delete(**options)
         except HttpResponseError as error:
