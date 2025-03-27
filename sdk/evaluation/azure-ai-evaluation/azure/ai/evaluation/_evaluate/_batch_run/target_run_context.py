@@ -7,6 +7,7 @@ from typing import Optional, Type
 
 from azure.ai.evaluation._legacy._adapters._constants import PF_FLOW_ENTRY_IN_TMP
 from azure.ai.evaluation._constants import PF_DISABLE_TRACING
+from azure.ai.evaluation._evaluate._utils import set_event_loop_policy
 
 
 class TargetRunContext:
@@ -31,6 +32,9 @@ class TargetRunContext:
             os.environ[PF_FLOW_ENTRY_IN_TMP] = "true"
 
         os.environ[PF_DISABLE_TRACING] = "true"
+
+        # For addressing the issue of asyncio event loop closed on Windows
+        set_event_loop_policy()
 
     def __exit__(
         self,

@@ -14,6 +14,7 @@ from .batch_clients import BatchClientRun, HasAsyncCallable
 from ..._legacy._batch_engine._run_submitter import RunSubmitter
 from ..._legacy._batch_engine._config import BatchEngineConfig
 from ..._legacy._batch_engine._run import Run
+from ..._legacy._adapters._constants import LINE_NUMBER
 
 
 LOGGER = logging.getLogger(__name__)
@@ -22,7 +23,9 @@ LOGGER = logging.getLogger(__name__)
 class RunSubmitterClient:
     def __init__(self, config: Optional[BatchEngineConfig] = None) -> None:
         self._config = config or BatchEngineConfig(LOGGER, use_async=True)
-        self._thread_pool = ThreadPoolExecutor(thread_name_prefix="evaluators_thread")
+        self._thread_pool = ThreadPoolExecutor(
+            thread_name_prefix="evaluators_thread",
+            max_workers=self._config.max_concurrency)
 
     def run(
         self,
@@ -33,21 +36,23 @@ class RunSubmitterClient:
         **kwargs: Any,
     ) -> BatchClientRun:
         if not isinstance(data, pd.DataFrame):
-            # Should never get here
             raise ValueError("Data must be a pandas DataFrame")
-        if not column_mapping:
-            raise ValueError("Column mapping must be provided")
 
-        # The column mappings are index by data to indicate they come from the data
+        # The column mappings are indexed by data to indicate they come from the data
         # input. Update the inputs so that each entry is a dictioary with a data key
         # that contains the original input data.
         inputs = [{"data": input_data} for input_data in data.to_dict(orient="records")]
 
-        # always uses async behind the scenes
+        # Pass the correct previous run to the evaluator
+        run: Optional[BatchClientRun] = kwargs.pop("run", None)
+        if run:
+            kwargs["run"] = self._get_run(run)
+
+        # Try to get async function to use
         if isinstance(flow, HasAsyncCallable):
             flow = flow._to_async()  # pylint: disable=protected-access
 
-        run_submitter = RunSubmitter(self._config)
+        run_submitter = RunSubmitter(self._config, self._thread_pool)
         run_future = self._thread_pool.submit(
             run_submitter.submit,
             dynamic_callable=flow,
@@ -67,7 +72,7 @@ class RunSubmitterClient:
         data: Dict[str, List[Any]] = defaultdict(list)
         stop_at: Final[int] = self._config.default_num_results if not all_results else sys.maxsize
 
-        def _update(prefix: str, items: Sequence[Mapping[str, Any]]) -> None:
+        def _update(prefix: str, items: Sequence[Mapping[str, Any]], add_line_num: bool = False) -> None:
             for i, line in enumerate(items):
                 if i >= stop_at:
                     break
@@ -75,7 +80,10 @@ class RunSubmitterClient:
                     key = f"{prefix}.{k}"
                     data[key].append(value)
 
-        _update("inputs", run.inputs)
+        # Go from a list of dictionaries (i.e. a row view of the data) to a dictionary of lists
+        # (i.e. a column view of the data)
+        _update("inputs", run.inputs, True)
+        _update("inputs", [{ LINE_NUMBER: i } for i in range(len(run.inputs)) ])
         _update("outputs", run.outputs)
 
         df = pd.DataFrame(data).reindex(columns=[k for k in data.keys()])

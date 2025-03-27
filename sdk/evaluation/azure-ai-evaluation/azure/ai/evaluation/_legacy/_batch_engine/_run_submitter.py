@@ -3,7 +3,11 @@
 # ---------------------------------------------------------
 
 import dataclasses
+import inspect
 import sys
+
+from concurrent.futures import Executor
+from copy import deepcopy
 from datetime import datetime, timezone
 from typing import Any, Callable, Dict, Mapping, Optional, Sequence, TextIO, Union
 
@@ -13,7 +17,7 @@ from ._run_storage import AbstractRunStorage, NoOpRunStorage
 from .._common._logging import incremental_print, print_red_error
 from ._config import BatchEngineConfig
 from ._exceptions import BatchEngineValidationError
-from ._engine import BatchEngine, BatchEngineError, BatchResult
+from ._engine import DEFAULTS_KEY, BatchEngine, BatchEngineError, BatchResult
 
 
 class RunSubmitter:
@@ -22,25 +26,32 @@ class RunSubmitter:
 
     THIS WILL BE REMOVED IN A FUTURE CODE UPDATE"""
 
-    def __init__(self, config: BatchEngineConfig):
+    def __init__(self, config: BatchEngineConfig, executor: Optional[Executor] = None):
         # self._client = PFClient instance
         # self._config = PFClient config
         # self.run_operations = RunOperations instance
 
         # TODO ralphe: Use proper logger here. Old code did LoggerFactory.get_logger(__name__)
         self._config = config
+        self._executor = executor
 
     def submit(
         self,
         dynamic_callable: Callable,
         inputs: Sequence[Mapping[str, Any]],
-        column_mapping: Mapping[str, str],
+        column_mapping: Optional[Mapping[str, str]],
         *,
         name_prefix: Optional[str] = None,
         created_on: Optional[datetime] = None,
         storage_creator: Optional[Callable[[Run], AbstractRunStorage]] = None,
         **kwargs,
     ) -> Run:
+
+        # if the column mappings are not provided, generate them based on the arguments to the
+        # flow function.
+        if column_mapping is None:
+            column_mapping = self._generate_column_mapping(dynamic_callable)
+
         # The old code always spun up two threads here using a ThreadPoolExecutor:
         # 1. One thread essentially did nothing of value (since tracing was disabled, and we
         #    don't care about checking for the latest PromptFlow version number now)
@@ -51,12 +62,14 @@ class RunSubmitter:
         # of the _run_bulk code here directly.
         # In a future code refactor, all of this will be cleaned up in favour of proper
         # async/await code.
-        run: Run = kwargs.pop("run", None) or Run(
+
+        run: Run = Run(
             dynamic_callable=dynamic_callable,
             name_prefix=name_prefix,
             inputs=inputs,
             column_mapping=column_mapping,
             created_on=created_on,
+            run=kwargs.pop("run", None),
         )
 
         logger = self._config.logger
@@ -95,6 +108,29 @@ class RunSubmitter:
         # removed since it is unnecessary. It also parsed and set environment variables. This
         # has also been removed since it can be problematic in a multi-threaded environment.
 
+        if run.previous_run:
+            previous: Optional[Run] = run.previous_run
+            if previous.status != RunStatus.COMPLETED:
+                raise BatchEngineValidationError(
+                    f"Referenced run {previous.name} is not completed, got status {previous.status.value}."
+                )
+            if previous.outputs is not None:
+                if len(previous.outputs) != len(run.inputs):
+                    raise BatchEngineValidationError(
+                        f"Referenced run {previous.name} has {len(previous.outputs)} outputs, "
+                        f"but {len(run.inputs)} inputs are provided."
+                    )
+                
+                # load in the previous run's outputs and inputs into the list of dictionaries to allow for
+                # the previous run's outputs to be used as inputs for the current run
+                run.inputs = [
+                    {
+                        "run.outputs": previous.outputs[i],
+                        "run.inputs": previous.inputs[i],
+                        **run.inputs[i]
+                    }
+                    for i in range(len(run.inputs))]
+
         self._validate_column_mapping(run.column_mapping)
 
         run._status = RunStatus.RUNNING
@@ -108,7 +144,7 @@ class RunSubmitter:
                 batch_timeout_sec=self._config.batch_timeout_seconds,
                 line_timeout_sec=self._config.run_timeout_seconds,
                 max_worker_count=self._config.max_concurrency,
-                **kwargs,
+                executor=self._executor,
             )
 
             batch_result = batch_engine.run(data=run.inputs, column_mapping=run.column_mapping, id=run.name)
@@ -153,9 +189,29 @@ class RunSubmitter:
             run.result = batch_result
 
     @staticmethod
+    def _generate_column_mapping(function: Callable) -> Mapping[str, Any]:
+        args = inspect.signature(function).parameters
+        default_values: Dict[str, Any] = {}
+        mapping: Dict[str, Any] = {}
+        for key, value in args.items():
+            if key in ["self", "cls"] or value.kind in [value.VAR_POSITIONAL, value.VAR_KEYWORD]:
+                continue
+
+            mapping[key] = f"${{data.{key}}}"
+            if value.default != inspect.Parameter.empty:
+                default_values[key] = value.default
+
+        return {
+            **mapping,
+            DEFAULTS_KEY: default_values,
+        }
+
+    @staticmethod
     def _validate_inputs(run: Run):
-        if not run.inputs:
-            raise BatchEngineValidationError("Data must be specified for evaluation run.")
+        if not run.inputs and not run.previous_run:
+            raise BatchEngineValidationError(
+                "Either data, or a previous run must be specified for the evaluation run."
+            )
 
     @staticmethod
     def _validate_column_mapping(column_mapping: Mapping[str, str]):
