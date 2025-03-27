@@ -8,8 +8,8 @@
   ([#40004](https://github.com/Azure/azure-sdk-for-python/pull/40004))
 - Support `server.address` attributes when converting Azure SDK messaging spans to envelopes
   ([#40059](https://github.com/Azure/azure-sdk-for-python/pull/40059))
-- Enabled Entra ID Credential conrfiguration via env var
-  ([#XXXXX](https://github.com/Azure/azure-sdk-for-python/pull/XXXXX))
+- Enabled Entra ID Credential configuration via env var
+  ([#40237](https://github.com/Azure/azure-sdk-for-python/pull/40237))
 
 ### Breaking Changes
 
