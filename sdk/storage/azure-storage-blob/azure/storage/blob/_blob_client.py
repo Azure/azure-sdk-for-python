@@ -372,7 +372,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         *,
         metadata: Optional[Dict[str, str]] = None,
         overwrite: Optional[bool] = None,
-        include_source_blob_properties: Optional[bool] = None,
+        include_source_blob_properties: bool = True,
         tags: Optional[Dict[str, str]] = None,
         source_content_md5: Optional[bytearray] = None,
         source_if_modified_since: Optional[datetime] = None,
