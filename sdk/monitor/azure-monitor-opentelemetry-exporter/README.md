@@ -671,7 +671,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 <!-- LINKS -->
 [aad_env_var_docs]: https://learn.microsoft.com/azure/azure-monitor/app/azure-ad-authentication
-<!-- TODO: Update with documentaiton link to be python-specific after Python docs have been updated to be like Java: https://learn.microsoft.com/en-us/azure/azure-monitor/app/azure-ad-authentication?tabs=java#environment-variable-configuration-2 -->
+<!-- TODO: Update with documentation link to be python-specific after Python docs have been updated to be like Java: https://learn.microsoft.com/en-us/azure/azure-monitor/app/azure-ad-authentication?tabs=java#environment-variable-configuration-2 -->
 [aad_for_ai_docs]: https://learn.microsoft.com/azure/azure-monitor/app/azure-ad-authentication?tabs=python
 [api_docs]: https://azure.github.io/azure-sdk-for-python/monitor.html#azure-monitor-opentelemetry-exporter
 [exporter_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples
