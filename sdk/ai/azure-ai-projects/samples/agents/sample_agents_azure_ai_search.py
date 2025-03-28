@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+
 """
 DESCRIPTION:
     This sample demonstrates how to use agent operations with the 
@@ -29,12 +30,14 @@ USAGE:
        Azure AI Foundry project.
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
        the "Models + endpoints" tab in your Azure AI Foundry project.
+    3) AI_SEARCH_CONNECTION_NAME - The connection name of the AI Search connection to your Foundry project,
+       as found under the "Name" column in the "Connected Resources" tab in your Azure AI Foundry project.
 """
 
 import os
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models import AzureAISearchTool, ConnectionType
+from azure.ai.projects.models import AzureAISearchQueryType, AzureAISearchTool, ListSortOrder, MessageRole
 
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(),
@@ -42,17 +45,19 @@ project_client = AIProjectClient.from_connection_string(
 )
 
 # [START create_agent_with_azure_ai_search_tool]
-conn_list = project_client.connections.list()
-conn_id = ""
-for conn in conn_list:
-    if conn.connection_type == ConnectionType.AZURE_AI_SEARCH:
-        conn_id = conn.id
-        break
+connection = project_client.connections.get(connection_name=os.environ["AI_SEARCH_CONNECTION_NAME"])
+conn_id = connection.id
 
 print(conn_id)
 
 # Initialize agent AI search tool and add the search index connection id
-ai_search = AzureAISearchTool(index_connection_id=conn_id, index_name="myindexname")
+ai_search = AzureAISearchTool(
+    index_connection_id=conn_id,
+    index_name="sample_index",
+    query_type=AzureAISearchQueryType.SIMPLE,
+    top_k=3,
+    filter=""
+)
 
 # Create agent with AI search tool and process assistant run
 with project_client:
@@ -74,7 +79,7 @@ with project_client:
     message = project_client.agents.create_message(
         thread_id=thread.id,
         role="user",
-        content="What inventory is available currently?",
+        content="What is the temperature rating of the cozynights sleeping bag?",
     )
     print(f"Created message, ID: {message.id}")
 
@@ -108,6 +113,21 @@ with project_client:
     project_client.agents.delete_agent(agent.id)
     print("Deleted agent")
 
+    # [START populate_references_agent_with_azure_ai_search_tool]
     # Fetch and log all messages
-    messages = project_client.agents.list_messages(thread_id=thread.id)
-    print(f"Messages: {messages}")
+    messages = project_client.agents.list_messages(thread_id=thread.id, order=ListSortOrder.ASCENDING)
+    for message in messages.data:
+        if message.role == MessageRole.AGENT and message.url_citation_annotations:
+            placeholder_annotations = {
+                annotation.text: f" [see {annotation.url_citation.title}] ({annotation.url_citation.url})"
+                for annotation in message.url_citation_annotations
+            }
+            for message_text in message.text_messages:
+                message_str = message_text.text.value
+                for k, v in placeholder_annotations.items():
+                    message_str = message_str.replace(k, v)
+                print(f"{message.role}: {message_str}")
+        else:
+            for message_text in message.text_messages:
+                print(f"{message.role}: {message_text.text.value}")
+    # [END populate_references_agent_with_azure_ai_search_tool]
