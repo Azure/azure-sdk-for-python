@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# cspell:ignore ruamel
+
 import os
 import re
 from io import open
