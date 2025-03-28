@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# pylint: disable=protected-access
 from typing import Any, Callable, cast, TypeVar, Union
 
 from azure.core import AsyncPipelineClient
@@ -70,7 +71,7 @@ class AsyncNoPollingMixin(AsyncLROBasePolling):
         """
         return "succeeded"
 
-    def result(self, *args, **kwargs):
+    def result(self, *args, **kwargs):  # pylint: disable=unused-argument
         return self.resource()
 
 
