@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any, Dict
+from typing import Optional
 
 _SUPPORTED_API_VERSIONS = [
     '2019-02-02',
@@ -31,8 +31,7 @@ _SUPPORTED_API_VERSIONS = [
 ]
 
 
-def get_api_version(kwargs: Dict[str, Any]) -> str:
-    api_version = kwargs.get('api_version', None)
+def get_api_version(api_version: Optional[str]) -> str:
     if api_version and api_version not in _SUPPORTED_API_VERSIONS:
         versions = '\n'.join(_SUPPORTED_API_VERSIONS)
         raise ValueError(f"Unsupported API version '{api_version}'. Please select from:\n{versions}")
