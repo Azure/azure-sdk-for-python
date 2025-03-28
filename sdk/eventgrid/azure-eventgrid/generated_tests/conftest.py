@@ -1,0 +1,50 @@
+# coding=utf-8
+import os
+import pytest
+from dotenv import load_dotenv
+from devtools_testutils import (
+    test_proxy,
+    add_general_regex_sanitizer,
+    add_body_key_sanitizer,
+    add_header_regex_sanitizer,
+)
+
+load_dotenv()
+
+
+# For security, please avoid record sensitive identity information in recordings
+@pytest.fixture(scope="session", autouse=True)
+def add_sanitizers(test_proxy):
+    eventgridpublisher_subscription_id = os.environ.get(
+        "EVENTGRIDPUBLISHER_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000"
+    )
+    eventgridpublisher_tenant_id = os.environ.get(
+        "EVENTGRIDPUBLISHER_TENANT_ID", "00000000-0000-0000-0000-000000000000"
+    )
+    eventgridpublisher_client_id = os.environ.get(
+        "EVENTGRIDPUBLISHER_CLIENT_ID", "00000000-0000-0000-0000-000000000000"
+    )
+    eventgridpublisher_client_secret = os.environ.get(
+        "EVENTGRIDPUBLISHER_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000"
+    )
+    add_general_regex_sanitizer(regex=eventgridpublisher_subscription_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=eventgridpublisher_tenant_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=eventgridpublisher_client_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=eventgridpublisher_client_secret, value="00000000-0000-0000-0000-000000000000")
+
+    eventgridconsumer_subscription_id = os.environ.get(
+        "EVENTGRIDCONSUMER_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000"
+    )
+    eventgridconsumer_tenant_id = os.environ.get("EVENTGRIDCONSUMER_TENANT_ID", "00000000-0000-0000-0000-000000000000")
+    eventgridconsumer_client_id = os.environ.get("EVENTGRIDCONSUMER_CLIENT_ID", "00000000-0000-0000-0000-000000000000")
+    eventgridconsumer_client_secret = os.environ.get(
+        "EVENTGRIDCONSUMER_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000"
+    )
+    add_general_regex_sanitizer(regex=eventgridconsumer_subscription_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=eventgridconsumer_tenant_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=eventgridconsumer_client_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=eventgridconsumer_client_secret, value="00000000-0000-0000-0000-000000000000")
+
+    add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
+    add_header_regex_sanitizer(key="Cookie", value="cookie;")
+    add_body_key_sanitizer(json_path="$..access_token", value="access_token")

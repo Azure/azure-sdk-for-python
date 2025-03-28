@@ -1,0 +1,80 @@
+# coding=utf-8
+import pytest
+from devtools_testutils.aio import recorded_by_proxy_async
+from testpreparer import TextTranslationPreparer
+from testpreparer_async import TextTranslationClientTestBaseAsync
+
+
+@pytest.mark.skip("you may need to update the auto-generated test case before run it")
+class TestTextTranslationAsync(TextTranslationClientTestBaseAsync):
+    @TextTranslationPreparer()
+    @recorded_by_proxy_async
+    async def test_get_supported_languages(self, texttranslation_endpoint):
+        client = self.create_async_client(endpoint=texttranslation_endpoint)
+        response = await client.get_supported_languages()
+
+        # please add some check logic here by yourself
+        # ...
+
+    @TextTranslationPreparer()
+    @recorded_by_proxy_async
+    async def test_translate(self, texttranslation_endpoint):
+        client = self.create_async_client(endpoint=texttranslation_endpoint)
+        response = await client.translate(
+            body=[{"text": "str"}],
+            to_language=["str"],
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @TextTranslationPreparer()
+    @recorded_by_proxy_async
+    async def test_transliterate(self, texttranslation_endpoint):
+        client = self.create_async_client(endpoint=texttranslation_endpoint)
+        response = await client.transliterate(
+            body=[{"text": "str"}],
+            language="str",
+            from_script="str",
+            to_script="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @TextTranslationPreparer()
+    @recorded_by_proxy_async
+    async def test_find_sentence_boundaries(self, texttranslation_endpoint):
+        client = self.create_async_client(endpoint=texttranslation_endpoint)
+        response = await client.find_sentence_boundaries(
+            body=[{"text": "str"}],
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @TextTranslationPreparer()
+    @recorded_by_proxy_async
+    async def test_lookup_dictionary_entries(self, texttranslation_endpoint):
+        client = self.create_async_client(endpoint=texttranslation_endpoint)
+        response = await client.lookup_dictionary_entries(
+            body=[{"text": "str"}],
+            from_language="str",
+            to_language="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @TextTranslationPreparer()
+    @recorded_by_proxy_async
+    async def test_lookup_dictionary_examples(self, texttranslation_endpoint):
+        client = self.create_async_client(endpoint=texttranslation_endpoint)
+        response = await client.lookup_dictionary_examples(
+            body=[{"text": "str", "translation": "str"}],
+            from_language="str",
+            to_language="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...

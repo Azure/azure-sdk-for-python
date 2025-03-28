@@ -1,0 +1,38 @@
+# coding=utf-8
+from azure.communication.messages import MessageTemplateClient, NotificationMessagesClient
+from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer
+import functools
+
+
+class NotificationMessagesClientTestBase(AzureRecordedTestCase):
+
+    def create_client(self, endpoint):
+        credential = self.get_credential(NotificationMessagesClient)
+        return self.create_client_from_credential(
+            NotificationMessagesClient,
+            credential=credential,
+            endpoint=endpoint,
+        )
+
+
+NotificationMessagesPreparer = functools.partial(
+    PowerShellPreparer,
+    "notificationmessages",
+    notificationmessages_endpoint="https://fake_notificationmessages_endpoint.com",
+)
+
+
+class MessageTemplateClientTestBase(AzureRecordedTestCase):
+
+    def create_client(self, endpoint):
+        credential = self.get_credential(MessageTemplateClient)
+        return self.create_client_from_credential(
+            MessageTemplateClient,
+            credential=credential,
+            endpoint=endpoint,
+        )
+
+
+MessageTemplatePreparer = functools.partial(
+    PowerShellPreparer, "messagetemplate", messagetemplate_endpoint="https://fake_messagetemplate_endpoint.com"
+)

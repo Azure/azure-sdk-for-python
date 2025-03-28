@@ -1,0 +1,29 @@
+# coding=utf-8
+import pytest
+from devtools_testutils import recorded_by_proxy
+from testpreparer import NotificationMessagesClientTestBase, NotificationMessagesPreparer
+
+
+@pytest.mark.skip("you may need to update the auto-generated test case before run it")
+class TestNotificationMessages(NotificationMessagesClientTestBase):
+    @NotificationMessagesPreparer()
+    @recorded_by_proxy
+    def test_send(self, notificationmessages_endpoint):
+        client = self.create_client(endpoint=notificationmessages_endpoint)
+        response = client.send(
+            body={"channelRegistrationId": "str", "kind": "audio", "mediaUri": "str", "to": ["str"]},
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @NotificationMessagesPreparer()
+    @recorded_by_proxy
+    def test_download_media(self, notificationmessages_endpoint):
+        client = self.create_client(endpoint=notificationmessages_endpoint)
+        response = client.download_media(
+            id="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...

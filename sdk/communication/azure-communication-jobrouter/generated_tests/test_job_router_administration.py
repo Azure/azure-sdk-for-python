@@ -1,0 +1,205 @@
+# coding=utf-8
+import pytest
+from devtools_testutils import recorded_by_proxy
+from testpreparer import JobRouterAdministrationClientTestBase, JobRouterAdministrationPreparer
+
+
+@pytest.mark.skip("you may need to update the auto-generated test case before run it")
+class TestJobRouterAdministration(JobRouterAdministrationClientTestBase):
+    @JobRouterAdministrationPreparer()
+    @recorded_by_proxy
+    def test_upsert_distribution_policy(self, jobrouteradministration_endpoint):
+        client = self.create_client(endpoint=jobrouteradministration_endpoint)
+        response = client.upsert_distribution_policy(
+            distribution_policy_id="str",
+            resource={
+                "etag": "str",
+                "id": "str",
+                "mode": "distribution_mode",
+                "name": "str",
+                "offerExpiresAfterSeconds": 0.0,
+            },
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @JobRouterAdministrationPreparer()
+    @recorded_by_proxy
+    def test_get_distribution_policy(self, jobrouteradministration_endpoint):
+        client = self.create_client(endpoint=jobrouteradministration_endpoint)
+        response = client.get_distribution_policy(
+            distribution_policy_id="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @JobRouterAdministrationPreparer()
+    @recorded_by_proxy
+    def test_list_distribution_policies(self, jobrouteradministration_endpoint):
+        client = self.create_client(endpoint=jobrouteradministration_endpoint)
+        response = client.list_distribution_policies()
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @JobRouterAdministrationPreparer()
+    @recorded_by_proxy
+    def test_delete_distribution_policy(self, jobrouteradministration_endpoint):
+        client = self.create_client(endpoint=jobrouteradministration_endpoint)
+        response = client.delete_distribution_policy(
+            distribution_policy_id="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @JobRouterAdministrationPreparer()
+    @recorded_by_proxy
+    def test_upsert_classification_policy(self, jobrouteradministration_endpoint):
+        client = self.create_client(endpoint=jobrouteradministration_endpoint)
+        response = client.upsert_classification_policy(
+            classification_policy_id="str",
+            resource={
+                "etag": "str",
+                "id": "str",
+                "fallbackQueueId": "str",
+                "name": "str",
+                "prioritizationRule": "router_rule",
+                "queueSelectorAttachments": ["queue_selector_attachment"],
+                "workerSelectorAttachments": ["worker_selector_attachment"],
+            },
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @JobRouterAdministrationPreparer()
+    @recorded_by_proxy
+    def test_get_classification_policy(self, jobrouteradministration_endpoint):
+        client = self.create_client(endpoint=jobrouteradministration_endpoint)
+        response = client.get_classification_policy(
+            classification_policy_id="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @JobRouterAdministrationPreparer()
+    @recorded_by_proxy
+    def test_list_classification_policies(self, jobrouteradministration_endpoint):
+        client = self.create_client(endpoint=jobrouteradministration_endpoint)
+        response = client.list_classification_policies()
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @JobRouterAdministrationPreparer()
+    @recorded_by_proxy
+    def test_delete_classification_policy(self, jobrouteradministration_endpoint):
+        client = self.create_client(endpoint=jobrouteradministration_endpoint)
+        response = client.delete_classification_policy(
+            classification_policy_id="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @JobRouterAdministrationPreparer()
+    @recorded_by_proxy
+    def test_upsert_exception_policy(self, jobrouteradministration_endpoint):
+        client = self.create_client(endpoint=jobrouteradministration_endpoint)
+        response = client.upsert_exception_policy(
+            exception_policy_id="str",
+            resource={
+                "etag": "str",
+                "id": "str",
+                "exceptionRules": [{"actions": ["exception_action"], "id": "str", "trigger": "exception_trigger"}],
+                "name": "str",
+            },
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @JobRouterAdministrationPreparer()
+    @recorded_by_proxy
+    def test_get_exception_policy(self, jobrouteradministration_endpoint):
+        client = self.create_client(endpoint=jobrouteradministration_endpoint)
+        response = client.get_exception_policy(
+            exception_policy_id="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @JobRouterAdministrationPreparer()
+    @recorded_by_proxy
+    def test_list_exception_policies(self, jobrouteradministration_endpoint):
+        client = self.create_client(endpoint=jobrouteradministration_endpoint)
+        response = client.list_exception_policies()
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @JobRouterAdministrationPreparer()
+    @recorded_by_proxy
+    def test_delete_exception_policy(self, jobrouteradministration_endpoint):
+        client = self.create_client(endpoint=jobrouteradministration_endpoint)
+        response = client.delete_exception_policy(
+            exception_policy_id="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @JobRouterAdministrationPreparer()
+    @recorded_by_proxy
+    def test_upsert_queue(self, jobrouteradministration_endpoint):
+        client = self.create_client(endpoint=jobrouteradministration_endpoint)
+        response = client.upsert_queue(
+            queue_id="str",
+            resource={
+                "etag": "str",
+                "id": "str",
+                "distributionPolicyId": "str",
+                "exceptionPolicyId": "str",
+                "labels": {"str": {}},
+                "name": "str",
+            },
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @JobRouterAdministrationPreparer()
+    @recorded_by_proxy
+    def test_get_queue(self, jobrouteradministration_endpoint):
+        client = self.create_client(endpoint=jobrouteradministration_endpoint)
+        response = client.get_queue(
+            queue_id="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @JobRouterAdministrationPreparer()
+    @recorded_by_proxy
+    def test_list_queues(self, jobrouteradministration_endpoint):
+        client = self.create_client(endpoint=jobrouteradministration_endpoint)
+        response = client.list_queues()
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @JobRouterAdministrationPreparer()
+    @recorded_by_proxy
+    def test_delete_queue(self, jobrouteradministration_endpoint):
+        client = self.create_client(endpoint=jobrouteradministration_endpoint)
+        response = client.delete_queue(
+            queue_id="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...

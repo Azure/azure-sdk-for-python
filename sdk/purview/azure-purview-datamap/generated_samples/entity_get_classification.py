@@ -1,0 +1,36 @@
+# coding=utf-8
+
+from azure.identity import DefaultAzureCredential
+
+from azure.purview.datamap import DataMapClient
+
+"""
+# PREREQUISITES
+    pip install azure-identity
+    pip install azure-purview-datamap
+# USAGE
+    python entity_get_classification.py
+
+    Before run the sample, please set the values of the client ID, tenant ID and client secret
+    of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
+    AZURE_CLIENT_SECRET. For more info about how to get the value, please see:
+    https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal
+"""
+
+
+def main():
+    client = DataMapClient(
+        endpoint="ENDPOINT",
+        credential=DefaultAzureCredential(),
+    )
+
+    response = client.entity.get_classification(
+        guid="9347abc5-7b86-4b82-a1e2-ad77c7c3cac3",
+        classification_name="MICROSOFT.PERSONAL.DATE_OF_BIRTH",
+    )
+    print(response)
+
+
+# x-ms-original-file: 2023-09-01/Entity_GetClassification.json
+if __name__ == "__main__":
+    main()

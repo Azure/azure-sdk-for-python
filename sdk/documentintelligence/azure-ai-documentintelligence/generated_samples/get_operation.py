@@ -1,0 +1,27 @@
+# coding=utf-8
+
+from azure.ai.documentintelligence import DocumentIntelligenceAdministrationClient
+
+"""
+# PREREQUISITES
+    pip install azure-ai-documentintelligence
+# USAGE
+    python get_operation.py
+"""
+
+
+def main():
+    client = DocumentIntelligenceClient(
+        endpoint="https://myendpoint.cognitiveservices.azure.com",
+        credential="CREDENTIAL",
+    )
+
+    response = client.get_operation(
+        operation_id="b704bb00-d130-4f3f-a1d8-ca96de3eabb4",
+    )
+    print(response)
+
+
+# x-ms-original-file: 2024-11-30/GetOperation.json
+if __name__ == "__main__":
+    main()

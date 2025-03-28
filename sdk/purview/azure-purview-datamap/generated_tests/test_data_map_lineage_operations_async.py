@@ -1,0 +1,44 @@
+# coding=utf-8
+import pytest
+from devtools_testutils.aio import recorded_by_proxy_async
+from testpreparer import DataMapPreparer
+from testpreparer_async import DataMapClientTestBaseAsync
+
+
+@pytest.mark.skip("you may need to update the auto-generated test case before run it")
+class TestDataMapLineageOperationsAsync(DataMapClientTestBaseAsync):
+    @DataMapPreparer()
+    @recorded_by_proxy_async
+    async def test_lineage_get(self, datamap_endpoint):
+        client = self.create_async_client(endpoint=datamap_endpoint)
+        response = await client.lineage.get(
+            guid="str",
+            direction="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @DataMapPreparer()
+    @recorded_by_proxy_async
+    async def test_lineage_get_next_page(self, datamap_endpoint):
+        client = self.create_async_client(endpoint=datamap_endpoint)
+        response = await client.lineage.get_next_page(
+            guid="str",
+            direction="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @DataMapPreparer()
+    @recorded_by_proxy_async
+    async def test_lineage_get_by_unique_attribute(self, datamap_endpoint):
+        client = self.create_async_client(endpoint=datamap_endpoint)
+        response = await client.lineage.get_by_unique_attribute(
+            type_name="str",
+            direction="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...

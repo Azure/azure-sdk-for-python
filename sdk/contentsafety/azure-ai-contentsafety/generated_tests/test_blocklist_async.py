@@ -1,0 +1,100 @@
+# coding=utf-8
+import pytest
+from devtools_testutils.aio import recorded_by_proxy_async
+from testpreparer import BlocklistPreparer
+from testpreparer_async import BlocklistClientTestBaseAsync
+
+
+@pytest.mark.skip("you may need to update the auto-generated test case before run it")
+class TestBlocklistAsync(BlocklistClientTestBaseAsync):
+    @BlocklistPreparer()
+    @recorded_by_proxy_async
+    async def test_add_or_update_blocklist_items(self, blocklist_endpoint):
+        client = self.create_async_client(endpoint=blocklist_endpoint)
+        response = await client.add_or_update_blocklist_items(
+            blocklist_name="str",
+            options={
+                "blocklistItems": [{"blocklistItemId": "str", "text": "str", "description": "str", "isRegex": bool}]
+            },
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @BlocklistPreparer()
+    @recorded_by_proxy_async
+    async def test_create_or_update_text_blocklist(self, blocklist_endpoint):
+        client = self.create_async_client(endpoint=blocklist_endpoint)
+        response = await client.create_or_update_text_blocklist(
+            blocklist_name="str",
+            options={"blocklistName": "str", "description": "str"},
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @BlocklistPreparer()
+    @recorded_by_proxy_async
+    async def test_delete_text_blocklist(self, blocklist_endpoint):
+        client = self.create_async_client(endpoint=blocklist_endpoint)
+        response = await client.delete_text_blocklist(
+            blocklist_name="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @BlocklistPreparer()
+    @recorded_by_proxy_async
+    async def test_get_text_blocklist(self, blocklist_endpoint):
+        client = self.create_async_client(endpoint=blocklist_endpoint)
+        response = await client.get_text_blocklist(
+            blocklist_name="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @BlocklistPreparer()
+    @recorded_by_proxy_async
+    async def test_get_text_blocklist_item(self, blocklist_endpoint):
+        client = self.create_async_client(endpoint=blocklist_endpoint)
+        response = await client.get_text_blocklist_item(
+            blocklist_name="str",
+            blocklist_item_id="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @BlocklistPreparer()
+    @recorded_by_proxy_async
+    async def test_list_text_blocklist_items(self, blocklist_endpoint):
+        client = self.create_async_client(endpoint=blocklist_endpoint)
+        response = client.list_text_blocklist_items(
+            blocklist_name="str",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @BlocklistPreparer()
+    @recorded_by_proxy_async
+    async def test_list_text_blocklists(self, blocklist_endpoint):
+        client = self.create_async_client(endpoint=blocklist_endpoint)
+        response = client.list_text_blocklists()
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @BlocklistPreparer()
+    @recorded_by_proxy_async
+    async def test_remove_blocklist_items(self, blocklist_endpoint):
+        client = self.create_async_client(endpoint=blocklist_endpoint)
+        response = await client.remove_blocklist_items(
+            blocklist_name="str",
+            options={"blocklistItemIds": ["str"]},
+        )
+
+        # please add some check logic here by yourself
+        # ...

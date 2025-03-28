@@ -1,0 +1,36 @@
+# coding=utf-8
+
+from azure.identity import DefaultAzureCredential
+
+from azure.developer.devcenter import DevBoxesClient
+
+"""
+# PREREQUISITES
+    pip install azure-identity
+    pip install azure-developer-devcenter
+# USAGE
+    python dev_boxes_restart_dev_box.py
+
+    Before run the sample, please set the values of the client ID, tenant ID and client secret
+    of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
+    AZURE_CLIENT_SECRET. For more info about how to get the value, please see:
+    https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal
+"""
+
+
+def main():
+    client = DevCenterClient(
+        endpoint="https://8a40af38-3b4c-4672-a6a4-5e964b1870ed-contosodevcenter.centralus.devcenter.azure.com",
+        credential=DefaultAzureCredential(),
+    )
+
+    client.begin_restart_dev_box(
+        project_name="myProject",
+        user_id="me",
+        dev_box_name="MyDevBox",
+    ).result()
+
+
+# x-ms-original-file: 2023-04-01/DevBoxes_RestartDevBox.json
+if __name__ == "__main__":
+    main()

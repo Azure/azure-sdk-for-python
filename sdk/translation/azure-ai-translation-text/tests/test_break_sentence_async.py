@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -22,7 +23,9 @@ class TestBreakSentenceAsync(TextTranslationTest):
             response = await client.find_sentence_boundaries(body=input_text_elements)
         assert response is not None
         assert response[0].detected_language.language == "en"
-        assert response[0].detected_language.score > 0.8 # Created bug: https://machinetranslation.visualstudio.com/MachineTranslation/_workitems/edit/164493
+        assert (
+            response[0].detected_language.score > 0.8
+        )  # Created bug: https://machinetranslation.visualstudio.com/MachineTranslation/_workitems/edit/164493
         assert response[0].sent_len[0] == 11
 
     @TextTranslationPreparer()

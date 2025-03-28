@@ -1,0 +1,36 @@
+# coding=utf-8
+from azure.eventgrid import EventGridConsumerClient, EventGridPublisherClient
+from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer
+import functools
+
+
+class EventGridPublisherClientTestBase(AzureRecordedTestCase):
+
+    def create_client(self, endpoint):
+        credential = self.get_credential(EventGridPublisherClient)
+        return self.create_client_from_credential(
+            EventGridPublisherClient,
+            credential=credential,
+            endpoint=endpoint,
+        )
+
+
+EventGridPublisherPreparer = functools.partial(
+    PowerShellPreparer, "eventgridpublisher", eventgridpublisher_endpoint="https://fake_eventgridpublisher_endpoint.com"
+)
+
+
+class EventGridConsumerClientTestBase(AzureRecordedTestCase):
+
+    def create_client(self, endpoint):
+        credential = self.get_credential(EventGridConsumerClient)
+        return self.create_client_from_credential(
+            EventGridConsumerClient,
+            credential=credential,
+            endpoint=endpoint,
+        )
+
+
+EventGridConsumerPreparer = functools.partial(
+    PowerShellPreparer, "eventgridconsumer", eventgridconsumer_endpoint="https://fake_eventgridconsumer_endpoint.com"
+)

@@ -1,0 +1,121 @@
+# coding=utf-8
+import pytest
+from devtools_testutils import recorded_by_proxy
+from testpreparer import DocumentIntelligenceClientTestBase, DocumentIntelligencePreparer
+
+
+@pytest.mark.skip("you may need to update the auto-generated test case before run it")
+class TestDocumentIntelligence(DocumentIntelligenceClientTestBase):
+    @DocumentIntelligencePreparer()
+    @recorded_by_proxy
+    def test_begin_analyze_document(self, documentintelligence_endpoint):
+        client = self.create_client(endpoint=documentintelligence_endpoint)
+        response = client.begin_analyze_document(
+            model_id="str",
+            body={"base64Source": bytes("bytes", encoding="utf-8"), "urlSource": "str"},
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @DocumentIntelligencePreparer()
+    @recorded_by_proxy
+    def test_get_analyze_result_pdf(self, documentintelligence_endpoint):
+        client = self.create_client(endpoint=documentintelligence_endpoint)
+        response = client.get_analyze_result_pdf(
+            model_id="str",
+            result_id="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @DocumentIntelligencePreparer()
+    @recorded_by_proxy
+    def test_get_analyze_result_figure(self, documentintelligence_endpoint):
+        client = self.create_client(endpoint=documentintelligence_endpoint)
+        response = client.get_analyze_result_figure(
+            model_id="str",
+            result_id="str",
+            figure_id="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @DocumentIntelligencePreparer()
+    @recorded_by_proxy
+    def test_delete_analyze_result(self, documentintelligence_endpoint):
+        client = self.create_client(endpoint=documentintelligence_endpoint)
+        response = client.delete_analyze_result(
+            model_id="str",
+            result_id="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @DocumentIntelligencePreparer()
+    @recorded_by_proxy
+    def test_begin_analyze_batch_documents(self, documentintelligence_endpoint):
+        client = self.create_client(endpoint=documentintelligence_endpoint)
+        response = client.begin_analyze_batch_documents(
+            model_id="str",
+            body={
+                "resultContainerUrl": "str",
+                "azureBlobFileListSource": {"containerUrl": "str", "fileList": "str"},
+                "azureBlobSource": {"containerUrl": "str", "prefix": "str"},
+                "overwriteExisting": bool,
+                "resultPrefix": "str",
+            },
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @DocumentIntelligencePreparer()
+    @recorded_by_proxy
+    def test_list_analyze_batch_results(self, documentintelligence_endpoint):
+        client = self.create_client(endpoint=documentintelligence_endpoint)
+        response = client.list_analyze_batch_results(
+            model_id="str",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @DocumentIntelligencePreparer()
+    @recorded_by_proxy
+    def test_delete_analyze_batch_result(self, documentintelligence_endpoint):
+        client = self.create_client(endpoint=documentintelligence_endpoint)
+        response = client.delete_analyze_batch_result(
+            model_id="str",
+            result_id="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @DocumentIntelligencePreparer()
+    @recorded_by_proxy
+    def test_get_analyze_batch_result(self, documentintelligence_endpoint):
+        client = self.create_client(endpoint=documentintelligence_endpoint)
+        response = client.get_analyze_batch_result(
+            model_id="str",
+            result_id="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @DocumentIntelligencePreparer()
+    @recorded_by_proxy
+    def test_begin_classify_document(self, documentintelligence_endpoint):
+        client = self.create_client(endpoint=documentintelligence_endpoint)
+        response = client.begin_classify_document(
+            classifier_id="str",
+            body={"base64Source": bytes("bytes", encoding="utf-8"), "urlSource": "str"},
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
