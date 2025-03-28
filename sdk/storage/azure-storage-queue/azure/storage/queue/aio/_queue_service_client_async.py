@@ -174,13 +174,11 @@ class QueueServiceClient(  # type: ignore [misc]
                 :caption: Creating the QueueServiceClient with a connection string.
         """
         account_url, secondary, credential = parse_connection_str(conn_str, credential, 'queue')
-        if 'secondary_hostname' not in kwargs:
-            kwargs['secondary_hostname'] = secondary
         return cls(
             account_url,
             credential=credential,
             api_version=api_version,
-            secondary_hostname=secondary_hostname,
+            secondary_hostname=secondary_hostname or secondary,
             audience=audience,
             **kwargs
         )

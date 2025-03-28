@@ -278,14 +278,12 @@ class QueueClient(  # type: ignore [misc]
                 :caption: Create the queue client from connection string.
         """
         account_url, secondary, credential = parse_connection_str(conn_str, credential, 'queue')
-        if 'secondary_hostname' not in kwargs:
-            kwargs['secondary_hostname'] = secondary
         return cls(
             account_url,
             queue_name=queue_name,
             credential=credential,
             api_version=api_version,
-            secondary_hostname=secondary_hostname,
+            secondary_hostname=secondary_hostname or secondary,
             message_encode_policy=message_encode_policy,
             message_decode_policy=message_decode_policy,
             audience=audience,
