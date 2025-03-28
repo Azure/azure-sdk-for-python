@@ -50,7 +50,7 @@ try:
     from ._converters._ai_services import AIAgentConverter
     _patch_all.append("AIAgentConverter")
 except ImportError:
-    print("Could not import AIAgentConverter. Please install the dependency with `pip install azure-ai-projects`.")
+    print("[INFO] Could not import AIAgentConverter. Please install the dependency with `pip install azure-ai-projects`.")
 
 # RedTeam requires a dependency on pyrit, but python 3.9 is not supported by pyrit.
 # So we only import it if it's available and the user has pyrit.
@@ -66,7 +66,7 @@ try:
         "RiskCategory",
     ])
 except ImportError:
-    print("Could not import RedTeam. Please install the dependency with `pip install azure-ai-evaluation[redteam]`.")
+    print("[INFO] Could not import RedTeam. Please install the dependency with `pip install azure-ai-evaluation[redteam]`.")
 
 
 __all__ = [
