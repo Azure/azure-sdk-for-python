@@ -9,5 +9,4 @@ pytest-xdist
 azure-ai-inference>=1.0.0b4
 azure-ai-projects
 aiohttp
--e "../azure-ai-evaluation" ; python_version < '3.10'
--e "../azure-ai-evaluation[redteam]" ; python_version >= '3.10'
+-e ../azure-ai-evaluation
