@@ -188,9 +188,10 @@ class _StatsbeatMetrics:
         elif _utils._is_on_aks():
             # AKS
             rp = _RP_Names.AKS.value
-            # TODO: AKS_ARM_NAMESPACE_ID is only for attach
-            # rpId = os.environ.get(_AKS_ARM_NAMESPACE_ID, "")
-            rpId = os.environ.get(_KUBERNETES_SERVICE_HOST , "")
+            if _AKS_ARM_NAMESPACE_ID in os.environ:
+                rpId = os.environ.get(_AKS_ARM_NAMESPACE_ID, "")
+            else:
+                rpId = os.environ.get(_KUBERNETES_SERVICE_HOST , "")
         elif self._vm_retry and self._get_azure_compute_metadata():
             # VM
             rp = _RP_Names.VM.value
