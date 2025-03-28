@@ -23,6 +23,8 @@
   ([#39886](https://github.com/Azure/azure-sdk-for-python/pull/39886))
 - Populate `client_Ip` on `customEvent` telemetry
   ([#39923](https://github.com/Azure/azure-sdk-for-python/pull/39923))
+- Update AKS check to use KUBERNETES_SERVICE_HOST
+  ([#39941](https://github.com/Azure/azure-sdk-for-python/pull/39941))
 
 ### Bugs Fixed
 
