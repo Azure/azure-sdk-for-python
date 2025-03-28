@@ -41,15 +41,16 @@ from ._model_configurations import (
     OpenAIModelConfiguration,
 )
 
+_patch_all = []
+
 # The converter from the AI service to the evaluator schema requires a dependency on
 # ai.projects, but we also don't want to force users installing ai.evaluations to pull
 # in ai.projects. So we only import it if it's available and the user has ai.projects.
 try:
     from ._converters._ai_services import AIAgentConverter
-    _patch_all = ["AIAgentConverter"]
+    _patch_all.append("AIAgentConverter")
 except ImportError:
     print("Could not import AIAgentConverter. Please install the dependency with `pip install azure-ai-projects`.")
-    _patch_all = []
 
 # RedTeam requires a dependency on pyrit, but python 3.9 is not supported by pyrit.
 # So we only import it if it's available and the user has pyrit.
@@ -58,15 +59,14 @@ try:
     from ._red_team._attack_strategy import AttackStrategy
     from ._red_team._attack_objective_generator import RiskCategory
     from ._red_team._red_team_result import RedTeamOutput
-    _patch_all = [
+    _patch_all.extend([
         "RedTeam",
         "RedTeamOutput",
         "AttackStrategy",
         "RiskCategory",
-    ]
+    ])
 except ImportError:
     print("Could not import RedTeam. Please install the dependency with `pip install azure-ai-evaluation[redteam]`.")
-    _patch_all = []
 
 
 __all__ = [
