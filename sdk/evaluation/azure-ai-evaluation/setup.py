@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# cspell:ignore ruamel
+
 import os
 import re
 from io import open
@@ -72,10 +74,14 @@ setup(
         "azure-core>=1.30.2",
         "nltk>=3.9.1",
         "azure-storage-blob>=12.10.0",
+        "httpx>=0.19.0",
+        # Dependencies added since Promptflow will soon be made optional
+        "pandas>=1.5.3,<3.0.0",
+        "openai>=1.4.0",  # TODO ralphe: What is a sensible lower bound here?
+        "ruamel.yaml>=0.17.10,<1.0.0",
+        "msrest>=0.6.18",
     ],
-    extras_require={
-        "redteam": ["pyrit==0.7.0"]
-    },
+    extras_require={"redteam": ["pyrit==0.7.0"]},
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",
         "Source": "https://github.com/Azure/azure-sdk-for-python",

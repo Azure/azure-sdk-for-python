@@ -6,7 +6,7 @@ import math
 import re
 from typing import Dict, TypeVar, Union
 
-from promptflow.core import AsyncPrompty
+from azure.ai.evaluation._legacy.prompty import AsyncPrompty
 from typing_extensions import override
 
 from azure.ai.evaluation._common.constants import PROMPT_BASED_REASON_EVALUATORS

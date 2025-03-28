@@ -4,7 +4,7 @@
 from concurrent.futures import as_completed
 from typing import TypeVar, Dict, List
 
-from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
+from azure.ai.evaluation._legacy._adapters.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 from typing_extensions import override
 
 from azure.ai.evaluation._evaluators._common import EvaluatorBase

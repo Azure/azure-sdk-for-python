@@ -6,7 +6,7 @@ import inspect
 from abc import ABC, abstractmethod
 from typing import Any, Callable, Dict, Generic, List, TypedDict, TypeVar, Union, cast, final, Optional
 
-from promptflow._utils.async_utils import async_run_allowing_running_loop
+from azure.ai.evaluation._legacy._adapters.utils import async_run_allowing_running_loop
 from typing_extensions import ParamSpec, TypeAlias, get_overloads
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException

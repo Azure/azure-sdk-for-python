@@ -29,9 +29,7 @@ from devtools_testutils.fake_credentials import FakeTokenCredential
 from devtools_testutils.helpers import get_recording_id
 from devtools_testutils.proxy_testcase import transform_request
 from filelock import FileLock
-from promptflow.client import PFClient
-from promptflow.executor._line_execution_process_pool import _process_wrapper
-from promptflow.executor._process_manager import create_spawned_fork_process_manager
+from azure.ai.evaluation._legacy._adapters.client import PFClient
 from pytest_mock import MockerFixture
 
 from azure.ai.evaluation import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
@@ -455,7 +453,7 @@ def azure_ml_client(project_scope: dict, azure_cred: TokenCredential) -> LiteMLC
 
 @pytest.fixture
 def pf_client() -> PFClient:
-    """The fixture, returning PRClient"""
+    """The fixture, returning PFClient"""
     return PFClient()
 
 
@@ -464,39 +462,10 @@ def pf_client() -> PFClient:
 # in fork mode, this is automatically enabled.
 # in spawn mode, we need to declare recording in each process separately.
 
-SpawnProcess = multiprocessing.get_context("spawn").Process
-
-
-class MockSpawnProcess(SpawnProcess):
-    def __init__(self, group=None, target=None, *args, **kwargs):
-        if target == _process_wrapper:
-            target = _mock_process_wrapper
-        if target == create_spawned_fork_process_manager:
-            target = _mock_create_spawned_fork_process_manager
-        super().__init__(group, target, *args, **kwargs)
-
 
 @pytest.fixture
 def recording_injection(mocker: MockerFixture):
-    original_process_class = multiprocessing.get_context("spawn").Process
-    multiprocessing.get_context("spawn").Process = MockSpawnProcess  # type: ignore
-    if "spawn" == multiprocessing.get_start_method():
-        multiprocessing.Process = MockSpawnProcess
-
-    try:
-        yield
-    finally:
-        multiprocessing.get_context("spawn").Process = original_process_class  # type: ignore
-        if "spawn" == multiprocessing.get_start_method():
-            multiprocessing.Process = original_process_class
-
-
-def _mock_process_wrapper(*args, **kwargs):
-    return _process_wrapper(*args, **kwargs)
-
-
-def _mock_create_spawned_fork_process_manager(*args, **kwargs):
-    return create_spawned_fork_process_manager(*args, **kwargs)
+    yield
 
 
 @pytest.fixture
@@ -583,7 +552,7 @@ def pytest_sessionfinish() -> None:
             On Windows, this causes the cleanup step to fail with a permission issue
             since the OS disallows deletion of files in use by a process.
         """
-        from promptflow._cli._pf._service import stop_service
+        from azure.ai.evaluation._legacy._adapters._service import stop_service
 
         stop_service()
 
