@@ -16,7 +16,14 @@ from azure.identity._internal.user_agent import USER_AGENT
 from azure.identity._internal import within_credential_chain
 import pytest
 
-from helpers import build_aad_response, validating_transport, mock_response, Request, GET_TOKEN_METHODS
+from helpers import (
+    build_aad_response,
+    validating_transport,
+    msal_validating_transport,
+    mock_response,
+    Request,
+    GET_TOKEN_METHODS,
+)
 
 MANAGED_IDENTITY_ENVIRON = "azure.identity._credentials.managed_identity.os.environ"
 ALL_ENVIRONMENTS = (
@@ -28,7 +35,7 @@ ALL_ENVIRONMENTS = (
         EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT: "...",
     },
     {EnvironmentVariables.IDENTITY_ENDPOINT: "...", EnvironmentVariables.IMDS_ENDPOINT: "..."},  # Arc
-    {  # token exchange
+    {  # Workload Identity
         EnvironmentVariables.AZURE_AUTHORITY_HOST: "https://localhost",
         EnvironmentVariables.AZURE_CLIENT_ID: "...",
         EnvironmentVariables.AZURE_TENANT_ID: "...",
@@ -93,7 +100,10 @@ def test_custom_hooks(environ, get_token_method):
             "token_type": "Bearer",
         }
     )
-    transport = validating_transport(requests=[Request()] * 2, responses=[expected_response] * 2)
+    if not environ.get(EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE):
+        transport = validating_transport(requests=[Request()] * 2, responses=[expected_response] * 2)
+    else:
+        transport = msal_validating_transport(requests=[Request()], responses=[expected_response])
 
     with mock.patch.dict(MANAGED_IDENTITY_ENVIRON, environ, clear=True):
         credential = ManagedIdentityCredential(
@@ -101,41 +111,8 @@ def test_custom_hooks(environ, get_token_method):
         )
     getattr(credential, get_token_method)(scope)
 
-    assert request_hook.call_count == 1
-    assert response_hook.call_count == 1
-    args, kwargs = response_hook.call_args
-    pipeline_response = args[0]
-    assert pipeline_response.http_response == expected_response
-
-
-@pytest.mark.parametrize("environ,get_token_method", product(ALL_ENVIRONMENTS, GET_TOKEN_METHODS))
-def test_tenant_id(environ, get_token_method):
-    scope = "scope"
-    expected_token = "***"
-    request_hook = mock.Mock()
-    response_hook = mock.Mock()
-    now = int(time.time())
-    expected_response = mock_response(
-        json_payload={
-            "access_token": expected_token,
-            "expires_in": 3600,
-            "expires_on": now + 3600,
-            "ext_expires_in": 3600,
-            "not_before": now,
-            "resource": scope,
-            "token_type": "Bearer",
-        }
-    )
-    transport = validating_transport(requests=[Request()] * 2, responses=[expected_response] * 2)
-
-    with mock.patch.dict(MANAGED_IDENTITY_ENVIRON, environ, clear=True):
-        credential = ManagedIdentityCredential(
-            transport=transport, raw_request_hook=request_hook, raw_response_hook=response_hook
-        )
-    getattr(credential, get_token_method)(scope)
-
-    assert request_hook.call_count == 1
-    assert response_hook.call_count == 1
+    assert request_hook.call_count >= 1
+    assert response_hook.call_count >= 1
     args, kwargs = response_hook.call_args
     pipeline_response = args[0]
     assert pipeline_response.http_response == expected_response
@@ -843,14 +820,14 @@ def test_service_fabric_with_client_id_error(get_token_method):
 
 
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
-def test_token_exchange(tmpdir, get_token_method):
+def test_workload_identity(tmpdir, get_token_method):
     exchange_token = "exchange-token"
     token_file = tmpdir.join("token")
     token_file.write(exchange_token)
     access_token = "***"
     authority = "https://localhost"
     default_client_id = "default_client_id"
-    tenant = "tenant_id"
+    tenant = "tenant-id"
     scope = "scope"
 
     success_response = mock_response(
@@ -864,7 +841,8 @@ def test_token_exchange(tmpdir, get_token_method):
             "token_type": "Bearer",
         }
     )
-    transport = validating_transport(
+
+    transport = msal_validating_transport(
         requests=[
             Request(
                 base_url=authority,
@@ -879,6 +857,7 @@ def test_token_exchange(tmpdir, get_token_method):
             )
         ],
         responses=[success_response],
+        endpoint=authority,
     )
 
     mock_environ = {
@@ -895,7 +874,7 @@ def test_token_exchange(tmpdir, get_token_method):
 
     # client_id kwarg should override AZURE_CLIENT_ID
     nondefault_client_id = "non" + default_client_id
-    transport = validating_transport(
+    transport = msal_validating_transport(
         requests=[
             Request(
                 base_url=authority,
@@ -910,6 +889,7 @@ def test_token_exchange(tmpdir, get_token_method):
             )
         ],
         responses=[success_response],
+        endpoint=authority,
     )
 
     with mock.patch.dict("os.environ", mock_environ, clear=True):
@@ -918,7 +898,7 @@ def test_token_exchange(tmpdir, get_token_method):
     assert token.token == access_token
 
     # AZURE_CLIENT_ID may not have a value, in which case client_id is required
-    transport = validating_transport(
+    transport = msal_validating_transport(
         requests=[
             Request(
                 base_url=authority,
@@ -933,6 +913,7 @@ def test_token_exchange(tmpdir, get_token_method):
             )
         ],
         responses=[success_response],
+        endpoint=authority,
     )
 
     with mock.patch.dict(
@@ -953,14 +934,14 @@ def test_token_exchange(tmpdir, get_token_method):
 
 
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
-def test_token_exchange_tenant_id(tmpdir, get_token_method):
+def test_workload_identity_tenant_id(tmpdir, get_token_method):
     exchange_token = "exchange-token"
     token_file = tmpdir.join("token")
     token_file.write(exchange_token)
     access_token = "***"
     authority = "https://localhost"
     default_client_id = "default_client_id"
-    tenant = "tenant_id"
+    tenant = "tenant-id"
     scope = "scope"
 
     success_response = mock_response(
@@ -974,7 +955,7 @@ def test_token_exchange_tenant_id(tmpdir, get_token_method):
             "token_type": "Bearer",
         }
     )
-    transport = validating_transport(
+    transport = msal_validating_transport(
         requests=[
             Request(
                 base_url=authority,
@@ -989,6 +970,7 @@ def test_token_exchange_tenant_id(tmpdir, get_token_method):
             )
         ],
         responses=[success_response],
+        endpoint=authority,
     )
 
     mock_environ = {
@@ -998,8 +980,8 @@ def test_token_exchange_tenant_id(tmpdir, get_token_method):
         EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE: token_file.strpath,
     }
     with mock.patch.dict("os.environ", mock_environ, clear=True):
-        credential = ManagedIdentityCredential(transport=transport)
-        kwargs = {"tenant_id": "tenant_id"}
+        credential = ManagedIdentityCredential(transport=transport, additionally_allowed_tenants=["*"])
+        kwargs = {"tenant_id": "tenant-id-2"}
         if get_token_method == "get_token_info":
             kwargs = {"options": kwargs}
         token = getattr(credential, get_token_method)(scope, **kwargs)

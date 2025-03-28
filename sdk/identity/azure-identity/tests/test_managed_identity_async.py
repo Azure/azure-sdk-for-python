@@ -87,7 +87,7 @@ async def test_tenant_id(environ, get_token_method):
         credential = ManagedIdentityCredential(
             transport=transport, raw_request_hook=request_hook, raw_response_hook=response_hook
         )
-    await getattr(credential, get_token_method)(scope)
+        await getattr(credential, get_token_method)(scope)
 
     assert request_hook.call_count == 1
     assert response_hook.call_count == 1

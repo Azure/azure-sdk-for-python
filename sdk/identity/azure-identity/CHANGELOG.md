@@ -13,6 +13,7 @@
 ### Other Changes
 
 - Deprecated `VisualStudioCodeCredential` as the VS Code Azure Account extension on which this credential depends on has been deprecated. See the Azure Account extension [deprecation notice](https://github.com/microsoft/vscode-azure-account/issues/964).  ([#40613](https://github.com/Azure/azure-sdk-for-python/pull/40613))
+- Updated the synchronous `ClientAssertionCredential` to use the Microsoft Authentication Library (MSAL) for its implementation.  ([#40277](https://github.com/Azure/azure-sdk-for-python/pull/40277))
 
 ## 1.21.0 (2025-03-11)
 
