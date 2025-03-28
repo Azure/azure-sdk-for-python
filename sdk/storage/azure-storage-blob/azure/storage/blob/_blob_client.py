@@ -62,7 +62,14 @@ from ._download import StorageStreamDownloader
 from ._encryption import StorageEncryptionMixin, _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
 from ._generated import AzureBlobStorage
 from ._lease import BlobLeaseClient
-from ._models import BlobBlock, BlobProperties, BlobType, PageRange, PageRangePaged
+from ._models import (
+    BlobBlock,
+    BlobProperties,
+    BlobQueryError,
+    BlobType,
+    PageRange,
+    PageRangePaged
+)
 from ._quick_query_helper import BlobQueryReader
 from ._shared.base_client import parse_connection_str, StorageAccountHostsMixin, TransportWrapper
 from ._shared.response_handlers import process_storage_error, return_response_headers
@@ -90,7 +97,6 @@ if TYPE_CHECKING:
         ArrowDialect
 )
     from ._models import (
-        BlobQueryError,
         ContentSettings,
         ImmutabilityPolicy,
         PremiumPageBlobTier,
@@ -942,7 +948,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
     def query_blob(
         self, query_expression: str,
         *,
-        on_error: Optional[Callable[["BlobQueryError"], None]] = None,
+        on_error: Optional[Callable[[BlobQueryError], None]] = None,
         blob_format: Optional[Union["DelimitedTextDialect", "DelimitedJsonDialect", "QuickQueryDialect", str]] = None,
         output_format: Optional[Union["DelimitedTextDialect", "DelimitedJsonDialect", "QuickQueryDialect", List["ArrowDialect"], str]] = None,  # pylint: disable=line-too-long
         lease: Optional[Union[BlobLeaseClient, str]] = None,
