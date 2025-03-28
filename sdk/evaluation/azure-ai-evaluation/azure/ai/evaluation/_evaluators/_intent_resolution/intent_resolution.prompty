@@ -23,29 +23,35 @@ inputs:
     default: "[]"
 ---
 system:
-You are an expert in evaluating the quality of a RESPONSE from an intelligent assistant based on provided definition and Data.
+# Instruction
+## Goal
+### You are an expert in evaluating the quality of a RESPONSE from an intelligent system based on provided Definition and Data. Your goal will involve answering the questions below using the information provided.
+- **Definition**: You are given a definition of the communication trait that is being evaluated to help guide your Score.
+- **Data**: Your input data includes QUERY, RESPONSE and TOOL_DEFINITIONS.
+- **Task**: To complete your evaluation you will be asked to evaluate the Data in a specific way.
 
 user:
-# Goal
-Your goal is to assess the quality of the RESPONSE of an assistant in relation to a QUERY from a user, specifically focusing on
-the assistant's ability to understand and resolve the user intent expressed in the QUERY. There is also a field for tool definitions
-describing the functions, if any, that are accessible to the agent and that the agent may invoke in the RESPONSE if necessary.
-
-There are two components to intent resolution:
-    - Intent Understanding: The extent to which the agent accurately discerns the user's underlying need or inquiry.
-    - Response Resolution: The degree to which the agent's response is comprehensive, relevant, and adequately addresses the user's request.
-
-Note that the QUERY can either be a string with a user request or an entire conversation history including previous requests and responses from the assistant.
-In this case, the assistant's response should be evaluated in the context of the entire conversation but the focus should be on the last intent.
+# Definition
+**Intent Resolution** refers to an assistant's ability to understand and resolve a user's intent expressed in a user QUERY and in an assistant RESPONSE.
+Intent Resolution considers both the extent to which the assistant accurately discerns the user's underlying need or inquiry and the degree to which the
+assistant's response is comprehensive, relevant, and adequately addresses the user's request.
+The Intent Resolution score ranges from 1 to 5, with higher numbers indicating greater resolution of the user intent.
 
 # Data
 QUERY: {{query}}
 RESPONSE: {{response}}
 TOOL_DEFINITIONS: {{tool_definitions}}
 
+The QUERY is either a string with a user request or a conversation history including previous requests and responses from the assistant.
+The RESPONSE is either a string with the assistant's response or a list of assistant messages, potentially including tool calls, to the user QUERY.
+The TOOL_DEFINITIONS is a list describing the functions, if any, that are accessible to the agent and that the agent may invoke in the RESPONSE if necessary to address the user QUERY.
+
+The RESPONSE should always be evaluated in the context of the QUERY and the TOOL_DEFINITIONS.
+When the QUERY is a conversation history, the assistant's RESPONSE should be evaluated in the context of the entire conversation but the focus should be on the extent to which the RESPONSE
+addresses the most recent user intent.
 
 # Ratings
-## [Score: 1] (Response completely unrelated to user intent)
+## [IntentResolution: 1] (Response completely unrelated to user intent)
 **Definition:** The agent's response does not address the query at all.
 
 **Example:**
@@ -65,7 +71,7 @@ TOOL_DEFINITIONS: {{tool_definitions}}
 }
 
 
-## [Score: 2] (Response minimally relates to user intent)
+## [IntentResolution: 2] (Response minimally relates to user intent)
 **Definition:** The response shows a token attempt to address the query by mentioning a relevant keyword or concept, but it provides almost no useful or actionable information.
 
 **Example input:**
@@ -85,7 +91,7 @@ TOOL_DEFINITIONS: {{tool_definitions}}
 }
 
 
-## [Score: 3] (Response partially addresses the user intent but lacks complete details)
+## [IntentResolution: 3] (Response partially addresses the user intent but lacks complete details)
 **Definition:** The response provides a basic idea related to the query by mentioning a few relevant elements, but it omits several key details and specifics needed for fully resolving the user's query.
 
 **Example input:**
@@ -105,7 +111,7 @@ TOOL_DEFINITIONS: {{tool_definitions}}
 }
 
 
-## [Score: 4] (Response addresses the user intent with moderate accuracy but has minor inaccuracies or omissions)
+## [IntentResolution: 4] (Response addresses the user intent with moderate accuracy but has minor inaccuracies or omissions)
 **Definition:** The response offers a moderately detailed answer that includes several specific elements relevant to the query, yet it still lacks some finer details or complete information.
 
 **Example input:**
@@ -125,7 +131,7 @@ TOOL_DEFINITIONS: {{tool_definitions}}
 }
 
 
-## [Score: 5] (Response directly addresses the user intent and fully resolves it)
+## [IntentResolution: 5] (Response directly addresses the user intent and fully resolves it)
 **Definition:** The response provides a complete, detailed, and accurate answer that fully resolves the user's query with all necessary information and precision.
 
 **Example input:**
@@ -147,7 +153,7 @@ TOOL_DEFINITIONS: {{tool_definitions}}
 
 # Task
 
-Please provide your evaluation for the assistant RESPONSE in relation to the user QUERY and tool definitions based on the Definitions and examples above.
+## Please provide your evaluation for the assistant RESPONSE in relation to the user QUERY and TOOL_DEFINITIONS based on the Definitions and examples above.
 Your output should consist only of a JSON object, as provided in the examples, that has the following keys:
   - explanation: a string that explains why you think the input Data should get this resolution_score.
   - conversation_has_intent: true or false
