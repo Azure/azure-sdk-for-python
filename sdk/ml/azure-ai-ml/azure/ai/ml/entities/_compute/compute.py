@@ -180,7 +180,7 @@ class Compute(Resource, RestTranslatableMixin):
         )
 
         type_in_override = find_type_in_override(params_override) if params_override else None
-        compute_type = type_in_override or data.get(CommonYamlFields.TYPE, None)  # override takes the priority
+        compute_type = type_in_override or data.get(CommonYamlFields.TYPE, None)  # override takes the priority.
         if compute_type:
             if compute_type.lower() == ComputeType.VIRTUALMACHINE:
                 _vm_load_from_dict: Compute = VirtualMachineCompute._load_from_dict(data, context, **kwargs)
