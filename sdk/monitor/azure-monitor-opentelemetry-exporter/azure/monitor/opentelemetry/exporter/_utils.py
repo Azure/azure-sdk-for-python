@@ -64,7 +64,7 @@ def _is_on_functions():
 
 
 def _is_on_aks():
-    return _KUBERNETES_SERVICE_HOST in environ
+    return _AKS_ARM_NAMESPACE_ID in environ or _KUBERNETES_SERVICE_HOST in environ
 
 
 # Attach

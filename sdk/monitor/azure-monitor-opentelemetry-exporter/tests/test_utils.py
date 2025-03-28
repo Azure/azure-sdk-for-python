@@ -309,7 +309,6 @@ class TestUtils(unittest.TestCase):
     @patch.dict(
         "azure.monitor.opentelemetry.exporter._utils.environ",
         {
-            "KUBERNETES_SERVICE_HOST": TEST_KUBERNETES_SERVICE_HOST,
             "AKS_ARM_NAMESPACE_ID": TEST_AKS_ARM_NAMESPACE_ID,
         },
         clear=True,
@@ -322,7 +321,6 @@ class TestUtils(unittest.TestCase):
     @patch.dict(
         "azure.monitor.opentelemetry.exporter._utils.environ",
         {
-            "KUBERNETES_SERVICE_HOST": TEST_KUBERNETES_SERVICE_HOST,
             "AKS_ARM_NAMESPACE_ID": TEST_AKS_ARM_NAMESPACE_ID,
         },
         clear=True,
@@ -335,7 +333,6 @@ class TestUtils(unittest.TestCase):
     @patch.dict(
         "azure.monitor.opentelemetry.exporter._utils.environ",
         {
-            "KUBERNETES_SERVICE_HOST": TEST_KUBERNETES_SERVICE_HOST,
             "AKS_ARM_NAMESPACE_ID": TEST_AKS_ARM_NAMESPACE_ID,
         },
         clear=True,
