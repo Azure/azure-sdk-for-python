@@ -10,6 +10,7 @@
 ### Sample updates
 
 * Sample update demonstrating new parameters added for Azure AI Search tool.
+* Sample added using OpenAPI tool against authenticated TripAdvisor API spec.
 
 ### Bugs Fixed
 
