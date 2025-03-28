@@ -91,11 +91,13 @@ def _get_match_headers(
 
 
 def get_access_conditions(lease: Optional[Union["BlobLeaseClient", str]]) -> Optional[LeaseAccessConditions]:
-    try:
-        lease_id = lease.id # type: ignore
-    except AttributeError:
-        lease_id = lease # type: ignore
-    return LeaseAccessConditions(lease_id=lease_id) if lease_id else None
+    if lease is None:
+        return None
+    if hasattr(lease, "id"):
+        lease_id = lease.id  # type: ignore
+    else:
+        lease_id = lease  # type: ignore
+    return LeaseAccessConditions(lease_id=lease_id)
 
 
 def get_modify_conditions(kwargs: Dict[str, Any]) -> ModifiedAccessConditions:
@@ -143,17 +145,18 @@ def get_container_cpk_scope_info(kwargs: Dict[str, Any]) -> Optional[ContainerCp
     return None
 
 
-def get_api_version(kwargs: Dict[str, Any]) -> str:
-    api_version = kwargs.get('api_version', None)
+def get_api_version(api_version: Optional[str] = None) -> str:
     if api_version and api_version not in _SUPPORTED_API_VERSIONS:
         versions = '\n'.join(_SUPPORTED_API_VERSIONS)
         raise ValueError(f"Unsupported API version '{api_version}'. Please select from:\n{versions}")
     return api_version or _SUPPORTED_API_VERSIONS[-1]
 
+
 def get_version_id(self_vid: Optional[str], kwargs: Dict[str, Any]) -> Optional[str]:
     if 'version_id' in kwargs:
         return cast(str, kwargs.pop('version_id'))
     return self_vid
+
 
 def serialize_blob_tags_header(tags: Optional[Dict[str, str]] = None) -> Optional[str]:
     if tags is None:

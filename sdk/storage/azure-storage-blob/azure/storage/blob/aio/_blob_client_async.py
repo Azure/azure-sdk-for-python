@@ -3,13 +3,14 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=too-many-lines, docstring-keyword-should-match-keyword-only
+# pylint: disable=too-many-lines, docstring-keyword-should-match-keyword-only, too-many-locals
 
 import warnings
 from datetime import datetime
 from functools import partial
 from typing import (
-    Any, AnyStr, AsyncIterable, cast, Dict, IO, Iterable, List, Optional, overload, Tuple, Union,
+    Any, AnyStr, AsyncIterable, Awaitable, Callable, cast, Dict,
+    IO, Iterable, List, Optional, overload, Tuple, Union,
     TYPE_CHECKING
 )
 from typing_extensions import Self
@@ -42,6 +43,7 @@ from .._blob_client_helpers import (
     _download_blob_options,
     _format_url,
     _from_blob_url,
+    _get_blob_properties_options,
     _get_blob_tags_options,
     _get_block_list_result,
     _get_page_ranges_options,
@@ -68,7 +70,6 @@ from .._deserialize import (
 )
 from .._encryption import StorageEncryptionMixin, _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
 from .._generated.aio import AzureBlobStorage
-from .._generated.models import CpkInfo
 from .._models import BlobType, BlobBlock, BlobProperties, PageRange
 from .._serialize import get_access_conditions, get_api_version, get_modify_conditions, get_version_id
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
@@ -76,9 +77,11 @@ from .._shared.policies_async import ExponentialRetry
 from .._shared.response_handlers import process_storage_error, return_response_headers
 
 if TYPE_CHECKING:
+    from azure.core import MatchConditions
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
     from azure.core.pipeline.policies import AsyncHTTPPolicy
+    from azure.storage.blob import CustomerProvidedEncryptionKey
     from azure.storage.blob.aio import ContainerClient
     from .._models import (
         ContentSettings,
@@ -156,18 +159,31 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             :caption: Creating the BlobClient from a SAS URL to a blob.
     """
     def __init__(
-            self, account_url: str,
-            container_name: str,
-            blob_name: str,
-            snapshot: Optional[Union[str, Dict[str, Any]]] = None,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
-            **kwargs: Any
+        self, account_url: str,
+        container_name: str,
+        blob_name: str,
+        snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+        *,
+        api_version: Optional[str] = None,
+        secondary_hostname: Optional[str] = None,
+        version_id: Optional[str] = None,
+        audience: Optional[str] = None,
+        max_block_size: int = 4 * 1024 * 1024,
+        max_page_size: int = 4 * 1024 * 1024,
+        max_chunk_get_size: int = 4 * 1024 * 1024,
+        max_single_put_size: int = 64 * 1024 * 1024,
+        max_single_get_size: int = 32 * 1024 * 1024,
+        min_large_block_upload_threshold: int = 4 * 1024 * 1024 + 1,
+        use_byte_buffer: Optional[bool] = None,
+        **kwargs: Any
     ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
         parsed_url, sas_token, path_snapshot = _parse_url(
             account_url=account_url,
             container_name=container_name,
-            blob_name=blob_name)
+            blob_name=blob_name
+        )
         self.container_name = container_name
         self.blob_name = blob_name
 
@@ -177,14 +193,28 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             self.snapshot = snapshot['snapshot']
         else:
             self.snapshot = snapshot or path_snapshot
-        self.version_id = kwargs.pop('version_id', None)
+        self.version_id = version_id
 
         # This parameter is used for the hierarchy traversal. Give precedence to credential.
         self._raw_credential = credential if credential else sas_token
         self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
-        super(BlobClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
+        super(BlobClient, self).__init__(
+            parsed_url,
+            service='blob',
+            credential=credential,
+            secondary_hostname=secondary_hostname,
+            audience=audience,
+            max_block_size=max_block_size,
+            max_page_size=max_page_size,
+            max_chunk_get_size=max_chunk_get_size,
+            max_single_put_size=max_single_put_size,
+            max_single_get_size=max_single_get_size,
+            min_large_block_upload_threshold=min_large_block_upload_threshold,
+            use_byte_buffer=use_byte_buffer,
+            **kwargs
+        )
         self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
-        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
+        self._client._config.version = get_api_version(api_version)  # type: ignore [assignment]
         self._configure_encryption(kwargs)
 
     def _format_url(self, hostname: str) -> str:
@@ -201,6 +231,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         cls, blob_url: str,
         credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+        *,
+        version_id: Optional[str] = None,
+        audience: Optional[str] = None,
         **kwargs: Any
     ) -> Self:
         """Create BlobClient from a blob url. This doesn't support customized blob url with '/' in blob name.
@@ -234,8 +267,14 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         """
         account_url, container_name, blob_name, path_snapshot = _from_blob_url(blob_url=blob_url, snapshot=snapshot)
         return cls(
-            account_url, container_name=container_name, blob_name=blob_name,
-            snapshot=path_snapshot, credential=credential, **kwargs
+            account_url,
+            container_name=container_name,
+            blob_name=blob_name,
+            snapshot=path_snapshot,
+            credential=credential,
+            version_id=version_id,
+            audience=audience,
+            **kwargs
         )
 
     @classmethod
@@ -245,6 +284,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         blob_name: str,
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
         credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+        *,
+        version_id: Optional[str] = None,
+        audience: Optional[str] = None,
         **kwargs: Any
     ) -> Self:
         """Create BlobClient from a Connection String.
@@ -289,8 +331,14 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
         return cls(
-            account_url, container_name=container_name, blob_name=blob_name,
-            snapshot=snapshot, credential=credential, **kwargs
+            account_url,
+            container_name=container_name,
+            blob_name=blob_name,
+            snapshot=snapshot,
+            credential=credential,
+            version_id=version_id,
+            audience=audience,
+            **kwargs
         )
 
     @distributed_trace_async
@@ -301,11 +349,13 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         The keys in the returned dictionary include 'sku_name' and 'account_kind'.
 
         :returns: A dict of account information (SKU and account type).
-        :rtype: dict(str, str)
+        :rtype: Dict[str, str]
         """
         try:
-            return cast(Dict[str, str],
-                        await self._client.blob.get_account_info(cls=return_response_headers, **kwargs))
+            return cast(
+                Dict[str, str],
+                await self._client.blob.get_account_info(cls=return_response_headers, **kwargs)
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -314,6 +364,25 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         self, source_url: str,
         *,
         metadata: Optional[Dict[str, str]] = None,
+        overwrite: Optional[bool] = None,
+        include_source_blob_properties: bool = True,
+        tags: Optional[Dict[str, str]] = None,
+        source_content_md5: Optional[bytearray] = None,
+        source_if_modified_since: Optional[datetime] = None,
+        source_if_unmodified_since: Optional[datetime] = None,
+        source_etag: Optional[str] = None,
+        source_match_condition: Optional["MatchConditions"] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional["MatchConditions"] = None,
+        destination_lease: Optional[Union[BlobLeaseClient, str]] = None,
+        timeout: Optional[int] = None,
+        content_settings: Optional["ContentSettings"] = None,
+        cpk: Optional["CustomerProvidedEncryptionKey"] = None,
+        encryption_scope: Optional[str] = None,
+        standard_blob_tier: Optional["StandardBlobTier"] = None,
+        source_authorization: Optional[str] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """
@@ -332,7 +401,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             https://myaccount.blob.core.windows.net/mycontainer/myblob?snapshot=<DateTime>
 
             https://otheraccount.blob.core.windows.net/mycontainer/myblob?sastoken
-        :keyword dict(str, str) metadata:
+        :keyword Dict[str, str] metadata:
             Name-value pairs associated with the blob as metadata.
         :keyword bool overwrite: Whether the blob to be uploaded should overwrite the current data.
             If True, upload_blob will overwrite the existing data. If set to False, the
@@ -345,7 +414,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             and tag values must be between 0 and 256 characters.
             Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
             space (' '), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
-        :paramtype tags: dict(str, str)
+        :paramtype tags: Dict[str, str]
         :keyword bytearray source_content_md5:
             Specify the md5 that is used to verify the integrity of the source bytes.
         :keyword ~datetime.datetime source_if_modified_since:
@@ -415,12 +484,32 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         :returns: Response from creating a new block blob for a given URL.
         :rtype: Dict[str, Any]
         """
-        if kwargs.get('cpk') and self.scheme.lower() != 'https':
+        if cpk and self.scheme.lower() != 'https':
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
         options = _upload_blob_from_url_options(
             source_url=source_url,
             metadata=metadata,
-            **kwargs)
+            overwrite=overwrite,
+            include_source_blob_properties=include_source_blob_properties,
+            tags=tags,
+            source_content_md5=source_content_md5,
+            source_if_modified_since=source_if_modified_since,
+            source_if_unmodified_since=source_if_unmodified_since,
+            source_etag=source_etag,
+            source_match_condition=source_match_condition,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_condition=match_condition,
+            destination_lease=destination_lease,
+            timeout=timeout,
+            content_settings=content_settings,
+            cpk=cpk,
+            encryption_scope=encryption_scope,
+            standard_blob_tier=standard_blob_tier,
+            source_authorization=source_authorization,
+            **kwargs
+        )
         try:
             return cast(Dict[str, Any], await self._client.block_blob.put_blob_from_url(**options))
         except HttpResponseError as error:
@@ -432,6 +521,27 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         blob_type: Union[str, BlobType] = BlobType.BLOCKBLOB,
         length: Optional[int] = None,
         metadata: Optional[Dict[str, str]] = None,
+        tags: Optional[Dict[str, str]] = None,
+        overwrite: bool = False,
+        content_settings: Optional["ContentSettings"] = None,
+        validate_content: bool = False,
+        lease: Optional[BlobLeaseClient] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_conditions: Optional["MatchConditions"] = None,
+        if_tags_match_condition: Optional[str] = None,
+        premium_page_blob_tier: Optional["PremiumPageBlobTier"] = None,
+        immutability_policy: Optional["ImmutabilityPolicy"] = None,
+        legal_hold: Optional[bool] = None,
+        standard_blob_tier: Optional["StandardBlobTier"] = None,
+        maxsize_condition: Optional[int] = None,
+        max_concurrency: int = 1,
+        cpk: Optional["CustomerProvidedEncryptionKey"] = None,
+        encryption_scope: Optional[str] = None,
+        encoding: str = 'UTF-8',
+        progress_hook: Optional[Callable[[int, Optional[int]], Awaitable[None]]] = None,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Creates a new blob from a data source with automatic chunking.
@@ -445,7 +555,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             should be supplied for optimal performance.
         :param metadata:
             Name-value pairs associated with the blob as metadata.
-        :type metadata: dict(str, str)
+        :type metadata: Dict[str, str]
         :keyword tags:
             Name-value pairs associated with the blob as tag. Tags are case-sensitive.
             The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
@@ -455,7 +565,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
 
             .. versionadded:: 12.4.0
 
-        :paramtype tags: dict(str, str)
+        :paramtype tags: Dict[str, str]
         :keyword bool overwrite: Whether the blob to be uploaded should overwrite the current data.
             If True, upload_blob will overwrite the existing data. If set to False, the
             operation will fail with ResourceExistsError. The exception to the above is with Append
@@ -563,7 +673,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             multiple calls to the Azure service and the timeout will apply to
             each call individually.
         :returns: Blob-updated property dict (Etag and last modified)
-        :rtype: dict[str, Any]
+        :rtype: Dict[str, Any]
 
         .. admonition:: Example:
 
@@ -576,13 +686,34 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         """
         if self.require_encryption and not self.key_encryption_key:
             raise ValueError("Encryption required but no key was provided.")
-        if kwargs.get('cpk') and self.scheme.lower() != 'https':
+        if cpk and self.scheme.lower() != 'https':
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
         options = _upload_blob_options(
             data=data,
             blob_type=blob_type,
             length=length,
             metadata=metadata,
+            tags=tags,
+            overwrite=overwrite,
+            content_settings=content_settings,
+            validate_content=validate_content,
+            lease=lease,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_conditions=match_conditions,
+            if_tags_match_condition=if_tags_match_condition,
+            premium_page_blob_tier=premium_page_blob_tier,
+            immutability_policy=immutability_policy,
+            legal_hold=legal_hold,
+            standard_blob_tier=standard_blob_tier,
+            maxsize_condition=maxsize_condition,
+            max_concurrency=max_concurrency,
+            cpk=cpk,
+            encryption_scope=encryption_scope,
+            encoding=encoding,
+            progress_hook=progress_hook,
+            timeout=timeout,
             encryption_options={
                 'required': self.require_encryption,
                 'version': self.encryption_version,
@@ -592,7 +723,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             config=self._config,
             sdk_moniker=self._sdk_moniker,
             client=self._client,
-            **kwargs)
+            **kwargs
+        )
         if blob_type == BlobType.BlockBlob:
             return cast(Dict[str, Any], await upload_block_blob(**options))
         if blob_type == BlobType.PageBlob:
@@ -604,7 +736,19 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         self, offset: Optional[int] = None,
         length: Optional[int] = None,
         *,
+        version_id: Optional[str] = None,
+        validate_content: bool = False,
+        lease: Optional[Union[BlobLeaseClient, str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional["MatchConditions"] = None,
+        if_tags_match_condition: Optional[str] = None,
+        cpk: Optional["CustomerProvidedEncryptionKey"] = None,
+        max_concurrency: int = 1,
         encoding: str,
+        progress_hook: Optional[Callable[[int, int], Awaitable[None]]] = None,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> StorageStreamDownloader[str]:
         ...
@@ -614,7 +758,19 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         self, offset: Optional[int] = None,
         length: Optional[int] = None,
         *,
+        version_id: Optional[str] = None,
+        validate_content: bool = False,
+        lease: Optional[Union[BlobLeaseClient, str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional["MatchConditions"] = None,
+        if_tags_match_condition: Optional[str] = None,
+        cpk: Optional["CustomerProvidedEncryptionKey"] = None,
+        max_concurrency: int = 1,
         encoding: None = None,
+        progress_hook: Optional[Callable[[int, int], Awaitable[None]]] = None,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> StorageStreamDownloader[bytes]:
         ...
@@ -624,7 +780,19 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         self, offset: Optional[int] = None,
         length: Optional[int] = None,
         *,
-        encoding: Union[str, None] = None,
+        version_id: Optional[str] = None,
+        validate_content: bool = False,
+        lease: Optional[Union[BlobLeaseClient, str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional["MatchConditions"] = None,
+        if_tags_match_condition: Optional[str] = None,
+        cpk: Optional["CustomerProvidedEncryptionKey"] = None,
+        max_concurrency: int = 1,
+        encoding: Optional[str] = None,
+        progress_hook: Optional[Callable[[int, int], Awaitable[None]]] = None,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Union[StorageStreamDownloader[str], StorageStreamDownloader[bytes]]:
         """Downloads a blob to the StorageStreamDownloader. The readall() method must
@@ -728,10 +896,21 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         options = _download_blob_options(
             blob_name=self.blob_name,
             container_name=self.container_name,
-            version_id=get_version_id(self.version_id, kwargs),
+            version_id=version_id or self.version_id,
             offset=offset,
             length=length,
             encoding=encoding,
+            validate_content=validate_content,
+            lease=lease,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_condition=match_condition,
+            if_tags_match_condition=if_tags_match_condition,
+            cpk=cpk,
+            max_concurrency=max_concurrency,
+            progress_hook=progress_hook,
+            timeout=timeout,
             encryption_options={
                 'required': self.require_encryption,
                 'version': self.encryption_version,
@@ -741,13 +920,26 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             config=self._config,
             sdk_moniker=self._sdk_moniker,
             client=self._client,
-            **kwargs)
+            **kwargs
+        )
         downloader = StorageStreamDownloader(**options)
         await downloader._setup()  # pylint: disable=protected-access
         return downloader
 
     @distributed_trace_async
-    async def delete_blob(self, delete_snapshots: Optional[str] = None, **kwargs: Any) -> None:
+    async def delete_blob(
+        self, delete_snapshots: Optional[str] = None,
+        *,
+        version_id: Optional[str] = None,
+        lease: Optional[Union[BlobLeaseClient, str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional["MatchConditions"] = None,
+        if_tags_match_condition: Optional[str] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
         """Marks the specified blob for deletion.
 
         The blob is later deleted during garbage collection.
@@ -820,16 +1012,24 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         """
         options = _delete_blob_options(
             snapshot=self.snapshot,
-            version_id=get_version_id(self.version_id, kwargs),
+            version_id=version_id or self.version_id,
             delete_snapshots=delete_snapshots,
-            **kwargs)
+            lease=lease,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_condition=match_condition,
+            if_tags_match_condition=if_tags_match_condition,
+            timeout=timeout,
+            **kwargs
+        )
         try:
             await self._client.blob.delete(**options)
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def undelete_blob(self, **kwargs: Any) -> None:
+    async def undelete_blob(self, *, timeout: Optional[int] = None, **kwargs: Any) -> None:
         """Restores soft-deleted blobs or snapshots.
 
         Operation will only be successful if used within the specified number of days
@@ -857,12 +1057,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
                 :caption: Undeleting a blob.
         """
         try:
-            await self._client.blob.undelete(timeout=kwargs.pop('timeout', None), **kwargs)
+            await self._client.blob.undelete(timeout=timeout, **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def exists(self, **kwargs: Any) -> bool:
+    async def exists(self, *, version_id: Optional[str] = None, timeout: Optional[int] = None, **kwargs: Any) -> bool:
         """
         Returns True if a blob exists with the defined parameters, and returns
         False otherwise.
@@ -879,12 +1079,13 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         :returns: boolean
         :rtype: bool
         """
-        version_id = get_version_id(self.version_id, kwargs)
         try:
             await self._client.blob.get_properties(
                 snapshot=self.snapshot,
-                version_id=version_id,
-                **kwargs)
+                version_id=version_id or self.version_id,
+                timeout=timeout,
+                **kwargs
+            )
             return True
         # Encrypted with CPK
         except ResourceExistsError:
@@ -896,7 +1097,19 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
                 return False
 
     @distributed_trace_async
-    async def get_blob_properties(self, **kwargs: Any) -> BlobProperties:
+    async def get_blob_properties(
+        self, *,
+        lease: Optional[Union[BlobLeaseClient, str]] = None,
+        version_id: Optional[str] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional["MatchConditions"] = None,
+        if_tags_match_condition: Optional[str] = None,
+        cpk: Optional["CustomerProvidedEncryptionKey"] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> BlobProperties:
         """Returns all user-defined metadata, standard HTTP properties, and
         system properties for the blob. It does not return the content of the blob.
 
@@ -958,29 +1171,29 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
                 :dedent: 12
                 :caption: Getting the properties for a blob.
         """
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = get_modify_conditions(kwargs)
-        version_id = get_version_id(self.version_id, kwargs)
-        cpk = kwargs.pop('cpk', None)
-        cpk_info = None
-        if cpk:
-            if self.scheme.lower() != 'https':
-                raise ValueError("Customer provided encryption key must be used over HTTPS.")
-            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                               encryption_algorithm=cpk.algorithm)
+        if cpk and self.scheme.lower() != 'https':
+            raise ValueError("Customer provided encryption key must be used over HTTPS.")
+        options = _get_blob_properties_options(
+            lease=lease,
+            version_id=version_id or self.version_id,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_condition=match_condition,
+            if_tags_match_condition=if_tags_match_condition,
+            cpk=cpk,
+            snapshot=self.snapshot,
+            timeout=timeout,
+            **kwargs
+        )
         try:
             cls_method = kwargs.pop('cls', None)
             if cls_method:
                 kwargs['cls'] = partial(deserialize_pipeline_response_into_cls, cls_method)
             blob_props = await self._client.blob.get_properties(
-                timeout=kwargs.pop('timeout', None),
-                version_id=version_id,
-                snapshot=self.snapshot,
-                lease_access_conditions=access_conditions,
-                modified_access_conditions=mod_conditions,
                 cls=kwargs.pop('cls', None) or deserialize_blob_properties,
-                cpk_info=cpk_info,
-                **kwargs)
+                **options
+            )
         except HttpResponseError as error:
             process_storage_error(error)
         blob_props.name = self.blob_name
@@ -1054,7 +1267,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             Dict containing name and value pairs. Each call to this operation
             replaces all existing metadata attached to the blob. To remove all
             metadata from the blob, call this operation with no metadata headers.
-        :type metadata: dict(str, str)
+        :type metadata: Dict[str, str]
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
@@ -1214,7 +1427,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             language, disposition, md5, and cache control.
         :param metadata:
             Name-value pairs associated with the blob as metadata.
-        :type metadata: dict(str, str)
+        :type metadata: Dict[str, str]
         :param ~azure.storage.blob.PremiumPageBlobTier premium_page_blob_tier:
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
@@ -1228,7 +1441,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
 
             .. versionadded:: 12.4.0
 
-        :paramtype tags: dict(str, str)
+        :paramtype tags: Dict[str, str]
         :keyword int sequence_number:
             Only for Page blobs. The sequence number is a user-controlled value that you can use to
             track requests. The value of the sequence number must be between 0
@@ -1286,7 +1499,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
         :returns: Blob-updated property dict (Etag and last modified).
-        :rtype: dict[str, Any]
+        :rtype: Dict[str, Any]
         """
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
@@ -1318,7 +1531,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             language, disposition, md5, and cache control.
         :param metadata:
             Name-value pairs associated with the blob as metadata.
-        :type metadata: dict(str, str)
+        :type metadata: Dict[str, str]
         :keyword tags:
             Name-value pairs associated with the blob as tag. Tags are case-sensitive.
             The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
@@ -1328,7 +1541,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
 
             .. versionadded:: 12.4.0
 
-        :paramtype tags: dict(str, str)
+        :paramtype tags: Dict[str, str]
         :keyword ~azure.storage.blob.ImmutabilityPolicy immutability_policy:
             Specifies the immutability policy of a blob, blob snapshot or blob version.
 
@@ -1382,7 +1595,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
         :returns: Blob-updated property dict (Etag and last modified).
-        :rtype: dict[str, Any]
+        :rtype: Dict[str, Any]
         """
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
@@ -1414,7 +1627,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
 
         :param metadata:
             Name-value pairs associated with the blob as metadata.
-        :type metadata: dict(str, str)
+        :type metadata: Dict[str, str]
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -1462,7 +1675,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
         :returns: Blob-updated property dict (Snapshot ID, Etag, and last modified).
-        :rtype: dict[str, Any]
+        :rtype: Dict[str, Any]
 
         .. admonition:: Example:
 
@@ -1536,7 +1749,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             source blob or file to the destination blob. If one or more name-value
             pairs are specified, the destination blob is created with the specified
             metadata, and metadata is not copied from the source blob or file.
-        :type metadata: dict(str, str)
+        :type metadata: Dict[str, str]
         :param bool incremental_copy:
             Copies the snapshot of the source page blob to a destination page blob.
             The snapshot is copied such that only the differential changes between
@@ -1555,7 +1768,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
 
             .. versionadded:: 12.4.0
 
-        :paramtype tags: dict(str, str) or Literal["COPY"]
+        :paramtype tags: Dict[str, str] or Literal["COPY"]
         :keyword ~azure.storage.blob.ImmutabilityPolicy immutability_policy:
             Specifies the immutability policy of a blob, blob snapshot or blob version.
 
@@ -2023,7 +2236,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             language, disposition, md5, and cache control.
         :param metadata:
             Name-value pairs associated with the blob as metadata.
-        :type metadata: dict[str, str]
+        :type metadata: Dict[str, str]
         :keyword tags:
             Name-value pairs associated with the blob as tag. Tags are case-sensitive.
             The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
@@ -2033,7 +2246,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
 
             .. versionadded:: 12.4.0
 
-        :paramtype tags: dict(str, str)
+        :paramtype tags: Dict[str, str]
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
@@ -2103,7 +2316,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
         :returns: Blob-updated property dict (Etag and last modified).
-        :rtype: dict(str, Any)
+        :rtype: Dict[str, Any]
         """
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
@@ -2175,7 +2388,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             and tag values must be between 0 and 256 characters.
             Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
             space (' '), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
-        :type tags: dict(str, str)
+        :type tags: Dict[str, str]
         :keyword str version_id:
             The version id parameter is an opaque DateTime
             value that, when present, specifies the version of the blob to delete.
@@ -2307,7 +2520,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         :returns:
             A tuple of two lists of page ranges as dictionaries with 'start' and 'end' keys.
             The first element are filled page ranges, the 2nd element is cleared page ranges.
-        :rtype: tuple(list(dict(str, str), list(dict(str, str))
+        :rtype: tuple(list(Dict[str, str], list(Dict[str, str])
         """
         warnings.warn(
             "get_page_ranges is deprecated, use list_page_ranges instead",
@@ -2483,7 +2696,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         :returns:
             A tuple of two lists of page ranges as dictionaries with 'start' and 'end' keys.
             The first element are filled page ranges, the 2nd element is cleared page ranges.
-        :rtype: tuple(list(dict(str, str), list(dict(str, str))
+        :rtype: tuple(list(Dict[str, str], list(Dict[str, str])
         """
         options = _get_page_ranges_options(
             snapshot=self.snapshot,
@@ -2546,7 +2759,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
         :returns: Blob-updated property dict (Etag and last modified).
-        :rtype: dict(str, Any)
+        :rtype: Dict[str, Any]
         """
         options = _set_sequence_number_options(sequence_number_action, sequence_number=sequence_number, **kwargs)
         try:
@@ -2602,7 +2815,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
         :returns: Blob-updated property dict (Etag and last modified).
-        :rtype: dict(str, Any)
+        :rtype: Dict[str, Any]
         """
         if kwargs.get('cpk') and self.scheme.lower() != 'https':
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
@@ -2698,7 +2911,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
         :returns: Blob-updated property dict (Etag and last modified).
-        :rtype: dict(str, Any)
+        :rtype: Dict[str, Any]
         """
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
@@ -2901,7 +3114,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
         :returns: Blob-updated property dict (Etag and last modified).
-        :rtype: dict(str, Any)
+        :rtype: Dict[str, Any]
         """
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
@@ -2998,7 +3211,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
         :returns: Blob-updated property dict (Etag, last modified, append offset, committed block count).
-        :rtype: dict(str, Any)
+        :rtype: Dict[str, Any]
         """
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
@@ -3171,7 +3384,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
         :returns: Blob-updated property dict (Etag, last modified, append offset, committed block count).
-        :rtype: dict(str, Any)
+        :rtype: Dict[str, Any]
         """
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
