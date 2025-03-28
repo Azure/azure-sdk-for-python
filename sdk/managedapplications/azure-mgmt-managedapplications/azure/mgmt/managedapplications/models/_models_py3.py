@@ -1836,13 +1836,13 @@ class ManagedIdentityToken(_serialization.Model):
     """
 
     _attribute_map = {
-        "access_token": {"key": "accessToken", "type": "str"},
-        "expires_in": {"key": "expiresIn", "type": "str"},
-        "expires_on": {"key": "expiresOn", "type": "str"},
-        "not_before": {"key": "notBefore", "type": "str"},
+        "access_token": {"key": "access_token", "type": "str"},
+        "expires_in": {"key": "expires_in", "type": "str"},
+        "expires_on": {"key": "expires_on", "type": "str"},
+        "not_before": {"key": "not_before", "type": "str"},
         "authorization_audience": {"key": "authorizationAudience", "type": "str"},
         "resource_id": {"key": "resourceId", "type": "str"},
-        "token_type": {"key": "tokenType", "type": "str"},
+        "token_type": {"key": "token_type", "type": "str"},
     }
 
     def __init__(
