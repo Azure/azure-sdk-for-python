@@ -1,0 +1,88 @@
+# coding=utf-8
+import pytest
+from devtools_testutils import recorded_by_proxy
+from testpreparer import MachineLearningServicesClientTestBase, MachineLearningServicesPreparer
+
+
+@pytest.mark.skip("you may need to update the auto-generated test case before run it")
+class TestMachineLearningServicesIndexesOperations(MachineLearningServicesClientTestBase):
+    @MachineLearningServicesPreparer()
+    @recorded_by_proxy
+    def test_indexes_get(self, machinelearningservices_endpoint):
+        client = self.create_client(endpoint=machinelearningservices_endpoint)
+        response = client.indexes.get(
+            name="str",
+            version="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @MachineLearningServicesPreparer()
+    @recorded_by_proxy
+    def test_indexes_create_or_update(self, machinelearningservices_endpoint):
+        client = self.create_client(endpoint=machinelearningservices_endpoint)
+        response = client.indexes.create_or_update(
+            name="str",
+            version="str",
+            body={
+                "id": "str",
+                "storageUri": "str",
+                "description": "str",
+                "properties": {"str": "str"},
+                "stage": "str",
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                },
+                "tags": {"str": "str"},
+            },
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @MachineLearningServicesPreparer()
+    @recorded_by_proxy
+    def test_indexes_list(self, machinelearningservices_endpoint):
+        client = self.create_client(endpoint=machinelearningservices_endpoint)
+        response = client.indexes.list(
+            name="str",
+            list_view_type="str",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @MachineLearningServicesPreparer()
+    @recorded_by_proxy
+    def test_indexes_get_latest(self, machinelearningservices_endpoint):
+        client = self.create_client(endpoint=machinelearningservices_endpoint)
+        response = client.indexes.get_latest(
+            name="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @MachineLearningServicesPreparer()
+    @recorded_by_proxy
+    def test_indexes_get_next_version(self, machinelearningservices_endpoint):
+        client = self.create_client(endpoint=machinelearningservices_endpoint)
+        response = client.indexes.get_next_version(
+            name="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @MachineLearningServicesPreparer()
+    @recorded_by_proxy
+    def test_indexes_list_latest(self, machinelearningservices_endpoint):
+        client = self.create_client(endpoint=machinelearningservices_endpoint)
+        response = client.indexes.list_latest()
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...

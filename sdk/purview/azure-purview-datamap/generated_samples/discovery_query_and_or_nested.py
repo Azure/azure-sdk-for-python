@@ -1,0 +1,50 @@
+# coding=utf-8
+
+from azure.identity import DefaultAzureCredential
+
+from azure.purview.datamap import DataMapClient
+
+"""
+# PREREQUISITES
+    pip install azure-identity
+    pip install azure-purview-datamap
+# USAGE
+    python discovery_query_and_or_nested.py
+
+    Before run the sample, please set the values of the client ID, tenant ID and client secret
+    of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
+    AZURE_CLIENT_SECRET. For more info about how to get the value, please see:
+    https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal
+"""
+
+
+def main():
+    client = DataMapClient(
+        endpoint="ENDPOINT",
+        credential=DefaultAzureCredential(),
+    )
+
+    response = client.discovery.query(
+        body={
+            "filter": {
+                "and": [
+                    {"entityType": "azure_blob_path"},
+                    {"attributeName": "qualifiedName", "attributeValue": ".csv", "operator": "contains"},
+                    {
+                        "or": [
+                            {"attributeName": "name", "attributeValue": "exampledata.csv", "operator": "eq"},
+                            {"attributeName": "qualifiedName", "attributeValue": "https://", "operator": "prefix"},
+                        ]
+                    },
+                ]
+            },
+            "keywords": None,
+            "limit": 10,
+        },
+    )
+    print(response)
+
+
+# x-ms-original-file: 2023-09-01/Discovery_Query_AndOrNested.json
+if __name__ == "__main__":
+    main()

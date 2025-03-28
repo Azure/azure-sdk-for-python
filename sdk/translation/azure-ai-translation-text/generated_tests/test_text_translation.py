@@ -1,0 +1,79 @@
+# coding=utf-8
+import pytest
+from devtools_testutils import recorded_by_proxy
+from testpreparer import TextTranslationClientTestBase, TextTranslationPreparer
+
+
+@pytest.mark.skip("you may need to update the auto-generated test case before run it")
+class TestTextTranslation(TextTranslationClientTestBase):
+    @TextTranslationPreparer()
+    @recorded_by_proxy
+    def test_get_supported_languages(self, texttranslation_endpoint):
+        client = self.create_client(endpoint=texttranslation_endpoint)
+        response = client.get_supported_languages()
+
+        # please add some check logic here by yourself
+        # ...
+
+    @TextTranslationPreparer()
+    @recorded_by_proxy
+    def test_translate(self, texttranslation_endpoint):
+        client = self.create_client(endpoint=texttranslation_endpoint)
+        response = client.translate(
+            body=[{"text": "str"}],
+            to_language=["str"],
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @TextTranslationPreparer()
+    @recorded_by_proxy
+    def test_transliterate(self, texttranslation_endpoint):
+        client = self.create_client(endpoint=texttranslation_endpoint)
+        response = client.transliterate(
+            body=[{"text": "str"}],
+            language="str",
+            from_script="str",
+            to_script="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @TextTranslationPreparer()
+    @recorded_by_proxy
+    def test_find_sentence_boundaries(self, texttranslation_endpoint):
+        client = self.create_client(endpoint=texttranslation_endpoint)
+        response = client.find_sentence_boundaries(
+            body=[{"text": "str"}],
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @TextTranslationPreparer()
+    @recorded_by_proxy
+    def test_lookup_dictionary_entries(self, texttranslation_endpoint):
+        client = self.create_client(endpoint=texttranslation_endpoint)
+        response = client.lookup_dictionary_entries(
+            body=[{"text": "str"}],
+            from_language="str",
+            to_language="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @TextTranslationPreparer()
+    @recorded_by_proxy
+    def test_lookup_dictionary_examples(self, texttranslation_endpoint):
+        client = self.create_client(endpoint=texttranslation_endpoint)
+        response = client.lookup_dictionary_examples(
+            body=[{"text": "str", "translation": "str"}],
+            from_language="str",
+            to_language="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...

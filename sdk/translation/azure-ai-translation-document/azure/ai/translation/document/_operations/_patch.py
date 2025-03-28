@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -328,7 +329,10 @@ class DocumentTranslationClientOperationsMixin(GeneratedDocumentTranslationClien
                 deserialization_callback=get_long_running_output,
             )
         return DocumentTranslationLROPoller[_models.TranslationStatus](
-            self._client, raw_result, get_long_running_output, polling_method # pylint: disable=possibly-used-before-assignment
+            self._client,
+            raw_result,
+            get_long_running_output,
+            polling_method,  # pylint: disable=possibly-used-before-assignment
         )
 
 

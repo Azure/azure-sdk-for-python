@@ -1,0 +1,19 @@
+# coding=utf-8
+import pytest
+from devtools_testutils.aio import recorded_by_proxy_async
+from testpreparer import MessageTemplatePreparer
+from testpreparer_async import MessageTemplateClientTestBaseAsync
+
+
+@pytest.mark.skip("you may need to update the auto-generated test case before run it")
+class TestMessageTemplateAsync(MessageTemplateClientTestBaseAsync):
+    @MessageTemplatePreparer()
+    @recorded_by_proxy_async
+    async def test_list_templates(self, messagetemplate_endpoint):
+        client = self.create_async_client(endpoint=messagetemplate_endpoint)
+        response = client.list_templates(
+            channel_id="str",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...

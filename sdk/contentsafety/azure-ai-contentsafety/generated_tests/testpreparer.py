@@ -1,0 +1,36 @@
+# coding=utf-8
+from azure.ai.contentsafety import BlocklistClient, ContentSafetyClient
+from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer
+import functools
+
+
+class ContentSafetyClientTestBase(AzureRecordedTestCase):
+
+    def create_client(self, endpoint):
+        credential = self.get_credential(ContentSafetyClient)
+        return self.create_client_from_credential(
+            ContentSafetyClient,
+            credential=credential,
+            endpoint=endpoint,
+        )
+
+
+ContentSafetyPreparer = functools.partial(
+    PowerShellPreparer, "contentsafety", contentsafety_endpoint="https://fake_contentsafety_endpoint.com"
+)
+
+
+class BlocklistClientTestBase(AzureRecordedTestCase):
+
+    def create_client(self, endpoint):
+        credential = self.get_credential(BlocklistClient)
+        return self.create_client_from_credential(
+            BlocklistClient,
+            credential=credential,
+            endpoint=endpoint,
+        )
+
+
+BlocklistPreparer = functools.partial(
+    PowerShellPreparer, "blocklist", blocklist_endpoint="https://fake_blocklist_endpoint.com"
+)
