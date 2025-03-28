@@ -5,20 +5,20 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: upload_test_file.py
+FILE: create_or_update_app_components_test.py
 
 DESCRIPTION:
-    This sample shows how to upload a file to your existing load test. The file could be a test script file or any other input artifact
+    This sample shows how to create or update app component for an existing test.
+
 USAGE:
-    python upload_test_file.py
+    python create_or_update_app_components_test.py
 
     Set the environment variables with your own values before running the sample:
     1)  AZURE_CLIENT_ID - client id
     2)  AZURE_CLIENT_SECRET - client secret
     3)  AZURE_TENANT_ID - tenant id for your Azure
-    4)  LOADTESTSERVICE_ENDPOINT - Data Plane endpoint for Loadtestservice
-
-    Please ensure that correct file and path is used
+    4)  RESOURCE_ID - resource id of resource that will be added as the app component
+    5)  LOADTESTSERVICE_ENDPOINT - Data Plane endpoint for Loadtestservice
 """
 from azure.developer.loadtesting import LoadTestAdministrationClient
 
@@ -28,17 +28,28 @@ from azure.identity import DefaultAzureCredential
 import os
 from dotenv import load_dotenv
 
+
 load_dotenv()
 LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]
+RESOURCE_ID = os.environ["RESOURCE_ID"]
 
+# Build a client through AAD and resource endpoint
 client = LoadTestAdministrationClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
 
 TEST_ID = "my-sdk-test-id"
-FILE_NAME = "sample.jmx"
 
-# uploading .jmx file to a test
-resultPoller = client.begin_upload_test_file(TEST_ID, FILE_NAME, open("sample.jmx", "rb"))
+result = client.create_or_update_app_components(
+    TEST_ID,
+    {
+        "components": {
+            RESOURCE_ID: {
+                "resourceId": RESOURCE_ID,
+                "resourceName": "App-Service-Sample-Demo",
+                "resourceType": "Microsoft.Web/sites",
+                "kind": "web",
+            }
+        },
+    },
+)
 
-# getting result of LRO poller with timeout of 600 secs
-validationResponse = resultPoller.result(600)
-print(validationResponse)
+print(result)
