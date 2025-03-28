@@ -2,14 +2,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Callable, Optional, Any
+from typing import Callable, Any
 
-from azure.core.credentials import AccessTokenInfo
-from .._internal import AadClient
-from .._internal.get_token_mixin import GetTokenMixin
+from .._internal.client_credential_base import ClientCredentialBase
 
 
-class ClientAssertionCredential(GetTokenMixin):
+class ClientAssertionCredential(ClientCredentialBase):
     """Authenticates a service principal with a JWT assertion.
 
     This credential is for advanced scenarios. :class:`~azure.identity.CertificateCredential` has a more
@@ -42,36 +40,16 @@ class ClientAssertionCredential(GetTokenMixin):
     """
 
     def __init__(self, tenant_id: str, client_id: str, func: Callable[[], str], **kwargs: Any) -> None:
-        self._func = func
-        authority = kwargs.pop("authority", None)
+        client_credential = {
+            "client_assertion": func,
+        }
         cache = kwargs.pop("cache", None)
         cae_cache = kwargs.pop("cae_cache", None)
-        additionally_allowed_tenants = kwargs.pop("additionally_allowed_tenants", None)
-        self._client = AadClient(
-            tenant_id,
-            client_id,
-            authority=authority,
-            cache=cache,
-            cae_cache=cae_cache,
-            additionally_allowed_tenants=additionally_allowed_tenants,
+        super().__init__(
+            client_id=client_id,
+            client_credential=client_credential,
+            tenant_id=tenant_id,
+            _cache=cache,
+            _cae_cache=cae_cache,
             **kwargs
         )
-        super().__init__()
-
-    def __enter__(self) -> "ClientAssertionCredential":
-        self._client.__enter__()
-        return self
-
-    def __exit__(self, *args: Any) -> None:
-        self._client.__exit__(*args)
-
-    def close(self) -> None:
-        self.__exit__()
-
-    def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessTokenInfo]:
-        return self._client.get_cached_access_token(scopes, **kwargs)
-
-    def _request_token(self, *scopes: str, **kwargs: Any) -> AccessTokenInfo:
-        assertion = self._func()
-        token = self._client.obtain_token_by_jwt_assertion(scopes, assertion, **kwargs)
-        return token

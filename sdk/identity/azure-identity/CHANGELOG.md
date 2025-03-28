@@ -12,6 +12,8 @@
 
 ### Other Changes
 
+- Updated the synchronous `ClientAssertionCredential` to use the Microsoft Authentication Library (MSAL) for its implementation.
+
 ## 1.21.0 (2025-03-11)
 
 ### Other Changes
