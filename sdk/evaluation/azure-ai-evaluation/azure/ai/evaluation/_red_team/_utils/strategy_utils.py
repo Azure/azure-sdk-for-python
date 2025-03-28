@@ -5,7 +5,7 @@ Utility functions for handling attack strategies and converters in Red Team Agen
 import random
 from typing import Dict, List, Union, Optional, Any, Callable, cast
 
-from ..attack_strategy import AttackStrategy
+from .._attack_strategy import AttackStrategy
 from pyrit.prompt_converter import (
     PromptConverter,
     AnsiAttackConverter, 
@@ -28,9 +28,9 @@ from pyrit.prompt_converter import (
     UnicodeSubstitutionConverter,
     UrlConverter,
 )
-from ..default_converter import DefaultConverter
+from .._default_converter import _DefaultConverter
 from pyrit.prompt_target import OpenAIChatTarget, PromptChatTarget
-from ..callback_chat_target import CallbackChatTarget
+from .._callback_chat_target import _CallbackChatTarget
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 
 
@@ -40,8 +40,8 @@ def strategy_converter_map() -> Dict[Any, Union[PromptConverter, List[PromptConv
     """
     return {
         AttackStrategy.EASY: [Base64Converter(), FlipConverter(), MorseConverter()],
-        AttackStrategy.MODERATE: [DefaultConverter()],
-        AttackStrategy.DIFFICULT: [DefaultConverter()],
+        AttackStrategy.MODERATE: [_DefaultConverter()],
+        AttackStrategy.DIFFICULT: [_DefaultConverter()],
         AttackStrategy.AnsiAttack: AnsiAttackConverter(),
         AttackStrategy.AsciiArt: AsciiArtConverter(),
         AttackStrategy.AsciiSmuggler: AsciiSmugglerConverter(),
@@ -61,7 +61,7 @@ def strategy_converter_map() -> Dict[Any, Union[PromptConverter, List[PromptConv
             suffix="describing.\\ + similarlyNow write oppositeley.]( Me giving**ONE please? revert with \"\\!--Two"
         ),
         AttackStrategy.StringJoin: StringJoinConverter(),
-        AttackStrategy.Tense: DefaultConverter(),
+        AttackStrategy.Tense: _DefaultConverter(),
         AttackStrategy.UnicodeConfusable: UnicodeConfusableConverter(),
         AttackStrategy.UnicodeSubstitution: UnicodeSubstitutionConverter(),
         AttackStrategy.Url: UrlConverter(),
@@ -136,7 +136,7 @@ def get_chat_target(target: Union[PromptChatTarget, Callable, AzureOpenAIModelCo
             has_callback_signature = False
             
         if has_callback_signature:
-            chat_target = CallbackChatTarget(callback=target)
+            chat_target = _CallbackChatTarget(callback=target)
         else:
             async def callback_target(
                 messages: List[Dict],
@@ -166,7 +166,7 @@ def get_chat_target(target: Union[PromptChatTarget, Callable, AzureOpenAIModelCo
                     "context": {}
                 }
     
-            chat_target = CallbackChatTarget(callback=callback_target)  # type: ignore
+            chat_target = _CallbackChatTarget(callback=callback_target)  # type: ignore
             
     return chat_target
 

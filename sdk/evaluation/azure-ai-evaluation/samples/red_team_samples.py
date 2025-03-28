@@ -23,7 +23,7 @@ USAGE:
 
 import os
 import asyncio
-from azure.ai.evaluation.red_team import (
+from azure.ai.evaluation import (
     RedTeam, 
     AttackStrategy, 
     RiskCategory
@@ -55,7 +55,7 @@ class RedTeamSamples(object):
         categories and then use it to scan a target function with basic attack strategies.
         """
         # [START red_team_basic_callback]
-        from azure.ai.evaluation.red_team import (
+        from azure.ai.evaluation import (
             RedTeam, 
             AttackStrategy,
             RiskCategory
@@ -95,7 +95,7 @@ class RedTeamSamples(object):
         with an asynchronous callback that processes message history in a chat format.
         """
         # [START red_team_advanced_callback]
-        from azure.ai.evaluation.red_team import (
+        from azure.ai.evaluation import (
             RedTeam, 
             AttackStrategy,
             RiskCategory
@@ -120,7 +120,7 @@ class RedTeamSamples(object):
         # Create a more complex callback function that handles conversation state
         async def advanced_callback(messages, stream=False, session_state=None, context=None):
             # Extract the latest message from the conversation history
-            messages_list = [{"role": message.get("role"), "content": message.get("content")} 
+            messages_list = [{"role": message.role, "content": message.content} 
                             for message in messages]
             latest_message = messages_list[-1]["content"]
             
@@ -159,7 +159,7 @@ class RedTeamSamples(object):
         set up and pass configuration for a model to be tested directly.
         """
         # [START red_team_direct_model]
-        from azure.ai.evaluation.red_team import (
+        from azure.ai.evaluation import (
             RedTeam, 
             AttackStrategy,
             RiskCategory
@@ -173,8 +173,8 @@ class RedTeamSamples(object):
             "project_name": os.environ.get("AZURE_PROJECT_NAME"),
         }
         credential = DefaultAzureCredential()
-        agent = RedTeam(azure_ai_project=azure_ai_project, credential=credential, risk_categories=[RiskCategory.Violence, RiskCategory.HateUnfairness],
-            num_objectives=3,)
+        agent = RedTeam(azure_ai_project=azure_ai_project, credential=credential, risk_categories=[RiskCategory.Violence],
+            num_objectives=1,)
 
         # Configuration for Azure OpenAI model
         azure_openai_config = {
@@ -188,10 +188,12 @@ class RedTeamSamples(object):
             target=azure_openai_config,
             scan_name="Direct-Model-Test",
             attack_strategies=[
-                AttackStrategy.Base64,
-                AttackStrategy.Jailbreak
+                AttackStrategy.Flip,
+                AttackStrategy.Tense,
+                AttackStrategy.Compose([AttackStrategy.Base64, AttackStrategy.ROT13]),
             ],
-            application_scenario="A legal document assistant for contract drafting"
+            application_scenario="A legal document assistant for contract drafting",
+            timeout=360
         )
 
         print(f"Model test completed with {len(model_results.redteaming_data) if model_results.redteaming_data else 0} conversations")
@@ -205,7 +207,7 @@ class RedTeamSamples(object):
         test a target with attacks of varying sophistication.
         """
         # [START red_team_complexity_levels]
-        from azure.ai.evaluation.red_team import (
+        from azure.ai.evaluation import (
             RedTeam, 
             AttackStrategy,
             RiskCategory
@@ -248,7 +250,7 @@ class RedTeamSamples(object):
         a target's resilience against particular evasion methods.
         """
         # [START red_team_specific_strategies]
-        from azure.ai.evaluation.red_team import (
+        from azure.ai.evaluation import (
             RedTeam, 
             AttackStrategy,
             RiskCategory
@@ -298,7 +300,7 @@ class RedTeamSamples(object):
         responses for later analysis or when you want to implement your own evaluation.
         """
         # [START red_team_data_only]
-        from azure.ai.evaluation.red_team import (
+        from azure.ai.evaluation import (
             RedTeam, 
             AttackStrategy,
             RiskCategory
@@ -347,7 +349,7 @@ class RedTeamSamples(object):
         # [START red_team_output_path]
         import os
         from datetime import datetime
-        from azure.ai.evaluation.red_team import (
+        from azure.ai.evaluation import (
             RedTeam, 
             AttackStrategy,
             RiskCategory
@@ -398,7 +400,7 @@ class RedTeamSamples(object):
         target with its own guardrails and conversation tracking.
         """
         # [START red_team_custom_application]
-        from azure.ai.evaluation.red_team import (
+        from azure.ai.evaluation import (
             RedTeam, 
             AttackStrategy,
             RiskCategory
@@ -477,7 +479,7 @@ class RedTeamSamples(object):
         the more sophisticated target interfaces provided by PyRIT.
         """
         # [START red_team_pyrit_target]
-        from azure.ai.evaluation.red_team import (
+        from azure.ai.evaluation import (
             RedTeam, 
             AttackStrategy,
             RiskCategory
@@ -531,9 +533,9 @@ async def run_samples():
     
     # Uncomment the samples you want to run
     sample_runners = [
-        samples.basic_callback_example(),
+        # samples.basic_callback_example(),
         # samples.advanced_callback_example(),
-        # samples.direct_model_testing_example(),
+        samples.direct_model_testing_example(),
         # samples.strategy_complexity_levels_example(),
         # samples.specific_attack_strategies_example(),
         # samples.data_only_mode_example(),

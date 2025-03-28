@@ -43,11 +43,9 @@ from azure.ai.evaluation import evaluate
 from azure.core.credentials import TokenCredential
 
 # Red Teaming imports
-from .red_team_result import RedTeamResult, RedTeamingScorecard, RedTeamingParameters, Conversation, RedTeamOutput
-from .callback_chat_target import CallbackChatTarget
-from .attack_strategy import AttackStrategy
-from .attack_objective_generator import RiskCategory, AttackObjectiveGenerator
-from .default_converter import DefaultConverter
+from ._red_team_result import _RedTeamResult, _RedTeamingScorecard, _RedTeamingParameters, RedTeamOutput
+from ._attack_strategy import AttackStrategy
+from ._attack_objective_generator import RiskCategory, _AttackObjectiveGenerator
 
 # PyRIT imports
 from pyrit.common import initialize_pyrit, DUCK_DB
@@ -59,12 +57,12 @@ from pyrit.exceptions import PyritException
 from pyrit.prompt_converter import PromptConverter, MathPromptConverter, Base64Converter, FlipConverter, MorseConverter, AnsiAttackConverter, AsciiArtConverter, AsciiSmugglerConverter, AtbashConverter, BinaryConverter, CaesarConverter, CharacterSpaceConverter, CharSwapGenerator, DiacriticConverter, LeetspeakConverter, UrlConverter, UnicodeSubstitutionConverter, UnicodeConfusableConverter, SuffixAppendConverter, StringJoinConverter, ROT13Converter
 
 # Local imports - constants and utilities
-from .utils.constants import (
+from ._utils.constants import (
     BASELINE_IDENTIFIER, DATA_EXT, RESULTS_EXT,
     ATTACK_STRATEGY_COMPLEXITY_MAP, RISK_CATEGORY_EVALUATOR_MAP,
     INTERNAL_TASK_TIMEOUT, TASK_STATUS
 )
-from .utils.logging_utils import (
+from ._utils.logging_utils import (
     setup_logger, log_section_header, log_subsection_header,
     log_strategy_start, log_strategy_completion, log_error
 )
@@ -134,7 +132,7 @@ class RedTeam():
 
         initialize_pyrit(memory_db_type=DUCK_DB)
 
-        self.attack_objective_generator = AttackObjectiveGenerator(risk_categories=risk_categories, num_objectives=num_objectives, application_scenario=application_scenario, custom_attack_seed_prompts=custom_attack_seed_prompts)
+        self.attack_objective_generator = _AttackObjectiveGenerator(risk_categories=risk_categories, num_objectives=num_objectives, application_scenario=application_scenario, custom_attack_seed_prompts=custom_attack_seed_prompts)
 
         self.logger.debug("RedTeam initialized successfully")
         
@@ -210,7 +208,7 @@ class RedTeam():
         """Log the Red Team Agent results to MLFlow.
         
         :param redteam_output: The output from the red team agent evaluation
-        :type redteam_output: ~azure.ai.evaluation.red_team.RedTeamOutput
+        :type redteam_output: ~azure.ai.evaluation.RedTeamOutput
         :param eval_run: The MLFlow run object
         :type eval_run: ~azure.ai.evaluation._evaluate._eval_run.EvalRun
         :param data_only: Whether to log only data without evaluation results
@@ -318,7 +316,7 @@ class RedTeam():
 
     # Using the utility function from strategy_utils.py instead
     def _strategy_converter_map(self):
-        from .utils.strategy_utils import strategy_converter_map
+        from ._utils.strategy_utils import strategy_converter_map
         return strategy_converter_map()
     
     async def _get_attack_objectives(
@@ -330,7 +328,7 @@ class RedTeam():
         """Get attack objectives from the RAI client for a specific risk category or from a custom dataset.
         
         :param attack_objective_generator: The generator with risk categories to get attack objectives for
-        :type attack_objective_generator: ~azure.ai.evaluation.redteam.AttackObjectiveGenerator
+        :type attack_objective_generator: ~azure.ai.evaluation.redteam._AttackObjectiveGenerator
         :param risk_category: The specific risk category to get objectives for
         :type risk_category: Optional[RiskCategory]
         :param application_scenario: Optional description of the application scenario for context
@@ -566,22 +564,22 @@ class RedTeam():
 
     # Replace with utility function
     def _message_to_dict(self, message: ChatMessage):
-        from .utils.formatting_utils import message_to_dict
+        from ._utils.formatting_utils import message_to_dict
         return message_to_dict(message)
     
     # Replace with utility function
     def _get_strategy_name(self, attack_strategy: Union[AttackStrategy, List[AttackStrategy]]) -> str:
-        from .utils.formatting_utils import get_strategy_name
+        from ._utils.formatting_utils import get_strategy_name
         return get_strategy_name(attack_strategy)
 
     # Replace with utility function
     def _get_flattened_attack_strategies(self, attack_strategies: List[Union[AttackStrategy, List[AttackStrategy]]]) -> List[Union[AttackStrategy, List[AttackStrategy]]]:
-        from .utils.formatting_utils import get_flattened_attack_strategies
+        from ._utils.formatting_utils import get_flattened_attack_strategies
         return get_flattened_attack_strategies(attack_strategies)
     
     # Replace with utility function
     def _get_converter_for_strategy(self, attack_strategy: Union[AttackStrategy, List[AttackStrategy]]) -> Union[PromptConverter, List[PromptConverter]]:
-        from .utils.strategy_utils import get_converter_for_strategy
+        from ._utils.strategy_utils import get_converter_for_strategy
         return get_converter_for_strategy(attack_strategy)
 
     async def _prompt_sending_orchestrator(
@@ -751,7 +749,7 @@ class RedTeam():
     
     # Replace with utility function
     def _get_chat_target(self, target: Union[PromptChatTarget,Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration]) -> PromptChatTarget:
-        from .utils.strategy_utils import get_chat_target
+        from ._utils.strategy_utils import get_chat_target
         return get_chat_target(target)
     
     # Replace with utility function
@@ -771,16 +769,16 @@ class RedTeam():
     
     # Replace with utility function
     def _get_attack_success(self, result: str) -> bool:
-        from .utils.formatting_utils import get_attack_success
+        from ._utils.formatting_utils import get_attack_success
         return get_attack_success(result)
 
-    def _to_red_team_result(self) -> RedTeamResult:
-        """Convert tracking data from red_team_info to the RedTeamResult format.
+    def _to_red_team_result(self) -> _RedTeamResult:
+        """Convert tracking data from red_team_info to the _RedTeamResult format.
         
-        Uses only the red_team_info tracking dictionary to build the RedTeamResult.
+        Uses only the red_team_info tracking dictionary to build the _RedTeamResult.
         
         :return: Structured red team agent results
-        :rtype: RedTeamResult
+        :rtype: _RedTeamResult
         """
         converters = []
         complexity_levels = []
@@ -793,7 +791,7 @@ class RedTeam():
             summary_file = os.path.join(self.scan_output_dir, "attack_summary.csv")
             self.logger.debug(f"Creating attack summary CSV file: {summary_file}")
         
-        self.logger.info(f"Building RedTeamResult from red_team_info with {len(self.red_team_info)} strategies")
+        self.logger.info(f"Building _RedTeamResult from red_team_info with {len(self.red_team_info)} strategies")
         
         # Process each strategy and risk category from red_team_info
         for strategy_name, risk_data in self.red_team_info.items():
@@ -1016,8 +1014,6 @@ class RedTeam():
                 baseline_risk_df = results_df[risk_mask & baseline_mask]
                 if not baseline_risk_df.empty:
                     joint_risk_dict["baseline_asr"] = round(list_mean_nan_safe(baseline_risk_df["attack_success"].tolist()) * 100, 2) if "attack_success" in baseline_risk_df.columns else 0.0
-                else:
-                    joint_risk_dict["baseline_asr"] = 0.0
                 
                 # Easy complexity ASR for this risk
                 easy_risk_df = results_df[risk_mask & easy_mask]
@@ -1090,12 +1086,12 @@ class RedTeam():
                     complexity_converters = complexity_df["converter"].unique().tolist()
                     redteaming_parameters["techniques_used"][complexity] = complexity_converters
         
-        self.logger.info("RedTeamResult creation completed")
+        self.logger.info("_RedTeamResult creation completed")
         
         # Create the final result
-        red_team_result = RedTeamResult(
-            redteaming_scorecard=cast(RedTeamingScorecard, scorecard),
-            redteaming_parameters=cast(RedTeamingParameters, redteaming_parameters),
+        red_team_result = _RedTeamResult(
+            redteaming_scorecard=cast(_RedTeamingScorecard, scorecard),
+            redteaming_parameters=cast(_RedTeamingParameters, redteaming_parameters),
             redteaming_data=conversations,
             studio_url=self.ai_studio_url or None
         )
@@ -1103,8 +1099,8 @@ class RedTeam():
         return red_team_result
 
     # Replace with utility function
-    def _to_scorecard(self, redteam_result: RedTeamResult) -> str:
-        from .utils.formatting_utils import format_scorecard
+    def _to_scorecard(self, redteam_result: _RedTeamResult) -> str:
+        from ._utils.formatting_utils import format_scorecard
         return format_scorecard(redteam_result)
     
     async def _evaluate(
@@ -1749,7 +1745,7 @@ class RedTeam():
             # Process results
             log_section_header(self.logger, "Processing results")
             
-            # Convert results to RedTeamResult using only red_team_info
+            # Convert results to _RedTeamResult using only red_team_info
             red_team_result = self._to_red_team_result()
             
             # Create output with either full results or just conversations

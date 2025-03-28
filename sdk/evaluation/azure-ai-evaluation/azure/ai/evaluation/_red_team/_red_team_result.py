@@ -4,7 +4,7 @@
 from typing import Dict, List, Optional,  TypedDict
 import json
 
-class RiskCategorySummary(TypedDict):
+class _RiskCategorySummary(TypedDict):
     """Summary of attack success rates across risk categories."""
     overall_asr: float
     overall_total: int
@@ -22,7 +22,7 @@ class RiskCategorySummary(TypedDict):
     self_harm_total: int
     self_harm_successful_attacks: int
 
-class AttackTechniqueSummary(TypedDict):
+class _AttackTechniqueSummary(TypedDict):
     """Summary of attack success rates across complexity levels."""
     overall_asr: float
     overall_total: int
@@ -40,7 +40,7 @@ class AttackTechniqueSummary(TypedDict):
     difficult_complexity_total: int
     difficult_complexity_successful_attacks: int
 
-class JointRiskAttackSummaryItem(TypedDict):
+class _JointRiskAttackSummaryItem(TypedDict):
     """Summary of attack success rates for a specific risk category across complexity levels."""
     risk_category: str
     baseline_asr: float
@@ -48,7 +48,7 @@ class JointRiskAttackSummaryItem(TypedDict):
     moderate_complexity_asr: float
     difficult_complexity_asr: float
 
-class RedTeamingScorecard(TypedDict):
+class _RedTeamingScorecard(TypedDict):
     """TypedDict representation of a Red Team Agent scorecard with the updated structure.
     
     The scorecard contains four main sections:
@@ -57,19 +57,19 @@ class RedTeamingScorecard(TypedDict):
     - joint_risk_attack_summary: Detailed metrics by risk category and complexity level
     - detailed_joint_risk_attack_asr: Detailed ASR information broken down by complexity level, risk category, and converter
     """
-    risk_category_summary: List[RiskCategorySummary]
-    attack_technique_summary: List[AttackTechniqueSummary]
-    joint_risk_attack_summary: List[JointRiskAttackSummaryItem]
+    risk_category_summary: List[_RiskCategorySummary]
+    attack_technique_summary: List[_AttackTechniqueSummary]
+    joint_risk_attack_summary: List[_JointRiskAttackSummaryItem]
     detailed_joint_risk_attack_asr: Dict[str, Dict[str, Dict[str, float]]]
 
-class AttackObjectiveSource(TypedDict):
+class _AttackObjectiveSource(TypedDict):
     """Information about how attack objectives were generated."""
     application_scenario: str
     risk_categories: List[str]
     custom_attack_seed_prompts: str
     policy_document: str
 
-class RedTeamingParameters(TypedDict):
+class _RedTeamingParameters(TypedDict):
     """TypedDict representation of parameters used in a red team evaluation with the updated structure.
     
     This class defines the structure for capturing metadata about an evaluation run, including:
@@ -77,18 +77,18 @@ class RedTeamingParameters(TypedDict):
     - attack_complexity: List of complexity levels used in the attacks (e.g., "Easy", "Moderate", "Difficult")
     - techniques_used: Dictionary mapping complexity levels to lists of converter techniques used
     """
-    attack_objective_generated_from: AttackObjectiveSource
+    attack_objective_generated_from: _AttackObjectiveSource
     attack_complexity: List[str]
     techniques_used: Dict[str, List[str]]
 
-class RiskAssessment(TypedDict):
+class _RiskAssessment(TypedDict):
     """Assessment of content safety risks in a conversation."""
     violence: Dict[str, str]
     sexual: Dict[str, str]
     self_harm: Dict[str, str]
     hate_unfair: Dict[str, str]
 
-class Conversation(TypedDict):
+class _Conversation(TypedDict):
     """TypedDict representation of a simulated conversation in a red team evaluation.
     
     This class defines the structure for capturing information about a simulated conversation, including:
@@ -103,32 +103,37 @@ class Conversation(TypedDict):
     attack_complexity: str
     risk_category: str
     conversation: List[Dict[str, str]]
-    risk_assessment: Optional[RiskAssessment]
+    risk_assessment: Optional[_RiskAssessment]
 
-class RedTeamResult(TypedDict):
+class _RedTeamResult(TypedDict):
     """TypedDict representation of a Red Team Agent evaluation result with the updated structure.
 
     This class defines the structure for capturing the results of a red team evaluation, including:
     - redteaming_scorecard: Scorecard containing summary and detailed ASR information
     - redteaming_parameters: Parameters containing metadata about the evaluation run
-    - redteaming_data: List of Conversation objects representing the conversations in the evaluation
+    - redteaming_data: List of _Conversation objects representing the conversations in the evaluation
     """
-    redteaming_scorecard: RedTeamingScorecard
-    redteaming_parameters: RedTeamingParameters
-    redteaming_data: List[Conversation]
+    redteaming_scorecard: _RedTeamingScorecard
+    redteaming_parameters: _RedTeamingParameters
+    redteaming_data: List[_Conversation]
     studio_url: Optional[str]
 
 class RedTeamOutput():
-    def __init__(self, red_team_result: Optional[RedTeamResult] = None, redteaming_data: Optional[List[Conversation]] = None):
+    def __init__(self, red_team_result: Optional[_RedTeamResult] = None, redteaming_data: Optional[List[_Conversation]] = None):
         self.red_team_result = red_team_result
         self.redteaming_data = redteaming_data
 
     def to_json(self) -> str:
-        """Converts a RedTeamResult object to a JSON-serializable dictionary."""
+        """
+        Converts a _RedTeamResult object to a JSON-serializable dictionary.
+
+        :returns: A string containing the _RedTeamResult in JSON format.
+        :rtype: str
+        """
         return json.dumps(self.red_team_result) if self.red_team_result else ""
 
-    def to_scorecard(self) -> Optional[RedTeamingScorecard]:
-        """Extracts the scorecard from a RedTeamResult object."""
+    def to_scorecard(self) -> Optional[_RedTeamingScorecard]:
+        """Extracts the scorecard from a _RedTeamResult object."""
         return self.red_team_result.get("redteaming_scorecard", None) if self.red_team_result else None
     
     def to_eval_qr_json_lines(self) -> str:
@@ -148,8 +153,8 @@ class RedTeamOutput():
             "threshold": "threshold value" (if available from evaluation)
         }
         
-        :returns: A string containing query-response pairs in JSONL format.
-        :rtype: str
+        :returns: A list of strings containing query-response pairs in JSONL format.
+        :rtype: List[str]
         """
         if not self.redteaming_data:
             return ""
@@ -192,11 +197,13 @@ class RedTeamOutput():
                         
                         result_lines.append(json.dumps(qr_pair))
             
-        return "\n".join(result_lines)
+        return result_lines
     
     def attack_simulation(self) -> str:
         """
         Returns the attack simulation data in a human-readable format.
+        :returns: A string containing the attack simulation data in a human-readable format.
+        :rtype: str
         """
         if not self.redteaming_data:
             return ""
