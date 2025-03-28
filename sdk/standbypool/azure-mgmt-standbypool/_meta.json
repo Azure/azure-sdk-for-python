@@ -1,6 +1,13 @@
 {
-  "commit": "e695076ad458a3eac3d6943f9e923544ff52b1e4",
+  "commit": "988baa35501be10dd37971f7544a3137be72c638",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/standbypool/StandbyPool.Management",
-  "@azure-tools/typespec-python": "0.31.1"
+  "@azure-tools/typespec-python": "0.31.1",
+  "autorest": "3.10.2",
+  "use": [
+    "@autorest/python@6.27.4",
+    "@autorest/modelerfour@4.27.0"
+  ],
+  "autorest_command": "autorest specification/standbypool/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/mnt/vss/_work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.27.4 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
+  "readme": "specification/standbypool/resource-manager/readme.md"
 }
