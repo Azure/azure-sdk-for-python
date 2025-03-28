@@ -7,7 +7,7 @@ from typing import Any, Callable, cast, TypeVar, Union
 from azure.core import PipelineClient
 from azure.core.pipeline import PipelineResponse
 from azure.core.polling.base_polling import LROBasePolling, OperationFailed, OperationResourcePolling
-from azure.core.rest import HttpResponse, HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpResponse, HttpRequest
 
 from ..models import SecurityDomainObject, SecurityDomainOperationStatus
 from .._model_base import _deserialize
@@ -26,7 +26,7 @@ def _finished(status):
     return str(status).lower() in _FINISHED
 
 
-def _is_empty(response: HttpResponse) -> bool:
+def _is_empty(response: Union[HttpResponse, AsyncHttpResponse]) -> bool:
     """Check if response body contains meaningful content.
 
     :param response: The response object.
@@ -165,7 +165,7 @@ class SecurityDomainDownloadNoPolling(SecurityDomainDownloadPollingMethod, NoPol
 
 
 class SecurityDomainUploadPolling(SecurityDomainDownloadPolling):
-    def set_initial_status(self, pipeline_response: "PipelineResponse") -> str:
+    def set_initial_status(self, pipeline_response: PipelineResponse) -> str:
         response: HttpResponse = pipeline_response.http_response
         self._polling_url = response.headers["azure-asyncoperation"]
 
