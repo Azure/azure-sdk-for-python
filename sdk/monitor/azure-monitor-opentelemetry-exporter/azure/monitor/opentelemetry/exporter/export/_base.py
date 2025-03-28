@@ -439,12 +439,13 @@ def _format_storage_telemetry_item(item: TelemetryItem) -> TelemetryItem:
                     item.data.base_data.additional_properties = None  # type: ignore
     return item
 
+# mypy: disable-error-code="union-attr"
 def _get_authentication_credential(**kwargs: Any) -> Optional[ManagedIdentityCredential]:
     if "credential" in kwargs:
         return kwargs.get("credential")
     try:
         if _APPLICATIONINSIGHTS_AUTHENTICATION_STRING in os.environ:
-            auth_string = os.getenv(_APPLICATIONINSIGHTS_AUTHENTICATION_STRING)
+            auth_string = os.getenv(_APPLICATIONINSIGHTS_AUTHENTICATION_STRING, "")
             kv_pairs = auth_string.split(";")
             auth_string_d = {}
             for kv_pair in kv_pairs:
