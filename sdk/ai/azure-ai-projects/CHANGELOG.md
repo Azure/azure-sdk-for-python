@@ -18,8 +18,6 @@
 * Fix for a bug in Agent tracing causing function tool calls to not work properly when tracing is enabled.
 * Fix for a bug in Agent streaming, where `agent_id` was not included in the response. This caused the SDK not to make function calls when the thread run status is `requires_action`.
 
-### Breaking Changes
-
 ## 1.0.0b7 (2025-03-06)
 
 ### Features added
