@@ -1293,7 +1293,7 @@ def _get_blob_properties_options(version_id: Optional[str], snapshot: Optional[s
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
-        CpkInfo(
+        cpk_info = CpkInfo(
             encryption_key=cpk.key_value,
             encryption_key_sha256=cpk.key_hash,
             encryption_algorithm=cpk.algorithm
