@@ -446,14 +446,16 @@ class TestStatsbeatMetrics(unittest.TestCase):
     @mock.patch.dict(
         os.environ,
         {
-            "AKS_ARM_NAMESPACE_ID": "namespace_id",
+            "KUBERNETES_SERVICE_HOST": "TEST_KUBERNETES_SERVICE_HOST",
         },
     )
     def test_get_attach_metric_aks(self):
         attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
         self.assertEqual(attributes["rp"], _RP_Names.UNKNOWN.value)
         attributes["rp"] = _RP_Names.AKS.value
-        attributes["rpId"] = "namespace_id"
+        # TODO: What should rpId be for aks?
+        # attributes["rpId"] = ""
+        attributes["rpId"] = "TEST_KUBERNETES_SERVICE_HOST"
         observations = self._metric._get_attach_metric(options=None)
         for obs in observations:
             self.assertEqual(obs.value, 1)
