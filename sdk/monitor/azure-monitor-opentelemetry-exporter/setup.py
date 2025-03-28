@@ -84,7 +84,7 @@ setup(
     python_requires=">=3.8",
     install_requires=[
         "azure-core<2.0.0,>=1.28.0",
-        "azure-identity~=1.20", #TODO: which version
+        "azure-identity~=1.17", #TODO: 1.0.0 works. 1.17 is latest that would not require azure core bump
         "fixedint==0.1.6",
         "msrest>=0.6.10",
         "opentelemetry-api~=1.26",
