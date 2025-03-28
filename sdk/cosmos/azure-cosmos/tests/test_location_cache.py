@@ -209,12 +209,12 @@ class TestLocationCache:
             read_doc_request.excluded_locations = excluded_locations_on_requests
 
             # Test if read endpoints were correctly filtered on client level
-            read_doc_endpoint = location_cache.get_applicable_read_regional_endpoints(read_doc_request)
+            read_doc_endpoint = location_cache._get_applicable_read_regional_endpoints(read_doc_request)
             read_doc_endpoint = [regional_endpoint.get_primary() for regional_endpoint in read_doc_endpoint]
             assert read_doc_endpoint == expected_read_endpoints
 
             # Test if write endpoints were correctly filtered on client level
-            write_doc_endpoint = location_cache.get_applicable_write_regional_endpoints(write_doc_request)
+            write_doc_endpoint = location_cache._get_applicable_write_regional_endpoints(write_doc_request)
             write_doc_endpoint = [regional_endpoint.get_primary() for regional_endpoint in write_doc_endpoint]
             assert write_doc_endpoint == expected_write_endpoints
 
@@ -241,7 +241,7 @@ class TestLocationCache:
         assert actual_excluded_locations == expected_excluded_locations
 
         expected_read_endpoints = [location2_endpoint]
-        read_doc_endpoint = location_cache.get_applicable_read_regional_endpoints(read_doc_request)
+        read_doc_endpoint = location_cache._get_applicable_read_regional_endpoints(read_doc_request)
         read_doc_endpoint = [regional_endpoint.get_primary() for regional_endpoint in read_doc_endpoint]
         assert read_doc_endpoint == expected_read_endpoints
 
@@ -256,7 +256,7 @@ class TestLocationCache:
             assert actual_excluded_locations == expected_excluded_locations
 
             expected_read_endpoints = [location1_endpoint]
-            read_doc_endpoint = location_cache.get_applicable_read_regional_endpoints(read_doc_request)
+            read_doc_endpoint = location_cache._get_applicable_read_regional_endpoints(read_doc_request)
             read_doc_endpoint = [regional_endpoint.get_primary() for regional_endpoint in read_doc_endpoint]
             assert read_doc_endpoint == expected_read_endpoints
 
