@@ -69,7 +69,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, threshold=3, **kwargs):
+    def __init__(self, model_config, *, threshold=3, **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE_NO_QUERY)  # Default to no query
 
