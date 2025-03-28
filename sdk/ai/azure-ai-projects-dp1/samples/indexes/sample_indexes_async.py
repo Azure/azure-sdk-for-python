@@ -42,16 +42,13 @@ async def sample_indexes_async() -> None:
     index = await project_client.indexes.get_version(name=index_name, version="1.0")
     print(index)
 
-
     print(f"Listing all versions of the Index named `{index_name}`:")
     async for index in project_client.indexes.list_versions(name=index_name, list_view_type=ListViewType.ALL):
         print(index)
 
-
     print("List latest versions of all Indexes:")
     async for index in project_client.indexes.list_latest(list_view_type=ListViewType.ALL):
         print(index)
-
 
     print("Delete the Index versions created above:")
     await project_client.indexes.delete_version(name=index_name, version="1.0")

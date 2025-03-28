@@ -10,21 +10,7 @@ import datetime
 from io import IOBase
 import json
 import sys
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    IO,
-    Iterable,
-    Iterator,
-    List,
-    Literal,
-    Optional,
-    TYPE_CHECKING,
-    TypeVar,
-    Union,
-    overload,
-)
+from typing import Any, Callable, Dict, IO, Iterable, Iterator, List, Optional, TYPE_CHECKING, TypeVar, Union, overload
 import urllib.parse
 import uuid
 
@@ -50,7 +36,6 @@ from .._configuration import AIProjectClientConfiguration
 from .._model_base import SdkJSONEncoder, _deserialize
 from .._serialization import Deserializer, Serializer
 from .._vendor import prepare_multipart_form_data
-from ..models._enums import PendingUploadType
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -1207,7 +1192,7 @@ def build_assistants_list_vector_store_file_batch_files_request(  # pylint: disa
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_connections_get_request(connection_name: str, **kwargs: Any) -> HttpRequest:
+def build_connections_get_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1215,9 +1200,9 @@ def build_connections_get_request(connection_name: str, **kwargs: Any) -> HttpRe
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/connections/{connectionName}"
+    _url = "/connections/{name}"
     path_format_arguments = {
-        "connectionName": _SERIALIZER.url("connection_name", connection_name, "str"),
+        "name": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1251,7 +1236,7 @@ def build_connections_list_request(
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if connection_type is not None:
-        _params["$connectionType"] = _SERIALIZER.query("connection_type", connection_type, "str")
+        _params["connectionType"] = _SERIALIZER.query("connection_type", connection_type, "str")
     if top is not None:
         _params["top"] = _SERIALIZER.query("top", top, "int")
     if skip is not None:
@@ -1523,7 +1508,7 @@ def build_datasets_create_version_request(name: str, version: str, **kwargs: Any
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_datasets_start_pending_upload_request(  # pylint: disable=name-too-long
+def build_datasets_start_pending_upload_version_request(  # pylint: disable=name-too-long
     name: str, version: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1534,7 +1519,7 @@ def build_datasets_start_pending_upload_request(  # pylint: disable=name-too-lon
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/datasets/{name}/versions/{version}/startPendingUpload"
+    _url = "/datasets/{name}/versions/{version}/startPendingUploadVersion"
     path_format_arguments = {
         "name": _SERIALIZER.url("name", name, "str"),
         "version": _SERIALIZER.url("version", version, "str"),
@@ -1553,7 +1538,7 @@ def build_datasets_start_pending_upload_request(  # pylint: disable=name-too-lon
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_datasets_start_pending_upload_auto_increment_request(  # pylint: disable=name-too-long
+def build_datasets_start_pending_upload_request(  # pylint: disable=name-too-long
     name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1575,12 +1560,6 @@ def build_datasets_start_pending_upload_auto_increment_request(  # pylint: disab
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    if "Repeatability-Request-ID" not in _headers:
-        _headers["Repeatability-Request-ID"] = str(uuid.uuid4())
-    if "Repeatability-First-Sent" not in _headers:
-        _headers["Repeatability-First-Sent"] = _SERIALIZER.serialize_data(
-            datetime.datetime.now(datetime.timezone.utc), "rfc-1123"
-        )
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1801,7 +1780,6 @@ def build_deployments_list_request(
     *,
     model_publisher: Optional[str] = None,
     model_name: Optional[str] = None,
-    include_connection_models: Optional[bool] = None,
     top: Optional[int] = None,
     skip: Optional[int] = None,
     maxpagesize: Optional[int] = None,
@@ -1819,13 +1797,9 @@ def build_deployments_list_request(
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if model_publisher is not None:
-        _params["$modelPublisher"] = _SERIALIZER.query("model_publisher", model_publisher, "str")
+        _params["modelPublisher"] = _SERIALIZER.query("model_publisher", model_publisher, "str")
     if model_name is not None:
-        _params["$modelName"] = _SERIALIZER.query("model_name", model_name, "str")
-    if include_connection_models is not None:
-        _params["$includeConnectedModels"] = _SERIALIZER.query(
-            "include_connection_models", include_connection_models, "bool"
-        )
+        _params["modelName"] = _SERIALIZER.query("model_name", model_name, "str")
     if top is not None:
         _params["top"] = _SERIALIZER.query("top", top, "int")
     if skip is not None:
@@ -6598,11 +6572,11 @@ class ConnectionsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get(self, connection_name: str, **kwargs: Any) -> _models.Connection:
+    def get(self, name: str, **kwargs: Any) -> _models.Connection:
         """Get a connection by name.
 
-        :param connection_name: The name of the resource. Required.
-        :type connection_name: str
+        :param name: The name of the resource. Required.
+        :type name: str
         :return: Connection. The Connection is compatible with MutableMapping
         :rtype: ~azure.ai.projects.dp1.models.Connection
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6621,7 +6595,7 @@ class ConnectionsOperations:
         cls: ClsType[_models.Connection] = kwargs.pop("cls", None)
 
         _request = build_connections_get_request(
-            connection_name=connection_name,
+            name=name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -7689,7 +7663,7 @@ class DatasetsOperations:
         return deserialized  # type: ignore
 
     @overload
-    def start_pending_upload(
+    def start_pending_upload_version(
         self,
         name: str,
         version: str,
@@ -7715,7 +7689,7 @@ class DatasetsOperations:
         """
 
     @overload
-    def start_pending_upload(
+    def start_pending_upload_version(
         self, name: str, version: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.PendingUploadResponse:
         """Create or start a pending upload of a dataset for a specific version.
@@ -7735,7 +7709,7 @@ class DatasetsOperations:
         """
 
     @overload
-    def start_pending_upload(
+    def start_pending_upload_version(
         self, name: str, version: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.PendingUploadResponse:
         """Create or start a pending upload of a dataset for a specific version.
@@ -7755,7 +7729,7 @@ class DatasetsOperations:
         """
 
     @distributed_trace
-    def start_pending_upload(
+    def start_pending_upload_version(
         self, name: str, version: str, body: Union[_models.PendingUploadRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.PendingUploadResponse:
         """Create or start a pending upload of a dataset for a specific version.
@@ -7792,7 +7766,7 @@ class DatasetsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_datasets_start_pending_upload_request(
+        _request = build_datasets_start_pending_upload_version_request(
             name=name,
             version=version,
             content_type=content_type,
@@ -7833,48 +7807,32 @@ class DatasetsOperations:
         return deserialized  # type: ignore
 
     @overload
-    def start_pending_upload_auto_increment(
-        self,
-        name: str,
-        *,
-        pending_upload_type: Literal[PendingUploadType.TEMPORARY_BLOB_REFERENCE],
-        content_type: str = "application/json",
-        pending_upload_id: Optional[str] = None,
-        connection_name: Optional[str] = None,
-        **kwargs: Any
+    def start_pending_upload(
+        self, name: str, body: _models.PendingUploadRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.PendingUploadResponse:
-        """Create or start a pending upload of a dataset. The dataset version will be generated by
-        service.
+        """Create or start a pending upload of a dataset. The version id will be generated by the service.
 
         :param name: The name of the resource. Required.
         :type name: str
-        :keyword pending_upload_type: TemporaryBlobReference is the only supported type. Temporary Blob
-         Reference is the only supported type. Required.
-        :paramtype pending_upload_type: str or ~azure.ai.projects.dp1.models.TEMPORARY_BLOB_REFERENCE
+        :param body: Parameters for the action. Required.
+        :type body: ~azure.ai.projects.dp1.models.PendingUploadRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword pending_upload_id: If PendingUploadId is not provided, a random GUID will be used.
-         Default value is None.
-        :paramtype pending_upload_id: str
-        :keyword connection_name: Name of Azure blob storage connection to use for generating temporary
-         SAS token. Default value is None.
-        :paramtype connection_name: str
         :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
         :rtype: ~azure.ai.projects.dp1.models.PendingUploadResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def start_pending_upload_auto_increment(
+    def start_pending_upload(
         self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.PendingUploadResponse:
-        """Create or start a pending upload of a dataset. The dataset version will be generated by
-        service.
+        """Create or start a pending upload of a dataset. The version id will be generated by the service.
 
         :param name: The name of the resource. Required.
         :type name: str
-        :param body: Required.
+        :param body: Parameters for the action. Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -7885,15 +7843,14 @@ class DatasetsOperations:
         """
 
     @overload
-    def start_pending_upload_auto_increment(
+    def start_pending_upload(
         self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.PendingUploadResponse:
-        """Create or start a pending upload of a dataset. The dataset version will be generated by
-        service.
+        """Create or start a pending upload of a dataset. The version id will be generated by the service.
 
         :param name: The name of the resource. Required.
         :type name: str
-        :param body: Required.
+        :param body: Parameters for the action. Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -7904,32 +7861,16 @@ class DatasetsOperations:
         """
 
     @distributed_trace
-    def start_pending_upload_auto_increment(
-        self,
-        name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        pending_upload_type: Literal[PendingUploadType.TEMPORARY_BLOB_REFERENCE] = _Unset,
-        pending_upload_id: Optional[str] = None,
-        connection_name: Optional[str] = None,
-        **kwargs: Any
+    def start_pending_upload(
+        self, name: str, body: Union[_models.PendingUploadRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.PendingUploadResponse:
-        """Create or start a pending upload of a dataset. The dataset version will be generated by
-        service.
+        """Create or start a pending upload of a dataset. The version id will be generated by the service.
 
         :param name: The name of the resource. Required.
         :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword pending_upload_type: TemporaryBlobReference is the only supported type. Temporary Blob
-         Reference is the only supported type. Required.
-        :paramtype pending_upload_type: str or ~azure.ai.projects.dp1.models.TEMPORARY_BLOB_REFERENCE
-        :keyword pending_upload_id: If PendingUploadId is not provided, a random GUID will be used.
-         Default value is None.
-        :paramtype pending_upload_id: str
-        :keyword connection_name: Name of Azure blob storage connection to use for generating temporary
-         SAS token. Default value is None.
-        :paramtype connection_name: str
+        :param body: Parameters for the action. Is one of the following types: PendingUploadRequest,
+         JSON, IO[bytes] Required.
+        :type body: ~azure.ai.projects.dp1.models.PendingUploadRequest or JSON or IO[bytes]
         :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
         :rtype: ~azure.ai.projects.dp1.models.PendingUploadResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7948,15 +7889,6 @@ class DatasetsOperations:
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PendingUploadResponse] = kwargs.pop("cls", None)
 
-        if body is _Unset:
-            if pending_upload_type is _Unset:
-                raise TypeError("missing required argument: pending_upload_type")
-            body = {
-                "connectionName": connection_name,
-                "pendingUploadId": pending_upload_id,
-                "pendingUploadType": pending_upload_type,
-            }
-            body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
         if isinstance(body, (IOBase, bytes)):
@@ -7964,7 +7896,7 @@ class DatasetsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_datasets_start_pending_upload_auto_increment_request(
+        _request = build_datasets_start_pending_upload_request(
             name=name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -7993,21 +7925,13 @@ class DatasetsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        response_headers = {}
-        response_headers["Repeatability-Result"] = self._deserialize(
-            "str", response.headers.get("Repeatability-Result")
-        )
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-
         if _stream:
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(_models.PendingUploadResponse, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
@@ -8721,7 +8645,6 @@ class DeploymentsOperations:
         *,
         model_publisher: Optional[str] = None,
         model_name: Optional[str] = None,
-        include_connection_models: Optional[bool] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
         **kwargs: Any
@@ -8733,9 +8656,6 @@ class DeploymentsOperations:
         :keyword model_name: Model name (the publisher specific name) to filter models by. Default
          value is None.
         :paramtype model_name: str
-        :keyword include_connection_models: Flag to include models from connections in response.
-         Default value is None.
-        :paramtype include_connection_models: bool
         :keyword top: The number of result items to return. Default value is None.
         :paramtype top: int
         :keyword skip: The number of result items to skip. Default value is None.
@@ -8764,7 +8684,6 @@ class DeploymentsOperations:
                 _request = build_deployments_list_request(
                     model_publisher=model_publisher,
                     model_name=model_name,
-                    include_connection_models=include_connection_models,
                     top=top,
                     skip=skip,
                     maxpagesize=maxpagesize,

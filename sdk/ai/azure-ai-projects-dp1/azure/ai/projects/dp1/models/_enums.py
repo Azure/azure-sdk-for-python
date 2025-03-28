@@ -47,6 +47,21 @@ class AgentsNamedToolChoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tool type ``azure_ai_search``"""
 
 
+class AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The authentication type used by the connection."""
+
+    API_KEY = "ApiKey"
+    """API Key authentication"""
+    ENTRA_ID = "AAD"
+    """Entra ID authentication (formerly known as AAD)"""
+    SAS = "SAS"
+    """Shared Access Signature (SAS) authentication"""
+    CUSTOM = "CustomKeys"
+    """Custom authentication"""
+    NONE = "None"
+    """No authentication"""
+
+
 class AzureAISearchQueryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Available query types for Azure AI Search tool."""
 

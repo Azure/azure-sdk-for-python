@@ -990,6 +990,9 @@ class Connection(_model_base.Model):
     :vartype type: str or ~azure.ai.projects.dp1.models.ConnectionType
     :ivar target: The connection URL to be used for this service. Required.
     :vartype target: str
+    :ivar auth_type: The authentication type used by the connection. Required. Known values are:
+     "ApiKey", "AAD", "SAS", "CustomKeys", and "None".
+    :vartype auth_type: str or ~azure.ai.projects.dp1.models.AuthenticationType
     :ivar metadata: Metadata of the connection. Required.
     :vartype metadata: dict[str, str]
     """
@@ -1001,6 +1004,11 @@ class Connection(_model_base.Model):
      \"CognitiveSearch\", \"CosmosDB\", \"ApiKey\", \"AppInsights\", and \"CustomKeys\"."""
     target: str = rest_field(visibility=["read"])
     """The connection URL to be used for this service. Required."""
+    auth_type: Union[str, "_models.AuthenticationType"] = rest_field(
+        name="authType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The authentication type used by the connection. Required. Known values are: \"ApiKey\",
+     \"AAD\", \"SAS\", \"CustomKeys\", and \"None\"."""
     metadata: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Metadata of the connection. Required."""
 
@@ -1008,6 +1016,7 @@ class Connection(_model_base.Model):
     def __init__(
         self,
         *,
+        auth_type: Union[str, "_models.AuthenticationType"],
         metadata: Dict[str, str],
     ) -> None: ...
 
