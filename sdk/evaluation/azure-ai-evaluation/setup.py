@@ -74,7 +74,7 @@ setup(
         "azure-storage-blob>=12.10.0",
     ],
     extras_require={
-        "redteam": ["pyrit==0.7.0"]
+        "redteam": ["pyrit==0.8.0"]
     },
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",
@@ -84,6 +84,6 @@ setup(
         "pytyped": ["py.typed"],
         "azure.ai.evaluation.simulator._prompty": ["*.prompty"],
         "azure.ai.evaluation.simulator._data_sources": ["*.json"],
-        "azure.ai.evaluation.autogen.raiclient": ["**/*.py"],
+        "azure.ai.evaluation._common.raiclient": ["**/*.py"],
     },
 )

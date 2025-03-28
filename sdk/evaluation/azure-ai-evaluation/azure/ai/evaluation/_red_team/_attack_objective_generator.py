@@ -15,7 +15,7 @@ class RiskCategory(str, Enum):
     Sexual = "sexual"
     SelfHarm = "self_harm"
 
-class AttackObjectiveGenerator:
+class _AttackObjectiveGenerator:
     """Generator for creating attack objectives.
 
     :param risk_categories: List of risk categories to generate attack objectives for (optional if custom_attack_seed_prompts is provided)
@@ -38,7 +38,7 @@ class AttackObjectiveGenerator:
         self.num_objectives = num_objectives
         self.application_scenario = application_scenario
         self.custom_attack_seed_prompts = custom_attack_seed_prompts
-        self.logger = logging.getLogger("AttackObjectiveGenerator")
+        self.logger = logging.getLogger("_AttackObjectiveGenerator")
         
         # If custom_attack_seed_prompts is provided, validate and load them
         self.custom_prompts = None

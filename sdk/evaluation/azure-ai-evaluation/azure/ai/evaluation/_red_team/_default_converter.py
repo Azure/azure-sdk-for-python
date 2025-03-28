@@ -2,7 +2,7 @@ from pyrit.models import PromptDataType
 from pyrit.prompt_converter import ConverterResult, PromptConverter
 
 
-class DefaultConverter(PromptConverter):
+class _DefaultConverter(PromptConverter):
 
     async def convert_async(self, *, prompt: str, input_type: PromptDataType = "text") -> ConverterResult:
         """
