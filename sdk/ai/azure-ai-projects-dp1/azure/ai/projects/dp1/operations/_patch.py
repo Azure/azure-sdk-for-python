@@ -161,7 +161,6 @@ class DatasetsOperations(DatasetsOperationsGenerated):
                                 dataset_type=DatasetType.URI_FILE,
                             ),
                         )
-    
 
         return dataset_version
 

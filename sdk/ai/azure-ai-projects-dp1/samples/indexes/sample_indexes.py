@@ -29,26 +29,23 @@ from azure.ai.projects.dp1 import AIProjectClient
 endpoint = os.environ["PROJECT_ENDPOINT"]
 index_name = os.environ["INDEX_NAME"]
 
-project_client = AIProjectClient(
+with AIProjectClient(
     endpoint=endpoint,
     credential=DefaultAzureCredential(),
-)
+) as project_client:
 
-print("Get an existing Index version `1.0`:")
-index = project_client.indexes.get_version(name=index_name, version="1.0")
-print(index)
-
-
-print(f"Listing all versions of the Index named `{index_name}`:")
-for index in project_client.indexes.list_versions(name=index_name):
+    print("Get an existing Index version `1`:")
+    index = project_client.indexes.get_version(name=index_name, version="1")
     print(index)
 
+    print(f"Listing all versions of the Index named `{index_name}`:")
+    for index in project_client.indexes.list_versions(name=index_name):
+        print(index)
 
-print("List latest versions of all Indexes:")
-for index in project_client.indexes.list_latest():
-    print(index)
+    print("List latest versions of all Indexes:")
+    for index in project_client.indexes.list_latest():
+        print(index)
 
-
-print("Delete the Index versions created above:")
-project_client.indexes.delete_version(name=index_name, version="1.0")
-project_client.indexes.delete_version(name=index_name, version="2.0")
+    print("Delete the Index versions created above:")
+    project_client.indexes.delete_version(name=index_name, version="1")
+    project_client.indexes.delete_version(name=index_name, version="2")

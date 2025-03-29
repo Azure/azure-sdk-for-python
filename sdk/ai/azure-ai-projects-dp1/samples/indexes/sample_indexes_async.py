@@ -26,31 +26,32 @@ import os
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.dp1.aio import AIProjectClient
 
+
 async def sample_indexes_async() -> None:
 
     endpoint = os.environ["PROJECT_ENDPOINT"]
     index_name = os.environ["INDEX_NAME"]
 
-    project_client = AIProjectClient(
+    async with AIProjectClient(
         endpoint=endpoint,
         credential=DefaultAzureCredential(),
-    )
+    ) as project_client:
 
-    print("Get an existing Index version `1.0`:")
-    index = await project_client.indexes.get_version(name=index_name, version="1.0")
-    print(index)
-
-    print(f"Listing all versions of the Index named `{index_name}`:")
-    async for index in project_client.indexes.list_versions(name=index_name):
+        print("Get an existing Index version `1`:")
+        index = await project_client.indexes.get_version(name=index_name, version="1")
         print(index)
 
-    print("List latest versions of all Indexes:")
-    async for index in project_client.indexes.list_latest():
-        print(index)
+        print(f"Listing all versions of the Index named `{index_name}`:")
+        async for index in project_client.indexes.list_versions(name=index_name):
+            print(index)
 
-    print("Delete the Index versions created above:")
-    await project_client.indexes.delete_version(name=index_name, version="1.0")
-    await project_client.indexes.delete_version(name=index_name, version="2.0")
+        print("List latest versions of all Indexes:")
+        async for index in project_client.indexes.list_latest():
+            print(index)
+
+        print("Delete the Index versions created above:")
+        await project_client.indexes.delete_version(name=index_name, version="1")
+        await project_client.indexes.delete_version(name=index_name, version="2")
 
 
 async def main():
