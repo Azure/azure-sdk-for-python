@@ -69,11 +69,11 @@ async def sample_datasets_async() -> None:
     print(dataset)
 
     print(f"Listing all versions of the Dataset named `{dataset_name}`:")
-    async for dataset in project_client.datasets.list_versions(name=dataset_name, list_view_type=ListViewType.ALL):
+    async for dataset in project_client.datasets.list_versions(name=dataset_name):
         print(dataset)
 
     print("List latest versions of all Datasets:")
-    async for dataset in project_client.datasets.list_latest(list_view_type=ListViewType.ALL):
+    async for dataset in project_client.datasets.list_latest():
         print(dataset)
 
     print("Delete all Dataset versions created above:")

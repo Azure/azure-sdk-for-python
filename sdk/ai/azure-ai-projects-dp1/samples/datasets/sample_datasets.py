@@ -65,11 +65,11 @@ dataset = project_client.datasets.get_version(name=dataset_name, version="1")
 print(dataset)
 
 print(f"Listing all versions of the Dataset named `{dataset_name}`:")
-for dataset in project_client.datasets.list_versions(name=dataset_name, list_view_type=ListViewType.ALL):
+for dataset in project_client.datasets.list_versions(name=dataset_name):
     print(dataset)
 
 print("List latest versions of all Datasets:")
-for dataset in project_client.datasets.list_latest(list_view_type=ListViewType.ALL):
+for dataset in project_client.datasets.list_latest():
     print(dataset)
 
 print("Delete all Dataset versions created above:")

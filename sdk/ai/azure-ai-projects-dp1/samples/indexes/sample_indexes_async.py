@@ -25,8 +25,6 @@ import asyncio
 import os
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.dp1.aio import AIProjectClient
-from azure.ai.projects.dp1.models import ListViewType
-
 
 async def sample_indexes_async() -> None:
 
@@ -43,11 +41,11 @@ async def sample_indexes_async() -> None:
     print(index)
 
     print(f"Listing all versions of the Index named `{index_name}`:")
-    async for index in project_client.indexes.list_versions(name=index_name, list_view_type=ListViewType.ALL):
+    async for index in project_client.indexes.list_versions(name=index_name):
         print(index)
 
     print("List latest versions of all Indexes:")
-    async for index in project_client.indexes.list_latest(list_view_type=ListViewType.ALL):
+    async for index in project_client.indexes.list_latest():
         print(index)
 
     print("Delete the Index versions created above:")
