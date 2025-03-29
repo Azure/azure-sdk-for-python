@@ -35,39 +35,44 @@ project_client = AIProjectClient(
     credential=DefaultAzureCredential(),
 )
 
-print("Upload a single file and create a new Dataset to reference the file:")
-dataset: DatasetVersion = project_client.datasets.upload_file_and_create_version(
+print("""Upload a single file and create a new Dataset to reference the file.
+Here we explicitly specify the dataset version.""")
+dataset: DatasetVersion = project_client.datasets.upload_file_and_create(
     name=dataset_name,
-    version="1.0",
+    version="1",
     file="sample_folder/file1.txt",
 )
 print(dataset)
 
-
-print("Upload all files in a folder (including subfolders) and create a new Dataset version to reference the folder:")
-dataset = project_client.datasets.upload_folder_and_create_version(
+print("""Upload all files in a folder (including subfolders) to the existing Dataset to reference the folder."
+Here again we explicitly specify the a new dataset version""")
+dataset = project_client.datasets.upload_folder_and_create(
     name=dataset_name,
-    version="2.0",
+    version="2",
     folder="sample_folder",
 )
 print(dataset)
 
-
-print("Get the existing Dataset version `1.0`:")
-dataset = project_client.datasets.get_version(name=dataset_name, version="1.0")
+print("Upload a single file to the existing dataset, while letting the service increment the version")
+dataset: DatasetVersion = project_client.datasets.upload_file_and_create(
+    name=dataset_name,
+    file="sample_folder/file2.txt",
+)
 print(dataset)
 
+print("Get an existing Dataset version `1`:")
+dataset = project_client.datasets.get_version(name=dataset_name, version="1")
+print(dataset)
 
 print(f"Listing all versions of the Dataset named `{dataset_name}`:")
 for dataset in project_client.datasets.list_versions(name=dataset_name, list_view_type=ListViewType.ALL):
     print(dataset)
 
-
 print("List latest versions of all Datasets:")
 for dataset in project_client.datasets.list_latest(list_view_type=ListViewType.ALL):
     print(dataset)
 
-
-print("Delete the Dataset versions created above:")
-project_client.datasets.delete_version(name=dataset_name, version="1.0")
-project_client.datasets.delete_version(name=dataset_name, version="2.0")
+print("Delete all Dataset versions created above:")
+project_client.datasets.delete_version(name=dataset_name, version="1")
+project_client.datasets.delete_version(name=dataset_name, version="2")
+project_client.datasets.delete_version(name=dataset_name, version="3")

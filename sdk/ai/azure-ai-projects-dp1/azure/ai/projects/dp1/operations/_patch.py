@@ -38,11 +38,17 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         version: Optional[str] = None,
     ) -> ContainerClient:
 
-        pending_upload_response: PendingUploadResponse = self.start_pending_upload(
-            name=name,
-            version=version,
-            body=PendingUploadRequest(pending_upload_type=PendingUploadType.TEMPORARY_BLOB_REFERENCE),
-        )
+        if version:
+            pending_upload_response: PendingUploadResponse = self.start_pending_upload_version(
+                name=name,
+                version=version,
+                body=PendingUploadRequest(pending_upload_type=PendingUploadType.TEMPORARY_BLOB_REFERENCE),
+            )
+        else:
+            pending_upload_response: PendingUploadResponse = self.start_pending_upload(
+                name=name,
+                body=PendingUploadRequest(pending_upload_type=PendingUploadType.TEMPORARY_BLOB_REFERENCE),
+            )
 
         if not pending_upload_response.blob_reference_for_consumption:
             raise ValueError("Blob reference for consumption is not present")
@@ -95,7 +101,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
             container_url=pending_upload_response.blob_reference_for_consumption.blob_uri,  # Of the form: "https://<account>.blob.core.windows.net/<container>?<sasToken>"
         )
 
-    def upload_file_and_create_version(
+    def upload_file_and_create(
         self, *, name: str, version: Optional[str] = None, file: str, **kwargs: Any
     ) -> DatasetVersion:
         """Upload file to a blob storage, and create a dataset that references this file.
@@ -136,16 +142,26 @@ class DatasetsOperations(DatasetsOperationsGenerated):
 
                     logger.debug("[%s] Done uploading", inspect.currentframe().f_code.co_name)
 
-                    dataset_version = self.create_version(
-                        name=name,
-                        version=version,
-                        body=DatasetVersion(
-                            # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.blobclient?view=azure-python#azure-storage-blob-blobclient-url
-                            # Per above doc the ".url" contains SAS token... should this be stripped away?
-                            dataset_uri=blob_client.url,  # "<account>.blob.windows.core.net/<container>/<file_name>"
-                            dataset_type=DatasetType.URI_FILE,
-                        ),
-                    )
+                    if version:
+                        dataset_version = self.create_version(
+                            name=name,
+                            version=version,
+                            body=DatasetVersion(
+                                # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.blobclient?view=azure-python#azure-storage-blob-blobclient-url
+                                # Per above doc the ".url" contains SAS token... should this be stripped away?
+                                dataset_uri=blob_client.url,  # "<account>.blob.windows.core.net/<container>/<file_name>"
+                                dataset_type=DatasetType.URI_FILE,
+                            ),
+                        )
+                    else:
+                        dataset_version = self.create(
+                            name=name,
+                            body=DatasetVersion(
+                                dataset_uri=blob_client.url,
+                                dataset_type=DatasetType.URI_FILE,
+                            ),
+                        )
+    
 
         return dataset_version
 
