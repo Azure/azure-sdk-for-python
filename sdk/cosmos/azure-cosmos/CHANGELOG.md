@@ -7,6 +7,7 @@
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed bug introduced in 4.10.0b3 with `etag` handling. See [PR ]().
 
 #### Other Changes
 
