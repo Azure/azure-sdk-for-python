@@ -50,3 +50,28 @@ def test_get_error_response():
     assert response is second_response
 
     assert not client.get_error_response(first_result)
+
+
+def test_string_response_content():
+    """Test client handling string response content with error message"""
+    # String response content with error message
+    string_error = "Some string error message containing the word error"
+    response = mock.Mock(status_code=401, headers={})
+    response.text = lambda encoding=None: string_error
+    response.headers["content-type"] = "text/plain"
+    response.content_type = "text/plain"
+
+    # Create a transport that returns the string response
+    transport = validating_transport(
+        requests=[Request(url="https://localhost")],
+        responses=[response],
+    )
+
+    client = MsalClient(transport=transport)
+
+    # Make a request to store the auth error.
+    client.get("https://localhost")
+    error_code, saved_response = getattr(client._local, "error", (None, None))
+
+    assert error_code == "oauth_error"
+    assert saved_response is response
