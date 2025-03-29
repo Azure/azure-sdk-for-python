@@ -89,7 +89,8 @@ def _get_match_headers(kwargs: Dict[str, Any]) -> Tuple[Optional[str], Optional[
     elif match_condition == MatchConditions.IfMissing:
         if_none_match = '*'
     elif match_condition is None:
-        if 'etag' in kwargs:
+        etag = kwargs.pop('etag', None)
+        if etag is not None:
             raise ValueError("'etag' specified without 'match_condition'.")
     else:
         raise TypeError("Invalid match condition: {}".format(match_condition))
