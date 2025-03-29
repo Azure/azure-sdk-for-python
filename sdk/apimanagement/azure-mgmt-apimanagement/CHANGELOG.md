@@ -1,5 +1,359 @@
 # Release History
 
+## 5.0.0 (2025-04-21)
+
+### Features Added
+
+  - Client `ApiManagementClient` added operation group `api_gateway`
+  - Client `ApiManagementClient` added operation group `api_management_gateway_skus`
+  - Client `ApiManagementClient` added operation group `all_policies`
+  - Client `ApiManagementClient` added operation group `api_gateway_config_connection`
+  - Client `ApiManagementClient` added operation group `policy_restriction`
+  - Client `ApiManagementClient` added operation group `policy_restriction_validations`
+  - Client `ApiManagementClient` added operation group `product_api_link`
+  - Client `ApiManagementClient` added operation group `product_group_link`
+  - Client `ApiManagementClient` added operation group `tag_api_link`
+  - Client `ApiManagementClient` added operation group `tag_operation_link`
+  - Client `ApiManagementClient` added operation group `tag_product_link`
+  - Client `ApiManagementClient` added operation group `workspace_backend`
+  - Client `ApiManagementClient` added operation group `workspace_certificate`
+  - Client `ApiManagementClient` added operation group `workspace_diagnostic`
+  - Client `ApiManagementClient` added operation group `workspace_api_diagnostic`
+  - Client `ApiManagementClient` added operation group `api_management_workspace_links`
+  - Client `ApiManagementClient` added operation group `api_management_workspace_link`
+  - Client `ApiManagementClient` added operation group `workspace_logger`
+  - Client `ApiManagementClient` added operation group `workspace`
+  - Client `ApiManagementClient` added operation group `workspace_policy`
+  - Client `ApiManagementClient` added operation group `workspace_named_value`
+  - Client `ApiManagementClient` added operation group `workspace_global_schema`
+  - Client `ApiManagementClient` added operation group `workspace_notification`
+  - Client `ApiManagementClient` added operation group `workspace_notification_recipient_user`
+  - Client `ApiManagementClient` added operation group `workspace_notification_recipient_email`
+  - Client `ApiManagementClient` added operation group `workspace_policy_fragment`
+  - Client `ApiManagementClient` added operation group `workspace_group`
+  - Client `ApiManagementClient` added operation group `workspace_group_user`
+  - Client `ApiManagementClient` added operation group `workspace_subscription`
+  - Client `ApiManagementClient` added operation group `workspace_api_version_set`
+  - Client `ApiManagementClient` added operation group `workspace_api`
+  - Client `ApiManagementClient` added operation group `workspace_api_revision`
+  - Client `ApiManagementClient` added operation group `workspace_api_release`
+  - Client `ApiManagementClient` added operation group `workspace_api_operation`
+  - Client `ApiManagementClient` added operation group `workspace_api_operation_policy`
+  - Client `ApiManagementClient` added operation group `workspace_api_policy`
+  - Client `ApiManagementClient` added operation group `workspace_api_schema`
+  - Client `ApiManagementClient` added operation group `workspace_product`
+  - Client `ApiManagementClient` added operation group `workspace_product_api_link`
+  - Client `ApiManagementClient` added operation group `workspace_product_group_link`
+  - Client `ApiManagementClient` added operation group `workspace_product_policy`
+  - Client `ApiManagementClient` added operation group `workspace_tag`
+  - Client `ApiManagementClient` added operation group `workspace_tag_api_link`
+  - Client `ApiManagementClient` added operation group `workspace_tag_operation_link`
+  - Client `ApiManagementClient` added operation group `workspace_tag_product_link`
+  - Client `ApiManagementClient` added operation group `workspace_api_export`
+  - Client `ApiManagementClient` added operation group `operation_status`
+  - Client `ApiManagementClient` added operation group `operations_results`
+  - Model `ApiContract` added property `provisioning_state`
+  - Model `ApiContractProperties` added property `provisioning_state`
+  - Model `ApiCreateOrUpdateParameter` added property `provisioning_state`
+  - Model `ApiCreateOrUpdateProperties` added property `provisioning_state`
+  - Model `ApiManagementServiceBaseProperties` added property `configuration_api`
+  - Model `ApiManagementServiceBaseProperties` added property `legacy_portal_status`
+  - Model `ApiManagementServiceBaseProperties` added property `developer_portal_status`
+  - Model `ApiManagementServiceProperties` added property `configuration_api`
+  - Model `ApiManagementServiceProperties` added property `legacy_portal_status`
+  - Model `ApiManagementServiceProperties` added property `developer_portal_status`
+  - Model `ApiManagementServiceResource` added property `configuration_api`
+  - Model `ApiManagementServiceResource` added property `legacy_portal_status`
+  - Model `ApiManagementServiceResource` added property `developer_portal_status`
+  - Model `ApiManagementServiceUpdateParameters` added property `configuration_api`
+  - Model `ApiManagementServiceUpdateParameters` added property `legacy_portal_status`
+  - Model `ApiManagementServiceUpdateParameters` added property `developer_portal_status`
+  - Model `ApiManagementServiceUpdateProperties` added property `configuration_api`
+  - Model `ApiManagementServiceUpdateProperties` added property `legacy_portal_status`
+  - Model `ApiManagementServiceUpdateProperties` added property `developer_portal_status`
+  - Enum `ApiType` added member `GRPC`
+  - Enum `ApiType` added member `ODATA`
+  - Model `AuthorizationAccessPolicyContract` added property `app_ids`
+  - Model `BackendBaseParameters` added property `circuit_breaker`
+  - Model `BackendBaseParameters` added property `pool`
+  - Model `BackendBaseParameters` added property `type`
+  - Model `BackendContract` added property `circuit_breaker`
+  - Model `BackendContract` added property `pool`
+  - Model `BackendContract` added property `type_properties_type`
+  - Model `BackendContractProperties` added property `circuit_breaker`
+  - Model `BackendContractProperties` added property `pool`
+  - Model `BackendContractProperties` added property `type`
+  - Model `BackendUpdateParameterProperties` added property `circuit_breaker`
+  - Model `BackendUpdateParameterProperties` added property `pool`
+  - Model `BackendUpdateParameterProperties` added property `type`
+  - Model `BackendUpdateParameters` added property `circuit_breaker`
+  - Model `BackendUpdateParameters` added property `pool`
+  - Model `BackendUpdateParameters` added property `type`
+  - Enum `ContentFormat` added member `GRPC`
+  - Enum `ContentFormat` added member `GRPC_LINK`
+  - Enum `ContentFormat` added member `ODATA`
+  - Enum `ContentFormat` added member `ODATA_LINK`
+  - Model `ErrorResponse` added property `error`
+  - Model `GlobalSchemaContract` added property `provisioning_state`
+  - Enum `HostnameType` added member `CONFIGURATION_API`
+  - Model `NamedValueContract` added property `provisioning_state`
+  - Model `NamedValueContractProperties` added property `provisioning_state`
+  - Enum `PlatformVersion` added member `STV2_1`
+  - Model `PolicyFragmentContract` added property `provisioning_state`
+  - Model `PortalRevisionContract` added property `provisioning_state`
+  - Model `SchemaContract` added property `provisioning_state`
+  - Enum `SkuType` added member `BASIC_V2`
+  - Enum `SkuType` added member `STANDARD_V2`
+  - Enum `SoapApiType` added member `G_RPC`
+  - Enum `SoapApiType` added member `O_DATA`
+  - Added model `AllPoliciesCollection`
+  - Added model `AllPoliciesContract`
+  - Added enum `ApiGatewaySkuType`
+  - Added model `ApiManagementGatewayBaseProperties`
+  - Added model `ApiManagementGatewayConfigConnectionListResult`
+  - Added model `ApiManagementGatewayConfigConnectionResource`
+  - Added model `ApiManagementGatewayListResult`
+  - Added model `ApiManagementGatewayProperties`
+  - Added model `ApiManagementGatewayResource`
+  - Added model `ApiManagementGatewaySkuProperties`
+  - Added model `ApiManagementGatewaySkuPropertiesForPatch`
+  - Added model `ApiManagementGatewayUpdateParameters`
+  - Added model `ApiManagementGatewayUpdateProperties`
+  - Added model `ApiManagementWorkspaceLinksListResult`
+  - Added model `ApiManagementWorkspaceLinksProperties`
+  - Added model `ApiManagementWorkspaceLinksResource`
+  - Added model `BackendBaseParametersPool`
+  - Added model `BackendCircuitBreaker`
+  - Added model `BackendConfiguration`
+  - Added model `BackendPool`
+  - Added model `BackendPoolItem`
+  - Added model `BackendSubnetConfiguration`
+  - Added enum `BackendType`
+  - Added model `CircuitBreakerFailureCondition`
+  - Added model `CircuitBreakerRule`
+  - Added model `ConfigurationApi`
+  - Added enum `DeveloperPortalStatus`
+  - Added model `DiagnosticUpdateContract`
+  - Added model `ErrorAdditionalInfo`
+  - Added model `ErrorDetail`
+  - Added model `FailureStatusCodeRange`
+  - Added model `FrontendConfiguration`
+  - Added model `GatewayConfigurationApi`
+  - Added model `GatewayDebugCredentialsContract`
+  - Added model `GatewayListDebugCredentialsContract`
+  - Added enum `GatewayListDebugCredentialsContractPurpose`
+  - Added model `GatewayListTraceContract`
+  - Added model `GatewayResourceSkuResult`
+  - Added model `GatewayResourceSkuResults`
+  - Added model `GatewaySku`
+  - Added model `GatewaySkuCapacity`
+  - Added enum `GatewaySkuCapacityScaleType`
+  - Added enum `KeyVaultRefreshState`
+  - Added enum `LegacyApiState`
+  - Added enum `LegacyPortalStatus`
+  - Added model `MigrateToStv2Contract`
+  - Added enum `MigrateToStv2Mode`
+  - Added model `OperationStatusResult`
+  - Added enum `PolicyComplianceState`
+  - Added model `PolicyRestrictionCollection`
+  - Added model `PolicyRestrictionContract`
+  - Added enum `PolicyRestrictionRequireBase`
+  - Added model `PolicyRestrictionUpdateContract`
+  - Added model `PolicyWithComplianceCollection`
+  - Added model `PolicyWithComplianceContract`
+  - Added model `ProductApiLinkCollection`
+  - Added model `ProductApiLinkContract`
+  - Added model `ProductGroupLinkCollection`
+  - Added model `ProductGroupLinkContract`
+  - Added model `TagApiLinkCollection`
+  - Added model `TagApiLinkContract`
+  - Added model `TagOperationLinkCollection`
+  - Added model `TagOperationLinkContract`
+  - Added model `TagProductLinkCollection`
+  - Added model `TagProductLinkContract`
+  - Added model `WorkspaceCollection`
+  - Added model `WorkspaceContract`
+  - Added model `WorkspaceLinksBaseProperties`
+  - Added model `WorkspaceLinksGateway`
+  - Model `ApiOperations` added method `begin_delete`
+  - Model `GatewayOperations` added method `invalidate_debug_credentials`
+  - Model `GatewayOperations` added method `list_debug_credentials`
+  - Model `GatewayOperations` added method `list_trace`
+  - Model `UserOperations` added method `begin_delete`
+  - Added model `AllPoliciesOperations`
+  - Added model `ApiGatewayConfigConnectionOperations`
+  - Added model `ApiGatewayOperations`
+  - Added model `ApiManagementGatewaySkusOperations`
+  - Added model `ApiManagementWorkspaceLinkOperations`
+  - Added model `ApiManagementWorkspaceLinksOperations`
+  - Added model `OperationStatusOperations`
+  - Added model `OperationsResultsOperations`
+  - Added model `PolicyRestrictionOperations`
+  - Added model `PolicyRestrictionValidationsOperations`
+  - Added model `ProductApiLinkOperations`
+  - Added model `ProductGroupLinkOperations`
+  - Added model `TagApiLinkOperations`
+  - Added model `TagOperationLinkOperations`
+  - Added model `TagProductLinkOperations`
+  - Added model `WorkspaceApiDiagnosticOperations`
+  - Added model `WorkspaceApiExportOperations`
+  - Added model `WorkspaceApiOperationOperations`
+  - Added model `WorkspaceApiOperationPolicyOperations`
+  - Added model `WorkspaceApiOperations`
+  - Added model `WorkspaceApiPolicyOperations`
+  - Added model `WorkspaceApiReleaseOperations`
+  - Added model `WorkspaceApiRevisionOperations`
+  - Added model `WorkspaceApiSchemaOperations`
+  - Added model `WorkspaceApiVersionSetOperations`
+  - Added model `WorkspaceBackendOperations`
+  - Added model `WorkspaceCertificateOperations`
+  - Added model `WorkspaceDiagnosticOperations`
+  - Added model `WorkspaceGlobalSchemaOperations`
+  - Added model `WorkspaceGroupOperations`
+  - Added model `WorkspaceGroupUserOperations`
+  - Added model `WorkspaceLoggerOperations`
+  - Added model `WorkspaceNamedValueOperations`
+  - Added model `WorkspaceNotificationOperations`
+  - Added model `WorkspaceNotificationRecipientEmailOperations`
+  - Added model `WorkspaceNotificationRecipientUserOperations`
+  - Added model `WorkspaceOperations`
+  - Added model `WorkspacePolicyFragmentOperations`
+  - Added model `WorkspacePolicyOperations`
+  - Added model `WorkspaceProductApiLinkOperations`
+  - Added model `WorkspaceProductGroupLinkOperations`
+  - Added model `WorkspaceProductOperations`
+  - Added model `WorkspaceProductPolicyOperations`
+  - Added model `WorkspaceSubscriptionOperations`
+  - Added model `WorkspaceTagApiLinkOperations`
+  - Added model `WorkspaceTagOperationLinkOperations`
+  - Added model `WorkspaceTagOperations`
+  - Added model `WorkspaceTagProductLinkOperations`
+  - Method `ApiManagementServiceOperations.begin_migrate_to_stv2` has a new overload `def begin_migrate_to_stv2(self: None, resource_group_name: str, service_name: str, parameters: Optional[MigrateToStv2Contract], content_type: str)`
+  - Method `ApiManagementServiceOperations.begin_migrate_to_stv2` has a new overload `def begin_migrate_to_stv2(self: None, resource_group_name: str, service_name: str, parameters: Optional[IO[bytes]], content_type: str)`
+  - Method `GatewayOperations.list_debug_credentials` has a new overload `def list_debug_credentials(self: None, resource_group_name: str, service_name: str, gateway_id: str, parameters: GatewayListDebugCredentialsContract, content_type: str)`
+  - Method `GatewayOperations.list_debug_credentials` has a new overload `def list_debug_credentials(self: None, resource_group_name: str, service_name: str, gateway_id: str, parameters: IO[bytes], content_type: str)`
+  - Method `GatewayOperations.list_trace` has a new overload `def list_trace(self: None, resource_group_name: str, service_name: str, gateway_id: str, parameters: GatewayListTraceContract, content_type: str)`
+  - Method `GatewayOperations.list_trace` has a new overload `def list_trace(self: None, resource_group_name: str, service_name: str, gateway_id: str, parameters: IO[bytes], content_type: str)`
+  - Method `ApiGatewayConfigConnectionOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, gateway_name: str, config_connection_name: str, parameters: ApiManagementGatewayConfigConnectionResource, content_type: str)`
+  - Method `ApiGatewayConfigConnectionOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, gateway_name: str, config_connection_name: str, parameters: IO[bytes], content_type: str)`
+  - Method `ApiGatewayOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, gateway_name: str, parameters: ApiManagementGatewayResource, content_type: str)`
+  - Method `ApiGatewayOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, gateway_name: str, parameters: IO[bytes], content_type: str)`
+  - Method `ApiGatewayOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, gateway_name: str, parameters: ApiManagementGatewayUpdateParameters, content_type: str)`
+  - Method `ApiGatewayOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, gateway_name: str, parameters: IO[bytes], content_type: str)`
+  - Method `PolicyRestrictionOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, policy_restriction_id: str, parameters: PolicyRestrictionContract, if_match: Optional[str], content_type: str)`
+  - Method `PolicyRestrictionOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, policy_restriction_id: str, parameters: IO[bytes], if_match: Optional[str], content_type: str)`
+  - Method `PolicyRestrictionOperations.update` has a new overload `def update(self: None, resource_group_name: str, service_name: str, policy_restriction_id: str, if_match: str, parameters: PolicyRestrictionUpdateContract, content_type: str)`
+  - Method `PolicyRestrictionOperations.update` has a new overload `def update(self: None, resource_group_name: str, service_name: str, policy_restriction_id: str, if_match: str, parameters: IO[bytes], content_type: str)`
+  - Method `ProductApiLinkOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, product_id: str, api_link_id: str, parameters: ProductApiLinkContract, content_type: str)`
+  - Method `ProductApiLinkOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, product_id: str, api_link_id: str, parameters: IO[bytes], content_type: str)`
+  - Method `ProductGroupLinkOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, product_id: str, group_link_id: str, parameters: ProductGroupLinkContract, content_type: str)`
+  - Method `ProductGroupLinkOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, product_id: str, group_link_id: str, parameters: IO[bytes], content_type: str)`
+  - Method `TagApiLinkOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, tag_id: str, api_link_id: str, parameters: TagApiLinkContract, content_type: str)`
+  - Method `TagApiLinkOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, tag_id: str, api_link_id: str, parameters: IO[bytes], content_type: str)`
+  - Method `TagOperationLinkOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, tag_id: str, operation_link_id: str, parameters: TagOperationLinkContract, content_type: str)`
+  - Method `TagOperationLinkOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, tag_id: str, operation_link_id: str, parameters: IO[bytes], content_type: str)`
+  - Method `TagProductLinkOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, tag_id: str, product_link_id: str, parameters: TagProductLinkContract, content_type: str)`
+  - Method `TagProductLinkOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, tag_id: str, product_link_id: str, parameters: IO[bytes], content_type: str)`
+  - Method `WorkspaceApiDiagnosticOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, api_id: str, diagnostic_id: str, parameters: DiagnosticContract, if_match: Optional[str], content_type: str)`
+  - Method `WorkspaceApiDiagnosticOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, api_id: str, diagnostic_id: str, parameters: IO[bytes], if_match: Optional[str], content_type: str)`
+  - Method `WorkspaceApiDiagnosticOperations.update` has a new overload `def update(self: None, resource_group_name: str, service_name: str, workspace_id: str, api_id: str, diagnostic_id: str, if_match: str, parameters: DiagnosticUpdateContract, content_type: str)`
+  - Method `WorkspaceApiDiagnosticOperations.update` has a new overload `def update(self: None, resource_group_name: str, service_name: str, workspace_id: str, api_id: str, diagnostic_id: str, if_match: str, parameters: IO[bytes], content_type: str)`
+  - Method `WorkspaceApiOperationOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, api_id: str, operation_id: str, parameters: OperationContract, if_match: Optional[str], content_type: str)`
+  - Method `WorkspaceApiOperationOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, api_id: str, operation_id: str, parameters: IO[bytes], if_match: Optional[str], content_type: str)`
+  - Method `WorkspaceApiOperationOperations.update` has a new overload `def update(self: None, resource_group_name: str, service_name: str, workspace_id: str, api_id: str, operation_id: str, if_match: str, parameters: OperationUpdateContract, content_type: str)`
+  - Method `WorkspaceApiOperationOperations.update` has a new overload `def update(self: None, resource_group_name: str, service_name: str, workspace_id: str, api_id: str, operation_id: str, if_match: str, parameters: IO[bytes], content_type: str)`
+  - Method `WorkspaceApiOperationPolicyOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, api_id: str, operation_id: str, policy_id: Union[str, PolicyIdName], parameters: PolicyContract, if_match: Optional[str], content_type: str)`
+  - Method `WorkspaceApiOperationPolicyOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, api_id: str, operation_id: str, policy_id: Union[str, PolicyIdName], parameters: IO[bytes], if_match: Optional[str], content_type: str)`
+  - Method `WorkspaceApiOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, api_id: str, parameters: ApiCreateOrUpdateParameter, if_match: Optional[str], content_type: str)`
+  - Method `WorkspaceApiOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, api_id: str, parameters: IO[bytes], if_match: Optional[str], content_type: str)`
+  - Method `WorkspaceApiOperations.update` has a new overload `def update(self: None, resource_group_name: str, service_name: str, workspace_id: str, api_id: str, if_match: str, parameters: ApiUpdateContract, content_type: str)`
+  - Method `WorkspaceApiOperations.update` has a new overload `def update(self: None, resource_group_name: str, service_name: str, workspace_id: str, api_id: str, if_match: str, parameters: IO[bytes], content_type: str)`
+  - Method `WorkspaceApiPolicyOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, api_id: str, policy_id: Union[str, PolicyIdName], parameters: PolicyContract, if_match: Optional[str], content_type: str)`
+  - Method `WorkspaceApiPolicyOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, api_id: str, policy_id: Union[str, PolicyIdName], parameters: IO[bytes], if_match: Optional[str], content_type: str)`
+  - Method `WorkspaceApiReleaseOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, api_id: str, release_id: str, parameters: ApiReleaseContract, if_match: Optional[str], content_type: str)`
+  - Method `WorkspaceApiReleaseOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, api_id: str, release_id: str, parameters: IO[bytes], if_match: Optional[str], content_type: str)`
+  - Method `WorkspaceApiReleaseOperations.update` has a new overload `def update(self: None, resource_group_name: str, service_name: str, workspace_id: str, api_id: str, release_id: str, if_match: str, parameters: ApiReleaseContract, content_type: str)`
+  - Method `WorkspaceApiReleaseOperations.update` has a new overload `def update(self: None, resource_group_name: str, service_name: str, workspace_id: str, api_id: str, release_id: str, if_match: str, parameters: IO[bytes], content_type: str)`
+  - Method `WorkspaceApiSchemaOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, api_id: str, schema_id: str, parameters: SchemaContract, if_match: Optional[str], content_type: str)`
+  - Method `WorkspaceApiSchemaOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, api_id: str, schema_id: str, parameters: IO[bytes], if_match: Optional[str], content_type: str)`
+  - Method `WorkspaceApiVersionSetOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, version_set_id: str, parameters: ApiVersionSetContract, if_match: Optional[str], content_type: str)`
+  - Method `WorkspaceApiVersionSetOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, version_set_id: str, parameters: IO[bytes], if_match: Optional[str], content_type: str)`
+  - Method `WorkspaceApiVersionSetOperations.update` has a new overload `def update(self: None, resource_group_name: str, service_name: str, workspace_id: str, version_set_id: str, if_match: str, parameters: ApiVersionSetUpdateParameters, content_type: str)`
+  - Method `WorkspaceApiVersionSetOperations.update` has a new overload `def update(self: None, resource_group_name: str, service_name: str, workspace_id: str, version_set_id: str, if_match: str, parameters: IO[bytes], content_type: str)`
+  - Method `WorkspaceBackendOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, backend_id: str, parameters: BackendContract, if_match: Optional[str], content_type: str)`
+  - Method `WorkspaceBackendOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, backend_id: str, parameters: IO[bytes], if_match: Optional[str], content_type: str)`
+  - Method `WorkspaceBackendOperations.update` has a new overload `def update(self: None, resource_group_name: str, service_name: str, workspace_id: str, backend_id: str, if_match: str, parameters: BackendUpdateParameters, content_type: str)`
+  - Method `WorkspaceBackendOperations.update` has a new overload `def update(self: None, resource_group_name: str, service_name: str, workspace_id: str, backend_id: str, if_match: str, parameters: IO[bytes], content_type: str)`
+  - Method `WorkspaceCertificateOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, certificate_id: str, parameters: CertificateCreateOrUpdateParameters, if_match: Optional[str], content_type: str)`
+  - Method `WorkspaceCertificateOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, certificate_id: str, parameters: IO[bytes], if_match: Optional[str], content_type: str)`
+  - Method `WorkspaceDiagnosticOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, diagnostic_id: str, parameters: DiagnosticContract, if_match: Optional[str], content_type: str)`
+  - Method `WorkspaceDiagnosticOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, diagnostic_id: str, parameters: IO[bytes], if_match: Optional[str], content_type: str)`
+  - Method `WorkspaceDiagnosticOperations.update` has a new overload `def update(self: None, resource_group_name: str, service_name: str, workspace_id: str, diagnostic_id: str, if_match: str, parameters: DiagnosticUpdateContract, content_type: str)`
+  - Method `WorkspaceDiagnosticOperations.update` has a new overload `def update(self: None, resource_group_name: str, service_name: str, workspace_id: str, diagnostic_id: str, if_match: str, parameters: IO[bytes], content_type: str)`
+  - Method `WorkspaceGlobalSchemaOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, schema_id: str, parameters: GlobalSchemaContract, if_match: Optional[str], content_type: str)`
+  - Method `WorkspaceGlobalSchemaOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, schema_id: str, parameters: IO[bytes], if_match: Optional[str], content_type: str)`
+  - Method `WorkspaceGroupOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, group_id: str, parameters: GroupCreateParameters, if_match: Optional[str], content_type: str)`
+  - Method `WorkspaceGroupOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, group_id: str, parameters: IO[bytes], if_match: Optional[str], content_type: str)`
+  - Method `WorkspaceGroupOperations.update` has a new overload `def update(self: None, resource_group_name: str, service_name: str, workspace_id: str, group_id: str, if_match: str, parameters: GroupUpdateParameters, content_type: str)`
+  - Method `WorkspaceGroupOperations.update` has a new overload `def update(self: None, resource_group_name: str, service_name: str, workspace_id: str, group_id: str, if_match: str, parameters: IO[bytes], content_type: str)`
+  - Method `WorkspaceLoggerOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, logger_id: str, parameters: LoggerContract, if_match: Optional[str], content_type: str)`
+  - Method `WorkspaceLoggerOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, logger_id: str, parameters: IO[bytes], if_match: Optional[str], content_type: str)`
+  - Method `WorkspaceLoggerOperations.update` has a new overload `def update(self: None, resource_group_name: str, service_name: str, workspace_id: str, logger_id: str, if_match: str, parameters: LoggerUpdateContract, content_type: str)`
+  - Method `WorkspaceLoggerOperations.update` has a new overload `def update(self: None, resource_group_name: str, service_name: str, workspace_id: str, logger_id: str, if_match: str, parameters: IO[bytes], content_type: str)`
+  - Method `WorkspaceNamedValueOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, named_value_id: str, parameters: NamedValueCreateContract, if_match: Optional[str], content_type: str)`
+  - Method `WorkspaceNamedValueOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, named_value_id: str, parameters: IO[bytes], if_match: Optional[str], content_type: str)`
+  - Method `WorkspaceNamedValueOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, named_value_id: str, if_match: str, parameters: NamedValueUpdateParameters, content_type: str)`
+  - Method `WorkspaceNamedValueOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, named_value_id: str, if_match: str, parameters: IO[bytes], content_type: str)`
+  - Method `WorkspaceOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, parameters: WorkspaceContract, if_match: Optional[str], content_type: str)`
+  - Method `WorkspaceOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, parameters: IO[bytes], if_match: Optional[str], content_type: str)`
+  - Method `WorkspaceOperations.update` has a new overload `def update(self: None, resource_group_name: str, service_name: str, workspace_id: str, if_match: str, parameters: WorkspaceContract, content_type: str)`
+  - Method `WorkspaceOperations.update` has a new overload `def update(self: None, resource_group_name: str, service_name: str, workspace_id: str, if_match: str, parameters: IO[bytes], content_type: str)`
+  - Method `WorkspacePolicyFragmentOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, id: str, parameters: PolicyFragmentContract, if_match: Optional[str], content_type: str)`
+  - Method `WorkspacePolicyFragmentOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, id: str, parameters: IO[bytes], if_match: Optional[str], content_type: str)`
+  - Method `WorkspacePolicyOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, policy_id: Union[str, PolicyIdName], parameters: PolicyContract, if_match: Optional[str], content_type: str)`
+  - Method `WorkspacePolicyOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, policy_id: Union[str, PolicyIdName], parameters: IO[bytes], if_match: Optional[str], content_type: str)`
+  - Method `WorkspaceProductApiLinkOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, product_id: str, api_link_id: str, parameters: ProductApiLinkContract, content_type: str)`
+  - Method `WorkspaceProductApiLinkOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, product_id: str, api_link_id: str, parameters: IO[bytes], content_type: str)`
+  - Method `WorkspaceProductGroupLinkOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, product_id: str, group_link_id: str, parameters: ProductGroupLinkContract, content_type: str)`
+  - Method `WorkspaceProductGroupLinkOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, product_id: str, group_link_id: str, parameters: IO[bytes], content_type: str)`
+  - Method `WorkspaceProductOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, product_id: str, parameters: ProductContract, if_match: Optional[str], content_type: str)`
+  - Method `WorkspaceProductOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, product_id: str, parameters: IO[bytes], if_match: Optional[str], content_type: str)`
+  - Method `WorkspaceProductOperations.update` has a new overload `def update(self: None, resource_group_name: str, service_name: str, workspace_id: str, product_id: str, if_match: str, parameters: ProductUpdateParameters, content_type: str)`
+  - Method `WorkspaceProductOperations.update` has a new overload `def update(self: None, resource_group_name: str, service_name: str, workspace_id: str, product_id: str, if_match: str, parameters: IO[bytes], content_type: str)`
+  - Method `WorkspaceProductPolicyOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, product_id: str, policy_id: Union[str, PolicyIdName], parameters: PolicyContract, if_match: Optional[str], content_type: str)`
+  - Method `WorkspaceProductPolicyOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, product_id: str, policy_id: Union[str, PolicyIdName], parameters: IO[bytes], if_match: Optional[str], content_type: str)`
+  - Method `WorkspaceSubscriptionOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, sid: str, parameters: SubscriptionCreateParameters, notify: Optional[bool], if_match: Optional[str], app_type: Optional[Union[str, AppType]], content_type: str)`
+  - Method `WorkspaceSubscriptionOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, sid: str, parameters: IO[bytes], notify: Optional[bool], if_match: Optional[str], app_type: Optional[Union[str, AppType]], content_type: str)`
+  - Method `WorkspaceSubscriptionOperations.update` has a new overload `def update(self: None, resource_group_name: str, service_name: str, workspace_id: str, sid: str, if_match: str, parameters: SubscriptionUpdateParameters, notify: Optional[bool], app_type: Optional[Union[str, AppType]], content_type: str)`
+  - Method `WorkspaceSubscriptionOperations.update` has a new overload `def update(self: None, resource_group_name: str, service_name: str, workspace_id: str, sid: str, if_match: str, parameters: IO[bytes], notify: Optional[bool], app_type: Optional[Union[str, AppType]], content_type: str)`
+  - Method `WorkspaceTagApiLinkOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, tag_id: str, api_link_id: str, parameters: TagApiLinkContract, content_type: str)`
+  - Method `WorkspaceTagApiLinkOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, tag_id: str, api_link_id: str, parameters: IO[bytes], content_type: str)`
+  - Method `WorkspaceTagOperationLinkOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, tag_id: str, operation_link_id: str, parameters: TagOperationLinkContract, content_type: str)`
+  - Method `WorkspaceTagOperationLinkOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, tag_id: str, operation_link_id: str, parameters: IO[bytes], content_type: str)`
+  - Method `WorkspaceTagOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, tag_id: str, parameters: TagCreateUpdateParameters, if_match: Optional[str], content_type: str)`
+  - Method `WorkspaceTagOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, tag_id: str, parameters: IO[bytes], if_match: Optional[str], content_type: str)`
+  - Method `WorkspaceTagOperations.update` has a new overload `def update(self: None, resource_group_name: str, service_name: str, workspace_id: str, tag_id: str, if_match: str, parameters: TagCreateUpdateParameters, content_type: str)`
+  - Method `WorkspaceTagOperations.update` has a new overload `def update(self: None, resource_group_name: str, service_name: str, workspace_id: str, tag_id: str, if_match: str, parameters: IO[bytes], content_type: str)`
+  - Method `WorkspaceTagProductLinkOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, tag_id: str, product_link_id: str, parameters: TagProductLinkContract, content_type: str)`
+  - Method `WorkspaceTagProductLinkOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, service_name: str, workspace_id: str, tag_id: str, product_link_id: str, parameters: IO[bytes], content_type: str)`
+
+### Breaking Changes
+
+  - Method `PolicyFragmentOperations.list_by_service` changed from `asynchronous` to `synchronous`
+  - Method `PolicyOperations.list_by_service` changed from `asynchronous` to `synchronous`
+  - Method `PortalConfigOperations.list_by_service` changed from `asynchronous` to `synchronous`
+  - Method `ProductPolicyOperations.list_by_product` changed from `asynchronous` to `synchronous`
+  - Method `ApiManagementServiceBaseProperties.__init__` parameter `virtual_network_type` changed default value from `str` to `none`
+  - Method `ApiManagementServiceProperties.__init__` parameter `virtual_network_type` changed default value from `str` to `none`
+  - Method `ApiManagementServiceResource.__init__` parameter `virtual_network_type` changed default value from `str` to `none`
+  - Method `ApiManagementServiceUpdateParameters.__init__` parameter `virtual_network_type` changed default value from `str` to `none`
+  - Method `ApiManagementServiceUpdateProperties.__init__` parameter `virtual_network_type` changed default value from `str` to `none`
+  - Model `ErrorResponse` deleted or renamed its instance variable `code`
+  - Model `ErrorResponse` deleted or renamed its instance variable `message`
+  - Model `ErrorResponse` deleted or renamed its instance variable `details`
+  - Deleted or renamed method `ApiOperations.delete`
+  - Deleted or renamed method `UserOperations.delete`
+
 ## 4.0.1 (2024-03-19)
 
 ### Other Changes
