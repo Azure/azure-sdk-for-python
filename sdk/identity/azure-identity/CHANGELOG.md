@@ -10,6 +10,8 @@
 
 ### Bugs Fixed
 
+- Fixed an issue with error handling in MSAL-based credentials when the response content is a string rather than a dictionary. ([#40281](https://github.com/Azure/azure-sdk-for-python/pull/40281))
+
 ### Other Changes
 
 ## 1.21.0 (2025-03-11)
