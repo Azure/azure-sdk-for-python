@@ -304,63 +304,6 @@ class AgentModel(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentOptions(_model_base.Model):
-    """Options used when creating or updating an Agent.
-
-    :ivar name: The name of the agent; used for display purposes and sent to the LLM to identify
-     the agent.
-    :vartype name: str
-    :ivar agent_model: The model definition for this agent. Required.
-    :vartype agent_model: ~azure.ai.projects.dp1.models.AgentModel
-    :ivar instructions: Instructions provided to guide how this agent operates.
-    :vartype instructions: list[~azure.ai.projects.dp1.models.ChatMessage]
-    :ivar tools: A list of tool definitions available to the agent.
-    :vartype tools: list[~azure.ai.projects.dp1.models.AgentToolDefinition]
-    :ivar tool_choice: How the agent should choose among provided tools.
-    :vartype tool_choice: ~azure.ai.projects.dp1.models.ToolChoiceBehavior
-    """
-
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The name of the agent; used for display purposes and sent to the LLM to identify the agent."""
-    agent_model: "_models.AgentModel" = rest_field(
-        name="agentModel", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The model definition for this agent. Required."""
-    instructions: Optional[List["_models.ChatMessage"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Instructions provided to guide how this agent operates."""
-    tools: Optional[List["_models.AgentToolDefinition"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """A list of tool definitions available to the agent."""
-    tool_choice: Optional["_models.ToolChoiceBehavior"] = rest_field(
-        name="toolChoice", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """How the agent should choose among provided tools."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        agent_model: "_models.AgentModel",
-        name: Optional[str] = None,
-        instructions: Optional[List["_models.ChatMessage"]] = None,
-        tools: Optional[List["_models.AgentToolDefinition"]] = None,
-        tool_choice: Optional["_models.ToolChoiceBehavior"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class AgentToolDefinition(_model_base.Model):
     """Represents a definition of a tool that an agent may use, used in a polymorphic manner.
 
@@ -1064,7 +1007,7 @@ class CodeInterpreterToolDefinition(AgentToolDefinition, discriminator="OpenAI.C
 class CompletionUsage(_model_base.Model):
     """Detailed token usage data for a run request.
 
-    :ivar output_tokens: Number of completion tokens used over the course of the run step.
+    :ivar output_tokens: Number of run (completion) tokens used over the course of the run.
      Required.
     :vartype output_tokens: int
     :ivar input_tokens: Number of prompt tokens used over the course of the run step. Required.
@@ -1078,7 +1021,7 @@ class CompletionUsage(_model_base.Model):
     """
 
     output_tokens: int = rest_field(name="outputTokens", visibility=["read", "create", "update", "delete", "query"])
-    """Number of completion tokens used over the course of the run step. Required."""
+    """Number of run (completion) tokens used over the course of the run. Required."""
     input_tokens: int = rest_field(name="inputTokens", visibility=["read", "create", "update", "delete", "query"])
     """Number of prompt tokens used over the course of the run step. Required."""
     total_tokens: int = rest_field(name="totalTokens", visibility=["read", "create", "update", "delete", "query"])
@@ -2597,7 +2540,7 @@ class RequiredToolChoiceBehavior(ToolChoiceBehavior, discriminator="required"):
 
 
 class Run(_model_base.Model):
-    """An agent-generated run record, including messages and status.
+    """An agent-generated run record, including both the requested inputs and the final outputs.
 
     :ivar agent_id: Unique identifier for the agent responsible for the run. Required.
     :vartype agent_id: str
@@ -2607,25 +2550,11 @@ class Run(_model_base.Model):
     :vartype created_at: int
     :ivar completed_at: Timestamp when the run finished processing (Unix time). Required.
     :vartype completed_at: int
-    :ivar status: Final status of the run request. Required. Is one of the following types:
-     Literal["inProgress"], Literal["incomplete"], Literal["cancelled"], Literal["failed"],
-     Literal["completed"], str
-    :vartype status: str or str or str or str or str or str
-    :ivar output: List of output messages generated by the agent. Required.
-    :vartype output: list[~azure.ai.projects.dp1.models.ChatMessage]
-    :ivar thread_id: Identifier for the thread associated with the run. Required.
-    :vartype thread_id: str
-    :ivar usage: Token usage details for this run. Required.
-    :vartype usage: ~azure.ai.projects.dp1.models.CompletionUsage
-    :ivar incomplete_details: Details about why the response is incomplete, if applicable.
-     Required.
-    :vartype incomplete_details: ~azure.ai.projects.dp1.models.RunIncompleteDetails
-    :ivar agent: The agent responsible for generating the run. Required.
-    :vartype agent: ~azure.ai.projects.dp1.models.AgentOptions
-    :ivar input: The list of input messages for the run. Required.
-    :vartype input: list[~azure.ai.projects.dp1.models.ChatMessage]
-    :ivar metadata: Optional metadata associated with the run request.
-    :vartype metadata: dict[str, str]
+    :ivar run_inputs: The inputs that were used to start this run. Required.
+    :vartype run_inputs: ~azure.ai.projects.dp1.models.RunInputs
+    :ivar run_outputs: The final outcome of this run, including status, output messages, token
+     usage. Required.
+    :vartype run_outputs: ~azure.ai.projects.dp1.models.RunOutputs
     :ivar options: Optional configuration for run generation.
     :vartype options: ~azure.ai.projects.dp1.models.RunOptions
     :ivar user_id: Identifier for the user making the request.
@@ -2642,28 +2571,14 @@ class Run(_model_base.Model):
     """Timestamp when the run was initiated (Unix time). Required."""
     completed_at: int = rest_field(name="completedAt", visibility=["read", "create", "update", "delete", "query"])
     """Timestamp when the run finished processing (Unix time). Required."""
-    status: Union[
-        Literal["inProgress"], Literal["incomplete"], Literal["cancelled"], Literal["failed"], Literal["completed"], str
-    ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Final status of the run request. Required. Is one of the following types:
-     Literal[\"inProgress\"], Literal[\"incomplete\"], Literal[\"cancelled\"], Literal[\"failed\"],
-     Literal[\"completed\"], str"""
-    output: List["_models.ChatMessage"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """List of output messages generated by the agent. Required."""
-    thread_id: str = rest_field(name="threadId", visibility=["read", "create", "update", "delete", "query"])
-    """Identifier for the thread associated with the run. Required."""
-    usage: "_models.CompletionUsage" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Token usage details for this run. Required."""
-    incomplete_details: "_models.RunIncompleteDetails" = rest_field(
-        name="incompleteDetails", visibility=["read", "create", "update", "delete", "query"]
+    run_inputs: "_models.RunInputs" = rest_field(
+        name="runInputs", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Details about why the response is incomplete, if applicable. Required."""
-    agent: "_models.AgentOptions" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The agent responsible for generating the run. Required."""
-    input: List["_models.ChatMessage"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The list of input messages for the run. Required."""
-    metadata: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional metadata associated with the run request."""
+    """The inputs that were used to start this run. Required."""
+    run_outputs: "_models.RunOutputs" = rest_field(
+        name="runOutputs", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The final outcome of this run, including status, output messages, token usage. Required."""
     options: Optional["_models.RunOptions"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional configuration for run generation."""
     user_id: Optional[str] = rest_field(name="userId", visibility=["read", "create", "update", "delete", "query"])
@@ -2678,21 +2593,8 @@ class Run(_model_base.Model):
         agent_id: str,
         created_at: int,
         completed_at: int,
-        status: Union[
-            Literal["inProgress"],
-            Literal["incomplete"],
-            Literal["cancelled"],
-            Literal["failed"],
-            Literal["completed"],
-            str,
-        ],
-        output: List["_models.ChatMessage"],
-        thread_id: str,
-        usage: "_models.CompletionUsage",
-        incomplete_details: "_models.RunIncompleteDetails",
-        agent: "_models.AgentOptions",
-        input: List["_models.ChatMessage"],
-        metadata: Optional[Dict[str, str]] = None,
+        run_inputs: "_models.RunInputs",
+        run_outputs: "_models.RunOutputs",
         options: Optional["_models.RunOptions"] = None,
         user_id: Optional[str] = None,
         store: Optional[bool] = None,
@@ -2709,39 +2611,9 @@ class Run(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RunIncompleteDetails(_model_base.Model):
-    """RunIncompleteDetails.
-
-    :ivar reason: Reason describing why the response is incomplete. Required.
-    :vartype reason: str
-    """
-
-    reason: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Reason describing why the response is incomplete. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        reason: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class RunInputs(_model_base.Model):
     """Parameters for creating a new run request.
 
-    :ivar run_id: Unique identifier for the run. Required.
-    :vartype run_id: str
     :ivar agent: The agent responsible for generating the run. Required.
     :vartype agent: ~azure.ai.projects.dp1.models.Agent
     :ivar input: The list of input messages for the run. Required.
@@ -2756,8 +2628,6 @@ class RunInputs(_model_base.Model):
     :vartype user_id: str
     """
 
-    run_id: str = rest_field(name="runId", visibility=["read"])
-    """Unique identifier for the run. Required."""
     agent: "_models.Agent" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The agent responsible for generating the run. Required."""
     input: List["_models.ChatMessage"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -2811,6 +2681,92 @@ class RunOptions(_model_base.Model):
         self,
         *,
         truncation_strategy: Optional["_models.TruncationStrategy"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RunOutputs(_model_base.Model):
+    """Fields describing the final run outcome, including status, output messages, and usage.
+
+    :ivar status: Final status of the run request. Required. Is one of the following types:
+     Literal["inProgress"], Literal["incomplete"], Literal["cancelled"], Literal["failed"],
+     Literal["completed"], str
+    :vartype status: str or str or str or str or str or str
+    :ivar messages: List of output messages generated by the agent. Required.
+    :vartype messages: list[~azure.ai.projects.dp1.models.ChatMessage]
+    :ivar usage: Token usage details for this run. Required.
+    :vartype usage: ~azure.ai.projects.dp1.models.CompletionUsage
+    :ivar incomplete_details: Details about why the response is incomplete, if applicable.
+    :vartype incomplete_details: ~azure.ai.projects.dp1.models.RunOutputsIncompleteDetails
+    """
+
+    status: Union[
+        Literal["inProgress"], Literal["incomplete"], Literal["cancelled"], Literal["failed"], Literal["completed"], str
+    ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Final status of the run request. Required. Is one of the following types:
+     Literal[\"inProgress\"], Literal[\"incomplete\"], Literal[\"cancelled\"], Literal[\"failed\"],
+     Literal[\"completed\"], str"""
+    messages: List["_models.ChatMessage"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """List of output messages generated by the agent. Required."""
+    usage: "_models.CompletionUsage" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Token usage details for this run. Required."""
+    incomplete_details: Optional["_models.RunOutputsIncompleteDetails"] = rest_field(
+        name="incompleteDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details about why the response is incomplete, if applicable."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        status: Union[
+            Literal["inProgress"],
+            Literal["incomplete"],
+            Literal["cancelled"],
+            Literal["failed"],
+            Literal["completed"],
+            str,
+        ],
+        messages: List["_models.ChatMessage"],
+        usage: "_models.CompletionUsage",
+        incomplete_details: Optional["_models.RunOutputsIncompleteDetails"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RunOutputsIncompleteDetails(_model_base.Model):
+    """RunOutputsIncompleteDetails.
+
+    :ivar reason: Required.
+    :vartype reason: str
+    """
+
+    reason: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        reason: str,
     ) -> None: ...
 
     @overload

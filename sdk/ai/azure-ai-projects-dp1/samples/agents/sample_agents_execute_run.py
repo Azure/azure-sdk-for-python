@@ -9,7 +9,7 @@ DESCRIPTION:
     the Azure Agents service using a synchronous client.
 
 USAGE:
-    python sample_agents_basics.py
+    python sample_agents_execute_run.py
 
     Before running the sample:
 
@@ -20,7 +20,7 @@ USAGE:
        Azure AI Foundry project.
 """
 
-import os, time
+import os
 from azure.ai.projects.dp1.models import AzureAgentModel, UserMessage, DeveloperMessage, TextContent, ChatMessage
 from azure.ai.projects.dp1 import AIProjectClient
 from azure.identity import DefaultAzureCredential
@@ -42,14 +42,7 @@ with project_client:
 
     content = TextContent(text="Tell me a joke")
     chat_message = ChatMessage(content=[content])
-    run = project_client.runs.create_run(agent=agent, input=[chat_message])
-
-    # Poll the run as long as run status is queued or in progress
-    while run.run_outputs.status in ["incomplete", "inProgress", "requires_action"]:
-        # Wait for a second
-        time.sleep(1)
-        run = project_client.runs.get_run(run_id=run.run_id)
-        print(f"Run status: {run.run_outputs.status}")
+    run = project_client.runs.create_and_execute_run(agent=agent, input=[chat_message])
 
     messages = run.run_outputs.messages
     for chat_message in messages:

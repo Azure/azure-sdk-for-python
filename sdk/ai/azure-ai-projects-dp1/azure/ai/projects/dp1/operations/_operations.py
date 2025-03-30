@@ -484,6 +484,28 @@ def build_runs_get_run_request(run_id: str, **kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_runs_create_and_execute_run_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/runs/execute"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_runs_create_and_stream_run_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -506,7 +528,7 @@ def build_runs_create_and_stream_run_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_runs_list_run_inputs_request(**kwargs: Any) -> HttpRequest:
+def build_runs_list_runs_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -514,7 +536,7 @@ def build_runs_list_run_inputs_request(**kwargs: Any) -> HttpRequest:
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/runinputs"
+    _url = "/runs"
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -3029,28 +3051,190 @@ class RunsOperations:
         return deserialized  # type: ignore
 
     @overload
+    def create_and_execute_run(
+        self,
+        *,
+        agent: _models.Agent,
+        input: List[_models.ChatMessage],
+        content_type: str = "application/json",
+        thread_id: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        options: Optional[_models.RunOptions] = None,
+        user_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.Run:
+        """Creates and waits for a run to finish, returning the completed Run (including its outputs).
+
+        :keyword agent: The agent responsible for generating the run. Required.
+        :paramtype agent: ~azure.ai.projects.dp1.models.Agent
+        :keyword input: The list of input messages for the run. Required.
+        :paramtype input: list[~azure.ai.projects.dp1.models.ChatMessage]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword thread_id: Optional identifier for an existing conversation thread. Default value is
+         None.
+        :paramtype thread_id: str
+        :keyword metadata: Optional metadata associated with the run request. Default value is None.
+        :paramtype metadata: dict[str, str]
+        :keyword options: Optional configuration for run generation. Default value is None.
+        :paramtype options: ~azure.ai.projects.dp1.models.RunOptions
+        :keyword user_id: Identifier for the user making the request. Default value is None.
+        :paramtype user_id: str
+        :return: Run. The Run is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.Run
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_and_execute_run(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Run:
+        """Creates and waits for a run to finish, returning the completed Run (including its outputs).
+
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Run. The Run is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.Run
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_and_execute_run(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Run:
+        """Creates and waits for a run to finish, returning the completed Run (including its outputs).
+
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Run. The Run is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.Run
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def create_and_execute_run(
+        self,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        agent: _models.Agent = _Unset,
+        input: List[_models.ChatMessage] = _Unset,
+        thread_id: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        options: Optional[_models.RunOptions] = None,
+        user_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.Run:
+        """Creates and waits for a run to finish, returning the completed Run (including its outputs).
+
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword agent: The agent responsible for generating the run. Required.
+        :paramtype agent: ~azure.ai.projects.dp1.models.Agent
+        :keyword input: The list of input messages for the run. Required.
+        :paramtype input: list[~azure.ai.projects.dp1.models.ChatMessage]
+        :keyword thread_id: Optional identifier for an existing conversation thread. Default value is
+         None.
+        :paramtype thread_id: str
+        :keyword metadata: Optional metadata associated with the run request. Default value is None.
+        :paramtype metadata: dict[str, str]
+        :keyword options: Optional configuration for run generation. Default value is None.
+        :paramtype options: ~azure.ai.projects.dp1.models.RunOptions
+        :keyword user_id: Identifier for the user making the request. Default value is None.
+        :paramtype user_id: str
+        :return: Run. The Run is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.Run
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Run] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            if agent is _Unset:
+                raise TypeError("missing required argument: agent")
+            if input is _Unset:
+                raise TypeError("missing required argument: input")
+            body = {
+                "agent": agent,
+                "input": input,
+                "metadata": metadata,
+                "options": options,
+                "threadId": thread_id,
+                "userId": user_id,
+            }
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_runs_create_and_execute_run_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.Run, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
     def create_and_stream_run(
         self,
         *,
         agent_id: str,
         created_at: int,
         completed_at: int,
-        status: Union[
-            Literal["inProgress"],
-            Literal["incomplete"],
-            Literal["cancelled"],
-            Literal["failed"],
-            Literal["completed"],
-            str,
-        ],
-        output: List[_models.ChatMessage],
-        thread_id: str,
-        usage: _models.CompletionUsage,
-        incomplete_details: _models.RunIncompleteDetails,
-        agent: _models.AgentOptions,
-        input: List[_models.ChatMessage],
+        run_inputs: _models.RunInputs,
+        run_outputs: _models.RunOutputs,
         content_type: str = "application/json",
-        metadata: Optional[Dict[str, str]] = None,
         options: Optional[_models.RunOptions] = None,
         user_id: Optional[str] = None,
         store: Optional[bool] = None,
@@ -3064,28 +3248,14 @@ class RunsOperations:
         :paramtype created_at: int
         :keyword completed_at: Timestamp when the run finished processing (Unix time). Required.
         :paramtype completed_at: int
-        :keyword status: Final status of the run request. Is one of the following types:
-         Literal["inProgress"], Literal["incomplete"], Literal["cancelled"], Literal["failed"],
-         Literal["completed"], str Required.
-        :paramtype status: str or str or str or str or str or str
-        :keyword output: List of output messages generated by the agent. Required.
-        :paramtype output: list[~azure.ai.projects.dp1.models.ChatMessage]
-        :keyword thread_id: Identifier for the thread associated with the run. Required.
-        :paramtype thread_id: str
-        :keyword usage: Token usage details for this run. Required.
-        :paramtype usage: ~azure.ai.projects.dp1.models.CompletionUsage
-        :keyword incomplete_details: Details about why the response is incomplete, if applicable.
-         Required.
-        :paramtype incomplete_details: ~azure.ai.projects.dp1.models.RunIncompleteDetails
-        :keyword agent: The agent responsible for generating the run. Required.
-        :paramtype agent: ~azure.ai.projects.dp1.models.AgentOptions
-        :keyword input: The list of input messages for the run. Required.
-        :paramtype input: list[~azure.ai.projects.dp1.models.ChatMessage]
+        :keyword run_inputs: The inputs that were used to start this run. Required.
+        :paramtype run_inputs: ~azure.ai.projects.dp1.models.RunInputs
+        :keyword run_outputs: The final outcome of this run, including status, output messages, token
+         usage. Required.
+        :paramtype run_outputs: ~azure.ai.projects.dp1.models.RunOutputs
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword metadata: Optional metadata associated with the run request. Default value is None.
-        :paramtype metadata: dict[str, str]
         :keyword options: Optional configuration for run generation. Default value is None.
         :paramtype options: ~azure.ai.projects.dp1.models.RunOptions
         :keyword user_id: Identifier for the user making the request. Default value is None.
@@ -3134,21 +3304,8 @@ class RunsOperations:
         agent_id: str = _Unset,
         created_at: int = _Unset,
         completed_at: int = _Unset,
-        status: Union[
-            Literal["inProgress"],
-            Literal["incomplete"],
-            Literal["cancelled"],
-            Literal["failed"],
-            Literal["completed"],
-            str,
-        ] = _Unset,
-        output: List[_models.ChatMessage] = _Unset,
-        thread_id: str = _Unset,
-        usage: _models.CompletionUsage = _Unset,
-        incomplete_details: _models.RunIncompleteDetails = _Unset,
-        agent: _models.AgentOptions = _Unset,
-        input: List[_models.ChatMessage] = _Unset,
-        metadata: Optional[Dict[str, str]] = None,
+        run_inputs: _models.RunInputs = _Unset,
+        run_outputs: _models.RunOutputs = _Unset,
         options: Optional[_models.RunOptions] = None,
         user_id: Optional[str] = None,
         store: Optional[bool] = None,
@@ -3164,25 +3321,11 @@ class RunsOperations:
         :paramtype created_at: int
         :keyword completed_at: Timestamp when the run finished processing (Unix time). Required.
         :paramtype completed_at: int
-        :keyword status: Final status of the run request. Is one of the following types:
-         Literal["inProgress"], Literal["incomplete"], Literal["cancelled"], Literal["failed"],
-         Literal["completed"], str Required.
-        :paramtype status: str or str or str or str or str or str
-        :keyword output: List of output messages generated by the agent. Required.
-        :paramtype output: list[~azure.ai.projects.dp1.models.ChatMessage]
-        :keyword thread_id: Identifier for the thread associated with the run. Required.
-        :paramtype thread_id: str
-        :keyword usage: Token usage details for this run. Required.
-        :paramtype usage: ~azure.ai.projects.dp1.models.CompletionUsage
-        :keyword incomplete_details: Details about why the response is incomplete, if applicable.
-         Required.
-        :paramtype incomplete_details: ~azure.ai.projects.dp1.models.RunIncompleteDetails
-        :keyword agent: The agent responsible for generating the run. Required.
-        :paramtype agent: ~azure.ai.projects.dp1.models.AgentOptions
-        :keyword input: The list of input messages for the run. Required.
-        :paramtype input: list[~azure.ai.projects.dp1.models.ChatMessage]
-        :keyword metadata: Optional metadata associated with the run request. Default value is None.
-        :paramtype metadata: dict[str, str]
+        :keyword run_inputs: The inputs that were used to start this run. Required.
+        :paramtype run_inputs: ~azure.ai.projects.dp1.models.RunInputs
+        :keyword run_outputs: The final outcome of this run, including status, output messages, token
+         usage. Required.
+        :paramtype run_outputs: ~azure.ai.projects.dp1.models.RunOutputs
         :keyword options: Optional configuration for run generation. Default value is None.
         :paramtype options: ~azure.ai.projects.dp1.models.RunOptions
         :keyword user_id: Identifier for the user making the request. Default value is None.
@@ -3215,34 +3358,18 @@ class RunsOperations:
                 raise TypeError("missing required argument: created_at")
             if completed_at is _Unset:
                 raise TypeError("missing required argument: completed_at")
-            if status is _Unset:
-                raise TypeError("missing required argument: status")
-            if output is _Unset:
-                raise TypeError("missing required argument: output")
-            if thread_id is _Unset:
-                raise TypeError("missing required argument: thread_id")
-            if usage is _Unset:
-                raise TypeError("missing required argument: usage")
-            if incomplete_details is _Unset:
-                raise TypeError("missing required argument: incomplete_details")
-            if agent is _Unset:
-                raise TypeError("missing required argument: agent")
-            if input is _Unset:
-                raise TypeError("missing required argument: input")
+            if run_inputs is _Unset:
+                raise TypeError("missing required argument: run_inputs")
+            if run_outputs is _Unset:
+                raise TypeError("missing required argument: run_outputs")
             body = {
-                "agent": agent,
                 "agentId": agent_id,
                 "completedAt": completed_at,
                 "createdAt": created_at,
-                "incompleteDetails": incomplete_details,
-                "input": input,
-                "metadata": metadata,
                 "options": options,
-                "output": output,
-                "status": status,
+                "runInputs": run_inputs,
+                "runOutputs": run_outputs,
                 "store": store,
-                "threadId": thread_id,
-                "usage": usage,
                 "userId": user_id,
             }
             body = {k: v for k, v in body.items() if v is not None}
@@ -3285,17 +3412,17 @@ class RunsOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def list_run_inputs(self, **kwargs: Any) -> Iterable["_models.RunInputs"]:
-        """Lists run inputs.
+    def list_runs(self, **kwargs: Any) -> Iterable["_models.Run"]:
+        """Lists all run records, each containing runInputs and runOutputs.
 
-        :return: An iterator like instance of RunInputs
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.dp1.models.RunInputs]
+        :return: An iterator like instance of Run
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.dp1.models.Run]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.RunInputs]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.Run]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3308,7 +3435,7 @@ class RunsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_runs_list_run_inputs_request(
+                _request = build_runs_list_runs_request(
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -3344,7 +3471,7 @@ class RunsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.RunInputs], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.Run], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
