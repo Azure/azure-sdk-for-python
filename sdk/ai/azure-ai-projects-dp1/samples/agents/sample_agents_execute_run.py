@@ -33,11 +33,10 @@ project_client = AIProjectClient(
 
 with project_client:
     text_content = TextContent(text="You are helpful assistant")
-    developer_message = DeveloperMessage(content=[text_content])
-    instructions: List[ChatMessage] = [developer_message]
+    instruction = DeveloperMessage(content=[text_content])
 
     agent = project_client.agents.create_agent(
-        agent_model=AzureAgentModel(id="gpt-4o"), name="SampleAgent", instructions=instructions
+        agent_model=AzureAgentModel(id="gpt-4o"), name="SampleAgent", instructions=[instruction]
     )
 
     content = TextContent(text="Tell me a joke")

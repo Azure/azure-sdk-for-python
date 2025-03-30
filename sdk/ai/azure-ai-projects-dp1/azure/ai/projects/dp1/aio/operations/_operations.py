@@ -1079,7 +1079,7 @@ class AgentsOperations:
         agent_model: _models.AgentModel,
         content_type: str = "application/json",
         name: Optional[str] = None,
-        instructions: Optional[List[_models.ChatMessage]] = None,
+        instructions: Optional[List[_models.DeveloperMessage]] = None,
         tools: Optional[List[_models.AgentToolDefinition]] = None,
         tool_choice: Optional[_models.ToolChoiceBehavior] = None,
         **kwargs: Any
@@ -1096,7 +1096,7 @@ class AgentsOperations:
         :paramtype name: str
         :keyword instructions: Instructions provided to guide how this agent operates. Default value is
          None.
-        :paramtype instructions: list[~azure.ai.projects.dp1.models.ChatMessage]
+        :paramtype instructions: list[~azure.ai.projects.dp1.models.DeveloperMessage]
         :keyword tools: A list of tool definitions available to the agent. Default value is None.
         :paramtype tools: list[~azure.ai.projects.dp1.models.AgentToolDefinition]
         :keyword tool_choice: How the agent should choose among provided tools. Default value is None.
@@ -1143,7 +1143,7 @@ class AgentsOperations:
         *,
         agent_model: _models.AgentModel = _Unset,
         name: Optional[str] = None,
-        instructions: Optional[List[_models.ChatMessage]] = None,
+        instructions: Optional[List[_models.DeveloperMessage]] = None,
         tools: Optional[List[_models.AgentToolDefinition]] = None,
         tool_choice: Optional[_models.ToolChoiceBehavior] = None,
         **kwargs: Any
@@ -1159,7 +1159,7 @@ class AgentsOperations:
         :paramtype name: str
         :keyword instructions: Instructions provided to guide how this agent operates. Default value is
          None.
-        :paramtype instructions: list[~azure.ai.projects.dp1.models.ChatMessage]
+        :paramtype instructions: list[~azure.ai.projects.dp1.models.DeveloperMessage]
         :keyword tools: A list of tool definitions available to the agent. Default value is None.
         :paramtype tools: list[~azure.ai.projects.dp1.models.AgentToolDefinition]
         :keyword tool_choice: How the agent should choose among provided tools. Default value is None.

@@ -34,7 +34,7 @@ class Agent(_model_base.Model):
     :ivar agent_model: The model definition for this agent. Required.
     :vartype agent_model: ~azure.ai.projects.dp1.models.AgentModel
     :ivar instructions: Instructions provided to guide how this agent operates.
-    :vartype instructions: list[~azure.ai.projects.dp1.models.ChatMessage]
+    :vartype instructions: list[~azure.ai.projects.dp1.models.DeveloperMessage]
     :ivar tools: A list of tool definitions available to the agent.
     :vartype tools: list[~azure.ai.projects.dp1.models.AgentToolDefinition]
     :ivar tool_choice: How the agent should choose among provided tools.
@@ -53,7 +53,7 @@ class Agent(_model_base.Model):
         name="agentModel", visibility=["read", "create", "update", "delete", "query"]
     )
     """The model definition for this agent. Required."""
-    instructions: Optional[List["_models.ChatMessage"]] = rest_field(
+    instructions: Optional[List["_models.DeveloperMessage"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Instructions provided to guide how this agent operates."""
@@ -74,7 +74,7 @@ class Agent(_model_base.Model):
         description: Optional[str] = None,
         metadata: Optional[Dict[str, str]] = None,
         name: Optional[str] = None,
-        instructions: Optional[List["_models.ChatMessage"]] = None,
+        instructions: Optional[List["_models.DeveloperMessage"]] = None,
         tools: Optional[List["_models.AgentToolDefinition"]] = None,
         tool_choice: Optional["_models.ToolChoiceBehavior"] = None,
     ) -> None: ...
