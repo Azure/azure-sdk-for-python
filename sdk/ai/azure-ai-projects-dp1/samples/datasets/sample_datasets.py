@@ -1,4 +1,3 @@
-
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -72,5 +71,3 @@ for dataset in project_client.datasets.list_latest(list_view_type=ListViewType.A
 print("Delete the dataset versions created above:")
 project_client.datasets.delete_version(name=dataset_name, version="1.0")
 project_client.datasets.delete_version(name=dataset_name, version="2.0")
-
-

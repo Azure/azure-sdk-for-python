@@ -7,10 +7,11 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING, Union
 from typing_extensions import Self
 
 from azure.core import PipelineClient
+from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 
@@ -23,7 +24,10 @@ from .operations import (
     DeploymentsOperations,
     EvaluationsOperations,
     IndexesOperations,
+    MessagesOperations,
+    RunsOperations,
     ServicePatternsOperations,
+    ThreadsOperations,
 )
 
 if TYPE_CHECKING:
@@ -33,10 +37,16 @@ if TYPE_CHECKING:
 class AIProjectClient:  # pylint: disable=too-many-instance-attributes
     """AIProjectClient.
 
-    :ivar agents: AgentsOperations operations
-    :vartype agents: azure.ai.projects.dp1.operations.AgentsOperations
     :ivar service_patterns: ServicePatternsOperations operations
     :vartype service_patterns: azure.ai.projects.dp1.operations.ServicePatternsOperations
+    :ivar messages: MessagesOperations operations
+    :vartype messages: azure.ai.projects.dp1.operations.MessagesOperations
+    :ivar threads: ThreadsOperations operations
+    :vartype threads: azure.ai.projects.dp1.operations.ThreadsOperations
+    :ivar agents: AgentsOperations operations
+    :vartype agents: azure.ai.projects.dp1.operations.AgentsOperations
+    :ivar runs: RunsOperations operations
+    :vartype runs: azure.ai.projects.dp1.operations.RunsOperations
     :ivar connections: ConnectionsOperations operations
     :vartype connections: azure.ai.projects.dp1.operations.ConnectionsOperations
     :ivar evaluations: EvaluationsOperations operations
@@ -48,17 +58,19 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
     :ivar deployments: DeploymentsOperations operations
     :vartype deployments: azure.ai.projects.dp1.operations.DeploymentsOperations
     :param endpoint: Project endpoint in the form of:
-     https://<aiservices-id>.services.ai.azure.com/projects/<project-name>. Required.
+     https://<aiservices-id>.services.ai.azure.com/api/projects/<project-name>. Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Required.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :param credential: Credential used to authenticate requests to the service. Is either a key
+     credential type or a token credential type. Required.
+    :type credential: ~azure.core.credentials.AzureKeyCredential or
+     ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
      "2025-05-01-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
+    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
         _endpoint = "{endpoint}"
         self._config = AIProjectClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         _policies = kwargs.pop("policies", None)
@@ -83,10 +95,13 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.agents = AgentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.service_patterns = ServicePatternsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.messages = MessagesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.threads = ThreadsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.agents = AgentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.runs = RunsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.connections = ConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.evaluations = EvaluationsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.datasets = DatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
