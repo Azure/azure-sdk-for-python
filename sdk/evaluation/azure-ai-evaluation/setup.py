@@ -76,8 +76,8 @@ setup(
         "azure-storage-blob>=12.10.0",
         "httpx>=0.25.1",
         # Dependencies added since Promptflow will soon be made optional
-        "pandas>=1.5.3,<3.0.0",
-        "openai>=1.4.0",  # TODO ralphe: What is a sensible lower bound here?
+        "pandas>=2.1.2,<3.0.0",
+        "openai>=1.40.0",
         "ruamel.yaml>=0.17.10,<1.0.0",
         "msrest>=0.6.21",
     ],
