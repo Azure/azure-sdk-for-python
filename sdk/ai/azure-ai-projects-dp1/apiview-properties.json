@@ -71,6 +71,8 @@
         "azure.ai.projects.dp1.models.UserMessage": "Azure.AI.Projects.UserMessage",
         "azure.ai.projects.dp1.models.VideoContent": "Azure.AI.Projects.VideoContent",
         "azure.ai.projects.dp1.models.AuthorRole": "Azure.AI.Projects.AuthorRole",
+        "azure.ai.projects.dp1.models.TruncationStrategyType": "Azure.AI.Projects.TruncationStrategyType",
+        "azure.ai.projects.dp1.models.RunOutputsStatus": "Azure.AI.Projects.RunOutputsStatus",
         "azure.ai.projects.dp1.models.ConnectionType": "Azure.AI.Projects.ConnectionType",
         "azure.ai.projects.dp1.models.DatasetType": "Azure.AI.Projects.DatasetType",
         "azure.ai.projects.dp1.models.ListViewType": "Azure.AI.Projects.ListViewType",

@@ -95,6 +95,8 @@ from ._enums import (  # type: ignore
     ListViewType,
     PendingUploadType,
     RepeatabilityResult,
+    RunOutputsStatus,
+    TruncationStrategyType,
 )
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -179,6 +181,8 @@ __all__ = [
     "ListViewType",
     "PendingUploadType",
     "RepeatabilityResult",
+    "RunOutputsStatus",
+    "TruncationStrategyType",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

@@ -57,14 +57,14 @@ class DatasetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class DeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of DeploymentType."""
+    """Represents the type of the deployment. Known literal is 'ModelDeployment'."""
 
     MODEL_DEPLOYMENT = "ModelDeployment"
     """Model deployment"""
 
 
 class IndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of IndexType."""
+    """Enumerates known index types, but also allows any custom string fallback."""
 
     AZURE_SEARCH = "AzureSearch"
     """Azure search"""
@@ -105,3 +105,27 @@ class RepeatabilityResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     Repeatability-Request-ID were invalid
     or because the Repeatability-First-Sent value was outside the range of values held by the
     server."""
+
+
+class RunOutputsStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Known status values for a run, plus a fallback string for unrecognized statuses."""
+
+    IN_PROGRESS = "inProgress"
+    """The run is ongoing."""
+    INCOMPLETE = "incomplete"
+    """The run did not produce a complete output."""
+    CANCELLED = "cancelled"
+    """The run was canceled."""
+    FAILED = "failed"
+    """The run failed."""
+    COMPLETED = "completed"
+    """The run completed successfully."""
+
+
+class TruncationStrategyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enumerates known truncation strategy types, but also allows any custom fallback string."""
+
+    AUTO = "auto"
+    """Automatically truncate messages to fit limits."""
+    LAST_MESSAGES = "lastMessages"
+    """Truncate older messages, keeping only the last few."""

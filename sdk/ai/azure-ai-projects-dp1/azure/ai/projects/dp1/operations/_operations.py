@@ -2988,6 +2988,7 @@ class RunsOperations:
     @distributed_trace
     def get_run(self, run_id: str, **kwargs: Any) -> _models.Run:
         """Retrieves an existing run by its ID.
+        @route("/run/{run_id}").
 
         :param run_id: Unique identifier for this run. Required.
         :type run_id: str
@@ -3241,6 +3242,7 @@ class RunsOperations:
         **kwargs: Any
     ) -> None:
         """Create and stream run.
+        @route("/run/stream").
 
         :keyword agent_id: Unique identifier for the agent responsible for the run. Required.
         :paramtype agent_id: str
@@ -3271,6 +3273,7 @@ class RunsOperations:
     @overload
     def create_and_stream_run(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Create and stream run.
+        @route("/run/stream").
 
         :param body: Required.
         :type body: JSON
@@ -3285,6 +3288,7 @@ class RunsOperations:
     @overload
     def create_and_stream_run(self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Create and stream run.
+        @route("/run/stream").
 
         :param body: Required.
         :type body: IO[bytes]
@@ -3312,6 +3316,7 @@ class RunsOperations:
         **kwargs: Any
     ) -> None:
         """Create and stream run.
+        @route("/run/stream").
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
@@ -3414,6 +3419,7 @@ class RunsOperations:
     @distributed_trace
     def list_runs(self, **kwargs: Any) -> Iterable["_models.Run"]:
         """Lists all run records, each containing runInputs and runOutputs.
+        @route("/runs").
 
         :return: An iterator like instance of Run
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.dp1.models.Run]
@@ -4005,7 +4011,8 @@ class DatasetsOperations:
         :param name: The name of the resource. Required.
         :type name: str
         :keyword top: Top count of results, top count cannot be greater than the page size. If topCount
-         > page size, results with be default page size count will be returned. Default value is None.
+         is larger than page size, results with be default page size count will be returned. Default
+         value is None.
         :paramtype top: int
         :keyword skip: Continuation token for pagination. Default value is None.
         :paramtype skip: str
@@ -4112,7 +4119,8 @@ class DatasetsOperations:
         """List the latest version of each DatasetVersion.
 
         :keyword top: Top count of results, top count cannot be greater than the page size. If topCount
-         > page size, results with be default page size count will be returned. Default value is None.
+         is larger than page size, results with be default page size count will be returned. Default
+         value is None.
         :paramtype top: int
         :keyword skip: Continuation token for pagination. Default value is None.
         :paramtype skip: str
@@ -4959,7 +4967,8 @@ class IndexesOperations:
         :param name: The name of the resource. Required.
         :type name: str
         :keyword top: Top count of results, top count cannot be greater than the page size. If topCount
-         > page size, results with be default page size count will be returned. Default value is None.
+         is larger than page size, results with be default page size count will be returned. Default
+         value is None.
         :paramtype top: int
         :keyword skip: Continuation token for pagination. Default value is None.
         :paramtype skip: str
@@ -5066,7 +5075,8 @@ class IndexesOperations:
         """List the latest version of each Index.
 
         :keyword top: Top count of results, top count cannot be greater than the page size. If topCount
-         > page size, results with be default page size count will be returned. Default value is None.
+         is larger than page size, results with be default page size count will be returned. Default
+         value is None.
         :paramtype top: int
         :keyword skip: Continuation token for pagination. Default value is None.
         :paramtype skip: str
