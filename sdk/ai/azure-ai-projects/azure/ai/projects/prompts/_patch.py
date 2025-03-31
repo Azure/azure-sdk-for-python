@@ -106,8 +106,8 @@ class PromptTemplate:
             data = kwargs
 
         if self.prompty is not None:
-            parsed = prepare(self.prompty, data) # type: ignore
-            return parsed
+            parsed = prepare(self.prompty, data)
+            return parsed # type: ignore
         else:
             raise ValueError("Please provide valid prompt template")
 
