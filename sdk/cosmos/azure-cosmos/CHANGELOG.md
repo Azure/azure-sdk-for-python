@@ -3,6 +3,7 @@
 ### 4.10.0b3 (Unreleased)
 
 #### Features Added
+* Per partition circuit breaker support. It can be enabled through environment variable `AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER`. See 
 
 #### Breaking Changes
 

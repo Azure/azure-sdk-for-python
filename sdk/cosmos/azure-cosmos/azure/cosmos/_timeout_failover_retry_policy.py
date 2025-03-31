@@ -5,14 +5,13 @@
 Cosmos database service.
 """
 from azure.cosmos.documents import _OperationType
+from azure.cosmos.http_constants import HttpHeaders
 
 
 class _TimeoutFailoverRetryPolicy(object):
 
     def __init__(self, connection_policy, global_endpoint_manager, *args):
         self.retry_after_in_milliseconds = 500
-        self.args = args
-
         self.global_endpoint_manager = global_endpoint_manager
         # If an account only has 1 region, then we still want to retry once on the same region
         self._max_retry_attempt_count = (len(self.global_endpoint_manager.location_cache.read_regional_routing_contexts)
@@ -28,6 +27,9 @@ class _TimeoutFailoverRetryPolicy(object):
         :returns: a boolean stating whether the request should be retried
         :rtype: bool
         """
+        # record the failure for circuit breaker tracking
+        self.global_endpoint_manager.record_failure(self.request)
+
         # we don't retry on write operations for timeouts or any internal server errors
         if self.request and (not _OperationType.IsReadOnlyOperation(self.request.operation_type)):
             return False

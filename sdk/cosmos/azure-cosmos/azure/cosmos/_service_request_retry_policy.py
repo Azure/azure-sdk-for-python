@@ -44,9 +44,12 @@ class ServiceRequestRetryPolicy(object):
             if self.request.resource_type == ResourceType.DatabaseAccount:
                 return False
 
-            refresh_cache = self.request.last_routed_location_endpoint_within_region is not None
-            # This logic is for the last retry and mark the region unavailable
-            self.mark_endpoint_unavailable(self.request.location_endpoint_to_route, refresh_cache)
+            if self.global_endpoint_manager.is_circuit_breaker_applicable(self.request):
+                self.global_endpoint_manager.mark_partition_unavailable(self.request)
+            else:
+                refresh_cache = self.request.last_routed_location_endpoint_within_region is not None
+                # This logic is for the last retry and mark the region unavailable
+                self.mark_endpoint_unavailable(self.request.location_endpoint_to_route, refresh_cache)
 
             # Check if it is safe to do another retry
             if self.in_region_retry_count >= self.total_in_region_retries:
@@ -65,7 +68,7 @@ class ServiceRequestRetryPolicy(object):
                 self.failover_retry_count += 1
                 if self.failover_retry_count >= self.total_retries:
                     return False
-                # # Check if it is safe to failover to another region
+                # Check if it is safe to failover to another region
                 location_endpoint = self.resolve_next_region_service_endpoint()
             else:
                 location_endpoint = self.resolve_current_region_service_endpoint()
@@ -80,7 +83,7 @@ class ServiceRequestRetryPolicy(object):
                     # and we reset the in region retry count
                     self.in_region_retry_count = 0
                     self.failover_retry_count += 1
-                    # # Check if it is safe to failover to another region
+                    # Check if it is safe to failover to another region
                     if self.failover_retry_count >= self.total_retries:
                         return False
                     location_endpoint = self.resolve_next_region_service_endpoint()

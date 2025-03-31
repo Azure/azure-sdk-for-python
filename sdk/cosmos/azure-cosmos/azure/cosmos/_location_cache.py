@@ -113,7 +113,10 @@ def get_endpoints_by_location(new_locations,
             except Exception as e:
                 raise e
 
-    return endpoints_by_location, parsed_locations
+    # Also store a hash map of endpoints for each location
+    locations_by_endpoints = {value.get_primary(): key for key, value in endpoints_by_location.items()}
+
+    return endpoints_by_location, locations_by_endpoints, parsed_locations
 
 def add_endpoint_if_preferred(endpoint: str, preferred_endpoints: Set[str], endpoints: Set[str]) -> bool:
     if endpoint in preferred_endpoints:
@@ -150,10 +153,24 @@ def _get_health_check_endpoints(
 
     return endpoints
 
+def get_applicable_regional_endpoints(endpoints, location_name_by_endpoint, fall_back_endpoint,
+                                      exclude_location_list):
+    # filter endpoints by excluded locations
+    applicable_endpoints = []
+    for endpoint in endpoints:
+        if location_name_by_endpoint.get(endpoint.get_primary()) not in exclude_location_list:
+            applicable_endpoints.append(endpoint)
+
+    # if endpoint is empty add fallback endpoint
+    if not applicable_endpoints:
+        applicable_endpoints.append(fall_back_endpoint)
+
+    return applicable_endpoints
+
+def current_time_millis():
+    return int(round(time.time() * 1000))
 
 class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
-    def current_time_millis(self):
-        return int(round(time.time() * 1000))
 
     def __init__(
         self,
@@ -161,6 +178,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         default_endpoint,
         enable_endpoint_discovery,
         use_multiple_write_locations,
+        connection_policy,
     ):
         self.preferred_locations = preferred_locations
         self.default_regional_routing_context = RegionalRoutingContext(default_endpoint, default_endpoint)
@@ -173,14 +191,21 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         self.last_cache_update_time_stamp = 0
         self.account_read_regional_routing_contexts_by_location = {} # pylint: disable=name-too-long
         self.account_write_regional_routing_contexts_by_location = {} # pylint: disable=name-too-long
+        self.account_locations_by_read_regional_endpoints = {} # pylint: disable=name-too-long
+        self.account_locations_by_write_regional_endpoints = {} # pylint: disable=name-too-long
         self.account_write_locations = []
         self.account_read_locations = []
+        self.connection_policy = connection_policy
 
     def get_write_regional_routing_contexts(self):
         return self.write_regional_routing_contexts
 
     def get_read_regional_routing_contexts(self):
         return self.read_regional_routing_contexts
+
+    def get_location_from_endpoint(self, endpoint: str) -> str:
+        regional_routing_context = RegionalRoutingContext(endpoint, endpoint)
+        return self.account_locations_by_read_regional_endpoints[regional_routing_context]
 
     def get_write_regional_routing_context(self):
         return self.get_write_regional_routing_contexts()[0].get_primary()
@@ -206,6 +231,45 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
 
     def get_ordered_read_locations(self):
         return self.account_read_locations
+
+    # Todo: @tvaron3 client should be appeneded to if using circuitbreaker exclude regions
+    def _get_configured_excluded_locations(self, request):
+        # If excluded locations were configured on request, use request level excluded locations.
+        excluded_locations = request.excluded_locations
+        if excluded_locations is None:
+            # If excluded locations were only configured on client(connection_policy), use client level
+            excluded_locations = self.connection_policy.ExcludedLocations
+        return excluded_locations
+
+    def get_applicable_read_regional_endpoints(self, request):
+        # Get configured excluded locations
+        excluded_locations = self._get_configured_excluded_locations(request)
+
+        # If excluded locations were configured, return filtered regional endpoints by excluded locations.
+        if excluded_locations:
+            return get_applicable_regional_endpoints(
+                self.get_read_regional_routing_contexts(),
+                self.account_locations_by_read_regional_endpoints,
+                self.get_write_regional_routing_contexts()[0],
+                excluded_locations)
+
+        # Else, return all regional endpoints
+        return self.get_read_regional_routing_contexts()
+
+    def get_applicable_write_regional_endpoints(self, request):
+        # Get configured excluded locations
+        excluded_locations = self._get_configured_excluded_locations(request)
+
+        # If excluded locations were configured, return filtered regional endpoints by excluded locations.
+        if excluded_locations:
+            return get_applicable_regional_endpoints(
+                self.get_write_regional_routing_contexts(),
+                self.account_locations_by_write_regional_endpoints,
+                self.default_regional_routing_context,
+                excluded_locations)
+
+        # Else, return all regional endpoints
+        return self.get_write_regional_routing_contexts()
 
     def resolve_service_endpoint(self, request):
         if request.location_endpoint_to_route:
@@ -247,9 +311,9 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             return self.default_regional_routing_context.get_primary()
 
         regional_routing_contexts = (
-            self.get_write_regional_routing_contexts()
+            self.get_applicable_write_regional_endpoints(request)
             if documents._OperationType.IsWriteOperation(request.operation_type)
-            else self.get_read_regional_routing_contexts()
+            else self.get_applicable_read_regional_endpoints(request)
         )
         regional_routing_context = regional_routing_contexts[location_index % len(regional_routing_contexts)]
         if (
@@ -361,6 +425,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         if self.enable_endpoint_discovery:
             if read_locations:
                 (self.account_read_regional_routing_contexts_by_location,
+                 self.account_locations_by_read_regional_endpoints,
                  self.account_read_locations) = get_endpoints_by_location(
                     read_locations,
                     self.account_read_regional_routing_contexts_by_location,
@@ -371,6 +436,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
 
             if write_locations:
                 (self.account_write_regional_routing_contexts_by_location,
+                 self.account_locations_by_write_regional_endpoints,
                  self.account_write_locations) = get_endpoints_by_location(
                     write_locations,
                     self.account_write_regional_routing_contexts_by_location,
@@ -391,7 +457,6 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             EndpointOperationType.ReadType,
             self.write_regional_routing_contexts[0]
         )
-        self.last_cache_update_timestamp = self.current_time_millis()  # pylint: disable=attribute-defined-outside-init
 
     def get_preferred_regional_routing_contexts(
         self, endpoints_by_location, orderedLocations, expected_available_operation, fallback_endpoint
