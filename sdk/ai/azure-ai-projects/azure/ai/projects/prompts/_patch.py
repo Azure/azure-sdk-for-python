@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# pylint: disable=line-too-long,R
+# pylint: disable=line-too-long,R,no-member
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
@@ -106,7 +106,7 @@ class PromptTemplate:
             data = kwargs
 
         if self.prompty is not None:
-            parsed = prepare(self.prompty, data)
+            parsed = prepare(self.prompty, data) # type: ignore
             return parsed
         else:
             raise ValueError("Please provide valid prompt template")
