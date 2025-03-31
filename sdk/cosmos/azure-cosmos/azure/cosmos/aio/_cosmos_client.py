@@ -23,10 +23,10 @@
 """
 
 from typing import Any, Dict, List, Optional, Union, cast, Mapping, Iterable, Callable
+import warnings
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials import TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.core import MatchConditions
 from azure.core.pipeline.policies import RetryMode
 
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -98,11 +98,15 @@ def _build_connection_policy(kwargs: Dict[str, Any]) -> ConnectionPolicy:
     # Retry config
     retry_options = policy.RetryOptions
     total_retries = kwargs.pop('retry_total', None)
-    retry_options._max_retry_attempt_count = total_retries or retry_options._max_retry_attempt_count
+    total_throttle_retries = kwargs.pop('retry_throttle_total', None)
+    retry_options._max_retry_attempt_count = \
+        total_throttle_retries or total_retries or retry_options._max_retry_attempt_count
     retry_options._fixed_retry_interval_in_milliseconds = \
         kwargs.pop('retry_fixed_interval', retry_options._fixed_retry_interval_in_milliseconds)
-    max_backoff = kwargs.pop('retry_backoff_max', policy.MaxBackoff)
-    retry_options._max_wait_time_in_seconds = max_backoff or retry_options._max_wait_time_in_seconds
+    max_backoff = kwargs.pop('retry_backoff_max', None)
+    max_throttle_backoff = kwargs.pop('retry_throttle_backoff_max', None)
+    retry_options._max_wait_time_in_seconds = \
+        max_throttle_backoff or max_backoff or retry_options._max_wait_time_in_seconds
     policy.RetryOptions = retry_options
     connection_retry = policy.ConnectionRetryConfiguration
     if not connection_retry:
@@ -111,7 +115,7 @@ def _build_connection_policy(kwargs: Dict[str, Any]) -> ConnectionPolicy:
             retry_connect=kwargs.pop('retry_connect', None),
             retry_read=kwargs.pop('retry_read', None),
             retry_status=kwargs.pop('retry_status', None),
-            retry_backoff_max=max_backoff,
+            retry_backoff_max=max_backoff or retry_options._max_wait_time_in_seconds,
             retry_mode=kwargs.pop('retry_mode', RetryMode.Fixed),
             retry_on_status_codes=kwargs.pop('retry_on_status_codes', []),
             retry_backoff_factor=kwargs.pop('retry_backoff_factor', 1),
@@ -203,6 +207,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         return self
 
     async def __aexit__(self, *args) -> None:
+        await self.client_connection._global_endpoint_manager.close() # pylint: disable=protected-access
         return await self.client_connection.pipeline_client.__aexit__(*args)
 
     async def close(self) -> None:
@@ -245,10 +250,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         id: str,
         *,
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
-        session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> DatabaseProxy:
         """
@@ -257,12 +259,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :param str id: ID (name) of the database to create.
         :keyword offer_throughput: The provisioned throughput for this offer.
         :paramtype offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
-        :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
-            has changed, and act according to the condition specified by the `match_condition` parameter.
-        :keyword match_condition: The match condition to use upon the etag.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosResourceExistsError: Database with the given ID already exists.
@@ -279,14 +276,26 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 :caption: Create a database in the Cosmos DB account:
                 :name: create_database
         """
+        session_token = kwargs.get('session_token')
         if session_token is not None:
-            kwargs["session_token"] = session_token
+            warnings.warn(
+                "The 'session_token' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
+                DeprecationWarning)
+        etag = kwargs.get('etag')
+        if etag is not None:
+            warnings.warn(
+                "The 'etag' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
+                DeprecationWarning)
+        match_condition = kwargs.get('match_condition')
+        if match_condition is not None:
+            warnings.warn(
+                "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
+                DeprecationWarning)
         if initial_headers is not None:
             kwargs["initial_headers"] = initial_headers
-        if etag is not None:
-            kwargs["etag"] = etag
-        if match_condition is not None:
-            kwargs["match_condition"] = match_condition
         request_options = _build_options(kwargs)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
 
@@ -299,10 +308,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         id: str,
         *,
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
-        session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> DatabaseProxy:
         """
@@ -317,26 +323,33 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :param str id: ID (name) of the database to read or create.
         :keyword offer_throughput: The provisioned throughput for this offer.
         :paramtype offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
-        :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
-            has changed, and act according to the condition specified by the `match_condition` parameter.
-        :keyword match_condition: The match condition to use upon the etag.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The database read or creation failed.
         :returns: A DatabaseProxy instance representing the database.
         :rtype: ~azure.cosmos.DatabaseProxy
         """
+        session_token = kwargs.get('session_token')
         if session_token is not None:
-            kwargs["session_token"] = session_token
+            warnings.warn(
+                "The 'session_token' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
+                DeprecationWarning)
+        etag = kwargs.get('etag')
+        if etag is not None:
+            warnings.warn(
+                "The 'etag' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
+                DeprecationWarning)
+        match_condition = kwargs.get('match_condition')
+        if match_condition is not None:
+            warnings.warn(
+                "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
+                DeprecationWarning)
         if initial_headers is not None:
             kwargs["initial_headers"] = initial_headers
-        if etag is not None:
-            kwargs["etag"] = etag
-        if match_condition is not None:
-            kwargs["match_condition"] = match_condition
         try:
             database_proxy = self.get_database_client(id)
             await database_proxy.read(**kwargs)
@@ -370,7 +383,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         self,
         *,
         max_item_count: Optional[int] = None,
-        session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         **kwargs: Any
@@ -385,8 +397,12 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :returns: An AsyncItemPaged of database properties (dicts).
         :rtype: AsyncItemPaged[Dict[str, str]]
         """
+        session_token = kwargs.pop('session_token', None)
         if session_token is not None:
-            kwargs["session_token"] = session_token
+            warnings.warn(
+                "The 'session_token' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
+                DeprecationWarning)
         if initial_headers is not None:
             kwargs["initial_headers"] = initial_headers
         feed_options = _build_options(kwargs)
@@ -405,7 +421,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         *,
         parameters: Optional[List[Dict[str, Any]]] = None,
         max_item_count: Optional[int] = None,
-        session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         **kwargs: Any
@@ -424,8 +439,12 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :returns: An AsyncItemPaged of database properties (dicts).
         :rtype: AsyncItemPaged[Dict[str, str]]
         """
+        session_token = kwargs.get('session_token')
         if session_token is not None:
-            kwargs["session_token"] = session_token
+            warnings.warn(
+                "The 'session_token' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
+                DeprecationWarning)
         if initial_headers is not None:
             kwargs["initial_headers"] = initial_headers
         feed_options = _build_options(kwargs)
@@ -445,10 +464,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         self,
         database: Union[str, DatabaseProxy, Dict[str, Any]],
         *,
-        session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         **kwargs: Any
     ) -> None:
@@ -457,27 +473,34 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :param database: The ID (name), dict representing the properties, or :class:`DatabaseProxy`
             instance of the database to delete.
         :type database: Union[str, ~azure.cosmos.DatabaseProxy, Dict[str, Any]]
-        :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
-            has changed, and act according to the condition specified by the `match_condition` parameter.
-        :keyword match_condition: The match condition to use upon the etag.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the database couldn't be deleted.
         :rtype: None
         """
+        session_token = kwargs.get('session_token')
         if session_token is not None:
-            kwargs["session_token"] = session_token
+            warnings.warn(
+                "The 'session_token' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
+                DeprecationWarning)
+        etag = kwargs.get('etag')
+        if etag is not None:
+            warnings.warn(
+                "The 'etag' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
+                DeprecationWarning)
+        match_condition = kwargs.get('match_condition')
+        if match_condition is not None:
+            warnings.warn(
+                "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
+                DeprecationWarning)
+
         if initial_headers is not None:
             kwargs["initial_headers"] = initial_headers
-        if etag is not None:
-            kwargs["etag"] = etag
-        if match_condition is not None:
-            kwargs["match_condition"] = match_condition
         request_options = _build_options(kwargs)
-
         database_link = _get_database_link(database)
         await self.client_connection.DeleteDatabase(database_link, options=request_options, **kwargs)
         if response_hook:

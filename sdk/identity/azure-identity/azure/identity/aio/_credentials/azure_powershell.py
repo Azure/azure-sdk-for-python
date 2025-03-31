@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 import sys
 from typing import Any, cast, List, Optional
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions

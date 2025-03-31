@@ -1,12 +1,23 @@
 # Release History
 
-## 4.9.1 (Unreleased)
+## 4.10.0b2 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+### Other Changes
+
+## 4.10.0b1 (2025-03-20)
+
+### Features Added
+- Added support for service API version `7.6-preview.2`
+- Added a `preserve_certificate_order` keyword-only argument when creating or importing certificates to allow
+  preserving a certificate chain's original order, and corresponding a `preserve_certificate_order` property to
+  `CertificateProperties` and `CertificateOperation` models
+  ([#37507](https://github.com/Azure/azure-sdk-for-python/pull/37507))
 
 ### Other Changes
 - Updated minimum `typing-extensions` version to 4.6.0

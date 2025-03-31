@@ -31,6 +31,8 @@ class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     :param model_config: Configuration for the Azure OpenAI model.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
+    :param threshold: The threshold for the evaluation. Default is 3.
+    :type threshold: float
     :return: A function that evaluates and generates metrics for "chat" scenario.
     :rtype: Callable
 
@@ -42,6 +44,15 @@ class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             :language: python
             :dedent: 8
             :caption: Initialize and call a RetrievalEvaluator.
+
+    .. admonition:: Example with Threshold:
+    
+        .. literalinclude:: ../samples/evaluation_samples_threshold.py
+            :start-after: [START threshold_retrieval_evaluator]
+            :end-before: [END threshold_retrieval_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize with threshold and call a RetrievalEvaluator.
 
     .. note::
 
@@ -57,10 +68,18 @@ class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config):  # pylint: disable=super-init-not-called
+    def __init__(self, model_config, *, threshold: float=3):  # pylint: disable=super-init-not-called
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
-        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY)
+        self._threshold = threshold
+        self._higher_is_better = True
+        super().__init__(
+            model_config=model_config,
+            prompty_file=prompty_path,
+            result_key=self._RESULT_KEY,
+            threshold=threshold,
+            _higher_is_better=self._higher_is_better,
+        )
 
     @overload
     def __call__(

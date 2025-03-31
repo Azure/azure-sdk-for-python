@@ -1,19 +1,18 @@
 # requirements leveraged by ci for testing
-pytest==7.3.1
-pytest-asyncio==0.21.0
-pytest-cov==4.0.0
+pytest==8.3.5
+pytest-asyncio==0.24.0
+pytest-cov==5.0.0
 pytest-custom-exit-code==0.3.0
 pytest-xdist==3.2.1
-coverage==7.2.5
+coverage==7.6.1
 bandit==1.6.2
-protobuf==3.17.3; python_version == '2.7'
-pyproject-api<1.6
+pyproject-api==1.8.0
 
 # locking packages defined as deps from azure-sdk-tools
-Jinja2==3.1.2
-json-delta==2.0
-readme_renderer==42.0;
+Jinja2==3.1.6
+json-delta==2.0.2
+readme_renderer==43.0
 python-dotenv==1.0.1
-pyyaml==6.0.1
-urllib3==2.0.7
-six==1.16.0
+pyyaml==6.0.2
+urllib3==2.2.3
+six==1.17.0

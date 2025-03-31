@@ -27,7 +27,7 @@ class EvaluationMetrics:
     LOGOS_AND_BRANDS = "logos_and_brands"
     XPIA = "xpia"
     CODE_VULNERABILITY = "code_vulnerability"
-    ISA = "inference_sensitive_attributes"
+    UNGROUNDED_ATTRIBUTES = "ungrounded_attributes"
 
 
 class _InternalEvaluationMetrics:
@@ -94,3 +94,8 @@ OTEL_EXPORTER_OTLP_TRACES_TIMEOUT_DEFAULT = 60
 AZURE_OPENAI_TYPE: Literal["azure_openai"] = "azure_openai"
 
 OPENAI_TYPE: Literal["openai"] = "openai"
+
+EVALUATION_PASS_FAIL_MAPPING = {
+    True: "pass",
+    False: "fail",
+}
