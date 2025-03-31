@@ -20,11 +20,11 @@ class TestSqlManagementServerUsagesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_server(self, resource_group):
+    def test_server_usages_list_by_server(self, resource_group):
         response = self.client.server_usages.list_by_server(
             resource_group_name=resource_group.name,
             server_name="str",
-            api_version="2014-04-01",
+            api_version="2024-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

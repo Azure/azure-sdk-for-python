@@ -78,6 +78,7 @@ class HateUnfairnessEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
         self,
         credential,
         azure_ai_project,
+        *,
         threshold: int = 3,
     ):
         super().__init__(

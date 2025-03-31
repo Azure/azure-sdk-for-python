@@ -6,6 +6,9 @@
         "Unfairness",
         "ssrf",
         "vuln",
+        "pyrit",
+        "Pyrit",
+        "submitaoaievaluation"
     ],
     "ignorePaths": [
         "sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/_evaluators/_retrieval/retrieval.prompty",

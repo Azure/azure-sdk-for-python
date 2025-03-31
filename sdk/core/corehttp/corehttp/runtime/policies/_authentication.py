@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 from __future__ import annotations
 import time
-from typing import TYPE_CHECKING, Optional, TypeVar, MutableMapping, Any
+from typing import TYPE_CHECKING, Optional, TypeVar, MutableMapping, Any, Union
 
 from ...credentials import TokenRequestOptions
 from ...rest import HttpResponse, HttpRequest
@@ -32,15 +32,23 @@ class _BearerTokenCredentialPolicyBase:
     :param credential: The credential.
     :type credential: ~corehttp.credentials.TokenCredential
     :param str scopes: Lets you specify the type of access needed.
+    :keyword auth_flows: A list of authentication flows to use for the credential.
+    :paramtype auth_flows: list[dict[str, Union[str, list[dict[str, str]]]]]
     """
 
+    # pylint: disable=unused-argument
     def __init__(
-        self, credential: "TokenCredential", *scopes: str, **kwargs: Any  # pylint: disable=unused-argument
+        self,
+        credential: "TokenCredential",
+        *scopes: str,
+        auth_flows: Optional[list[dict[str, Union[str, list[dict[str, str]]]]]] = None,
+        **kwargs: Any,
     ) -> None:
         super(_BearerTokenCredentialPolicyBase, self).__init__()
         self._scopes = scopes
         self._credential = credential
         self._token: Optional["AccessTokenInfo"] = None
+        self._auth_flows = auth_flows
 
     @staticmethod
     def _enforce_https(request: PipelineRequest[HTTPRequestType]) -> None:
@@ -83,20 +91,30 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
     :param credential: The credential.
     :type credential: ~corehttp.TokenCredential
     :param str scopes: Lets you specify the type of access needed.
+    :keyword auth_flows: A list of authentication flows to use for the credential.
+    :paramtype auth_flows: list[dict[str, Union[str, list[dict[str, str]]]]]
     :raises: :class:`~corehttp.exceptions.ServiceRequestError`
     """
 
-    def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
+    def on_request(
+        self,
+        request: PipelineRequest[HTTPRequestType],
+        *,
+        auth_flows: Optional[list[dict[str, Union[str, list[dict[str, str]]]]]] = None,
+    ) -> None:
         """Called before the policy sends a request.
 
         The base implementation authorizes the request with a bearer token.
 
         :param ~corehttp.runtime.pipeline.PipelineRequest request: the request
+        :keyword auth_flows: A list of authentication flows to use for the credential.
+        :paramtype auth_flows: list[dict[str, Union[str, list[dict[str, str]]]]]
         """
         self._enforce_https(request)
 
         if self._token is None or self._need_new_token:
-            self._token = self._credential.get_token_info(*self._scopes)
+            options: TokenRequestOptions = {"auth_flows": auth_flows} if auth_flows else {}  # type: ignore
+            self._token = self._credential.get_token_info(*self._scopes, options=options)
         self._update_headers(request.http_request.headers, self._token.token)
 
     def authorize_request(self, request: PipelineRequest[HTTPRequestType], *scopes: str, **kwargs: Any) -> None:
@@ -124,7 +142,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
         :return: The pipeline response object
         :rtype: ~corehttp.runtime.pipeline.PipelineResponse
         """
-        self.on_request(request)
+        self.on_request(request, auth_flows=self._auth_flows)
         try:
             response = self.next.send(request)
         except Exception:
