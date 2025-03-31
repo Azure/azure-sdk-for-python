@@ -11,8 +11,8 @@ try:
 except ImportError:
     has_pyrit = False
 if has_pyrit:
-    from azure.ai.evaluation.red_team.red_team_result import (
-        RedTeamOutput, RedTeamResult, RedTeamingScorecard, RedTeamingParameters, Conversation
+    from azure.ai.evaluation._red_team._red_team_result import (
+        RedTeamOutput, _RedTeamResult, _RedTeamingScorecard, _RedTeamingParameters, _Conversation
     )
 
 
@@ -177,7 +177,7 @@ class TestRedTeamOutputConversion:
         json_lines = output.to_eval_qr_json_lines()
         
         # Should have one valid JSON line
-        json_data = json.loads(json_lines)
+        json_data = json.loads(json_lines[0])
         assert json_data["query"] == "Test attack message"
         assert json_data["response"] == "Test harmful response"
         assert json_data["attack_strategy"] == "Base64Converter"
@@ -203,10 +203,8 @@ class TestRedTeamOutputConversion:
         }
         
         output = RedTeamOutput(redteaming_data=[mock_multi_turn])
-        json_lines = output.to_eval_qr_json_lines()
+        lines = output.to_eval_qr_json_lines()
         
-        # Split into lines and parse each
-        lines = json_lines.strip().split("\n")
         assert len(lines) == 2
         
         first_turn = json.loads(lines[0])
@@ -221,7 +219,7 @@ class TestRedTeamOutputConversion:
         """Test to_eval_qr_json_lines method with no data."""
         output = RedTeamOutput()
         json_lines = output.to_eval_qr_json_lines()
-        assert json_lines == ""
+        assert json_lines == ''
 
 
 @pytest.mark.unittest

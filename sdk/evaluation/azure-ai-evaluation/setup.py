@@ -81,7 +81,9 @@ setup(
         "ruamel.yaml>=0.17.10,<1.0.0",
         "msrest>=0.6.18",
     ],
-    extras_require={"redteam": ["pyrit==0.7.0"]},
+    extras_require={
+        "redteam": ["pyrit==0.8.0"]
+    },
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",
         "Source": "https://github.com/Azure/azure-sdk-for-python",
@@ -90,6 +92,6 @@ setup(
         "pytyped": ["py.typed"],
         "azure.ai.evaluation.simulator._prompty": ["*.prompty"],
         "azure.ai.evaluation.simulator._data_sources": ["*.json"],
-        "azure.ai.evaluation.autogen.raiclient": ["**/*.py"],
+        "azure.ai.evaluation._common.raiclient": ["**/*.py"],
     },
 )

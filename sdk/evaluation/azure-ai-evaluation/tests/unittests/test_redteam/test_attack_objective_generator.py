@@ -14,8 +14,8 @@ except ImportError:
     has_pyrit = False
 
 if has_pyrit:
-    from azure.ai.evaluation.red_team.attack_objective_generator import (
-        AttackObjectiveGenerator, RiskCategory
+    from azure.ai.evaluation._red_team._attack_objective_generator import (
+        _AttackObjectiveGenerator, RiskCategory
     )
 
 
@@ -40,33 +40,33 @@ class TestRiskCategoryEnum:
 @pytest.mark.unittest
 @pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestObjectiveGeneratorInitialization:
-    """Test AttackObjectiveGenerator initialization."""
+    """Test _AttackObjectiveGenerator initialization."""
 
     def test_objective_generator_init_default(self):
-        """Test AttackObjectiveGenerator initialization with default parameters."""
-        generator = AttackObjectiveGenerator(
+        """Test _AttackObjectiveGenerator initialization with default parameters."""
+        generator = _AttackObjectiveGenerator(
             risk_categories=[RiskCategory.Violence, RiskCategory.HateUnfairness]
         )
         assert generator.risk_categories == [RiskCategory.Violence, RiskCategory.HateUnfairness]
         assert generator.num_objectives == 10  # Default value
     
     def test_objective_generator_init_custom(self):
-        """Test AttackObjectiveGenerator initialization with custom num_objectives."""
-        generator_custom = AttackObjectiveGenerator(
+        """Test _AttackObjectiveGenerator initialization with custom num_objectives."""
+        generator_custom = _AttackObjectiveGenerator(
             risk_categories=[RiskCategory.Violence], num_objectives=5
         )
         assert generator_custom.risk_categories == [RiskCategory.Violence]
         assert generator_custom.num_objectives == 5
 
     def test_objective_generator_empty_categories(self):
-        """Test AttackObjectiveGenerator with empty categories."""
-        generator = AttackObjectiveGenerator(risk_categories=[])
+        """Test _AttackObjectiveGenerator with empty categories."""
+        generator = _AttackObjectiveGenerator(risk_categories=[])
         assert generator.risk_categories == []
         assert generator.num_objectives == 10
 
     def test_objective_generator_single_category(self):
-        """Test AttackObjectiveGenerator with a single category."""
-        generator = AttackObjectiveGenerator(risk_categories=[RiskCategory.Sexual])
+        """Test _AttackObjectiveGenerator with a single category."""
+        generator = _AttackObjectiveGenerator(risk_categories=[RiskCategory.Sexual])
         assert len(generator.risk_categories) == 1
         assert generator.risk_categories[0] == RiskCategory.Sexual
 
@@ -74,27 +74,27 @@ class TestObjectiveGeneratorInitialization:
 @pytest.mark.unittest
 @pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestObjectiveGeneratorFeatures:
-    """Test features of the AttackObjectiveGenerator."""
+    """Test features of the _AttackObjectiveGenerator."""
     
     def test_objective_generator_with_all_categories(self):
-        """Test AttackObjectiveGenerator with all risk categories."""
+        """Test _AttackObjectiveGenerator with all risk categories."""
         all_categories = list(RiskCategory)
-        generator = AttackObjectiveGenerator(risk_categories=all_categories)
+        generator = _AttackObjectiveGenerator(risk_categories=all_categories)
         assert set(generator.risk_categories) == set(all_categories)
 
     def test_objective_generator_with_num_objectives_zero(self):
-        """Test AttackObjectiveGenerator with num_objectives=0."""
+        """Test _AttackObjectiveGenerator with num_objectives=0."""
         # This is technically valid but not useful in practice
-        generator = AttackObjectiveGenerator(
+        generator = _AttackObjectiveGenerator(
             risk_categories=[RiskCategory.Violence], num_objectives=0
         )
         assert generator.num_objectives == 0
         
     def test_objective_generator_with_custom_attack_seed_prompts(self):
-        """Test AttackObjectiveGenerator with custom attack seed prompts."""
+        """Test _AttackObjectiveGenerator with custom attack seed prompts."""
         # Test with a valid custom prompts file
         custom_prompts_path = os.path.join(os.path.dirname(__file__), "data", "custom_prompts.json")
-        generator = AttackObjectiveGenerator(
+        generator = _AttackObjectiveGenerator(
             custom_attack_seed_prompts=custom_prompts_path
         )
         
@@ -108,14 +108,14 @@ class TestObjectiveGeneratorFeatures:
         assert len(generator.valid_prompts_by_category.get(RiskCategory.HateUnfairness.value, [])) == 1
         
     def test_objective_generator_with_invalid_custom_attack_seed_prompts(self):
-        """Test AttackObjectiveGenerator with invalid custom attack seed prompts path."""
+        """Test _AttackObjectiveGenerator with invalid custom attack seed prompts path."""
         with pytest.raises(ValueError, match="Custom attack seed prompts file not found"):
-            AttackObjectiveGenerator(
+            _AttackObjectiveGenerator(
                 custom_attack_seed_prompts="nonexistent_file.json"
             )
             
     def test_objective_generator_with_relative_path(self):
-        """Test AttackObjectiveGenerator with a relative path."""
+        """Test _AttackObjectiveGenerator with a relative path."""
         # Mock the JSON content with valid prompts
         mock_json_data = """[
             {
@@ -149,7 +149,7 @@ class TestObjectiveGeneratorFeatures:
              patch("builtins.open", mock_open(read_data=mock_json_data)):
             
             rel_path = "relative/path/custom_prompts.json"
-            generator = AttackObjectiveGenerator(
+            generator = _AttackObjectiveGenerator(
                 custom_attack_seed_prompts=rel_path
             )
             
@@ -160,7 +160,7 @@ class TestObjectiveGeneratorFeatures:
             assert len(generator.validated_prompts) == 1
     
     def test_objective_generator_with_absolute_path(self):
-        """Test AttackObjectiveGenerator with an absolute path."""
+        """Test _AttackObjectiveGenerator with an absolute path."""
         # Mock the JSON content with valid prompts
         mock_json_data = """[
             {
@@ -190,7 +190,7 @@ class TestObjectiveGeneratorFeatures:
              patch("builtins.open", mock_open(read_data=mock_json_data)), \
              patch("logging.getLogger") as mock_logger:
             
-            generator = AttackObjectiveGenerator(
+            generator = _AttackObjectiveGenerator(
                 custom_attack_seed_prompts="/absolute/path/custom_prompts.json"
             )
             

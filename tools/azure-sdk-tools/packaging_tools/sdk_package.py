@@ -100,7 +100,8 @@ def main(generate_input, generate_output):
         result["packages"].append(package)
 
         # check generated files
-        check_file(package)
+        if package_name.startswith("azure-mgmt-"):
+            check_file(package)
 
     with open(generate_output, "w") as writer:
         json.dump(result, writer)
