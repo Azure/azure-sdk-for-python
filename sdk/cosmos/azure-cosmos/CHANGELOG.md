@@ -7,6 +7,7 @@
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed how the environment variables in the sdk are parsed. See [PR ]
 
 #### Other Changes
 
