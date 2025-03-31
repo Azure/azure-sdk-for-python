@@ -18,12 +18,13 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from .._serialization import Deserializer, Serializer
 from ._configuration import AIProjectClientConfiguration
 from .operations import (
-    AssistantsOperations,
     ConnectionsOperations,
     DatasetsOperations,
     DeploymentsOperations,
+    EvaluationResultsOperations,
     EvaluationsOperations,
     IndexesOperations,
+    RedTeamsOperations,
     ServicePatternsOperations,
 )
 
@@ -34,8 +35,6 @@ if TYPE_CHECKING:
 class AIProjectClient:  # pylint: disable=too-many-instance-attributes
     """AIProjectClient.
 
-    :ivar assistants: AssistantsOperations operations
-    :vartype assistants: azure.ai.projects.dp1.aio.operations.AssistantsOperations
     :ivar service_patterns: ServicePatternsOperations operations
     :vartype service_patterns: azure.ai.projects.dp1.aio.operations.ServicePatternsOperations
     :ivar connections: ConnectionsOperations operations
@@ -48,6 +47,10 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
     :vartype indexes: azure.ai.projects.dp1.aio.operations.IndexesOperations
     :ivar deployments: DeploymentsOperations operations
     :vartype deployments: azure.ai.projects.dp1.aio.operations.DeploymentsOperations
+    :ivar evaluation_results: EvaluationResultsOperations operations
+    :vartype evaluation_results: azure.ai.projects.dp1.aio.operations.EvaluationResultsOperations
+    :ivar red_teams: RedTeamsOperations operations
+    :vartype red_teams: azure.ai.projects.dp1.aio.operations.RedTeamsOperations
     :param endpoint: Project endpoint in the form of:
      https://<aiservices-id>.services.ai.azure.com/api/projects/<project-name>. Required.
     :type endpoint: str
@@ -56,7 +59,7 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2025-05-01-preview". Note that overriding this default value may result in unsupported
+     "2025-05-15-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
@@ -88,7 +91,6 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.assistants = AssistantsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.service_patterns = ServicePatternsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -97,6 +99,10 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
         self.datasets = DatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.indexes = IndexesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.deployments = DeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.evaluation_results = EvaluationResultsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.red_teams = RedTeamsOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
