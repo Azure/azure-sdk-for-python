@@ -772,3 +772,292 @@ class AzureAppConfigurationClient:
 
     def __exit__(self, *args: Any) -> None:
         self._impl.__exit__(*args)
+
+    @distributed_trace
+    def list_feature_flags(
+        self,
+        name_filter: Optional[str] = None,
+        label_filter: Optional[str] = None,
+        *,
+        tags_filter: Optional[List[str]] = None,
+        accept_datetime: Optional[Union[datetime, str]] = None,
+        **kwargs: Any,
+    ) -> ItemPaged["FeatureFlag"]:
+        """List the feature flags stored in the configuration service, optionally filtered by
+        name, label, tags and accept_datetime.
+
+        :param name_filter: Filter results based on their names. '*' can be used as wildcard in the beginning or end
+            of the filter.
+        :type name_filter: str or None
+        :param label_filter: Filter results based on their label. '*' can be used as wildcard in the beginning or end
+            of the filter.
+        :type label_filter: str or None
+        :keyword tags_filter: Filter results based on their tags.
+        :paramtype tags_filter: list[str] or None
+        :keyword accept_datetime: Retrieve FeatureFlag that existed at this datetime
+        :paramtype accept_datetime: ~datetime.datetime or str or None
+        :return: An iterator of :class:`~azure.appconfiguration.FeatureFlag`
+        :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.FeatureFlag]
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`, \
+            :class:`~azure.core.exceptions.ClientAuthenticationError`
+
+        Example
+
+        .. code-block:: python
+
+            from datetime import datetime, timedelta
+
+            accept_datetime = datetime.utcnow() + timedelta(days=-1)
+
+            all_feature_flags = client.list_feature_flags()
+            for item in all_feature_flags:
+                pass  # do something
+
+            filtered_feature_flags = client.list_feature_flags(
+                label_filter="Labe*", name_filter="Nam*", accept_datetime=str(accept_datetime)
+            )
+            for item in filtered_feature_flags:
+                pass  # do something
+        """
+        if isinstance(accept_datetime, datetime):
+            accept_datetime = str(accept_datetime)
+
+        return self._impl.get_feature_flags(  # type: ignore[return-value]
+            label=label_filter,
+            name=name_filter,
+            accept_datetime=accept_datetime,
+            tags=tags_filter,
+            cls=lambda objs: [FeatureFlag._from_generated(x) for x in objs],
+            **kwargs,
+        )
+
+    @distributed_trace
+    def get_feature_flag(
+        self,
+        name: str,
+        label: Optional[str] = None,
+        etag: Optional[str] = "*",
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
+        *,
+        accept_datetime: Optional[Union[datetime, str]] = None,
+        **kwargs: Any,
+    ) -> Union[None, "FeatureFlag"]:
+        """Get the matched FeatureFlag from Azure App Configuration service
+
+        :param name: Name of the FeatureFlag
+        :type name: str
+        :param label: Label used to identify the FeatureFlag. Default is `None`.
+        :type label: str or None
+        :param etag: Check if the FeatureFlag is changed. Set None to skip checking etag
+        :type etag: str or None
+        :param match_condition: The match condition to use upon the etag
+        :type match_condition: ~azure.core.MatchConditions
+        :keyword accept_datetime: Retrieve FeatureFlag that existed at this datetime
+        :paramtype accept_datetime: ~datetime.datetime or str or None
+        :return: The matched FeatureFlag object
+        :rtype: ~azure.appconfiguration.FeatureFlag or None
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`, \
+            :class:`~azure.core.exceptions.ClientAuthenticationError`, \
+            :class:`~azure.core.exceptions.ResourceNotFoundError`, \
+            :class:`~azure.core.exceptions.ResourceModifiedError`, \
+            :class:`~azure.core.exceptions.ResourceExistsError`
+
+        Example
+
+        .. code-block:: python
+
+            fetched_feature_flag = client.get_feature_flag(
+                name="MyFeature", label="MyLabel"
+            )
+        """
+        if isinstance(accept_datetime, datetime):
+            accept_datetime = str(accept_datetime)
+
+        error_map: Dict[int, Any] = {}
+        if match_condition == MatchConditions.IfNotModified:
+            error_map.update({412: ResourceModifiedError})
+        if match_condition == MatchConditions.IfPresent:
+            error_map.update({412: ResourceNotFoundError})
+        if match_condition == MatchConditions.IfMissing:
+            error_map.update({412: ResourceExistsError})
+
+        try:
+            feature_flag = self._impl.get_feature_flag(
+                name=name,
+                label=label,
+                accept_datetime=accept_datetime,
+                if_match=prep_if_match(etag, match_condition),
+                if_none_match=prep_if_none_match(etag, match_condition),
+                error_map=error_map,
+                **kwargs,
+            )
+            from ._models import FeatureFlag
+            return FeatureFlag._from_generated(feature_flag)
+        except ResourceNotModifiedError:
+            return None
+
+    @distributed_trace
+    def add_feature_flag(
+        self, feature_flag: "FeatureFlag", **kwargs: Any
+    ) -> "FeatureFlag":
+        """Add a FeatureFlag instance into the Azure App Configuration service.
+
+        :param feature_flag: The FeatureFlag object to be added
+        :type feature_flag: ~azure.appconfiguration.FeatureFlag
+        :return: The FeatureFlag object returned from the App Configuration service
+        :rtype: ~azure.appconfiguration.FeatureFlag
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`, \
+            :class:`~azure.core.exceptions.ClientAuthenticationError`, \
+            :class:`~azure.core.exceptions.ResourceExistsError`
+
+        Example
+
+        .. code-block:: python
+
+            feature_flag = FeatureFlag(
+                alias="MyFeature",
+                label="MyLabel",
+                description="my feature flag",
+                enabled=True,
+                tags={"my tag": "my tag value"}
+            )
+            added_feature_flag = client.add_feature_flag(feature_flag)
+        """
+        from ._models import FeatureFlag
+        error_map = {412: ResourceExistsError}
+        feature_flag_added = self._impl.put_feature_flag(
+            entity=feature_flag,
+            name=feature_flag.name,
+            label=feature_flag.label,
+            if_none_match="*",
+            error_map=error_map,
+            **kwargs,
+        )
+        return FeatureFlag._from_generated(feature_flag_added)
+
+    @distributed_trace
+    def set_feature_flag(
+        self,
+        feature_flag: "FeatureFlag",
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
+        *,
+        etag: Optional[str] = None,
+        **kwargs: Any,
+    ) -> "FeatureFlag":
+        """Add or update a FeatureFlag.
+        If the feature flag identified by name and label does not exist, this is a create.
+        Otherwise this is an update.
+
+        :param feature_flag: The FeatureFlag to be added (if not exists) \
+            or updated (if exists) to the service
+        :type feature_flag: ~azure.appconfiguration.FeatureFlag
+        :param match_condition: The match condition to use upon the etag
+        :type match_condition: ~azure.core.MatchConditions
+        :keyword etag: Check if the FeatureFlag is changed. \
+            Will use the value from param feature_flag if not set.
+        :paramtype etag: str or None
+        :return: The FeatureFlag returned from the service
+        :rtype: ~azure.appconfiguration.FeatureFlag
+        :raises: :class:`~azure.appconfiguration.ResourceReadOnlyError`, \
+            :class:`~azure.core.exceptions.HttpResponseError`, \
+            :class:`~azure.core.exceptions.ClientAuthenticationError`, \
+            :class:`~azure.core.exceptions.ResourceModifiedError`, \
+            :class:`~azure.core.exceptions.ResourceNotModifiedError`, \
+            :class:`~azure.core.exceptions.ResourceNotFoundError`, \
+            :class:`~azure.core.exceptions.ResourceExistsError`
+
+        Example
+
+        .. code-block:: python
+
+            feature_flag = FeatureFlag(
+                alias="MyFeature",
+                label="MyLabel",
+                description="my set feature flag",
+                enabled=True,
+                tags={"my tag": "my tag value"}
+            )
+            returned_feature_flag = client.set_feature_flag(feature_flag)
+        """
+        from ._models import FeatureFlag
+        error_map: Dict[int, Any] = {409: ResourceReadOnlyError}
+        if match_condition == MatchConditions.IfNotModified:
+            error_map.update({412: ResourceModifiedError})
+        if match_condition == MatchConditions.IfModified:
+            error_map.update({412: ResourceNotModifiedError})
+        if match_condition == MatchConditions.IfPresent:
+            error_map.update({412: ResourceNotFoundError})
+        if match_condition == MatchConditions.IfMissing:
+            error_map.update({412: ResourceExistsError})
+
+        feature_flag_set = self._impl.put_feature_flag(
+            entity=feature_flag,
+            name=feature_flag.name,
+            label=feature_flag.label,
+            if_match=prep_if_match(feature_flag.etag, match_condition),
+            if_none_match=prep_if_none_match(etag or feature_flag.etag, match_condition),
+            error_map=error_map,
+            **kwargs,
+        )
+        return FeatureFlag._from_generated(feature_flag_set)
+
+    @distributed_trace
+    def delete_feature_flag(  # pylint:disable=delete-operation-wrong-return-type
+        self,
+        name: str,
+        label: Optional[str] = None,
+        *,
+        etag: Optional[str] = None,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
+        **kwargs: Any,
+    ) -> Union[None, "FeatureFlag"]:
+        """Delete a FeatureFlag if it exists
+
+        :param name: Name used to identify the FeatureFlag
+        :type name: str
+        :param label: Label used to identify the FeatureFlag. Default is `None`.
+        :type label: str or None
+        :keyword etag: Check if the FeatureFlag is changed. Set None to skip checking etag
+        :paramtype etag: str or None
+        :keyword match_condition: The match condition to use upon the etag
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: The deleted FeatureFlag returned from the service, or None if it doesn't exist.
+        :rtype: ~azure.appconfiguration.FeatureFlag
+        :raises: :class:`~azure.appconfiguration.ResourceReadOnlyError`, \
+            :class:`~azure.core.exceptions.HttpResponseError`, \
+            :class:`~azure.core.exceptions.ClientAuthenticationError`, \
+            :class:`~azure.core.exceptions.ResourceModifiedError`, \
+            :class:`~azure.core.exceptions.ResourceNotModifiedError`, \
+            :class:`~azure.core.exceptions.ResourceNotFoundError`, \
+            :class:`~azure.core.exceptions.ResourceExistsError`
+
+        Example
+
+        .. code-block:: python
+
+            deleted_feature_flag = client.delete_feature_flag(
+                name="MyFeature", label="MyLabel"
+            )
+        """
+        from ._models import FeatureFlag
+        error_map: Dict[int, Any] = {409: ResourceReadOnlyError}
+        if match_condition == MatchConditions.IfNotModified:
+            error_map.update({412: ResourceModifiedError})
+        if match_condition == MatchConditions.IfModified:
+            error_map.update({412: ResourceNotModifiedError})
+        if match_condition == MatchConditions.IfPresent:
+            error_map.update({412: ResourceNotFoundError})
+        if match_condition == MatchConditions.IfMissing:
+            error_map.update({412: ResourceExistsError})
+
+        feature_flag_deleted = self._impl.delete_feature_flag(
+            name=name,
+            label=label,
+            if_match=prep_if_match(etag, match_condition),
+            if_none_match=prep_if_none_match(etag, match_condition),
+            error_map=error_map,
+            **kwargs,
+        )
+        if feature_flag_deleted:
+            return FeatureFlag._from_generated(feature_flag_deleted)
+        return None
