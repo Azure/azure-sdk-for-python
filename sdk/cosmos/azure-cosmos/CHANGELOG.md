@@ -7,6 +7,7 @@
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed bug introduced in 4.10.0b3 with explicitly setting `etag` keyword argument as `None` causing exceptions. See [PR 40282](https://github.com/Azure/azure-sdk-for-python/pull/40282).
 
 #### Other Changes
 

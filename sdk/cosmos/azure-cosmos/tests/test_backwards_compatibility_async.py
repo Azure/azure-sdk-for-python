@@ -127,6 +127,11 @@ class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
         item2 = await container.upsert_item({"id": str(uuid.uuid4()), "pk": 0}, etag=str(uuid.uuid4()),
                                      match_condition=MatchConditions.IfNotModified)
         assert item2 is not None
+        item = await container.create_item({"id": str(uuid.uuid4()), "pk": 0}, etag=None, match_condition=None)
+        assert item is not None
+        item2 = await container.upsert_item({"id": str(uuid.uuid4()), "pk": 0}, etag=None,
+                                            match_condition=None)
+        assert item2 is not None
         batch_operations = [
             ("create", ({"id": str(uuid.uuid4()), "pk": 0},)),
             ("replace", (item2['id'], {"id": str(uuid.uuid4()), "pk": 0})),
