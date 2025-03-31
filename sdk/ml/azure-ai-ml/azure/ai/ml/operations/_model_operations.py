@@ -27,7 +27,6 @@ from azure.ai.ml._restclient.model_dataplane import AzureMachineLearningWorkspac
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
-
 from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
 from azure.ai.ml._restclient.v2023_08_01_preview.models import ListViewType, ModelVersion
 from azure.ai.ml._scope_dependent_operations import (
@@ -117,7 +116,7 @@ class ModelOperations(_ScopeDependentOperations):
         self._model_versions_operation = service_client.model_versions
         self._model_container_operation = service_client.model_containers
         if service_client_model_dataplane is not None:
-            self._model_extensive_operation = service_client_model_dataplane.extensive_model
+            self._model_dataplane_operation = service_client_model_dataplane.models
         self._service_client = service_client
         self._datastore_operation = datastore_operations
         self._all_operations = all_operations
@@ -305,7 +304,7 @@ class ModelOperations(_ScopeDependentOperations):
         # if continuation token is None and system_metadata attribute found
         # we need to send the system_metadata values in the request
         return (
-            self._model_extensive_operation.begin_create_or_update_model_with_system_metadata(
+            self._model_dataplane_operation.begin_create_or_update_model_with_system_metadata(
                 subscription_id=self._operation_scope._subscription_id,
                 name=str(name),
                 version=str(version),
@@ -316,7 +315,7 @@ class ModelOperations(_ScopeDependentOperations):
             if self._registry_name
             and cont_token is None
             and hasattr(model_version_resource.properties, "system_metadata")
-            and self._model_extensive_operation is not None
+            and self._model_dataplane_operation is not None
             else self._model_versions_operation.begin_create_or_update(
                 name=name,
                 version=version,
