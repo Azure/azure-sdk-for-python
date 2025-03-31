@@ -9,9 +9,6 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from typing import Any
 
-if TYPE_CHECKING:
-    import typing_extensions
 
-# test_allowed_imports
-if TYPE_CHECKING:
-    from math import PI
+def foo() -> Any:
+    return 42
