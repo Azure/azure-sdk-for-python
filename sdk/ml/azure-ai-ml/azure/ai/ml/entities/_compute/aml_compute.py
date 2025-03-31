@@ -6,9 +6,7 @@
 
 from typing import Any, Dict, Optional
 
-from azure.ai.ml._restclient.v2022_12_01_preview.models import (
-    AmlCompute as AmlComputeRest,
-)
+from azure.ai.ml._restclient.v2022_12_01_preview.models import AmlCompute as AmlComputeRest
 from azure.ai.ml._restclient.v2022_12_01_preview.models import (
     AmlComputeProperties,
     ComputeResource,
@@ -18,11 +16,7 @@ from azure.ai.ml._restclient.v2022_12_01_preview.models import (
 )
 from azure.ai.ml._schema._utils.utils import get_subnet_str
 from azure.ai.ml._schema.compute.aml_compute import AmlComputeSchema
-from azure.ai.ml._utils.utils import (
-    camel_to_snake,
-    snake_to_pascal,
-    to_iso_duration_format,
-)
+from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal, to_iso_duration_format
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._compute import ComputeDefaults, ComputeType
 from azure.ai.ml.entities._credentials import IdentityConfiguration
@@ -251,7 +245,7 @@ class AmlCompute(Compute):
             ),
         )
         remote_login_public_access = "Enabled"
-        disableLocalAuth = not (self.ssh_settings)
+        disableLocalAuth = not self.ssh_settings
         if self.ssh_public_access_enabled is not None:
             remote_login_public_access = "Enabled" if self.ssh_public_access_enabled else "Disabled"
 

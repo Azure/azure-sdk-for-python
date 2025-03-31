@@ -135,6 +135,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                 else:
                     # on startup do this in foreground
                     await self._endpoints_health_check(**kwargs)
+                    self.startup = False
 
     async def _endpoints_health_check(self, **kwargs):
         """Gets the database account for each endpoint.

@@ -227,7 +227,7 @@ class DataLakeDirectoryClient(PathClient):
         return self._create('directory', metadata=metadata, **kwargs)
 
     @distributed_trace
-    def delete_directory(self, **kwargs: Any) -> Dict[str, Any]:  # pylint: disable=delete-operation-wrong-return-type
+    def delete_directory(self, **kwargs: Any) -> None:
         """
         Marks the specified directory for deletion.
 
@@ -270,7 +270,7 @@ class DataLakeDirectoryClient(PathClient):
                 :dedent: 4
                 :caption: Delete directory.
         """
-        return self._delete(recursive=True, **kwargs)
+        return self._delete(recursive=True, **kwargs)  # type: ignore [return-value]
 
     @distributed_trace
     def get_directory_properties(self, **kwargs: Any) -> DirectoryProperties:
