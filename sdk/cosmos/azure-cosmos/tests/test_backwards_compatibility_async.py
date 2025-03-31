@@ -122,9 +122,9 @@ class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
             assert e.status_code == 404
 
         # Item
-        item = await container.create_item({"id": str(uuid.uuid4()), "pk": 0}, etag=None, match_condition=MatchConditions.IfModified)
+        item = await container.create_item({"id": str(uuid.uuid4()), "pk": 0}, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
         assert item is not None
-        item2 = await container.upsert_item({"id": str(uuid.uuid4()), "pk": 0}, etag=None,
+        item2 = await container.upsert_item({"id": str(uuid.uuid4()), "pk": 0}, etag=str(uuid.uuid4()),
                                      match_condition=MatchConditions.IfNotModified)
         assert item2 is not None
         batch_operations = [

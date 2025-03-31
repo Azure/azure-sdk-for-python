@@ -139,9 +139,9 @@ class TestBackwardsCompatibility(unittest.TestCase):
             assert e.status_code == 404
 
         # Item
-        item = container.create_item({"id": str(uuid.uuid4()), "pk": 0}, etag=None, match_condition=MatchConditions.IfModified)
+        item = container.create_item({"id": str(uuid.uuid4()), "pk": 0}, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
         assert item is not None
-        item2 = container.upsert_item({"id": str(uuid.uuid4()), "pk": 0}, etag=None,
+        item2 = container.upsert_item({"id": str(uuid.uuid4()), "pk": 0}, etag=str(uuid.uuid4()),
                                      match_condition=MatchConditions.IfNotModified)
         assert item2 is not None
         batch_operations = [
