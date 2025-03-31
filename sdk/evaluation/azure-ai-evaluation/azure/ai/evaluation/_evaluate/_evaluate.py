@@ -507,7 +507,7 @@ def _apply_target_to_data(
     """
 
     _run_name = kwargs.get("_run_name")
-    with TargetRunContext():
+    with TargetRunContext(batch_client):
         run: BatchClientRun = batch_client.run(
             flow=target,
             display_name=evaluation_name,
@@ -516,9 +516,8 @@ def _apply_target_to_data(
             name=_run_name,
             evaluator_name=getattr(target, "__qualname__", "TARGET"),
         )
-
-    target_output: pd.DataFrame = batch_client.get_details(run, all_results=True)
-    run_summary = batch_client.get_run_summary(run)
+        target_output: pd.DataFrame = batch_client.get_details(run, all_results=True)
+        run_summary = batch_client.get_run_summary(run)
 
     if run_summary["completed_lines"] == 0:
         msg = (

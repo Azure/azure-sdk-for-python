@@ -40,6 +40,7 @@ from ._utils_deprecated import (
     async_run_allowing_running_loop,
     convert_eager_flow_output_to_dict,
 )
+from ._openai_injector import CaptureOpenAITokenUsage
 
 
 MAX_WORKER_COUNT: Final[int] = 10
@@ -301,35 +302,34 @@ class BatchEngine:
 
             try:
                 # TODO ralphe: Handle line timeouts here
-
-                # NOTE: In the legacy code, any synchronous functions were executed in a different process
-                #       for isolation reasons. However this isolation was violated in the way the code was
-                #       used by the evaluation SDK (e.g. you need to have the module already loaded to pass the
-                #       callable into the batch engine, so starting a new process to examine it was redundant).
-                #       It also came with performance and memory usage costs (each line was processed in a
-                #       separate process up to a maximum of 4), and these processes were created and torn down
-                #       too frequently.
-                #       For now we will just run the function in the current process, but in the future we may
-                #       want to consider running the function in a separate process for isolation reasons.
-                output: Any
-                if is_async_callable(self._func):
-                    output = await self._func(**inputs)
-                else:
-                    # to maximize the parallelism, we run the synchronous function in a separate thread
-                    # and await its result
-                    output = await asyncio.get_event_loop().run_in_executor(
-                        self._executor,
-                        partial(self._func, **inputs))
-                
-                # This should in theory never happen but as an extra precaution, let's check if the output
-                # is awaitable and await it if it is.
-                if inspect.isawaitable(output):
-                    output = await output
+                with CaptureOpenAITokenUsage() as captured_tokens:
+                    # NOTE: In the legacy code, any synchronous functions were executed in a different process
+                    #       for isolation reasons. However this isolation was violated in the way the code was
+                    #       used by the evaluation SDK (e.g. you need to have the module already loaded to pass the
+                    #       callable into the batch engine, so starting a new process to examine it was redundant).
+                    #       It also came with performance and memory usage costs (each line was processed in a
+                    #       separate process up to a maximum of 4), and these processes were created and torn down
+                    #       too frequently.
+                    #       For now we will just run the function in the current process, but in the future we may
+                    #       want to consider running the function in a separate process for isolation reasons.
+                    output: Any
+                    if is_async_callable(self._func):
+                        output = await self._func(**inputs)
+                    else:
+                        # to maximize the parallelism, we run the synchronous function in a separate thread
+                        # and await its result
+                        output = await asyncio.get_event_loop().run_in_executor(
+                            self._executor,
+                            partial(self._func, **inputs))
+                    
+                    # This should in theory never happen but as an extra precaution, let's check if the output
+                    # is awaitable and await it if it is.
+                    if inspect.isawaitable(output):
+                        output = await output
 
                 details.status = BatchStatus.Completed
                 details.result = convert_eager_flow_output_to_dict(output)
-
-                # TODO figure out how to get the token metrics here
+                details.tokens.update(captured_tokens)
             except Exception as ex:
                 details.status = BatchStatus.Failed
                 details.error = BatchRunError(

@@ -6,7 +6,7 @@ import logging
 import pandas as pd
 import sys
 from collections import defaultdict
-from concurrent.futures import Future, ThreadPoolExecutor
+from concurrent.futures import Future
 from os import PathLike
 from typing import Any, Callable, Dict, Final, List, Mapping, Optional, Sequence, Union, cast
 
@@ -15,6 +15,7 @@ from ..._legacy._batch_engine._run_submitter import RunSubmitter
 from ..._legacy._batch_engine._config import BatchEngineConfig
 from ..._legacy._batch_engine._run import Run
 from ..._legacy._adapters._constants import LINE_NUMBER
+from ..._legacy._common._thread_pool_executor_with_context import ThreadPoolExecutorWithContext
 
 
 LOGGER = logging.getLogger(__name__)
@@ -23,7 +24,7 @@ LOGGER = logging.getLogger(__name__)
 class RunSubmitterClient:
     def __init__(self, config: Optional[BatchEngineConfig] = None) -> None:
         self._config = config or BatchEngineConfig(LOGGER, use_async=True)
-        self._thread_pool = ThreadPoolExecutor(
+        self._thread_pool = ThreadPoolExecutorWithContext(
             thread_name_prefix="evaluators_thread",
             max_workers=self._config.max_concurrency)
 

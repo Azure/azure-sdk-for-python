@@ -25,9 +25,9 @@ def start_trace(
     :type collection: typing.Optional[str]
     """
 
-    logging.debug("injecting OpenAI API...")
-    inject_openai_api()
-    logging.debug("OpenAI API injected.")
+    # logging.debug("injecting OpenAI API...")
+    # inject_openai_api()
+    # logging.debug("OpenAI API injected.")
 
     res_attrs: Dict[str, str] = {"service.name": "promptflow"}
     if resource_attributes:
