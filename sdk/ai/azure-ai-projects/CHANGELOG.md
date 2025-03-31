@@ -3,6 +3,7 @@
 ## 1.0.0b9 (Unreleased)
 
 ### Features added
+* Add Prompty support to AI Foundry Projects SDK
 
 ### Sample updates
 
