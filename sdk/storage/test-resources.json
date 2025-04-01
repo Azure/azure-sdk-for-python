@@ -138,24 +138,6 @@
         ]
         },
         {
-            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
-            "apiVersion": "[variables('storageApiVersion')]",
-            "name": "[concat(variables('primaryAccountName'), '/default/mycontainerdirectory')]",
-            "properties": {},
-            "dependsOn": [
-                "[concat('Microsoft.Storage/storageAccounts/', variables('primaryAccountName'))]"
-            ]
-        },
-        {
-            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
-            "apiVersion": "[variables('storageApiVersion')]",
-            "name": "[concat(variables('primaryAccountName'), '/default/mycontainerdirectory2')]",
-            "properties": {},
-            "dependsOn": [
-                "[concat('Microsoft.Storage/storageAccounts/', variables('primaryAccountName'))]"
-            ]
-        },
-        {
             "type": "Microsoft.Storage/storageAccounts/fileServices",
             "apiVersion": "[variables('storageApiVersion')]",
             "name": "[concat(variables('primaryAccountName'), '/default')]",

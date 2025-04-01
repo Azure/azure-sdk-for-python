@@ -26,7 +26,7 @@ DESCRIPTION:
 '''
 
 import os
-from azure.storage.blob import BlobServiceClient
+from azure.storage.blob import BlobServiceClient, ContainerClient
 
 class DirectoryClient:
   def __init__(self, connection_string, container_name):
@@ -170,6 +170,8 @@ except KeyError:
   sys.exit(1)
 
 CONTAINER_NAME = "mycontainerdirectory2"
+container = ContainerClient.from_connection_string(CONNECTION_STRING, CONTAINER_NAME)
+container.create_container()
 
 SAMPLE_DIRS = [
   'cats/calico',
