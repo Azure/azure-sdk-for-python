@@ -162,7 +162,7 @@ class Operations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Operation], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.Operation], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -720,7 +720,7 @@ class EndpointsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.EndpointResource], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.EndpointResource], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1879,7 +1879,7 @@ class ServiceConfigurationsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ServiceConfigurationResource], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.ServiceConfigurationResource], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2383,7 +2383,7 @@ class PublicCloudConnectorsOperations:
         self,
         resource_group_name: str,
         public_cloud_connector: str,
-        properties: _models.PublicCloudConnector,
+        properties: _models.PublicCloudConnectorUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2396,7 +2396,7 @@ class PublicCloudConnectorsOperations:
         :param public_cloud_connector: Represent public cloud connectors resource. Required.
         :type public_cloud_connector: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.hybridconnectivity.models.PublicCloudConnector
+        :type properties: ~azure.mgmt.hybridconnectivity.models.PublicCloudConnectorUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2464,7 +2464,7 @@ class PublicCloudConnectorsOperations:
         self,
         resource_group_name: str,
         public_cloud_connector: str,
-        properties: Union[_models.PublicCloudConnector, JSON, IO[bytes]],
+        properties: Union[_models.PublicCloudConnectorUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.PublicCloudConnector:
         """Update a PublicCloudConnector.
@@ -2475,8 +2475,8 @@ class PublicCloudConnectorsOperations:
         :param public_cloud_connector: Represent public cloud connectors resource. Required.
         :type public_cloud_connector: str
         :param properties: The resource properties to be updated. Is one of the following types:
-         PublicCloudConnector, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.hybridconnectivity.models.PublicCloudConnector or JSON or
+         PublicCloudConnectorUpdate, JSON, IO[bytes] Required.
+        :type properties: ~azure.mgmt.hybridconnectivity.models.PublicCloudConnectorUpdate or JSON or
          IO[bytes]
         :return: PublicCloudConnector. The PublicCloudConnector is compatible with MutableMapping
         :rtype: ~azure.mgmt.hybridconnectivity.models.PublicCloudConnector
@@ -2667,7 +2667,7 @@ class PublicCloudConnectorsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.PublicCloudConnector], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.PublicCloudConnector], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2752,7 +2752,7 @@ class PublicCloudConnectorsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.PublicCloudConnector], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.PublicCloudConnector], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -3158,7 +3158,7 @@ class SolutionConfigurationsOperations:
         self,
         resource_uri: str,
         solution_configuration: str,
-        properties: _models.SolutionConfiguration,
+        properties: _models.SolutionConfigurationUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3171,7 +3171,7 @@ class SolutionConfigurationsOperations:
         :param solution_configuration: Represent Solution Configuration Resource. Required.
         :type solution_configuration: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.hybridconnectivity.models.SolutionConfiguration
+        :type properties: ~azure.mgmt.hybridconnectivity.models.SolutionConfigurationUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3239,7 +3239,7 @@ class SolutionConfigurationsOperations:
         self,
         resource_uri: str,
         solution_configuration: str,
-        properties: Union[_models.SolutionConfiguration, JSON, IO[bytes]],
+        properties: Union[_models.SolutionConfigurationUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.SolutionConfiguration:
         """Update a SolutionConfiguration.
@@ -3250,8 +3250,8 @@ class SolutionConfigurationsOperations:
         :param solution_configuration: Represent Solution Configuration Resource. Required.
         :type solution_configuration: str
         :param properties: The resource properties to be updated. Is one of the following types:
-         SolutionConfiguration, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.hybridconnectivity.models.SolutionConfiguration or JSON or
+         SolutionConfigurationUpdate, JSON, IO[bytes] Required.
+        :type properties: ~azure.mgmt.hybridconnectivity.models.SolutionConfigurationUpdate or JSON or
          IO[bytes]
         :return: SolutionConfiguration. The SolutionConfiguration is compatible with MutableMapping
         :rtype: ~azure.mgmt.hybridconnectivity.models.SolutionConfiguration
@@ -3437,7 +3437,7 @@ class SolutionConfigurationsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.SolutionConfiguration], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.SolutionConfiguration], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -3746,7 +3746,7 @@ class InventoryOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.InventoryResource], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.InventoryResource], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -3923,7 +3923,7 @@ class SolutionTypesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.SolutionTypeResource], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.SolutionTypeResource], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -4008,7 +4008,7 @@ class SolutionTypesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.SolutionTypeResource], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.SolutionTypeResource], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)

@@ -12,6 +12,7 @@
   - Model `ServiceConfigurationResource` added property `properties`
   - Added model `AADProfileProperties`
   - Added model `AwsCloudProfile`
+  - Added model `AwsCloudProfileUpdate`
   - Added enum `CloudNativeType`
   - Added model `ExtensionResource`
   - Added model `GenerateAwsTemplateRequest`
@@ -22,19 +23,24 @@
   - Added model `OperationStatusResult`
   - Added model `PublicCloudConnector`
   - Added model `PublicCloudConnectorProperties`
+  - Added model `PublicCloudConnectorPropertiesUpdate`
+  - Added model `PublicCloudConnectorUpdate`
   - Added model `RelayNamespaceAccessProperties`
   - Added enum `ResourceProvisioningState`
   - Added model `ServiceConfigurationProperties`
   - Added model `ServiceConfigurationPropertiesPatch`
   - Added model `SolutionConfiguration`
   - Added model `SolutionConfigurationProperties`
+  - Added model `SolutionConfigurationPropertiesUpdate`
   - Added enum `SolutionConfigurationStatus`
+  - Added model `SolutionConfigurationUpdate`
   - Added model `SolutionSettings`
   - Added model `SolutionTypeProperties`
   - Added model `SolutionTypeResource`
   - Added model `SolutionTypeSettings`
   - Added model `SolutionTypeSettingsProperties`
   - Added model `TrackedResource`
+  - Added model `TrackedResourceUpdate`
   - Added operation group `GenerateAwsTemplateOperations`
   - Added operation group `InventoryOperations`
   - Added operation group `PublicCloudConnectorsOperations`

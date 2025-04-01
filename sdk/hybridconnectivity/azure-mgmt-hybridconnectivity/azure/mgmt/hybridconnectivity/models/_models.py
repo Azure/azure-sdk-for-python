@@ -21,7 +21,6 @@ if TYPE_CHECKING:
 class AADProfileProperties(_model_base.Model):
     """The AAD Profile.
 
-
     :ivar server_id: The arc ingress gateway server app id. Required.
     :vartype server_id: str
     :ivar tenant_id: The target resource home tenant id. Required.
@@ -55,7 +54,6 @@ class AADProfileProperties(_model_base.Model):
 class AwsCloudProfile(_model_base.Model):
     """cloud profile for AWS.
 
-
     :ivar account_id: Account id for the AWS account. Required.
     :vartype account_id: str
     :ivar excluded_accounts: List of AWS accounts which need to be excluded.
@@ -85,6 +83,36 @@ class AwsCloudProfile(_model_base.Model):
         account_id: str,
         excluded_accounts: Optional[List[str]] = None,
         is_organizational_account: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AwsCloudProfileUpdate(_model_base.Model):
+    """cloud profile for AWS.
+
+    :ivar excluded_accounts: List of AWS accounts which need to be excluded.
+    :vartype excluded_accounts: list[str]
+    """
+
+    excluded_accounts: Optional[List[str]] = rest_field(
+        name="excludedAccounts", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of AWS accounts which need to be excluded."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        excluded_accounts: Optional[List[str]] = None,
     ) -> None: ...
 
     @overload
@@ -158,9 +186,6 @@ class EndpointAccessResource(_model_base.Model):
 class EndpointProperties(_model_base.Model):
     """Endpoint details.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar type: The type of endpoint. Required. Known values are: "default" and "custom".
     :vartype type: str or ~azure.mgmt.hybridconnectivity.models.Type
     :ivar resource_id: The resource Id of the connectivity endpoint (optional).
@@ -200,8 +225,6 @@ class EndpointProperties(_model_base.Model):
 class Resource(_model_base.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
@@ -230,8 +253,6 @@ class Resource(_model_base.Model):
 class ExtensionResource(Resource):
     """The base extension resource.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
@@ -248,8 +269,6 @@ class ExtensionResource(Resource):
 
 class EndpointResource(ExtensionResource):
     """The endpoint for the target resource.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -292,8 +311,6 @@ class EndpointResource(ExtensionResource):
 class ErrorAdditionalInfo(_model_base.Model):
     """The resource management error additional info.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
@@ -308,8 +325,6 @@ class ErrorAdditionalInfo(_model_base.Model):
 
 class ErrorDetail(_model_base.Model):
     """The error detail.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar code: The error code.
     :vartype code: str
@@ -368,8 +383,6 @@ class ErrorResponse(_model_base.Model):
 
 class GenerateAwsTemplateRequest(_model_base.Model):
     """ConnectorId and SolutionTypes and their properties to Generate AWS CFT Template.
-
-    All required parameters must be populated in order to send to server.
 
     :ivar connector_id: The name of public cloud connector. Required.
     :vartype connector_id: str
@@ -470,7 +483,6 @@ class IngressGatewayResource(_model_base.Model):
 class IngressProfileProperties(_model_base.Model):
     """Ingress gateway profile.
 
-
     :ivar hostname: The ingress hostname. Required.
     :vartype hostname: str
     :ivar aad_profile: The AAD Profile. Required.
@@ -525,8 +537,6 @@ class IngressProfileProperties(_model_base.Model):
 
 class InventoryProperties(_model_base.Model):
     """Definition of inventory.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar cloud_native_type: Gets or sets the cloud native resource type. "ec2"
     :vartype cloud_native_type: str or ~azure.mgmt.hybridconnectivity.models.CloudNativeType
@@ -597,8 +607,6 @@ class ProxyResource(Resource):
     """The resource model definition for a Azure Resource Manager proxy resource. It will not have
     tags and a location.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
@@ -616,8 +624,6 @@ class ProxyResource(Resource):
 class InventoryResource(ProxyResource):
     """Concrete proxy resource types can be created by aliasing this type using a specific property
     type.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -724,8 +730,6 @@ class ListIngressGatewayCredentialsRequest(_model_base.Model):
 class ManagedProxyRequest(_model_base.Model):
     """Represent ManageProxy Request object.
 
-    All required parameters must be populated in order to send to server.
-
     :ivar service: The name of the service. Required.
     :vartype service: str
     :ivar hostname: The target host name.
@@ -768,7 +772,6 @@ class ManagedProxyRequest(_model_base.Model):
 class ManagedProxyResource(_model_base.Model):
     """Managed Proxy.
 
-
     :ivar proxy: The short lived proxy name. Required.
     :vartype proxy: str
     :ivar expires_on: The expiration time of short lived proxy name in unix epoch. Required.
@@ -801,8 +804,6 @@ class ManagedProxyResource(_model_base.Model):
 
 class Operation(_model_base.Model):
     """Details of a REST API operation, returned from the Resource Provider Operations API.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
      "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
@@ -861,8 +862,6 @@ class Operation(_model_base.Model):
 class OperationDisplay(_model_base.Model):
     """Localized display information for and operation.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
     :vartype provider: str
@@ -893,9 +892,6 @@ class OperationDisplay(_model_base.Model):
 
 class OperationStatusResult(_model_base.Model):
     """The current status of an async operation.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar id: Fully qualified ID for the async operation.
     :vartype id: str
@@ -974,9 +970,6 @@ class TrackedResource(Resource):
     """The resource model definition for an Azure Resource Manager tracked top level resource which
     has 'tags' and a 'location'.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
@@ -1020,9 +1013,6 @@ class TrackedResource(Resource):
 
 class PublicCloudConnector(TrackedResource):
     """Public Cloud Connector.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -1071,9 +1061,6 @@ class PublicCloudConnector(TrackedResource):
 class PublicCloudConnectorProperties(_model_base.Model):
     """Properties of public cloud connectors.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar aws_cloud_profile: Cloud profile for AWS. Required.
     :vartype aws_cloud_profile: ~azure.mgmt.hybridconnectivity.models.AwsCloudProfile
     :ivar host_type: Host cloud the public cloud connector. Required. "AWS"
@@ -1118,11 +1105,122 @@ class PublicCloudConnectorProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class PublicCloudConnectorPropertiesUpdate(_model_base.Model):
+    """Properties of public cloud connectors.
+
+    :ivar aws_cloud_profile: Cloud profile for AWS.
+    :vartype aws_cloud_profile: ~azure.mgmt.hybridconnectivity.models.AwsCloudProfileUpdate
+    """
+
+    aws_cloud_profile: Optional["_models.AwsCloudProfileUpdate"] = rest_field(
+        name="awsCloudProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Cloud profile for AWS."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        aws_cloud_profile: Optional["_models.AwsCloudProfileUpdate"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TrackedResourceUpdate(Resource):
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.hybridconnectivity.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PublicCloudConnectorUpdate(TrackedResourceUpdate):
+    """Public Cloud Connector.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.hybridconnectivity.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.hybridconnectivity.models.PublicCloudConnectorPropertiesUpdate
+    """
+
+    properties: Optional["_models.PublicCloudConnectorPropertiesUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        properties: Optional["_models.PublicCloudConnectorPropertiesUpdate"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class RelayNamespaceAccessProperties(_model_base.Model):
     """Azure relay hybrid connection access properties.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar namespace_name: The namespace name. Required.
     :vartype namespace_name: str
@@ -1181,9 +1279,6 @@ class RelayNamespaceAccessProperties(_model_base.Model):
 
 class ServiceConfigurationProperties(_model_base.Model):
     """Service configuration details.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar service_name: Name of the service. Required. Known values are: "SSH" and "WAC".
     :vartype service_name: str or ~azure.mgmt.hybridconnectivity.models.ServiceName
@@ -1262,8 +1357,6 @@ class ServiceConfigurationPropertiesPatch(_model_base.Model):
 
 class ServiceConfigurationResource(ExtensionResource):
     """The service configuration details associated with the target resource.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -1376,8 +1469,6 @@ class ServiceConfigurationResourcePatch(_model_base.Model):
 class SolutionConfiguration(ExtensionResource):
     """Solution Configuration.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
@@ -1418,9 +1509,6 @@ class SolutionConfiguration(ExtensionResource):
 
 class SolutionConfigurationProperties(_model_base.Model):
     """Solution configuration resource.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar provisioning_state: The resource provisioning state. Known values are: "Succeeded",
      "Failed", and "Canceled".
@@ -1463,6 +1551,85 @@ class SolutionConfigurationProperties(_model_base.Model):
         *,
         solution_type: str,
         solution_settings: Optional["_models.SolutionSettings"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SolutionConfigurationPropertiesUpdate(_model_base.Model):
+    """Solution configuration resource.
+
+    :ivar solution_type: The type of the solution.
+    :vartype solution_type: str
+    :ivar solution_settings: Solution settings.
+    :vartype solution_settings: ~azure.mgmt.hybridconnectivity.models.SolutionSettings
+    """
+
+    solution_type: Optional[str] = rest_field(
+        name="solutionType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of the solution."""
+    solution_settings: Optional["_models.SolutionSettings"] = rest_field(
+        name="solutionSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Solution settings."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        solution_type: Optional[str] = None,
+        solution_settings: Optional["_models.SolutionSettings"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SolutionConfigurationUpdate(ProxyResource):
+    """Solution Configuration.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.hybridconnectivity.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties:
+     ~azure.mgmt.hybridconnectivity.models.SolutionConfigurationPropertiesUpdate
+    """
+
+    properties: Optional["_models.SolutionConfigurationPropertiesUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.SolutionConfigurationPropertiesUpdate"] = None,
     ) -> None: ...
 
     @overload
@@ -1534,8 +1701,6 @@ class SolutionTypeResource(ProxyResource):
     """Concrete proxy resource types can be created by aliasing this type using a specific property
     type.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
@@ -1577,8 +1742,6 @@ class SolutionTypeResource(ProxyResource):
 class SolutionTypeSettings(_model_base.Model):
     """The properties of Solution Type.
 
-    All required parameters must be populated in order to send to server.
-
     :ivar solution_type: The type of the solution. Required.
     :vartype solution_type: str
     :ivar solution_settings: Solution settings.
@@ -1613,7 +1776,6 @@ class SolutionTypeSettings(_model_base.Model):
 
 class SolutionTypeSettingsProperties(_model_base.Model):
     """Represent Solution settings properties description array.
-
 
     :ivar name: The name of the solution setting property. Required.
     :vartype name: str
