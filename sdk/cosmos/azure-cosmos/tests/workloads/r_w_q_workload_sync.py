@@ -2,7 +2,8 @@ import os
 import random
 import sys
 
-from workload_configs import COSMOS_URI, COSMOS_KEY, PREFERRED_LOCATIONS, USE_MULTIPLE_WRITABLE_LOCATIONS, CONCURRENT_REQUESTS
+from workload_configs import (COSMOS_URI, COSMOS_KEY, PREFERRED_LOCATIONS, USE_MULTIPLE_WRITABLE_LOCATIONS,
+                              CONCURRENT_REQUESTS, COSMOS_DATABASE, COSMOS_CONTAINER)
 
 sys.path.append(r"./")
 
@@ -12,7 +13,6 @@ import time
 from datetime import datetime
 
 import logging
-from logging.handlers import RotatingFileHandler
 from logging.handlers import RotatingFileHandler
 
 
@@ -54,8 +54,8 @@ def run_workload(client_id, client_logger):
                            user_agent=str(client_id) + "-" + datetime.now().strftime(
                                "%Y%m%d-%H%M%S"), preferred_locations=PREFERRED_LOCATIONS,
                       connection_policy=connectionPolicy) as client:
-        db = client.get_database_client("ycsb")
-        cont = db.get_container_client("usertable")
+        db = client.get_database_client(COSMOS_DATABASE)
+        cont = db.get_container_client(COSMOS_CONTAINER)
         time.sleep(1)
 
         while True:

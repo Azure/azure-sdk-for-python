@@ -4,8 +4,7 @@ import sys
 
 from azure.cosmos import documents
 from workload_configs import (COSMOS_URI, COSMOS_KEY, PREFERRED_LOCATIONS, USE_MULTIPLE_WRITABLE_LOCATIONS,
-                              CONCURRENT_REQUESTS, COSMOS_CONTAINER, COSMOS_DATABASE)
-
+                              CONCURRENT_REQUESTS, COSMOS_DATABASE, COSMOS_CONTAINER)
 sys.path.append(r"./")
 
 from azure.cosmos.aio import CosmosClient as AsyncClient
@@ -22,6 +21,13 @@ from logging.handlers import RotatingFileHandler
 def get_random_item():
     random_int = random.randint(1, 10000)
     return {"id": "Simon-" + str(random_int), "pk": "pk-" + str(random_int)}
+
+
+async def upsert_item_concurrently(container, num_upserts):
+    tasks = []
+    for _ in range(num_upserts):
+        tasks.append(container.upsert_item(get_random_item()))
+    await asyncio.gather(*tasks)
 
 
 async def read_item_concurrently(container, num_upserts):
@@ -49,25 +55,25 @@ async def perform_query(container):
 
 
 async def run_workload(client_id, client_logger):
-
     connectionPolicy = documents.ConnectionPolicy()
     connectionPolicy.UseMultipleWriteLocations = USE_MULTIPLE_WRITABLE_LOCATIONS
-    async with AsyncClient(COSMOS_URI, COSMOS_KEY,
+    client = AsyncClient(COSMOS_URI, COSMOS_KEY,
                            enable_diagnostics_logging=True, logger=client_logger,
                            user_agent=str(client_id) + "-" + datetime.now().strftime(
                                "%Y%m%d-%H%M%S"), preferred_locations=PREFERRED_LOCATIONS,
-                           connection_policy=connectionPolicy) as client:
-        db = client.get_database_client(COSMOS_DATABASE)
-        cont = db.get_container_client(COSMOS_CONTAINER)
-        time.sleep(1)
+                           connection_policy=connectionPolicy)
+    db = client.get_database_client(COSMOS_DATABASE)
+    cont = db.get_container_client(COSMOS_CONTAINER)
+    time.sleep(1)
 
-        while True:
-            try:
-                await read_item_concurrently(cont, CONCURRENT_REQUESTS)
-                await query_items_concurrently(cont, 2)
-            except Exception as e:
-                client_logger.info("Exception in application layer")
-                client_logger.error(e)
+    while True:
+        try:
+            await upsert_item_concurrently(cont, CONCURRENT_REQUESTS)
+            await read_item_concurrently(cont, CONCURRENT_REQUESTS)
+            await query_items_concurrently(cont, 2)
+        except Exception as e:
+            client_logger.info("Exception in application layer")
+            client_logger.error(e)
 
 
 if __name__ == "__main__":

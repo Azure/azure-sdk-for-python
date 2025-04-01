@@ -5,7 +5,7 @@ import sys
 import aiohttp
 
 from azure.cosmos import documents
-from workload_configs import COSMOS_KEY, PREFERRED_LOCATIONS, CONCURRENT_REQUESTS, COSMOS_PROXY_URI
+from workload_configs import COSMOS_KEY, PREFERRED_LOCATIONS, CONCURRENT_REQUESTS, COSMOS_PROXY_URI, COSMOS_CONTAINER, COSMOS_DATABASE
 from workload_configs import USE_MULTIPLE_WRITABLE_LOCATIONS
 
 sys.path.append(r"./")
@@ -60,8 +60,8 @@ async def run_workload(client_id, client_logger):
                                enable_diagnostics_logging=True, logger=client_logger, transport=transport,
                                user_agent=str(client_id) + "-" + datetime.now().strftime(
                                    "%Y%m%d-%H%M%S"), connection_policy=connectionPolicy) as client:
-            db = client.get_database_client("ycsb")
-            cont = db.get_container_client("usertable")
+            db = client.get_database_client(COSMOS_DATABASE)
+            cont = db.get_container_client(COSMOS_CONTAINER)
             time.sleep(1)
 
             while True:
