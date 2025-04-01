@@ -20,12 +20,12 @@ class TestSqlManagementDatabaseAdvisorsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_database(self, resource_group):
+    def test_database_advisors_list_by_database(self, resource_group):
         response = self.client.database_advisors.list_by_database(
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -33,13 +33,13 @@ class TestSqlManagementDatabaseAdvisorsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_database_advisors_get(self, resource_group):
         response = self.client.database_advisors.get(
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
             advisor_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -47,7 +47,7 @@ class TestSqlManagementDatabaseAdvisorsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update(self, resource_group):
+    def test_database_advisors_update(self, resource_group):
         response = self.client.database_advisors.update(
             resource_group_name=resource_group.name,
             server_name="str",
@@ -76,7 +76,7 @@ class TestSqlManagementDatabaseAdvisorsOperations(AzureMgmtRecordedTestCase):
                                 "unit": "str",
                             }
                         ],
-                        "executeActionDuration": "str",
+                        "executeActionDuration": "1 day, 0:00:00",
                         "executeActionInitiatedBy": "str",
                         "executeActionInitiatedTime": "2020-02-20 00:00:00",
                         "executeActionStartTime": "2020-02-20 00:00:00",
@@ -100,7 +100,7 @@ class TestSqlManagementDatabaseAdvisorsOperations(AzureMgmtRecordedTestCase):
                             }
                         ],
                         "recommendationReason": "str",
-                        "revertActionDuration": "str",
+                        "revertActionDuration": "1 day, 0:00:00",
                         "revertActionInitiatedBy": "str",
                         "revertActionInitiatedTime": "2020-02-20 00:00:00",
                         "revertActionStartTime": "2020-02-20 00:00:00",
@@ -125,7 +125,7 @@ class TestSqlManagementDatabaseAdvisorsOperations(AzureMgmtRecordedTestCase):
                 ],
                 "type": "str",
             },
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself

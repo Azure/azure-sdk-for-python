@@ -3,6 +3,10 @@
 # cSpell:disable
 
 from opentelemetry.semconv.metrics import MetricInstruments
+from opentelemetry.semconv.metrics.http_metrics import (
+    HTTP_CLIENT_REQUEST_DURATION,
+    HTTP_SERVER_REQUEST_DURATION,
+)
 
 # Environment variables
 
@@ -59,6 +63,7 @@ _REMOTE_DEPENDENCY_ENVELOPE_NAME = "Microsoft.ApplicationInsights.RemoteDependen
 # Feature constants
 _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE = "APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE"
 _AZURE_MONITOR_DISTRO_VERSION_ARG = "distro_version"
+_MICROSOFT_CUSTOM_EVENT_NAME = "microsoft.custom_event.name"
 
 # Statsbeat
 
@@ -172,6 +177,8 @@ _INSTRUMENTATIONS_BIT_MAP = {_INSTRUMENTATIONS_LIST[i]: _BASE**i for i in range(
 
 # List of metric instrument names that are autocollected from instrumentations
 _AUTOCOLLECTED_INSTRUMENT_NAMES = (
+    HTTP_CLIENT_REQUEST_DURATION,
+    HTTP_SERVER_REQUEST_DURATION,
     MetricInstruments.HTTP_SERVER_DURATION,
     MetricInstruments.HTTP_SERVER_REQUEST_SIZE,
     MetricInstruments.HTTP_SERVER_RESPONSE_SIZE,

@@ -197,6 +197,14 @@ class _TraceData(_TelemetryData):
             custom_dimensions=log_record.attributes,
         )
 
+    @staticmethod
+    @no_type_check
+    def _from_log_record(log_record: LogRecord):
+        return _TraceData(
+            message=str(log_record.body),
+            custom_dimensions=log_record.attributes,
+        )
+
 
 def _get_field_names(data_type: type):
     field_map = {}

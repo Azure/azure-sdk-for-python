@@ -64,6 +64,7 @@ class CertificateClient(KeyVaultClientBase):
         *,
         enabled: Optional[bool] = None,
         tags: Optional[Dict[str, str]] = None,
+        preserve_certificate_order: Optional[bool] = None,
         **kwargs: Any,
     ) -> LROPoller[Union[KeyVaultCertificate, CertificateOperation]]:
         """Creates a new certificate.
@@ -81,6 +82,7 @@ class CertificateClient(KeyVaultClientBase):
         :keyword bool enabled: Whether the certificate is enabled for use.
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
+        :keyword bool preserve_certificate_order: Whether to preserve the order of the certificate chain.
 
         :returns: An LROPoller for the create certificate operation. Waiting on the poller gives you the certificate if
             creation is successful, or the CertificateOperation if not.
@@ -113,11 +115,11 @@ class CertificateClient(KeyVaultClientBase):
         parameters = self._models.CertificateCreateParameters(
             certificate_policy=policy._to_certificate_policy_bundle(),
             certificate_attributes=attributes,
-            tags=tags
+            tags=tags,
+            preserve_cert_order=preserve_certificate_order,
         )
 
         pipeline_response, cert_bundle = self._client.create_certificate(
-            vault_base_url=self.vault_url,
             certificate_name=certificate_name,
             parameters=parameters,
             cls=lambda pipeline_response, deserialized, _: (pipeline_response, deserialized),
@@ -165,7 +167,7 @@ class CertificateClient(KeyVaultClientBase):
                 :dedent: 8
         """
         bundle = self._client.get_certificate(
-            vault_base_url=self.vault_url, certificate_name=certificate_name, certificate_version="", **kwargs
+            certificate_name=certificate_name, certificate_version="", **kwargs
         )
         return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
 
@@ -194,7 +196,7 @@ class CertificateClient(KeyVaultClientBase):
                 :dedent: 8
         """
         bundle = self._client.get_certificate(
-            vault_base_url=self.vault_url, certificate_name=certificate_name, certificate_version=version, **kwargs
+            certificate_name=certificate_name, certificate_version=version, **kwargs
         )
         return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
 
@@ -230,7 +232,6 @@ class CertificateClient(KeyVaultClientBase):
         if polling_interval is None:
             polling_interval = 2
         pipeline_response, deleted_cert_bundle = self._client.delete_certificate(
-            vault_base_url=self.vault_url,
             certificate_name=certificate_name,
             cls=lambda pipeline_response, deserialized, _: (pipeline_response, deserialized),
             **kwargs,
@@ -272,7 +273,7 @@ class CertificateClient(KeyVaultClientBase):
                 :dedent: 8
         """
         bundle = self._client.get_deleted_certificate(
-            vault_base_url=self.vault_url, certificate_name=certificate_name, **kwargs
+            certificate_name=certificate_name, **kwargs
         )
         return DeletedCertificate._from_deleted_certificate_bundle(deleted_certificate_bundle=bundle)
 
@@ -294,7 +295,7 @@ class CertificateClient(KeyVaultClientBase):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         self._client.purge_deleted_certificate(
-            vault_base_url=self.vault_url, certificate_name=certificate_name, **kwargs
+            certificate_name=certificate_name, **kwargs
         )
 
     @distributed_trace
@@ -329,7 +330,6 @@ class CertificateClient(KeyVaultClientBase):
             polling_interval = 2
 
         pipeline_response, recovered_cert_bundle = self._client.recover_deleted_certificate(
-            vault_base_url=self.vault_url,
             certificate_name=certificate_name,
             cls=lambda pipeline_response, deserialized, _: (pipeline_response, deserialized),
             **kwargs,
@@ -356,6 +356,7 @@ class CertificateClient(KeyVaultClientBase):
         tags: Optional[Dict[str, str]] = None,
         password: Optional[str] = None,
         policy: Optional[CertificatePolicy] = None,
+        preserve_certificate_order: Optional[bool] = None,
         **kwargs: Any,
     ) -> KeyVaultCertificate:
         """Import a certificate created externally. Requires certificates/import permission.
@@ -379,6 +380,7 @@ class CertificateClient(KeyVaultClientBase):
             with :attr:`~azure.keyvault.certificates.CertificatePolicy.content_type` set to
             :attr:`~azure.keyvault.certificates.CertificateContentType.pem`.
         :paramtype policy: ~azure.keyvault.certificates.CertificatePolicy
+        :keyword bool preserve_certificate_order: Whether to preserve the order of the certificate chain.
 
         :returns: The imported KeyVaultCertificate
         :rtype: ~azure.keyvault.certificates.KeyVaultCertificate
@@ -398,10 +400,11 @@ class CertificateClient(KeyVaultClientBase):
             certificate_policy=policy._to_certificate_policy_bundle() if policy else None,
             certificate_attributes=attributes,
             tags=tags,
+            preserve_cert_order=preserve_certificate_order,
         )
 
         bundle = self._client.import_certificate(
-            vault_base_url=self.vault_url, certificate_name=certificate_name, parameters=parameters, **kwargs
+            certificate_name=certificate_name, parameters=parameters, **kwargs
         )
         return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
 
@@ -419,7 +422,7 @@ class CertificateClient(KeyVaultClientBase):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         bundle = self._client.get_certificate_policy(
-            vault_base_url=self.vault_url, certificate_name=certificate_name, **kwargs
+            certificate_name=certificate_name, **kwargs
         )
         return CertificatePolicy._from_certificate_policy_bundle(certificate_policy_bundle=bundle)
 
@@ -441,7 +444,6 @@ class CertificateClient(KeyVaultClientBase):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         bundle = self._client.update_certificate_policy(
-            vault_base_url=self.vault_url,
             certificate_name=certificate_name,
             certificate_policy=policy._to_certificate_policy_bundle(),
             **kwargs
@@ -491,7 +493,6 @@ class CertificateClient(KeyVaultClientBase):
         )
 
         bundle = self._client.update_certificate(
-            vault_base_url=self.vault_url,
             certificate_name=certificate_name,
             certificate_version=version or "",
             parameters=parameters,
@@ -525,7 +526,7 @@ class CertificateClient(KeyVaultClientBase):
                 :dedent: 8
         """
         backup_result = self._client.backup_certificate(
-            vault_base_url=self.vault_url, certificate_name=certificate_name, **kwargs
+            certificate_name=certificate_name, **kwargs
         )
         return backup_result.value
 
@@ -553,7 +554,6 @@ class CertificateClient(KeyVaultClientBase):
                 :dedent: 8
         """
         bundle = self._client.restore_certificate(
-            vault_base_url=self.vault_url,
             parameters=self._models.CertificateRestoreParameters(certificate_bundle_backup=backup),
             **kwargs
         )
@@ -597,7 +597,6 @@ class CertificateClient(KeyVaultClientBase):
             kwargs.update({"include_pending": include_pending})
 
         return self._client.get_deleted_certificates(
-            vault_base_url=self._vault_url,
             maxresults=max_page_size,
             cls=lambda objs: [
                 DeletedCertificate._from_deleted_certificate_item(deleted_certificate_item=x) for x in objs
@@ -642,7 +641,6 @@ class CertificateClient(KeyVaultClientBase):
             kwargs.update({"include_pending": include_pending})
 
         return self._client.get_certificates(
-            vault_base_url=self._vault_url,
             maxresults=max_page_size,
             cls=lambda objs: [CertificateProperties._from_certificate_item(certificate_item=x) for x in objs],
             **kwargs
@@ -673,7 +671,6 @@ class CertificateClient(KeyVaultClientBase):
         """
         max_page_size = kwargs.pop("max_page_size", None)
         return self._client.get_certificate_versions(
-            vault_base_url=self._vault_url,
             certificate_name=certificate_name,
             maxresults=max_page_size,
             cls=lambda objs: [CertificateProperties._from_certificate_item(certificate_item=x) for x in objs],
@@ -701,7 +698,6 @@ class CertificateClient(KeyVaultClientBase):
                 :dedent: 8
         """
         new_contacts = self._client.set_certificate_contacts(
-            vault_base_url=self.vault_url,
             contacts=self._models.Contacts(contact_list=[c._to_certificate_contacts_item() for c in contacts]),
             **kwargs
         )
@@ -726,7 +722,7 @@ class CertificateClient(KeyVaultClientBase):
                 :caption: Get contacts
                 :dedent: 8
         """
-        contacts = self._client.get_certificate_contacts(vault_base_url=self._vault_url, **kwargs)
+        contacts = self._client.get_certificate_contacts(**kwargs)
         return [CertificateContact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list]
 
     @distributed_trace
@@ -746,7 +742,7 @@ class CertificateClient(KeyVaultClientBase):
                 :caption: Delete contacts
                 :dedent: 8
         """
-        contacts = self._client.delete_certificate_contacts(vault_base_url=self.vault_url, **kwargs)
+        contacts = self._client.delete_certificate_contacts(**kwargs)
         return [CertificateContact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list]
 
     @distributed_trace
@@ -763,7 +759,7 @@ class CertificateClient(KeyVaultClientBase):
         """
 
         bundle = self._client.get_certificate_operation(
-            vault_base_url=self.vault_url, certificate_name=certificate_name, **kwargs
+            certificate_name=certificate_name, **kwargs
         )
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
@@ -781,7 +777,7 @@ class CertificateClient(KeyVaultClientBase):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         bundle = self._client.delete_certificate_operation(
-            vault_base_url=self.vault_url, certificate_name=certificate_name, **kwargs
+            certificate_name=certificate_name, **kwargs
         )
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
@@ -797,7 +793,6 @@ class CertificateClient(KeyVaultClientBase):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         bundle = self._client.update_certificate_operation(
-            vault_base_url=self.vault_url,
             certificate_name=certificate_name,
             certificate_operation=self._models.CertificateOperationUpdateParameter(cancellation_requested=True),
             **kwargs
@@ -846,7 +841,7 @@ class CertificateClient(KeyVaultClientBase):
         )
 
         bundle = self._client.merge_certificate(
-            vault_base_url=self.vault_url, certificate_name=certificate_name, parameters=parameters, **kwargs
+            certificate_name=certificate_name, parameters=parameters, **kwargs
         )
         return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
 
@@ -871,7 +866,7 @@ class CertificateClient(KeyVaultClientBase):
                 :dedent: 8
         """
         issuer_bundle = self._client.get_certificate_issuer(
-            vault_base_url=self.vault_url, issuer_name=issuer_name, **kwargs
+            issuer_name=issuer_name, **kwargs
         )
         return CertificateIssuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
@@ -948,7 +943,7 @@ class CertificateClient(KeyVaultClientBase):
         )
 
         issuer_bundle = self._client.set_certificate_issuer(
-            vault_base_url=self.vault_url, issuer_name=issuer_name, parameter=parameters, **kwargs
+            issuer_name=issuer_name, parameter=parameters, **kwargs
         )
         return CertificateIssuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
@@ -1016,7 +1011,7 @@ class CertificateClient(KeyVaultClientBase):
         )
 
         issuer_bundle = self._client.update_certificate_issuer(
-            vault_base_url=self.vault_url, issuer_name=issuer_name, parameter=parameters, **kwargs
+            issuer_name=issuer_name, parameter=parameters, **kwargs
         )
         return CertificateIssuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
@@ -1042,7 +1037,7 @@ class CertificateClient(KeyVaultClientBase):
                 :dedent: 8
         """
         issuer_bundle = self._client.delete_certificate_issuer(
-            vault_base_url=self.vault_url, issuer_name=issuer_name, **kwargs
+            issuer_name=issuer_name, **kwargs
         )
         return CertificateIssuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
@@ -1067,7 +1062,6 @@ class CertificateClient(KeyVaultClientBase):
         """
         max_page_size = kwargs.pop("max_page_size", None)
         return self._client.get_certificate_issuers(
-            vault_base_url=self.vault_url,
             maxresults=max_page_size,
             cls=lambda objs: [IssuerProperties._from_issuer_item(issuer_item=x) for x in objs],
             **kwargs

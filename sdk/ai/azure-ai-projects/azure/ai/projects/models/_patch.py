@@ -42,8 +42,9 @@ from typing import (
 from azure.core.credentials import AccessToken, TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
 
-from ._enums import AgentStreamEvent, ConnectionType, MessageRole
+from ._enums import AgentStreamEvent, ConnectionType, MessageRole, AzureAISearchQueryType
 from ._models import (
+    AISearchIndexResource,
     AzureAISearchResource,
     AzureAISearchToolDefinition,
     AzureFunctionDefinition,
@@ -58,10 +59,10 @@ from ._models import (
     FunctionDefinition,
     FunctionToolDefinition,
     GetConnectionResponse,
-    IndexResource,
     MessageImageFileContent,
     MessageTextContent,
     MessageTextFileCitationAnnotation,
+    MessageTextUrlCitationAnnotation,
     MessageTextFilePathAnnotation,
     MicrosoftFabricToolDefinition,
     OpenApiAuthDetails,
@@ -160,6 +161,9 @@ def _parse_event(event_data_str: str) -> Tuple[str, StreamEventData]:
     # Workaround for service bug: Rename 'expires_at' to 'expired_at'
     if event_type.startswith("thread.run.step") and isinstance(parsed_data, dict) and "expires_at" in parsed_data:
         parsed_data["expired_at"] = parsed_data.pop("expires_at")
+
+    if isinstance(parsed_data, dict) and "assistant_id" in parsed_data:
+        parsed_data["agent_id"] = parsed_data.pop("assistant_id")
 
     # Map to the appropriate class instance
     if event_type in {
@@ -508,6 +512,22 @@ class ThreadMessage(ThreadMessageGenerated):
             if isinstance(annotation, MessageTextFilePathAnnotation)
         ]
 
+    @property
+    def url_citation_annotations(self) -> List[MessageTextUrlCitationAnnotation]:
+        """Returns all URL citation annotations from text message annotations in the messages.
+
+        :rtype: List[MessageTextUrlCitationAnnotation]
+        """
+        if not self.content:
+            return []
+        return [
+            annotation
+            for content in self.content
+            if isinstance(content, MessageTextContent)
+            for annotation in content.text.annotations
+            if isinstance(annotation, MessageTextUrlCitationAnnotation)
+        ]
+
 
 class MessageAttachment(MessageAttachmentGenerated):
     @overload
@@ -743,10 +763,41 @@ class AsyncFunctionTool(BaseFunctionTool):
 class AzureAISearchTool(Tool[AzureAISearchToolDefinition]):
     """
     A tool that searches for information using Azure AI Search.
+    :param connection_id: Connection ID used by tool. All connection tools allow only one connection.
     """
 
-    def __init__(self, index_connection_id: str, index_name: str):
-        self.index_list = [IndexResource(index_connection_id=index_connection_id, index_name=index_name)]
+    def __init__(
+        self,
+        index_connection_id: str,
+        index_name: str,
+        query_type: AzureAISearchQueryType = AzureAISearchQueryType.SIMPLE,
+        filter: str = "",
+        top_k: int = 5,
+    ):
+        """
+        Initialize AzureAISearch with an index_connection_id and index_name, with optional params.
+
+        :param index_connection_id: Index Connection ID used by tool. Allows only one connection.
+        :type index_connection_id: str
+        :param index_name: Name of Index in search resource to be used by tool.
+        :type index_name: str
+        :param query_type: Type of query in an AIIndexResource attached to this agent. 
+            Default value is AzureAISearchQueryType.SIMPLE.
+        :type query_type: AzureAISearchQueryType
+        :param filter: Odata filter string for search resource.
+        :type filter: str
+        :param top_k: Number of documents to retrieve from search and present to the model.
+        :type top_k: int
+        """
+        self.index_list = [
+            AISearchIndexResource(
+                index_connection_id=index_connection_id,
+                index_name=index_name,
+                query_type=query_type,
+                filter=filter,
+                top_k=top_k,
+            )
+        ]
 
     @property
     def definitions(self) -> List[AzureAISearchToolDefinition]:
@@ -981,7 +1032,7 @@ class FabricTool(ConnectionTool[MicrosoftFabricToolDefinition]):
 
         :rtype: List[ToolDefinition]
         """
-        return [MicrosoftFabricToolDefinition(fabric_aiskill=ToolConnectionList(connection_list=self.connection_ids))]
+        return [MicrosoftFabricToolDefinition(fabric_dataagent=ToolConnectionList(connection_list=self.connection_ids))]
 
 
 class SharepointTool(ConnectionTool[SharepointToolDefinition]):
@@ -1329,7 +1380,7 @@ class BaseAsyncAgentEventHandler(AsyncIterator[T]):
         self.submit_tool_outputs: Optional[Callable[[ThreadRun, "BaseAsyncAgentEventHandler[T]"], Awaitable[None]]] = (
             None
         )
-        self.buffer: Optional[str] = None
+        self.buffer: Optional[bytes] = None
 
     def initialize(
         self,
@@ -1341,30 +1392,37 @@ class BaseAsyncAgentEventHandler(AsyncIterator[T]):
         )
         self.submit_tool_outputs = submit_tool_outputs
 
+    # cspell:disable-next-line
     async def __anext__(self) -> T:
-        self.buffer = "" if self.buffer is None else self.buffer
+        # cspell:disable-next-line
+        event_bytes = await self.__anext_impl__()
+        return await self._process_event(event_bytes.decode("utf-8"))
+
+    # cspell:disable-next-line
+    async def __anext_impl__(self) -> bytes:
+        self.buffer = b"" if self.buffer is None else self.buffer
         if self.response_iterator is None:
             raise ValueError("The response handler was not initialized.")
 
-        if not "\n\n" in self.buffer:
+        if not b"\n\n" in self.buffer:
             async for chunk in self.response_iterator:
-                self.buffer += chunk.decode("utf-8")
-                if "\n\n" in self.buffer:
+                self.buffer += chunk
+                if b"\n\n" in self.buffer:
                     break
 
-        if self.buffer == "":
+        if self.buffer == b"":
             raise StopAsyncIteration()
 
-        event_str = ""
-        if "\n\n" in self.buffer:
-            event_end_index = self.buffer.index("\n\n")
-            event_str = self.buffer[:event_end_index]
+        event_bytes = b""
+        if b"\n\n" in self.buffer:
+            event_end_index = self.buffer.index(b"\n\n")
+            event_bytes = self.buffer[:event_end_index]
             self.buffer = self.buffer[event_end_index:].lstrip()
         else:
-            event_str = self.buffer
-            self.buffer = ""
+            event_bytes = self.buffer
+            self.buffer = b""
 
-        return await self._process_event(event_str)
+        return event_bytes
 
     async def _process_event(self, event_data_str: str) -> T:
         raise NotImplementedError("This method needs to be implemented.")
@@ -1386,7 +1444,7 @@ class BaseAgentEventHandler(Iterator[T]):
     def __init__(self) -> None:
         self.response_iterator: Optional[Iterator[bytes]] = None
         self.submit_tool_outputs: Optional[Callable[[ThreadRun, "BaseAgentEventHandler[T]"], None]] = None
-        self.buffer: Optional[str] = None
+        self.buffer: Optional[bytes] = None
 
     def initialize(
         self,
@@ -1399,29 +1457,33 @@ class BaseAgentEventHandler(Iterator[T]):
         self.submit_tool_outputs = submit_tool_outputs
 
     def __next__(self) -> T:
-        self.buffer = "" if self.buffer is None else self.buffer
+        event_bytes = self.__next_impl__()
+        return self._process_event(event_bytes.decode("utf-8"))
+
+    def __next_impl__(self) -> bytes:
+        self.buffer = b"" if self.buffer is None else self.buffer
         if self.response_iterator is None:
             raise ValueError("The response handler was not initialized.")
 
-        if not "\n\n" in self.buffer:
+        if not b"\n\n" in self.buffer:
             for chunk in self.response_iterator:
-                self.buffer += chunk.decode("utf-8")
-                if "\n\n" in self.buffer:
+                self.buffer += chunk
+                if b"\n\n" in self.buffer:
                     break
 
-        if self.buffer == "":
+        if self.buffer == b"":
             raise StopIteration()
 
-        event_str = ""
-        if "\n\n" in self.buffer:
-            event_end_index = self.buffer.index("\n\n")
-            event_str = self.buffer[:event_end_index]
+        event_bytes = b""
+        if b"\n\n" in self.buffer:
+            event_end_index = self.buffer.index(b"\n\n")
+            event_bytes = self.buffer[:event_end_index]
             self.buffer = self.buffer[event_end_index:].lstrip()
         else:
-            event_str = self.buffer
-            self.buffer = ""
+            event_bytes = self.buffer
+            self.buffer = b""
 
-        return self._process_event(event_str)
+        return event_bytes
 
     def _process_event(self, event_data_str: str) -> T:
         raise NotImplementedError("This method needs to be implemented.")

@@ -1,0 +1,45 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-0000-0000-0000-000000000000",
+    "location": "eastus",
+    "api-version": "2025-01-01-preview",
+    "parameters": {
+      "value": [
+        {
+          "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/demo_workspace1/quotas/Standard_DSv2_Family_Cluster_Dedicated_vCPUs",
+          "type": "Microsoft.MachineLearningServices/workspaces/quotas",
+          "limit": 100,
+          "unit": "Count"
+        },
+        {
+          "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/demo_workspace2/quotas/Standard_DSv2_Family_Cluster_Dedicated_vCPUs",
+          "type": "Microsoft.MachineLearningServices/workspaces/quotas",
+          "limit": 200,
+          "unit": "Count"
+        }
+      ]
+    }
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "value": [
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/demo_workspace1/quotas/Standard_DSv2_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/workspaces/quotas",
+            "limit": 100,
+            "unit": "Count",
+            "status": "Success"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/demo_workspace2/quotas/Standard_DSv2_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/workspaces/quotas",
+            "limit": 200,
+            "unit": "Count",
+            "status": "Success"
+          }
+        ]
+      }
+    }
+  }
+}
