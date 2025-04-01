@@ -4,8 +4,8 @@
 # This code violates do-not-harcode-connection-verify
 
 
-from azure.core.pipeline.transport import RequestsTransport
+from azure.core.pipeline.transport import HttpTransport
 
 def create_client():
-    transport = RequestsTransport(connection_verify=False)  # Hardcoded to False
+    transport = HttpTransport(connection_verify=False)  # Hardcoded to False
     return transport
