@@ -13,7 +13,7 @@ from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGrou
 AZURE_LOCATION = "eastus"
 
 
-@pytest.mark.skip("you may need to update the auto-generated test case before run it")
+@pytest.mark.live_test_only
 class TestEdgeZonesMgmtOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(EdgeZonesMgmtClient)
@@ -23,5 +23,4 @@ class TestEdgeZonesMgmtOperations(AzureMgmtRecordedTestCase):
     def test_operations_list(self, resource_group):
         response = self.client.operations.list()
         result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
+        assert result
