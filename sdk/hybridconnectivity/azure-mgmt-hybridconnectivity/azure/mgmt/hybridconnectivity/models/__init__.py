@@ -16,6 +16,7 @@ if TYPE_CHECKING:
 from ._models import (  # type: ignore
     AADProfileProperties,
     AwsCloudProfile,
+    AwsCloudProfileUpdate,
     EndpointAccessResource,
     EndpointProperties,
     EndpointResource,
@@ -38,6 +39,8 @@ from ._models import (  # type: ignore
     ProxyResource,
     PublicCloudConnector,
     PublicCloudConnectorProperties,
+    PublicCloudConnectorPropertiesUpdate,
+    PublicCloudConnectorUpdate,
     RelayNamespaceAccessProperties,
     Resource,
     ServiceConfigurationProperties,
@@ -46,6 +49,8 @@ from ._models import (  # type: ignore
     ServiceConfigurationResourcePatch,
     SolutionConfiguration,
     SolutionConfigurationProperties,
+    SolutionConfigurationPropertiesUpdate,
+    SolutionConfigurationUpdate,
     SolutionSettings,
     SolutionTypeProperties,
     SolutionTypeResource,
@@ -53,6 +58,7 @@ from ._models import (  # type: ignore
     SolutionTypeSettingsProperties,
     SystemData,
     TrackedResource,
+    TrackedResourceUpdate,
 )
 
 from ._enums import (  # type: ignore
@@ -74,6 +80,7 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "AADProfileProperties",
     "AwsCloudProfile",
+    "AwsCloudProfileUpdate",
     "EndpointAccessResource",
     "EndpointProperties",
     "EndpointResource",
@@ -96,6 +103,8 @@ __all__ = [
     "ProxyResource",
     "PublicCloudConnector",
     "PublicCloudConnectorProperties",
+    "PublicCloudConnectorPropertiesUpdate",
+    "PublicCloudConnectorUpdate",
     "RelayNamespaceAccessProperties",
     "Resource",
     "ServiceConfigurationProperties",
@@ -104,6 +113,8 @@ __all__ = [
     "ServiceConfigurationResourcePatch",
     "SolutionConfiguration",
     "SolutionConfigurationProperties",
+    "SolutionConfigurationPropertiesUpdate",
+    "SolutionConfigurationUpdate",
     "SolutionSettings",
     "SolutionTypeProperties",
     "SolutionTypeResource",
@@ -111,6 +122,7 @@ __all__ = [
     "SolutionTypeSettingsProperties",
     "SystemData",
     "TrackedResource",
+    "TrackedResourceUpdate",
     "ActionType",
     "CloudNativeType",
     "CreatedByType",
