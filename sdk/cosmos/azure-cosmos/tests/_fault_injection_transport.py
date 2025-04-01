@@ -27,7 +27,7 @@ import json
 import logging
 import sys
 from collections.abc import MutableMapping
-from typing import Callable, Optional
+from typing import Callable, Optional, Any
 
 import aiohttp
 from azure.core.pipeline.transport import AioHttpTransport, AioHttpTransportResponse
@@ -41,7 +41,7 @@ class FaultInjectionTransport(AioHttpTransport):
     logger = logging.getLogger('azure.cosmos.fault_injection_transport')
     logger.setLevel(logging.DEBUG)
 
-    def __init__(self, *, session: aiohttp.ClientSession | None = None, loop=None, session_owner: bool = True, **config):
+    def __init__(self, *, session: Optional[aiohttp.ClientSession] = None, loop=None, session_owner: bool = True, **config):
         self.faults = []
         self.requestTransformations = []
         self.responseTransformations = []
@@ -64,7 +64,7 @@ class FaultInjectionTransport(AioHttpTransport):
         """
         return next((x for x in iterable if condition(x)), None)
 
-    async def send(self, request: HttpRequest, *, stream: bool = False, proxies: MutableMapping[str, str] | None = None, **config) -> AsyncHttpResponse:
+    async def send(self, request: HttpRequest, *, stream: bool = False, proxies: Optional[MutableMapping[str, str]] = None, **config) -> AsyncHttpResponse:
         FaultInjectionTransport.logger.info("--> FaultInjectionTransport.Send {} {}".format(request.method, request.url))
         # find the first fault Factory with matching predicate if any
         first_fault_factory = FaultInjectionTransport.__first_item(iter(self.faults), lambda f: f["predicate"](request))
@@ -201,7 +201,7 @@ class FaultInjectionTransport(AioHttpTransport):
             first_region_name: str,
             second_region_name: str,
             r: HttpRequest,
-            inner: Callable[[], asyncio.Task[AsyncHttpResponse]]) -> asyncio.Task[AsyncHttpResponse]:
+            inner: Callable[[], asyncio.Task[AsyncHttpResponse]]) -> AsyncHttpResponse:
 
         response = await inner()
         if not FaultInjectionTransport.predicate_is_database_account_call(response.request):
@@ -228,7 +228,7 @@ class FaultInjectionTransport(AioHttpTransport):
         return response
 
     class MockHttpResponse(AioHttpTransportResponse):
-        def __init__(self, request: HttpRequest, status_code: int, content:Optional[dict[str, any]]):
+        def __init__(self, request: HttpRequest, status_code: int, content:Optional[dict[str, Any]]):
             self.request: HttpRequest = request
             # This is actually never None, and set by all implementations after the call to
             # __init__ of this class. This class is also a legacy impl, so it's risky to change it
@@ -239,19 +239,19 @@ class FaultInjectionTransport(AioHttpTransport):
             self.reason: Optional[str] = None
             self.content_type: Optional[str] = None
             self.block_size: int = 4096  # Default to same as R
-            self.content: Optional[dict[str, any]] = None
+            self.content: Optional[dict[str, Any]] = None
             self.json_text: Optional[str] = None
             self.bytes: Optional[bytes] = None
             if content:
-                self.content:Optional[dict[str, any]] = content
-                self.json_text:Optional[str] = json.dumps(content)
-                self.bytes:bytes = self.json_text.encode("utf-8")
+                self.content = content
+                self.json_text = json.dumps(content)
+                self.bytes = self.json_text.encode("utf-8")
 
 
-        def body(self) -> bytes:
+        def body(self) -> Optional[bytes]:
             return self.bytes
 
-        def text(self, encoding: Optional[str] = None) -> str:
+        def text(self, encoding: Optional[str] = None) -> Optional[str]:
             return self.json_text
 
         async def load_body(self) -> None:

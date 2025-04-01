@@ -61,7 +61,7 @@ class TestFaultInjectionTransportAsync:
 
         cls.mgmt_client = CosmosClient(host, master_key, consistency_level="Session",
                                       connection_policy=connection_policy, logger=logger)
-        created_database: DatabaseProxy = cls.mgmt_client.get_database_client(cls.database_id)
+        created_database = cls.mgmt_client.get_database_client(cls.database_id)
         asyncio.run(asyncio.wait_for(
             created_database.create_container(
                 cls.single_partition_container_name,
@@ -71,7 +71,7 @@ class TestFaultInjectionTransportAsync:
     @classmethod
     def teardown_class(cls):
         logger.info("tearing down class: {}".format(cls.__name__))
-        created_database: DatabaseProxy = cls.mgmt_client.get_database_client(cls.database_id)
+        created_database = cls.mgmt_client.get_database_client(cls.database_id)
         try:
             asyncio.run(asyncio.wait_for(
                 created_database.delete_container(cls.single_partition_container_name),
@@ -100,7 +100,7 @@ class TestFaultInjectionTransportAsync:
         except Exception as close_error:
             logger.warning(f"Exception trying to close method client. {close_error}")
 
-    async def test_throws_injected_error(self, setup):
+    async def test_throws_injected_error(self, setup: object):
         id_value: str = str(uuid.uuid4())
         document_definition = {'id': id_value,
                                'pk': id_value,
@@ -126,7 +126,7 @@ class TestFaultInjectionTransportAsync:
         finally:
             TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
 
-    async def test_swr_mrr_succeeds(self, setup):
+    async def test_swr_mrr_succeeds(self, setup: object):
         expected_read_region_uri: str = test_config.TestConfig.local_host
         expected_write_region_uri: str = expected_read_region_uri.replace("localhost", "127.0.0.1")
         custom_transport = FaultInjectionTransport()
@@ -167,18 +167,18 @@ class TestFaultInjectionTransportAsync:
             request: HttpRequest = created_document.get_response_headers()["_request"]
             # Validate the response comes from "Write Region" (the write region)
             assert request.url.startswith(expected_write_region_uri)
-            start:float = time.perf_counter()
+            start: float = time.perf_counter()
 
             while (time.perf_counter() - start) < 2:
                 read_document = await container.read_item(id_value, partition_key=id_value)
-                request: HttpRequest = read_document.get_response_headers()["_request"]
+                request = read_document.get_response_headers()["_request"]
                 # Validate the response comes from "Read Region" (the most preferred read-only region)
                 assert request.url.startswith(expected_read_region_uri)
 
         finally:
             TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
 
-    async def test_swr_mrr_region_down_read_succeeds(self, setup):
+    async def test_swr_mrr_region_down_read_succeeds(self, setup: object):
         expected_read_region_uri: str = test_config.TestConfig.local_host
         expected_write_region_uri: str = expected_read_region_uri.replace("localhost", "127.0.0.1")
         custom_transport = FaultInjectionTransport()
@@ -232,14 +232,14 @@ class TestFaultInjectionTransportAsync:
 
             while (time.perf_counter() - start) < 2:
                 read_document = await container.read_item(id_value, partition_key=id_value)
-                request: HttpRequest = read_document.get_response_headers()["_request"]
+                request = read_document.get_response_headers()["_request"]
                 # Validate the response comes from "Write Region" ("Read Region" the most preferred read-only region is down)
                 assert request.url.startswith(expected_write_region_uri)
 
         finally:
             TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
 
-    async def test_swr_mrr_region_down_envoy_read_succeeds(self, setup):
+    async def test_swr_mrr_region_down_envoy_read_succeeds(self, setup: object):
         expected_read_region_uri: str = test_config.TestConfig.local_host
         expected_write_region_uri: str = expected_read_region_uri.replace("localhost", "127.0.0.1")
         custom_transport = FaultInjectionTransport()
@@ -298,7 +298,7 @@ class TestFaultInjectionTransportAsync:
 
             while (time.perf_counter() - start) < 2:
                 read_document = await container.read_item(id_value, partition_key=id_value)
-                request: HttpRequest = read_document.get_response_headers()["_request"]
+                request = read_document.get_response_headers()["_request"]
                 # Validate the response comes from "Write Region" ("Read Region" the most preferred read-only region is down)
                 assert request.url.startswith(expected_write_region_uri)
 
@@ -306,7 +306,7 @@ class TestFaultInjectionTransportAsync:
             TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
 
 
-    async def test_mwr_succeeds(self, setup):
+    async def test_mwr_succeeds(self, setup: object):
         first_region_uri: str = test_config.TestConfig.local_host.replace("localhost", "127.0.0.1")
         second_region_uri: str = test_config.TestConfig.local_host
         custom_transport = FaultInjectionTransport()
@@ -344,7 +344,7 @@ class TestFaultInjectionTransportAsync:
 
             while (time.perf_counter() - start) < 2:
                 read_document = await container.read_item(id_value, partition_key=id_value)
-                request: HttpRequest = read_document.get_response_headers()["_request"]
+                request = read_document.get_response_headers()["_request"]
                 # Validate the response comes from "East US" (the most preferred read-only region)
                 assert request.url.startswith(first_region_uri)
 
