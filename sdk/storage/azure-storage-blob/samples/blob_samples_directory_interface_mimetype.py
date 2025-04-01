@@ -24,6 +24,7 @@ from blob_samples_directory_interface import DirectoryClient
 import mimetypes
 import os
 from azure.storage.blob import ContentSettings, ContainerClient
+from azure.core.exceptions import ResourceExistsError
 
 class DirectoryClientEx(DirectoryClient):
     # overriding upload_file method
@@ -47,7 +48,10 @@ except KeyError:
 
 CONTAINER_NAME = "mycontainerdirectory"
 container = ContainerClient.from_connection_string(CONNECTION_STRING, CONTAINER_NAME)
-container.create_container()
+try:
+  container.create_container()
+except ResourceExistsError:
+  print("The specified container already exists.")
 
 SAMPLE_DIRS = [
     'cats/calico',
