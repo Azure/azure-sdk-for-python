@@ -670,7 +670,7 @@ class RedTeam():
                             
                     except asyncio.TimeoutError:
                         self.logger.warning(f"Batch {batch_idx+1} for {strategy_name}/{risk_category} timed out after {timeout} seconds, continuing with partial results")
-                        self.logger.debug(f"❌ Timeout: Strategy {strategy_name}, Risk {risk_category}, Batch {batch_idx+1} after {timeout} seconds.", exc_info=True)
+                        self.logger.debug(f"Timeout: Strategy {strategy_name}, Risk {risk_category}, Batch {batch_idx+1} after {timeout} seconds.", exc_info=True)
                         print(f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category}, Batch {batch_idx+1}")
                         # Set task status to TIMEOUT
                         batch_task_key = f"{strategy_name}_{risk_category}_batch_{batch_idx+1}"
@@ -923,7 +923,11 @@ class RedTeam():
             risk_category_summary = {}
             
             # Overall metrics across all categories
-            overall_asr = round(list_mean_nan_safe(results_df["attack_success"].tolist()) * 100, 2) if "attack_success" in results_df.columns else 0.0
+            try:
+                overall_asr = round(list_mean_nan_safe(results_df["attack_success"].tolist()) * 100, 2) if "attack_success" in results_df.columns else 0.0
+            except EvaluationException:
+                self.logger.debug("All values in overall attack success array were None or NaN, setting ASR to NaN")
+                overall_asr = math.nan
             overall_total = len(results_df)
             overall_successful_attacks = sum([s for s in results_df["attack_success"].tolist() if not is_none_or_nan(s)]) if "attack_success" in results_df.columns else 0
             
@@ -935,7 +939,11 @@ class RedTeam():
             
             # Per-risk category metrics
             for risk, group in risk_category_groups:
-                asr = round(list_mean_nan_safe(group["attack_success"].tolist()) * 100, 2) if "attack_success" in group.columns else 0.0
+                try:
+                    asr = round(list_mean_nan_safe(group["attack_success"].tolist()) * 100, 2) if "attack_success" in group.columns else 0.0
+                except EvaluationException:
+                    self.logger.debug(f"All values in attack success array for {risk} were None or NaN, setting ASR to NaN")
+                    asr = math.nan
                 total = len(group)
                 successful_attacks =sum([s for s in group["attack_success"].tolist() if not is_none_or_nan(s)]) if "attack_success" in group.columns else 0
                     
@@ -958,8 +966,13 @@ class RedTeam():
             # Baseline metrics
             baseline_df = results_df[baseline_mask]
             if not baseline_df.empty:
+                try:
+                    baseline_asr = round(list_mean_nan_safe(baseline_df["attack_success"].tolist()) * 100, 2) if "attack_success" in baseline_df.columns else 0.0
+                except EvaluationException:
+                    self.logger.debug("All values in baseline attack success array were None or NaN, setting ASR to NaN")
+                    baseline_asr = math.nan
                 attack_technique_summary_dict.update({
-                    "baseline_asr": round(list_mean_nan_safe(baseline_df["attack_success"].tolist()) * 100, 2) if "attack_success" in baseline_df.columns else 0.0,
+                    "baseline_asr": baseline_asr,
                     "baseline_total": len(baseline_df),
                     "baseline_attack_successes": sum([s for s in baseline_df["attack_success"].tolist() if not is_none_or_nan(s)]) if "attack_success" in baseline_df.columns else 0
                 })
@@ -967,8 +980,13 @@ class RedTeam():
             # Easy complexity metrics
             easy_df = results_df[easy_mask]
             if not easy_df.empty:
+                try:
+                    easy_complexity_asr = round(list_mean_nan_safe(easy_df["attack_success"].tolist()) * 100, 2) if "attack_success" in easy_df.columns else 0.0
+                except EvaluationException:
+                    self.logger.debug("All values in easy complexity attack success array were None or NaN, setting ASR to NaN")
+                    easy_complexity_asr = math.nan
                 attack_technique_summary_dict.update({
-                    "easy_complexity_asr": round(list_mean_nan_safe(easy_df["attack_success"].tolist()) * 100, 2) if "attack_success" in easy_df.columns else 0.0,
+                    "easy_complexity_asr": easy_complexity_asr,
                     "easy_complexity_total": len(easy_df),
                     "easy_complexity_attack_successes": sum([s for s in easy_df["attack_success"].tolist() if not is_none_or_nan(s)]) if "attack_success" in easy_df.columns else 0
                 })
@@ -976,8 +994,13 @@ class RedTeam():
             # Moderate complexity metrics
             moderate_df = results_df[moderate_mask]
             if not moderate_df.empty:
+                try:
+                    moderate_complexity_asr = round(list_mean_nan_safe(moderate_df["attack_success"].tolist()) * 100, 2) if "attack_success" in moderate_df.columns else 0.0
+                except EvaluationException:
+                    self.logger.debug("All values in moderate complexity attack success array were None or NaN, setting ASR to NaN")
+                    moderate_complexity_asr = math.nan
                 attack_technique_summary_dict.update({
-                    "moderate_complexity_asr": round(list_mean_nan_safe(moderate_df["attack_success"].tolist()) * 100, 2) if "attack_success" in moderate_df.columns else 0.0,
+                    "moderate_complexity_asr": moderate_complexity_asr,
                     "moderate_complexity_total": len(moderate_df),
                     "moderate_complexity_attack_successes": sum([s for s in moderate_df["attack_success"].tolist() if not is_none_or_nan(s)]) if "attack_success" in moderate_df.columns else 0
                 })
@@ -985,8 +1008,13 @@ class RedTeam():
             # Difficult complexity metrics
             difficult_df = results_df[difficult_mask]
             if not difficult_df.empty:
+                try:
+                    difficult_complexity_asr = round(list_mean_nan_safe(difficult_df["attack_success"].tolist()) * 100, 2) if "attack_success" in difficult_df.columns else 0.0
+                except EvaluationException:
+                    self.logger.debug("All values in difficult complexity attack success array were None or NaN, setting ASR to NaN")
+                    difficult_complexity_asr = math.nan
                 attack_technique_summary_dict.update({
-                    "difficult_complexity_asr": round(list_mean_nan_safe(difficult_df["attack_success"].tolist()) * 100, 2) if "attack_success" in difficult_df.columns else 0.0,
+                    "difficult_complexity_asr": difficult_complexity_asr,
                     "difficult_complexity_total": len(difficult_df),
                     "difficult_complexity_attack_successes": sum([s for s in difficult_df["attack_success"].tolist() if not is_none_or_nan(s)]) if "attack_success" in difficult_df.columns else 0
                 })
@@ -1013,22 +1041,38 @@ class RedTeam():
                 # Baseline ASR for this risk
                 baseline_risk_df = results_df[risk_mask & baseline_mask]
                 if not baseline_risk_df.empty:
-                    joint_risk_dict["baseline_asr"] = round(list_mean_nan_safe(baseline_risk_df["attack_success"].tolist()) * 100, 2) if "attack_success" in baseline_risk_df.columns else 0.0
+                    try:
+                        joint_risk_dict["baseline_asr"] = round(list_mean_nan_safe(baseline_risk_df["attack_success"].tolist()) * 100, 2) if "attack_success" in baseline_risk_df.columns else 0.0
+                    except EvaluationException:
+                        self.logger.debug(f"All values in baseline attack success array for {risk_key} were None or NaN, setting ASR to NaN")
+                        joint_risk_dict["baseline_asr"] = math.nan
                 
                 # Easy complexity ASR for this risk
                 easy_risk_df = results_df[risk_mask & easy_mask]
                 if not easy_risk_df.empty:
-                    joint_risk_dict["easy_complexity_asr"] = round(list_mean_nan_safe(easy_risk_df["attack_success"].tolist()) * 100, 2) if "attack_success" in easy_risk_df.columns else 0.0
+                    try:
+                        joint_risk_dict["easy_complexity_asr"] = round(list_mean_nan_safe(easy_risk_df["attack_success"].tolist()) * 100, 2) if "attack_success" in easy_risk_df.columns else 0.0
+                    except EvaluationException:
+                        self.logger.debug(f"All values in easy complexity attack success array for {risk_key} were None or NaN, setting ASR to NaN")
+                        joint_risk_dict["easy_complexity_asr"] = math.nan
                 
                 # Moderate complexity ASR for this risk
                 moderate_risk_df = results_df[risk_mask & moderate_mask]
                 if not moderate_risk_df.empty:
-                    joint_risk_dict["moderate_complexity_asr"] = round(list_mean_nan_safe(moderate_risk_df["attack_success"].tolist()) * 100, 2) if "attack_success" in moderate_risk_df.columns else 0.0
+                    try:
+                        joint_risk_dict["moderate_complexity_asr"] = round(list_mean_nan_safe(moderate_risk_df["attack_success"].tolist()) * 100, 2) if "attack_success" in moderate_risk_df.columns else 0.0
+                    except EvaluationException:
+                        self.logger.debug(f"All values in moderate complexity attack success array for {risk_key} were None or NaN, setting ASR to NaN")
+                        joint_risk_dict["moderate_complexity_asr"] = math.nan
                 
                 # Difficult complexity ASR for this risk
                 difficult_risk_df = results_df[risk_mask & difficult_mask]
                 if not difficult_risk_df.empty:
-                    joint_risk_dict["difficult_complexity_asr"] = round(list_mean_nan_safe(difficult_risk_df["attack_success"].tolist()) * 100, 2) if "attack_success" in difficult_risk_df.columns else 0.0
+                    try:
+                        joint_risk_dict["difficult_complexity_asr"] = round(list_mean_nan_safe(difficult_risk_df["attack_success"].tolist()) * 100, 2) if "attack_success" in difficult_risk_df.columns else 0.0
+                    except EvaluationException:
+                        self.logger.debug(f"All values in difficult complexity attack success array for {risk_key} were None or NaN, setting ASR to NaN")
+                        joint_risk_dict["difficult_complexity_asr"] = math.nan
                 
                 joint_risk_attack_summary.append(joint_risk_dict)
             
@@ -1055,7 +1099,11 @@ class RedTeam():
                         
                     converter_groups = complexity_risk_df.groupby("converter")
                     for converter_name, converter_group in converter_groups:
-                        asr_value = round(list_mean_nan_safe(converter_group["attack_success"].tolist()) * 100, 2) if "attack_success" in converter_group.columns else 0.0
+                        try:
+                            asr_value = round(list_mean_nan_safe(converter_group["attack_success"].tolist()) * 100, 2) if "attack_success" in converter_group.columns else 0.0
+                        except EvaluationException:
+                            self.logger.debug(f"All values in attack success array for {converter_name} in {complexity}/{risk_key} were None or NaN, setting ASR to NaN")
+                            asr_value = math.nan
                         detailed_joint_risk_attack_asr[complexity][risk_key][f"{converter_name}_ASR"] = asr_value
             
             # Compile the scorecard
