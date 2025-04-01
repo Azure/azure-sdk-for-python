@@ -82,17 +82,6 @@ def main(generate_input, generate_output):
                     package["apiViewArtifact"] = str(Path(package_path, file))
         except Exception as e:
             _LOGGER.debug(f"Fail to generate ApiView token file for {package_name}: {e}")
-        # Installation package
-        package["installInstructions"] = {
-            "full": "You can install the use using pip install of the artifacts.",
-            "lite": f"pip install {package_name}",
-        }
-        for artifact in package["artifacts"]:
-            if ".whl" in artifact:
-                package["language"] = "Python"
-                break
-        package["packageFolder"] = package["path"][0]
-        result["packages"].append(package)
 
         # check generated files and update package["version"]
         if package_name.startswith("azure-mgmt-"):
@@ -105,7 +94,18 @@ def main(generate_input, generate_output):
         create_package(prefolder, package_name)
         dist_path = Path(sdk_folder, folder_name, package_name, "dist")
         package["artifacts"] = [str(dist_path / package_file) for package_file in os.listdir(dist_path)]
+        for artifact in package["artifacts"]:
+            if ".whl" in artifact:
+                package["language"] = "Python"
+                break
+        # Installation package
+        package["installInstructions"] = {
+            "full": "You can install the use using pip install of the artifacts.",
+            "lite": f"pip install {package_name}",
+        }
         package["result"] = "succeeded"
+        package["packageFolder"] = package["path"][0]
+        result["packages"].append(package)
 
     with open(generate_output, "w") as writer:
         json.dump(result, writer)
