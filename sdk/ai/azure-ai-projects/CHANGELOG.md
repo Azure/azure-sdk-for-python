@@ -3,6 +3,7 @@
 ## 1.0.0b9 (Unreleased)
 
 ### Features added
+* Utilities to load prompt template strings and Prompty file content
 
 ### Sample updates
 
