@@ -59,13 +59,8 @@ def main(generate_input, generate_output):
         package["version"] = last_version
 
         _LOGGER.info(f"[PACKAGE]({package_name})[CHANGELOG]:{md_output}")
-        # Built package
-        create_package(prefolder, package_name)
-        folder_name = package["path"][0]
-        dist_path = Path(sdk_folder, folder_name, package_name, "dist")
-        package["artifacts"] = [str(dist_path / package_file) for package_file in os.listdir(dist_path)]
-        package["result"] = "succeeded"
         # Generate api stub File
+        folder_name = package["path"][0]
         try:
             package_path = Path(sdk_folder, folder_name, package_name)
             check_call(
@@ -99,9 +94,18 @@ def main(generate_input, generate_output):
         package["packageFolder"] = package["path"][0]
         result["packages"].append(package)
 
-        # check generated files
+        # check generated files and update package["version"]
         if package_name.startswith("azure-mgmt-"):
-            check_file(package)
+            try:
+                check_file(package)
+            except Exception as e:
+                _LOGGER.error(f"Fail to check generated files for {package_name}: {e}")
+
+        # Built package
+        create_package(prefolder, package_name)
+        dist_path = Path(sdk_folder, folder_name, package_name, "dist")
+        package["artifacts"] = [str(dist_path / package_file) for package_file in os.listdir(dist_path)]
+        package["result"] = "succeeded"
 
     with open(generate_output, "w") as writer:
         json.dump(result, writer)
