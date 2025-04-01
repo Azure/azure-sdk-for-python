@@ -26,7 +26,6 @@ Cosmos database service.
 import json
 import os
 from azure.cosmos.exceptions import CosmosHttpResponseError
-from .._constants import _Constants as Constants
 from azure.cosmos._execution_context import endpoint_component, multi_execution_aggregator
 from azure.cosmos._execution_context import non_streaming_order_by_aggregator, hybrid_search_aggregator
 from azure.cosmos._execution_context.base_execution_context import _QueryExecutionContextBase
@@ -34,6 +33,7 @@ from azure.cosmos._execution_context.base_execution_context import _DefaultQuery
 from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
 from azure.cosmos.documents import _DistinctType
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes
+from .._constants import _Constants as Constants
 
 # pylint: disable=protected-access
 
