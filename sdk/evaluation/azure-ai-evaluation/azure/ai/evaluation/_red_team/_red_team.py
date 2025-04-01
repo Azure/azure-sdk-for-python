@@ -1419,7 +1419,6 @@ class RedTeam():
             application_scenario: Optional[str] = None,
             parallel_execution: bool = True,
             max_parallel_tasks: int = 5,
-            debug_mode: bool = False,
             timeout: int = 120) -> RedTeamOutput:
         """Run a red team scan against the target using the specified strategies.
         
@@ -1441,8 +1440,6 @@ class RedTeam():
         :type parallel_execution: bool
         :param max_parallel_tasks: Maximum number of parallel orchestrator tasks to run (default: 5)
         :type max_parallel_tasks: int
-        :param debug_mode: Whether to run in debug mode (more verbose output)
-        :type debug_mode: bool
         :param timeout: The timeout in seconds for API calls (default: 120)
         :type timeout: int
         :return: The output from the red team scan
@@ -1684,9 +1681,6 @@ class RedTeam():
                     )
                     all_objectives[strategy_name][risk_category.value] = objectives
                     
-                    # Print status about objective count for this strategy/risk
-                    if debug_mode:
-                        print(f"  - {risk_category.value}: {len(objectives)} objectives")
             
             self.logger.info("Completed fetching all attack objectives")
             
