@@ -23,13 +23,13 @@ def get_random_item():
 
 def upsert_item(container, num_upserts):
     for _ in range(num_upserts):
-        container.upsert_item(get_random_item())
+        container.upsert_item(get_random_item(), etag=None, match_condition=None)
 
 
 def read_item(container, num_upserts):
     for _ in range(num_upserts):
         item = get_random_item()
-        container.read_item(item["id"], item["id"])
+        container.read_item(item["id"], item["id"], etag=None, match_condition=None)
 
 
 def query_items(container, num_queries):
