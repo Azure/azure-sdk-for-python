@@ -425,13 +425,13 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
 
             user = client.create_or_update_ledger_user(user_id, {"assignedRoles": ["Reader"]})
             assert user["userId"] == user_id
-            assert user["assignedRoles"] == ["Contributor", "Reader"]
+            assert user["assignedRoles"] == ["Reader"]
 
             time.sleep(3)  # Let the PATCH user operation be committed, just in case.
 
             user = client.get_ledger_user(user_id)
             assert user["userId"] == user_id
-            assert user["assignedRoles"] == ["Contributor", "Reader"]
+            assert user["assignedRoles"] == ["Reader"]
 
             client.delete_ledger_user(user_id)
 
