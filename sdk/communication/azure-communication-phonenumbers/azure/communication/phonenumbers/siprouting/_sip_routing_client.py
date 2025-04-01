@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import IO, TYPE_CHECKING, Any, List, Optional, Union, overload
+from typing import TYPE_CHECKING, Any, List, Optional, Union
 from urllib.parse import urlparse
 
 from azure.core.tracing.decorator import distributed_trace
@@ -57,7 +57,8 @@ class SipRoutingClient(object):
         self._authentication_policy = get_authentication_policy(endpoint, credential)
 
         self._rest_service = SIPRoutingService(
-            self._endpoint, credential=credential, authentication_policy=self._authentication_policy, sdk_moniker=SDK_MONIKER, **kwargs
+            self._endpoint, credential=credential, authentication_policy=self._authentication_policy,
+            sdk_moniker=SDK_MONIKER, **kwargs
         )
 
     @classmethod
@@ -141,7 +142,7 @@ class SipRoutingClient(object):
 
     @distributed_trace
     def list_trunks(
-        self, 
+        self,
         expand: Optional[Union[str, ExpandEnum]] = None,
         **kwargs  # type: Any
     ):  # type: (...) -> ItemPaged[SipTrunk]
@@ -177,7 +178,8 @@ class SipRoutingClient(object):
 
         def extract_data(config):
             list_of_elem = [
-                SipTrunkRoute(description=x.description, name=x.name, number_pattern=x.number_pattern, trunks=x.trunks)
+                SipTrunkRoute(description=x.description, name=x.name, number_pattern=x.number_pattern,
+                              trunks=x.trunks, caller_id_override=x.caller_id_override)
                 for x in config.routes
             ]
             return None, list_of_elem
@@ -257,11 +259,14 @@ class SipRoutingClient(object):
         :type sip_configuration: ~azure.communication.phonenumbers.siprouting.models.SipConfiguration
         :param target_phone_number: Phone number to test routing patterns against. Required.
         :type target_phone_number: str
-        :return: List of routes matching the target number, provided in the same order of priority as in SipConfiguration.
+        :return: List of routes matching the target number,
+         provided in the same order of priority as in SipConfiguration.
         :rtype: ~azure.communication.phonenumbers.siprouting.models.RoutesForNumber
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return self._rest_service.sip_routing.test_routes_with_number(sip_configuration=sip_configuration,target_phone_number=target_phone_number, **kwargs)
+        return self._rest_service.sip_routing.test_routes_with_number(sip_configuration=sip_configuration,
+                                                                      target_phone_number=target_phone_number,
+                                                                      **kwargs)
 
     def _list_trunks_(self, **kwargs):
         config = self._rest_service.sip_routing.get(**kwargs)
