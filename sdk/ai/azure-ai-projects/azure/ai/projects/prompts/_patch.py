@@ -18,7 +18,9 @@ from ._utils import remove_leading_empty_space
 
 
 class PromptTemplate:
-    """The helper class which takes variant of inputs, e.g. Prompty format or string, and returns the parsed prompt in an array."""
+    """The helper class which takes variant of inputs, e.g. Prompty format or string, and returns the parsed prompt in an array.
+    Prompty library is required to be installed to use this class.
+    """
 
     @classmethod
     def from_prompty(cls, file_path: str) -> Self:
