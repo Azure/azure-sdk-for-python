@@ -13,7 +13,7 @@ from azure.cosmos.aio import CosmosClient, DatabaseProxy
 from azure.cosmos.exceptions import CosmosHttpResponseError
 
 @pytest.mark.cosmosEmulator
-class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
+class TestBackwardsCompatibilityAsync(unittest.IsolatedAsyncioTestCase):
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
     connectionPolicy = test_config.TestConfig.connectionPolicy
