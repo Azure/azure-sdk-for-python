@@ -3,7 +3,6 @@
     "CrossLanguageDefinitionId": {
         "azure.ai.projects.dp1.models.Index": "Azure.AI.Projects.Index",
         "azure.ai.projects.dp1.models.AzureAISearchIndex": "Azure.AI.Projects.AzureAISearchIndex",
-        "azure.ai.projects.dp1.models.BaseCredential": "Azure.AI.Projects.BaseCredential",
         "azure.ai.projects.dp1.models.BlobReferenceForConsumption": "Azure.AI.Projects.BlobReferenceForConsumption",
         "azure.ai.projects.dp1.models.Connection": "Azure.AI.Projects.Connection",
         "azure.ai.projects.dp1.models.CosmosDBIndex": "Azure.AI.Projects.CosmosDBIndex",
@@ -29,7 +28,6 @@
         "azure.ai.projects.dp1.models.DatasetType": "Azure.AI.Projects.DatasetType",
         "azure.ai.projects.dp1.models.ListViewType": "Azure.AI.Projects.ListViewType",
         "azure.ai.projects.dp1.models.RepeatabilityResult": "Azure.Core.RepeatabilityResult",
-        "azure.ai.projects.dp1.models.CredentialType": "Azure.AI.Projects.CredentialType",
         "azure.ai.projects.dp1.models.PendingUploadType": "Azure.AI.Projects.PendingUploadType",
         "azure.ai.projects.dp1.models.IndexType": "Azure.AI.Projects.IndexType",
         "azure.ai.projects.dp1.models.DeploymentType": "Azure.AI.Projects.DeploymentType",

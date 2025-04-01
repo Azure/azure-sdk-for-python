@@ -33,6 +33,7 @@ from azure.core.utils import case_insensitive_dict
 from ... import models as _models
 from ..._model_base import SdkJSONEncoder, _deserialize
 from ..._serialization import Deserializer, Serializer
+from ..._validation import api_version_validation
 from ...operations._operations import (
     build_connections_get_request,
     build_connections_list_request,
@@ -302,6 +303,10 @@ class EvaluationsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "name", "client_request_id", "accept"]},
+    )
     async def get(self, name: str, **kwargs: Any) -> _models.Evaluation:
         """Get an evaluation run by name.
 
@@ -367,6 +372,12 @@ class EvaluationsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-05-15-preview",
+        params_added_on={
+            "2025-05-15-preview": ["api_version", "top", "skip", "maxpagesize", "client_request_id", "accept"]
+        },
+    )
     def list(
         self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable["_models.Evaluation"]:
@@ -507,6 +518,10 @@ class EvaluationsOperations:
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "content_type", "accept"]},
+    )
     async def create_run(
         self, evaluation: Union[_models.Evaluation, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.Evaluation:
@@ -2308,6 +2323,12 @@ class EvaluationResultsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-05-15-preview",
+        params_added_on={
+            "2025-05-15-preview": ["api_version", "name", "top", "skip", "tags", "list_view_type", "accept"]
+        },
+    )
     def list_versions(
         self,
         name: str,
@@ -2418,6 +2439,10 @@ class EvaluationResultsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "top", "skip", "tags", "list_view_type", "accept"]},
+    )
     def list_latest(
         self,
         *,
@@ -2524,6 +2549,10 @@ class EvaluationResultsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "name", "version", "accept"]},
+    )
     async def get_version(self, name: str, version: str, **kwargs: Any) -> _models.EvaluationResult:
         """Get the specific version of the EvaluationResult.
 
@@ -2587,6 +2616,10 @@ class EvaluationResultsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "name", "version", "accept"]},
+    )
     async def delete_version(self, name: str, version: str, **kwargs: Any) -> None:
         """Delete the specific version of the EvaluationResult.
 
@@ -2692,6 +2725,20 @@ class EvaluationResultsOperations:
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-05-15-preview",
+        params_added_on={
+            "2025-05-15-preview": [
+                "api_version",
+                "name",
+                "repeatability_request_id",
+                "repeatability_first_sent",
+                "client_request_id",
+                "content_type",
+                "accept",
+            ]
+        },
+    )
     async def create(
         self, name: str, body: Union[_models.EvaluationResult, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.EvaluationResult:
@@ -2841,6 +2888,10 @@ class EvaluationResultsOperations:
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "name", "version", "content_type", "accept"]},
+    )
     async def create_version(
         self, name: str, version: str, body: Union[_models.EvaluationResult, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.EvaluationResult:
@@ -2985,6 +3036,10 @@ class EvaluationResultsOperations:
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "name", "version", "content_type", "accept"]},
+    )
     async def start_pending_upload(
         self, name: str, version: str, body: Union[_models.PendingUploadRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.PendingUploadResponse:
@@ -3081,6 +3136,10 @@ class RedTeamsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "name", "client_request_id", "accept"]},
+    )
     async def get(self, name: str, **kwargs: Any) -> _models.RedTeam:
         """Get a redteam by name.
 
@@ -3146,6 +3205,12 @@ class RedTeamsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-05-15-preview",
+        params_added_on={
+            "2025-05-15-preview": ["api_version", "top", "skip", "maxpagesize", "client_request_id", "accept"]
+        },
+    )
     def list(
         self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable["_models.RedTeam"]:
@@ -3286,6 +3351,10 @@ class RedTeamsOperations:
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "content_type", "accept"]},
+    )
     async def create_run(self, red_team: Union[_models.RedTeam, JSON, IO[bytes]], **kwargs: Any) -> _models.RedTeam:
         """Creates a redteam run.
 
