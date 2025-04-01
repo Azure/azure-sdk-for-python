@@ -162,7 +162,7 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE) -> None:
         f"The build will begin to fail for this library if errors are not fixed."
         f"\n\n**Library name:** {package_name}"
         f"\n**{check_type.capitalize()} version:** {version}"
-        f"\n**{check_type.capitalize()} errors:** [Link to build ({today.strftime('%Y-%m-%d')})]({build_link})"
+        f"\n**{check_type.capitalize()} Build:** [Link to build ({today.strftime('%Y-%m-%d')})]({build_link})"
         f"\n**How to fix:** Run the `next-{check_type}` tox command at the library package-level and resolve "
         f"the {error_type} errors.\n"
         f'1) `../{package_name}>pip install "tox<5"`\n'

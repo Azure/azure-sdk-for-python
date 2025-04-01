@@ -4,6 +4,11 @@
 
 ### Features Added
 
+## 12.25.1 (2025-03-27)
+
+### Other Changes
+- Updated dependency for `azure-storage-file-datalake` type hints.
+
 ## 12.25.0 (2025-03-11)
 
 ### Features Added

@@ -17,11 +17,6 @@ This guide walks you through how to investigate failures, common errors in the `
 ### Troubleshoot Remote Tracking Issues
 
 - Before running `evaluate()`, to ensure that you can enable logging and tracing to your Azure AI project, make sure you are first logged in by running `az login`.
-- Then install the following sub-package:
-
-    ```Shell
-    pip install azure-ai-evaluation[remote]
-    ```
 
 - Ensure that you assign the proper permissions to the storage account linked to your Azure AI Studio hub. This can be done with the following command. More information can be found [here](https://aka.ms/credentialleshub).
 
