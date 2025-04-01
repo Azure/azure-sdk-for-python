@@ -1,4 +1,14 @@
 # Release History
+## 1.8.0a20240401 (unreleased)
+
+### Features Added
+ - Add support for feature flags endpoint.
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
 
 ## 1.7.2 (Unreleased)
 
