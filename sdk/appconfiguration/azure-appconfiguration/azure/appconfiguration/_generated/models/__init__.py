@@ -14,43 +14,67 @@ if TYPE_CHECKING:
 
 
 from ._models import (  # type: ignore
+    Allocation,
+    Conditions,
     Error,
+    FeatureFlag,
+    FeatureFlagFilter,
+    GroupAllocation,
     Key,
     KeyValue,
     KeyValueFilter,
     Label,
     OperationDetails,
+    PercentileAllocation,
     Snapshot,
     SnapshotUpdateParameters,
+    Telemetry,
+    UserAllocation,
+    Variant,
 )
 
 from ._enums import (  # type: ignore
     ConfigurationSettingFields,
+    FeatureFlagFields,
     LabelFields,
     OperationState,
+    RequirementType,
     SnapshotComposition,
     SnapshotFields,
     SnapshotStatus,
+    StatusOverride,
 )
 from ._patch import __all__ as _patch_all
 from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "Allocation",
+    "Conditions",
     "Error",
+    "FeatureFlag",
+    "FeatureFlagFilter",
+    "GroupAllocation",
     "Key",
     "KeyValue",
     "KeyValueFilter",
     "Label",
     "OperationDetails",
+    "PercentileAllocation",
     "Snapshot",
     "SnapshotUpdateParameters",
+    "Telemetry",
+    "UserAllocation",
+    "Variant",
     "ConfigurationSettingFields",
+    "FeatureFlagFields",
     "LabelFields",
     "OperationState",
+    "RequirementType",
     "SnapshotComposition",
     "SnapshotFields",
     "SnapshotStatus",
+    "StatusOverride",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()
