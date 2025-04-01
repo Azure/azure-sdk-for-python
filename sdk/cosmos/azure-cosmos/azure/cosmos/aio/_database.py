@@ -25,7 +25,6 @@
 from typing import Any, Dict, List, Mapping, Optional, Union, Callable
 
 import warnings
-from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
@@ -131,23 +130,26 @@ class DatabaseProxy(object):
     async def read(
         self,
         *,
-        session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Read the database properties.
 
-        :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
+        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given database couldn't be retrieved.
         :returns: A dict representing the database properties
         :rtype: Dict[str, Any]
         """
-        database_link = _get_database_link(self)
+        session_token = kwargs.get('session_token')
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            warnings.warn(
+                "The 'session_token' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
+                DeprecationWarning)
+
+        database_link = _get_database_link(self)
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
         request_options = _build_options(kwargs)
@@ -169,10 +171,7 @@ class DatabaseProxy(object):
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
         unique_key_policy: Optional[Dict[str, str]] = None,
         conflict_resolution_policy: Optional[Dict[str, str]] = None,
-        session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         computed_properties: Optional[List[Dict[str, str]]] = None,
         analytical_storage_ttl: Optional[int] = None,
         vector_embedding_policy: Optional[Dict[str, Any]] = None,
@@ -194,17 +193,12 @@ class DatabaseProxy(object):
         :paramtype offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
         :keyword dict[str, str] unique_key_policy: The unique key policy to apply to the container.
         :keyword dict[str, str] conflict_resolution_policy: The conflict resolution policy to apply to the container.
-        :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
-            has changed, and act according to the condition specified by the `match_condition` parameter.
-        :keyword match_condition: The match condition to use upon the etag.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword List[Dict[str, str]] computed_properties: Sets The computed properties for this
             container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
             `here: https://learn.microsoft.com/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
+        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL. Please
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
@@ -238,6 +232,25 @@ class DatabaseProxy(object):
                 :caption: Create a container with specific settings; in this case, a custom partition key:
                 :name: create_container_with_settings
         """
+        session_token = kwargs.get('session_token')
+        if session_token is not None:
+            warnings.warn(
+                "The 'session_token' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
+                DeprecationWarning)
+        etag = kwargs.get('etag')
+        if etag is not None:
+            warnings.warn(
+                "The 'etag' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
+                DeprecationWarning)
+        match_condition = kwargs.get('match_condition')
+        if match_condition is not None:
+            warnings.warn(
+                "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
+                DeprecationWarning)
+
         definition: Dict[str, Any] = {"id": id}
         if partition_key is not None:
             definition["partitionKey"] = partition_key
@@ -265,14 +278,8 @@ class DatabaseProxy(object):
         if full_text_policy is not None:
             definition["fullTextPolicy"] = full_text_policy
 
-        if session_token is not None:
-            kwargs['session_token'] = session_token
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
-        if etag is not None:
-            kwargs['etag'] = etag
-        if match_condition is not None:
-            kwargs['match_condition'] = match_condition
         request_options = _build_options(kwargs)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
 
@@ -292,10 +299,7 @@ class DatabaseProxy(object):
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
         unique_key_policy: Optional[Dict[str, str]] = None,
         conflict_resolution_policy: Optional[Dict[str, str]] = None,
-        session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         computed_properties: Optional[List[Dict[str, str]]] = None,
         analytical_storage_ttl: Optional[int] = None,
         vector_embedding_policy: Optional[Dict[str, Any]] = None,
@@ -319,17 +323,12 @@ class DatabaseProxy(object):
         :paramtype offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
         :keyword dict[str, str] unique_key_policy: The unique key policy to apply to the container.
         :keyword dict[str, str] conflict_resolution_policy: The conflict resolution policy to apply to the container.
-        :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
-            has changed, and act according to the condition specified by the `match_condition` parameter.
-        :keyword match_condition: The match condition to use upon the etag.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword List[Dict[str, str]] computed_properties: Sets The computed properties for this
             container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
             `here: https://learn.microsoft.com/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
+        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL. Please
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
@@ -345,10 +344,27 @@ class DatabaseProxy(object):
         :returns: A `ContainerProxy` instance representing the new container.
         :rtype: ~azure.cosmos.aio.ContainerProxy
         """
+        session_token = kwargs.get('session_token')
+        if session_token is not None:
+            warnings.warn(
+                "The 'session_token' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
+                DeprecationWarning)
+        etag = kwargs.get('etag')
+        if etag is not None:
+            warnings.warn(
+                "The 'etag' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
+                DeprecationWarning)
+        match_condition = kwargs.get('match_condition')
+        if match_condition is not None:
+            warnings.warn(
+                "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
+                DeprecationWarning)
         try:
             container_proxy = self.get_container_client(id)
             await container_proxy.read(
-                session_token=session_token,
                 initial_headers=initial_headers,
                 **kwargs
             )
@@ -364,9 +380,6 @@ class DatabaseProxy(object):
                 conflict_resolution_policy=conflict_resolution_policy,
                 analytical_storage_ttl=analytical_storage_ttl,
                 computed_properties=computed_properties,
-                etag=etag,
-                match_condition=match_condition,
-                session_token=session_token,
                 initial_headers=initial_headers,
                 vector_embedding_policy=vector_embedding_policy,
                 change_feed_policy=change_feed_policy,
@@ -405,7 +418,6 @@ class DatabaseProxy(object):
     def list_containers(
         self,
         *,
-        session_token: Optional[str] = None,
         max_item_count: Optional[int] = None,
         initial_headers: Optional[Dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]] = None,
@@ -414,7 +426,6 @@ class DatabaseProxy(object):
         """List the containers in the database.
 
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
-        :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]
@@ -431,8 +442,12 @@ class DatabaseProxy(object):
                 :caption: List all containers in the database:
                 :name: list_containers
         """
+        session_token = kwargs.get('session_token')
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            warnings.warn(
+                "The 'session_token' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
+                DeprecationWarning)
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
         feed_options = _build_options(kwargs)
@@ -452,7 +467,6 @@ class DatabaseProxy(object):
         query: str,
         *,
         parameters: Optional[List[Dict[str, Any]]] = None,
-        session_token: Optional[str] = None,
         max_item_count: Optional[int] = None,
         initial_headers: Optional[Dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]] = None,
@@ -465,15 +479,18 @@ class DatabaseProxy(object):
             Each parameter is a dict() with 'name' and 'value' keys.
         :paramtype parameters: Optional[List[Dict[str, Any]]]
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
-        :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]
         :returns: An AsyncItemPaged of container properties (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
+        session_token = kwargs.get('session_token')
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            warnings.warn(
+                "The 'session_token' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
+                DeprecationWarning)
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
         feed_options = _build_options(kwargs)
@@ -499,10 +516,7 @@ class DatabaseProxy(object):
         indexing_policy: Optional[Dict[str, str]] = None,
         default_ttl: Optional[int] = None,
         conflict_resolution_policy: Optional[Dict[str, str]] = None,
-        session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         analytical_storage_ttl: Optional[int] = None,
         computed_properties: Optional[List[Dict[str, str]]] = None,
         full_text_policy: Optional[Dict[str, Any]] = None,
@@ -522,11 +536,6 @@ class DatabaseProxy(object):
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
         :keyword dict[str, str] conflict_resolution_policy: The conflict resolution policy to apply to the container.
-        :keyword str session_token: Token for use with Session consistency.
-        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
-            has changed, and act according to the condition specified by the `match_condition` parameter.
-        :keyword match_condition: The match condition to use upon the etag.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.  Please
@@ -535,7 +544,7 @@ class DatabaseProxy(object):
             container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
             `here: https://learn.microsoft.com/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
+        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
@@ -554,14 +563,26 @@ class DatabaseProxy(object):
                 :caption: Reset the TTL property on a container, and display the updated properties:
                 :name: reset_container_properties
         """
+        session_token = kwargs.get('session_token')
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            warnings.warn(
+                "The 'session_token' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
+                DeprecationWarning)
+        etag = kwargs.get('etag')
+        if etag is not None:
+            warnings.warn(
+                "The 'etag' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
+                DeprecationWarning)
+        match_condition = kwargs.get('match_condition')
+        if match_condition is not None:
+            warnings.warn(
+                "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
+                DeprecationWarning)
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
-        if etag is not None:
-            kwargs['etag'] = etag
-        if match_condition is not None:
-            kwargs['match_condition'] = match_condition
         request_options = _build_options(kwargs)
 
         container_id = self._get_container_id(container)
@@ -593,10 +614,7 @@ class DatabaseProxy(object):
         self,
         container: Union[str, ContainerProxy, Mapping[str, Any]],
         *,
-        session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
         """Delete a container.
@@ -605,25 +623,32 @@ class DatabaseProxy(object):
             pass in the ID of the container to delete, a :class:`ContainerProxy` instance or
             a dict representing the properties of the container.
         :type container: str or Dict[str, Any] or ~azure.cosmos.aio.ContainerProxy
-        :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
-            has changed, and act according to the condition specified by the `match_condition` parameter.
-        :keyword match_condition: The match condition to use upon the etag.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], None], None]
+        :paramtype response_hook: Callable[[Mapping[str, str], None], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the container couldn't be deleted.
         :rtype: None
         """
+        session_token = kwargs.get('session_token')
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            warnings.warn(
+                "The 'session_token' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
+                DeprecationWarning)
+        etag = kwargs.get('etag')
+        if etag is not None:
+            warnings.warn(
+                "The 'etag' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
+                DeprecationWarning)
+        match_condition = kwargs.get('match_condition')
+        if match_condition is not None:
+            warnings.warn(
+                "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
+                DeprecationWarning)
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
-        if etag is not None:
-            kwargs['etag'] = etag
-        if match_condition is not None:
-            kwargs['match_condition'] = match_condition
         request_options = _build_options(kwargs)
 
         collection_link = self._get_container_link(container)

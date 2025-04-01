@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from logging import getLogger
+from logging import getLogger, Formatter
 from os import environ
 from typing import Dict
 
@@ -34,6 +34,7 @@ from azure.monitor.opentelemetry._constants import (
     ENABLE_LIVE_METRICS_ARG,
     INSTRUMENTATION_OPTIONS_ARG,
     LOGGER_NAME_ARG,
+    LOGGING_FORMATTER_ARG,
     RESOURCE_ARG,
     SAMPLING_RATIO_ARG,
     SPAN_PROCESSORS_ARG,
@@ -66,6 +67,7 @@ def _get_configurations(**kwargs) -> Dict[str, ConfigurationValue]:
     _default_disable_metrics(configurations)
     _default_disable_tracing(configurations)
     _default_logger_name(configurations)
+    _default_logging_formatter(configurations)
     _default_resource(configurations)
     _default_sampling_ratio(configurations)
     _default_instrumentation_options(configurations)
@@ -102,6 +104,12 @@ def _default_disable_tracing(configurations):
 
 def _default_logger_name(configurations):
     configurations.setdefault(LOGGER_NAME_ARG, "")
+
+
+def _default_logging_formatter(configurations):
+    formatter = configurations.get(LOGGING_FORMATTER_ARG)
+    if not isinstance(formatter, Formatter):
+        configurations[LOGGING_FORMATTER_ARG] = None
 
 
 def _default_resource(configurations):

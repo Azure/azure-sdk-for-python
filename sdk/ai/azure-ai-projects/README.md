@@ -46,6 +46,7 @@ To report an issue with the client library, or request additional features, plea
       - [Function call](#create-agent-with-function-call)
       - [Azure Function Call](#create-agent-with-azure-function-call)
       - [OpenAPI](#create-agent-with-openapi)
+      - [Fabric data](#create-an-agent-with-fabric)
     - [Create thread](#create-thread) with
       - [Tool resource](#create-thread-with-tool-resource)
     - [Create message](#create-message) with:
@@ -455,17 +456,19 @@ Here is an example to integrate Azure AI Search:
 <!-- SNIPPET:sample_agents_azure_ai_search.create_agent_with_azure_ai_search_tool -->
 
 ```python
-conn_list = project_client.connections.list()
-conn_id = ""
-for conn in conn_list:
-    if conn.connection_type == ConnectionType.AZURE_AI_SEARCH:
-        conn_id = conn.id
-        break
+connection = project_client.connections.get(connection_name=os.environ["AI_SEARCH_CONNECTION_NAME"])
+conn_id = connection.id
 
 print(conn_id)
 
 # Initialize agent AI search tool and add the search index connection id
-ai_search = AzureAISearchTool(index_connection_id=conn_id, index_name="myindexname")
+ai_search = AzureAISearchTool(
+    index_connection_id=conn_id,
+    index_name="sample_index",
+    query_type=AzureAISearchQueryType.SIMPLE,
+    top_k=3,
+    filter=""
+)
 
 # Create agent with AI search tool and process assistant run
 with project_client:
@@ -476,6 +479,34 @@ with project_client:
         tools=ai_search.definitions,
         tool_resources=ai_search.resources,
     )
+```
+
+<!-- END SNIPPET -->
+
+If the agent has found the relevant information in the index, the reference
+and annotation will be provided in the message response. In the example above, we replace
+the reference placeholder by the actual reference and url. Please note, that to
+get sensible result, the index needs to have fields "title" and "url".
+
+<!-- SNIPPET:sample_agents_azure_ai_search.populate_references_agent_with_azure_ai_search_tool -->
+
+```python
+# Fetch and log all messages
+messages = project_client.agents.list_messages(thread_id=thread.id, order=ListSortOrder.ASCENDING)
+for message in messages.data:
+    if message.role == MessageRole.AGENT and message.url_citation_annotations:
+        placeholder_annotations = {
+            annotation.text: f" [see {annotation.url_citation.title}] ({annotation.url_citation.url})"
+            for annotation in message.url_citation_annotations
+        }
+        for message_text in message.text_messages:
+            message_str = message_text.text.value
+            for k, v in placeholder_annotations.items():
+                message_str = message_str.replace(k, v)
+            print(f"{message.role}: {message_str}")
+    else:
+        for message_text in message.text_messages:
+            print(f"{message.role}: {message_text.text.value}")
 ```
 
 <!-- END SNIPPET -->
@@ -779,6 +810,37 @@ with project_client:
 ```
 
 <!-- END SNIPPET -->
+
+#### Create an Agent with Fabric
+
+To enable your Agent to answer queries using Fabric data, use `FabricTool` along with a connection to the Fabric resource.
+
+Here is an example:
+
+<!-- SNIPPET:sample_agents_fabric.create_agent_with_fabric_tool -->
+
+```python
+fabric_connection = project_client.connections.get(connection_name=os.environ["FABRIC_CONNECTION_NAME"])
+conn_id = fabric_connection.id
+
+print(conn_id)
+
+# Initialize an Agent Fabric tool and add the connection id
+fabric = FabricTool(connection_id=conn_id)
+
+# Create an Agent with the Fabric tool and process an Agent run
+with project_client:
+    agent = project_client.agents.create_agent(
+        model=os.environ["MODEL_DEPLOYMENT_NAME"],
+        name="my-agent",
+        instructions="You are a helpful agent",
+        tools=fabric.definitions,
+        headers={"x-ms-enable-preview": "true"},
+    )
+```
+
+<!-- END SNIPPET -->
+
 
 #### Create Thread
 

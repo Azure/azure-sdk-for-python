@@ -47,7 +47,7 @@ def main():
                     "privateDnsZoneArmResourceId": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourcegroups/testrg/providers/Microsoft.Network/privateDnsZones/test-private-dns-zone.postgres.database.azure.com",
                 },
                 "storage": {"autoGrow": "Disabled", "storageSizeGB": 512, "tier": "P20"},
-                "version": "16",
+                "version": "12",
             },
             "sku": {"name": "Standard_D4s_v3", "tier": "GeneralPurpose"},
             "tags": {"ElasticServer": "1"},
@@ -56,6 +56,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2024-11-01-preview/examples/ServerCreate.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2024-08-01/examples/ServerCreate.json
 if __name__ == "__main__":
     main()
