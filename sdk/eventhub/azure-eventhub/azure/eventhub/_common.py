@@ -228,8 +228,6 @@ class EventData:
     def from_bytes(cls, message: bytes) -> "EventData":
 
         amqp_message = decode_payload(memoryview(message))
-        print(amqp_message)
-
         event_data = cls(body="")
         event_data._message = amqp_message
         event_data._raw_amqp_message = AmqpAnnotatedMessage(message=amqp_message)
