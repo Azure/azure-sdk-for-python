@@ -1,8 +1,18 @@
 # Release History
 
-## 1.0.0b9 (Unreleased)
+## 1.0.0b10 (Unreleased)
 
 ### Features added
+
+### Sample updates
+
+### Bugs Fixed
+
+## 1.0.0b9 (2025-04-15)
+
+### Features added
+
+* Update me
 
 ### Sample updates
 
