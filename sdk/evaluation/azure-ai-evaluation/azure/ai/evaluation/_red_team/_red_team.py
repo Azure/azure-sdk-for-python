@@ -441,11 +441,11 @@ class RedTeam():
                 self.logger.debug(f"API call: get_attack_objectives({risk_cat_value}, app: {application_scenario}, strategy: {strategy})")
                 # strategy param specifies whether to get a strategy-specific dataset from the RAI service
                 # right now, only tense requires strategy-specific dataset
-                if strategy == "tense":
+                if "tense" in strategy:
                     objectives_response = await self.generated_rai_client.get_attack_objectives(
                         risk_category=risk_cat_value,
                         application_scenario=application_scenario or "",
-                        strategy=strategy
+                        strategy="tense"
                     )
                 else: 
                     objectives_response = await self.generated_rai_client.get_attack_objectives(
@@ -1673,7 +1673,6 @@ class RedTeam():
                 for risk_category in self.risk_categories:
                     progress_bar.set_postfix({"current": f"fetching {strategy_name}/{risk_category.value}"})
                     self.logger.debug(f"Fetching objectives for {strategy_name} strategy and {risk_category.value} risk category")
-                    
                     objectives = await self._get_attack_objectives(
                         risk_category=risk_category,
                         application_scenario=application_scenario,

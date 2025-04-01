@@ -41,7 +41,7 @@ def strategy_converter_map() -> Dict[Any, Union[PromptConverter, List[PromptConv
     return {
         AttackStrategy.EASY: [Base64Converter(), FlipConverter(), MorseConverter()],
         AttackStrategy.MODERATE: [_DefaultConverter()],
-        AttackStrategy.DIFFICULT: [[Base64Converter(), _DefaultConverter()]],
+        AttackStrategy.DIFFICULT: [[_DefaultConverter(), Base64Converter()]],
         AttackStrategy.AnsiAttack: AnsiAttackConverter(),
         AttackStrategy.AsciiArt: AsciiArtConverter(),
         AttackStrategy.AsciiSmuggler: AsciiSmugglerConverter(),
