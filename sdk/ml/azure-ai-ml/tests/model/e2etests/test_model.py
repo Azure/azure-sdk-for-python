@@ -107,7 +107,7 @@ class TestModel(AzureRecordedTestCase):
 
         model = registry_client.models.create_or_update(model)
         assert model.name == model_name
-        assert model.version == "3"
+        assert model.version == "1"
         assert model.description == "this is my test model with system metadata"
         assert model.type == "mlflow_model"
 

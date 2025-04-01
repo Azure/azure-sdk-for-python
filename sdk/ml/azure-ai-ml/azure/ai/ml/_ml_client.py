@@ -261,6 +261,13 @@ class MLClient:
             if not workspace_name:
                 workspace_name = workspace_reference
 
+            self._service_client_model_dataplane = ServiceClientModelDataPlane(
+                credential=self._credential,
+                subscription_id=subscription_id,
+                base_url=self._service_client_10_2021_dataplanepreview._client._base_url,
+                **kwargs,
+            )
+
         self._operation_scope = OperationScope(
             str(subscription_id),
             str(resource_group_name),
@@ -494,17 +501,6 @@ class MLClient:
         )
 
         self._service_client_04_2024_preview = ServiceClient042024Preview(
-            credential=self._credential,
-            subscription_id=(
-                self._ws_operation_scope._subscription_id
-                if registry_reference
-                else self._operation_scope._subscription_id
-            ),
-            base_url=base_url,
-            **kwargs,
-        )
-
-        self._service_client_model_dataplane = ServiceClientModelDataPlane(
             credential=self._credential,
             subscription_id=(
                 self._ws_operation_scope._subscription_id
