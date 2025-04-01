@@ -42,8 +42,9 @@ from typing import (
 from azure.core.credentials import AccessToken, TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
 
-from ._enums import AgentStreamEvent, ConnectionType, MessageRole
+from ._enums import AgentStreamEvent, ConnectionType, MessageRole, AzureAISearchQueryType
 from ._models import (
+    AISearchIndexResource,
     AzureAISearchResource,
     AzureAISearchToolDefinition,
     AzureFunctionDefinition,
@@ -58,7 +59,6 @@ from ._models import (
     FunctionDefinition,
     FunctionToolDefinition,
     GetConnectionResponse,
-    IndexResource,
     MessageImageFileContent,
     MessageTextContent,
     MessageTextFileCitationAnnotation,
@@ -161,6 +161,9 @@ def _parse_event(event_data_str: str) -> Tuple[str, StreamEventData]:
     # Workaround for service bug: Rename 'expires_at' to 'expired_at'
     if event_type.startswith("thread.run.step") and isinstance(parsed_data, dict) and "expires_at" in parsed_data:
         parsed_data["expired_at"] = parsed_data.pop("expires_at")
+
+    if isinstance(parsed_data, dict) and "assistant_id" in parsed_data:
+        parsed_data["agent_id"] = parsed_data.pop("assistant_id")
 
     # Map to the appropriate class instance
     if event_type in {
@@ -760,10 +763,41 @@ class AsyncFunctionTool(BaseFunctionTool):
 class AzureAISearchTool(Tool[AzureAISearchToolDefinition]):
     """
     A tool that searches for information using Azure AI Search.
+    :param connection_id: Connection ID used by tool. All connection tools allow only one connection.
     """
 
-    def __init__(self, index_connection_id: str, index_name: str):
-        self.index_list = [IndexResource(index_connection_id=index_connection_id, index_name=index_name)]
+    def __init__(
+        self,
+        index_connection_id: str,
+        index_name: str,
+        query_type: AzureAISearchQueryType = AzureAISearchQueryType.SIMPLE,
+        filter: str = "",
+        top_k: int = 5,
+    ):
+        """
+        Initialize AzureAISearch with an index_connection_id and index_name, with optional params.
+
+        :param index_connection_id: Index Connection ID used by tool. Allows only one connection.
+        :type index_connection_id: str
+        :param index_name: Name of Index in search resource to be used by tool.
+        :type index_name: str
+        :param query_type: Type of query in an AIIndexResource attached to this agent. 
+            Default value is AzureAISearchQueryType.SIMPLE.
+        :type query_type: AzureAISearchQueryType
+        :param filter: Odata filter string for search resource.
+        :type filter: str
+        :param top_k: Number of documents to retrieve from search and present to the model.
+        :type top_k: int
+        """
+        self.index_list = [
+            AISearchIndexResource(
+                index_connection_id=index_connection_id,
+                index_name=index_name,
+                query_type=query_type,
+                filter=filter,
+                top_k=top_k,
+            )
+        ]
 
     @property
     def definitions(self) -> List[AzureAISearchToolDefinition]:
@@ -998,7 +1032,7 @@ class FabricTool(ConnectionTool[MicrosoftFabricToolDefinition]):
 
         :rtype: List[ToolDefinition]
         """
-        return [MicrosoftFabricToolDefinition(fabric_aiskill=ToolConnectionList(connection_list=self.connection_ids))]
+        return [MicrosoftFabricToolDefinition(fabric_dataagent=ToolConnectionList(connection_list=self.connection_ids))]
 
 
 class SharepointTool(ConnectionTool[SharepointToolDefinition]):
@@ -1358,7 +1392,14 @@ class BaseAsyncAgentEventHandler(AsyncIterator[T]):
         )
         self.submit_tool_outputs = submit_tool_outputs
 
+    # cspell:disable-next-line
     async def __anext__(self) -> T:
+        # cspell:disable-next-line
+        event_bytes = await self.__anext_impl__()
+        return await self._process_event(event_bytes.decode("utf-8"))
+
+    # cspell:disable-next-line
+    async def __anext_impl__(self) -> bytes:
         self.buffer = b"" if self.buffer is None else self.buffer
         if self.response_iterator is None:
             raise ValueError("The response handler was not initialized.")
@@ -1381,7 +1422,7 @@ class BaseAsyncAgentEventHandler(AsyncIterator[T]):
             event_bytes = self.buffer
             self.buffer = b""
 
-        return await self._process_event(event_bytes.decode("utf-8"))
+        return event_bytes
 
     async def _process_event(self, event_data_str: str) -> T:
         raise NotImplementedError("This method needs to be implemented.")
@@ -1416,6 +1457,10 @@ class BaseAgentEventHandler(Iterator[T]):
         self.submit_tool_outputs = submit_tool_outputs
 
     def __next__(self) -> T:
+        event_bytes = self.__next_impl__()
+        return self._process_event(event_bytes.decode("utf-8"))
+
+    def __next_impl__(self) -> bytes:
         self.buffer = b"" if self.buffer is None else self.buffer
         if self.response_iterator is None:
             raise ValueError("The response handler was not initialized.")
@@ -1438,7 +1483,7 @@ class BaseAgentEventHandler(Iterator[T]):
             event_bytes = self.buffer
             self.buffer = b""
 
-        return self._process_event(event_bytes.decode("utf-8"))
+        return event_bytes
 
     def _process_event(self, event_data_str: str) -> T:
         raise NotImplementedError("This method needs to be implemented.")
