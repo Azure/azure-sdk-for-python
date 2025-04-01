@@ -585,7 +585,11 @@ class MLClient:
                 else self._service_client_08_2023_preview
             ),
             self._datastores,
-            self._service_client_model_dataplane,
+            (
+                self._service_client_model_dataplane
+                if registry_name or registry_reference
+                else None
+            ),
             self._operation_container,
             requests_pipeline=self._requests_pipeline,
             control_plane_client=self._service_client_08_2023_preview,
