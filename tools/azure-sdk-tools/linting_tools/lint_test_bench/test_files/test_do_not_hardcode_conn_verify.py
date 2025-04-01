@@ -4,12 +4,8 @@
 # This code violates do-not-harcode-connection-verify
 
 
-class FunctionKeywordArgumentsErrors:
-    def create(self, x, connection_verify):
-        if connection_verify:
-            return x+1
-        return x
+from azure.core.pipeline.transport import RequestsTransport
 
-    def run(self):
-        client = self.create(connection_verify=False, x=0)
-        return client
+def create_client():
+    transport = RequestsTransport(connection_verify=False)  # Hardcoded to False
+    return transport
