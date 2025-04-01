@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -716,7 +716,6 @@ class BlockBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Upload Block Blob operation updates the content of an existing block blob. Updating an
         existing block blob overwrites any existing metadata on the blob. Partial updates are not
         supported with Put Blob; the content of the existing blob is overwritten with the content of
@@ -943,7 +942,6 @@ class BlockBlobOperations:
         source_modified_access_conditions: Optional[_models.SourceModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Put Blob from URL operation creates a new Block Blob where the contents of the blob are
         read from a given URL.  This API is supported beginning with the 2020-04-08 version. Partial
         updates are not supported with Put Blob from URL; the content of an existing blob is
@@ -1175,7 +1173,6 @@ class BlockBlobOperations:
         cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Stage Block operation creates a new block to be committed as part of a blob.
 
         :param block_id: A valid Base64 string value that identifies the block. Prior to encoding, the
@@ -1330,7 +1327,6 @@ class BlockBlobOperations:
         source_modified_access_conditions: Optional[_models.SourceModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Stage Block operation creates a new block to be committed as part of a blob where the
         contents are read from a URL.
 
@@ -1499,7 +1495,6 @@ class BlockBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Commit Block List operation writes a blob by specifying the list of block IDs that make up
         the blob. In order to be written as part of a blob, a block must have been successfully written
         to the server in a prior Put Block operation. You can call Put Block List to update a blob by
@@ -1703,7 +1698,6 @@ class BlockBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> _models.BlockList:
-        # pylint: disable=line-too-long
         """The Get Block List operation retrieves the list of blocks that have been uploaded as part of a
         block blob.
 

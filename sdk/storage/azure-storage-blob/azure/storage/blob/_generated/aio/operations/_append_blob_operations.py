@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -78,7 +79,6 @@ class AppendBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Create Append Blob operation creates a new append blob.
 
         :param content_length: The length of the request. Required.
@@ -264,7 +264,6 @@ class AppendBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Append Block operation commits a new block of data to the end of an existing append blob.
         The Append Block operation is permitted only if the blob was created with x-ms-blob-type set to
         AppendBlob. Append Block is supported only on version 2015-02-21 version or later.
@@ -454,7 +453,6 @@ class AppendBlobOperations:
         source_modified_access_conditions: Optional[_models.SourceModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Append Block operation commits a new block of data to the end of an existing append blob
         where the contents are read from a source url. The Append Block operation is permitted only if
         the blob was created with x-ms-blob-type set to AppendBlob. Append Block is supported only on
@@ -646,7 +644,6 @@ class AppendBlobOperations:
         append_position_access_conditions: Optional[_models.AppendPositionAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Seal operation seals the Append Blob to make it read-only. Seal is supported only on
         version 2019-12-12 version or later.
 
