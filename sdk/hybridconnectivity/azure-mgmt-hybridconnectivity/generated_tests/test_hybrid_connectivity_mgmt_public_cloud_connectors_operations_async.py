@@ -75,19 +75,9 @@ class TestHybridConnectivityMgmtPublicCloudConnectorsOperationsAsync(AzureMgmtRe
             resource_group_name=resource_group.name,
             public_cloud_connector="str",
             properties={
-                "location": "str",
                 "id": "str",
                 "name": "str",
-                "properties": {
-                    "awsCloudProfile": {
-                        "accountId": "str",
-                        "excludedAccounts": ["str"],
-                        "isOrganizationalAccount": bool,
-                    },
-                    "hostType": "str",
-                    "connectorPrimaryIdentifier": "str",
-                    "provisioningState": "str",
-                },
+                "properties": {"awsCloudProfile": {"excludedAccounts": ["str"]}},
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
                     "createdBy": "str",

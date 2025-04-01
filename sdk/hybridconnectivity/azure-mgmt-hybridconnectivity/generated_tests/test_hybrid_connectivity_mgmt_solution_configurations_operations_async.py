@@ -71,14 +71,7 @@ class TestHybridConnectivityMgmtSolutionConfigurationsOperationsAsync(AzureMgmtR
             properties={
                 "id": "str",
                 "name": "str",
-                "properties": {
-                    "solutionType": "str",
-                    "lastSyncTime": "2020-02-20 00:00:00",
-                    "provisioningState": "str",
-                    "solutionSettings": {},
-                    "status": "str",
-                    "statusDetails": "str",
-                },
+                "properties": {"solutionSettings": {}, "solutionType": "str"},
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
                     "createdBy": "str",
