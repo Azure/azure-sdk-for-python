@@ -20,13 +20,13 @@ class TestSqlManagementJobVersionsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_job(self, resource_group):
+    def test_job_versions_list_by_job(self, resource_group):
         response = self.client.job_versions.list_by_job(
             resource_group_name=resource_group.name,
             server_name="str",
             job_agent_name="str",
             job_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -34,14 +34,14 @@ class TestSqlManagementJobVersionsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_job_versions_get(self, resource_group):
         response = self.client.job_versions.get(
             resource_group_name=resource_group.name,
             server_name="str",
             job_agent_name="str",
             job_name="str",
             job_version=0,
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself

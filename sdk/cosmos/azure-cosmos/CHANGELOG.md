@@ -1,16 +1,26 @@
 ## Release History
 
-### 4.10.0b3 (Unreleased)
+### 4.10.0b4 (Unreleased)
 
 #### Features Added
 
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed bug introduced in 4.10.0b3 with explicitly setting `etag` keyword argument as `None` causing exceptions. See [PR 40282](https://github.com/Azure/azure-sdk-for-python/pull/40282).
 
 #### Other Changes
 
-### 4.10.0b2 (2025-04-08)
+### 4.10.0b3 (2025-03-27)
+
+#### Bugs Fixed
+* Fixed too many health checks happening when skipping the recommended client startup. See [PR 40203](https://github.com/Azure/azure-sdk-for-python/pull/40203).
+
+#### Other Changes
+* Removed excess keyword arguments from methods that did not use them. See [PR 40008](https://github.com/Azure/azure-sdk-for-python/pull/40008).
+* Removed first `response_hook` call for query methods that would utilize wrong response headers. See [PR 40008](https://github.com/Azure/azure-sdk-for-python/pull/40008).
+
+### 4.10.0b2 (2025-03-17)
 
 #### Bugs Fixed
 * Fixed bug preventing health check in some scenarios. See [PR 39647](https://github.com/Azure/azure-sdk-for-python/pull/39647)
