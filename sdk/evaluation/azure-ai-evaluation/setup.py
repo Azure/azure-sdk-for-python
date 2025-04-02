@@ -74,7 +74,10 @@ setup(
         "azure-storage-blob>=12.10.0",
     ],
     extras_require={
-        "redteam": ["pyrit>=0.8.0"]
+        "redteam": [
+            "termcolor==2.5.0"
+            "pyrit==0.8.0"
+        ]
     },
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",
