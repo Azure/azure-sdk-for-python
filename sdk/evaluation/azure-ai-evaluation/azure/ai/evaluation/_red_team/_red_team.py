@@ -679,7 +679,7 @@ class RedTeam():
                         continue
                     except Exception as e:
                         log_error(self.logger, f"Error processing batch {batch_idx+1}", e, f"{strategy_name}/{risk_category}")
-                        print(f"❌ ERROR: Strategy {strategy_name}, Risk {risk_category}, Batch {batch_idx+1}: {str(e)}")
+                        self.logger.debug(f"ERROR: Strategy {strategy_name}, Risk {risk_category}, Batch {batch_idx+1}: {str(e)}")
                         # Continue with other batches even if one fails
                         continue
             else:
@@ -701,14 +701,14 @@ class RedTeam():
                     self.task_statuses[single_batch_task_key] = TASK_STATUS["TIMEOUT"]
                 except Exception as e:
                     log_error(self.logger, "Error processing prompts", e, f"{strategy_name}/{risk_category}")
-                    print(f"❌ ERROR: Strategy {strategy_name}, Risk {risk_category}: {str(e)}")
+                    self.logger.debug(f"ERROR: Strategy {strategy_name}, Risk {risk_category}: {str(e)}")
             
             self.task_statuses[task_key] = TASK_STATUS["COMPLETED"]
             return orchestrator
             
         except Exception as e:
             log_error(self.logger, "Failed to initialize orchestrator", e, f"{strategy_name}/{risk_category}")
-            print(f"❌ CRITICAL: Failed to create orchestrator for {strategy_name}/{risk_category}: {str(e)}")
+            self.logger.debug(f"CRITICAL: Failed to create orchestrator for {strategy_name}/{risk_category}: {str(e)}")
             self.task_statuses[task_key] = TASK_STATUS["FAILED"]
             raise
 
@@ -1344,7 +1344,7 @@ class RedTeam():
                 orchestrator = await call_orchestrator(self.chat_target, all_prompts, converter, strategy_name, risk_category.value, timeout)
             except PyritException as e:
                 log_error(self.logger, f"Error calling orchestrator for {strategy_name} strategy", e)
-                print(f"❌ Orchestrator error for {strategy_name}/{risk_category.value}: {str(e)}")
+                self.logger.debug(f"Orchestrator error for {strategy_name}/{risk_category.value}: {str(e)}")
                 self.task_statuses[task_key] = TASK_STATUS["FAILED"]
                 self.failed_tasks += 1
                 
@@ -1399,7 +1399,7 @@ class RedTeam():
             
         except Exception as e:
             log_error(self.logger, f"Unexpected error processing {strategy_name} strategy for {risk_category.value}", e)
-            print(f"❌ Critical error in task {strategy_name}/{risk_category.value}: {str(e)}")
+            self.logger.debug(f"Critical error in task {strategy_name}/{risk_category.value}: {str(e)}")
             self.task_statuses[task_key] = TASK_STATUS["FAILED"]
             self.failed_tasks += 1
             
@@ -1519,7 +1519,7 @@ class RedTeam():
         if not self.attack_objective_generator:
             error_msg = "Attack objective generator is required for red team agent."
             log_error(self.logger, error_msg)
-            print(f"❌ {error_msg}")
+            self.logger.debug(f"{error_msg}")
             raise EvaluationException(
                 message=error_msg,
                 internal_message="Attack objective generator is not provided.",
@@ -1747,7 +1747,7 @@ class RedTeam():
                         continue
                     except Exception as e:
                         log_error(self.logger, f"Error processing batch {i//max_parallel_tasks+1}", e)
-                        print(f"❌ Error in batch {i//max_parallel_tasks+1}: {str(e)}")
+                        self.logger.debug(f"Error in batch {i//max_parallel_tasks+1}: {str(e)}")
                         continue
             else:
                 # Sequential execution 
@@ -1769,7 +1769,7 @@ class RedTeam():
                         continue
                     except Exception as e:
                         log_error(self.logger, f"Error processing task {i+1}/{len(orchestrator_tasks)}", e)
-                        print(f"❌ Error in task {i+1}: {str(e)}")
+                        self.logger.debug(f"Error in task {i+1}: {str(e)}")
                         continue
             
             progress_bar.close()
