@@ -8,7 +8,7 @@
 and `set_queue_access_policy` APIs.
 
 ### Other Changes
-- Migrated any previous documented `kwarg` arguments to be named keywords. 
+- Migrated any previously documented `kwarg` arguments to be named keywords. 
 Some public types may have been adjusted if they were previously erroneous or incomplete.
 
 ## 12.12.0 (2024-09-17)
