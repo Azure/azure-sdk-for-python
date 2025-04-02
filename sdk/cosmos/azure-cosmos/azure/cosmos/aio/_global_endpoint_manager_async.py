@@ -33,6 +33,7 @@ from azure.cosmos import DatabaseAccount
 from .. import _constants as constants
 from .. import exceptions
 from .._location_cache import LocationCache, current_time_millis
+from .._request_object import RequestObject
 
 # pylint: disable=protected-access
 
@@ -63,9 +64,8 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         self.last_refresh_time = 0
         self._database_account_cache = None
 
-    # TODO: @tvaron3 fix this
-    def get_use_multiple_write_locations(self):
-        return self.location_cache.can_use_multiple_write_locations()
+    def get_use_multiple_write_locations(self, request: RequestObject):
+        return self.location_cache.can_use_multiple_write_locations_for_request(request)
 
     def get_refresh_time_interval_in_ms_stub(self):
         return constants._Constants.DefaultEndpointsRefreshTime
