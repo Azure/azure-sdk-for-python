@@ -42,7 +42,7 @@ jobs:
     strategy:
       matrix:
         Python_38_Linux (AzureCloud):
-          PythonVersion: '3.8'
+          PythonVersion: '3.9'
           Pool: "azsdk-pool-mms-ubuntu-2004-general"
           OSVmImage: azsdk-pool-mms-ubuntu-2004-1espt
         ${{ if eq(parameters.Daily, true) }}:
@@ -84,7 +84,7 @@ jobs:
               Pool: azsdk-pool-mms-win-2022-general
               OSVmImage: azsdk-pool-mms-win-2022-1espt
             Python_38_Windows (AzureCloud):
-              PythonVersion: '3.8'
+              PythonVersion: '3.9'
               Pool: azsdk-pool-mms-win-2022-general
               OSVmImage: azsdk-pool-mms-win-2022-1espt
 
@@ -118,7 +118,7 @@ jobs:
               Pool: Azure Pipelines
               OSVmImage: macos-latest
             Python_38_Mac (AzureCloud):
-              PythonVersion: '3.8'
+              PythonVersion: '3.9'
               Pool: Azure Pipelines
               OSVmImage: macos-latest
 
