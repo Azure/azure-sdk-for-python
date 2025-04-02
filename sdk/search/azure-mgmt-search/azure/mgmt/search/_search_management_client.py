@@ -27,7 +27,6 @@ from .operations import (
     PrivateLinkResourcesOperations,
     QueryKeysOperations,
     SearchManagementClientOperationsMixin,
-    ServiceOperations,
     ServicesOperations,
     SharedPrivateLinkResourcesOperations,
     UsagesOperations,
@@ -64,8 +63,6 @@ class SearchManagementClient(SearchManagementClientOperationsMixin):  # pylint: 
      NetworkSecurityPerimeterConfigurationsOperations operations
     :vartype network_security_perimeter_configurations:
      azure.mgmt.search.operations.NetworkSecurityPerimeterConfigurationsOperations
-    :ivar service: ServiceOperations operations
-    :vartype service: azure.mgmt.search.operations.ServiceOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The unique identifier for a Microsoft Azure subscription. You can
@@ -132,7 +129,6 @@ class SearchManagementClient(SearchManagementClientOperationsMixin):  # pylint: 
         self.network_security_perimeter_configurations = NetworkSecurityPerimeterConfigurationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.service = ServiceOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

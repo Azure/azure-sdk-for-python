@@ -242,3 +242,15 @@ class TestSearchManagementServicesOperations(AzureMgmtRecordedTestCase):
 
         # please add some check logic here by yourself
         # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_services_begin_upgrade(self, resource_group):
+        response = self.client.services.begin_upgrade(
+            resource_group_name=resource_group.name,
+            search_service_name="str",
+            api_version="2025-02-01-preview",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
