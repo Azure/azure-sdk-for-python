@@ -13,6 +13,7 @@ from azure.ai.ml import MLClient, load_model
 from azure.ai.ml._restclient.v2022_05_01.models import ListViewType
 from azure.ai.ml.constants._common import LONG_URI_REGEX_FORMAT
 from azure.ai.ml.entities._assets import Model
+from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 
 
@@ -96,6 +97,19 @@ class TestModel(AzureRecordedTestCase):
         model_list = client.models.list(name=model.name, stage="Production")
         model_stage_list = [m.stage for m in model_list if m is not None]
         assert model.stage in model_stage_list
+
+    def test_crud_model_with_system_metadata(self, registry_client: MLClient, randstr: Callable[[], str]) -> None:
+        path = Path("./tests/test_configs/model/model_with_system_metadata.yml")
+        model_name = randstr("model_with_system_metadata")
+
+        model = load_model(path)
+        model.name = model_name
+
+        model = registry_client.models.create_or_update(model)
+        assert model.name == model_name
+        assert model.version == "1"
+        assert model.description == "this is my test model with system metadata"
+        assert model.type == "mlflow_model"
 
     def test_list_no_name(self, client: MLClient) -> None:
         models = client.models.list()
