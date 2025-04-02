@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -37,7 +36,7 @@ import os
 import jsonref
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models import OpenApiTool, OpenApiConnectionAuthDetails, OpenApiConnectionSecurityScheme
+from azure.ai.projects.models import OpenApiTool, OpenApiConnectionAuthDetails, OpenApiConnectionSecurityScheme 
 
 
 project_client = AIProjectClient.from_connection_string(
@@ -51,16 +50,14 @@ connection = project_client.connections.get(connection_name=connection_name)
 
 print(connection.id)
 
-with open("./tripadvisor_openapi.json", "r") as f:
+with open('./tripadvisor_openapi.json', 'r') as f:
     openapi_spec = jsonref.loads(f.read())
 
 # Create Auth object for the OpenApiTool (note that connection or managed identity auth setup requires additional setup in Azure)
 auth = OpenApiConnectionAuthDetails(security_scheme=OpenApiConnectionSecurityScheme(connection_id=connection.id))
 
 # Initialize an Agent OpenApi tool using the read in OpenAPI spec
-openapi = OpenApiTool(
-    name="get_weather", spec=openapi_spec, description="Retrieve weather information for a location", auth=auth
-)
+openapi = OpenApiTool(name="get_weather", spec=openapi_spec, description="Retrieve weather information for a location", auth=auth)
 
 # Create an Agent with OpenApi tool and process Agent run
 with project_client:
