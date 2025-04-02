@@ -12,8 +12,8 @@ from azure.cosmos import PartitionKey
 from azure.cosmos.aio import CosmosClient, DatabaseProxy
 from azure.cosmos.exceptions import CosmosHttpResponseError
 
-@pytest.mark.cosmosLong
-class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
+@pytest.mark.cosmosEmulator
+class TestBackwardsCompatibilityAsync(unittest.IsolatedAsyncioTestCase):
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
     connectionPolicy = test_config.TestConfig.connectionPolicy
@@ -75,7 +75,7 @@ class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
         assert replace_container is not None
         assert replace_container_read != container2_read
         assert 'defaultTtl' in replace_container_read # Check for default_ttl as a new additional property
-        assert replace_container_read['default_ttl'] == 30
+        assert replace_container_read['defaultTtl'] == 30
         await database.delete_container(replace_container.id, session_token=str(uuid.uuid4()))
         try:
             await container2.read()
