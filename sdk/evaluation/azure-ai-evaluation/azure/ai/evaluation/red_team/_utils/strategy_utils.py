@@ -107,23 +107,27 @@ def get_chat_target(target: Union[PromptChatTarget, Callable, AzureOpenAIModelCo
     if not isinstance(target, Callable):
         if "azure_deployment" in target and "azure_endpoint" in target:  # Azure OpenAI
             api_key = target.get("api_key", None)
+            api_version = target.get("api_version", "2024-06-01")
             if not api_key:
                 chat_target = OpenAIChatTarget(
                     model_name=target["azure_deployment"],
                     endpoint=target["azure_endpoint"],
-                    use_aad_auth=True
+                    use_aad_auth=True,
+                    api_version=api_version,
                 )
             else: 
                 chat_target = OpenAIChatTarget(
                     model_name=target["azure_deployment"],
                     endpoint=target["azure_endpoint"],
-                    api_key=api_key
+                    api_key=api_key,
+                    api_version=api_version,
                 )
         else:  # OpenAI
             chat_target = OpenAIChatTarget(
                 model_name=target["model"],
                 endpoint=target.get("base_url", None),
-                api_key=target["api_key"]
+                api_key=target["api_key"],
+                api_version=target.get("api_version", "2024-06-01"),
             )
     else:
         # Target is callable
