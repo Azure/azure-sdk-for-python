@@ -156,7 +156,8 @@ IGNORED_SAMPLES = {
     "azure-storage-blob": [
         "blob_samples_proxy_configuration.py",
         "blob_samples_container_access_policy.py",
-        "blob_samples_container_access_policy_async.py"
+        "blob_samples_container_access_policy_async.py",
+        "blob_samples_client_side_encryption_keyvault.py"
     ],
 }
 

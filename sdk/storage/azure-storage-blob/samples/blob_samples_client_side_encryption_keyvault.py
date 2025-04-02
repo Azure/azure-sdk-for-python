@@ -21,10 +21,7 @@ DESCRIPTION:
 USAGE: python blob_samples_client_side_encryption_keyvault.py
     Set the environment variables with your own values before running the sample:
     1) AZURE_STORAGE_ACCOUNT_URL - the storage account url
-    2) ACTIVE_DIRECTORY_APPLICATION_ID - Azure Active Directory application ID
-    3) ACTIVE_DIRECTORY_APPLICATION_SECRET - Azure Active Directory application secret
-    4) ACTIVE_DIRECTORY_TENANT_ID - Azure Active Directory tenant ID
-    5) AZURE_KEYVAULT_DNS_NAME: The keyvault account dns name
+    2) AZURE_KEYVAULT_DNS_NAME: The keyvault account dns name
 """
 
 import os
@@ -41,9 +38,6 @@ from azure.storage.blob import BlobServiceClient
 # Environment variable keys which must be set to run this sample
 STORAGE_URL = 'STORAGE_ACCOUNT_BLOB_URL'
 KEYVAULT_URL = 'KEYVAULT_URL'
-AZURE_CLIENT_ID = 'ACTIVE_DIRECTORY_APPLICATION_ID'
-AZURE_CLIENT_SECRET = 'ACTIVE_DIRECTORY_APPLICATION_SECRET'
-AZURE_TENANT_ID = 'ACTIVE_DIRECTORY_TENANT_ID'
 
 def get_env_var(key):
     try:
