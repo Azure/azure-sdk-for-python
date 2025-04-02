@@ -68,10 +68,10 @@ setup(
         "promptflow-core>=1.17.1",
         "pyjwt>=2.8.0",
         # pickle support for credentials was added to this release
-        "azure-identity>=1.16.0",
-        "azure-core>=1.30.2",
+        "azure-identity>=1.19.0",
+        "azure-core>=1.32.0",
         "nltk>=3.9.1",
-        "azure-storage-blob>=12.10.0",
+        "azure-storage-blob>=12.25.1",
     ],
     extras_require={
         "redteam": ["pyrit>=0.8.0"]
