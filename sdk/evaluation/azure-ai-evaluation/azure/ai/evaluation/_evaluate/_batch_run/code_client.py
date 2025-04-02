@@ -6,17 +6,17 @@ import json
 import logging
 import os
 from concurrent.futures import Future
-from pathlib import Path
-from typing import Any, Callable, Dict, Optional, Union, cast
+from typing import Any, Callable, Dict, Optional, Sequence, Union, cast
 
 import pandas as pd
-from promptflow.contracts.types import AttrDict
-from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
+from azure.ai.evaluation._legacy._adapters.types import AttrDict
+from azure.ai.evaluation._legacy._adapters.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 
 from azure.ai.evaluation._evaluate._utils import _apply_column_mapping, _has_aggregator, get_int_env_var, load_jsonl
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
 from ..._constants import PF_BATCH_TIMEOUT_SEC, PF_BATCH_TIMEOUT_SEC_DEFAULT
+from .batch_clients import BatchClientRun
 
 LOGGER = logging.getLogger(__name__)
 
@@ -84,7 +84,7 @@ class CodeClient:  # pylint: disable=client-accepts-api-version-keyword
             for param in inspect.signature(evaluator).parameters.values()
             if param.name not in ["args", "kwargs"]
         }
-        for value in input_df.to_dict("records"):
+        for value in cast(Sequence[Dict[str, Any]], input_df.to_dict("records")):
             # Filter out only the parameters that are present in the input data
             # if no parameters then pass data as is
             filtered_values = {k: v for k, v in value.items() if k in parameters} if len(parameters) > 0 else value
@@ -133,10 +133,10 @@ class CodeClient:  # pylint: disable=client-accepts-api-version-keyword
     def run(
         self,  # pylint: disable=unused-argument
         flow: Callable,
-        data: Union[os.PathLike, Path, pd.DataFrame],
-        evaluator_name: Optional[str] = None,
+        data: Union[str, os.PathLike, pd.DataFrame],
         column_mapping: Optional[Dict[str, str]] = None,
-        **kwargs,
+        evaluator_name: Optional[str] = None,
+        **kwargs: Any,
     ) -> CodeRun:
         input_df = data
         if not isinstance(input_df, pd.DataFrame):
@@ -157,7 +157,7 @@ class CodeClient:  # pylint: disable=client-accepts-api-version-keyword
             evaluator=flow,
             input_df=input_df,
             column_mapping=column_mapping,
-            evaluator_name=evaluator_name,
+            evaluator_name=evaluator_name or "",
         )
 
         return CodeRun(
@@ -169,11 +169,13 @@ class CodeClient:  # pylint: disable=client-accepts-api-version-keyword
             ),
         )
 
-    def get_details(self, run: CodeRun, all_results: bool = False) -> pd.DataFrame:
+    def get_details(self, client_run: BatchClientRun, all_results: bool = False) -> pd.DataFrame:
+        run = self._get_result(client_run)
         result_df = run.get_result_df(exclude_inputs=not all_results)
         return result_df
 
-    def get_metrics(self, run: CodeRun) -> Dict[str, Any]:
+    def get_metrics(self, client_run: BatchClientRun) -> Dict[str, Any]:
+        run = self._get_result(client_run)
         try:
             aggregated_metrics = run.get_aggregated_metrics()
             print("Aggregated metrics")
@@ -183,6 +185,10 @@ class CodeClient:  # pylint: disable=client-accepts-api-version-keyword
             return {}
         return aggregated_metrics
 
-    def get_run_summary(self, run: CodeRun) -> Any:  # pylint: disable=unused-argument
+    def get_run_summary(self, client_run: BatchClientRun) -> Any:  # pylint: disable=unused-argument
         # Not implemented
         return None
+
+    @staticmethod
+    def _get_result(run: BatchClientRun) -> CodeRun:
+        return cast(CodeRun, run)
