@@ -4,7 +4,7 @@
 
 ## Prequisites
 
-- Python >= 3.8
+- Python >= 3.9
 - pip install -r dev_requirements.txt
 
 ## How to run tests
