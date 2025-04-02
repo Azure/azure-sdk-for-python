@@ -316,6 +316,9 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     if options.get("correlatedActivityId"):
         headers[http_constants.HttpHeaders.CorrelatedActivityId] = options["correlatedActivityId"]
 
+    if options.get("throughputBucket"):
+        headers[http_constants.HttpHeaders.ThroughputBucket] = options["throughputBucket"]
+
     if resource_type == "docs" and verb != "get":
         if "responsePayloadOnWriteDisabled" in options:
             responsePayloadOnWriteDisabled = options["responsePayloadOnWriteDisabled"]

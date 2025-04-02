@@ -188,6 +188,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         level (to log all requests) or at a single request level. Requests will be logged at INFO level.
     :keyword bool no_response_on_write: Indicates whether service should be instructed to skip sending 
         response payloads on rite operations for items.
+    :keyword int throughput_bucket: The desired throughput bucket for the client
 
     .. admonition:: Example:
 
@@ -265,6 +266,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> DatabaseProxy:
         """
@@ -279,6 +281,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword response_hook: A callable invoked with the response metadata.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :paramtype response_hook: Callable[[Mapping[str, str]], None]
         :returns: A DatabaseProxy instance representing the new database.
         :rtype: ~azure.cosmos.DatabaseProxy
@@ -308,6 +311,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 UserWarning,
             )
             request_options["populateQueryMetrics"] = populate_query_metrics
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
 
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
         result = self.client_connection.CreateDatabase(database={"id": id}, options=request_options, **kwargs)
@@ -326,6 +331,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         initial_headers: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> DatabaseProxy:
         """
@@ -346,6 +352,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :returns: A DatabaseProxy instance representing the database.
         :rtype: ~azure.cosmos.DatabaseProxy
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The database read or creation failed.
@@ -358,6 +365,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             kwargs["etag"] = etag
         if match_condition is not None:
             kwargs["match_condition"] = match_condition
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
         try:
             database_proxy = self.get_database_client(id)
             database_proxy.read(

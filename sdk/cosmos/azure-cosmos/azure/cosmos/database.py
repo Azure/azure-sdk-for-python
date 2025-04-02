@@ -25,6 +25,8 @@
 from typing import Any, Dict, List, Union, Optional, Mapping, Callable
 
 import warnings
+
+from adodbapi.examples.db_print import kw_args
 from azure.core import MatchConditions
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.paging import ItemPaged
@@ -178,6 +180,7 @@ class DatabaseProxy(object):
         vector_embedding_policy: Optional[Dict[str, Any]] = None,
         change_feed_policy: Optional[Dict[str, Any]] = None,
         full_text_policy: Optional[Dict[str, Any]] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> ContainerProxy:
         """Create a new container with the given ID (name).
@@ -212,6 +215,7 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :returns: A `ContainerProxy` instance representing the new container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
         :rtype: ~azure.cosmos.ContainerProxy
@@ -267,6 +271,8 @@ class DatabaseProxy(object):
             kwargs['etag'] = etag
         if match_condition is not None:
             kwargs['match_condition'] = match_condition
+        if throughput_bucket is not None:
+            kwargs['throughput_bucket'] = throughput_bucket
         request_options = build_options(kwargs)
         if populate_query_metrics is not None:
             warnings.warn(
@@ -302,6 +308,7 @@ class DatabaseProxy(object):
         vector_embedding_policy: Optional[Dict[str, Any]] = None,
         change_feed_policy: Optional[Dict[str, Any]] = None,
         full_text_policy: Optional[Dict[str, Any]] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> ContainerProxy:
         """Create a container if it does not exist already.
@@ -338,6 +345,7 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :returns: A `ContainerProxy` instance representing the container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container read or creation failed.
         :rtype: ~azure.cosmos.ContainerProxy
@@ -370,6 +378,7 @@ class DatabaseProxy(object):
                 vector_embedding_policy=vector_embedding_policy,
                 change_feed_policy=change_feed_policy,
                 full_text_policy=full_text_policy,
+                throughput_bucket=throughput_bucket,
                 **kwargs
             )
 
@@ -563,6 +572,7 @@ class DatabaseProxy(object):
         analytical_storage_ttl: Optional[int] = None,
         computed_properties: Optional[List[Dict[str, str]]] = None,
         full_text_policy: Optional[Dict[str, Any]] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> ContainerProxy:
         """Reset the properties of the container.
@@ -593,6 +603,7 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :returns: A `ContainerProxy` instance representing the container after replace completed.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.
             This includes if the container with given id does not exist.
@@ -615,6 +626,8 @@ class DatabaseProxy(object):
             kwargs['etag'] = etag
         if match_condition is not None:
             kwargs['match_condition'] = match_condition
+        if throughput_bucket is not None:
+            kwargs['throughput_bucket'] = throughput_bucket
         request_options = build_options(kwargs)
         if populate_query_metrics is not None:
             warnings.warn(

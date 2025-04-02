@@ -849,6 +849,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         no_response: Optional[bool] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> CosmosDict:
         """Create an item in the container.
@@ -876,6 +877,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword bool no_response: Indicates whether service should be instructed to skip sending
             response payloads. When not specified explicitly here, the default value will be determined from kwargs or
             when also not specified there from client-level kwargs.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Item with the given ID already exists.
         :returns: A CosmosDict representing the new item. The dict will be empty if `no_response` is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
@@ -896,6 +898,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['match_condition'] = match_condition
         if no_response is not None:
             kwargs['no_response'] = no_response
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
         request_options = build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = not enable_automatic_id_generation
         if populate_query_metrics:
