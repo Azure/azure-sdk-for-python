@@ -689,7 +689,7 @@ class JobOperations(_ScopeDependentOperations):
                 git_props.pop(GitProperties.PROP_MLFLOW_GIT_BRANCH)
                 git_props.pop(GitProperties.PROP_MLFLOW_GIT_COMMIT)
                 git_props.pop(GitProperties.PROP_DIRTY)
-                module_logger.warning("Git properties cannot be set when the git repo URL contains secret.")
+                module_logger.warning("Git properties are removed because the repository URL contains a secret.")
 
             if git_props:
                 job.properties = {**job.properties, **git_props}
