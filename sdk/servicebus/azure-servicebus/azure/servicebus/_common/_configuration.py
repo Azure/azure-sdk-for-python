@@ -35,7 +35,6 @@ class Configuration(object):  # pylint:disable=too-many-instance-attributes
         self.transport_type = (
             TransportType.AmqpOverWebsocket if self.http_proxy else kwargs.get("transport_type", TransportType.Amqp)
         )
-        self.legacy_ws = kwargs.get("legacy_ws", False)
         # The following configs are not public, for internal usage only
         self.auth_timeout: float = kwargs.get("auth_timeout", 60)
         self.encoding = kwargs.get("encoding", "UTF-8")

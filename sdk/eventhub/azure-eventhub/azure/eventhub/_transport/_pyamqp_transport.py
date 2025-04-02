@@ -347,7 +347,6 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
             properties=properties,
             client_name=client_name,
             use_tls=config.use_tls,
-            legacy_ws=config.legacy_ws,
             **kwargs,
         )
 
@@ -494,7 +493,6 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
             streaming_receive=streaming_receive,
             timeout=timeout,
             use_tls=config.use_tls,
-            legacy_ws=config.legacy_ws,
             **kwargs,
         )
 
@@ -582,7 +580,6 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
             connection_verify=config.connection_verify,
             ssl_context=config.ssl_context,
             use_tls=config.use_tls,
-            legacy_ws=config.legacy_ws,
         )
 
     @staticmethod
