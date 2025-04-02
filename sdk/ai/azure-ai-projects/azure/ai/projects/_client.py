@@ -17,7 +17,10 @@ from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import AIProjectClientConfiguration
 from ._serialization import Deserializer, Serializer
-from .operations import AgentsOperations, ConnectionsOperations, EvaluationsOperations, TelemetryOperations
+from .agents.operations import AgentsOperations
+from .connections.operations import ConnectionsOperations
+from .operations import EvaluationsOperations
+from .telemetry.operations import TelemetryOperations
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -119,12 +122,16 @@ class AIProjectClient:
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
             ),
-            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)

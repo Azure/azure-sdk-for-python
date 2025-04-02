@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 import io
 import json
 import unittest

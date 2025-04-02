@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -68,8 +69,6 @@ with AIProjectClient.from_connection_string(
         ]
         messages = prompt_template.create_messages(input=input, rules=rules, chat_history=chat_history)
 
-        response = client.complete(
-            model=model_deployment_name, messages=messages
-        )
+        response = client.complete(model=model_deployment_name, messages=messages)
 
         print(response.choices[0].message.content)

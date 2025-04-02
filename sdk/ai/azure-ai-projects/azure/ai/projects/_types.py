@@ -9,13 +9,17 @@
 from typing import TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
-    from . import models as _models
+    from .agents import models as _agents_models1
 AgentsApiResponseFormatOption = Union[
     str,
     str,
-    "_models.AgentsApiResponseFormatMode",
-    "_models.AgentsApiResponseFormat",
-    "_models.ResponseFormatJsonSchemaType",
+    "_agents_models1.AgentsApiResponseFormatMode",
+    "_agents_models1.AgentsApiResponseFormat",
+    "_agents_models1.ResponseFormatJsonSchemaType",
 ]
-MessageAttachmentToolDefinition = Union["_models.CodeInterpreterToolDefinition", "_models.FileSearchToolDefinition"]
-AgentsApiToolChoiceOption = Union[str, str, "_models.AgentsApiToolChoiceOptionMode", "_models.AgentsNamedToolChoice"]
+MessageAttachmentToolDefinition = Union[
+    "_agents_models1.CodeInterpreterToolDefinition", "_agents_models1.FileSearchToolDefinition"
+]
+AgentsApiToolChoiceOption = Union[
+    str, str, "_agents_models1.AgentsApiToolChoiceOptionMode", "_agents_models1.AgentsNamedToolChoice"
+]
