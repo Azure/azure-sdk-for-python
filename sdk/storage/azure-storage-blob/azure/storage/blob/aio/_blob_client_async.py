@@ -9,7 +9,7 @@ import warnings
 from datetime import datetime
 from functools import partial
 from typing import (
-    Any, AnyStr, AsyncIterable, cast, Dict, IO,
+    Any, AnyStr, AsyncIterable, Callable, cast, Dict, IO,
     Iterable, List, Optional, overload, Tuple, Union,
     TYPE_CHECKING
 )
@@ -79,14 +79,20 @@ from .._shared.policies_async import ExponentialRetry
 from .._shared.response_handlers import process_storage_error, return_response_headers
 
 if TYPE_CHECKING:
+    from azure.core import MatchConditions
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
     from azure.core.pipeline.policies import AsyncHTTPPolicy
+    from azure.storage.blob import CustomerProvidedEncryptionKey
     from azure.storage.blob.aio import ContainerClient
     from .._models import (
+        ArrowDialect,
         ContentSettings,
+        DelimitedJsonDialect,
+        DelimitedTextDialect,
         ImmutabilityPolicy,
         PremiumPageBlobTier,
+        QuickQueryDialect,
         SequenceNumberAction,
         StandardBlobTier
     )
@@ -760,7 +766,22 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         return downloader
 
     @distributed_trace_async
-    async def query_blob(self, query_expression: str, **kwargs: Any) -> BlobQueryReader:
+    async def query_blob(
+        self, query_expression: str,
+        *,
+        on_error: Optional[Callable[[BlobQueryError], None]] = None,
+        blob_format: Optional[Union["DelimitedTextDialect", "DelimitedJsonDialect", "QuickQueryDialect", str]] = None,
+        output_format: Optional[Union["DelimitedTextDialect", "DelimitedJsonDialect", "QuickQueryDialect", List["ArrowDialect"], str]] = None,  # pylint: disable=line-too-long
+        lease: Optional[Union[BlobLeaseClient, str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional["MatchConditions"] = None,
+        if_tags_match_condition: Optional[str] = None,
+        cpk: Optional["CustomerProvidedEncryptionKey"] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> BlobQueryReader:
         """Enables users to select/project on blob/or blob snapshot data by providing simple query expressions.
         This operation returns a BlobQueryReader, users need to use readall() or readinto() to get query data.
 
@@ -844,12 +865,25 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
                 :dedent: 4
                 :caption: select/project on blob/or blob snapshot data by providing simple query expressions.
         """
-        errors = kwargs.pop("on_error", None)
         error_cls = kwargs.pop("error_cls", BlobQueryError)
         encoding = kwargs.pop("encoding", None)
-        if kwargs.get('cpk') and self.scheme.lower() != 'https':
+        if cpk and self.scheme.lower() != 'https':
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
-        options, delimiter = _quick_query_options(self.snapshot, query_expression, **kwargs)
+        options, delimiter = _quick_query_options(
+            self.snapshot,
+            query_expression,
+            blob_format=blob_format,
+            output_format=output_format,
+            lease=lease,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_condition=match_condition,
+            if_tags_match_condition=if_tags_match_condition,
+            cpk=cpk,
+            timeout=timeout,
+            **kwargs
+        )
         try:
             headers, raw_response_body = await self._client.blob.query(**options)
         except HttpResponseError as error:
@@ -857,14 +891,14 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         blob_query_reader = BlobQueryReader(
             name=self.blob_name,
             container=self.container_name,
-            errors=errors,
+            errors=on_error,
             record_delimiter=delimiter,
             encoding=encoding,
             headers=headers,
             response=raw_response_body,
             error_cls=error_cls
         )
-        await blob_query_reader._setup()
+        await blob_query_reader._setup()  # pylint: disable=protected-access
         return blob_query_reader
 
     @distributed_trace_async
