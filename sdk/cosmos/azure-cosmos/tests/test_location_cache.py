@@ -38,10 +38,9 @@ def create_database_account(enable_multiple_writable_locations):
 
 
 def refresh_location_cache(preferred_locations, use_multiple_write_locations, connection_policy=documents.ConnectionPolicy()):
-    lc = LocationCache(preferred_locations=preferred_locations,
-                       default_endpoint=default_endpoint,
-                       enable_endpoint_discovery=True,
-                       use_multiple_write_locations=use_multiple_write_locations,
+    connection_policy.PreferredLocations = preferred_locations
+    connection_policy.UseMultipleWriteLocations = use_multiple_write_locations
+    lc = LocationCache(default_endpoint=default_endpoint,
                        connection_policy=connection_policy)
     return lc
 
@@ -210,12 +209,12 @@ class TestLocationCache:
             read_doc_request.excluded_locations = excluded_locations_on_requests
 
             # Test if read endpoints were correctly filtered on client level
-            read_doc_endpoint = location_cache.get_applicable_read_regional_endpoints(read_doc_request)
+            read_doc_endpoint = location_cache._get_applicable_read_regional_endpoints(read_doc_request)
             read_doc_endpoint = [regional_endpoint.get_primary() for regional_endpoint in read_doc_endpoint]
             assert read_doc_endpoint == expected_read_endpoints
 
             # Test if write endpoints were correctly filtered on client level
-            write_doc_endpoint = location_cache.get_applicable_write_regional_endpoints(write_doc_request)
+            write_doc_endpoint = location_cache._get_applicable_write_regional_endpoints(write_doc_request)
             write_doc_endpoint = [regional_endpoint.get_primary() for regional_endpoint in write_doc_endpoint]
             assert write_doc_endpoint == expected_write_endpoints
 
@@ -242,7 +241,7 @@ class TestLocationCache:
         assert actual_excluded_locations == expected_excluded_locations
 
         expected_read_endpoints = [location2_endpoint]
-        read_doc_endpoint = location_cache.get_applicable_read_regional_endpoints(read_doc_request)
+        read_doc_endpoint = location_cache._get_applicable_read_regional_endpoints(read_doc_request)
         read_doc_endpoint = [regional_endpoint.get_primary() for regional_endpoint in read_doc_endpoint]
         assert read_doc_endpoint == expected_read_endpoints
 
@@ -257,7 +256,7 @@ class TestLocationCache:
             assert actual_excluded_locations == expected_excluded_locations
 
             expected_read_endpoints = [location1_endpoint]
-            read_doc_endpoint = location_cache.get_applicable_read_regional_endpoints(read_doc_request)
+            read_doc_endpoint = location_cache._get_applicable_read_regional_endpoints(read_doc_request)
             read_doc_endpoint = [regional_endpoint.get_primary() for regional_endpoint in read_doc_endpoint]
             assert read_doc_endpoint == expected_read_endpoints
 

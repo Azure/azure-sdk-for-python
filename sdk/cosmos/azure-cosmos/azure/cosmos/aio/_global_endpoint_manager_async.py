@@ -25,6 +25,7 @@ database service.
 
 import asyncio # pylint: disable=do-not-import-asyncio
 import logging
+from asyncio import CancelledError # pylint: disable=do-not-import-asyncio
 from typing import Tuple
 
 from azure.core.exceptions import AzureError
@@ -51,10 +52,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         self.DefaultEndpoint = client.url_connection
         self.refresh_time_interval_in_ms = self.get_refresh_time_interval_in_ms_stub()
         self.location_cache = LocationCache(
-            self.PreferredLocations,
             self.DefaultEndpoint,
-            client.connection_policy.EnableEndpointDiscovery,
-            client.connection_policy.UseMultipleWriteLocations,
             client.connection_policy
         )
         self.startup = True
