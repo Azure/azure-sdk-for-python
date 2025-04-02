@@ -115,7 +115,8 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key)
+            credential=storage_account_key
+        )
         await self._setup(bsc)
 
         # upload the csv file
@@ -168,3 +169,1006 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         assert reader._size == reader._bytes_processed
         assert data, CSV_DATA.replace(b'\r\n' == b'')
         await self._teardown(bsc)
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_quick_query_readall_with_encoding(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key
+        )
+        await self._setup(bsc)
+
+        # upload the csv file
+        blob_name = self._get_blob_reference()
+        blob_client = bsc.get_blob_client(self.container_name, blob_name)
+        await blob_client.upload_blob(CSV_DATA, overwrite=True)
+
+        errors = []
+
+        def on_error(error):
+            errors.append(error)
+
+        reader = await blob_client.query_blob("SELECT * from BlobStorage", on_error=on_error, encoding='utf-8')
+        data = await reader.readall()
+
+        assert len(errors) == 0
+        assert len(reader) == len(CSV_DATA)
+        assert reader._size == reader._bytes_processed
+        assert data, CSV_DATA.replace(b'\r\n' == b'\n').decode('utf-8')
+        await self._teardown(bsc)
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_quick_query_iter_records_with_encoding(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key
+        )
+        await self._setup(bsc)
+
+        # upload the csv file
+        blob_name = self._get_blob_reference()
+        blob_client = bsc.get_blob_client(self.container_name, blob_name)
+        await blob_client.upload_blob(CSV_DATA, overwrite=True)
+
+        reader = await blob_client.query_blob("SELECT * from BlobStorage", encoding='utf-8')
+        data = ''
+        async for record in reader.records():
+            data += record
+
+        assert len(reader) == len(CSV_DATA)
+        assert reader._size == reader._bytes_processed
+        assert data, CSV_DATA.replace(b'\r\n' == b'').decode('utf-8')
+        await self._teardown(bsc)
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_quick_query_iter_output_records_excluding_headers(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key
+        )
+        await self._setup(bsc)
+
+        # upload the csv file
+        blob_name = self._get_blob_reference()
+        blob_client = bsc.get_blob_client(self.container_name, blob_name)
+        await blob_client.upload_blob(CSV_DATA, overwrite=True)
+
+        input_format = DelimitedTextDialect(has_header=True)
+        output_format = DelimitedTextDialect(has_header=False)
+        reader = await blob_client.query_blob(
+            "SELECT * from BlobStorage",
+            blob_format=input_format,
+            output_format=output_format
+        )
+        read_records = reader.records()
+
+        # Assert first line does not include header
+        data = await anext(read_records)
+        assert data == b'App Configuration,azure-data-appconfiguration,1,appconfiguration,FALSE'
+
+        async for record in read_records:
+            data += record
+
+        assert len(reader) == len(CSV_DATA)
+        assert reader._size == reader._bytes_processed
+        assert data, CSV_DATA.replace(b'\r\n' == b'')[44:]
+        await self._teardown(bsc)
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_quick_query_iter_output_records_including_headers(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key
+        )
+        await self._setup(bsc)
+
+        # upload the csv file
+        blob_name = self._get_blob_reference()
+        blob_client = bsc.get_blob_client(self.container_name, blob_name)
+        await blob_client.upload_blob(CSV_DATA, overwrite=True)
+
+        input_format = DelimitedTextDialect(has_header=True)
+        reader = await blob_client.query_blob("SELECT * from BlobStorage", blob_format=input_format)
+        read_records = reader.records()
+
+        # Assert first line does not include header
+        data = await anext(read_records)
+        assert data == b'Service,Package,Version,RepoPath,MissingDocs'
+
+        async for record in read_records:
+            data += record
+
+        assert len(reader) == len(CSV_DATA)
+        assert reader._size == reader._bytes_processed
+        assert data, CSV_DATA.replace(b'\r\n' == b'')
+        await self._teardown(bsc)
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_quick_query_iter_records_with_progress(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key
+        )
+        await self._setup(bsc)
+
+        # upload the csv file
+        blob_name = self._get_blob_reference()
+        blob_client = bsc.get_blob_client(self.container_name, blob_name)
+        await blob_client.upload_blob(CSV_DATA, overwrite=True)
+
+        reader = await blob_client.query_blob("SELECT * from BlobStorage")
+        data = b''
+        progress = 0
+        async for record in reader.records():
+            if record:
+                data += record
+                progress += len(record) + 2
+
+        assert len(reader) == len(CSV_DATA)
+        assert reader._size == reader._bytes_processed
+        assert data, CSV_DATA.replace(b'\r\n' == b'')
+        assert progress == reader._size
+        await self._teardown(bsc)
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_quick_query_readall_with_serialization_setting(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key
+        )
+        await self._setup(bsc)
+
+        # upload the csv file
+        blob_name = self._get_blob_reference()
+        blob_client = bsc.get_blob_client(self.container_name, blob_name)
+        await blob_client.upload_blob(CSV_DATA, overwrite=True)
+
+        errors = []
+
+        def on_error(error):
+            errors.append(error)
+
+        input_format = DelimitedTextDialect(
+            delimiter=',',
+            quotechar='"',
+            lineterminator='\n',
+            escapechar='',
+            has_header=False
+        )
+        output_format = DelimitedTextDialect(
+            delimiter=';',
+            quotechar="'",
+            lineterminator='.',
+            escapechar='\\'
+        )
+        resp = await blob_client.query_blob(
+            "SELECT * from BlobStorage",
+            on_error=on_error,
+            blob_format=input_format,
+            output_format=output_format
+        )
+        query_result = await resp.readall()
+
+        assert len(errors) == 0
+        assert resp._size == len(CSV_DATA)
+        assert query_result == CONVERTED_CSV_DATA
+        await self._teardown(bsc)
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_quick_query_iter_records_with_serialization_setting(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key
+        )
+        await self._setup(bsc)
+
+        # upload the csv file
+        blob_name = self._get_blob_reference()
+        blob_client = bsc.get_blob_client(self.container_name, blob_name)
+        await blob_client.upload_blob(CSV_DATA, overwrite=True)
+
+        input_format = DelimitedTextDialect(
+            delimiter=',',
+            quotechar='"',
+            lineterminator='\n',
+            escapechar='',
+            has_header=False
+        )
+        output_format = DelimitedTextDialect(
+            delimiter=';',
+            quotechar="'",
+            lineterminator='%',
+            escapechar='\\'
+        )
+
+        reader = await blob_client.query_blob(
+            "SELECT * from BlobStorage",
+            blob_format=input_format,
+            output_format=output_format
+        )
+        data = []
+        async for record in reader.records():
+            if record:
+                data.append(record)
+
+        assert len(reader) == len(CSV_DATA)
+        assert reader._size == reader._bytes_processed
+        assert len(data) == 33
+        await self._teardown(bsc)
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_quick_query_readall_with_fatal_error_handler(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key
+        )
+        await self._setup(bsc)
+
+        data1 = b'{name: owner}'
+        data2 = b'{name2: owner2}'
+        data3 = b'{version:0,begin:1601-01-01T00:00:00.000Z,intervalSecs:3600,status:Finalized,config:' \
+                b'{version:0,configVersionEtag:0x8d75ef460eb1a12,numShards:1,recordsFormat:avro,formatSchemaVersion:3,' \
+                b'shardDistFnVersion:1},chunkFilePaths:[$blobchangefeed/log/00/1601/01/01/0000/],storageDiagnostics:' \
+                b'{version:0,lastModifiedTime:2019-11-01T17:53:18.861Z,' \
+                b'data:{aid:d305317d-a006-0042-00dd-902bbb06fc56}}}'
+        data = data1 + b'\n' + data2 + b'\n' + data1
+
+        # upload the json file
+        blob_name = self._get_blob_reference()
+        blob_client = bsc.get_blob_client(self.container_name, blob_name)
+        await blob_client.upload_blob(data, overwrite=True)
+
+        errors = []
+
+        def on_error(error):
+            errors.append(error)
+
+        input_format = DelimitedJsonDialect()
+        output_format = DelimitedTextDialect(
+            delimiter=';',
+            quotechar="'",
+            lineterminator='.',
+            escapechar='\\'
+        )
+        resp = await blob_client.query_blob(
+            "SELECT * from BlobStorage",
+            on_error=on_error,
+            blob_format=input_format,
+            output_format=output_format
+        )
+        query_result = await resp.readall()
+
+        assert len(errors) == 1
+        assert resp._size == 43
+        assert query_result == b''
+        await self._teardown(bsc)
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_quick_query_iter_records_with_fatal_error_handler(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key
+        )
+        await self._setup(bsc)
+
+        data1 = b'{name: owner}'
+        data2 = b'{name2: owner2}'
+        data3 = b'{version:0,begin:1601-01-01T00:00:00.000Z,intervalSecs:3600,status:Finalized,config:' \
+                b'{version:0,configVersionEtag:0x8d75ef460eb1a12,numShards:1,recordsFormat:avro,formatSchemaVersion:3,' \
+                b'shardDistFnVersion:1},chunkFilePaths:[$blobchangefeed/log/00/1601/01/01/0000/],storageDiagnostics:' \
+                b'{version:0,lastModifiedTime:2019-11-01T17:53:18.861Z,' \
+                b'data:{aid:d305317d-a006-0042-00dd-902bbb06fc56}}}'
+        data = data1 + b'\n' + data2 + b'\n' + data1
+
+        # upload the json file
+        blob_name = self._get_blob_reference()
+        blob_client = bsc.get_blob_client(self.container_name, blob_name)
+        await blob_client.upload_blob(data, overwrite=True)
+
+        errors = []
+
+        def on_error(error):
+            errors.append(error)
+
+        input_format = DelimitedJsonDialect()
+        output_format = DelimitedTextDialect(
+            delimiter=';',
+            quotechar="'",
+            lineterminator='.',
+            escapechar='\\'
+        )
+        resp = await blob_client.query_blob(
+            "SELECT * from BlobStorage",
+            on_error=on_error,
+            blob_format=input_format,
+            output_format=output_format
+        )
+        data = []
+        async for record in resp.records():
+            data.append(record)
+
+        assert len(errors) == 1
+        assert resp._size == 43
+        assert data == [b'']
+        await self._teardown(bsc)
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_quick_query_readall_with_fatal_error_handler_raise(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key
+        )
+        await self._setup(bsc)
+
+        data1 = b'{name: owner}'
+        data2 = b'{name2: owner2}'
+        data3 = b'{version:0,begin:1601-01-01T00:00:00.000Z,intervalSecs:3600,status:Finalized,config:' \
+                b'{version:0,configVersionEtag:0x8d75ef460eb1a12,numShards:1,recordsFormat:avro,formatSchemaVersion:3,' \
+                b'shardDistFnVersion:1},chunkFilePaths:[$blobchangefeed/log/00/1601/01/01/0000/],storageDiagnostics:' \
+                b'{version:0,lastModifiedTime:2019-11-01T17:53:18.861Z,' \
+                b'data:{aid:d305317d-a006-0042-00dd-902bbb06fc56}}}'
+        data = data1 + b'\n' + data2 + b'\n' + data1
+
+        # upload the json file
+        blob_name = self._get_blob_reference()
+        blob_client = bsc.get_blob_client(self.container_name, blob_name)
+        await blob_client.upload_blob(data, overwrite=True)
+
+        errors = []
+
+        def on_error(error):
+            raise Exception(error.description)
+
+        input_format = DelimitedJsonDialect()
+        output_format = DelimitedTextDialect(
+            delimiter=';',
+            quotechar="'",
+            lineterminator='.',
+            escapechar='\\'
+        )
+        resp = await blob_client.query_blob(
+            "SELECT * from BlobStorage",
+            on_error=on_error,
+            blob_format=input_format,
+            output_format=output_format
+        )
+        with pytest.raises(Exception):
+            query_result = await resp.readall()
+        await self._teardown(bsc)
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_quick_query_iter_records_with_fatal_error_handler_raise(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key
+        )
+        await self._setup(bsc)
+
+        data1 = b'{name: owner}'
+        data2 = b'{name2: owner2}'
+        data3 = b'{version:0,begin:1601-01-01T00:00:00.000Z,intervalSecs:3600,status:Finalized,config:' \
+                b'{version:0,configVersionEtag:0x8d75ef460eb1a12,numShards:1,recordsFormat:avro,formatSchemaVersion:3,' \
+                b'shardDistFnVersion:1},chunkFilePaths:[$blobchangefeed/log/00/1601/01/01/0000/],storageDiagnostics:' \
+                b'{version:0,lastModifiedTime:2019-11-01T17:53:18.861Z,' \
+                b'data:{aid:d305317d-a006-0042-00dd-902bbb06fc56}}}'
+        data = data1 + b'\n' + data2 + b'\n' + data1
+
+        # upload the json file
+        blob_name = self._get_blob_reference()
+        blob_client = bsc.get_blob_client(self.container_name, blob_name)
+        await blob_client.upload_blob(data, overwrite=True)
+
+        errors = []
+
+        def on_error(error):
+            raise Exception(error.description)
+
+        input_format = DelimitedJsonDialect()
+        output_format = DelimitedTextDialect(
+            delimiter=';',
+            quotechar="'",
+            lineterminator='.',
+            escapechar='\\'
+        )
+        resp = await blob_client.query_blob(
+            "SELECT * from BlobStorage",
+            on_error=on_error,
+            blob_format=input_format,
+            output_format=output_format
+        )
+
+        with pytest.raises(Exception):
+            async for record in resp.records():
+                print(record)
+        await self._teardown(bsc)
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_quick_query_readall_with_fatal_error_ignore(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key
+        )
+        await self._setup(bsc)
+
+        data1 = b'{name: owner}'
+        data2 = b'{name2: owner2}'
+        data = data1 + b'\n' + data2 + b'\n' + data1
+
+        # upload the json file
+        blob_name = self._get_blob_reference()
+        blob_client = bsc.get_blob_client(self.container_name, blob_name)
+        await blob_client.upload_blob(data, overwrite=True)
+
+        input_format = DelimitedJsonDialect()
+        output_format = DelimitedTextDialect(
+            delimiter=';',
+            quotechar="'",
+            lineterminator='.',
+            escapechar='\\'
+        )
+        resp = await blob_client.query_blob(
+            "SELECT * from BlobStorage",
+            blob_format=input_format,
+            output_format=output_format
+        )
+        query_result = await resp.readall()
+        await self._teardown(bsc)
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_quick_query_iter_records_with_fatal_error_ignore(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key
+        )
+        await self._setup(bsc)
+
+        data1 = b'{name: owner}'
+        data2 = b'{name2: owner2}'
+        data3 = b'{version:0,begin:1601-01-01T00:00:00.000Z,intervalSecs:3600,status:Finalized,config:' \
+                b'{version:0,configVersionEtag:0x8d75ef460eb1a12,numShards:1,recordsFormat:avro,formatSchemaVersion:3,' \
+                b'shardDistFnVersion:1},chunkFilePaths:[$blobchangefeed/log/00/1601/01/01/0000/],storageDiagnostics:' \
+                b'{version:0,lastModifiedTime:2019-11-01T17:53:18.861Z,' \
+                b'data:{aid:d305317d-a006-0042-00dd-902bbb06fc56}}}'
+        data = data1 + b'\n' + data2 + b'\n' + data1
+
+        # upload the json file
+        blob_name = self._get_blob_reference()
+        blob_client = bsc.get_blob_client(self.container_name, blob_name)
+        await blob_client.upload_blob(data, overwrite=True)
+
+        input_format = DelimitedJsonDialect()
+        output_format = DelimitedTextDialect(
+            delimiter=';',
+            quotechar="'",
+            lineterminator='.',
+            escapechar='\\'
+        )
+        resp = await blob_client.query_blob(
+            "SELECT * from BlobStorage",
+            blob_format=input_format,
+            output_format=output_format
+        )
+
+        async for record in resp.records():
+            print(record)
+        await self._teardown(bsc)
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_quick_query_readall_with_nonfatal_error_handler(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key
+        )
+        await self._setup(bsc)
+
+        # upload the csv file
+        blob_name = self._get_blob_reference()
+        blob_client = bsc.get_blob_client(self.container_name, blob_name)
+        await blob_client.upload_blob(CSV_DATA, overwrite=True)
+
+        errors = []
+
+        def on_error(error):
+            errors.append(error)
+
+        input_format = DelimitedTextDialect(
+            delimiter=',',
+            quotechar='"',
+            lineterminator='\n',
+            escapechar='',
+            has_header=True
+        )
+        output_format = DelimitedTextDialect(
+            delimiter=';',
+            quotechar="'",
+            lineterminator='.',
+            escapechar='\\',
+        )
+        resp = await blob_client.query_blob(
+            "SELECT RepoPath from BlobStorage",
+            blob_format=input_format,
+            output_format=output_format,
+            on_error=on_error
+        )
+        query_result = await resp.readall()
+
+        # the error is because that line only has one column
+        assert len(errors) == 1
+        assert resp._size == len(CSV_DATA)
+        assert len(query_result) > 0
+        await self._teardown(bsc)
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_quick_query_iter_records_with_nonfatal_error_handler(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key
+        )
+        await self._setup(bsc)
+
+        # upload the csv file
+        blob_name = self._get_blob_reference()
+        blob_client = bsc.get_blob_client(self.container_name, blob_name)
+        await blob_client.upload_blob(CSV_DATA, overwrite=True)
+
+        errors = []
+
+        def on_error(error):
+            errors.append(error)
+
+        input_format = DelimitedTextDialect(
+            delimiter=',',
+            quotechar='"',
+            lineterminator='\n',
+            escapechar='',
+            has_header=True
+        )
+        output_format = DelimitedTextDialect(
+            delimiter=';',
+            quotechar="'",
+            lineterminator='%',
+            escapechar='\\',
+        )
+        resp = await blob_client.query_blob(
+            "SELECT RepoPath from BlobStorage",
+            blob_format=input_format,
+            output_format=output_format,
+            on_error=on_error
+        )
+
+        data = []
+        async for record in resp.records():
+            data.append(record)
+
+        # the error is because that line only has one column
+        assert len(errors) == 1
+        assert resp._size == len(CSV_DATA)
+        assert len(data) == 32
+        await self._teardown(bsc)
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_quick_query_readall_with_nonfatal_error_ignore(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key
+        )
+        await self._setup(bsc)
+
+        # upload the csv file
+        blob_name = self._get_blob_reference()
+        blob_client = bsc.get_blob_client(self.container_name, blob_name)
+        await blob_client.upload_blob(CSV_DATA, overwrite=True)
+
+        input_format = DelimitedTextDialect(
+            delimiter=',',
+            quotechar='"',
+            lineterminator='\n',
+            escapechar='',
+            has_header=True
+        )
+        output_format = DelimitedTextDialect(
+            delimiter=';',
+            quotechar="'",
+            lineterminator='.',
+            escapechar='\\',
+        )
+        resp = await blob_client.query_blob(
+            "SELECT RepoPath from BlobStorage",
+            blob_format=input_format,
+            output_format=output_format
+        )
+        query_result = await resp.readall()
+        assert resp._size == len(CSV_DATA)
+        assert len(query_result) > 0
+        await self._teardown(bsc)
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_quick_query_iter_records_with_nonfatal_error_ignore(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key
+        )
+        await self._setup(bsc)
+
+        # upload the csv file
+        blob_name = self._get_blob_reference()
+        blob_client = bsc.get_blob_client(self.container_name, blob_name)
+        await blob_client.upload_blob(CSV_DATA, overwrite=True)
+
+        input_format = DelimitedTextDialect(
+            delimiter=',',
+            quotechar='"',
+            lineterminator='\n',
+            escapechar='',
+            has_header=True
+        )
+        output_format = DelimitedTextDialect(
+            delimiter=';',
+            quotechar="'",
+            lineterminator='$',
+            escapechar='\\',
+        )
+        resp = await blob_client.query_blob(
+            "SELECT RepoPath from BlobStorage",
+            blob_format=input_format,
+            output_format=output_format
+        )
+
+        data = []
+        async for record in resp.records():
+            data.append(record)
+
+        assert resp._size == len(CSV_DATA)
+        assert len(data) == 32
+        await self._teardown(bsc)
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_quick_query_readall_with_json_serialization_setting(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key
+        )
+        await self._setup(bsc)
+
+        data1 = b'{\"name\": \"owner\", \"id\": 1}'
+        data2 = b'{\"name2\": \"owner2\"}'
+        data = data1 + b'\n' + data2 + b'\n' + data1
+
+        # upload the json file
+        blob_name = self._get_blob_reference()
+        blob_client = bsc.get_blob_client(self.container_name, blob_name)
+        await blob_client.upload_blob(data, overwrite=True)
+
+        errors = []
+        def on_error(error):
+            errors.append(error)
+
+        input_format = DelimitedJsonDialect(delimiter='\n')
+        output_format = DelimitedJsonDialect(delimiter=';')
+
+        resp = await blob_client.query_blob(
+            "SELECT name from BlobStorage",
+            on_error=on_error,
+            blob_format=input_format,
+            output_format=output_format
+        )
+        query_result = await resp.readall()
+
+        assert len(errors) == 0
+        assert resp._size == len(data)
+        assert query_result == b'{"name":"owner"};{};{"name":"owner"};'
+        await self._teardown(bsc)
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_quick_query_iter_records_with_json_serialization_setting(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key
+        )
+        await self._setup(bsc)
+
+        data1 = b'{\"name\": \"owner\", \"id\": 1}'
+        data2 = b'{\"name2\": \"owner2\"}'
+        data = data1 + b'\n' + data2 + b'\n' + data1
+
+        # upload the json file
+        blob_name = self._get_blob_reference()
+        blob_client = bsc.get_blob_client(self.container_name, blob_name)
+        await blob_client.upload_blob(data, overwrite=True)
+
+        errors = []
+        def on_error(error):
+            errors.append(error)
+
+        input_format = DelimitedJsonDialect(delimiter='\n')
+        output_format = DelimitedJsonDialect(delimiter=';')
+
+        resp = await blob_client.query_blob(
+            "SELECT name from BlobStorage",
+            on_error=on_error,
+            blob_format=input_format,
+            output_format=output_format
+        )
+
+        listdata = []
+        async for record in resp.records():
+            listdata.append(record)
+
+        assert len(errors) == 0
+        assert resp._size == len(data)
+        assert listdata, [b'{"name":"owner"}',b'{}',b'{"name":"owner"}' == b'']
+        await self._teardown(bsc)
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_quick_query_with_only_input_json_serialization_setting(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key
+        )
+        await self._setup(bsc)
+
+        data1 = b'{\"name\": \"owner\", \"id\": 1}'
+        data2 = b'{\"name2\": \"owner2\"}'
+        data = data1 + data2 + data1
+
+        # upload the json file
+        blob_name = self._get_blob_reference()
+        blob_client = bsc.get_blob_client(self.container_name, blob_name)
+        await blob_client.upload_blob(data, overwrite=True)
+
+        errors = []
+
+        def on_error(error):
+            errors.append(error)
+
+        input_format = DelimitedJsonDialect(delimiter='\n')
+        output_format = None
+
+        resp = await blob_client.query_blob(
+            "SELECT name from BlobStorage",
+            on_error=on_error,
+            blob_format=input_format,
+            output_format=output_format
+        )
+        query_result = await resp.readall()
+
+        assert len(errors) == 0
+        assert resp._size == len(data)
+        assert query_result == b'{"name":"owner"}\n{}\n{"name":"owner"}\n'
+        await self._teardown(bsc)
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_quick_query_output_in_arrow_format(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key
+        )
+        await self._setup(bsc)
+
+        data = b'100,200,300,400\n300,400,500,600\n'
+
+        # upload the json file
+        blob_name = self._get_blob_reference()
+        blob_client = bsc.get_blob_client(self.container_name, blob_name)
+        await blob_client.upload_blob(data, overwrite=True)
+
+        errors = []
+
+        def on_error(error):
+            errors.append(error)
+
+        output_format = [ArrowDialect(ArrowType.DECIMAL, name="abc", precision=4, scale=2)]
+
+        resp = await blob_client.query_blob(
+            "SELECT _2 from BlobStorage WHERE _1 > 250",
+            on_error=on_error,
+            output_format=output_format
+        )
+        data = await resp.readall()
+        expected_result = (
+            b'/////3gAAAAQAAAAAAAKAAwABgAFAAgACgAAAAABBAAMAAAACAAIAAAABAAIAAAABAAAAAEAAAAU'
+            b'AAAAEAAUAAgABgAHAAwAAAAQABAAAAAAAAEHEAAAABwAAAAEAAAAAAAAAAMAAABhYmMACAAMAAQA'
+            b'CAAIAAAABAAAAAIAAAD/////cAAAABAAAAAAAAoADgAGAAUACAAKAAAAAAMEABAAAAAAAAoADAAA'
+            b'AAQACAAKAAAAMAAAAAQAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+            b'AQAAAAAAAAAAAAAAAAAAAAAAAAD/////iAAAABQAAAAAAAAADAAWAAYABQAIAAwADAAAAAADBAAY'
+            b'AAAAEAAAAAAAAAAAAAoAGAAMAAQACAAKAAAAPAAAABAAAAABAAAAAAAAAAAAAAACAAAAAAAAAAAA'
+            b'AAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAQAAAAEAAAAAAAAAAAAAAAAAAACQAQAAAAAA'
+            b'AAAAAAAAAAAA'
+        )
+        query_result = base64.b64encode(data)
+
+        assert len(errors) == 0
+        assert query_result == expected_result
+        await self._teardown(bsc)
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_quick_query_input_in_arrow_format(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key
+        )
+        await self._setup(bsc)
+
+        # upload the json file
+        blob_name = self._get_blob_reference()
+        blob_client = bsc.get_blob_client(self.container_name, blob_name)
+
+        errors = []
+
+        def on_error(error):
+            errors.append(error)
+
+        input_format = [ArrowDialect(ArrowType.DECIMAL, name="abc", precision=4, scale=2)]
+
+        with pytest.raises(ValueError):
+            await blob_client.query_blob(
+                "SELECT * from BlobStorage",
+                on_error=on_error,
+                blob_format=input_format
+            )
+
+        await self._teardown(bsc)
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_quick_query_input_in_parquet_format(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key
+        )
+        await self._setup(bsc)
+        expression = "select * from blobstorage where id < 1;"
+        expected_data = b"0,mdifjt55.ea3,mdifjt55.ea3\n"
+
+        blob_name = self._get_blob_reference()
+        blob_client = bsc.get_blob_client(self.container_name, blob_name)
+        parquet_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./resources/parquet.parquet"))
+        with open(parquet_path, "rb") as parquet_data:
+            await blob_client.upload_blob(parquet_data, overwrite=True)
+
+        reader = await blob_client.query_blob(expression, blob_format=QuickQueryDialect.Parquet)
+        real_data = await reader.readall()
+
+        assert real_data == expected_data
+        await self._teardown(bsc)
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_quick_query_output_in_parquet_format(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key
+        )
+        await self._setup(bsc)
+        expression = "SELECT * from BlobStorage"
+
+        blob_name = self._get_blob_reference()
+        blob_client = bsc.get_blob_client(self.container_name, blob_name)
+        parquet_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./resources/parquet.parquet"))
+        with open(parquet_path, "rb") as parquet_data:
+            await blob_client.upload_blob(parquet_data, overwrite=True)
+
+        with pytest.raises(ValueError):
+            await blob_client.query_blob(
+                expression,
+                blob_format="ParquetDialect",
+                output_format="ParquetDialect"
+            )
