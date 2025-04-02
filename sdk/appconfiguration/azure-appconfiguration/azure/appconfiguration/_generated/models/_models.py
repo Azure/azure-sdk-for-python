@@ -209,7 +209,7 @@ class FeatureFlag(_model_base.Model):
     """The variants of the feature flag."""
     allocation: Optional["_models.Allocation"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The allocation of the feature flag."""
-    telemetry: Optional["_models.Telemetry"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    telemetry: Optional["_models.FeatureFlagTelemetry"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The telemetry settings of the feature flag."""
     tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The tags of the feature flag."""
@@ -229,7 +229,7 @@ class FeatureFlag(_model_base.Model):
         conditions: Optional["_models.Conditions"] = None,
         variants: Optional[List["_models.Variant"]] = None,
         allocation: Optional["_models.Allocation"] = None,
-        telemetry: Optional["_models.Telemetry"] = None,
+        telemetry: Optional["_models.FeatureFlagTelemetry"] = None,
         tags: Optional[Dict[str, str]] = None,
     ) -> None: ...
 
@@ -660,7 +660,7 @@ class SnapshotUpdateParameters(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Telemetry(_model_base.Model):
+class FeatureFlagTelemetry(_model_base.Model):
     """Feature Flag Telemetry object.
 
     :ivar enabled: The enabled state of the telemetry. Required.

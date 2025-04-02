@@ -28,7 +28,7 @@ from ._models import (  # type: ignore
     PercentileAllocation,
     Snapshot,
     SnapshotUpdateParameters,
-    Telemetry,
+    FeatureFlagTelemetry,
     UserAllocation,
     Variant,
 )
@@ -63,7 +63,7 @@ __all__ = [
     "PercentileAllocation",
     "Snapshot",
     "SnapshotUpdateParameters",
-    "Telemetry",
+    "FeatureFlagTelemetry",
     "UserAllocation",
     "Variant",
     "ConfigurationSettingFields",

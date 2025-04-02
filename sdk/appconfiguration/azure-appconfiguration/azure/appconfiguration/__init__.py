@@ -27,13 +27,14 @@ from ._generated.models import (
     SnapshotComposition,
     FeatureFlag,
     FeatureFlagFields,
+    FeatureFlagFilter,
     Allocation,
     UserAllocation,
     PercentileAllocation,
     GroupAllocation,
     Conditions,
     Variant,
-    Telemetry
+    FeatureFlagTelemetry
 )
 from ._version import VERSION
 from ._azure_appconfiguration_error import ResourceReadOnlyError
@@ -52,13 +53,14 @@ __all__ = [
     "LabelFields",
     "FeatureFlag",
     "FeatureFlagFields",
+    "FeatureFlagFilter",
     "Allocation",
     "UserAllocation",
     "PercentileAllocation",
     "GroupAllocation",
     "Conditions",
     "Variant",
-    "Telemetry",
+    "FeatureFlagTelemetry",
     "ConfigurationSettingFields",
     "ConfigurationSettingsFilter",
     "ConfigurationSettingLabel",
