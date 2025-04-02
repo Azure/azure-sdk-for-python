@@ -13,7 +13,7 @@ from ssl import SSLError
 from typing import Any, Dict, List, Tuple, Optional, NamedTuple, Type, Union, cast
 
 from ._transport import Transport
-from .sasl import SASLTransport, SASLWithWebSocket, SASLWithLegacyWebSocket
+from .sasl import SASLTransport, SASLWithWebSocket
 from .session import Session
 from .performatives import OpenFrame, CloseFrame
 from .constants import (
@@ -159,13 +159,9 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         if transport:
             self._transport = transport
         elif "sasl_credential" in kwargs:
-            sasl_transport: Union[
-                Type[SASLTransport],
-                Type[SASLWithWebSocket],
-                Type[SASLWithLegacyWebSocket]] = SASLTransport
+            sasl_transport: Union[Type[SASLTransport], Type[SASLWithWebSocket]] = SASLTransport
             if self._transport_type.name == "AmqpOverWebsocket" or kwargs.get("http_proxy"):
-                use_legacy_ws = kwargs.get("legacy_ws", False)
-                sasl_transport = SASLWithWebSocket if not use_legacy_ws else SASLWithLegacyWebSocket
+                sasl_transport = SASLWithWebSocket
                 endpoint = parsed_url.hostname + parsed_url.path
             self._transport = sasl_transport(
                 host=endpoint,
