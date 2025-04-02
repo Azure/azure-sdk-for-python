@@ -755,7 +755,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
     @distributed_trace
     def query_blob(self, query_expression: str, **kwargs: Any) -> BlobQueryReader:
         """Enables users to select/project on blob/or blob snapshot data by providing simple query expressions.
-        This operation returns a BlobQueryReader, users need to use readall() or readinto() to get query data.
+        This operations returns a BlobQueryReader, users need to use readall() or readinto() to get query data.
 
         :param str query_expression:
             Required. a query statement. For more details see
@@ -766,41 +766,34 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             Optional. Defines the serialization of the data currently stored in the blob. The default is to
             treat the blob data as CSV data formatted in the default dialect. This can be overridden with
             a custom DelimitedTextDialect, or DelimitedJsonDialect or "ParquetDialect" (passed as a string or enum).
-            These dialects can be passed through their respective classes, the QuickQueryDialect enum or as a string.
+            These dialects can be passed through their respective classes, the QuickQueryDialect enum or as a string
 
             .. note::
                 "ParquetDialect" is in preview, so some features may not work as intended.
 
-        :paramtype blob_format:
-            ~azure.storage.blob.DelimitedTextDialect or
-            ~azure.storage.blob.DelimitedJsonDialect or
-            ~azure.storage.blob.QuickQueryDialect or
-            str
+        :paramtype blob_format: ~azure.storage.blob.DelimitedTextDialect or ~azure.storage.blob.DelimitedJsonDialect
+            or ~azure.storage.blob.QuickQueryDialect or str
         :keyword output_format:
             Optional. Defines the output serialization for the data stream. By default the data will be returned
             as it is represented in the blob (Parquet formats default to DelimitedTextDialect).
             By providing an output format, the blob data will be reformatted according to that profile.
             This value can be a DelimitedTextDialect or a DelimitedJsonDialect or ArrowDialect.
-            These dialects can be passed through their respective classes, the QuickQueryDialect enum or as a string.
-        :paramtype output_format:
-            ~azure.storage.blob.DelimitedTextDialect or
-            ~azure.storage.blob.DelimitedJsonDialect or
-            ~azure.storage.blob.QuickQueryDialect or
-            List[~azure.storage.blob.ArrowDialect] or
-            str
+            These dialects can be passed through their respective classes, the QuickQueryDialect enum or as a string
+        :paramtype output_format: ~azure.storage.blob.DelimitedTextDialect or ~azure.storage.blob.DelimitedJsonDialect
+            or List[~azure.storage.blob.ArrowDialect] or ~azure.storage.blob.QuickQueryDialect or str
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
         :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
-            If timezone is included, any non-UTC datetime will be converted to UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
-            Specify this header to perform the operation only if
-            the resource has been modified since the specified date/time.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
         :keyword ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
-            If timezone is included, any non-UTC datetime will be converted to UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
@@ -823,7 +816,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
-            This value is not tracked or validated on the client. To configure client-side network timeouts
+            This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
         :returns: A streaming object (BlobQueryReader)
@@ -856,8 +849,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             encoding=encoding,
             headers=headers,
             response=raw_response_body,
-            error_cls=error_cls
-        )
+            error_cls=error_cls)
 
     @distributed_trace
     def delete_blob(self, delete_snapshots: Optional[str] = None, **kwargs: Any) -> None:
