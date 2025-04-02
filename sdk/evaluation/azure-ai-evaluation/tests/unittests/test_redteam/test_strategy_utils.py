@@ -109,7 +109,8 @@ class TestChatTargetFunctions:
         mock_openai_chat_target.assert_called_once_with(
             model_name="gpt-35-turbo",
             endpoint="https://example.openai.azure.com",
-            api_key="test-api-key"
+            api_key="test-api-key",
+            api_version='2024-06-01'
         )
         assert result == mock_instance
         
@@ -127,7 +128,8 @@ class TestChatTargetFunctions:
         mock_openai_chat_target.assert_called_once_with(
             model_name="gpt-35-turbo",
             endpoint="https://example.openai.azure.com",
-            use_aad_auth=True
+            use_aad_auth=True,
+            api_version='2024-06-01'
         )
 
     @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
@@ -146,7 +148,8 @@ class TestChatTargetFunctions:
         mock_openai_chat_target.assert_called_once_with(
             model_name="gpt-4",
             endpoint=None,
-            api_key="test-api-key"
+            api_key="test-api-key",
+            api_version='2024-06-01'
         )
         
         # Test with base_url
@@ -163,7 +166,8 @@ class TestChatTargetFunctions:
         mock_openai_chat_target.assert_called_once_with(
             model_name="gpt-4",
             endpoint="https://example.com/api",
-            api_key="test-api-key"
+            api_key="test-api-key",
+            api_version='2024-06-01'
         )
 
     @patch("azure.ai.evaluation.red_team._utils.strategy_utils._CallbackChatTarget")
