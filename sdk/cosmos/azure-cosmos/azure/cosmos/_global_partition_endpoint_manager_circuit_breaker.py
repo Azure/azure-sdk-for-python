@@ -26,7 +26,7 @@ from typing import TYPE_CHECKING
 from azure.cosmos._global_partition_endpoint_manager_circuit_breaker_core import \
     _GlobalPartitionEndpointManagerForCircuitBreakerCore
 
-from azure.cosmos.aio._global_endpoint_manager_async import _GlobalEndpointManager
+from azure.cosmos._global_endpoint_manager import _GlobalEndpointManager
 from azure.cosmos._request_object import RequestObject
 if TYPE_CHECKING:
     from azure.cosmos._cosmos_client_connection import CosmosClientConnection

@@ -5,7 +5,6 @@
 Cosmos database service.
 """
 from azure.cosmos.documents import _OperationType
-from azure.cosmos.http_constants import HttpHeaders
 
 
 class _TimeoutFailoverRetryPolicy(object):
