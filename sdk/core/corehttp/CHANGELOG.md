@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b6 (Unreleased)
+## 1.0.0b6 (2025-03-27)
 
 ### Features Added
 
@@ -10,16 +10,13 @@
 - `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` now check if a credential has the `get_token_info` method defined. If so, the `get_token_info` method is used to acquire a token. [#38346](https://github.com/Azure/azure-sdk-for-python/pull/38346)
   - These policies now also check the `refresh_on` attribute when determining if a new token request should be made.
 - Added `model` attribute to `HttpResponseError` to allow accessing error attributes based on a known model. [#39636](https://github.com/Azure/azure-sdk-for-python/pull/39636)
+- Added `auth_flows` support in `BearerTokenCredentialPolicy`. [#40084](https://github.com/Azure/azure-sdk-for-python/pull/40084)
 
 ### Breaking Changes
 
 - The `get_token` method has been removed from the `TokenCredential` and `AsyncTokenCredential` protocols. Implementations should now use the new `get_token_info` method to acquire tokens. [#38346](https://github.com/Azure/azure-sdk-for-python/pull/38346)
 - The `AccessToken` class has been removed and replaced with a new `AccessTokenInfo` class. [#38346](https://github.com/Azure/azure-sdk-for-python/pull/38346)
 - `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` now rely on credentials having the `get_token_info` method defined. [#38346](https://github.com/Azure/azure-sdk-for-python/pull/38346)
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.0.0b5 (2024-02-29)
 

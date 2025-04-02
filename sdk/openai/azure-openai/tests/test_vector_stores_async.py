@@ -19,7 +19,7 @@ class TestVectorStoresAsync(AzureRecordedTestCase):
     @configure_async
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type, api_version", [(ASST_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
-    async def test_assistants_vector_stores_crud(self, client_async: openai.AsyncAzureOpenAI | openai.AsyncOpenAI, api_type, api_version, **kwargs):
+    async def test_vector_stores_crud(self, client_async: openai.AsyncAzureOpenAI | openai.AsyncOpenAI, api_type, api_version, **kwargs):
         file_name = f"test{uuid.uuid4()}.txt"
         with open(file_name, "w") as f:
             f.write("Contoso company policy requires that all employees take at least 10 vacation days a year.")
@@ -84,6 +84,27 @@ class TestVectorStoresAsync(AzureRecordedTestCase):
             assert vector_store_file_2.id == vector_store_file.id
             assert vector_store_file.vector_store_id == vector_store.id
 
+            # TODO Not supported by Azure yet
+            # vector_store_file_updated = await client_async.vector_stores.files.update(
+            #     file_id=vector_store_file.id,
+            #     vector_store_id=vector_store.id,
+            #     attributes={"Q": "A"}
+            # )
+            # assert vector_store_file_updated.attributes == {"Q": "A"}
+
+            # file_content = await client_async.vector_stores.files.content(
+            #     vector_store_id=vector_store.id,
+            #     file_id=vector_store_file.id
+            # )
+            # assert file_content
+
+            # search_response = await client_async.vector_stores.search(
+            #     vector_store_id=vector_store.id,
+            #     query="vacation days",
+            # )
+            # async for s in search_response:
+            #     assert s
+
         finally:
             os.remove(path)
             deleted_vector_store_file = await client_async.vector_stores.files.delete(
@@ -99,7 +120,7 @@ class TestVectorStoresAsync(AzureRecordedTestCase):
     @configure_async
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type, api_version", [(ASST_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
-    async def test_assistants_vector_stores_batch_crud(self, client_async: openai.AsyncAzureOpenAI | openai.AsyncOpenAI, api_type, api_version, **kwargs):
+    async def test_vector_stores_batch_crud(self, client_async: openai.AsyncAzureOpenAI | openai.AsyncOpenAI, api_type, api_version, **kwargs):
         file_name = f"test{uuid.uuid4()}.txt"
         file_name_2 = f"test{uuid.uuid4()}.txt"
         with open(file_name, "w") as f:
