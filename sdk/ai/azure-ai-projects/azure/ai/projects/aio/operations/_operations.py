@@ -5402,46 +5402,6 @@ class TelemetryOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def create_application_insights_if_not_exists(self, resource_group_name: str, resource_name: str, location: str) -> str:
-        """Create an Application Insights resource and assign RBAC roles.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param resource_name: The name of the Application Insights resource.
-        :type resource_name: str
-        :param location: The location of the resource.
-        :type location: str
-        :return: The connection string of the Application Insights resource.
-        :rtype: str
-        """
-        credential = DefaultAzureCredential()
-        client = ApplicationInsightsManagementClient(credential, self._outer_instance.subscription_id)
-        app_insights_component = ApplicationInsightsComponent(
-            location=location,
-            application_type="web",
-            kind="web"
-        )
-
-        component = client.components.get(resource_group_name, resource_name)
-        self.connection_string = component.connection_string
-
-        # Assign RBAC roles
-        role_definition = '3913510d-42f4-4e42-8a64-420c390055eb'  # monitoring metrics publisher"
-        authorization_client = AuthorizationManagementClient(credential, self._outer_instance.subscription_id)
-        role_definition_id = f"/subscriptions/{self._outer_instance.subscription_id}/providers/Microsoft.Authorization/roleDefinitions/{role_definition}"
-        principal_id = ""  # this should be RAISvc principal ID.
-
-        role_assignment_params = RoleAssignmentCreateParameters(
-            role_definition_id=role_definition_id,
-            principal_id=principal_id
-        )
-        scope = f"/subscriptions/{self._outer_instance.subscription_id}/resourceGroups/{resource_group_name}/providers/microsoft.insights/components/{resource_name}"
-        role_assignment_name = "monitoring-metrics-publisher"
-        authorization_client.role_assignments.create(scope, role_assignment_name, role_assignment_params)
-
-        return self.connection_string
-    
-    @distributed_trace_async
     async def _get_app_insights(
         self, app_insights_resource_url: str, **kwargs: Any
     ) -> _models._models.GetAppInsightsResponse:

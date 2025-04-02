@@ -25,6 +25,16 @@ from .operations import (
     EvaluationsOperations,
     TelemetryOperations,
 )
+from azure.identity import DefaultAzureCredential
+from azure.core.tracing.decorator import distributed_trace
+from azure.mgmt.applicationinsights import ApplicationInsightsManagementClient
+from azure.mgmt.applicationinsights.v2018_05_01_preview.models import ApplicationInsightsComponent
+from azure.identity import DefaultAzureCredential
+from azure.mgmt.applicationinsights import ApplicationInsightsManagementClient
+from azure.mgmt.applicationinsights.models import ApplicationInsightsComponent
+from azure.mgmt.authorization import AuthorizationManagementClient
+from azure.mgmt.authorization.models import RoleAssignmentCreateParameters
+import uuid
 from .operations._patch import _SyncCredentialWrapper, InferenceOperations
 
 if TYPE_CHECKING:
@@ -66,6 +76,9 @@ class AIProjectClient(
         kwargs3 = kwargs.copy()
 
         self._user_agent: Optional[str] = kwargs.get("user_agent", None)
+        self._create_app_insights: Optional[bool] = kwargs.get("create_app_insights", None)
+        if self._create_app_insights:
+            self.create_app_insights(subscription_id, resource_group_name, project_name, credential)
 
         # For getting AppInsights connection string from the AppInsights resource.
         # The AppInsights resource URL is not known at this point. We need to get it from the
@@ -259,6 +272,47 @@ class AIProjectClient(
             credential,
             **kwargs,
         )
+    
+    @classmethod
+    def create_app_insights(cls, subscription_id, resource_group_name, project_name, credential) -> None:
+       """Create an Application Insights resource and assign RBAC roles.
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param resource_name: The name of the Application Insights resource.
+        :type resource_name: str
+        :param location: The location of the resource.
+        :type location: str
+        :return: The connection string of the Application Insights resource.
+        :rtype: str
+        """
+        credential = DefaultAzureCredential()
+        client = ApplicationInsightsManagementClient(credential, subscription_id)
+        app_insights_component = ApplicationInsightsComponent(
+            location=cls.location
+            application_type="web",
+            kind="web"
+        )
+
+        component = client.components.get(resource_group_name, project_name)
+        connection_string = component.connection_string
+
+        # Assign RBAC roles
+        role_definition = '3913510d-42f4-4e42-8a64-420c390055eb'  # monitoring metrics publisher"
+        authorization_client = AuthorizationManagementClient(credential, subscription_id)
+        role_definition_id = f"/subscriptions/{subscription_id}/providers/Microsoft.Authorization/roleDefinitions/{role_definition}"
+        principal_id = ""  # this should be RAISvc principal ID.
+
+        role_assignment_params = RoleAssignmentCreateParameters(
+            role_definition_id=role_definition_id,
+            principal_id=principal_id
+        )
+        scope = f"/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/microsoft.insights/components/{resource_name}"
+        role_assignment_name = "monitoring-metrics-publisher"
+        authorization_client.role_assignments.create(scope, role_assignment_name, role_assignment_params)
+        # create an AIProject from the connection string of the app insights we just created
+
+        cls.from_connection_string(connection_string, credential)
+    
 
     def upload_file(self, file_path: Union[Path, str, PathLike]) -> Tuple[str, str]:
         """Upload a file to the Azure AI Foundry project.

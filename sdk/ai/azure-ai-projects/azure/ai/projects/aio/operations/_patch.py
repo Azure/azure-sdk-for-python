@@ -610,44 +610,6 @@ class TelemetryOperations(TelemetryOperationsGenerated):
         self._outer_instance = kwargs.pop("outer_instance")
         super().__init__(*args, **kwargs)
 
-    async def create_application_insights_if_not_exists(self, resource_group_name: str, resource_name: str, location: str) -> str:
-        from azure.identity import DefaultAzureCredential
-        from azure.mgmt.applicationinsights import ApplicationInsightsManagementClient
-        from azure.mgmt.applicationinsights.models import ApplicationInsightsComponent
-        from azure.mgmt.authorization import AuthorizationManagementClient
-        from azure.mgmt.authorization.models import RoleAssignmentCreateParameters
-        import uuid
-
-        token_credential = DefaultAzureCredential()
-        client = ApplicationInsightsManagementClient(token_credential, self._config.subscription_id)
-        
-        try:
-            component = client.components.get(resource_group_name, resource_name)
-        except Exception:
-            app_insights_component = ApplicationInsightsComponent(
-                location=location,
-                application_type="web",
-                kind="web"
-            )
-            component = client.components.create_or_update(resource_group_name, resource_name, app_insights_component)
-
-        # Assign RBAC roles
-        role_definition = '3913510d-42f4-4e42-8a64-420c390055eb'  # monitoring metrics publisher
-        authorization_client = AuthorizationManagementClient(token_credential, self._config.subscription_id)
-        role_definition_id = f"/subscriptions/{self._config.subscription_id}/providers/Microsoft.Authorization/roleDefinitions/{role_definition}"
-        principal_id = ""  # this should be RAISvc principal ID.
-
-        role_assignment_params = RoleAssignmentCreateParameters(
-            role_definition_id=role_definition_id,
-            principal_id=principal_id
-        )
-
-        scope = f"/subscriptions/{self._config.subscription_id}/resourceGroups/{resource_group_name}/providers/microsoft.insights/components/{resource_name}"
-        role_assignment_name = str(uuid.uuid4())
-        authorization_client.role_assignments.create(scope, role_assignment_name, role_assignment_params)
-        
-        return component.connection_string
-
     async def get_connection_string(self) -> str:
         """Get the Application Insights connection string associated with the Project's
         Application Insights resource.
@@ -664,16 +626,7 @@ class TelemetryOperations(TelemetryOperationsGenerated):
             )
 
             if not get_workspace_response.properties.application_insights:
-                # create an AppInsights for the customer using the resource group and project name
-                create_app_insights_response = await self.create_application_insights_if_not_exists(
-                    resource_group_name=self._outer_instance.resource_group_name,
-                    resource_name=self._outer_instance.project_name,
-                    location=get_workspace_response.location,
-                )
-                if not create_app_insights_response:
-                    raise ResourceNotFoundError("Application Insights resource was not able to be created for this Project.")
-
-                #raise ResourceNotFoundError("Application Insights resource was not enabled for this Project.")
+                raise ResourceNotFoundError("Application Insights resource was not enabled for this Project.")
 
             # Make a GET call to the Application Insights resource URL to get the connection string
             app_insights_respose: GetAppInsightsResponse = await self._get_app_insights(
