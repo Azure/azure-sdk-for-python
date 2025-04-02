@@ -21,11 +21,11 @@ class TestContainerServiceFleetMgmtAutoUpgradeProfilesOperationsAsync(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_fleet(self, resource_group):
+    async def test_auto_upgrade_profiles_list_by_fleet(self, resource_group):
         response = self.client.auto_upgrade_profiles.list_by_fleet(
             resource_group_name=resource_group.name,
             fleet_name="str",
-            api_version="2024-05-02-preview",
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -33,12 +33,12 @@ class TestContainerServiceFleetMgmtAutoUpgradeProfilesOperationsAsync(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_auto_upgrade_profiles_get(self, resource_group):
         response = await self.client.auto_upgrade_profiles.get(
             resource_group_name=resource_group.name,
             fleet_name="str",
             auto_upgrade_profile_name="str",
-            api_version="2024-05-02-preview",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -46,13 +46,25 @@ class TestContainerServiceFleetMgmtAutoUpgradeProfilesOperationsAsync(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_auto_upgrade_profiles_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.auto_upgrade_profiles.begin_create_or_update(
                 resource_group_name=resource_group.name,
                 fleet_name="str",
                 auto_upgrade_profile_name="str",
                 resource={
+                    "autoUpgradeProfileStatus": {
+                        "lastTriggerError": {
+                            "additionalInfo": [{"info": {}, "type": "str"}],
+                            "code": "str",
+                            "details": [...],
+                            "message": "str",
+                            "target": "str",
+                        },
+                        "lastTriggerStatus": "str",
+                        "lastTriggerUpgradeVersions": ["str"],
+                        "lastTriggeredAt": "2020-02-20 00:00:00",
+                    },
                     "channel": "str",
                     "disabled": bool,
                     "eTag": "str",
@@ -71,7 +83,7 @@ class TestContainerServiceFleetMgmtAutoUpgradeProfilesOperationsAsync(AzureMgmtR
                     "type": "str",
                     "updateStrategyId": "str",
                 },
-                api_version="2024-05-02-preview",
+                api_version="2025-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -80,13 +92,13 @@ class TestContainerServiceFleetMgmtAutoUpgradeProfilesOperationsAsync(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_auto_upgrade_profiles_begin_delete(self, resource_group):
         response = await (
             await self.client.auto_upgrade_profiles.begin_delete(
                 resource_group_name=resource_group.name,
                 fleet_name="str",
                 auto_upgrade_profile_name="str",
-                api_version="2024-05-02-preview",
+                api_version="2025-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

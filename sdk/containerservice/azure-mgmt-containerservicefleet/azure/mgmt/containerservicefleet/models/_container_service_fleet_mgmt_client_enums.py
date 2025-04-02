@@ -16,6 +16,47 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INTERNAL = "Internal"
 
 
+class AutoUpgradeLastTriggerStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AutoUpgradeLastTriggerStatus is the status of the last AutoUpgrade trigger (attempt to
+    automatically create and start UpdateRun when there are new released versions) of an auto
+    upgrade profile.
+    """
+
+    SUCCEEDED = "Succeeded"
+    """The last AutoUpgrade trigger was succeeded."""
+    FAILED = "Failed"
+    """The last AutoUpgrade trigger failed."""
+
+
+class AutoUpgradeNodeImageSelectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The node image upgrade type."""
+
+    LATEST = "Latest"
+    """Use the latest image version when upgrading nodes. Clusters may use different image versions
+    (e.g., 'AKSUbuntu-1804gen2containerd-2021.10.12' and 'AKSUbuntu-1804gen2containerd-2021.10.19')
+    because, for example, the latest available version is different in different regions."""
+    CONSISTENT = "Consistent"
+    """The image versions to upgrade nodes to are selected as described below: for each node pool in
+    managed clusters affected by the update run, the system selects the latest image version such
+    that it is available across all other node pools (in all other clusters) of the same image
+    type. As a result, all node pools of the same image type will be upgraded to the same image
+    version. For example, if the latest image version for image type 'AKSUbuntu-1804gen2containerd'
+    is 'AKSUbuntu-1804gen2containerd-2021.10.12' for a node pool in cluster A in region X, and is
+    'AKSUbuntu-1804gen2containerd-2021.10.17' for a node pool in cluster B in region Y, the system
+    will upgrade both node pools to image version 'AKSUbuntu-1804gen2containerd-2021.10.12'."""
+
+
+class AutoUpgradeProfileProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of the AutoUpgradeProfile resource."""
+
+    SUCCEEDED = "Succeeded"
+    """Resource has been created."""
+    FAILED = "Failed"
+    """Resource creation failed."""
+    CANCELED = "Canceled"
+    """Resource creation was canceled."""
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource."""
 
@@ -112,6 +153,10 @@ class NodeImageSelectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     is 'AKSUbuntu-1804gen2containerd-2021.10.12' for a node pool in cluster A in region X, and is
     'AKSUbuntu-1804gen2containerd-2021.10.17' for a node pool in cluster B in region Y, the system
     will upgrade both node pools to image version 'AKSUbuntu-1804gen2containerd-2021.10.12'."""
+    CUSTOM = "Custom"
+    """Upgrade the nodes to the custom image versions. When set, update run will use node image
+    versions provided in customNodeImageVersions to upgrade the nodes. If set,
+    customNodeImageVersions must not be empty."""
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -165,3 +210,18 @@ class UpdateState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The state of an UpdateRun/UpdateStage/UpdateGroup/MemberUpdate that has failed."""
     COMPLETED = "Completed"
     """The state of an UpdateRun/UpdateStage/UpdateGroup/MemberUpdate that has completed."""
+
+
+class UpgradeChannel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Configuration of how auto upgrade will be run."""
+
+    STABLE = "Stable"
+    """Upgrades the clusters kubernetes version to the latest supported patch release on minor version
+    N-1, where N is the latest supported minor version.
+     For example, if a cluster runs version 1.17.7 and versions 1.17.9, 1.18.4, 1.18.6, and 1.19.1
+    are available, the cluster upgrades to 1.18.6."""
+    RAPID = "Rapid"
+    """Upgrades the clusters kubernetes version to the latest supported patch release on the latest
+    supported minor version."""
+    NODE_IMAGE = "NodeImage"
+    """Upgrade node image version of the clusters."""

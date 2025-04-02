@@ -21,11 +21,11 @@ class TestContainerServiceFleetMgmtFleetMembersOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_fleet(self, resource_group):
+    async def test_fleet_members_list_by_fleet(self, resource_group):
         response = self.client.fleet_members.list_by_fleet(
             resource_group_name=resource_group.name,
             fleet_name="str",
-            api_version="2024-04-01",
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -33,12 +33,12 @@ class TestContainerServiceFleetMgmtFleetMembersOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_fleet_members_get(self, resource_group):
         response = await self.client.fleet_members.get(
             resource_group_name=resource_group.name,
             fleet_name="str",
             fleet_member_name="str",
-            api_version="2024-04-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestContainerServiceFleetMgmtFleetMembersOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create(self, resource_group):
+    async def test_fleet_members_begin_create(self, resource_group):
         response = await (
             await self.client.fleet_members.begin_create(
                 resource_group_name=resource_group.name,
@@ -59,6 +59,16 @@ class TestContainerServiceFleetMgmtFleetMembersOperationsAsync(AzureMgmtRecorded
                     "id": "str",
                     "name": "str",
                     "provisioningState": "str",
+                    "status": {
+                        "lastOperationError": {
+                            "additionalInfo": [{"info": {}, "type": "str"}],
+                            "code": "str",
+                            "details": [...],
+                            "message": "str",
+                            "target": "str",
+                        },
+                        "lastOperationId": "str",
+                    },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
                         "createdBy": "str",
@@ -69,7 +79,7 @@ class TestContainerServiceFleetMgmtFleetMembersOperationsAsync(AzureMgmtRecorded
                     },
                     "type": "str",
                 },
-                api_version="2024-04-01",
+                api_version="2025-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -78,14 +88,14 @@ class TestContainerServiceFleetMgmtFleetMembersOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_fleet_members_begin_update(self, resource_group):
         response = await (
             await self.client.fleet_members.begin_update(
                 resource_group_name=resource_group.name,
                 fleet_name="str",
                 fleet_member_name="str",
                 properties={"group": "str"},
-                api_version="2024-04-01",
+                api_version="2025-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -94,13 +104,13 @@ class TestContainerServiceFleetMgmtFleetMembersOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_fleet_members_begin_delete(self, resource_group):
         response = await (
             await self.client.fleet_members.begin_delete(
                 resource_group_name=resource_group.name,
                 fleet_name="str",
                 fleet_member_name="str",
-                api_version="2024-04-01",
+                api_version="2025-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
