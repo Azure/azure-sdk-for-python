@@ -27,30 +27,31 @@ import json
 import logging
 import sys
 from collections.abc import MutableMapping
-from typing import Callable, Optional, Any
+from typing import Callable, Optional, Any, Dict, List
 
 import aiohttp
 from azure.core.pipeline.transport import AioHttpTransport, AioHttpTransportResponse
 from azure.core.rest import HttpRequest, AsyncHttpResponse
+from azure.cosmos import documents
 
 import test_config
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.core.exceptions import ServiceRequestError
 
-class FaultInjectionTransport(AioHttpTransport):
+class FaultInjectionTransportAsync(AioHttpTransport):
     logger = logging.getLogger('azure.cosmos.fault_injection_transport')
     logger.setLevel(logging.DEBUG)
 
     def __init__(self, *, session: Optional[aiohttp.ClientSession] = None, loop=None, session_owner: bool = True, **config):
-        self.faults = []
-        self.requestTransformations = []
-        self.responseTransformations = []
+        self.faults: List[Dict[str, Any]] = []
+        self.requestTransformations: List[Dict[str, Any]]  = []
+        self.responseTransformations: List[Dict[str, Any]] = []
         super().__init__(session=session, loop=loop, session_owner=session_owner, **config)
 
     def add_fault(self, predicate: Callable[[HttpRequest], bool], fault_factory: Callable[[HttpRequest], asyncio.Task[Exception]]):
         self.faults.append({"predicate": predicate, "apply": fault_factory})
 
-    def add_response_transformation(self, predicate: Callable[[HttpRequest], bool], response_transformation: Callable[[HttpRequest, Callable[[HttpRequest], asyncio.Task[AsyncHttpResponse]]], asyncio.Task[AsyncHttpResponse]]):
+    def add_response_transformation(self, predicate: Callable[[HttpRequest], bool], response_transformation: Callable[[HttpRequest, Callable[[HttpRequest], AioHttpTransportResponse]], AioHttpTransportResponse]):
         self.responseTransformations.append({
             "predicate": predicate, 
             "apply": response_transformation})
@@ -142,10 +143,8 @@ class FaultInjectionTransport(AioHttpTransport):
 
     @staticmethod
     def predicate_is_write_operation(r: HttpRequest, uri_prefix: str) -> bool:
-        is_write_document_operation = (r.headers.get('x-ms-thinclient-proxy-resource-type') == 'docs'
-                and r.headers.get('x-ms-thinclient-proxy-operation-type') != 'Read'
-                and r.headers.get('x-ms-thinclient-proxy-operation-type') != 'ReadFeed'
-                and r.headers.get('x-ms-thinclient-proxy-operation-type') != 'Query')
+        is_write_document_operation = documents._OperationType.IsWriteOperation(
+            str(r.headers.get('x-ms-thinclient-proxy-operation-type')))
 
         return is_write_document_operation and uri_prefix in r.url
 
@@ -173,14 +172,12 @@ class FaultInjectionTransport(AioHttpTransport):
     async def transform_topology_swr_mrr(
             write_region_name: str,
             read_region_name: str,
-            r: HttpRequest,
-            inner: Callable[[],asyncio.Task[AsyncHttpResponse]]) -> asyncio.Task[AsyncHttpResponse]:
+            inner: Callable[[],asyncio.Task[AioHttpTransportResponse]]) -> AioHttpTransportResponse:
 
         response = await inner()
         if not FaultInjectionTransport.predicate_is_database_account_call(response.request):
             return response
 
-        await response.load_body()
         data = response.body()
         if response.status_code == 200 and data:
             data = data.decode("utf-8")
@@ -200,14 +197,12 @@ class FaultInjectionTransport(AioHttpTransport):
     async def transform_topology_mwr(
             first_region_name: str,
             second_region_name: str,
-            r: HttpRequest,
-            inner: Callable[[], asyncio.Task[AsyncHttpResponse]]) -> AsyncHttpResponse:
+            inner: Callable[[], asyncio.Task[AioHttpTransportResponse]]) -> AioHttpTransportResponse:
 
         response = await inner()
         if not FaultInjectionTransport.predicate_is_database_account_call(response.request):
             return response
 
-        await response.load_body()
         data = response.body()
         if response.status_code == 200 and data:
             data = data.decode("utf-8")
@@ -251,7 +246,7 @@ class FaultInjectionTransport(AioHttpTransport):
         def body(self) -> Optional[bytes]:
             return self.bytes
 
-        def text(self, encoding: Optional[str] = None) -> Optional[str]:
+        def text(self) -> Optional[str]:
             return self.json_text
 
         async def load_body(self) -> None:
