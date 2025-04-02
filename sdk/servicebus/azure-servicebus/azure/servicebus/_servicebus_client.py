@@ -122,7 +122,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
 
         if uamqp_transport:
             # Deprecation of uamqp transport
-            warnings.warn("The `uamqp_transport` parameter is deprecated and will be removed in a future release along with support for uamqp. Please use the Pure Python AMQP transport instead.", DeprecationWarning, stacklevel=2)
+            warnings.warn("uAMQP legacy support will be removed in the July 2025 release. Please use the Pure Python AMQP transport instead. If you rely on this, please comment on [this issue](https://github.com/Azure/azure-sdk-for-python/issues/40347) ", DeprecationWarning, stacklevel=2)
 
             try:
                 from ._transport._uamqp_transport import UamqpTransport
