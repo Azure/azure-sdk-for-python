@@ -431,7 +431,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
 
             user = client.get_ledger_user(user_id)
             assert user["userId"] == user_id
-            assert user["assignedRoles"] == ["Reader"]
+            assert user["assignedRoles"] == ["Contributor","Reader"]
 
             client.delete_ledger_user(user_id)
 
