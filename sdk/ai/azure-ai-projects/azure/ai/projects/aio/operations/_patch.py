@@ -13,6 +13,7 @@ import io
 import logging
 import os
 import time
+from typing import Callable, Set
 from pathlib import Path
 from typing import (
     IO,
@@ -27,11 +28,14 @@ from typing import (
     TextIO,
     Union,
     cast,
+    Callable,
+    Set,
     overload,
 )
 
 from azure.core.credentials import TokenCredential
 from azure.core.exceptions import ResourceNotFoundError
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ... import models as _models
@@ -661,7 +665,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self._toolset: Dict[str, _models.AsyncToolSet] = {}
+        self._function_tool = _models.AsyncFunctionTool(set())
 
     # pylint: disable=arguments-differ
     @overload
@@ -892,8 +896,6 @@ class AgentsOperations(AgentsOperationsGenerated):
             **kwargs,
         )
 
-        if toolset is not None:
-            self._toolset[new_agent.id] = toolset
         return new_agent
 
     # pylint: disable=arguments-differ
@@ -1146,7 +1148,6 @@ class AgentsOperations(AgentsOperationsGenerated):
             return await super().update_agent(body=body, **kwargs)
 
         if toolset is not None:
-            self._toolset[agent_id] = toolset
             tools = toolset.definitions
             tool_resources = toolset.resources
 
@@ -1640,11 +1641,9 @@ class AgentsOperations(AgentsOperationsGenerated):
                 # We need tool set only if we are executing local function. In case if
                 # the tool is azure_function we just need to wait when it will be finished.
                 if any(tool_call.type == "function" for tool_call in tool_calls):
-                    toolset = toolset or self._toolset.get(run.agent_id)
-                    if toolset:
-                        tool_outputs = await toolset.execute_tool_calls(tool_calls)
-                    else:
-                        raise ValueError("Toolset is not available in the client.")
+                    toolset = _models.AsyncToolSet()
+                    toolset.add(self._function_tool)
+                    tool_outputs = await toolset.execute_tool_calls(tool_calls)
 
                     logging.info("Tool outputs: %s", tool_outputs)
                     if tool_outputs:
@@ -2334,12 +2333,9 @@ class AgentsOperations(AgentsOperationsGenerated):
             # We need tool set only if we are executing local function. In case if
             # the tool is azure_function we just need to wait when it will be finished.
             if any(tool_call.type == "function" for tool_call in tool_calls):
-                toolset = self._toolset.get(run.agent_id)
-                if toolset:
-                    tool_outputs = await toolset.execute_tool_calls(tool_calls)
-                else:
-                    logger.debug("Toolset is not available in the client.")
-                    return
+                toolset = _models.AsyncToolSet()
+                toolset.add(self._function_tool)
+                tool_outputs = await toolset.execute_tool_calls(tool_calls)
 
                 logger.info("Tool outputs: %s", tool_outputs)
                 if tool_outputs:
@@ -3124,9 +3120,55 @@ class AgentsOperations(AgentsOperationsGenerated):
         :rtype: ~azure.ai.projects.models.AgentDeletionStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        if agent_id in self._toolset:
-            del self._toolset[agent_id]
         return await super().delete_agent(agent_id, **kwargs)
+
+    @overload
+    def set_toolcalls(self, *, functions: Set[Callable[..., Any]]) -> None:
+        """Setup tool calls for the agent to be executed automatically.
+
+        :keyword functions: A set of callable functions to be used as tools.
+        :type functions: Set[Callable[..., Any]]
+        """
+
+    @overload
+    def set_toolcalls(self, *, function_tool: _models.AsyncFunctionTool) -> None:
+        """Setup tool calls for the agent to be executed automatically.
+
+        :keyword function_tool: An AsyncFunctionTool object representing the tool to be used.
+        :type function_tool: Optional[_models.AsyncFunctionTool]
+        """
+
+    @overload
+    def set_toolcalls(self, *, toolset: _models.AsyncToolSet) -> None:
+        """Setup tool calls for the agent to be executed automatically.
+
+        :keyword toolset: An AsyncToolSet object representing the set of tools to be used.
+        :type toolset: Optional[_models.AsyncToolSet]
+        """
+
+    def set_toolcalls(
+        self,
+        *,
+        functions: Optional[Set[Callable[..., Any]]] = None,
+        function_tool: Optional[_models.AsyncFunctionTool] = None,
+        toolset: Optional[_models.AsyncToolSet] = None,
+    ) -> None:
+        """Setup tool calls for the agent to be executed automatically.
+
+        :keyword functions: A set of callable functions to be used as tools.
+        :type functions: Set[Callable[..., Any]]
+        :keyword function_tool: An AsyncFunctionTool object representing the tool to be used.
+        :type function_tool: Optional[_models.AsyncFunctionTool]
+        :keyword toolset: An AsyncToolSet object representing the set of tools to be used.
+        :type toolset: Optional[_models.AsyncToolSet]
+        """
+        if functions:
+            self._function_tool = _models.AsyncFunctionTool(functions)
+        elif function_tool:
+            self._function_tool = function_tool
+        elif toolset:
+            tool = toolset.get_tool(_models.AsyncFunctionTool)
+            self._function_tool = tool
 
 
 class _SyncCredentialWrapper(TokenCredential):

@@ -6,9 +6,12 @@
 * Utilities to load prompt template strings and Prompty file content
 
 ### Sample updates
+* Added `project_client.agents.set_toolcalls(toolset=toolset)` to all samples that has `toolcalls` executed by `azure-ai-project` SDK
 
 ### Bugs Fixed
 
+### Breaking Changes
+The `toolset` parameter in `create_agents` no longer executes `toolcalls` by default. Instead, calling `set_toolcalls` now automatically executes `toolcalls` for `agents` with a `function tool` in `tools` or `toolset`.
 
 ## 1.0.0b8 (2025-03-28)
 

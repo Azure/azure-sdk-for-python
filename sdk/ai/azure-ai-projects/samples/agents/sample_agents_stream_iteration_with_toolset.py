@@ -44,6 +44,7 @@ toolset = ToolSet()
 toolset.add(functions)
 
 with project_client:
+    project_client.agents.set_toolcalls(toolset=toolset)
     agent = project_client.agents.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-assistant",
