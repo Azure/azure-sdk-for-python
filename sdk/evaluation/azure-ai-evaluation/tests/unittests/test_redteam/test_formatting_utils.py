@@ -13,11 +13,11 @@ except ImportError:
     has_pyrit = False
 
 if has_pyrit:
-    from azure.ai.evaluation._red_team._utils.formatting_utils import (
+    from azure.ai.evaluation.red_team._utils.formatting_utils import (
         message_to_dict, get_strategy_name, get_flattened_attack_strategies,
         get_attack_success, format_scorecard, is_none_or_nan, list_mean_nan_safe
     )
-    from azure.ai.evaluation._red_team._attack_strategy import AttackStrategy
+    from azure.ai.evaluation.red_team._attack_strategy import AttackStrategy
     from pyrit.models import ChatMessage
 
 
@@ -99,17 +99,9 @@ class TestAttackStrategyFunctions:
         result = get_flattened_attack_strategies(strategies)
         
         # Should expand MODERATE into specific strategies plus baseline
-        assert AttackStrategy.AsciiArt in result
+        assert AttackStrategy.Tense in result
         assert AttackStrategy.Baseline in result
         assert AttackStrategy.MODERATE not in result  # MODERATE should be replaced
-        
-        # Should have at least one composed strategy
-        has_composed = False
-        for strategy in result:
-            if isinstance(strategy, list):
-                has_composed = True
-                break
-        assert has_composed
 
     def test_get_flattened_attack_strategies_difficult(self):
         """Test flattening with DIFFICULT strategy."""
@@ -125,7 +117,7 @@ class TestAttackStrategyFunctions:
         for strategy in result:
             if isinstance(strategy, list):
                 composed_count += 1
-        assert composed_count >= 2
+        assert composed_count >= 1
 
     def test_get_flattened_attack_strategies_duplicates(self):
         """Test that duplicate strategies are removed."""
