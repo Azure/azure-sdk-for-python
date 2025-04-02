@@ -5,6 +5,7 @@
 # pylint: disable=client-method-missing-tracing-decorator
 from typing import Any, Union, Optional, TYPE_CHECKING, Type
 import logging
+import warnings
 from weakref import WeakSet
 from typing_extensions import Literal
 import certifi
@@ -120,6 +121,9 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         amqp_transport: Union[Type[PyamqpTransport], Type["UamqpTransport"]] = PyamqpTransport
 
         if uamqp_transport:
+            # Deprecation of uamqp transport
+            warnings.warn("The `uamqp_transport` parameter is deprecated and will be removed in a future release along with support for uamqp. Please use the Pure Python AMQP transport instead.", DeprecationWarning, stacklevel=2)
+
             try:
                 from ._transport._uamqp_transport import UamqpTransport
                 amqp_transport = UamqpTransport

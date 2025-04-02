@@ -5,6 +5,7 @@
 import logging
 import threading
 import datetime
+import warnings
 from typing import TYPE_CHECKING, List, Literal, Union, Any, Callable, Optional, Dict, Tuple, overload
 
 from ._client_base import ClientBase
@@ -154,7 +155,9 @@ class EventHubConsumerClient(ClientBase):  # pylint: disable=client-accepts-api-
         credential: "CredentialTypes",
         **kwargs: Any,
     ) -> None:
-
+        # Deprecation of uamqp transport
+        if kwargs.get("uamqp_transport"):
+            warnings.warn("The `uamqp_transport` parameter is deprecated and will be removed in a future release along with support for uamqp. Please use the Pure Python AMQP transport instead.", DeprecationWarning, stacklevel=2)
         self._checkpoint_store = kwargs.pop("checkpoint_store", None)
         self._load_balancing_interval = kwargs.pop("load_balancing_interval", None)
         if self._load_balancing_interval is None:

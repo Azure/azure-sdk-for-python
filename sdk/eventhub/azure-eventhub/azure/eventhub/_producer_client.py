@@ -5,6 +5,7 @@
 from concurrent.futures import ThreadPoolExecutor
 import logging
 import threading
+import warnings
 import time
 from typing import (
     Any,
@@ -200,6 +201,10 @@ class EventHubProducerClient(ClientBase):  # pylint: disable=client-accepts-api-
             network_tracing=kwargs.get("logging_enable"),
             **kwargs,
         )
+        # Deprecation of uamqp transport
+        if kwargs.get("uamqp_transport"):
+            warnings.warn("The `uamqp_transport` parameter is deprecated and will be removed in a future release along with support for uamqp. Please use the Pure Python AMQP transport instead.", DeprecationWarning, stacklevel=2)
+
         self._auth_uri = f"sb://{self._address.hostname}{self._address.path}"
         self._keep_alive = kwargs.get("keep_alive", None)
 

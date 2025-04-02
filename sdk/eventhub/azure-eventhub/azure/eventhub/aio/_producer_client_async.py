@@ -5,6 +5,7 @@
 import asyncio
 import logging
 import time
+import warnings
 
 from typing import Any, Union, List, Optional, Dict, Callable, cast
 from typing_extensions import TYPE_CHECKING, Literal, Awaitable, overload
@@ -185,6 +186,10 @@ class EventHubProducerClient(ClientBaseAsync):  # pylint: disable=client-accepts
             network_tracing=kwargs.pop("logging_enable", False),
             **kwargs,
         )
+        # Deprecation of uamqp transport
+        if kwargs.get("uamqp_transport"):
+            warnings.warn("The `uamqp_transport` parameter is deprecated and will be removed in a future release along with support for uamqp. Please use the Pure Python AMQP transport instead.", DeprecationWarning, stacklevel=2)
+        
         self._auth_uri = f"sb://{self._address.hostname}{self._address.path}"
         self._keep_alive = kwargs.get("keep_alive", None)
         self._producers: Dict[str, Optional[EventHubProducer]] = {ALL_PARTITIONS: self._create_producer()}
