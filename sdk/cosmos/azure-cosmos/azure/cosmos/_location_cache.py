@@ -25,7 +25,7 @@ DatabaseAccount with multiple writable and readable locations.
 import collections
 import logging
 import time
-from typing import Set
+from typing import Set, Optional
 from urllib.parse import urlparse
 
 from . import documents
@@ -232,13 +232,13 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
     def get_ordered_read_locations(self):
         return self.account_read_locations
 
-    # Todo: @tvaron3 client should be appeneded to if using circuitbreaker exclude regions
     def _get_configured_excluded_locations(self, request):
         # If excluded locations were configured on request, use request level excluded locations.
         excluded_locations = request.excluded_locations
         if excluded_locations is None:
             # If excluded locations were only configured on client(connection_policy), use client level
             excluded_locations = self.connection_policy.ExcludedLocations
+        excluded_locations.union(request.excluded_locations_circuit_breaker)
         return excluded_locations
 
     def get_applicable_read_regional_endpoints(self, request):

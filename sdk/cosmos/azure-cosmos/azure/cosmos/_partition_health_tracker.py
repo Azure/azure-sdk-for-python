@@ -22,7 +22,7 @@
 """Internal class for partition health tracker for circuit breaker.
 """
 import os
-from typing import Dict, Set, Any
+from typing import Dict, Set, Any, Optional
 from ._constants import _Constants as Constants
 from azure.cosmos._location_cache import current_time_millis, EndpointOperationType
 from azure.cosmos._routing.routing_range import PartitionKeyRangeWrapper, Range
@@ -164,7 +164,12 @@ class PartitionHealthTracker(object):
             return set()
 
 
-    def add_failure(self, pkrange_wrapper: PartitionKeyRangeWrapper, operation_type: str, location: str) -> None:
+    def add_failure(
+            self,
+            pkrange_wrapper: PartitionKeyRangeWrapper,
+            operation_type: str,
+            location: Optional[str]
+    ) -> None:
         # Retrieve the failure rate threshold from the environment.
         failure_rate_threshold = int(os.getenv(Constants.FAILURE_PERCENTAGE_TOLERATED,
                                                Constants.FAILURE_PERCENTAGE_TOLERATED_DEFAULT))
