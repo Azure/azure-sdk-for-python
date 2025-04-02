@@ -188,7 +188,7 @@ class EventHubProducerClient(ClientBaseAsync):  # pylint: disable=client-accepts
         )
         # Deprecation of uamqp transport
         if kwargs.get("uamqp_transport"):
-            warnings.warn("uAMQP legacy support will be removed in the July 2025 release. Please remove the use of `uamqp_transport` from the client arguments to use the pure Python AMQP transport. If you rely on this, please comment on [this issue](https://github.com/Azure/azure-sdk-for-python/issues/40347) ", DeprecationWarning, stacklevel=2)
+            warnings.warn("uAMQP legacy support will be removed in the July 2025 release. Please remove the use of `uamqp_transport` keyword argument from the client in order to use the pure Python AMQP transport. If you rely on this, please comment on [this issue](https://github.com/Azure/azure-sdk-for-python/issues/40347) ", DeprecationWarning, stacklevel=2)
         
         self._auth_uri = f"sb://{self._address.hostname}{self._address.path}"
         self._keep_alive = kwargs.get("keep_alive", None)
