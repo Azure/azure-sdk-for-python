@@ -1,5 +1,34 @@
 # Release History
 
+## 3.1.0 (2025-04-02)
+
+### Features Added
+
+  - Client `ContainerServiceFleetMgmtClient` added operation group `auto_upgrade_profiles`
+  - Client `ContainerServiceFleetMgmtClient` added operation group `auto_upgrade_profile_operations`
+  - Model `APIServerAccessProfile` added property `enable_vnet_integration`
+  - Model `APIServerAccessProfile` added property `subnet_id`
+  - Model `Fleet` added property `status`
+  - Model `FleetMember` added property `status`
+  - Model `NodeImageSelection` added property `custom_node_image_versions`
+  - Enum `NodeImageSelectionType` added member `CUSTOM`
+  - Model `UpdateRun` added property `auto_upgrade_profile_id`
+  - Added enum `AutoUpgradeLastTriggerStatus`
+  - Added model `AutoUpgradeNodeImageSelection`
+  - Added enum `AutoUpgradeNodeImageSelectionType`
+  - Added model `AutoUpgradeProfile`
+  - Added model `AutoUpgradeProfileListResult`
+  - Added enum `AutoUpgradeProfileProvisioningState`
+  - Added model `AutoUpgradeProfileStatus`
+  - Added model `FleetMemberStatus`
+  - Added model `FleetStatus`
+  - Added model `GenerateResponse`
+  - Added enum `UpgradeChannel`
+  - Added model `AutoUpgradeProfileOperationsOperations`
+  - Added model `AutoUpgradeProfilesOperations`
+  - Method `AutoUpgradeProfilesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, fleet_name: str, auto_upgrade_profile_name: str, resource: AutoUpgradeProfile, if_match: Optional[str], if_none_match: Optional[str], content_type: str)`
+  - Method `AutoUpgradeProfilesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, fleet_name: str, auto_upgrade_profile_name: str, resource: IO[bytes], if_match: Optional[str], if_none_match: Optional[str], content_type: str)`
+
 ## 3.0.0 (2024-10-31)
 
 ### Breaking Changes
