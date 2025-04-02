@@ -4,8 +4,10 @@
 # ------------------------------------
 import logging
 import os
-from typing import List, Any, Optional, cast
+import sys
+from typing import List, Any, Optional, cast, TYPE_CHECKING
 
+import msal
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions, SupportsTokenInfo, TokenCredential
 from .._constants import EnvironmentVariables
 from .._internal import get_default_authority, normalize_authority, within_dac
@@ -19,6 +21,9 @@ from .azure_cli import AzureCliCredential
 from .azd_cli import AzureDeveloperCliCredential
 from .vscode import VisualStudioCodeCredential
 from .workload_identity import WorkloadIdentityCredential
+
+if TYPE_CHECKING:
+    from azure.identity.broker import InteractiveBrowserBrokerCredential
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -42,6 +47,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
     5. The identity currently logged in to the Azure CLI.
     6. The identity currently logged in to Azure PowerShell.
     7. The identity currently logged in to the Azure Developer CLI.
+    8. On Windows only: The currently logged in Windows account. This requires the `azure-identity-broker` package to
+       be installed.
 
     This default behavior is configurable with keyword arguments.
 
@@ -192,6 +199,20 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 )
             else:
                 credentials.append(InteractiveBrowserCredential(tenant_id=interactive_browser_tenant_id, **kwargs))
+        broker_credential_class = _get_broker_credential()
+        if broker_credential_class and sys.platform.startswith("win"):
+            # The silent auth flow for brokered auth is only available on Windows.
+            broker_credential_args = {
+                "tenant_id": interactive_browser_tenant_id,
+                "parent_window_handle": msal.PublicClientApplication.CONSOLE_WINDOW_HANDLE,
+                "use_default_broker_account": True,
+                **kwargs,
+            }
+            if interactive_browser_client_id:
+                broker_credential_args["client_id"] = interactive_browser_client_id
+
+            credentials.append(broker_credential_class(**broker_credential_args))
+
         within_dac.set(False)
         super(DefaultAzureCredential, self).__init__(*credentials)
 
@@ -256,3 +277,13 @@ class DefaultAzureCredential(ChainedTokenCredential):
         token_info = cast(SupportsTokenInfo, super()).get_token_info(*scopes, options=options)
         within_dac.set(False)
         return token_info
+
+
+def _get_broker_credential() -> Optional["InteractiveBrowserBrokerCredential"]:
+    # Get the broker credential if available
+    try:
+        from azure.identity.broker import InteractiveBrowserBrokerCredential
+
+        return InteractiveBrowserBrokerCredential
+    except ImportError:
+        return None
