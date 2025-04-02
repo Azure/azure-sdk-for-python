@@ -66,38 +66,38 @@ class FaultInjectionTransportAsync(AioHttpTransport):
         return next((x for x in iterable if condition(x)), None)
 
     async def send(self, request: HttpRequest, *, stream: bool = False, proxies: Optional[MutableMapping[str, str]] = None, **config) -> AsyncHttpResponse:
-        FaultInjectionTransport.logger.info("--> FaultInjectionTransport.Send {} {}".format(request.method, request.url))
+        FaultInjectionTransportAsync.logger.info("--> FaultInjectionTransport.Send {} {}".format(request.method, request.url))
         # find the first fault Factory with matching predicate if any
-        first_fault_factory = FaultInjectionTransport.__first_item(iter(self.faults), lambda f: f["predicate"](request))
+        first_fault_factory = FaultInjectionTransportAsync.__first_item(iter(self.faults), lambda f: f["predicate"](request))
         if first_fault_factory:
-            FaultInjectionTransport.logger.info("--> FaultInjectionTransport.ApplyFaultInjection")
+            FaultInjectionTransportAsync.logger.info("--> FaultInjectionTransport.ApplyFaultInjection")
             injected_error = await first_fault_factory["apply"](request)
-            FaultInjectionTransport.logger.info("Found to-be-injected error {}".format(injected_error))
+            FaultInjectionTransportAsync.logger.info("Found to-be-injected error {}".format(injected_error))
             raise injected_error
 
         # apply the chain of request transformations with matching predicates if any
         matching_request_transformations = filter(lambda f: f["predicate"](f["predicate"]), iter(self.requestTransformations))
         for currentTransformation in matching_request_transformations:
-            FaultInjectionTransport.logger.info("--> FaultInjectionTransport.ApplyRequestTransformation")
+            FaultInjectionTransportAsync.logger.info("--> FaultInjectionTransport.ApplyRequestTransformation")
             request = await currentTransformation["apply"](request)
 
-        first_response_transformation = FaultInjectionTransport.__first_item(iter(self.responseTransformations), lambda f: f["predicate"](request))
+        first_response_transformation = FaultInjectionTransportAsync.__first_item(iter(self.responseTransformations), lambda f: f["predicate"](request))
 
-        FaultInjectionTransport.logger.info("--> FaultInjectionTransport.BeforeGetResponseTask")
+        FaultInjectionTransportAsync.logger.info("--> FaultInjectionTransport.BeforeGetResponseTask")
         get_response_task =  asyncio.create_task(super().send(request, stream=stream, proxies=proxies, **config))
-        FaultInjectionTransport.logger.info("<-- FaultInjectionTransport.AfterGetResponseTask")
+        FaultInjectionTransportAsync.logger.info("<-- FaultInjectionTransport.AfterGetResponseTask")
 
         if first_response_transformation:
-            FaultInjectionTransport.logger.info(f"Invoking response transformation")
+            FaultInjectionTransportAsync.logger.info(f"Invoking response transformation")
             response = await first_response_transformation["apply"](request, lambda: get_response_task)
             response.headers["_request"] = request
-            FaultInjectionTransport.logger.info(f"Received response transformation result with status code {response.status_code}")
+            FaultInjectionTransportAsync.logger.info(f"Received response transformation result with status code {response.status_code}")
             return response
         else:
-            FaultInjectionTransport.logger.info(f"Sending request to {request.url}")
+            FaultInjectionTransportAsync.logger.info(f"Sending request to {request.url}")
             response = await get_response_task
             response.headers["_request"] = request
-            FaultInjectionTransport.logger.info(f"Received response with status code {response.status_code}")
+            FaultInjectionTransportAsync.logger.info(f"Received response with status code {response.status_code}")
             return response
 
     @staticmethod
@@ -125,8 +125,8 @@ class FaultInjectionTransportAsync(AioHttpTransport):
 
     @staticmethod
     def predicate_req_for_document_with_id(r: HttpRequest, id_value: str) -> bool:
-        return (FaultInjectionTransport.predicate_url_contains_id(r, id_value)
-                or FaultInjectionTransport.predicate_req_payload_contains_id(r, id_value))
+        return (FaultInjectionTransportAsync.predicate_url_contains_id(r, id_value)
+                or FaultInjectionTransportAsync.predicate_req_payload_contains_id(r, id_value))
 
     @staticmethod
     def predicate_is_database_account_call(r: HttpRequest) -> bool:
@@ -175,7 +175,7 @@ class FaultInjectionTransportAsync(AioHttpTransport):
             inner: Callable[[],asyncio.Task[AioHttpTransportResponse]]) -> AioHttpTransportResponse:
 
         response = await inner()
-        if not FaultInjectionTransport.predicate_is_database_account_call(response.request):
+        if not FaultInjectionTransportAsync.predicate_is_database_account_call(response.request):
             return response
 
         data = response.body()
@@ -187,9 +187,9 @@ class FaultInjectionTransportAsync(AioHttpTransport):
             readable_locations[0]["name"] = write_region_name
             writable_locations[0]["name"] = write_region_name
             readable_locations.append({"name": read_region_name, "databaseAccountEndpoint" : test_config.TestConfig.local_host})
-            FaultInjectionTransport.logger.info("Transformed Account Topology: {}".format(result))
+            FaultInjectionTransportAsync.logger.info("Transformed Account Topology: {}".format(result))
             request: HttpRequest = response.request
-            return FaultInjectionTransport.MockHttpResponse(request, 200, result)
+            return FaultInjectionTransportAsync.MockHttpResponse(request, 200, result)
 
         return response
 
@@ -200,7 +200,7 @@ class FaultInjectionTransportAsync(AioHttpTransport):
             inner: Callable[[], asyncio.Task[AioHttpTransportResponse]]) -> AioHttpTransportResponse:
 
         response = await inner()
-        if not FaultInjectionTransport.predicate_is_database_account_call(response.request):
+        if not FaultInjectionTransportAsync.predicate_is_database_account_call(response.request):
             return response
 
         data = response.body()
@@ -216,9 +216,9 @@ class FaultInjectionTransportAsync(AioHttpTransport):
             writable_locations.append(
                 {"name": second_region_name, "databaseAccountEndpoint": test_config.TestConfig.local_host})
             result["enableMultipleWriteLocations"] = True
-            FaultInjectionTransport.logger.info("Transformed Account Topology: {}".format(result))
+            FaultInjectionTransportAsync.logger.info("Transformed Account Topology: {}".format(result))
             request: HttpRequest = response.request
-            return FaultInjectionTransport.MockHttpResponse(request, 200, result)
+            return FaultInjectionTransportAsync.MockHttpResponse(request, 200, result)
 
         return response
 
