@@ -68,14 +68,6 @@ class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Custom Keys"""
 
 
-class CredentialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The different Credential types."""
-
-    API_KEY = "ApiKey"
-    AAD = "AAD"
-    SAS = "SAS"
-
-
 class DatasetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to determine the type of data."""
 

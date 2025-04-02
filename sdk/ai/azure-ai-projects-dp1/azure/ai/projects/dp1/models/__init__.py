@@ -15,7 +15,6 @@ if TYPE_CHECKING:
 
 from ._models import (  # type: ignore
     AzureAISearchIndex,
-    BaseCredential,
     BlobReferenceForConsumption,
     Connection,
     CosmosDBIndex,
@@ -43,7 +42,6 @@ from ._enums import (  # type: ignore
     AttackStrategy,
     AuthenticationType,
     ConnectionType,
-    CredentialType,
     DatasetType,
     DeploymentType,
     IndexType,
@@ -59,7 +57,6 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "AzureAISearchIndex",
-    "BaseCredential",
     "BlobReferenceForConsumption",
     "Connection",
     "CosmosDBIndex",
@@ -84,7 +81,6 @@ __all__ = [
     "AttackStrategy",
     "AuthenticationType",
     "ConnectionType",
-    "CredentialType",
     "DatasetType",
     "DeploymentType",
     "IndexType",
