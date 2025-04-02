@@ -642,6 +642,9 @@ class OsDiskCreateOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The strategy for creating the OS disk."""
 
     EPHEMERAL = "Ephemeral"
+    """Utilize the local storage of the host machine."""
+    PERSISTENT = "Persistent"
+    """Utilize a storage appliance backed volume to host the disk."""
 
 
 class OsDiskDeleteOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -723,8 +726,9 @@ class SkipShutdown(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class StorageApplianceDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The detailed status of the storage appliance."""
 
-    ERROR = "Error"
     AVAILABLE = "Available"
+    DEGRADED = "Degraded"
+    ERROR = "Error"
     PROVISIONING = "Provisioning"
 
 
@@ -794,7 +798,11 @@ class VirtualMachineDeviceModelType(str, Enum, metaclass=CaseInsensitiveEnumMeta
     """The type of the device model to use."""
 
     T1 = "T1"
+    """Traditional and most compatible device virtualization interface."""
     T2 = "T2"
+    """Modern and enhanced device virtualization interface."""
+    T3 = "T3"
+    """Improved security and functionality (including TPM and secure boot support)."""
 
 
 class VirtualMachineIPAllocationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -883,6 +891,13 @@ class VolumeProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELED = "Canceled"
     PROVISIONING = "Provisioning"
     ACCEPTED = "Accepted"
+
+
+class VulnerabilityScanningSettingsContainerScan(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The mode selection for container vulnerability scanning."""
+
+    DISABLED = "Disabled"
+    ENABLED = "Enabled"
 
 
 class WorkloadImpact(str, Enum, metaclass=CaseInsensitiveEnumMeta):

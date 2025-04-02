@@ -730,6 +730,43 @@ class AgentPoolUpgradeSettings(_serialization.Model):
         self.max_unavailable = max_unavailable
 
 
+class AnalyticsOutputSettings(_serialization.Model):
+    """AnalyticsOutputSettings represents the settings for the log analytics workspace used for output
+    of logs from this cluster.
+
+    :ivar analytics_workspace_id: The resource ID of the analytics workspace that is to be used by
+     the specified identity.
+    :vartype analytics_workspace_id: str
+    :ivar associated_identity: The selection of the managed identity to use with this analytics
+     workspace. The identity type must be either system assigned or user assigned.
+    :vartype associated_identity: ~azure.mgmt.networkcloud.models.IdentitySelector
+    """
+
+    _attribute_map = {
+        "analytics_workspace_id": {"key": "analyticsWorkspaceId", "type": "str"},
+        "associated_identity": {"key": "associatedIdentity", "type": "IdentitySelector"},
+    }
+
+    def __init__(
+        self,
+        *,
+        analytics_workspace_id: Optional[str] = None,
+        associated_identity: Optional["_models.IdentitySelector"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword analytics_workspace_id: The resource ID of the analytics workspace that is to be used
+         by the specified identity.
+        :paramtype analytics_workspace_id: str
+        :keyword associated_identity: The selection of the managed identity to use with this analytics
+         workspace. The identity type must be either system assigned or user assigned.
+        :paramtype associated_identity: ~azure.mgmt.networkcloud.models.IdentitySelector
+        """
+        super().__init__(**kwargs)
+        self.analytics_workspace_id = analytics_workspace_id
+        self.associated_identity = associated_identity
+
+
 class AttachedNetworkConfiguration(_serialization.Model):
     """AttachedNetworkConfiguration represents the set of workload networks to attach to a resource.
 
@@ -1135,7 +1172,9 @@ class BareMetalMachineConfigurationData(_serialization.Model):
      including IP address and protocol.
     :vartype bmc_connection_string: str
     :ivar bmc_credentials: The credentials of the baseboard management controller on this bare
-     metal machine. Required.
+     metal machine. The password field is expected to be an Azure Key Vault key URL. Until the
+     cluster is converted to utilize managed identity by setting the secret archive settings, the
+     actual password value should be provided instead. Required.
     :vartype bmc_credentials: ~azure.mgmt.networkcloud.models.AdministrativeCredentials
     :ivar bmc_mac_address: The MAC address of the BMC for this machine. Required.
     :vartype bmc_mac_address: str
@@ -1192,7 +1231,9 @@ class BareMetalMachineConfigurationData(_serialization.Model):
     ) -> None:
         """
         :keyword bmc_credentials: The credentials of the baseboard management controller on this bare
-         metal machine. Required.
+         metal machine. The password field is expected to be an Azure Key Vault key URL. Until the
+         cluster is converted to utilize managed identity by setting the secret archive settings, the
+         actual password value should be provided instead. Required.
         :paramtype bmc_credentials: ~azure.mgmt.networkcloud.models.AdministrativeCredentials
         :keyword bmc_mac_address: The MAC address of the BMC for this machine. Required.
         :paramtype bmc_mac_address: str
@@ -1586,7 +1627,9 @@ class BareMetalMachineReplaceParameters(_serialization.Model):
     metal machine for another.
 
     :ivar bmc_credentials: The credentials of the baseboard management controller on this bare
-     metal machine.
+     metal machine. The password field is expected to be an Azure Key Vault key URL. Until the
+     cluster is converted to utilize managed identity by setting the secret archive settings, the
+     actual password value should be provided instead.
     :vartype bmc_credentials: ~azure.mgmt.networkcloud.models.AdministrativeCredentials
     :ivar bmc_mac_address: The MAC address of the BMC device.
     :vartype bmc_mac_address: str
@@ -1625,7 +1668,9 @@ class BareMetalMachineReplaceParameters(_serialization.Model):
     ) -> None:
         """
         :keyword bmc_credentials: The credentials of the baseboard management controller on this bare
-         metal machine.
+         metal machine. The password field is expected to be an Azure Key Vault key URL. Until the
+         cluster is converted to utilize managed identity by setting the secret archive settings, the
+         actual password value should be provided instead.
         :paramtype bmc_credentials: ~azure.mgmt.networkcloud.models.AdministrativeCredentials
         :keyword bmc_mac_address: The MAC address of the BMC device.
         :paramtype bmc_mac_address: str
@@ -2365,8 +2410,11 @@ class Cluster(TrackedResource):
      only a single rack in a single rack cluster, or an aggregator rack in a multi-rack cluster.
      Required.
     :vartype aggregator_or_single_rack_definition: ~azure.mgmt.networkcloud.models.RackDefinition
-    :ivar analytics_workspace_id: The resource ID of the Log Analytics Workspace that will be used
-     for storing relevant logs.
+    :ivar analytics_output_settings: The settings for the log analytics workspace used for output
+     of logs from this cluster.
+    :vartype analytics_output_settings: ~azure.mgmt.networkcloud.models.AnalyticsOutputSettings
+    :ivar analytics_workspace_id: Field Deprecated. The resource ID of the Log Analytics Workspace
+     that will be used for storing relevant logs.
     :vartype analytics_workspace_id: str
     :ivar available_upgrade_versions: The list of cluster runtime version upgrades available for
      this cluster.
@@ -2440,10 +2488,17 @@ class Cluster(TrackedResource):
     :ivar secret_archive: The configuration for use of a key vault to store secrets for later
      retrieval by the operator.
     :vartype secret_archive: ~azure.mgmt.networkcloud.models.ClusterSecretArchive
+    :ivar secret_archive_settings: The settings for the secret archive used to hold credentials for
+     the cluster.
+    :vartype secret_archive_settings: ~azure.mgmt.networkcloud.models.SecretArchiveSettings
     :ivar support_expiry_date: The support end date of the runtime version of the cluster.
     :vartype support_expiry_date: str
     :ivar update_strategy: The strategy for updating the cluster.
     :vartype update_strategy: ~azure.mgmt.networkcloud.models.ClusterUpdateStrategy
+    :ivar vulnerability_scanning_settings: The settings for how security vulnerability scanning is
+     applied to the cluster.
+    :vartype vulnerability_scanning_settings:
+     ~azure.mgmt.networkcloud.models.VulnerabilityScanningSettings
     :ivar workload_resource_ids: The list of workload resource IDs that are hosted within this
      cluster.
     :vartype workload_resource_ids: list[str]
@@ -2489,6 +2544,7 @@ class Cluster(TrackedResource):
             "key": "properties.aggregatorOrSingleRackDefinition",
             "type": "RackDefinition",
         },
+        "analytics_output_settings": {"key": "properties.analyticsOutputSettings", "type": "AnalyticsOutputSettings"},
         "analytics_workspace_id": {"key": "properties.analyticsWorkspaceId", "type": "str"},
         "available_upgrade_versions": {
             "key": "properties.availableUpgradeVersions",
@@ -2524,8 +2580,13 @@ class Cluster(TrackedResource):
             "type": "RuntimeProtectionConfiguration",
         },
         "secret_archive": {"key": "properties.secretArchive", "type": "ClusterSecretArchive"},
+        "secret_archive_settings": {"key": "properties.secretArchiveSettings", "type": "SecretArchiveSettings"},
         "support_expiry_date": {"key": "properties.supportExpiryDate", "type": "str"},
         "update_strategy": {"key": "properties.updateStrategy", "type": "ClusterUpdateStrategy"},
+        "vulnerability_scanning_settings": {
+            "key": "properties.vulnerabilityScanningSettings",
+            "type": "VulnerabilityScanningSettings",
+        },
         "workload_resource_ids": {"key": "properties.workloadResourceIds", "type": "[str]"},
     }
 
@@ -2540,6 +2601,7 @@ class Cluster(TrackedResource):
         network_fabric_id: str,
         tags: Optional[Dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
+        analytics_output_settings: Optional["_models.AnalyticsOutputSettings"] = None,
         analytics_workspace_id: Optional[str] = None,
         cluster_location: Optional[str] = None,
         cluster_service_principal: Optional["_models.ServicePrincipalInformation"] = None,
@@ -2549,7 +2611,9 @@ class Cluster(TrackedResource):
         managed_resource_group_configuration: Optional["_models.ManagedResourceGroupConfiguration"] = None,
         runtime_protection_configuration: Optional["_models.RuntimeProtectionConfiguration"] = None,
         secret_archive: Optional["_models.ClusterSecretArchive"] = None,
+        secret_archive_settings: Optional["_models.SecretArchiveSettings"] = None,
         update_strategy: Optional["_models.ClusterUpdateStrategy"] = None,
+        vulnerability_scanning_settings: Optional["_models.VulnerabilityScanningSettings"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2566,8 +2630,11 @@ class Cluster(TrackedResource):
          only a single rack in a single rack cluster, or an aggregator rack in a multi-rack cluster.
          Required.
         :paramtype aggregator_or_single_rack_definition: ~azure.mgmt.networkcloud.models.RackDefinition
-        :keyword analytics_workspace_id: The resource ID of the Log Analytics Workspace that will be
-         used for storing relevant logs.
+        :keyword analytics_output_settings: The settings for the log analytics workspace used for
+         output of logs from this cluster.
+        :paramtype analytics_output_settings: ~azure.mgmt.networkcloud.models.AnalyticsOutputSettings
+        :keyword analytics_workspace_id: Field Deprecated. The resource ID of the Log Analytics
+         Workspace that will be used for storing relevant logs.
         :paramtype analytics_workspace_id: str
         :keyword cluster_location: The customer-provided location information to identify where the
          cluster resides.
@@ -2604,13 +2671,21 @@ class Cluster(TrackedResource):
         :keyword secret_archive: The configuration for use of a key vault to store secrets for later
          retrieval by the operator.
         :paramtype secret_archive: ~azure.mgmt.networkcloud.models.ClusterSecretArchive
+        :keyword secret_archive_settings: The settings for the secret archive used to hold credentials
+         for the cluster.
+        :paramtype secret_archive_settings: ~azure.mgmt.networkcloud.models.SecretArchiveSettings
         :keyword update_strategy: The strategy for updating the cluster.
         :paramtype update_strategy: ~azure.mgmt.networkcloud.models.ClusterUpdateStrategy
+        :keyword vulnerability_scanning_settings: The settings for how security vulnerability scanning
+         is applied to the cluster.
+        :paramtype vulnerability_scanning_settings:
+         ~azure.mgmt.networkcloud.models.VulnerabilityScanningSettings
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.extended_location = extended_location
         self.identity = identity
         self.aggregator_or_single_rack_definition = aggregator_or_single_rack_definition
+        self.analytics_output_settings = analytics_output_settings
         self.analytics_workspace_id = analytics_workspace_id
         self.available_upgrade_versions = None
         self.cluster_capacity = None
@@ -2634,8 +2709,10 @@ class Cluster(TrackedResource):
         self.provisioning_state = None
         self.runtime_protection_configuration = runtime_protection_configuration
         self.secret_archive = secret_archive
+        self.secret_archive_settings = secret_archive_settings
         self.support_expiry_date = None
         self.update_strategy = update_strategy
+        self.vulnerability_scanning_settings = vulnerability_scanning_settings
         self.workload_resource_ids = None
 
 
@@ -3303,6 +3380,9 @@ class ClusterPatchParameters(_serialization.Model):
     :ivar aggregator_or_single_rack_definition: The rack definition that is intended to reflect
      only a single rack in a single rack cluster, or an aggregator rack in a multi-rack cluster.
     :vartype aggregator_or_single_rack_definition: ~azure.mgmt.networkcloud.models.RackDefinition
+    :ivar analytics_output_settings: The settings for the log analytics workspace used for output
+     of logs from this cluster.
+    :vartype analytics_output_settings: ~azure.mgmt.networkcloud.models.AnalyticsOutputSettings
     :ivar cluster_location: The customer-provided location information to identify where the
      cluster resides.
     :vartype cluster_location: str
@@ -3325,8 +3405,15 @@ class ClusterPatchParameters(_serialization.Model):
     :ivar secret_archive: The configuration for use of a key vault to store secrets for later
      retrieval by the operator.
     :vartype secret_archive: ~azure.mgmt.networkcloud.models.ClusterSecretArchive
+    :ivar secret_archive_settings: The settings for the secret archive used to hold credentials for
+     the cluster.
+    :vartype secret_archive_settings: ~azure.mgmt.networkcloud.models.SecretArchiveSettings
     :ivar update_strategy: The strategy for updating the cluster.
     :vartype update_strategy: ~azure.mgmt.networkcloud.models.ClusterUpdateStrategy
+    :ivar vulnerability_scanning_settings: The settings for how security vulnerability scanning is
+     applied to the cluster.
+    :vartype vulnerability_scanning_settings:
+     ~azure.mgmt.networkcloud.models.VulnerabilityScanningSettingsPatch
     """
 
     _attribute_map = {
@@ -3336,6 +3423,7 @@ class ClusterPatchParameters(_serialization.Model):
             "key": "properties.aggregatorOrSingleRackDefinition",
             "type": "RackDefinition",
         },
+        "analytics_output_settings": {"key": "properties.analyticsOutputSettings", "type": "AnalyticsOutputSettings"},
         "cluster_location": {"key": "properties.clusterLocation", "type": "str"},
         "cluster_service_principal": {
             "key": "properties.clusterServicePrincipal",
@@ -3349,7 +3437,12 @@ class ClusterPatchParameters(_serialization.Model):
             "type": "RuntimeProtectionConfiguration",
         },
         "secret_archive": {"key": "properties.secretArchive", "type": "ClusterSecretArchive"},
+        "secret_archive_settings": {"key": "properties.secretArchiveSettings", "type": "SecretArchiveSettings"},
         "update_strategy": {"key": "properties.updateStrategy", "type": "ClusterUpdateStrategy"},
+        "vulnerability_scanning_settings": {
+            "key": "properties.vulnerabilityScanningSettings",
+            "type": "VulnerabilityScanningSettingsPatch",
+        },
     }
 
     def __init__(
@@ -3358,6 +3451,7 @@ class ClusterPatchParameters(_serialization.Model):
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         tags: Optional[Dict[str, str]] = None,
         aggregator_or_single_rack_definition: Optional["_models.RackDefinition"] = None,
+        analytics_output_settings: Optional["_models.AnalyticsOutputSettings"] = None,
         cluster_location: Optional[str] = None,
         cluster_service_principal: Optional["_models.ServicePrincipalInformation"] = None,
         command_output_settings: Optional["_models.CommandOutputSettings"] = None,
@@ -3365,7 +3459,9 @@ class ClusterPatchParameters(_serialization.Model):
         compute_rack_definitions: Optional[List["_models.RackDefinition"]] = None,
         runtime_protection_configuration: Optional["_models.RuntimeProtectionConfiguration"] = None,
         secret_archive: Optional["_models.ClusterSecretArchive"] = None,
+        secret_archive_settings: Optional["_models.SecretArchiveSettings"] = None,
         update_strategy: Optional["_models.ClusterUpdateStrategy"] = None,
+        vulnerability_scanning_settings: Optional["_models.VulnerabilityScanningSettingsPatch"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3376,6 +3472,9 @@ class ClusterPatchParameters(_serialization.Model):
         :keyword aggregator_or_single_rack_definition: The rack definition that is intended to reflect
          only a single rack in a single rack cluster, or an aggregator rack in a multi-rack cluster.
         :paramtype aggregator_or_single_rack_definition: ~azure.mgmt.networkcloud.models.RackDefinition
+        :keyword analytics_output_settings: The settings for the log analytics workspace used for
+         output of logs from this cluster.
+        :paramtype analytics_output_settings: ~azure.mgmt.networkcloud.models.AnalyticsOutputSettings
         :keyword cluster_location: The customer-provided location information to identify where the
          cluster resides.
         :paramtype cluster_location: str
@@ -3399,13 +3498,21 @@ class ClusterPatchParameters(_serialization.Model):
         :keyword secret_archive: The configuration for use of a key vault to store secrets for later
          retrieval by the operator.
         :paramtype secret_archive: ~azure.mgmt.networkcloud.models.ClusterSecretArchive
+        :keyword secret_archive_settings: The settings for the secret archive used to hold credentials
+         for the cluster.
+        :paramtype secret_archive_settings: ~azure.mgmt.networkcloud.models.SecretArchiveSettings
         :keyword update_strategy: The strategy for updating the cluster.
         :paramtype update_strategy: ~azure.mgmt.networkcloud.models.ClusterUpdateStrategy
+        :keyword vulnerability_scanning_settings: The settings for how security vulnerability scanning
+         is applied to the cluster.
+        :paramtype vulnerability_scanning_settings:
+         ~azure.mgmt.networkcloud.models.VulnerabilityScanningSettingsPatch
         """
         super().__init__(**kwargs)
         self.identity = identity
         self.tags = tags
         self.aggregator_or_single_rack_definition = aggregator_or_single_rack_definition
+        self.analytics_output_settings = analytics_output_settings
         self.cluster_location = cluster_location
         self.cluster_service_principal = cluster_service_principal
         self.command_output_settings = command_output_settings
@@ -3413,7 +3520,9 @@ class ClusterPatchParameters(_serialization.Model):
         self.compute_rack_definitions = compute_rack_definitions
         self.runtime_protection_configuration = runtime_protection_configuration
         self.secret_archive = secret_archive
+        self.secret_archive_settings = secret_archive_settings
         self.update_strategy = update_strategy
+        self.vulnerability_scanning_settings = vulnerability_scanning_settings
 
 
 class ClusterScanRuntimeParameters(_serialization.Model):
@@ -6697,7 +6806,8 @@ class OsDisk(_serialization.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar create_option: The strategy for creating the OS disk. "Ephemeral"
+    :ivar create_option: The strategy for creating the OS disk. Known values are: "Ephemeral" and
+     "Persistent".
     :vartype create_option: str or ~azure.mgmt.networkcloud.models.OsDiskCreateOption
     :ivar delete_option: The strategy for deleting the OS disk. "Delete"
     :vartype delete_option: str or ~azure.mgmt.networkcloud.models.OsDiskDeleteOption
@@ -6725,7 +6835,8 @@ class OsDisk(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword create_option: The strategy for creating the OS disk. "Ephemeral"
+        :keyword create_option: The strategy for creating the OS disk. Known values are: "Ephemeral"
+         and "Persistent".
         :paramtype create_option: str or ~azure.mgmt.networkcloud.models.OsDiskCreateOption
         :keyword delete_option: The strategy for deleting the OS disk. "Delete"
         :paramtype delete_option: str or ~azure.mgmt.networkcloud.models.OsDiskDeleteOption
@@ -7259,6 +7370,41 @@ class SecretArchiveReference(_serialization.Model):
         self.secret_version = None
 
 
+class SecretArchiveSettings(_serialization.Model):
+    """SecretArchiveSettings represents the settings for the secret archive used to hold credentials
+    for the cluster.
+
+    :ivar associated_identity: The selection of the managed identity to use with this vault URI.
+     The identity type must be either system assigned or user assigned.
+    :vartype associated_identity: ~azure.mgmt.networkcloud.models.IdentitySelector
+    :ivar vault_uri: The URI for the key vault used as the secret archive.
+    :vartype vault_uri: str
+    """
+
+    _attribute_map = {
+        "associated_identity": {"key": "associatedIdentity", "type": "IdentitySelector"},
+        "vault_uri": {"key": "vaultUri", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        associated_identity: Optional["_models.IdentitySelector"] = None,
+        vault_uri: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword associated_identity: The selection of the managed identity to use with this vault URI.
+         The identity type must be either system assigned or user assigned.
+        :paramtype associated_identity: ~azure.mgmt.networkcloud.models.IdentitySelector
+        :keyword vault_uri: The URI for the key vault used as the secret archive.
+        :paramtype vault_uri: str
+        """
+        super().__init__(**kwargs)
+        self.associated_identity = associated_identity
+        self.vault_uri = vault_uri
+
+
 class SecretRotationStatus(_serialization.Model):
     """SecretRotationStatus represents the status of a secret rotation.
 
@@ -7529,14 +7675,15 @@ class StorageAppliance(TrackedResource):
     :ivar administrator_credentials: The credentials of the administrative interface on this
      storage appliance. Required.
     :vartype administrator_credentials: ~azure.mgmt.networkcloud.models.AdministrativeCredentials
-    :ivar capacity: The total capacity of the storage appliance.
+    :ivar capacity: The total capacity of the storage appliance. Measured in GiB.
     :vartype capacity: int
     :ivar capacity_used: The amount of storage consumed.
     :vartype capacity_used: int
     :ivar cluster_id: The resource ID of the cluster this storage appliance is associated with.
+     Measured in GiB.
     :vartype cluster_id: str
-    :ivar detailed_status: The detailed status of the storage appliance. Known values are: "Error",
-     "Available", and "Provisioning".
+    :ivar detailed_status: The detailed status of the storage appliance. Known values are:
+     "Available", "Degraded", "Error", and "Provisioning".
     :vartype detailed_status: str or ~azure.mgmt.networkcloud.models.StorageApplianceDetailedStatus
     :ivar detailed_status_message: The descriptive message about the current detailed status.
     :vartype detailed_status_message: str
@@ -7695,7 +7842,9 @@ class StorageApplianceConfigurationData(_serialization.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar admin_credentials: The credentials of the administrative interface on this storage
-     appliance. Required.
+     appliance. The password field is expected to be an Azure Key Vault key URL. Until the cluster
+     is converted to utilize managed identity by setting the secret archive settings, the actual
+     password value should be provided instead. Required.
     :vartype admin_credentials: ~azure.mgmt.networkcloud.models.AdministrativeCredentials
     :ivar rack_slot: The slot that storage appliance is in the rack based on the BOM configuration.
      Required.
@@ -7732,7 +7881,9 @@ class StorageApplianceConfigurationData(_serialization.Model):
     ) -> None:
         """
         :keyword admin_credentials: The credentials of the administrative interface on this storage
-         appliance. Required.
+         appliance. The password field is expected to be an Azure Key Vault key URL. Until the cluster
+         is converted to utilize managed identity by setting the secret archive settings, the actual
+         password value should be provided instead. Required.
         :paramtype admin_credentials: ~azure.mgmt.networkcloud.models.AdministrativeCredentials
         :keyword rack_slot: The slot that storage appliance is in the rack based on the BOM
          configuration. Required.
@@ -8392,6 +8543,9 @@ class VirtualMachine(TrackedResource):
     :vartype cloud_services_network_attachment: ~azure.mgmt.networkcloud.models.NetworkAttachment
     :ivar cluster_id: The resource ID of the cluster the virtual machine is created for.
     :vartype cluster_id: str
+    :ivar console_extended_location: The extended location to use for creation of a VM console
+     resource.
+    :vartype console_extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
     :ivar cpu_cores: The number of CPU cores in the virtual machine. Required.
     :vartype cpu_cores: int
     :ivar detailed_status: The more detailed status of the virtual machine. Known values are:
@@ -8433,7 +8587,8 @@ class VirtualMachine(TrackedResource):
      virtio interface. Known values are: "Modern" and "Transitional".
     :vartype virtio_interface: str or
      ~azure.mgmt.networkcloud.models.VirtualMachineVirtioInterfaceType
-    :ivar vm_device_model: The type of the device model to use. Known values are: "T1" and "T2".
+    :ivar vm_device_model: The type of the device model to use. Known values are: "T1", "T2", and
+     "T3".
     :vartype vm_device_model: str or ~azure.mgmt.networkcloud.models.VirtualMachineDeviceModelType
     :ivar vm_image: The virtual machine image that is currently provisioned to the OS disk, using
      the full url and tag notation used to pull the image. Required.
@@ -8486,6 +8641,7 @@ class VirtualMachine(TrackedResource):
             "type": "NetworkAttachment",
         },
         "cluster_id": {"key": "properties.clusterId", "type": "str"},
+        "console_extended_location": {"key": "properties.consoleExtendedLocation", "type": "ExtendedLocation"},
         "cpu_cores": {"key": "properties.cpuCores", "type": "int"},
         "detailed_status": {"key": "properties.detailedStatus", "type": "str"},
         "detailed_status_message": {"key": "properties.detailedStatusMessage", "type": "str"},
@@ -8522,6 +8678,7 @@ class VirtualMachine(TrackedResource):
         vm_image: str,
         tags: Optional[Dict[str, str]] = None,
         boot_method: Union[str, "_models.VirtualMachineBootMethod"] = "UEFI",
+        console_extended_location: Optional["_models.ExtendedLocation"] = None,
         isolate_emulator_thread: Union[str, "_models.VirtualMachineIsolateEmulatorThread"] = "True",
         network_attachments: Optional[List["_models.NetworkAttachment"]] = None,
         network_data: Optional[str] = None,
@@ -8550,6 +8707,9 @@ class VirtualMachine(TrackedResource):
         :keyword cloud_services_network_attachment: The cloud service network that provides
          platform-level services for the virtual machine. Required.
         :paramtype cloud_services_network_attachment: ~azure.mgmt.networkcloud.models.NetworkAttachment
+        :keyword console_extended_location: The extended location to use for creation of a VM console
+         resource.
+        :paramtype console_extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
         :keyword cpu_cores: The number of CPU cores in the virtual machine. Required.
         :paramtype cpu_cores: int
         :keyword isolate_emulator_thread: Field Deprecated, the value will be ignored if provided. The
@@ -8578,7 +8738,8 @@ class VirtualMachine(TrackedResource):
          virtio interface. Known values are: "Modern" and "Transitional".
         :paramtype virtio_interface: str or
          ~azure.mgmt.networkcloud.models.VirtualMachineVirtioInterfaceType
-        :keyword vm_device_model: The type of the device model to use. Known values are: "T1" and "T2".
+        :keyword vm_device_model: The type of the device model to use. Known values are: "T1", "T2",
+         and "T3".
         :paramtype vm_device_model: str or
          ~azure.mgmt.networkcloud.models.VirtualMachineDeviceModelType
         :keyword vm_image: The virtual machine image that is currently provisioned to the OS disk,
@@ -8597,6 +8758,7 @@ class VirtualMachine(TrackedResource):
         self.boot_method = boot_method
         self.cloud_services_network_attachment = cloud_services_network_attachment
         self.cluster_id = None
+        self.console_extended_location = console_extended_location
         self.cpu_cores = cpu_cores
         self.detailed_status = None
         self.detailed_status_message = None
@@ -8925,3 +9087,63 @@ class VolumePatchParameters(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.tags = tags
+
+
+class VulnerabilityScanningSettings(_serialization.Model):
+    """VulnerabilityScanningSettings represents the settings for how security vulnerability scanning
+    is applied to the cluster.
+
+    :ivar container_scan: The mode selection for container vulnerability scanning. Known values
+     are: "Disabled" and "Enabled".
+    :vartype container_scan: str or
+     ~azure.mgmt.networkcloud.models.VulnerabilityScanningSettingsContainerScan
+    """
+
+    _attribute_map = {
+        "container_scan": {"key": "containerScan", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        container_scan: Optional[Union[str, "_models.VulnerabilityScanningSettingsContainerScan"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword container_scan: The mode selection for container vulnerability scanning. Known values
+         are: "Disabled" and "Enabled".
+        :paramtype container_scan: str or
+         ~azure.mgmt.networkcloud.models.VulnerabilityScanningSettingsContainerScan
+        """
+        super().__init__(**kwargs)
+        self.container_scan = container_scan
+
+
+class VulnerabilityScanningSettingsPatch(_serialization.Model):
+    """VulnerabilityScanningSettingsPatch represents the settings for how security vulnerability
+    scanning is applied to the cluster.
+
+    :ivar container_scan: The mode selection for container vulnerability scanning. Known values
+     are: "Disabled" and "Enabled".
+    :vartype container_scan: str or
+     ~azure.mgmt.networkcloud.models.VulnerabilityScanningSettingsContainerScan
+    """
+
+    _attribute_map = {
+        "container_scan": {"key": "containerScan", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        container_scan: Optional[Union[str, "_models.VulnerabilityScanningSettingsContainerScan"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword container_scan: The mode selection for container vulnerability scanning. Known values
+         are: "Disabled" and "Enabled".
+        :paramtype container_scan: str or
+         ~azure.mgmt.networkcloud.models.VulnerabilityScanningSettingsContainerScan
+        """
+        super().__init__(**kwargs)
+        self.container_scan = container_scan

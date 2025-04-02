@@ -24,6 +24,7 @@ from ._models_py3 import (  # type: ignore
     AgentPoolList,
     AgentPoolPatchParameters,
     AgentPoolUpgradeSettings,
+    AnalyticsOutputSettings,
     AttachedNetworkConfiguration,
     AvailableUpgrade,
     BareMetalMachine,
@@ -131,6 +132,7 @@ from ._models_py3 import (  # type: ignore
     RuntimeProtectionConfiguration,
     RuntimeProtectionStatus,
     SecretArchiveReference,
+    SecretArchiveSettings,
     SecretRotationStatus,
     ServiceLoadBalancerBgpPeer,
     ServicePrincipalInformation,
@@ -160,6 +162,8 @@ from ._models_py3 import (  # type: ignore
     Volume,
     VolumeList,
     VolumePatchParameters,
+    VulnerabilityScanningSettings,
+    VulnerabilityScanningSettingsPatch,
 )
 
 from ._network_cloud_mgmt_client_enums import (  # type: ignore
@@ -265,6 +269,7 @@ from ._network_cloud_mgmt_client_enums import (  # type: ignore
     VirtualMachineVirtioInterfaceType,
     VolumeDetailedStatus,
     VolumeProvisioningState,
+    VulnerabilityScanningSettingsContainerScan,
     WorkloadImpact,
 )
 from ._patch import __all__ as _patch_all
@@ -282,6 +287,7 @@ __all__ = [
     "AgentPoolList",
     "AgentPoolPatchParameters",
     "AgentPoolUpgradeSettings",
+    "AnalyticsOutputSettings",
     "AttachedNetworkConfiguration",
     "AvailableUpgrade",
     "BareMetalMachine",
@@ -389,6 +395,7 @@ __all__ = [
     "RuntimeProtectionConfiguration",
     "RuntimeProtectionStatus",
     "SecretArchiveReference",
+    "SecretArchiveSettings",
     "SecretRotationStatus",
     "ServiceLoadBalancerBgpPeer",
     "ServicePrincipalInformation",
@@ -418,6 +425,8 @@ __all__ = [
     "Volume",
     "VolumeList",
     "VolumePatchParameters",
+    "VulnerabilityScanningSettings",
+    "VulnerabilityScanningSettingsPatch",
     "ActionType",
     "AdvertiseToFabric",
     "AgentPoolDetailedStatus",
@@ -520,6 +529,7 @@ __all__ = [
     "VirtualMachineVirtioInterfaceType",
     "VolumeDetailedStatus",
     "VolumeProvisioningState",
+    "VulnerabilityScanningSettingsContainerScan",
     "WorkloadImpact",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore

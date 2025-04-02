@@ -23,7 +23,7 @@ class TestNetworkCloudMgmtCloudServicesNetworksOperationsAsync(AzureMgmtRecorded
     @recorded_by_proxy_async
     async def test_cloud_services_networks_list_by_subscription(self, resource_group):
         response = self.client.cloud_services_networks.list_by_subscription(
-            api_version="2024-07-01",
+            api_version="2024-10-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestNetworkCloudMgmtCloudServicesNetworksOperationsAsync(AzureMgmtRecorded
     async def test_cloud_services_networks_list_by_resource_group(self, resource_group):
         response = self.client.cloud_services_networks.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-07-01",
+            api_version="2024-10-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestNetworkCloudMgmtCloudServicesNetworksOperationsAsync(AzureMgmtRecorded
         response = await self.client.cloud_services_networks.get(
             resource_group_name=resource_group.name,
             cloud_services_network_name="str",
-            api_version="2024-07-01",
+            api_version="2024-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -86,7 +86,7 @@ class TestNetworkCloudMgmtCloudServicesNetworksOperationsAsync(AzureMgmtRecorded
                     "type": "str",
                     "virtualMachinesAssociatedIds": ["str"],
                 },
-                api_version="2024-07-01",
+                api_version="2024-10-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -100,7 +100,7 @@ class TestNetworkCloudMgmtCloudServicesNetworksOperationsAsync(AzureMgmtRecorded
             await self.client.cloud_services_networks.begin_delete(
                 resource_group_name=resource_group.name,
                 cloud_services_network_name="str",
-                api_version="2024-07-01",
+                api_version="2024-10-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -114,7 +114,7 @@ class TestNetworkCloudMgmtCloudServicesNetworksOperationsAsync(AzureMgmtRecorded
             await self.client.cloud_services_networks.begin_update(
                 resource_group_name=resource_group.name,
                 cloud_services_network_name="str",
-                api_version="2024-07-01",
+                api_version="2024-10-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

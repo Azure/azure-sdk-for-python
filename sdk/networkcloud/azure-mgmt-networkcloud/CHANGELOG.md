@@ -1,5 +1,25 @@
 # Release History
 
+## 2.1.0b1 (2025-04-21)
+
+### Features Added
+
+  - Model `Cluster` added property `analytics_output_settings`
+  - Model `Cluster` added property `secret_archive_settings`
+  - Model `Cluster` added property `vulnerability_scanning_settings`
+  - Model `ClusterPatchParameters` added property `analytics_output_settings`
+  - Model `ClusterPatchParameters` added property `secret_archive_settings`
+  - Model `ClusterPatchParameters` added property `vulnerability_scanning_settings`
+  - Enum `OsDiskCreateOption` added member `PERSISTENT`
+  - Enum `StorageApplianceDetailedStatus` added member `DEGRADED`
+  - Model `VirtualMachine` added property `console_extended_location`
+  - Enum `VirtualMachineDeviceModelType` added member `T3`
+  - Added model `AnalyticsOutputSettings`
+  - Added model `SecretArchiveSettings`
+  - Added model `VulnerabilityScanningSettings`
+  - Added enum `VulnerabilityScanningSettingsContainerScan`
+  - Added model `VulnerabilityScanningSettingsPatch`
+
 ## 2.0.0 (2025-02-24)
 
 ### Features Added
