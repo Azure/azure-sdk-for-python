@@ -24,8 +24,12 @@ database service.
 """
 
 import asyncio # pylint: disable=do-not-import-asyncio
+import logging
+from asyncio import CancelledError
+from typing import Tuple
 
 from azure.core.exceptions import AzureError
+from azure.cosmos import DatabaseAccount
 
 from .. import _constants as constants
 from .. import exceptions
@@ -34,7 +38,9 @@ from .._location_cache import LocationCache
 
 # pylint: disable=protected-access
 
-class _GlobalEndpointManager(object):
+logger = logging.getLogger("azure.cosmos.aio_GlobalEndpointManager")
+
+class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attributes
     """
     This internal class implements the logic for endpoint management for
     geo-replicated database accounts.
@@ -50,25 +56,26 @@ class _GlobalEndpointManager(object):
             self.PreferredLocations,
             self.DefaultEndpoint,
             self.EnableEndpointDiscovery,
-            client.connection_policy.UseMultipleWriteLocations,
-            self.refresh_time_interval_in_ms,
+            client.connection_policy.UseMultipleWriteLocations
         )
+        self.startup = True
+        self.refresh_task = None
         self.refresh_needed = False
         self.refresh_lock = asyncio.Lock()
         self.last_refresh_time = 0
         self._database_account_cache = None
 
+    def get_use_multiple_write_locations(self):
+        return self.location_cache.can_use_multiple_write_locations()
+
     def get_refresh_time_interval_in_ms_stub(self):
-        return constants._Constants.DefaultUnavailableLocationExpirationTime
+        return constants._Constants.DefaultEndpointsRefreshTime
 
     def get_write_endpoint(self):
-        return self.location_cache.get_write_regional_endpoint()
+        return self.location_cache.get_write_regional_routing_context()
 
     def get_read_endpoint(self):
-        return self.location_cache.get_read_regional_endpoint()
-
-    def swap_regional_endpoint_values(self, request):
-        return self.location_cache.swap_regional_endpoint_values(request)
+        return self.location_cache.get_read_regional_routing_context()
 
     def resolve_service_endpoint(self, request):
         return self.location_cache.resolve_service_endpoint(request)
@@ -85,14 +92,21 @@ class _GlobalEndpointManager(object):
     def can_use_multiple_write_locations(self, request):
         return self.location_cache.can_use_multiple_write_locations_for_request(request)
 
-    async def force_refresh(self, database_account):
+    async def force_refresh_on_startup(self, database_account):
         self.refresh_needed = True
         await self.refresh_endpoint_list(database_account)
+        self.startup = False
 
     def update_location_cache(self):
         self.location_cache.update_location_cache()
 
     async def refresh_endpoint_list(self, database_account, **kwargs):
+        if self.refresh_task and self.refresh_task.done():
+            try:
+                await self.refresh_task
+                self.refresh_task = None
+            except (Exception, CancelledError) as exception: #pylint: disable=broad-exception-caught
+                logger.exception("Health check task failed: %s", exception)
         if self.location_cache.current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms:
             self.refresh_needed = True
         if self.refresh_needed:
@@ -106,7 +120,7 @@ class _GlobalEndpointManager(object):
                     raise e
 
     async def _refresh_endpoint_list_private(self, database_account=None, **kwargs):
-        if database_account:
+        if database_account and not self.startup:
             self.location_cache.perform_on_database_account_read(database_account)
             self.refresh_needed = False
             self.last_refresh_time = self.location_cache.current_time_millis()
@@ -114,46 +128,58 @@ class _GlobalEndpointManager(object):
             if self.location_cache.should_refresh_endpoints() or self.refresh_needed:
                 self.refresh_needed = False
                 self.last_refresh_time = self.location_cache.current_time_millis()
-                database_account = await self._GetDatabaseAccount(**kwargs)
-                self.location_cache.perform_on_database_account_read(database_account)
-                # this will perform getDatabaseAccount calls to check endpoint health
-                await self._endpoints_health_check(**kwargs)
+                if not self.startup:
+                    # this will perform getDatabaseAccount calls to check endpoint health
+                    # in background
+                    self.refresh_task = asyncio.create_task(self._endpoints_health_check(**kwargs))
+                else:
+                    # on startup do this in foreground
+                    await self._endpoints_health_check(**kwargs)
+                    self.startup = False
 
     async def _endpoints_health_check(self, **kwargs):
         """Gets the database account for each endpoint.
 
         Validating if the endpoint is healthy else marking it as unavailable.
         """
-        all_endpoints = [self.location_cache.read_regional_endpoints[0]]
-        all_endpoints.extend(self.location_cache.write_regional_endpoints)
-        count = 0
-        for endpoint in all_endpoints:
-            count += 1
-            if count > 3:
-                break
-            try:
-                await self.client._GetDatabaseAccountCheck(endpoint.get_current(), **kwargs)
-            except (exceptions.CosmosHttpResponseError, AzureError):
-                if endpoint in self.location_cache.read_regional_endpoints:
-                    self.mark_endpoint_unavailable_for_read(endpoint.get_current(), False)
-                if endpoint in self.location_cache.write_regional_endpoints:
-                    self.mark_endpoint_unavailable_for_write(endpoint.get_current(), False)
-                    endpoint.swap()
+        endpoints_attempted = set()
+        # get the database account from the default endpoint first
+        database_account, attempted_endpoint = await self._GetDatabaseAccount(**kwargs)
+        endpoints_attempted.add(attempted_endpoint)
+        self.location_cache.perform_on_database_account_read(database_account)
+        # get all the endpoints to check
+        endpoints = self.location_cache.endpoints_to_health_check()
+        success_count = 0
+        for endpoint in endpoints:
+            if endpoint not in endpoints_attempted:
+                # health check continues until 4 successes or all endpoints are checked
+                if success_count >= 4:
+                    break
+                endpoints_attempted.add(endpoint)
+                try:
+                    await self.client._GetDatabaseAccountCheck(endpoint, **kwargs)
+                    success_count += 1
+                    self.location_cache.mark_endpoint_available(endpoint)
+                except (exceptions.CosmosHttpResponseError, AzureError):
+                    self.mark_endpoint_unavailable_for_read(endpoint, False)
+                    self.mark_endpoint_unavailable_for_write(endpoint, False)
         self.location_cache.update_location_cache()
 
-    async def _GetDatabaseAccount(self, **kwargs):
+    async def _GetDatabaseAccount(self, **kwargs) -> Tuple[DatabaseAccount, str]:
         """Gets the database account.
 
         First tries by using the default endpoint, and if that doesn't work,
         use the endpoints for the preferred locations in the order they are
         specified, to get the database account.
-        :returns: A `DatabaseAccount` instance representing the Cosmos DB Database Account.
-        :rtype: ~azure.cosmos.DatabaseAccount
+        :returns: A `DatabaseAccount` instance representing the Cosmos DB Database Account
+        and the endpoint that was used for the request.
+        :rtype: tuple of (~azure.cosmos.DatabaseAccount, str)
         """
         try:
             database_account = await self._GetDatabaseAccountStub(self.DefaultEndpoint, **kwargs)
             self._database_account_cache = database_account
-            return database_account
+            self.location_cache.mark_endpoint_available(self.DefaultEndpoint)
+            return database_account, self.DefaultEndpoint
         # If for any reason(non-globaldb related), we are not able to get the database
         # account from the above call to GetDatabaseAccount, we would try to get this
         # information from any of the preferred locations that the user might have
@@ -161,14 +187,18 @@ class _GlobalEndpointManager(object):
         # until we get the database account and return None at the end, if we are not able
         # to get that info from any endpoints
         except (exceptions.CosmosHttpResponseError, AzureError):
+            self.mark_endpoint_unavailable_for_read(self.DefaultEndpoint, False)
+            self.mark_endpoint_unavailable_for_write(self.DefaultEndpoint, False)
             for location_name in self.PreferredLocations:
                 locational_endpoint = LocationCache.GetLocationalEndpoint(self.DefaultEndpoint, location_name)
                 try:
                     database_account = await self._GetDatabaseAccountStub(locational_endpoint, **kwargs)
                     self._database_account_cache = database_account
-                    return database_account
+                    self.location_cache.mark_endpoint_available(locational_endpoint)
+                    return database_account, locational_endpoint
                 except (exceptions.CosmosHttpResponseError, AzureError):
-                    pass
+                    self.mark_endpoint_unavailable_for_read(locational_endpoint, False)
+                    self.mark_endpoint_unavailable_for_write(locational_endpoint, False)
             raise
 
     async def _GetDatabaseAccountStub(self, endpoint, **kwargs):
@@ -180,3 +210,12 @@ class _GlobalEndpointManager(object):
         :rtype: ~azure.cosmos.DatabaseAccount
         """
         return await self.client.GetDatabaseAccount(endpoint, **kwargs)
+
+    async def close(self):
+        # cleanup any running tasks
+        if self.refresh_task:
+            self.refresh_task.cancel()
+            try:
+                await self.refresh_task
+            except (Exception, CancelledError) : #pylint: disable=broad-exception-caught
+                pass

@@ -24,6 +24,7 @@ class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Key Vault API versions supported by this package"""
 
     #: this is the default version
+    V7_6_PREVIEW_2 = "7.6-preview.2"
     V7_5 = "7.5"
     V7_4 = "7.4"
     V7_3 = "7.3"
@@ -33,7 +34,7 @@ class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     V2016_10_01 = "2016-10-01"
 
 
-DEFAULT_VERSION = ApiVersion.V7_5
+DEFAULT_VERSION = ApiVersion.V7_6_PREVIEW_2
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -100,11 +101,13 @@ class KeyVaultClientBase(object):
 
             verify_challenge = kwargs.pop("verify_challenge_resource", True)
             self._client = _KeyVaultClient(
+                credential=credential,
+                vault_base_url=self._vault_url,
                 api_version=self.api_version,
                 authentication_policy=ChallengeAuthPolicy(credential, verify_challenge_resource=verify_challenge),
                 sdk_moniker=SDK_MONIKER,
                 http_logging_policy=http_logging_policy,
-                **kwargs
+                **kwargs,
             )
             self._models = _models
         except ValueError as exc:

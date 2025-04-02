@@ -25,7 +25,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperations(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             instance_id="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperations(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             instance_id="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -51,7 +51,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperations(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             instance_id="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -64,7 +64,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperations(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             instance_id="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -352,6 +352,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperations(AzureMgmtRecorded
                 "plan": {"name": "str", "product": "str", "promotionCode": "str", "publisher": "str"},
                 "protectionPolicy": {"protectFromScaleIn": bool, "protectFromScaleSetActions": bool},
                 "provisioningState": "str",
+                "resilientVMDeletionStatus": "str",
                 "resources": [
                     {
                         "autoUpgradeMinorVersion": bool,
@@ -398,12 +399,19 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperations(AzureMgmtRecorded
                 "securityProfile": {
                     "encryptionAtHost": bool,
                     "encryptionIdentity": {"userAssignedIdentityResourceId": "str"},
-                    "proxyAgentSettings": {"enabled": bool, "keyIncarnationId": 0, "mode": "str"},
+                    "proxyAgentSettings": {
+                        "enabled": bool,
+                        "imds": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
+                        "keyIncarnationId": 0,
+                        "mode": "str",
+                        "wireServer": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
+                    },
                     "securityType": "str",
                     "uefiSettings": {"secureBootEnabled": bool, "vTpmEnabled": bool},
                 },
                 "sku": {"capacity": 0, "name": "str", "tier": "str"},
                 "storageProfile": {
+                    "alignRegionalDisksToVMZone": bool,
                     "dataDisks": [
                         {
                             "createOption": "str",
@@ -473,7 +481,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperations(AzureMgmtRecorded
                 "vmId": "str",
                 "zones": ["str"],
             },
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -486,7 +494,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperations(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             instance_id="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -499,7 +507,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperations(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             instance_id="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -512,7 +520,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperations(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             instance_id="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -524,7 +532,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperations(AzureMgmtRecorded
         response = self.client.virtual_machine_scale_set_vms.list(
             resource_group_name=resource_group.name,
             virtual_machine_scale_set_name="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -537,7 +545,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperations(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             instance_id="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -550,7 +558,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperations(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             instance_id="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -563,7 +571,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperations(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             instance_id="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -576,7 +584,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperations(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             instance_id="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -589,7 +597,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperations(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             instance_id="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -602,7 +610,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperations(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             instance_id="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -615,7 +623,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperations(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             instance_id="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -641,7 +649,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperations(AzureMgmtRecorded
                 ],
                 "dataDisksToDetach": [{"diskId": "str", "detachOption": "str"}],
             },
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -655,7 +663,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperations(AzureMgmtRecorded
             vm_scale_set_name="str",
             instance_id="str",
             parameters={"commandId": "str", "parameters": [{"name": "str", "value": "str"}], "script": ["str"]},
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

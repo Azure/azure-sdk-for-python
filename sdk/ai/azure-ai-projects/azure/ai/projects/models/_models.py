@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -27,9 +27,6 @@ if TYPE_CHECKING:
 
 class Agent(_model_base.Model):
     """Represents an agent that can call the model and use tools.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar id: The identifier, which can be referenced in API endpoints. Required.
     :vartype id: str
@@ -76,42 +73,46 @@ class Agent(_model_base.Model):
     :vartype metadata: dict[str, str]
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The identifier, which can be referenced in API endpoints. Required."""
-    object: Literal["assistant"] = rest_field()
+    object: Literal["assistant"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The object type, which is always assistant. Required. Default value is \"assistant\"."""
-    created_at: datetime.datetime = rest_field(format="unix-timestamp")
+    created_at: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
     """The Unix timestamp, in seconds, representing when this object was created. Required."""
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the agent. Required."""
-    description: str = rest_field()
+    description: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The description of the agent. Required."""
-    model: str = rest_field()
+    model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the model to use. Required."""
-    instructions: str = rest_field()
+    instructions: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The system instructions for the agent to use. Required."""
-    tools: List["_models.ToolDefinition"] = rest_field()
+    tools: List["_models.ToolDefinition"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The collection of tools enabled for the agent. Required."""
-    tool_resources: "_models.ToolResources" = rest_field()
+    tool_resources: "_models.ToolResources" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A set of resources that are used by the agent's tools. The resources are specific to the type
      of tool. For example, the ``code_interpreter``
      tool requires a list of file IDs, while the ``file_search`` tool requires a list of vector
      store IDs. Required."""
-    temperature: float = rest_field()
+    temperature: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output
      more random,
      while lower values like 0.2 will make it more focused and deterministic. Required."""
-    top_p: float = rest_field()
+    top_p: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An alternative to sampling with temperature, called nucleus sampling, where the model considers
      the results of the tokens with top_p probability mass.
      So 0.1 means only the tokens comprising the top 10% probability mass are considered.
      
      We generally recommend altering this or temperature but not both. Required."""
-    response_format: Optional["_types.AgentsApiResponseFormatOption"] = rest_field()
+    response_format: Optional["_types.AgentsApiResponseFormatOption"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The response format of the tool calls used by this agent. Is one of the following types: str,
      Union[str, \"_models.AgentsApiResponseFormatMode\"], AgentsApiResponseFormat,
      ResponseFormatJsonSchemaType"""
-    metadata: Dict[str, str] = rest_field()
+    metadata: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A set of up to 16 key/value pairs that can be attached to an object, used for storing
      additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length. Required."""
@@ -149,9 +150,6 @@ class Agent(_model_base.Model):
 class AgentDeletionStatus(_model_base.Model):
     """The status of an agent deletion operation.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: The ID of the resource specified for deletion. Required.
     :vartype id: str
     :ivar deleted: A value indicating whether deletion was successful. Required.
@@ -161,11 +159,11 @@ class AgentDeletionStatus(_model_base.Model):
     :vartype object: str
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the resource specified for deletion. Required."""
-    deleted: bool = rest_field()
+    deleted: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A value indicating whether deletion was successful. Required."""
-    object: Literal["assistant.deleted"] = rest_field()
+    object: Literal["assistant.deleted"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The object type, which is always 'assistant.deleted'. Required. Default value is
      \"assistant.deleted\"."""
 
@@ -199,7 +197,9 @@ class AgentsApiResponseFormat(_model_base.Model):
     :vartype type: str or ~azure.ai.projects.models.ResponseFormat
     """
 
-    type: Optional[Union[str, "_models.ResponseFormat"]] = rest_field()
+    type: Optional[Union[str, "_models.ResponseFormat"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Must be one of ``text`` or ``json_object``. Known values are: \"text\" and \"json_object\"."""
 
     @overload
@@ -223,20 +223,21 @@ class AgentsApiResponseFormat(_model_base.Model):
 class AgentsNamedToolChoice(_model_base.Model):
     """Specifies a tool the model should use. Use to force the model to call a specific tool.
 
-
-    :ivar type: the type of tool. If type is ``function``\\ , the function name must be set.
-     Required. Known values are: "function", "code_interpreter", "file_search", "bing_grounding",
-     "fabric_aiskill", "sharepoint_grounding", and "azure_ai_search".
+    :ivar type: the type of tool. If type is ``function``\\, the function name must be set. Required.
+     Known values are: "function", "code_interpreter", "file_search", "bing_grounding",
+     "fabric_dataagent", "sharepoint_grounding", and "azure_ai_search".
     :vartype type: str or ~azure.ai.projects.models.AgentsNamedToolChoiceType
     :ivar function: The name of the function to call.
     :vartype function: ~azure.ai.projects.models.FunctionName
     """
 
-    type: Union[str, "_models.AgentsNamedToolChoiceType"] = rest_field()
-    """the type of tool. If type is ``function``, the function name must be set. Required. Known
+    type: Union[str, "_models.AgentsNamedToolChoiceType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """the type of tool. If type is \"function\" , the function name must be set. Required. Known
      values are: \"function\", \"code_interpreter\", \"file_search\", \"bing_grounding\",
-     \"fabric_aiskill\", \"sharepoint_grounding\", and \"azure_ai_search\"."""
-    function: Optional["_models.FunctionName"] = rest_field()
+     \"fabric_dataagent\", \"sharepoint_grounding\", and \"azure_ai_search\"."""
+    function: Optional["_models.FunctionName"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the function to call."""
 
     @overload
@@ -261,9 +262,6 @@ class AgentsNamedToolChoice(_model_base.Model):
 class AgentThread(_model_base.Model):
     """Information about a single thread associated with an agent.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: The identifier, which can be referenced in API endpoints. Required.
     :vartype id: str
     :ivar object: The object type, which is always 'thread'. Required. Default value is "thread".
@@ -283,19 +281,21 @@ class AgentThread(_model_base.Model):
     :vartype metadata: dict[str, str]
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The identifier, which can be referenced in API endpoints. Required."""
-    object: Literal["thread"] = rest_field()
+    object: Literal["thread"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The object type, which is always 'thread'. Required. Default value is \"thread\"."""
-    created_at: datetime.datetime = rest_field(format="unix-timestamp")
+    created_at: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
     """The Unix timestamp, in seconds, representing when this object was created. Required."""
-    tool_resources: "_models.ToolResources" = rest_field()
+    tool_resources: "_models.ToolResources" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A set of resources that are made available to the agent's tools in this thread. The resources
      are specific to the type
      of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while the
      ``file_search`` tool requires a list
      of vector store IDs. Required."""
-    metadata: Dict[str, str] = rest_field()
+    metadata: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A set of up to 16 key/value pairs that can be attached to an object, used for storing
      additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length. Required."""
@@ -329,8 +329,8 @@ class AgentThreadCreationOptions(_model_base.Model):
     :vartype messages: list[~azure.ai.projects.models.ThreadMessageOptions]
     :ivar tool_resources: A set of resources that are made available to the agent's tools in this
      thread. The resources are specific to the
-     type of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while
-     the ``file_search`` tool requires
+     type of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while the
+     ``file_search`` tool requires
      a list of vector store IDs.
     :vartype tool_resources: ~azure.ai.projects.models.ToolResources
     :ivar metadata: A set of up to 16 key/value pairs that can be attached to an object, used for
@@ -339,15 +339,19 @@ class AgentThreadCreationOptions(_model_base.Model):
     :vartype metadata: dict[str, str]
     """
 
-    messages: Optional[List["_models.ThreadMessageOptions"]] = rest_field()
+    messages: Optional[List["_models.ThreadMessageOptions"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The initial messages to associate with the new thread."""
-    tool_resources: Optional["_models.ToolResources"] = rest_field()
+    tool_resources: Optional["_models.ToolResources"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A set of resources that are made available to the agent's tools in this thread. The resources
      are specific to the
      type of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while the
      ``file_search`` tool requires
      a list of vector store IDs."""
-    metadata: Optional[Dict[str, str]] = rest_field()
+    metadata: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A set of up to 16 key/value pairs that can be attached to an object, used for storing
      additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length."""
@@ -372,15 +376,146 @@ class AgentThreadCreationOptions(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class AISearchIndexResource(_model_base.Model):
+    """A AI Search Index resource.
+
+    :ivar index_connection_id: An index connection id in an IndexResource attached to this agent.
+     Required.
+    :vartype index_connection_id: str
+    :ivar index_name: The name of an index in an IndexResource attached to this agent. Required.
+    :vartype index_name: str
+    :ivar query_type: Type of query in an AIIndexResource attached to this agent. Known values are:
+     "simple", "semantic", "vector", "vector_simple_hybrid", and "vector_semantic_hybrid".
+    :vartype query_type: str or ~azure.ai.projects.models.AzureAISearchQueryType
+    :ivar top_k: Number of documents to retrieve from search and present to the model.
+    :vartype top_k: int
+    :ivar filter: Odata filter string for search resource.
+    :vartype filter: str
+    """
+
+    index_connection_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An index connection id in an IndexResource attached to this agent. Required."""
+    index_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of an index in an IndexResource attached to this agent. Required."""
+    query_type: Optional[Union[str, "_models.AzureAISearchQueryType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Type of query in an AIIndexResource attached to this agent. Known values are: \"simple\",
+     \"semantic\", \"vector\", \"vector_simple_hybrid\", and \"vector_semantic_hybrid\"."""
+    top_k: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Number of documents to retrieve from search and present to the model."""
+    filter: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Odata filter string for search resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index_connection_id: str,
+        index_name: str,
+        query_type: Optional[Union[str, "_models.AzureAISearchQueryType"]] = None,
+        top_k: Optional[int] = None,
+        filter: Optional[str] = None,  # pylint: disable=redefined-builtin
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TargetModelConfig(_model_base.Model):
+    """Abstract class for model configuration.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AOAIModelConfig, MAASModelConfig
+
+    :ivar type: Type of the model configuration. Required. Default value is None.
+    :vartype type: str
+    """
+
+    __mapping__: Dict[str, _model_base.Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """Type of the model configuration. Required. Default value is None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AOAIModelConfig(TargetModelConfig, discriminator="AOAI"):
+    """Azure OpenAI model configuration. The API version would be selected by the service for querying
+    the model.
+
+    :ivar type: Required. Default value is "AOAI".
+    :vartype type: str
+    :ivar azure_endpoint: Endpoint URL for AOAI model. Required.
+    :vartype azure_endpoint: str
+    :ivar api_key: API Key for AOAI model. Required.
+    :vartype api_key: str
+    :ivar azure_deployment: Deployment name for AOAI model. Required.
+    :vartype azure_deployment: str
+    """
+
+    type: Literal["AOAI"] = rest_discriminator(name="type", visibility=["read"])  # type: ignore
+    """Required. Default value is \"AOAI\"."""
+    azure_endpoint: str = rest_field(name="azureEndpoint", visibility=["read", "create", "update", "delete", "query"])
+    """Endpoint URL for AOAI model. Required."""
+    api_key: str = rest_field(name="apiKey", visibility=["read", "create", "update", "delete", "query"])
+    """API Key for AOAI model. Required."""
+    azure_deployment: str = rest_field(
+        name="azureDeployment", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Deployment name for AOAI model. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        azure_endpoint: str,
+        api_key: str,
+        azure_deployment: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="AOAI", **kwargs)
+
+
 class AppInsightsProperties(_model_base.Model):
     """The properties of the Application Insights resource.
-
 
     :ivar connection_string: Authentication type of the connection target. Required.
     :vartype connection_string: str
     """
 
-    connection_string: str = rest_field(name="ConnectionString")
+    connection_string: str = rest_field(
+        name="ConnectionString", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Authentication type of the connection target. Required."""
 
     @overload
@@ -407,13 +542,12 @@ class InputData(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     ApplicationInsightsConfiguration, Dataset
 
-
     :ivar type: Type of the data. Required. Default value is None.
     :vartype type: str
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    type: str = rest_discriminator(name="type")
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Type of the data. Required. Default value is None."""
 
     @overload
@@ -437,9 +571,6 @@ class InputData(_model_base.Model):
 class ApplicationInsightsConfiguration(InputData, discriminator="app_insights"):
     """Data Source for Application Insights.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar type: Required. Default value is "app_insights".
     :vartype type: str
     :ivar resource_id: LogAnalytic Workspace resourceID associated with ApplicationInsights.
@@ -455,13 +586,17 @@ class ApplicationInsightsConfiguration(InputData, discriminator="app_insights"):
 
     type: Literal["app_insights"] = rest_discriminator(name="type", visibility=["read"])  # type: ignore
     """Required. Default value is \"app_insights\"."""
-    resource_id: str = rest_field(name="resourceId")
+    resource_id: str = rest_field(name="resourceId", visibility=["read", "create", "update", "delete", "query"])
     """LogAnalytic Workspace resourceID associated with ApplicationInsights. Required."""
-    query: str = rest_field()
+    query: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Query to fetch the data. Required."""
-    service_name: Optional[str] = rest_field(name="serviceName")
+    service_name: Optional[str] = rest_field(
+        name="serviceName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Service name."""
-    connection_string: Optional[str] = rest_field(name="connectionString")
+    connection_string: Optional[str] = rest_field(
+        name="connectionString", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Connection String to connect to ApplicationInsights."""
 
     @overload
@@ -490,10 +625,12 @@ class AzureAISearchResource(_model_base.Model):
 
     :ivar index_list: The indices attached to this agent. There can be a maximum of 1 index
      resource attached to the agent.
-    :vartype index_list: list[~azure.ai.projects.models.IndexResource]
+    :vartype index_list: list[~azure.ai.projects.models.AISearchIndexResource]
     """
 
-    index_list: Optional[List["_models.IndexResource"]] = rest_field(name="indexes")
+    index_list: Optional[List["_models.AISearchIndexResource"]] = rest_field(
+        name="indexes", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The indices attached to this agent. There can be a maximum of 1 index
      resource attached to the agent."""
 
@@ -501,7 +638,7 @@ class AzureAISearchResource(_model_base.Model):
     def __init__(
         self,
         *,
-        index_list: Optional[List["_models.IndexResource"]] = None,
+        index_list: Optional[List["_models.AISearchIndexResource"]] = None,
     ) -> None: ...
 
     @overload
@@ -523,13 +660,12 @@ class ToolDefinition(_model_base.Model):
     CodeInterpreterToolDefinition, MicrosoftFabricToolDefinition, FileSearchToolDefinition,
     FunctionToolDefinition, OpenApiToolDefinition, SharepointToolDefinition
 
-
     :ivar type: The object type. Required. Default value is None.
     :vartype type: str
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    type: str = rest_discriminator(name="type")
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The object type. Required. Default value is None."""
 
     @overload
@@ -553,13 +689,12 @@ class ToolDefinition(_model_base.Model):
 class AzureAISearchToolDefinition(ToolDefinition, discriminator="azure_ai_search"):
     """The input definition information for an Azure AI search tool as used to configure an agent.
 
-
     :ivar type: The object type, which is always 'azure_ai_search'. Required. Default value is
      "azure_ai_search".
     :vartype type: str
     """
 
-    type: Literal["azure_ai_search"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["azure_ai_search"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'azure_ai_search'. Required. Default value is
      \"azure_ai_search\"."""
 
@@ -582,9 +717,6 @@ class AzureAISearchToolDefinition(ToolDefinition, discriminator="azure_ai_search
 class AzureFunctionBinding(_model_base.Model):
     """The structure for keeping storage queue name and URI.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar type: The type of binding, which is always 'storage_queue'. Required. Default value is
      "storage_queue".
     :vartype type: str
@@ -592,10 +724,12 @@ class AzureFunctionBinding(_model_base.Model):
     :vartype storage_queue: ~azure.ai.projects.models.AzureFunctionStorageQueue
     """
 
-    type: Literal["storage_queue"] = rest_field()
+    type: Literal["storage_queue"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The type of binding, which is always 'storage_queue'. Required. Default value is
      \"storage_queue\"."""
-    storage_queue: "_models.AzureFunctionStorageQueue" = rest_field()
+    storage_queue: "_models.AzureFunctionStorageQueue" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Storage queue. Required."""
 
     @overload
@@ -620,7 +754,6 @@ class AzureFunctionBinding(_model_base.Model):
 class AzureFunctionDefinition(_model_base.Model):
     """The definition of Azure function.
 
-
     :ivar function: The definition of azure function and its parameters. Required.
     :vartype function: ~azure.ai.projects.models.FunctionDefinition
     :ivar input_binding: Input storage queue. The queue storage trigger runs a function as messages
@@ -631,12 +764,16 @@ class AzureFunctionDefinition(_model_base.Model):
     :vartype output_binding: ~azure.ai.projects.models.AzureFunctionBinding
     """
 
-    function: "_models.FunctionDefinition" = rest_field()
+    function: "_models.FunctionDefinition" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The definition of azure function and its parameters. Required."""
-    input_binding: "_models.AzureFunctionBinding" = rest_field()
+    input_binding: "_models.AzureFunctionBinding" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Input storage queue. The queue storage trigger runs a function as messages are added to it.
      Required."""
-    output_binding: "_models.AzureFunctionBinding" = rest_field()
+    output_binding: "_models.AzureFunctionBinding" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Output storage queue. The function writes output to this queue when the input items are
      processed. Required."""
 
@@ -663,7 +800,6 @@ class AzureFunctionDefinition(_model_base.Model):
 class AzureFunctionStorageQueue(_model_base.Model):
     """The structure for keeping storage queue name and URI.
 
-
     :ivar storage_service_endpoint: URI to the Azure Storage Queue service allowing you to
      manipulate a queue. Required.
     :vartype storage_service_endpoint: str
@@ -671,9 +807,11 @@ class AzureFunctionStorageQueue(_model_base.Model):
     :vartype queue_name: str
     """
 
-    storage_service_endpoint: str = rest_field(name="queue_service_endpoint")
+    storage_service_endpoint: str = rest_field(
+        name="queue_service_endpoint", visibility=["read", "create", "update", "delete", "query"]
+    )
     """URI to the Azure Storage Queue service allowing you to manipulate a queue. Required."""
-    queue_name: str = rest_field()
+    queue_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of an Azure function storage queue. Required."""
 
     @overload
@@ -698,7 +836,6 @@ class AzureFunctionStorageQueue(_model_base.Model):
 class AzureFunctionToolDefinition(ToolDefinition, discriminator="azure_function"):
     """The input definition information for a azure function tool as used to configure an agent.
 
-
     :ivar type: The object type, which is always 'azure_function'. Required. Default value is
      "azure_function".
     :vartype type: str
@@ -707,10 +844,12 @@ class AzureFunctionToolDefinition(ToolDefinition, discriminator="azure_function"
     :vartype azure_function: ~azure.ai.projects.models.AzureFunctionDefinition
     """
 
-    type: Literal["azure_function"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["azure_function"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'azure_function'. Required. Default value is
      \"azure_function\"."""
-    azure_function: "_models.AzureFunctionDefinition" = rest_field()
+    azure_function: "_models.AzureFunctionDefinition" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The definition of the concrete function that the function tool should call. Required."""
 
     @overload
@@ -735,7 +874,6 @@ class BingGroundingToolDefinition(ToolDefinition, discriminator="bing_grounding"
     """The input definition information for a bing grounding search tool as used to configure an
     agent.
 
-
     :ivar type: The object type, which is always 'bing_grounding'. Required. Default value is
      "bing_grounding".
     :vartype type: str
@@ -743,10 +881,12 @@ class BingGroundingToolDefinition(ToolDefinition, discriminator="bing_grounding"
     :vartype bing_grounding: ~azure.ai.projects.models.ToolConnectionList
     """
 
-    type: Literal["bing_grounding"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["bing_grounding"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'bing_grounding'. Required. Default value is
      \"bing_grounding\"."""
-    bing_grounding: "_models.ToolConnectionList" = rest_field()
+    bing_grounding: "_models.ToolConnectionList" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The list of connections used by the bing grounding tool. Required."""
 
     @overload
@@ -770,13 +910,12 @@ class BingGroundingToolDefinition(ToolDefinition, discriminator="bing_grounding"
 class CodeInterpreterToolDefinition(ToolDefinition, discriminator="code_interpreter"):
     """The input definition information for a code interpreter tool as used to configure an agent.
 
-
     :ivar type: The object type, which is always 'code_interpreter'. Required. Default value is
      "code_interpreter".
     :vartype type: str
     """
 
-    type: Literal["code_interpreter"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["code_interpreter"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'code_interpreter'. Required. Default value is
      \"code_interpreter\"."""
 
@@ -808,11 +947,13 @@ class CodeInterpreterToolResource(_model_base.Model):
     :vartype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
     """
 
-    file_ids: Optional[List[str]] = rest_field()
+    file_ids: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of file IDs made available to the ``code_interpreter`` tool. There can be a maximum of
      20 files
      associated with the tool."""
-    data_sources: Optional[List["_models.VectorStoreDataSource"]] = rest_field()
+    data_sources: Optional[List["_models.VectorStoreDataSource"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The data sources to be used. This option is mutually exclusive with the ``fileIds`` property."""
 
     @overload
@@ -837,12 +978,11 @@ class CodeInterpreterToolResource(_model_base.Model):
 class CredentialsApiKeyAuth(_model_base.Model):
     """The credentials needed for API key authentication.
 
-
     :ivar key: The API key. Required.
     :vartype key: str
     """
 
-    key: str = rest_field()
+    key: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The API key. Required."""
 
     @overload
@@ -866,12 +1006,11 @@ class CredentialsApiKeyAuth(_model_base.Model):
 class CredentialsSASAuth(_model_base.Model):
     """The credentials needed for Shared Access Signatures (SAS) authentication.
 
-
     :ivar sas: The Shared Access Signatures (SAS) token. Required.
     :vartype sas: str
     """
 
-    sas: str = rest_field(name="SAS")
+    sas: str = rest_field(name="SAS", visibility=["read", "create", "update", "delete", "query"])
     """The Shared Access Signatures (SAS) token. Required."""
 
     @overload
@@ -898,13 +1037,12 @@ class Trigger(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     CronTrigger, RecurrenceTrigger
 
-
     :ivar type: Type of the trigger. Required. Default value is None.
     :vartype type: str
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    type: str = rest_discriminator(name="type")
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Type of the trigger. Required. Default value is None."""
 
     @overload
@@ -928,9 +1066,6 @@ class Trigger(_model_base.Model):
 class CronTrigger(Trigger, discriminator="Cron"):
     """Cron Trigger Definition.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar type: Required. Default value is "Cron".
     :vartype type: str
     :ivar expression: Cron expression for the trigger. Required.
@@ -939,7 +1074,7 @@ class CronTrigger(Trigger, discriminator="Cron"):
 
     type: Literal["Cron"] = rest_discriminator(name="type", visibility=["read"])  # type: ignore
     """Required. Default value is \"Cron\"."""
-    expression: str = rest_field()
+    expression: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Cron expression for the trigger. Required."""
 
     @overload
@@ -963,9 +1098,6 @@ class CronTrigger(Trigger, discriminator="Cron"):
 class Dataset(InputData, discriminator="dataset"):
     """Dataset as source for evaluation.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar type: Required. Default value is "dataset".
     :vartype type: str
     :ivar id: Evaluation input data. Required.
@@ -974,7 +1106,7 @@ class Dataset(InputData, discriminator="dataset"):
 
     type: Literal["dataset"] = rest_discriminator(name="type", visibility=["read"])  # type: ignore
     """Required. Default value is \"dataset\"."""
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Evaluation input data. Required."""
 
     @overload
@@ -998,13 +1130,12 @@ class Dataset(InputData, discriminator="dataset"):
 class Evaluation(_model_base.Model):
     """Evaluation Definition.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: Identifier of the evaluation. Required.
     :vartype id: str
     :ivar data: Data for evaluation. Required.
     :vartype data: ~azure.ai.projects.models.InputData
+    :ivar target: Evaluation target specifying the model config and parameters.
+    :vartype target: ~azure.ai.projects.models.EvaluationTarget
     :ivar display_name: Display Name for evaluation. It helps to find the evaluation easily in AI
      Foundry. It does not need to be unique.
     :vartype display_name: str
@@ -1028,17 +1159,21 @@ class Evaluation(_model_base.Model):
     """Identifier of the evaluation. Required."""
     data: "_models.InputData" = rest_field(visibility=["read", "create"])
     """Data for evaluation. Required."""
-    display_name: Optional[str] = rest_field(name="displayName")
+    target: Optional["_models.EvaluationTarget"] = rest_field(visibility=["read", "create"])
+    """Evaluation target specifying the model config and parameters."""
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Display Name for evaluation. It helps to find the evaluation easily in AI Foundry. It does not
      need to be unique."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Description of the evaluation. It can be used to store additional information about the
      evaluation and is mutable."""
     system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
     """Metadata containing createdBy and modifiedBy information."""
     status: Optional[str] = rest_field(visibility=["read"])
     """Status of the evaluation. It is set by service and is read-only."""
-    tags: Optional[Dict[str, str]] = rest_field()
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Evaluation's tags. Unlike properties, tags are fully mutable."""
     properties: Optional[Dict[str, str]] = rest_field(visibility=["read", "create"])
     """Evaluation's properties. Unlike tags, properties are add-only. Once added, a property cannot be
@@ -1052,6 +1187,7 @@ class Evaluation(_model_base.Model):
         *,
         data: "_models.InputData",
         evaluators: Dict[str, "_models.EvaluatorConfiguration"],
+        target: Optional["_models.EvaluationTarget"] = None,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
@@ -1071,9 +1207,6 @@ class Evaluation(_model_base.Model):
 
 class EvaluationSchedule(_model_base.Model):
     """Evaluation Schedule Definition.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar name: Name of the schedule, which also serves as the unique identifier for the
      evaluation. Required.
@@ -1105,14 +1238,14 @@ class EvaluationSchedule(_model_base.Model):
     """Name of the schedule, which also serves as the unique identifier for the evaluation. Required."""
     data: "_models.ApplicationInsightsConfiguration" = rest_field(visibility=["read", "create"])
     """Data for evaluation. Required."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Description of the evaluation. It can be used to store additional information about the
      evaluation and is mutable."""
     system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
     """Metadata containing createdBy and modifiedBy information."""
     provisioning_state: Optional[str] = rest_field(name="provisioningState", visibility=["read"])
     """Provisioning State of the evaluation. It is set by service and is read-only."""
-    tags: Optional[Dict[str, str]] = rest_field()
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Evaluation's tags. Unlike properties, tags are fully mutable."""
     properties: Optional[Dict[str, str]] = rest_field(visibility=["read", "create"])
     """Evaluation's properties. Unlike tags, properties are add-only. Once added, a property cannot be
@@ -1121,7 +1254,7 @@ class EvaluationSchedule(_model_base.Model):
     """Enabled status of the evaluation. It is set by service and is read-only."""
     evaluators: Dict[str, "_models.EvaluatorConfiguration"] = rest_field(visibility=["read", "create"])
     """Evaluators to be used for the evaluation. Required."""
-    trigger: "_models.Trigger" = rest_field()
+    trigger: "_models.Trigger" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Trigger for the evaluation. Required."""
 
     @overload
@@ -1147,9 +1280,50 @@ class EvaluationSchedule(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class EvaluationTarget(_model_base.Model):
+    """Target for the evaluation process.
+
+    :ivar system_message: System message related to the evaluation target. Required.
+    :vartype system_message: str
+    :ivar model_config: Model configuration for the evaluation. Required.
+    :vartype model_config: ~azure.ai.projects.models.TargetModelConfig
+    :ivar model_params: A dictionary of parameters for the model.
+    :vartype model_params: dict[str, any]
+    """
+
+    system_message: str = rest_field(name="systemMessage", visibility=["read", "create", "update", "delete", "query"])
+    """System message related to the evaluation target. Required."""
+    model_config: "_models.TargetModelConfig" = rest_field(
+        name="modelConfig", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Model configuration for the evaluation. Required."""
+    model_params: Optional[Dict[str, Any]] = rest_field(
+        name="modelParams", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A dictionary of parameters for the model."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        system_message: str,
+        model_config: "_models.TargetModelConfig",
+        model_params: Optional[Dict[str, Any]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class EvaluatorConfiguration(_model_base.Model):
     """Evaluator Configuration.
-
 
     :ivar id: Identifier of the evaluator. Required.
     :vartype id: str
@@ -1159,11 +1333,15 @@ class EvaluatorConfiguration(_model_base.Model):
     :vartype data_mapping: dict[str, str]
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Identifier of the evaluator. Required."""
-    init_params: Optional[Dict[str, Any]] = rest_field(name="initParams")
+    init_params: Optional[Dict[str, Any]] = rest_field(
+        name="initParams", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Initialization parameters of the evaluator."""
-    data_mapping: Optional[Dict[str, str]] = rest_field(name="dataMapping")
+    data_mapping: Optional[Dict[str, str]] = rest_field(
+        name="dataMapping", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Data parameters of the evaluator."""
 
     @overload
@@ -1189,9 +1367,6 @@ class EvaluatorConfiguration(_model_base.Model):
 class FileDeletionStatus(_model_base.Model):
     """A status response from a file deletion operation.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: The ID of the resource specified for deletion. Required.
     :vartype id: str
     :ivar deleted: A value indicating whether deletion was successful. Required.
@@ -1200,11 +1375,11 @@ class FileDeletionStatus(_model_base.Model):
     :vartype object: str
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the resource specified for deletion. Required."""
-    deleted: bool = rest_field()
+    deleted: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A value indicating whether deletion was successful. Required."""
-    object: Literal["file"] = rest_field()
+    object: Literal["file"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The object type, which is always 'file'. Required. Default value is \"file\"."""
 
     @overload
@@ -1230,18 +1405,15 @@ class FileDeletionStatus(_model_base.Model):
 class FileListResponse(_model_base.Model):
     """The response data from a file list operation.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar object: The object type, which is always 'list'. Required. Default value is "list".
     :vartype object: str
     :ivar data: The files returned for the request. Required.
     :vartype data: list[~azure.ai.projects.models.OpenAIFile]
     """
 
-    object: Literal["list"] = rest_field()
+    object: Literal["list"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The object type, which is always 'list'. Required. Default value is \"list\"."""
-    data: List["_models.OpenAIFile"] = rest_field()
+    data: List["_models.OpenAIFile"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The files returned for the request. Required."""
 
     @overload
@@ -1266,16 +1438,15 @@ class FileListResponse(_model_base.Model):
 class FileSearchRankingOptions(_model_base.Model):
     """Ranking options for file search.
 
-
     :ivar ranker: File search ranker. Required.
     :vartype ranker: str
     :ivar score_threshold: Ranker search threshold. Required.
     :vartype score_threshold: float
     """
 
-    ranker: str = rest_field()
+    ranker: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """File search ranker. Required."""
-    score_threshold: float = rest_field()
+    score_threshold: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Ranker search threshold. Required."""
 
     @overload
@@ -1300,18 +1471,15 @@ class FileSearchRankingOptions(_model_base.Model):
 class FileSearchToolCallContent(_model_base.Model):
     """The file search result content object.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar type: The type of the content. Required. Default value is "text".
     :vartype type: str
     :ivar text: The text content of the file. Required.
     :vartype text: str
     """
 
-    type: Literal["text"] = rest_field()
+    type: Literal["text"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The type of the content. Required. Default value is \"text\"."""
-    text: str = rest_field()
+    text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The text content of the file. Required."""
 
     @overload
@@ -1336,7 +1504,6 @@ class FileSearchToolCallContent(_model_base.Model):
 class FileSearchToolDefinition(ToolDefinition, discriminator="file_search"):
     """The input definition information for a file search tool as used to configure an agent.
 
-
     :ivar type: The object type, which is always 'file_search'. Required. Default value is
      "file_search".
     :vartype type: str
@@ -1344,9 +1511,11 @@ class FileSearchToolDefinition(ToolDefinition, discriminator="file_search"):
     :vartype file_search: ~azure.ai.projects.models.FileSearchToolDefinitionDetails
     """
 
-    type: Literal["file_search"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["file_search"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'file_search'. Required. Default value is \"file_search\"."""
-    file_search: Optional["_models.FileSearchToolDefinitionDetails"] = rest_field()
+    file_search: Optional["_models.FileSearchToolDefinitionDetails"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Options overrides for the file search tool."""
 
     @overload
@@ -1381,13 +1550,15 @@ class FileSearchToolDefinitionDetails(_model_base.Model):
     :vartype ranking_options: ~azure.ai.projects.models.FileSearchRankingOptions
     """
 
-    max_num_results: Optional[int] = rest_field()
+    max_num_results: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The maximum number of results the file search tool should output. The default is 20 for gpt-4*
      models and 5 for gpt-3.5-turbo. This number should be between 1 and 50 inclusive.
      
      Note that the file search tool may output fewer than ``max_num_results`` results. See the file
      search tool documentation for more information."""
-    ranking_options: Optional["_models.FileSearchRankingOptions"] = rest_field()
+    ranking_options: Optional["_models.FileSearchRankingOptions"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Ranking options for file search."""
 
     @overload
@@ -1422,10 +1593,12 @@ class FileSearchToolResource(_model_base.Model):
     :vartype vector_stores: list[~azure.ai.projects.models.VectorStoreConfigurations]
     """
 
-    vector_store_ids: Optional[List[str]] = rest_field()
+    vector_store_ids: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the vector store attached to this agent. There can be a maximum of 1 vector
      store attached to the agent."""
-    vector_stores: Optional[List["_models.VectorStoreConfigurations"]] = rest_field()
+    vector_stores: Optional[List["_models.VectorStoreConfigurations"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The list of vector store configuration objects from Azure.
      This list is limited to one element.
      The only element of this list contains the list of azure asset IDs used by the search tool."""
@@ -1452,7 +1625,6 @@ class FileSearchToolResource(_model_base.Model):
 class FunctionDefinition(_model_base.Model):
     """The input definition information for a function.
 
-
     :ivar name: The name of the function to be called. Required.
     :vartype name: str
     :ivar description: A description of what the function does, used by the model to choose when
@@ -1463,12 +1635,12 @@ class FunctionDefinition(_model_base.Model):
     :vartype parameters: any
     """
 
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the function to be called. Required."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A description of what the function does, used by the model to choose when and how to call the
      function."""
-    parameters: Any = rest_field()
+    parameters: Any = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The parameters the functions accepts, described as a JSON Schema object. Required."""
 
     @overload
@@ -1494,12 +1666,11 @@ class FunctionDefinition(_model_base.Model):
 class FunctionName(_model_base.Model):
     """The function name that will be used, if using the ``function`` tool.
 
-
     :ivar name: The name of the function to call. Required.
     :vartype name: str
     """
 
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the function to call. Required."""
 
     @overload
@@ -1523,7 +1694,6 @@ class FunctionName(_model_base.Model):
 class FunctionToolDefinition(ToolDefinition, discriminator="function"):
     """The input definition information for a function tool as used to configure an agent.
 
-
     :ivar type: The object type, which is always 'function'. Required. Default value is "function".
     :vartype type: str
     :ivar function: The definition of the concrete function that the function tool should call.
@@ -1531,9 +1701,9 @@ class FunctionToolDefinition(ToolDefinition, discriminator="function"):
     :vartype function: ~azure.ai.projects.models.FunctionDefinition
     """
 
-    type: Literal["function"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["function"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'function'. Required. Default value is \"function\"."""
-    function: "_models.FunctionDefinition" = rest_field()
+    function: "_models.FunctionDefinition" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The definition of the concrete function that the function tool should call. Required."""
 
     @overload
@@ -1557,7 +1727,6 @@ class FunctionToolDefinition(ToolDefinition, discriminator="function"):
 class GetAppInsightsResponse(_model_base.Model):
     """Response from getting properties of the Application Insights resource.
 
-
     :ivar id: A unique identifier for the resource. Required.
     :vartype id: str
     :ivar name: The name of the resource. Required.
@@ -1566,11 +1735,13 @@ class GetAppInsightsResponse(_model_base.Model):
     :vartype properties: ~azure.ai.projects.models._models.AppInsightsProperties
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A unique identifier for the resource. Required."""
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the resource. Required."""
-    properties: "_models._models.AppInsightsProperties" = rest_field()
+    properties: "_models._models.AppInsightsProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The properties of the resource. Required."""
 
     @overload
@@ -1596,7 +1767,6 @@ class GetAppInsightsResponse(_model_base.Model):
 class GetConnectionResponse(_model_base.Model):
     """Response from the listSecrets operation.
 
-
     :ivar id: A unique identifier for the connection. Required.
     :vartype id: str
     :ivar name: The name of the resource. Required.
@@ -1605,11 +1775,13 @@ class GetConnectionResponse(_model_base.Model):
     :vartype properties: ~azure.ai.projects.models._models.InternalConnectionProperties
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A unique identifier for the connection. Required."""
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the resource. Required."""
-    properties: "_models._models.InternalConnectionProperties" = rest_field()
+    properties: "_models._models.InternalConnectionProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The properties of the resource. Required."""
 
     @overload
@@ -1635,7 +1807,6 @@ class GetConnectionResponse(_model_base.Model):
 class GetWorkspaceResponse(_model_base.Model):
     """Response from the Workspace - Get operation.
 
-
     :ivar id: A unique identifier for the resource. Required.
     :vartype id: str
     :ivar name: The name of the resource. Required.
@@ -1644,11 +1815,13 @@ class GetWorkspaceResponse(_model_base.Model):
     :vartype properties: ~azure.ai.projects.models._models.WorkspaceProperties
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A unique identifier for the resource. Required."""
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the resource. Required."""
-    properties: "_models._models.WorkspaceProperties" = rest_field()
+    properties: "_models._models.WorkspaceProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The properties of the resource. Required."""
 
     @overload
@@ -1674,14 +1847,15 @@ class GetWorkspaceResponse(_model_base.Model):
 class IncompleteRunDetails(_model_base.Model):
     """Details on why the run is incomplete. Will be ``null`` if the run is not incomplete.
 
-
     :ivar reason: The reason why the run is incomplete. This indicates which specific token limit
      was reached during the run. Required. Known values are: "max_completion_tokens" and
      "max_prompt_tokens".
     :vartype reason: str or ~azure.ai.projects.models.IncompleteDetailsReason
     """
 
-    reason: Union[str, "_models.IncompleteDetailsReason"] = rest_field()
+    reason: Union[str, "_models.IncompleteDetailsReason"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The reason why the run is incomplete. This indicates which specific token limit was reached
      during the run. Required. Known values are: \"max_completion_tokens\" and
      \"max_prompt_tokens\"."""
@@ -1704,67 +1878,36 @@ class IncompleteRunDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class IndexResource(_model_base.Model):
-    """A Index resource.
-
-
-    :ivar index_connection_id: An index connection id in an IndexResource attached to this agent.
-     Required.
-    :vartype index_connection_id: str
-    :ivar index_name: The name of an index in an IndexResource attached to this agent. Required.
-    :vartype index_name: str
-    """
-
-    index_connection_id: str = rest_field()
-    """An index connection id in an IndexResource attached to this agent. Required."""
-    index_name: str = rest_field()
-    """The name of an index in an IndexResource attached to this agent. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        index_connection_id: str,
-        index_name: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class InternalConnectionProperties(_model_base.Model):
     """Connection properties.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     InternalConnectionPropertiesAADAuth, InternalConnectionPropertiesApiKeyAuth,
-    InternalConnectionPropertiesNoAuth, InternalConnectionPropertiesSASAuth
-
+    InternalConnectionPropertiesCustomAuth, InternalConnectionPropertiesNoAuth,
+    InternalConnectionPropertiesSASAuth
 
     :ivar auth_type: Authentication type of the connection target. Required. Known values are:
-     "ApiKey", "AAD", "SAS", and "None".
+     "ApiKey", "AAD", "SAS", "CustomKeys", and "None".
     :vartype auth_type: str or ~azure.ai.projects.models.AuthenticationType
     :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
-     "Serverless", "AzureBlob", "AIServices", and "CognitiveSearch".
+     "Serverless", "AzureBlob", "AIServices", "CognitiveSearch", "ApiKey", "CustomKeys", and
+     "CognitiveService".
     :vartype category: str or ~azure.ai.projects.models.ConnectionType
     :ivar target: The connection URL to be used for this service. Required.
     :vartype target: str
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    auth_type: str = rest_discriminator(name="authType")
+    auth_type: str = rest_discriminator(name="authType", visibility=["read", "create", "update", "delete", "query"])
     """Authentication type of the connection target. Required. Known values are: \"ApiKey\", \"AAD\",
-     \"SAS\", and \"None\"."""
-    category: Union[str, "_models.ConnectionType"] = rest_field()
+     \"SAS\", \"CustomKeys\", and \"None\"."""
+    category: Union[str, "_models.ConnectionType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Category of the connection. Required. Known values are: \"AzureOpenAI\", \"Serverless\",
-     \"AzureBlob\", \"AIServices\", and \"CognitiveSearch\"."""
-    target: str = rest_field()
+     \"AzureBlob\", \"AIServices\", \"CognitiveSearch\", \"ApiKey\", \"CustomKeys\", and
+     \"CognitiveService\"."""
+    target: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The connection URL to be used for this service. Required."""
 
     @overload
@@ -1788,12 +1931,11 @@ class InternalConnectionProperties(_model_base.Model):
 
 
 class InternalConnectionPropertiesAADAuth(InternalConnectionProperties, discriminator="AAD"):
-    """Connection properties for connections with AAD authentication (aka ``Entra ID passthrough``\\
-    ).
-
+    """Connection properties for connections with AAD authentication (aka ``Entra ID passthrough``).
 
     :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
-     "Serverless", "AzureBlob", "AIServices", and "CognitiveSearch".
+     "Serverless", "AzureBlob", "AIServices", "CognitiveSearch", "ApiKey", "CustomKeys", and
+     "CognitiveService".
     :vartype category: str or ~azure.ai.projects.models.ConnectionType
     :ivar target: The connection URL to be used for this service. Required.
     :vartype target: str
@@ -1802,7 +1944,7 @@ class InternalConnectionPropertiesAADAuth(InternalConnectionProperties, discrimi
     :vartype auth_type: str or ~azure.ai.projects.models.ENTRA_ID
     """
 
-    auth_type: Literal[AuthenticationType.ENTRA_ID] = rest_discriminator(name="authType")  # type: ignore
+    auth_type: Literal[AuthenticationType.ENTRA_ID] = rest_discriminator(name="authType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Authentication type of the connection target. Required. Entra ID authentication (formerly known
      as AAD)"""
 
@@ -1828,9 +1970,9 @@ class InternalConnectionPropertiesAADAuth(InternalConnectionProperties, discrimi
 class InternalConnectionPropertiesApiKeyAuth(InternalConnectionProperties, discriminator="ApiKey"):
     """Connection properties for connections with API key authentication.
 
-
     :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
-     "Serverless", "AzureBlob", "AIServices", and "CognitiveSearch".
+     "Serverless", "AzureBlob", "AIServices", "CognitiveSearch", "ApiKey", "CustomKeys", and
+     "CognitiveService".
     :vartype category: str or ~azure.ai.projects.models.ConnectionType
     :ivar target: The connection URL to be used for this service. Required.
     :vartype target: str
@@ -1840,9 +1982,11 @@ class InternalConnectionPropertiesApiKeyAuth(InternalConnectionProperties, discr
     :vartype credentials: ~azure.ai.projects.models._models.CredentialsApiKeyAuth
     """
 
-    auth_type: Literal[AuthenticationType.API_KEY] = rest_discriminator(name="authType")  # type: ignore
+    auth_type: Literal[AuthenticationType.API_KEY] = rest_discriminator(name="authType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Authentication type of the connection target. Required. API Key authentication"""
-    credentials: "_models._models.CredentialsApiKeyAuth" = rest_field()
+    credentials: "_models._models.CredentialsApiKeyAuth" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Credentials will only be present for authType=ApiKey. Required."""
 
     @overload
@@ -1865,12 +2009,47 @@ class InternalConnectionPropertiesApiKeyAuth(InternalConnectionProperties, discr
         super().__init__(*args, auth_type=AuthenticationType.API_KEY, **kwargs)
 
 
+class InternalConnectionPropertiesCustomAuth(InternalConnectionProperties, discriminator="CustomKeys"):
+    """Connection properties for connections with Custom authentication.
+
+    :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
+     "Serverless", "AzureBlob", "AIServices", "CognitiveSearch", "ApiKey", "CustomKeys", and
+     "CognitiveService".
+    :vartype category: str or ~azure.ai.projects.models.ConnectionType
+    :ivar target: The connection URL to be used for this service. Required.
+    :vartype target: str
+    :ivar auth_type: Authentication type of the connection target. Required. Custom authentication
+    :vartype auth_type: str or ~azure.ai.projects.models.CUSTOM
+    """
+
+    auth_type: Literal[AuthenticationType.CUSTOM] = rest_discriminator(name="authType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Authentication type of the connection target. Required. Custom authentication"""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        category: Union[str, "_models.ConnectionType"],
+        target: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, auth_type=AuthenticationType.CUSTOM, **kwargs)
+
+
 class InternalConnectionPropertiesNoAuth(InternalConnectionProperties, discriminator="None"):
     """Connection properties for connections with no authentication.
 
-
     :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
-     "Serverless", "AzureBlob", "AIServices", and "CognitiveSearch".
+     "Serverless", "AzureBlob", "AIServices", "CognitiveSearch", "ApiKey", "CustomKeys", and
+     "CognitiveService".
     :vartype category: str or ~azure.ai.projects.models.ConnectionType
     :ivar target: The connection URL to be used for this service. Required.
     :vartype target: str
@@ -1878,7 +2057,7 @@ class InternalConnectionPropertiesNoAuth(InternalConnectionProperties, discrimin
     :vartype auth_type: str or ~azure.ai.projects.models.NONE
     """
 
-    auth_type: Literal[AuthenticationType.NONE] = rest_discriminator(name="authType")  # type: ignore
+    auth_type: Literal[AuthenticationType.NONE] = rest_discriminator(name="authType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Authentication type of the connection target. Required. No authentication"""
 
     @overload
@@ -1903,9 +2082,9 @@ class InternalConnectionPropertiesNoAuth(InternalConnectionProperties, discrimin
 class InternalConnectionPropertiesSASAuth(InternalConnectionProperties, discriminator="SAS"):
     """Connection properties for connections with SAS authentication.
 
-
     :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
-     "Serverless", "AzureBlob", "AIServices", and "CognitiveSearch".
+     "Serverless", "AzureBlob", "AIServices", "CognitiveSearch", "ApiKey", "CustomKeys", and
+     "CognitiveService".
     :vartype category: str or ~azure.ai.projects.models.ConnectionType
     :ivar target: The connection URL to be used for this service. Required.
     :vartype target: str
@@ -1916,10 +2095,12 @@ class InternalConnectionPropertiesSASAuth(InternalConnectionProperties, discrimi
     :vartype credentials: ~azure.ai.projects.models._models.CredentialsSASAuth
     """
 
-    auth_type: Literal[AuthenticationType.SAS] = rest_discriminator(name="authType")  # type: ignore
+    auth_type: Literal[AuthenticationType.SAS] = rest_discriminator(name="authType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Authentication type of the connection target. Required. Shared Access Signature (SAS)
      authentication"""
-    credentials: "_models._models.CredentialsSASAuth" = rest_field()
+    credentials: "_models._models.CredentialsSASAuth" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Credentials will only be present for authType=ApiKey. Required."""
 
     @overload
@@ -1945,12 +2126,13 @@ class InternalConnectionPropertiesSASAuth(InternalConnectionProperties, discrimi
 class ListConnectionsResponse(_model_base.Model):
     """Response from the list operation.
 
-
     :ivar value: A list of connection list secrets. Required.
     :vartype value: list[~azure.ai.projects.models._models.GetConnectionResponse]
     """
 
-    value: List["_models._models.GetConnectionResponse"] = rest_field()
+    value: List["_models._models.GetConnectionResponse"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of connection list secrets. Required."""
 
     @overload
@@ -1971,9 +2153,46 @@ class ListConnectionsResponse(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class MAASModelConfig(TargetModelConfig, discriminator="MAAS"):
+    """MaaS model configuration. The API version would be selected by the service for querying the
+    model.
+
+    :ivar type: Required. Default value is "MAAS".
+    :vartype type: str
+    :ivar azure_endpoint: Endpoint URL for MAAS model. Required.
+    :vartype azure_endpoint: str
+    :ivar api_key: API Key for MAAS model. Required.
+    :vartype api_key: str
+    """
+
+    type: Literal["MAAS"] = rest_discriminator(name="type", visibility=["read"])  # type: ignore
+    """Required. Default value is \"MAAS\"."""
+    azure_endpoint: str = rest_field(name="azureEndpoint", visibility=["read", "create", "update", "delete", "query"])
+    """Endpoint URL for MAAS model. Required."""
+    api_key: str = rest_field(name="apiKey", visibility=["read", "create", "update", "delete", "query"])
+    """API Key for MAAS model. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        azure_endpoint: str,
+        api_key: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="MAAS", **kwargs)
+
+
 class MessageAttachment(_model_base.Model):
     """This describes to which tools a file has been attached.
-
 
     :ivar file_id: The ID of the file to attach to the message.
     :vartype file_id: str
@@ -1984,11 +2203,15 @@ class MessageAttachment(_model_base.Model):
      ~azure.ai.projects.models.FileSearchToolDefinition]
     """
 
-    file_id: Optional[str] = rest_field()
+    file_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the file to attach to the message."""
-    data_source: Optional["_models.VectorStoreDataSource"] = rest_field()
+    data_source: Optional["_models.VectorStoreDataSource"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Azure asset ID."""
-    tools: List["_types.MessageAttachmentToolDefinition"] = rest_field()
+    tools: List["_types.MessageAttachmentToolDefinition"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The tools to add to this file. Required."""
 
     @overload
@@ -2017,13 +2240,12 @@ class MessageContent(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     MessageImageFileContent, MessageTextContent
 
-
     :ivar type: The object type. Required. Default value is None.
     :vartype type: str
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    type: str = rest_discriminator(name="type")
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The object type. Required. Default value is None."""
 
     @overload
@@ -2047,7 +2269,6 @@ class MessageContent(_model_base.Model):
 class MessageDelta(_model_base.Model):
     """Represents the typed 'delta' payload within a streaming message delta chunk.
 
-
     :ivar role: The entity that produced the message. Required. Known values are: "user" and
      "assistant".
     :vartype role: str or ~azure.ai.projects.models.MessageRole
@@ -2055,9 +2276,11 @@ class MessageDelta(_model_base.Model):
     :vartype content: list[~azure.ai.projects.models.MessageDeltaContent]
     """
 
-    role: Union[str, "_models.MessageRole"] = rest_field()
+    role: Union[str, "_models.MessageRole"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The entity that produced the message. Required. Known values are: \"user\" and \"assistant\"."""
-    content: List["_models.MessageDeltaContent"] = rest_field()
+    content: List["_models.MessageDeltaContent"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The content of the message as an array of text and/or images. Required."""
 
     @overload
@@ -2082,9 +2305,6 @@ class MessageDelta(_model_base.Model):
 class MessageDeltaChunk(_model_base.Model):
     """Represents a message delta i.e. any changed fields on a message during streaming.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: The identifier of the message, which can be referenced in API endpoints. Required.
     :vartype id: str
     :ivar object: The object type, which is always ``thread.message.delta``. Required. Default
@@ -2094,12 +2314,12 @@ class MessageDeltaChunk(_model_base.Model):
     :vartype delta: ~azure.ai.projects.models.MessageDelta
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The identifier of the message, which can be referenced in API endpoints. Required."""
-    object: Literal["thread.message.delta"] = rest_field()
+    object: Literal["thread.message.delta"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The object type, which is always ``thread.message.delta``. Required. Default value is
      \"thread.message.delta\"."""
-    delta: "_models.MessageDelta" = rest_field()
+    delta: "_models.MessageDelta" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The delta containing the fields that have changed on the Message. Required."""
 
     @overload
@@ -2128,7 +2348,6 @@ class MessageDeltaContent(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     MessageDeltaImageFileContent, MessageDeltaTextContent
 
-
     :ivar index: The index of the content part of the message. Required.
     :vartype index: int
     :ivar type: The type of content for this content part. Required. Default value is None.
@@ -2136,9 +2355,9 @@ class MessageDeltaContent(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    index: int = rest_field()
+    index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The index of the content part of the message. Required."""
-    type: str = rest_discriminator(name="type")
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The type of content for this content part. Required. Default value is None."""
 
     @overload
@@ -2163,7 +2382,6 @@ class MessageDeltaContent(_model_base.Model):
 class MessageDeltaImageFileContent(MessageDeltaContent, discriminator="image_file"):
     """Represents a streamed image file content part within a streaming message delta chunk.
 
-
     :ivar index: The index of the content part of the message. Required.
     :vartype index: int
     :ivar type: The type of content for this content part, which is always "image_file.". Required.
@@ -2173,10 +2391,12 @@ class MessageDeltaImageFileContent(MessageDeltaContent, discriminator="image_fil
     :vartype image_file: ~azure.ai.projects.models.MessageDeltaImageFileContentObject
     """
 
-    type: Literal["image_file"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["image_file"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of content for this content part, which is always \"image_file.\". Required. Default
      value is \"image_file\"."""
-    image_file: Optional["_models.MessageDeltaImageFileContentObject"] = rest_field()
+    image_file: Optional["_models.MessageDeltaImageFileContentObject"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The image_file data."""
 
     @overload
@@ -2205,7 +2425,7 @@ class MessageDeltaImageFileContentObject(_model_base.Model):
     :vartype file_id: str
     """
 
-    file_id: Optional[str] = rest_field()
+    file_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The file ID of the image in the message content."""
 
     @overload
@@ -2230,8 +2450,8 @@ class MessageDeltaTextAnnotation(_model_base.Model):
     """The abstract base representation of a streamed text content part's text annotation.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    MessageDeltaTextFileCitationAnnotation, MessageDeltaTextFilePathAnnotation
-
+    MessageDeltaTextFileCitationAnnotation, MessageDeltaTextFilePathAnnotation,
+    MessageDeltaTextUrlCitationAnnotation
 
     :ivar index: The index of the annotation within a text content part. Required.
     :vartype index: int
@@ -2240,9 +2460,9 @@ class MessageDeltaTextAnnotation(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    index: int = rest_field()
+    index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The index of the annotation within a text content part. Required."""
-    type: str = rest_discriminator(name="type")
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The type of the text content annotation. Required. Default value is None."""
 
     @overload
@@ -2267,7 +2487,6 @@ class MessageDeltaTextAnnotation(_model_base.Model):
 class MessageDeltaTextContent(MessageDeltaContent, discriminator="text"):
     """Represents a streamed text content part within a streaming message delta chunk.
 
-
     :ivar index: The index of the content part of the message. Required.
     :vartype index: int
     :ivar type: The type of content for this content part, which is always "text.". Required.
@@ -2277,10 +2496,12 @@ class MessageDeltaTextContent(MessageDeltaContent, discriminator="text"):
     :vartype text: ~azure.ai.projects.models.MessageDeltaTextContentObject
     """
 
-    type: Literal["text"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["text"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of content for this content part, which is always \"text.\". Required. Default value
      is \"text\"."""
-    text: Optional["_models.MessageDeltaTextContentObject"] = rest_field()
+    text: Optional["_models.MessageDeltaTextContentObject"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The text content details."""
 
     @overload
@@ -2311,9 +2532,11 @@ class MessageDeltaTextContentObject(_model_base.Model):
     :vartype annotations: list[~azure.ai.projects.models.MessageDeltaTextAnnotation]
     """
 
-    value: Optional[str] = rest_field()
+    value: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The data that makes up the text."""
-    annotations: Optional[List["_models.MessageDeltaTextAnnotation"]] = rest_field()
+    annotations: Optional[List["_models.MessageDeltaTextAnnotation"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Annotations for the text."""
 
     @overload
@@ -2338,7 +2561,6 @@ class MessageDeltaTextContentObject(_model_base.Model):
 class MessageDeltaTextFileCitationAnnotation(MessageDeltaTextAnnotation, discriminator="file_citation"):
     """Represents a streamed file citation applied to a streaming text content part.
 
-
     :ivar index: The index of the annotation within a text content part. Required.
     :vartype index: int
     :ivar type: The type of the text content annotation, which is always "file_citation.".
@@ -2354,16 +2576,18 @@ class MessageDeltaTextFileCitationAnnotation(MessageDeltaTextAnnotation, discrim
     :vartype end_index: int
     """
 
-    type: Literal["file_citation"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["file_citation"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the text content annotation, which is always \"file_citation.\". Required. Default
      value is \"file_citation\"."""
-    file_citation: Optional["_models.MessageDeltaTextFileCitationAnnotationObject"] = rest_field()
+    file_citation: Optional["_models.MessageDeltaTextFileCitationAnnotationObject"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The file citation information."""
-    text: Optional[str] = rest_field()
+    text: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The text in the message content that needs to be replaced."""
-    start_index: Optional[int] = rest_field()
+    start_index: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The start index of this annotation in the content text."""
-    end_index: Optional[int] = rest_field()
+    end_index: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The end index of this annotation in the content text."""
 
     @overload
@@ -2397,9 +2621,9 @@ class MessageDeltaTextFileCitationAnnotationObject(_model_base.Model):  # pylint
     :vartype quote: str
     """
 
-    file_id: Optional[str] = rest_field()
+    file_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the specific file the citation is from."""
-    quote: Optional[str] = rest_field()
+    quote: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The specific quote in the cited file."""
 
     @overload
@@ -2424,7 +2648,6 @@ class MessageDeltaTextFileCitationAnnotationObject(_model_base.Model):  # pylint
 class MessageDeltaTextFilePathAnnotation(MessageDeltaTextAnnotation, discriminator="file_path"):
     """Represents a streamed file path annotation applied to a streaming text content part.
 
-
     :ivar index: The index of the annotation within a text content part. Required.
     :vartype index: int
     :ivar type: The type of the text content annotation, which is always "file_path.". Required.
@@ -2440,16 +2663,18 @@ class MessageDeltaTextFilePathAnnotation(MessageDeltaTextAnnotation, discriminat
     :vartype text: str
     """
 
-    type: Literal["file_path"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["file_path"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the text content annotation, which is always \"file_path.\". Required. Default
      value is \"file_path\"."""
-    file_path: Optional["_models.MessageDeltaTextFilePathAnnotationObject"] = rest_field()
+    file_path: Optional["_models.MessageDeltaTextFilePathAnnotationObject"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The file path information."""
-    start_index: Optional[int] = rest_field()
+    start_index: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The start index of this annotation in the content text."""
-    end_index: Optional[int] = rest_field()
+    end_index: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The end index of this annotation in the content text."""
-    text: Optional[str] = rest_field()
+    text: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The text in the message content that needs to be replaced."""
 
     @overload
@@ -2482,7 +2707,7 @@ class MessageDeltaTextFilePathAnnotationObject(_model_base.Model):
     :vartype file_id: str
     """
 
-    file_id: Optional[str] = rest_field()
+    file_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The file ID for the annotation."""
 
     @overload
@@ -2503,9 +2728,90 @@ class MessageDeltaTextFilePathAnnotationObject(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class MessageDeltaTextUrlCitationAnnotation(MessageDeltaTextAnnotation, discriminator="url_citation"):
+    """A citation within the message that points to a specific URL associated with the message.
+    Generated when the agent uses tools such as 'bing_grounding' to search the Internet.
+
+    :ivar index: The index of the annotation within a text content part. Required.
+    :vartype index: int
+    :ivar type: The object type, which is always 'url_citation'. Required. Default value is
+     "url_citation".
+    :vartype type: str
+    :ivar url_citation: The details of the URL citation. Required.
+    :vartype url_citation: ~azure.ai.projects.models.MessageDeltaTextUrlCitationDetails
+    :ivar start_index: The first text index associated with this text annotation.
+    :vartype start_index: int
+    :ivar end_index: The last text index associated with this text annotation.
+    :vartype end_index: int
+    """
+
+    type: Literal["url_citation"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'url_citation'. Required. Default value is \"url_citation\"."""
+    url_citation: "_models.MessageDeltaTextUrlCitationDetails" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The details of the URL citation. Required."""
+    start_index: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The first text index associated with this text annotation."""
+    end_index: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The last text index associated with this text annotation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index: int,
+        url_citation: "_models.MessageDeltaTextUrlCitationDetails",
+        start_index: Optional[int] = None,
+        end_index: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="url_citation", **kwargs)
+
+
+class MessageDeltaTextUrlCitationDetails(_model_base.Model):
+    """A representation of a URL citation, as used in text thread message content.
+
+    :ivar url: The URL associated with this citation. Required.
+    :vartype url: str
+    :ivar title: The title of the URL.
+    :vartype title: str
+    """
+
+    url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The URL associated with this citation. Required."""
+    title: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The title of the URL."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        url: str,
+        title: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class MessageImageFileContent(MessageContent, discriminator="image_file"):
     """A representation of image file content in a thread message.
-
 
     :ivar type: The object type, which is always 'image_file'. Required. Default value is
      "image_file".
@@ -2514,9 +2820,11 @@ class MessageImageFileContent(MessageContent, discriminator="image_file"):
     :vartype image_file: ~azure.ai.projects.models.MessageImageFileDetails
     """
 
-    type: Literal["image_file"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["image_file"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'image_file'. Required. Default value is \"image_file\"."""
-    image_file: "_models.MessageImageFileDetails" = rest_field()
+    image_file: "_models.MessageImageFileDetails" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The image file for this thread message content item. Required."""
 
     @overload
@@ -2540,12 +2848,11 @@ class MessageImageFileContent(MessageContent, discriminator="image_file"):
 class MessageImageFileDetails(_model_base.Model):
     """An image reference, as represented in thread message content.
 
-
     :ivar file_id: The ID for the file associated with this image. Required.
     :vartype file_id: str
     """
 
-    file_id: str = rest_field()
+    file_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID for the file associated with this image. Required."""
 
     @overload
@@ -2569,14 +2876,15 @@ class MessageImageFileDetails(_model_base.Model):
 class MessageIncompleteDetails(_model_base.Model):
     """Information providing additional detail about a message entering an incomplete status.
 
-
     :ivar reason: The provided reason describing why the message was marked as incomplete.
      Required. Known values are: "content_filter", "max_tokens", "run_cancelled", "run_failed", and
      "run_expired".
     :vartype reason: str or ~azure.ai.projects.models.MessageIncompleteDetailsReason
     """
 
-    reason: Union[str, "_models.MessageIncompleteDetailsReason"] = rest_field()
+    reason: Union[str, "_models.MessageIncompleteDetailsReason"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The provided reason describing why the message was marked as incomplete. Required. Known values
      are: \"content_filter\", \"max_tokens\", \"run_cancelled\", \"run_failed\", and
      \"run_expired\"."""
@@ -2603,8 +2911,8 @@ class MessageTextAnnotation(_model_base.Model):
     """An abstract representation of an annotation to text thread message content.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    MessageTextFileCitationAnnotation, MessageTextFilePathAnnotation
-
+    MessageTextFileCitationAnnotation, MessageTextFilePathAnnotation,
+    MessageTextUrlCitationAnnotation
 
     :ivar type: The object type. Required. Default value is None.
     :vartype type: str
@@ -2613,9 +2921,9 @@ class MessageTextAnnotation(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    type: str = rest_discriminator(name="type")
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The object type. Required. Default value is None."""
-    text: str = rest_field()
+    text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The textual content associated with this text annotation item. Required."""
 
     @overload
@@ -2640,16 +2948,15 @@ class MessageTextAnnotation(_model_base.Model):
 class MessageTextContent(MessageContent, discriminator="text"):
     """A representation of a textual item of thread message content.
 
-
     :ivar type: The object type, which is always 'text'. Required. Default value is "text".
     :vartype type: str
     :ivar text: The text and associated annotations for this thread message content item. Required.
     :vartype text: ~azure.ai.projects.models.MessageTextDetails
     """
 
-    type: Literal["text"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["text"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'text'. Required. Default value is \"text\"."""
-    text: "_models.MessageTextDetails" = rest_field()
+    text: "_models.MessageTextDetails" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The text and associated annotations for this thread message content item. Required."""
 
     @overload
@@ -2673,16 +2980,17 @@ class MessageTextContent(MessageContent, discriminator="text"):
 class MessageTextDetails(_model_base.Model):
     """The text and associated annotations for a single item of agent thread message content.
 
-
     :ivar value: The text data. Required.
     :vartype value: str
     :ivar annotations: A list of annotations associated with this text. Required.
     :vartype annotations: list[~azure.ai.projects.models.MessageTextAnnotation]
     """
 
-    value: str = rest_field()
+    value: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The text data. Required."""
-    annotations: List["_models.MessageTextAnnotation"] = rest_field()
+    annotations: List["_models.MessageTextAnnotation"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of annotations associated with this text. Required."""
 
     @overload
@@ -2709,7 +3017,6 @@ class MessageTextFileCitationAnnotation(MessageTextAnnotation, discriminator="fi
     with the agent or the message. Generated when the agent uses the 'file_search' tool to search
     files.
 
-
     :ivar text: The textual content associated with this text annotation item. Required.
     :vartype text: str
     :ivar type: The object type, which is always 'file_citation'. Required. Default value is
@@ -2725,14 +3032,16 @@ class MessageTextFileCitationAnnotation(MessageTextAnnotation, discriminator="fi
     :vartype end_index: int
     """
 
-    type: Literal["file_citation"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["file_citation"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'file_citation'. Required. Default value is \"file_citation\"."""
-    file_citation: "_models.MessageTextFileCitationDetails" = rest_field()
+    file_citation: "_models.MessageTextFileCitationDetails" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A citation within the message that points to a specific quote from a specific file.
      Generated when the agent uses the \"file_search\" tool to search files. Required."""
-    start_index: Optional[int] = rest_field()
+    start_index: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The first text index associated with this text annotation."""
-    end_index: Optional[int] = rest_field()
+    end_index: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The last text index associated with this text annotation."""
 
     @overload
@@ -2760,16 +3069,15 @@ class MessageTextFileCitationDetails(_model_base.Model):
     """A representation of a file-based text citation, as used in a file-based annotation of text
     thread message content.
 
-
     :ivar file_id: The ID of the file associated with this citation. Required.
     :vartype file_id: str
     :ivar quote: The specific quote cited in the associated file. Required.
     :vartype quote: str
     """
 
-    file_id: str = rest_field()
+    file_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the file associated with this citation. Required."""
-    quote: str = rest_field()
+    quote: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The specific quote cited in the associated file. Required."""
 
     @overload
@@ -2794,7 +3102,6 @@ class MessageTextFileCitationDetails(_model_base.Model):
 class MessageTextFilePathAnnotation(MessageTextAnnotation, discriminator="file_path"):
     """A citation within the message that points to a file located at a specific path.
 
-
     :ivar text: The textual content associated with this text annotation item. Required.
     :vartype text: str
     :ivar type: The object type, which is always 'file_path'. Required. Default value is
@@ -2809,14 +3116,16 @@ class MessageTextFilePathAnnotation(MessageTextAnnotation, discriminator="file_p
     :vartype end_index: int
     """
 
-    type: Literal["file_path"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["file_path"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'file_path'. Required. Default value is \"file_path\"."""
-    file_path: "_models.MessageTextFilePathDetails" = rest_field()
+    file_path: "_models.MessageTextFilePathDetails" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A URL for the file that's generated when the agent used the code_interpreter tool to generate a
      file. Required."""
-    start_index: Optional[int] = rest_field()
+    start_index: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The first text index associated with this text annotation."""
-    end_index: Optional[int] = rest_field()
+    end_index: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The last text index associated with this text annotation."""
 
     @overload
@@ -2843,12 +3152,11 @@ class MessageTextFilePathAnnotation(MessageTextAnnotation, discriminator="file_p
 class MessageTextFilePathDetails(_model_base.Model):
     """An encapsulation of an image file ID, as used by message image content.
 
-
     :ivar file_id: The ID of the specific file that the citation is from. Required.
     :vartype file_id: str
     """
 
-    file_id: str = rest_field()
+    file_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the specific file that the citation is from. Required."""
 
     @overload
@@ -2869,28 +3177,42 @@ class MessageTextFilePathDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MicrosoftFabricToolDefinition(ToolDefinition, discriminator="fabric_aiskill"):
-    """The input definition information for a Microsoft Fabric tool as used to configure an agent.
+class MessageTextUrlCitationAnnotation(MessageTextAnnotation, discriminator="url_citation"):
+    """A citation within the message that points to a specific URL associated with the message.
+    Generated when the agent uses tools such as 'bing_grounding' to search the Internet.
 
-
-    :ivar type: The object type, which is always 'fabric_aiskill'. Required. Default value is
-     "fabric_aiskill".
+    :ivar text: The textual content associated with this text annotation item. Required.
+    :vartype text: str
+    :ivar type: The object type, which is always 'url_citation'. Required. Default value is
+     "url_citation".
     :vartype type: str
-    :ivar fabric_aiskill: The list of connections used by the Microsoft Fabric tool. Required.
-    :vartype fabric_aiskill: ~azure.ai.projects.models.ToolConnectionList
+    :ivar url_citation: The details of the URL citation. Required.
+    :vartype url_citation: ~azure.ai.projects.models.MessageTextUrlCitationDetails
+    :ivar start_index: The first text index associated with this text annotation.
+    :vartype start_index: int
+    :ivar end_index: The last text index associated with this text annotation.
+    :vartype end_index: int
     """
 
-    type: Literal["fabric_aiskill"] = rest_discriminator(name="type")  # type: ignore
-    """The object type, which is always 'fabric_aiskill'. Required. Default value is
-     \"fabric_aiskill\"."""
-    fabric_aiskill: "_models.ToolConnectionList" = rest_field()
-    """The list of connections used by the Microsoft Fabric tool. Required."""
+    type: Literal["url_citation"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'url_citation'. Required. Default value is \"url_citation\"."""
+    url_citation: "_models.MessageTextUrlCitationDetails" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The details of the URL citation. Required."""
+    start_index: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The first text index associated with this text annotation."""
+    end_index: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The last text index associated with this text annotation."""
 
     @overload
     def __init__(
         self,
         *,
-        fabric_aiskill: "_models.ToolConnectionList",
+        text: str,
+        url_citation: "_models.MessageTextUrlCitationDetails",
+        start_index: Optional[int] = None,
+        end_index: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -2901,14 +3223,80 @@ class MicrosoftFabricToolDefinition(ToolDefinition, discriminator="fabric_aiskil
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="fabric_aiskill", **kwargs)
+        super().__init__(*args, type="url_citation", **kwargs)
+
+
+class MessageTextUrlCitationDetails(_model_base.Model):
+    """A representation of a URL citation, as used in text thread message content.
+
+    :ivar url: The URL associated with this citation. Required.
+    :vartype url: str
+    :ivar title: The title of the URL.
+    :vartype title: str
+    """
+
+    url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The URL associated with this citation. Required."""
+    title: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The title of the URL."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        url: str,
+        title: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MicrosoftFabricToolDefinition(ToolDefinition, discriminator="fabric_dataagent"):
+    """The input definition information for a Microsoft Fabric tool as used to configure an agent.
+
+    :ivar type: The object type, which is always 'fabric_dataagent'. Required. Default value is
+     "fabric_dataagent".
+    :vartype type: str
+    :ivar fabric_dataagent: The list of connections used by the Microsoft Fabric tool. Required.
+    :vartype fabric_dataagent: ~azure.ai.projects.models.ToolConnectionList
+    """
+
+    type: Literal["fabric_dataagent"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'fabric_dataagent'. Required. Default value is
+     \"fabric_dataagent\"."""
+    fabric_dataagent: "_models.ToolConnectionList" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of connections used by the Microsoft Fabric tool. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        fabric_dataagent: "_models.ToolConnectionList",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="fabric_dataagent", **kwargs)
 
 
 class OpenAIFile(_model_base.Model):
     """Represents an agent that can call the model and use tools.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar object: The object type, which is always 'file'. Required. Default value is "file".
     :vartype object: str
@@ -2932,25 +3320,29 @@ class OpenAIFile(_model_base.Model):
     :vartype status_details: str
     """
 
-    object: Literal["file"] = rest_field()
+    object: Literal["file"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The object type, which is always 'file'. Required. Default value is \"file\"."""
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The identifier, which can be referenced in API endpoints. Required."""
-    bytes: int = rest_field()
+    bytes: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The size of the file, in bytes. Required."""
-    filename: str = rest_field()
+    filename: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the file. Required."""
-    created_at: datetime.datetime = rest_field(format="unix-timestamp")
+    created_at: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
     """The Unix timestamp, in seconds, representing when this object was created. Required."""
-    purpose: Union[str, "_models.FilePurpose"] = rest_field()
+    purpose: Union[str, "_models.FilePurpose"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The intended purpose of a file. Required. Known values are: \"fine-tune\",
      \"fine-tune-results\", \"assistants\", \"assistants_output\", \"batch\", \"batch_output\", and
      \"vision\"."""
-    status: Optional[Union[str, "_models.FileState"]] = rest_field()
+    status: Optional[Union[str, "_models.FileState"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The state of the file. This field is available in Azure OpenAI only. Known values are:
      \"uploaded\", \"pending\", \"running\", \"processed\", \"error\", \"deleting\", and
      \"deleted\"."""
-    status_details: Optional[str] = rest_field()
+    status_details: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The error message with details in case processing of this file failed. This field is available
      in Azure OpenAI only."""
 
@@ -2982,9 +3374,6 @@ class OpenAIFile(_model_base.Model):
 class OpenAIPageableListOfAgent(_model_base.Model):
     """The response data for a requested list of items.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar object: The object type, which is always list. Required. Default value is "list".
     :vartype object: str
     :ivar data: The requested list of items. Required.
@@ -2998,15 +3387,15 @@ class OpenAIPageableListOfAgent(_model_base.Model):
     :vartype has_more: bool
     """
 
-    object: Literal["list"] = rest_field()
+    object: Literal["list"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The object type, which is always list. Required. Default value is \"list\"."""
-    data: List["_models.Agent"] = rest_field()
+    data: List["_models.Agent"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The requested list of items. Required."""
-    first_id: str = rest_field()
+    first_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The first ID represented in this list. Required."""
-    last_id: str = rest_field()
+    last_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The last ID represented in this list. Required."""
-    has_more: bool = rest_field()
+    has_more: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A value indicating whether there are additional values available not captured in this list.
      Required."""
 
@@ -3035,9 +3424,6 @@ class OpenAIPageableListOfAgent(_model_base.Model):
 class OpenAIPageableListOfRunStep(_model_base.Model):
     """The response data for a requested list of items.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar object: The object type, which is always list. Required. Default value is "list".
     :vartype object: str
     :ivar data: The requested list of items. Required.
@@ -3051,15 +3437,15 @@ class OpenAIPageableListOfRunStep(_model_base.Model):
     :vartype has_more: bool
     """
 
-    object: Literal["list"] = rest_field()
+    object: Literal["list"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The object type, which is always list. Required. Default value is \"list\"."""
-    data: List["_models.RunStep"] = rest_field()
+    data: List["_models.RunStep"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The requested list of items. Required."""
-    first_id: str = rest_field()
+    first_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The first ID represented in this list. Required."""
-    last_id: str = rest_field()
+    last_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The last ID represented in this list. Required."""
-    has_more: bool = rest_field()
+    has_more: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A value indicating whether there are additional values available not captured in this list.
      Required."""
 
@@ -3088,9 +3474,6 @@ class OpenAIPageableListOfRunStep(_model_base.Model):
 class OpenAIPageableListOfThreadMessage(_model_base.Model):
     """The response data for a requested list of items.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar object: The object type, which is always list. Required. Default value is "list".
     :vartype object: str
     :ivar data: The requested list of items. Required.
@@ -3104,15 +3487,15 @@ class OpenAIPageableListOfThreadMessage(_model_base.Model):
     :vartype has_more: bool
     """
 
-    object: Literal["list"] = rest_field()
+    object: Literal["list"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The object type, which is always list. Required. Default value is \"list\"."""
-    data: List["_models.ThreadMessage"] = rest_field()
+    data: List["_models.ThreadMessage"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The requested list of items. Required."""
-    first_id: str = rest_field()
+    first_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The first ID represented in this list. Required."""
-    last_id: str = rest_field()
+    last_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The last ID represented in this list. Required."""
-    has_more: bool = rest_field()
+    has_more: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A value indicating whether there are additional values available not captured in this list.
      Required."""
 
@@ -3141,9 +3524,6 @@ class OpenAIPageableListOfThreadMessage(_model_base.Model):
 class OpenAIPageableListOfThreadRun(_model_base.Model):
     """The response data for a requested list of items.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar object: The object type, which is always list. Required. Default value is "list".
     :vartype object: str
     :ivar data: The requested list of items. Required.
@@ -3157,15 +3537,15 @@ class OpenAIPageableListOfThreadRun(_model_base.Model):
     :vartype has_more: bool
     """
 
-    object: Literal["list"] = rest_field()
+    object: Literal["list"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The object type, which is always list. Required. Default value is \"list\"."""
-    data: List["_models.ThreadRun"] = rest_field()
+    data: List["_models.ThreadRun"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The requested list of items. Required."""
-    first_id: str = rest_field()
+    first_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The first ID represented in this list. Required."""
-    last_id: str = rest_field()
+    last_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The last ID represented in this list. Required."""
-    has_more: bool = rest_field()
+    has_more: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A value indicating whether there are additional values available not captured in this list.
      Required."""
 
@@ -3194,9 +3574,6 @@ class OpenAIPageableListOfThreadRun(_model_base.Model):
 class OpenAIPageableListOfVectorStore(_model_base.Model):
     """The response data for a requested list of items.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar object: The object type, which is always list. Required. Default value is "list".
     :vartype object: str
     :ivar data: The requested list of items. Required.
@@ -3210,15 +3587,15 @@ class OpenAIPageableListOfVectorStore(_model_base.Model):
     :vartype has_more: bool
     """
 
-    object: Literal["list"] = rest_field()
+    object: Literal["list"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The object type, which is always list. Required. Default value is \"list\"."""
-    data: List["_models.VectorStore"] = rest_field()
+    data: List["_models.VectorStore"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The requested list of items. Required."""
-    first_id: str = rest_field()
+    first_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The first ID represented in this list. Required."""
-    last_id: str = rest_field()
+    last_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The last ID represented in this list. Required."""
-    has_more: bool = rest_field()
+    has_more: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A value indicating whether there are additional values available not captured in this list.
      Required."""
 
@@ -3247,9 +3624,6 @@ class OpenAIPageableListOfVectorStore(_model_base.Model):
 class OpenAIPageableListOfVectorStoreFile(_model_base.Model):
     """The response data for a requested list of items.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar object: The object type, which is always list. Required. Default value is "list".
     :vartype object: str
     :ivar data: The requested list of items. Required.
@@ -3263,15 +3637,15 @@ class OpenAIPageableListOfVectorStoreFile(_model_base.Model):
     :vartype has_more: bool
     """
 
-    object: Literal["list"] = rest_field()
+    object: Literal["list"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The object type, which is always list. Required. Default value is \"list\"."""
-    data: List["_models.VectorStoreFile"] = rest_field()
+    data: List["_models.VectorStoreFile"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The requested list of items. Required."""
-    first_id: str = rest_field()
+    first_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The first ID represented in this list. Required."""
-    last_id: str = rest_field()
+    last_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The last ID represented in this list. Required."""
-    has_more: bool = rest_field()
+    has_more: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A value indicating whether there are additional values available not captured in this list.
      Required."""
 
@@ -3303,14 +3677,13 @@ class OpenApiAuthDetails(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     OpenApiAnonymousAuthDetails, OpenApiConnectionAuthDetails, OpenApiManagedAuthDetails
 
-
     :ivar type: The type of authentication, must be anonymous/connection/managed_identity.
      Required. Known values are: "anonymous", "connection", and "managed_identity".
     :vartype type: str or ~azure.ai.projects.models.OpenApiAuthType
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    type: str = rest_discriminator(name="type")
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The type of authentication, must be anonymous/connection/managed_identity. Required. Known
      values are: \"anonymous\", \"connection\", and \"managed_identity\"."""
 
@@ -3335,12 +3708,11 @@ class OpenApiAuthDetails(_model_base.Model):
 class OpenApiAnonymousAuthDetails(OpenApiAuthDetails, discriminator="anonymous"):
     """Security details for OpenApi anonymous authentication.
 
-
     :ivar type: The object type, which is always 'anonymous'. Required.
     :vartype type: str or ~azure.ai.projects.models.ANONYMOUS
     """
 
-    type: Literal[OpenApiAuthType.ANONYMOUS] = rest_discriminator(name="type")  # type: ignore
+    type: Literal[OpenApiAuthType.ANONYMOUS] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'anonymous'. Required."""
 
     @overload
@@ -3362,16 +3734,17 @@ class OpenApiAnonymousAuthDetails(OpenApiAuthDetails, discriminator="anonymous")
 class OpenApiConnectionAuthDetails(OpenApiAuthDetails, discriminator="connection"):
     """Security details for OpenApi connection authentication.
 
-
     :ivar type: The object type, which is always 'connection'. Required.
     :vartype type: str or ~azure.ai.projects.models.CONNECTION
     :ivar security_scheme: Connection auth security details. Required.
     :vartype security_scheme: ~azure.ai.projects.models.OpenApiConnectionSecurityScheme
     """
 
-    type: Literal[OpenApiAuthType.CONNECTION] = rest_discriminator(name="type")  # type: ignore
+    type: Literal[OpenApiAuthType.CONNECTION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'connection'. Required."""
-    security_scheme: "_models.OpenApiConnectionSecurityScheme" = rest_field()
+    security_scheme: "_models.OpenApiConnectionSecurityScheme" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Connection auth security details. Required."""
 
     @overload
@@ -3395,12 +3768,11 @@ class OpenApiConnectionAuthDetails(OpenApiAuthDetails, discriminator="connection
 class OpenApiConnectionSecurityScheme(_model_base.Model):
     """Security scheme for OpenApi managed_identity authentication.
 
-
     :ivar connection_id: Connection id for Connection auth type. Required.
     :vartype connection_id: str
     """
 
-    connection_id: str = rest_field()
+    connection_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Connection id for Connection auth type. Required."""
 
     @overload
@@ -3424,7 +3796,6 @@ class OpenApiConnectionSecurityScheme(_model_base.Model):
 class OpenApiFunctionDefinition(_model_base.Model):
     """The input definition information for an openapi function.
 
-
     :ivar name: The name of the function to be called. Required.
     :vartype name: str
     :ivar description: A description of what the function does, used by the model to choose when
@@ -3436,14 +3807,14 @@ class OpenApiFunctionDefinition(_model_base.Model):
     :vartype auth: ~azure.ai.projects.models.OpenApiAuthDetails
     """
 
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the function to be called. Required."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A description of what the function does, used by the model to choose when and how to call the
      function."""
-    spec: Any = rest_field()
+    spec: Any = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The openapi function shape, described as a JSON Schema object. Required."""
-    auth: "_models.OpenApiAuthDetails" = rest_field()
+    auth: "_models.OpenApiAuthDetails" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Open API authentication details. Required."""
 
     @overload
@@ -3470,16 +3841,17 @@ class OpenApiFunctionDefinition(_model_base.Model):
 class OpenApiManagedAuthDetails(OpenApiAuthDetails, discriminator="managed_identity"):
     """Security details for OpenApi managed_identity authentication.
 
-
     :ivar type: The object type, which is always 'managed_identity'. Required.
     :vartype type: str or ~azure.ai.projects.models.MANAGED_IDENTITY
     :ivar security_scheme: Connection auth security details. Required.
     :vartype security_scheme: ~azure.ai.projects.models.OpenApiManagedSecurityScheme
     """
 
-    type: Literal[OpenApiAuthType.MANAGED_IDENTITY] = rest_discriminator(name="type")  # type: ignore
+    type: Literal[OpenApiAuthType.MANAGED_IDENTITY] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'managed_identity'. Required."""
-    security_scheme: "_models.OpenApiManagedSecurityScheme" = rest_field()
+    security_scheme: "_models.OpenApiManagedSecurityScheme" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Connection auth security details. Required."""
 
     @overload
@@ -3503,12 +3875,11 @@ class OpenApiManagedAuthDetails(OpenApiAuthDetails, discriminator="managed_ident
 class OpenApiManagedSecurityScheme(_model_base.Model):
     """Security scheme for OpenApi managed_identity authentication.
 
-
     :ivar audience: Authentication scope for managed_identity auth type. Required.
     :vartype audience: str
     """
 
-    audience: str = rest_field()
+    audience: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Authentication scope for managed_identity auth type. Required."""
 
     @overload
@@ -3532,16 +3903,17 @@ class OpenApiManagedSecurityScheme(_model_base.Model):
 class OpenApiToolDefinition(ToolDefinition, discriminator="openapi"):
     """The input definition information for an OpenAPI tool as used to configure an agent.
 
-
     :ivar type: The object type, which is always 'openapi'. Required. Default value is "openapi".
     :vartype type: str
     :ivar openapi: The openapi function definition. Required.
     :vartype openapi: ~azure.ai.projects.models.OpenApiFunctionDefinition
     """
 
-    type: Literal["openapi"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["openapi"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'openapi'. Required. Default value is \"openapi\"."""
-    openapi: "_models.OpenApiFunctionDefinition" = rest_field()
+    openapi: "_models.OpenApiFunctionDefinition" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The openapi function definition. Required."""
 
     @overload
@@ -3565,7 +3937,6 @@ class OpenApiToolDefinition(ToolDefinition, discriminator="openapi"):
 class RecurrenceSchedule(_model_base.Model):
     """RecurrenceSchedule Definition.
 
-
     :ivar hours: List of hours for the schedule. Required.
     :vartype hours: list[int]
     :ivar minutes: List of minutes for the schedule. Required.
@@ -3576,13 +3947,17 @@ class RecurrenceSchedule(_model_base.Model):
     :vartype month_days: list[int]
     """
 
-    hours: List[int] = rest_field()
+    hours: List[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of hours for the schedule. Required."""
-    minutes: List[int] = rest_field()
+    minutes: List[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of minutes for the schedule. Required."""
-    week_days: Optional[List[Union[str, "_models.WeekDays"]]] = rest_field(name="weekDays")
+    week_days: Optional[List[Union[str, "_models.WeekDays"]]] = rest_field(
+        name="weekDays", visibility=["read", "create", "update", "delete", "query"]
+    )
     """List of days for the schedule."""
-    month_days: Optional[List[int]] = rest_field(name="monthDays")
+    month_days: Optional[List[int]] = rest_field(
+        name="monthDays", visibility=["read", "create", "update", "delete", "query"]
+    )
     """List of month days for the schedule."""
 
     @overload
@@ -3609,9 +3984,6 @@ class RecurrenceSchedule(_model_base.Model):
 class RecurrenceTrigger(Trigger, discriminator="Recurrence"):
     """Recurrence Trigger Definition.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar type: Required. Default value is "Recurrence".
     :vartype type: str
     :ivar frequency: The frequency to trigger schedule. Required. Known values are: "Month",
@@ -3625,12 +3997,14 @@ class RecurrenceTrigger(Trigger, discriminator="Recurrence"):
 
     type: Literal["Recurrence"] = rest_discriminator(name="type", visibility=["read"])  # type: ignore
     """Required. Default value is \"Recurrence\"."""
-    frequency: Union[str, "_models.Frequency"] = rest_field()
+    frequency: Union[str, "_models.Frequency"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The frequency to trigger schedule. Required. Known values are: \"Month\", \"Week\", \"Day\",
      \"Hour\", and \"Minute\"."""
-    interval: int = rest_field()
+    interval: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Specifies schedule interval in conjunction with frequency. Required."""
-    schedule: Optional["_models.RecurrenceSchedule"] = rest_field()
+    schedule: Optional["_models.RecurrenceSchedule"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The recurrence schedule."""
 
     @overload
@@ -3659,13 +4033,12 @@ class RequiredAction(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     SubmitToolOutputsAction
 
-
     :ivar type: The object type. Required. Default value is None.
     :vartype type: str
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    type: str = rest_discriminator(name="type")
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The object type. Required. Default value is None."""
 
     @overload
@@ -3692,7 +4065,6 @@ class RequiredToolCall(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     RequiredFunctionToolCall
 
-
     :ivar type: The object type for the required tool call. Required. Default value is None.
     :vartype type: str
     :ivar id: The ID of the tool call. This ID must be referenced when submitting tool outputs.
@@ -3701,9 +4073,9 @@ class RequiredToolCall(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    type: str = rest_discriminator(name="type")
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The object type for the required tool call. Required. Default value is None."""
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the tool call. This ID must be referenced when submitting tool outputs. Required."""
 
     @overload
@@ -3729,7 +4101,6 @@ class RequiredFunctionToolCall(RequiredToolCall, discriminator="function"):
     """A representation of a requested call to a function tool, needed by the model to continue
     evaluation of a run.
 
-
     :ivar id: The ID of the tool call. This ID must be referenced when submitting tool outputs.
      Required.
     :vartype id: str
@@ -3741,10 +4112,12 @@ class RequiredFunctionToolCall(RequiredToolCall, discriminator="function"):
     :vartype function: ~azure.ai.projects.models.RequiredFunctionToolCallDetails
     """
 
-    type: Literal["function"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["function"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type of the required tool call. Always 'function' for function tools. Required.
      Default value is \"function\"."""
-    function: "_models.RequiredFunctionToolCallDetails" = rest_field()
+    function: "_models.RequiredFunctionToolCallDetails" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Detailed information about the function to be executed by the tool that includes name and
      arguments. Required."""
 
@@ -3771,7 +4144,6 @@ class RequiredFunctionToolCallDetails(_model_base.Model):
     """The detailed information for a function invocation, as provided by a required action invoking a
     function tool, that includes the name of and arguments to the function.
 
-
     :ivar name: The name of the function. Required.
     :vartype name: str
     :ivar arguments: The arguments to use when invoking the named function, as provided by the
@@ -3780,9 +4152,9 @@ class RequiredFunctionToolCallDetails(_model_base.Model):
     :vartype arguments: str
     """
 
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the function. Required."""
-    arguments: str = rest_field()
+    arguments: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The arguments to use when invoking the named function, as provided by the model. Arguments are
      presented as a JSON document that should be validated and parsed for evaluation. Required."""
 
@@ -3809,7 +4181,6 @@ class ResponseFormatJsonSchema(_model_base.Model):
     """A description of what the response format is for, used by the model to determine how to respond
     in the format.
 
-
     :ivar description: A description of what the response format is for, used by the model to
      determine how to respond in the format.
     :vartype description: str
@@ -3819,12 +4190,12 @@ class ResponseFormatJsonSchema(_model_base.Model):
     :vartype schema: any
     """
 
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A description of what the response format is for, used by the model to determine how to respond
      in the format."""
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of a schema. Required."""
-    schema: Any = rest_field()
+    schema: Any = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The JSON schema object, describing the response format. Required."""
 
     @overload
@@ -3850,18 +4221,17 @@ class ResponseFormatJsonSchema(_model_base.Model):
 class ResponseFormatJsonSchemaType(_model_base.Model):
     """The type of response format being defined: ``json_schema``.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar type: Type. Required. Default value is "json_schema".
     :vartype type: str
     :ivar json_schema: The JSON schema, describing response format. Required.
     :vartype json_schema: ~azure.ai.projects.models.ResponseFormatJsonSchema
     """
 
-    type: Literal["json_schema"] = rest_field()
+    type: Literal["json_schema"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Type. Required. Default value is \"json_schema\"."""
-    json_schema: "_models.ResponseFormatJsonSchema" = rest_field()
+    json_schema: "_models.ResponseFormatJsonSchema" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The JSON schema, describing response format. Required."""
 
     @overload
@@ -3887,7 +4257,6 @@ class RunCompletionUsage(_model_base.Model):
     """Usage statistics related to the run. This value will be ``null`` if the run is not in a
     terminal state (i.e. ``in_progress``\\ , ``queued``\\ , etc.).
 
-
     :ivar completion_tokens: Number of completion tokens used over the course of the run. Required.
     :vartype completion_tokens: int
     :ivar prompt_tokens: Number of prompt tokens used over the course of the run. Required.
@@ -3896,11 +4265,11 @@ class RunCompletionUsage(_model_base.Model):
     :vartype total_tokens: int
     """
 
-    completion_tokens: int = rest_field()
+    completion_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Number of completion tokens used over the course of the run. Required."""
-    prompt_tokens: int = rest_field()
+    prompt_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Number of prompt tokens used over the course of the run. Required."""
-    total_tokens: int = rest_field()
+    total_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Total number of tokens used (prompt + completion). Required."""
 
     @overload
@@ -3926,16 +4295,15 @@ class RunCompletionUsage(_model_base.Model):
 class RunError(_model_base.Model):
     """The details of an error as encountered by an agent thread run.
 
-
     :ivar code: The status for the error. Required.
     :vartype code: str
     :ivar message: The human-readable text associated with the error. Required.
     :vartype message: str
     """
 
-    code: str = rest_field()
+    code: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The status for the error. Required."""
-    message: str = rest_field()
+    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The human-readable text associated with the error. Required."""
 
     @overload
@@ -3960,9 +4328,6 @@ class RunError(_model_base.Model):
 class RunStep(_model_base.Model):
     """Detailed information about a single step of an agent thread run.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: The identifier, which can be referenced in API endpoints. Required.
     :vartype id: str
     :ivar object: The object type, which is always 'thread.run.step'. Required. Default value is
@@ -3971,8 +4336,8 @@ class RunStep(_model_base.Model):
     :ivar type: The type of run step, which can be either message_creation or tool_calls. Required.
      Known values are: "message_creation" and "tool_calls".
     :vartype type: str or ~azure.ai.projects.models.RunStepType
-    :ivar assistant_id: The ID of the agent associated with the run step. Required.
-    :vartype assistant_id: str
+    :ivar agent_id: The ID of the agent associated with the run step. Required.
+    :vartype agent_id: str
     :ivar thread_id: The ID of the thread that was run. Required.
     :vartype thread_id: str
     :ivar run_id: The ID of the run that this run step is a part of. Required.
@@ -4007,41 +4372,53 @@ class RunStep(_model_base.Model):
     :vartype metadata: dict[str, str]
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The identifier, which can be referenced in API endpoints. Required."""
-    object: Literal["thread.run.step"] = rest_field()
+    object: Literal["thread.run.step"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The object type, which is always 'thread.run.step'. Required. Default value is
      \"thread.run.step\"."""
-    type: Union[str, "_models.RunStepType"] = rest_field()
+    type: Union[str, "_models.RunStepType"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The type of run step, which can be either message_creation or tool_calls. Required. Known
      values are: \"message_creation\" and \"tool_calls\"."""
-    assistant_id: str = rest_field()
+    agent_id: str = rest_field(name="assistant_id", visibility=["read", "create", "update", "delete", "query"])
     """The ID of the agent associated with the run step. Required."""
-    thread_id: str = rest_field()
+    thread_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the thread that was run. Required."""
-    run_id: str = rest_field()
+    run_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the run that this run step is a part of. Required."""
-    status: Union[str, "_models.RunStepStatus"] = rest_field()
+    status: Union[str, "_models.RunStepStatus"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The status of this run step. Required. Known values are: \"in_progress\", \"cancelled\",
      \"failed\", \"completed\", and \"expired\"."""
-    step_details: "_models.RunStepDetails" = rest_field()
+    step_details: "_models.RunStepDetails" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The details for this run step. Required."""
-    last_error: "_models.RunStepError" = rest_field()
+    last_error: "_models.RunStepError" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """If applicable, information about the last error encountered by this run step. Required."""
-    created_at: datetime.datetime = rest_field(format="unix-timestamp")
+    created_at: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
     """The Unix timestamp, in seconds, representing when this object was created. Required."""
-    expired_at: datetime.datetime = rest_field(format="unix-timestamp")
+    expired_at: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
     """The Unix timestamp, in seconds, representing when this item expired. Required."""
-    completed_at: datetime.datetime = rest_field(format="unix-timestamp")
+    completed_at: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
     """The Unix timestamp, in seconds, representing when this completed. Required."""
-    cancelled_at: datetime.datetime = rest_field(format="unix-timestamp")
+    cancelled_at: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
     """The Unix timestamp, in seconds, representing when this was cancelled. Required."""
-    failed_at: datetime.datetime = rest_field(format="unix-timestamp")
+    failed_at: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
     """The Unix timestamp, in seconds, representing when this failed. Required."""
-    usage: Optional["_models.RunStepCompletionUsage"] = rest_field()
+    usage: Optional["_models.RunStepCompletionUsage"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Usage statistics related to the run step. This value will be ``null`` while the run step's
      status is ``in_progress``."""
-    metadata: Dict[str, str] = rest_field()
+    metadata: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A set of up to 16 key/value pairs that can be attached to an object, used for storing
      additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length. Required."""
@@ -4052,7 +4429,7 @@ class RunStep(_model_base.Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         type: Union[str, "_models.RunStepType"],
-        assistant_id: str,
+        agent_id: str,
         thread_id: str,
         run_id: str,
         status: Union[str, "_models.RunStepStatus"],
@@ -4088,7 +4465,6 @@ class RunStepToolCall(_model_base.Model):
     RunStepMicrosoftFabricToolCall, RunStepFileSearchToolCall, RunStepFunctionToolCall,
     RunStepSharepointToolCall
 
-
     :ivar type: The object type. Required. Default value is None.
     :vartype type: str
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
@@ -4097,9 +4473,9 @@ class RunStepToolCall(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    type: str = rest_discriminator(name="type")
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The object type. Required. Default value is None."""
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the tool call. This ID must be referenced when you submit tool outputs. Required."""
 
     @overload
@@ -4126,7 +4502,6 @@ class RunStepAzureAISearchToolCall(RunStepToolCall, discriminator="azure_ai_sear
     tool, that represents
     executed Azure AI search.
 
-
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
     :vartype id: str
@@ -4137,10 +4512,10 @@ class RunStepAzureAISearchToolCall(RunStepToolCall, discriminator="azure_ai_sear
     :vartype azure_ai_search: dict[str, str]
     """
 
-    type: Literal["azure_ai_search"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["azure_ai_search"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'azure_ai_search'. Required. Default value is
      \"azure_ai_search\"."""
-    azure_ai_search: Dict[str, str] = rest_field()
+    azure_ai_search: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Reserved for future use. Required."""
 
     @overload
@@ -4167,7 +4542,6 @@ class RunStepBingGroundingToolCall(RunStepToolCall, discriminator="bing_groundin
     tool, that represents
     executed search with bing grounding.
 
-
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
     :vartype id: str
@@ -4178,10 +4552,10 @@ class RunStepBingGroundingToolCall(RunStepToolCall, discriminator="bing_groundin
     :vartype bing_grounding: dict[str, str]
     """
 
-    type: Literal["bing_grounding"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["bing_grounding"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'bing_grounding'. Required. Default value is
      \"bing_grounding\"."""
-    bing_grounding: Dict[str, str] = rest_field()
+    bing_grounding: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Reserved for future use. Required."""
 
     @overload
@@ -4209,13 +4583,12 @@ class RunStepCodeInterpreterToolCallOutput(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     RunStepCodeInterpreterImageOutput, RunStepCodeInterpreterLogOutput
 
-
     :ivar type: The object type. Required. Default value is None.
     :vartype type: str
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    type: str = rest_discriminator(name="type")
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The object type. Required. Default value is None."""
 
     @overload
@@ -4240,16 +4613,17 @@ class RunStepCodeInterpreterImageOutput(RunStepCodeInterpreterToolCallOutput, di
     """A representation of an image output emitted by a code interpreter tool in response to a tool
     call by the model.
 
-
     :ivar type: The object type, which is always 'image'. Required. Default value is "image".
     :vartype type: str
     :ivar image: Referential information for the image associated with this output. Required.
     :vartype image: ~azure.ai.projects.models.RunStepCodeInterpreterImageReference
     """
 
-    type: Literal["image"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["image"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'image'. Required. Default value is \"image\"."""
-    image: "_models.RunStepCodeInterpreterImageReference" = rest_field()
+    image: "_models.RunStepCodeInterpreterImageReference" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Referential information for the image associated with this output. Required."""
 
     @overload
@@ -4273,12 +4647,11 @@ class RunStepCodeInterpreterImageOutput(RunStepCodeInterpreterToolCallOutput, di
 class RunStepCodeInterpreterImageReference(_model_base.Model):
     """An image reference emitted by a code interpreter tool in response to a tool call by the model.
 
-
     :ivar file_id: The ID of the file associated with this image. Required.
     :vartype file_id: str
     """
 
-    file_id: str = rest_field()
+    file_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the file associated with this image. Required."""
 
     @overload
@@ -4303,16 +4676,15 @@ class RunStepCodeInterpreterLogOutput(RunStepCodeInterpreterToolCallOutput, disc
     """A representation of a log output emitted by a code interpreter tool in response to a tool call
     by the model.
 
-
     :ivar type: The object type, which is always 'logs'. Required. Default value is "logs".
     :vartype type: str
     :ivar logs: The serialized log output emitted by the code interpreter. Required.
     :vartype logs: str
     """
 
-    type: Literal["logs"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["logs"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'logs'. Required. Default value is \"logs\"."""
-    logs: str = rest_field()
+    logs: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The serialized log output emitted by the code interpreter. Required."""
 
     @overload
@@ -4338,7 +4710,6 @@ class RunStepCodeInterpreterToolCall(RunStepToolCall, discriminator="code_interp
     tool, that
     represents inputs and outputs consumed and emitted by the code interpreter.
 
-
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
     :vartype id: str
@@ -4349,10 +4720,12 @@ class RunStepCodeInterpreterToolCall(RunStepToolCall, discriminator="code_interp
     :vartype code_interpreter: ~azure.ai.projects.models.RunStepCodeInterpreterToolCallDetails
     """
 
-    type: Literal["code_interpreter"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["code_interpreter"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'code_interpreter'. Required. Default value is
      \"code_interpreter\"."""
-    code_interpreter: "_models.RunStepCodeInterpreterToolCallDetails" = rest_field()
+    code_interpreter: "_models.RunStepCodeInterpreterToolCallDetails" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The details of the tool call to the code interpreter tool. Required."""
 
     @overload
@@ -4377,7 +4750,6 @@ class RunStepCodeInterpreterToolCall(RunStepToolCall, discriminator="code_interp
 class RunStepCodeInterpreterToolCallDetails(_model_base.Model):
     """The detailed information about a code interpreter invocation by the model.
 
-
     :ivar input: The input provided by the model to the code interpreter tool. Required.
     :vartype input: str
     :ivar outputs: The outputs produced by the code interpreter tool back to the model in response
@@ -4385,9 +4757,11 @@ class RunStepCodeInterpreterToolCallDetails(_model_base.Model):
     :vartype outputs: list[~azure.ai.projects.models.RunStepCodeInterpreterToolCallOutput]
     """
 
-    input: str = rest_field()
+    input: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The input provided by the model to the code interpreter tool. Required."""
-    outputs: List["_models.RunStepCodeInterpreterToolCallOutput"] = rest_field()
+    outputs: List["_models.RunStepCodeInterpreterToolCallOutput"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The outputs produced by the code interpreter tool back to the model in response to the tool
      call. Required."""
 
@@ -4413,7 +4787,6 @@ class RunStepCodeInterpreterToolCallDetails(_model_base.Model):
 class RunStepCompletionUsage(_model_base.Model):
     """Usage statistics related to the run step.
 
-
     :ivar completion_tokens: Number of completion tokens used over the course of the run step.
      Required.
     :vartype completion_tokens: int
@@ -4423,11 +4796,11 @@ class RunStepCompletionUsage(_model_base.Model):
     :vartype total_tokens: int
     """
 
-    completion_tokens: int = rest_field()
+    completion_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Number of completion tokens used over the course of the run step. Required."""
-    prompt_tokens: int = rest_field()
+    prompt_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Number of prompt tokens used over the course of the run step. Required."""
-    total_tokens: int = rest_field()
+    total_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Total number of tokens used (prompt + completion). Required."""
 
     @overload
@@ -4457,7 +4830,9 @@ class RunStepDelta(_model_base.Model):
     :vartype step_details: ~azure.ai.projects.models.RunStepDeltaDetail
     """
 
-    step_details: Optional["_models.RunStepDeltaDetail"] = rest_field()
+    step_details: Optional["_models.RunStepDeltaDetail"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The details of the run step."""
 
     @overload
@@ -4481,9 +4856,6 @@ class RunStepDelta(_model_base.Model):
 class RunStepDeltaChunk(_model_base.Model):
     """Represents a run step delta i.e. any changed fields on a run step during streaming.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: The identifier of the run step, which can be referenced in API endpoints. Required.
     :vartype id: str
     :ivar object: The object type, which is always ``thread.run.step.delta``. Required. Default
@@ -4493,12 +4865,12 @@ class RunStepDeltaChunk(_model_base.Model):
     :vartype delta: ~azure.ai.projects.models.RunStepDelta
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The identifier of the run step, which can be referenced in API endpoints. Required."""
-    object: Literal["thread.run.step.delta"] = rest_field()
+    object: Literal["thread.run.step.delta"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The object type, which is always ``thread.run.step.delta``. Required. Default value is
      \"thread.run.step.delta\"."""
-    delta: "_models.RunStepDelta" = rest_field()
+    delta: "_models.RunStepDelta" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The delta containing the fields that have changed on the run step. Required."""
 
     @overload
@@ -4528,18 +4900,18 @@ class RunStepDeltaCodeInterpreterDetailItemObject(_model_base.Model):  # pylint:
     :vartype input: str
     :ivar outputs: The outputs from the Code Interpreter tool call. Code Interpreter can output one
      or more
-     items, including text (\\ ``logs``\\ ) or images (\\ ``image``\\ ). Each of these are
-     represented by a
+     items, including text (``logs``) or images (``image``). Each of these are represented by a
      different object type.
     :vartype outputs: list[~azure.ai.projects.models.RunStepDeltaCodeInterpreterOutput]
     """
 
-    input: Optional[str] = rest_field()
+    input: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The input into the Code Interpreter tool call."""
-    outputs: Optional[List["_models.RunStepDeltaCodeInterpreterOutput"]] = rest_field()
+    outputs: Optional[List["_models.RunStepDeltaCodeInterpreterOutput"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The outputs from the Code Interpreter tool call. Code Interpreter can output one or more
-     items, including text (``logs``) or images (``image``). Each of these are represented
-     by a
+     items, including text (``logs``) or images (``image``). Each of these are represented by a
      different object type."""
 
     @overload
@@ -4568,7 +4940,6 @@ class RunStepDeltaCodeInterpreterOutput(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     RunStepDeltaCodeInterpreterImageOutput, RunStepDeltaCodeInterpreterLogOutput
 
-
     :ivar index: The index of the output in the streaming run step tool call's Code Interpreter
      outputs array. Required.
     :vartype index: int
@@ -4578,10 +4949,10 @@ class RunStepDeltaCodeInterpreterOutput(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    index: int = rest_field()
+    index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The index of the output in the streaming run step tool call's Code Interpreter outputs array.
      Required."""
-    type: str = rest_discriminator(name="type")
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The type of the streaming run step tool call's Code Interpreter output. Required. Default value
      is None."""
 
@@ -4608,7 +4979,6 @@ class RunStepDeltaCodeInterpreterImageOutput(RunStepDeltaCodeInterpreterOutput, 
     """Represents an image output as produced the Code interpreter tool and as represented in a
     streaming run step's delta tool calls collection.
 
-
     :ivar index: The index of the output in the streaming run step tool call's Code Interpreter
      outputs array. Required.
     :vartype index: int
@@ -4618,9 +4988,11 @@ class RunStepDeltaCodeInterpreterImageOutput(RunStepDeltaCodeInterpreterOutput, 
     :vartype image: ~azure.ai.projects.models.RunStepDeltaCodeInterpreterImageOutputObject
     """
 
-    type: Literal["image"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["image"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always \"image.\". Required. Default value is \"image\"."""
-    image: Optional["_models.RunStepDeltaCodeInterpreterImageOutputObject"] = rest_field()
+    image: Optional["_models.RunStepDeltaCodeInterpreterImageOutputObject"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The image data for the Code Interpreter tool call output."""
 
     @overload
@@ -4649,7 +5021,7 @@ class RunStepDeltaCodeInterpreterImageOutputObject(_model_base.Model):  # pylint
     :vartype file_id: str
     """
 
-    file_id: Optional[str] = rest_field()
+    file_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The file ID for the image."""
 
     @overload
@@ -4674,7 +5046,6 @@ class RunStepDeltaCodeInterpreterLogOutput(RunStepDeltaCodeInterpreterOutput, di
     """Represents a log output as produced by the Code Interpreter tool and as represented in a
     streaming run step's delta tool calls collection.
 
-
     :ivar index: The index of the output in the streaming run step tool call's Code Interpreter
      outputs array. Required.
     :vartype index: int
@@ -4684,9 +5055,9 @@ class RunStepDeltaCodeInterpreterLogOutput(RunStepDeltaCodeInterpreterOutput, di
     :vartype logs: str
     """
 
-    type: Literal["logs"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["logs"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the object, which is always \"logs.\". Required. Default value is \"logs\"."""
-    logs: Optional[str] = rest_field()
+    logs: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The text output from the Code Interpreter tool call."""
 
     @overload
@@ -4716,7 +5087,6 @@ class RunStepDeltaToolCall(_model_base.Model):
     RunStepDeltaCodeInterpreterToolCall, RunStepDeltaFileSearchToolCall,
     RunStepDeltaFunctionToolCall
 
-
     :ivar index: The index of the tool call detail in the run step's tool_calls array. Required.
     :vartype index: int
     :ivar id: The ID of the tool call, used when submitting outputs to the run. Required.
@@ -4727,11 +5097,11 @@ class RunStepDeltaToolCall(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    index: int = rest_field()
+    index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The index of the tool call detail in the run step's tool_calls array. Required."""
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the tool call, used when submitting outputs to the run. Required."""
-    type: str = rest_discriminator(name="type")
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The type of the tool call detail item in a streaming run step's details. Required. Default
      value is None."""
 
@@ -4758,7 +5128,6 @@ class RunStepDeltaToolCall(_model_base.Model):
 class RunStepDeltaCodeInterpreterToolCall(RunStepDeltaToolCall, discriminator="code_interpreter"):
     """Represents a Code Interpreter tool call within a streaming run step's tool call details.
 
-
     :ivar index: The index of the tool call detail in the run step's tool_calls array. Required.
     :vartype index: int
     :ivar id: The ID of the tool call, used when submitting outputs to the run. Required.
@@ -4771,10 +5140,12 @@ class RunStepDeltaCodeInterpreterToolCall(RunStepDeltaToolCall, discriminator="c
      ~azure.ai.projects.models.RunStepDeltaCodeInterpreterDetailItemObject
     """
 
-    type: Literal["code_interpreter"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["code_interpreter"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always \"code_interpreter.\". Required. Default value is
      \"code_interpreter\"."""
-    code_interpreter: Optional["_models.RunStepDeltaCodeInterpreterDetailItemObject"] = rest_field()
+    code_interpreter: Optional["_models.RunStepDeltaCodeInterpreterDetailItemObject"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The Code Interpreter data for the tool call."""
 
     @overload
@@ -4803,13 +5174,12 @@ class RunStepDeltaDetail(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     RunStepDeltaMessageCreation, RunStepDeltaToolCallObject
 
-
     :ivar type: The object type for the run step detail object. Required. Default value is None.
     :vartype type: str
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    type: str = rest_discriminator(name="type")
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The object type for the run step detail object. Required. Default value is None."""
 
     @overload
@@ -4833,7 +5203,6 @@ class RunStepDeltaDetail(_model_base.Model):
 class RunStepDeltaFileSearchToolCall(RunStepDeltaToolCall, discriminator="file_search"):
     """Represents a file search tool call within a streaming run step's tool call details.
 
-
     :ivar index: The index of the tool call detail in the run step's tool_calls array. Required.
     :vartype index: int
     :ivar id: The ID of the tool call, used when submitting outputs to the run. Required.
@@ -4842,12 +5211,14 @@ class RunStepDeltaFileSearchToolCall(RunStepDeltaToolCall, discriminator="file_s
      "file_search".
     :vartype type: str
     :ivar file_search: Reserved for future use.
-    :vartype file_search: dict[str, str]
+    :vartype file_search: ~azure.ai.projects.models.RunStepFileSearchToolCallResults
     """
 
-    type: Literal["file_search"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["file_search"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always \"file_search.\". Required. Default value is \"file_search\"."""
-    file_search: Optional[Dict[str, str]] = rest_field()
+    file_search: Optional["_models.RunStepFileSearchToolCallResults"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Reserved for future use."""
 
     @overload
@@ -4856,7 +5227,7 @@ class RunStepDeltaFileSearchToolCall(RunStepDeltaToolCall, discriminator="file_s
         *,
         index: int,
         id: str,  # pylint: disable=redefined-builtin
-        file_search: Optional[Dict[str, str]] = None,
+        file_search: Optional["_models.RunStepFileSearchToolCallResults"] = None,
     ) -> None: ...
 
     @overload
@@ -4881,11 +5252,11 @@ class RunStepDeltaFunction(_model_base.Model):
     :vartype output: str
     """
 
-    name: Optional[str] = rest_field()
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the function."""
-    arguments: Optional[str] = rest_field()
+    arguments: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The arguments passed to the function as input."""
-    output: Optional[str] = rest_field()
+    output: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The output of the function, null if outputs have not yet been submitted."""
 
     @overload
@@ -4911,7 +5282,6 @@ class RunStepDeltaFunction(_model_base.Model):
 class RunStepDeltaFunctionToolCall(RunStepDeltaToolCall, discriminator="function"):
     """Represents a function tool call within a streaming run step's tool call details.
 
-
     :ivar index: The index of the tool call detail in the run step's tool_calls array. Required.
     :vartype index: int
     :ivar id: The ID of the tool call, used when submitting outputs to the run. Required.
@@ -4923,9 +5293,11 @@ class RunStepDeltaFunctionToolCall(RunStepDeltaToolCall, discriminator="function
     :vartype function: ~azure.ai.projects.models.RunStepDeltaFunction
     """
 
-    type: Literal["function"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["function"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always \"function.\". Required. Default value is \"function\"."""
-    function: Optional["_models.RunStepDeltaFunction"] = rest_field()
+    function: Optional["_models.RunStepDeltaFunction"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The function data for the tool call."""
 
     @overload
@@ -4951,7 +5323,6 @@ class RunStepDeltaFunctionToolCall(RunStepDeltaToolCall, discriminator="function
 class RunStepDeltaMessageCreation(RunStepDeltaDetail, discriminator="message_creation"):
     """Represents a message creation within a streaming run step delta.
 
-
     :ivar type: The object type, which is always "message_creation.". Required. Default value is
      "message_creation".
     :vartype type: str
@@ -4959,10 +5330,12 @@ class RunStepDeltaMessageCreation(RunStepDeltaDetail, discriminator="message_cre
     :vartype message_creation: ~azure.ai.projects.models.RunStepDeltaMessageCreationObject
     """
 
-    type: Literal["message_creation"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["message_creation"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always \"message_creation.\". Required. Default value is
      \"message_creation\"."""
-    message_creation: Optional["_models.RunStepDeltaMessageCreationObject"] = rest_field()
+    message_creation: Optional["_models.RunStepDeltaMessageCreationObject"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The message creation data."""
 
     @overload
@@ -4990,7 +5363,7 @@ class RunStepDeltaMessageCreationObject(_model_base.Model):
     :vartype message_id: str
     """
 
-    message_id: Optional[str] = rest_field()
+    message_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the newly-created message."""
 
     @overload
@@ -5014,7 +5387,6 @@ class RunStepDeltaMessageCreationObject(_model_base.Model):
 class RunStepDeltaToolCallObject(RunStepDeltaDetail, discriminator="tool_calls"):
     """Represents an invocation of tool calls as part of a streaming run step.
 
-
     :ivar type: The object type, which is always "tool_calls.". Required. Default value is
      "tool_calls".
     :vartype type: str
@@ -5022,9 +5394,11 @@ class RunStepDeltaToolCallObject(RunStepDeltaDetail, discriminator="tool_calls")
     :vartype tool_calls: list[~azure.ai.projects.models.RunStepDeltaToolCall]
     """
 
-    type: Literal["tool_calls"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["tool_calls"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always \"tool_calls.\". Required. Default value is \"tool_calls\"."""
-    tool_calls: Optional[List["_models.RunStepDeltaToolCall"]] = rest_field()
+    tool_calls: Optional[List["_models.RunStepDeltaToolCall"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The collection of tool calls for the tool call detail item."""
 
     @overload
@@ -5051,13 +5425,12 @@ class RunStepDetails(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     RunStepMessageCreationDetails, RunStepToolCallDetails
 
-
     :ivar type: The object type. Required. Known values are: "message_creation" and "tool_calls".
     :vartype type: str or ~azure.ai.projects.models.RunStepType
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    type: str = rest_discriminator(name="type")
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The object type. Required. Known values are: \"message_creation\" and \"tool_calls\"."""
 
     @overload
@@ -5081,7 +5454,6 @@ class RunStepDetails(_model_base.Model):
 class RunStepError(_model_base.Model):
     """The error information associated with a failed run step.
 
-
     :ivar code: The error code for this error. Required. Known values are: "server_error" and
      "rate_limit_exceeded".
     :vartype code: str or ~azure.ai.projects.models.RunStepErrorCode
@@ -5089,10 +5461,12 @@ class RunStepError(_model_base.Model):
     :vartype message: str
     """
 
-    code: Union[str, "_models.RunStepErrorCode"] = rest_field()
+    code: Union[str, "_models.RunStepErrorCode"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The error code for this error. Required. Known values are: \"server_error\" and
      \"rate_limit_exceeded\"."""
-    message: str = rest_field()
+    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The human-readable text associated with this error. Required."""
 
     @overload
@@ -5119,7 +5493,6 @@ class RunStepFileSearchToolCall(RunStepToolCall, discriminator="file_search"):
     that represents
     executed file search.
 
-
     :ivar type: The object type, which is always 'file_search'. Required. Default value is
      "file_search".
     :vartype type: str
@@ -5130,9 +5503,11 @@ class RunStepFileSearchToolCall(RunStepToolCall, discriminator="file_search"):
     :vartype file_search: ~azure.ai.projects.models.RunStepFileSearchToolCallResults
     """
 
-    type: Literal["file_search"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["file_search"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'file_search'. Required. Default value is \"file_search\"."""
-    file_search: "_models.RunStepFileSearchToolCallResults" = rest_field()
+    file_search: "_models.RunStepFileSearchToolCallResults" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """For now, this is always going to be an empty object. Required."""
 
     @overload
@@ -5157,7 +5532,6 @@ class RunStepFileSearchToolCall(RunStepToolCall, discriminator="file_search"):
 class RunStepFileSearchToolCallResult(_model_base.Model):
     """File search tool call result.
 
-
     :ivar file_id: The ID of the file that result was found in. Required.
     :vartype file_id: str
     :ivar file_name: The name of the file that result was found in. Required.
@@ -5170,13 +5544,15 @@ class RunStepFileSearchToolCallResult(_model_base.Model):
     :vartype content: list[~azure.ai.projects.models.FileSearchToolCallContent]
     """
 
-    file_id: str = rest_field()
+    file_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the file that result was found in. Required."""
-    file_name: str = rest_field()
+    file_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the file that result was found in. Required."""
-    score: float = rest_field()
+    score: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The score of the result. All values must be a floating point number between 0 and 1. Required."""
-    content: Optional[List["_models.FileSearchToolCallContent"]] = rest_field()
+    content: Optional[List["_models.FileSearchToolCallContent"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The content of the result that was found. The content is only included if requested via the
      include query parameter."""
 
@@ -5204,16 +5580,19 @@ class RunStepFileSearchToolCallResult(_model_base.Model):
 class RunStepFileSearchToolCallResults(_model_base.Model):
     """The results of the file search.
 
-
     :ivar ranking_options: Ranking options for file search.
     :vartype ranking_options: ~azure.ai.projects.models.FileSearchRankingOptions
     :ivar results: The array of a file search results. Required.
     :vartype results: list[~azure.ai.projects.models.RunStepFileSearchToolCallResult]
     """
 
-    ranking_options: Optional["_models.FileSearchRankingOptions"] = rest_field()
+    ranking_options: Optional["_models.FileSearchRankingOptions"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Ranking options for file search."""
-    results: List["_models.RunStepFileSearchToolCallResult"] = rest_field()
+    results: List["_models.RunStepFileSearchToolCallResult"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The array of a file search results. Required."""
 
     @overload
@@ -5240,7 +5619,6 @@ class RunStepFunctionToolCall(RunStepToolCall, discriminator="function"):
     that represents the inputs
     and output consumed and emitted by the specified function.
 
-
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
     :vartype id: str
@@ -5250,9 +5628,11 @@ class RunStepFunctionToolCall(RunStepToolCall, discriminator="function"):
     :vartype function: ~azure.ai.projects.models.RunStepFunctionToolCallDetails
     """
 
-    type: Literal["function"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["function"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'function'. Required. Default value is \"function\"."""
-    function: "_models.RunStepFunctionToolCallDetails" = rest_field()
+    function: "_models.RunStepFunctionToolCallDetails" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The detailed information about the function called by the model. Required."""
 
     @overload
@@ -5277,7 +5657,6 @@ class RunStepFunctionToolCall(RunStepToolCall, discriminator="function"):
 class RunStepFunctionToolCallDetails(_model_base.Model):
     """The detailed information about the function called by the model.
 
-
     :ivar name: The name of the function. Required.
     :vartype name: str
     :ivar arguments: The arguments that the model requires are provided to the named function.
@@ -5288,11 +5667,11 @@ class RunStepFunctionToolCallDetails(_model_base.Model):
     :vartype output: str
     """
 
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the function. Required."""
-    arguments: str = rest_field()
+    arguments: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The arguments that the model requires are provided to the named function. Required."""
-    output: str = rest_field()
+    output: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The output of the function, only populated for function calls that have already have had their
      outputs submitted. Required."""
 
@@ -5319,7 +5698,6 @@ class RunStepFunctionToolCallDetails(_model_base.Model):
 class RunStepMessageCreationDetails(RunStepDetails, discriminator="message_creation"):
     """The detailed information associated with a message creation run step.
 
-
     :ivar type: The object type, which is always 'message_creation'. Required. Represents a run
      step to create a message.
     :vartype type: str or ~azure.ai.projects.models.MESSAGE_CREATION
@@ -5328,10 +5706,12 @@ class RunStepMessageCreationDetails(RunStepDetails, discriminator="message_creat
     :vartype message_creation: ~azure.ai.projects.models.RunStepMessageCreationReference
     """
 
-    type: Literal[RunStepType.MESSAGE_CREATION] = rest_discriminator(name="type")  # type: ignore
+    type: Literal[RunStepType.MESSAGE_CREATION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'message_creation'. Required. Represents a run step to create
      a message."""
-    message_creation: "_models.RunStepMessageCreationReference" = rest_field()
+    message_creation: "_models.RunStepMessageCreationReference" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Information about the message creation associated with this run step. Required."""
 
     @overload
@@ -5355,12 +5735,11 @@ class RunStepMessageCreationDetails(RunStepDetails, discriminator="message_creat
 class RunStepMessageCreationReference(_model_base.Model):
     """The details of a message created as a part of a run step.
 
-
     :ivar message_id: The ID of the message created by this run step. Required.
     :vartype message_id: str
     """
 
-    message_id: str = rest_field()
+    message_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the message created by this run step. Required."""
 
     @overload
@@ -5381,26 +5760,27 @@ class RunStepMessageCreationReference(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="fabric_aiskill"):
+class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="fabric_dataagent"):
     """A record of a call to a Microsoft Fabric tool, issued by the model in evaluation of a defined
     tool, that represents
     executed Microsoft Fabric operations.
 
-
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
     :vartype id: str
-    :ivar type: The object type, which is always 'fabric_aiskill'. Required. Default value is
-     "fabric_aiskill".
+    :ivar type: The object type, which is always 'fabric_dataagent'. Required. Default value is
+     "fabric_dataagent".
     :vartype type: str
     :ivar microsoft_fabric: Reserved for future use. Required.
     :vartype microsoft_fabric: dict[str, str]
     """
 
-    type: Literal["fabric_aiskill"] = rest_discriminator(name="type")  # type: ignore
-    """The object type, which is always 'fabric_aiskill'. Required. Default value is
-     \"fabric_aiskill\"."""
-    microsoft_fabric: Dict[str, str] = rest_field(name="fabric_aiskill")
+    type: Literal["fabric_dataagent"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'fabric_dataagent'. Required. Default value is
+     \"fabric_dataagent\"."""
+    microsoft_fabric: Dict[str, str] = rest_field(
+        name="fabric_dataagent", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Reserved for future use. Required."""
 
     @overload
@@ -5419,14 +5799,13 @@ class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="fabric_aisk
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="fabric_aiskill", **kwargs)
+        super().__init__(*args, type="fabric_dataagent", **kwargs)
 
 
 class RunStepSharepointToolCall(RunStepToolCall, discriminator="sharepoint_grounding"):
     """A record of a call to a SharePoint tool, issued by the model in evaluation of a defined tool,
     that represents
     executed SharePoint actions.
-
 
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
@@ -5438,10 +5817,12 @@ class RunStepSharepointToolCall(RunStepToolCall, discriminator="sharepoint_groun
     :vartype share_point: dict[str, str]
     """
 
-    type: Literal["sharepoint_grounding"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["sharepoint_grounding"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'sharepoint_grounding'. Required. Default value is
      \"sharepoint_grounding\"."""
-    share_point: Dict[str, str] = rest_field(name="sharepoint_grounding")
+    share_point: Dict[str, str] = rest_field(
+        name="sharepoint_grounding", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Reserved for future use. Required."""
 
     @overload
@@ -5466,7 +5847,6 @@ class RunStepSharepointToolCall(RunStepToolCall, discriminator="sharepoint_groun
 class RunStepToolCallDetails(RunStepDetails, discriminator="tool_calls"):
     """The detailed information associated with a run step calling tools.
 
-
     :ivar type: The object type, which is always 'tool_calls'. Required. Represents a run step that
      calls tools.
     :vartype type: str or ~azure.ai.projects.models.TOOL_CALLS
@@ -5474,10 +5854,10 @@ class RunStepToolCallDetails(RunStepDetails, discriminator="tool_calls"):
     :vartype tool_calls: list[~azure.ai.projects.models.RunStepToolCall]
     """
 
-    type: Literal[RunStepType.TOOL_CALLS] = rest_discriminator(name="type")  # type: ignore
+    type: Literal[RunStepType.TOOL_CALLS] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'tool_calls'. Required. Represents a run step that calls
      tools."""
-    tool_calls: List["_models.RunStepToolCall"] = rest_field()
+    tool_calls: List["_models.RunStepToolCall"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of tool call details for this run step. Required."""
 
     @overload
@@ -5501,7 +5881,6 @@ class RunStepToolCallDetails(RunStepDetails, discriminator="tool_calls"):
 class SharepointToolDefinition(ToolDefinition, discriminator="sharepoint_grounding"):
     """The input definition information for a sharepoint tool as used to configure an agent.
 
-
     :ivar type: The object type, which is always 'sharepoint_grounding'. Required. Default value is
      "sharepoint_grounding".
     :vartype type: str
@@ -5509,10 +5888,12 @@ class SharepointToolDefinition(ToolDefinition, discriminator="sharepoint_groundi
     :vartype sharepoint_grounding: ~azure.ai.projects.models.ToolConnectionList
     """
 
-    type: Literal["sharepoint_grounding"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["sharepoint_grounding"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'sharepoint_grounding'. Required. Default value is
      \"sharepoint_grounding\"."""
-    sharepoint_grounding: "_models.ToolConnectionList" = rest_field()
+    sharepoint_grounding: "_models.ToolConnectionList" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The list of connections used by the SharePoint tool. Required."""
 
     @overload
@@ -5536,7 +5917,6 @@ class SharepointToolDefinition(ToolDefinition, discriminator="sharepoint_groundi
 class SubmitToolOutputsAction(RequiredAction, discriminator="submit_tool_outputs"):
     """The details for required tool calls that must be submitted for an agent thread run to continue.
 
-
     :ivar type: The object type, which is always 'submit_tool_outputs'. Required. Default value is
      "submit_tool_outputs".
     :vartype type: str
@@ -5545,10 +5925,12 @@ class SubmitToolOutputsAction(RequiredAction, discriminator="submit_tool_outputs
     :vartype submit_tool_outputs: ~azure.ai.projects.models.SubmitToolOutputsDetails
     """
 
-    type: Literal["submit_tool_outputs"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["submit_tool_outputs"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'submit_tool_outputs'. Required. Default value is
      \"submit_tool_outputs\"."""
-    submit_tool_outputs: "_models.SubmitToolOutputsDetails" = rest_field()
+    submit_tool_outputs: "_models.SubmitToolOutputsDetails" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The details describing tools that should be called to submit tool outputs. Required."""
 
     @overload
@@ -5572,13 +5954,14 @@ class SubmitToolOutputsAction(RequiredAction, discriminator="submit_tool_outputs
 class SubmitToolOutputsDetails(_model_base.Model):
     """The details describing tools that should be called to submit tool outputs.
 
-
     :ivar tool_calls: The list of tool calls that must be resolved for the agent thread run to
      continue. Required.
     :vartype tool_calls: list[~azure.ai.projects.models.RequiredToolCall]
     """
 
-    tool_calls: List["_models.RequiredToolCall"] = rest_field()
+    tool_calls: List["_models.RequiredToolCall"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The list of tool calls that must be resolved for the agent thread run to continue. Required."""
 
     @overload
@@ -5601,8 +5984,6 @@ class SubmitToolOutputsDetails(_model_base.Model):
 
 class SystemData(_model_base.Model):
     """Metadata pertaining to creation and last modification of the resource.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar created_at: The timestamp the resource was created at.
     :vartype created_at: ~datetime.datetime
@@ -5629,9 +6010,6 @@ class SystemData(_model_base.Model):
 class ThreadDeletionStatus(_model_base.Model):
     """The status of a thread deletion operation.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: The ID of the resource specified for deletion. Required.
     :vartype id: str
     :ivar deleted: A value indicating whether deletion was successful. Required.
@@ -5641,11 +6019,11 @@ class ThreadDeletionStatus(_model_base.Model):
     :vartype object: str
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the resource specified for deletion. Required."""
-    deleted: bool = rest_field()
+    deleted: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A value indicating whether deletion was successful. Required."""
-    object: Literal["thread.deleted"] = rest_field()
+    object: Literal["thread.deleted"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The object type, which is always 'thread.deleted'. Required. Default value is
      \"thread.deleted\"."""
 
@@ -5671,9 +6049,6 @@ class ThreadDeletionStatus(_model_base.Model):
 
 class ThreadMessage(_model_base.Model):
     """A single, existing message within an agent thread.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar id: The identifier, which can be referenced in API endpoints. Required.
     :vartype id: str
@@ -5702,8 +6077,8 @@ class ThreadMessage(_model_base.Model):
     :vartype role: str or ~azure.ai.projects.models.MessageRole
     :ivar content: The list of content items associated with the agent thread message. Required.
     :vartype content: list[~azure.ai.projects.models.MessageContent]
-    :ivar assistant_id: If applicable, the ID of the agent that authored this message. Required.
-    :vartype assistant_id: str
+    :ivar agent_id: If applicable, the ID of the agent that authored this message. Required.
+    :vartype agent_id: str
     :ivar run_id: If applicable, the ID of the run associated with the authoring of this message.
      Required.
     :vartype run_id: str
@@ -5716,36 +6091,46 @@ class ThreadMessage(_model_base.Model):
     :vartype metadata: dict[str, str]
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The identifier, which can be referenced in API endpoints. Required."""
-    object: Literal["thread.message"] = rest_field()
+    object: Literal["thread.message"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The object type, which is always 'thread.message'. Required. Default value is
      \"thread.message\"."""
-    created_at: datetime.datetime = rest_field(format="unix-timestamp")
+    created_at: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
     """The Unix timestamp, in seconds, representing when this object was created. Required."""
-    thread_id: str = rest_field()
+    thread_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the thread that this message belongs to. Required."""
-    status: Union[str, "_models.MessageStatus"] = rest_field()
+    status: Union[str, "_models.MessageStatus"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The status of the message. Required. Known values are: \"in_progress\", \"incomplete\", and
      \"completed\"."""
-    incomplete_details: "_models.MessageIncompleteDetails" = rest_field()
+    incomplete_details: "_models.MessageIncompleteDetails" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """On an incomplete message, details about why the message is incomplete. Required."""
-    completed_at: datetime.datetime = rest_field(format="unix-timestamp")
+    completed_at: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
     """The Unix timestamp (in seconds) for when the message was completed. Required."""
-    incomplete_at: datetime.datetime = rest_field(format="unix-timestamp")
+    incomplete_at: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
     """The Unix timestamp (in seconds) for when the message was marked as incomplete. Required."""
-    role: Union[str, "_models.MessageRole"] = rest_field()
+    role: Union[str, "_models.MessageRole"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The role associated with the agent thread message. Required. Known values are: \"user\" and
      \"assistant\"."""
-    content: List["_models.MessageContent"] = rest_field()
+    content: List["_models.MessageContent"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The list of content items associated with the agent thread message. Required."""
-    assistant_id: str = rest_field()
+    agent_id: str = rest_field(name="assistant_id", visibility=["read", "create", "update", "delete", "query"])
     """If applicable, the ID of the agent that authored this message. Required."""
-    run_id: str = rest_field()
+    run_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """If applicable, the ID of the run associated with the authoring of this message. Required."""
-    attachments: List["_models.MessageAttachment"] = rest_field()
+    attachments: List["_models.MessageAttachment"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of files attached to the message, and the tools they were added to. Required."""
-    metadata: Dict[str, str] = rest_field()
+    metadata: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A set of up to 16 key/value pairs that can be attached to an object, used for storing
      additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length. Required."""
@@ -5763,7 +6148,7 @@ class ThreadMessage(_model_base.Model):
         incomplete_at: datetime.datetime,
         role: Union[str, "_models.MessageRole"],
         content: List["_models.MessageContent"],
-        assistant_id: str,
+        agent_id: str,
         run_id: str,
         attachments: List["_models.MessageAttachment"],
         metadata: Dict[str, str],
@@ -5785,16 +6170,14 @@ class ThreadMessageOptions(_model_base.Model):
     """A single message within an agent thread, as provided during that thread's creation for its
     initial state.
 
-    All required parameters must be populated in order to send to server.
-
     :ivar role: The role of the entity that is creating the message. Allowed values include:
 
-
-     * ``user``\\ : Indicates the message is sent by an actual user and should be used in most
+     * ``user``: Indicates the message is sent by an actual user and should be used in most
        cases to represent user-generated messages.
-     * ``assistant``\\ : Indicates the message is generated by the agent. Use this value to insert
-       messages from the agent into the
-       conversation. Required. Known values are: "user" and "assistant".
+     * ``assistant``: Indicates the message is generated by the agent. Use this value to insert
+       messages from the agent into the conversation.
+
+     Required. Known values are: "user" and "assistant".
     :vartype role: str or ~azure.ai.projects.models.MessageRole
     :ivar content: The textual content of the initial message. Currently, robust input including
      images and annotated text may only be provided via
@@ -5809,22 +6192,25 @@ class ThreadMessageOptions(_model_base.Model):
     :vartype metadata: dict[str, str]
     """
 
-    role: Union[str, "_models.MessageRole"] = rest_field()
+    role: Union[str, "_models.MessageRole"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The role of the entity that is creating the message. Allowed values include:
-     
      
      * ``user``: Indicates the message is sent by an actual user and should be used in most
        cases to represent user-generated messages.
      * ``assistant``: Indicates the message is generated by the agent. Use this value to insert
-       messages from the agent into the
-       conversation. Required. Known values are: \"user\" and \"assistant\"."""
-    content: str = rest_field()
+       messages from the agent into the conversation.
+
+     Required. Known values are: \"user\" and \"assistant\".
+     """
+    content: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The textual content of the initial message. Currently, robust input including images and
      annotated text may only be provided via
      a separate call to the create message API. Required."""
-    attachments: Optional[List["_models.MessageAttachment"]] = rest_field()
+    attachments: Optional[List["_models.MessageAttachment"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of files attached to the message, and the tools they should be added to."""
-    metadata: Optional[Dict[str, str]] = rest_field()
+    metadata: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A set of up to 16 key/value pairs that can be attached to an object, used for storing
      additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length."""
@@ -5853,9 +6239,6 @@ class ThreadMessageOptions(_model_base.Model):
 class ThreadRun(_model_base.Model):
     """Data representing a single evaluation run of an agent thread.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: The identifier, which can be referenced in API endpoints. Required.
     :vartype id: str
     :ivar object: The object type, which is always 'thread.run'. Required. Default value is
@@ -5863,9 +6246,9 @@ class ThreadRun(_model_base.Model):
     :vartype object: str
     :ivar thread_id: The ID of the thread associated with this run. Required.
     :vartype thread_id: str
-    :ivar assistant_id: The ID of the agent associated with the thread this run was performed
-     against. Required.
-    :vartype assistant_id: str
+    :ivar agent_id: The ID of the agent associated with the thread this run was performed against.
+     Required.
+    :vartype agent_id: str
     :ivar status: The status of the agent thread run. Required. Known values are: "queued",
      "in_progress", "requires_action", "cancelling", "cancelled", "failed", "completed", and
      "expired".
@@ -5939,72 +6322,96 @@ class ThreadRun(_model_base.Model):
     :vartype parallel_tool_calls: bool
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The identifier, which can be referenced in API endpoints. Required."""
-    object: Literal["thread.run"] = rest_field()
+    object: Literal["thread.run"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The object type, which is always 'thread.run'. Required. Default value is \"thread.run\"."""
-    thread_id: str = rest_field()
+    thread_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the thread associated with this run. Required."""
-    assistant_id: str = rest_field()
+    agent_id: str = rest_field(name="assistant_id", visibility=["read", "create", "update", "delete", "query"])
     """The ID of the agent associated with the thread this run was performed against. Required."""
-    status: Union[str, "_models.RunStatus"] = rest_field()
+    status: Union[str, "_models.RunStatus"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The status of the agent thread run. Required. Known values are: \"queued\", \"in_progress\",
      \"requires_action\", \"cancelling\", \"cancelled\", \"failed\", \"completed\", and \"expired\"."""
-    required_action: Optional["_models.RequiredAction"] = rest_field()
+    required_action: Optional["_models.RequiredAction"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The details of the action required for the agent thread run to continue."""
-    last_error: "_models.RunError" = rest_field()
+    last_error: "_models.RunError" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The last error, if any, encountered by this agent thread run. Required."""
-    model: str = rest_field()
+    model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the model to use. Required."""
-    instructions: str = rest_field()
+    instructions: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The overridden system instructions used for this agent thread run. Required."""
-    tools: List["_models.ToolDefinition"] = rest_field()
+    tools: List["_models.ToolDefinition"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The overridden enabled tools used for this agent thread run. Required."""
-    created_at: datetime.datetime = rest_field(format="unix-timestamp")
+    created_at: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
     """The Unix timestamp, in seconds, representing when this object was created. Required."""
-    expires_at: datetime.datetime = rest_field(format="unix-timestamp")
+    expires_at: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
     """The Unix timestamp, in seconds, representing when this item expires. Required."""
-    started_at: datetime.datetime = rest_field(format="unix-timestamp")
+    started_at: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
     """The Unix timestamp, in seconds, representing when this item was started. Required."""
-    completed_at: datetime.datetime = rest_field(format="unix-timestamp")
+    completed_at: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
     """The Unix timestamp, in seconds, representing when this completed. Required."""
-    cancelled_at: datetime.datetime = rest_field(format="unix-timestamp")
+    cancelled_at: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
     """The Unix timestamp, in seconds, representing when this was cancelled. Required."""
-    failed_at: datetime.datetime = rest_field(format="unix-timestamp")
+    failed_at: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
     """The Unix timestamp, in seconds, representing when this failed. Required."""
-    incomplete_details: "_models.IncompleteRunDetails" = rest_field()
+    incomplete_details: "_models.IncompleteRunDetails" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Details on why the run is incomplete. Will be ``null`` if the run is not incomplete. Required."""
-    usage: "_models.RunCompletionUsage" = rest_field()
+    usage: "_models.RunCompletionUsage" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Usage statistics related to the run. This value will be ``null`` if the run is not in a
      terminal state (i.e. ``in_progress``, ``queued``, etc.). Required."""
-    temperature: Optional[float] = rest_field()
+    temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The sampling temperature used for this run. If not set, defaults to 1."""
-    top_p: Optional[float] = rest_field()
+    top_p: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The nucleus sampling value used for this run. If not set, defaults to 1."""
-    max_prompt_tokens: int = rest_field()
+    max_prompt_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The maximum number of prompt tokens specified to have been used over the course of the run.
      Required."""
-    max_completion_tokens: int = rest_field()
+    max_completion_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The maximum number of completion tokens specified to have been used over the course of the run.
      Required."""
-    truncation_strategy: "_models.TruncationObject" = rest_field()
+    truncation_strategy: "_models.TruncationObject" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The strategy to use for dropping messages as the context windows moves forward. Required."""
-    tool_choice: "_types.AgentsApiToolChoiceOption" = rest_field()
+    tool_choice: "_types.AgentsApiToolChoiceOption" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Controls whether or not and which tool is called by the model. Required. Is one of the
      following types: str, Union[str, \"_models.AgentsApiToolChoiceOptionMode\"],
      AgentsNamedToolChoice"""
-    response_format: "_types.AgentsApiResponseFormatOption" = rest_field()
+    response_format: "_types.AgentsApiResponseFormatOption" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The response format of the tool calls used in this run. Required. Is one of the following
      types: str, Union[str, \"_models.AgentsApiResponseFormatMode\"], AgentsApiResponseFormat,
      ResponseFormatJsonSchemaType"""
-    metadata: Dict[str, str] = rest_field()
+    metadata: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A set of up to 16 key/value pairs that can be attached to an object, used for storing
      additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length. Required."""
-    tool_resources: Optional["_models.UpdateToolResourcesOptions"] = rest_field()
+    tool_resources: Optional["_models.UpdateToolResourcesOptions"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Override the tools the agent can use for this run. This is useful for modifying the behavior on
      a per-run basis."""
-    parallel_tool_calls: bool = rest_field()
+    parallel_tool_calls: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Determines if tools can be executed in parallel within the run. Required."""
 
     @overload
@@ -6013,7 +6420,7 @@ class ThreadRun(_model_base.Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         thread_id: str,
-        assistant_id: str,
+        agent_id: str,
         status: Union[str, "_models.RunStatus"],
         last_error: "_models.RunError",
         model: str,
@@ -6055,12 +6462,11 @@ class ThreadRun(_model_base.Model):
 class ToolConnection(_model_base.Model):
     """A connection resource.
 
-
     :ivar connection_id: A connection in a ToolConnectionList attached to this tool. Required.
     :vartype connection_id: str
     """
 
-    connection_id: str = rest_field()
+    connection_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A connection in a ToolConnectionList attached to this tool. Required."""
 
     @overload
@@ -6082,8 +6488,8 @@ class ToolConnection(_model_base.Model):
 
 
 class ToolConnectionList(_model_base.Model):
-    """A set of connection resources currently used by either the ``bing_grounding``\\ ,
-    ``fabric_aiskill``\\ , or ``sharepoint_grounding`` tools.
+    """A set of connection resources currently used by either the ``bing_grounding``,
+    ``fabric_dataagent``, or ``sharepoint_grounding`` tools.
 
     :ivar connection_list: The connections attached to this tool. There can be a maximum of 1
      connection
@@ -6091,7 +6497,9 @@ class ToolConnectionList(_model_base.Model):
     :vartype connection_list: list[~azure.ai.projects.models.ToolConnection]
     """
 
-    connection_list: Optional[List["_models.ToolConnection"]] = rest_field(name="connections")
+    connection_list: Optional[List["_models.ToolConnection"]] = rest_field(
+        name="connections", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The connections attached to this tool. There can be a maximum of 1 connection
      resource attached to the tool."""
 
@@ -6124,10 +6532,10 @@ class ToolOutput(_model_base.Model):
     :vartype output: str
     """
 
-    tool_call_id: Optional[str] = rest_field()
+    tool_call_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the tool call being resolved, as provided in the tool calls of a required action from
      a run."""
-    output: Optional[str] = rest_field()
+    output: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The output from the tool to be submitted."""
 
     @overload
@@ -6167,11 +6575,17 @@ class ToolResources(_model_base.Model):
     :vartype azure_ai_search: ~azure.ai.projects.models.AzureAISearchResource
     """
 
-    code_interpreter: Optional["_models.CodeInterpreterToolResource"] = rest_field()
+    code_interpreter: Optional["_models.CodeInterpreterToolResource"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Resources to be used by the ``code_interpreter`` tool consisting of file IDs."""
-    file_search: Optional["_models.FileSearchToolResource"] = rest_field()
+    file_search: Optional["_models.FileSearchToolResource"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Resources to be used by the ``file_search`` tool consisting of vector store IDs."""
-    azure_ai_search: Optional["_models.AzureAISearchResource"] = rest_field()
+    azure_ai_search: Optional["_models.AzureAISearchResource"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Resources to be used by the ``azure_ai_search`` tool consisting of index IDs and names."""
 
     @overload
@@ -6198,7 +6612,6 @@ class TruncationObject(_model_base.Model):
     """Controls for how a thread will be truncated prior to the run. Use this to control the initial
     context window of the run.
 
-
     :ivar type: The truncation strategy to use for the thread. The default is ``auto``. If set to
      ``last_messages``\\ , the thread will
      be truncated to the ``lastMessages`` count most recent messages in the thread. When set to
@@ -6211,14 +6624,16 @@ class TruncationObject(_model_base.Model):
     :vartype last_messages: int
     """
 
-    type: Union[str, "_models.TruncationStrategy"] = rest_field()
+    type: Union[str, "_models.TruncationStrategy"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The truncation strategy to use for the thread. The default is ``auto``. If set to
      ``last_messages``, the thread will
      be truncated to the ``lastMessages`` count most recent messages in the thread. When set to
-     ``auto``, messages in the middle of the thread
+     ``auto`` , messages in the middle of the thread
      will be dropped to fit the context length of the model, ``max_prompt_tokens``. Required. Known
      values are: \"auto\" and \"last_messages\"."""
-    last_messages: Optional[int] = rest_field()
+    last_messages: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of most recent messages from the thread when constructing the context for the run."""
 
     @overload
@@ -6247,7 +6662,7 @@ class UpdateCodeInterpreterToolResourceOptions(_model_base.Model):
     :vartype file_ids: list[str]
     """
 
-    file_ids: Optional[List[str]] = rest_field()
+    file_ids: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of file IDs to override the current list of the agent."""
 
     @overload
@@ -6275,7 +6690,7 @@ class UpdateFileSearchToolResourceOptions(_model_base.Model):
     :vartype vector_store_ids: list[str]
     """
 
-    vector_store_ids: Optional[List[str]] = rest_field()
+    vector_store_ids: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of vector store IDs to override the current list of the agent."""
 
     @overload
@@ -6315,14 +6730,20 @@ class UpdateToolResourcesOptions(_model_base.Model):
     :vartype azure_ai_search: ~azure.ai.projects.models.AzureAISearchResource
     """
 
-    code_interpreter: Optional["_models.UpdateCodeInterpreterToolResourceOptions"] = rest_field()
+    code_interpreter: Optional["_models.UpdateCodeInterpreterToolResourceOptions"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Overrides the list of file IDs made available to the ``code_interpreter`` tool. There can be a
      maximum of 20 files
      associated with the tool."""
-    file_search: Optional["_models.UpdateFileSearchToolResourceOptions"] = rest_field()
+    file_search: Optional["_models.UpdateFileSearchToolResourceOptions"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Overrides the vector store attached to this agent. There can be a maximum of 1 vector store
      attached to the agent."""
-    azure_ai_search: Optional["_models.AzureAISearchResource"] = rest_field()
+    azure_ai_search: Optional["_models.AzureAISearchResource"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Overrides the resources to be used by the ``azure_ai_search`` tool consisting of index IDs and
      names."""
 
@@ -6349,9 +6770,6 @@ class UpdateToolResourcesOptions(_model_base.Model):
 class VectorStore(_model_base.Model):
     """A vector store is a collection of processed files can be used by the ``file_search`` tool.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: The identifier, which can be referenced in API endpoints. Required.
     :vartype id: str
     :ivar object: The object type, which is always ``vector_store``. Required. Default value is
@@ -6367,9 +6785,9 @@ class VectorStore(_model_base.Model):
     :ivar file_counts: Files count grouped by status processed or being processed by this vector
      store. Required.
     :vartype file_counts: ~azure.ai.projects.models.VectorStoreFileCount
-    :ivar status: The status of the vector store, which can be either ``expired``\\ ,
-     ``in_progress``\\ , or ``completed``. A status of ``completed`` indicates that the vector store
-     is ready for use. Required. Known values are: "expired", "in_progress", and "completed".
+    :ivar status: The status of the vector store, which can be either ``expired``, ``in_progress``,
+     or ``completed``. A status of ``completed`` indicates that the vector store is ready for use.
+     Required. Known values are: "expired", "in_progress", and "completed".
     :vartype status: str or ~azure.ai.projects.models.VectorStoreStatus
     :ivar expires_after: Details on when this vector store expires.
     :vartype expires_after: ~azure.ai.projects.models.VectorStoreExpirationPolicy
@@ -6384,29 +6802,39 @@ class VectorStore(_model_base.Model):
     :vartype metadata: dict[str, str]
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The identifier, which can be referenced in API endpoints. Required."""
-    object: Literal["vector_store"] = rest_field()
+    object: Literal["vector_store"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The object type, which is always ``vector_store``. Required. Default value is \"vector_store\"."""
-    created_at: datetime.datetime = rest_field(format="unix-timestamp")
+    created_at: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
     """The Unix timestamp (in seconds) for when the vector store was created. Required."""
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the vector store. Required."""
-    usage_bytes: int = rest_field()
+    usage_bytes: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The total number of bytes used by the files in the vector store. Required."""
-    file_counts: "_models.VectorStoreFileCount" = rest_field()
+    file_counts: "_models.VectorStoreFileCount" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Files count grouped by status processed or being processed by this vector store. Required."""
-    status: Union[str, "_models.VectorStoreStatus"] = rest_field()
+    status: Union[str, "_models.VectorStoreStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The status of the vector store, which can be either ``expired``, ``in_progress``, or
      ``completed``. A status of ``completed`` indicates that the vector store is ready for use.
      Required. Known values are: \"expired\", \"in_progress\", and \"completed\"."""
-    expires_after: Optional["_models.VectorStoreExpirationPolicy"] = rest_field()
+    expires_after: Optional["_models.VectorStoreExpirationPolicy"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Details on when this vector store expires."""
-    expires_at: Optional[datetime.datetime] = rest_field(format="unix-timestamp")
+    expires_at: Optional[datetime.datetime] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
     """The Unix timestamp (in seconds) for when the vector store will expire."""
-    last_active_at: datetime.datetime = rest_field(format="unix-timestamp")
+    last_active_at: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
     """The Unix timestamp (in seconds) for when the vector store was last active. Required."""
-    metadata: Dict[str, str] = rest_field()
+    metadata: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A set of up to 16 key/value pairs that can be attached to an object, used for storing
      additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length. Required."""
@@ -6445,14 +6873,12 @@ class VectorStoreChunkingStrategyRequest(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     VectorStoreAutoChunkingStrategyRequest, VectorStoreStaticChunkingStrategyRequest
 
-    All required parameters must be populated in order to send to server.
-
     :ivar type: The object type. Required. Known values are: "auto" and "static".
     :vartype type: str or ~azure.ai.projects.models.VectorStoreChunkingStrategyRequestType
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    type: str = rest_discriminator(name="type")
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The object type. Required. Known values are: \"auto\" and \"static\"."""
 
     @overload
@@ -6477,13 +6903,11 @@ class VectorStoreAutoChunkingStrategyRequest(VectorStoreChunkingStrategyRequest,
     """The default strategy. This strategy currently uses a max_chunk_size_tokens of 800 and
     chunk_overlap_tokens of 400.
 
-    All required parameters must be populated in order to send to server.
-
     :ivar type: The object type, which is always 'auto'. Required.
     :vartype type: str or ~azure.ai.projects.models.AUTO
     """
 
-    type: Literal[VectorStoreChunkingStrategyRequestType.AUTO] = rest_discriminator(name="type")  # type: ignore
+    type: Literal[VectorStoreChunkingStrategyRequestType.AUTO] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'auto'. Required."""
 
     @overload
@@ -6508,13 +6932,12 @@ class VectorStoreChunkingStrategyResponse(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     VectorStoreAutoChunkingStrategyResponse, VectorStoreStaticChunkingStrategyResponse
 
-
     :ivar type: The object type. Required. Known values are: "other" and "static".
     :vartype type: str or ~azure.ai.projects.models.VectorStoreChunkingStrategyResponseType
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    type: str = rest_discriminator(name="type")
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The object type. Required. Known values are: \"other\" and \"static\"."""
 
     @overload
@@ -6539,12 +6962,11 @@ class VectorStoreAutoChunkingStrategyResponse(VectorStoreChunkingStrategyRespons
     """This is returned when the chunking strategy is unknown. Typically, this is because the file was
     indexed before the chunking_strategy concept was introduced in the API.
 
-
     :ivar type: The object type, which is always 'other'. Required.
     :vartype type: str or ~azure.ai.projects.models.OTHER
     """
 
-    type: Literal[VectorStoreChunkingStrategyResponseType.OTHER] = rest_discriminator(name="type")  # type: ignore
+    type: Literal[VectorStoreChunkingStrategyResponseType.OTHER] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'other'. Required."""
 
     @overload
@@ -6567,12 +6989,13 @@ class VectorStoreConfiguration(_model_base.Model):
     """Vector storage configuration is the list of data sources, used when multiple
     files can be used for the enterprise file search.
 
-
     :ivar data_sources: Data sources. Required.
     :vartype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
     """
 
-    data_sources: List["_models.VectorStoreDataSource"] = rest_field()
+    data_sources: List["_models.VectorStoreDataSource"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Data sources. Required."""
 
     @overload
@@ -6597,16 +7020,17 @@ class VectorStoreConfigurations(_model_base.Model):
     """The structure, containing the list of vector storage configurations i.e. the list of azure
     asset IDs.
 
-
     :ivar store_name: Name. Required.
     :vartype store_name: str
     :ivar store_configuration: Configurations. Required.
     :vartype store_configuration: ~azure.ai.projects.models.VectorStoreConfiguration
     """
 
-    store_name: str = rest_field(name="name")
+    store_name: str = rest_field(name="name", visibility=["read", "create", "update", "delete", "query"])
     """Name. Required."""
-    store_configuration: "_models.VectorStoreConfiguration" = rest_field(name="configuration")
+    store_configuration: "_models.VectorStoreConfiguration" = rest_field(
+        name="configuration", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Configurations. Required."""
 
     @overload
@@ -6633,16 +7057,17 @@ class VectorStoreDataSource(_model_base.Model):
     source
     for the enterprise file search.
 
-
     :ivar asset_identifier: Asset URI. Required.
     :vartype asset_identifier: str
     :ivar asset_type: The asset type. Required. Known values are: "uri_asset" and "id_asset".
     :vartype asset_type: str or ~azure.ai.projects.models.VectorStoreDataSourceAssetType
     """
 
-    asset_identifier: str = rest_field(name="uri")
+    asset_identifier: str = rest_field(name="uri", visibility=["read", "create", "update", "delete", "query"])
     """Asset URI. Required."""
-    asset_type: Union[str, "_models.VectorStoreDataSourceAssetType"] = rest_field(name="type")
+    asset_type: Union[str, "_models.VectorStoreDataSourceAssetType"] = rest_field(
+        name="type", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The asset type. Required. Known values are: \"uri_asset\" and \"id_asset\"."""
 
     @overload
@@ -6667,9 +7092,6 @@ class VectorStoreDataSource(_model_base.Model):
 class VectorStoreDeletionStatus(_model_base.Model):
     """Response object for deleting a vector store.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: The ID of the resource specified for deletion. Required.
     :vartype id: str
     :ivar deleted: A value indicating whether deletion was successful. Required.
@@ -6679,11 +7101,11 @@ class VectorStoreDeletionStatus(_model_base.Model):
     :vartype object: str
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the resource specified for deletion. Required."""
-    deleted: bool = rest_field()
+    deleted: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A value indicating whether deletion was successful. Required."""
-    object: Literal["vector_store.deleted"] = rest_field()
+    object: Literal["vector_store.deleted"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The object type, which is always 'vector_store.deleted'. Required. Default value is
      \"vector_store.deleted\"."""
 
@@ -6710,7 +7132,6 @@ class VectorStoreDeletionStatus(_model_base.Model):
 class VectorStoreExpirationPolicy(_model_base.Model):
     """The expiration policy for a vector store.
 
-
     :ivar anchor: Anchor timestamp after which the expiration policy applies. Supported anchors:
      ``last_active_at``. Required. "last_active_at"
     :vartype anchor: str or ~azure.ai.projects.models.VectorStoreExpirationPolicyAnchor
@@ -6718,10 +7139,12 @@ class VectorStoreExpirationPolicy(_model_base.Model):
     :vartype days: int
     """
 
-    anchor: Union[str, "_models.VectorStoreExpirationPolicyAnchor"] = rest_field()
+    anchor: Union[str, "_models.VectorStoreExpirationPolicyAnchor"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Anchor timestamp after which the expiration policy applies. Supported anchors:
      ``last_active_at``. Required. \"last_active_at\""""
-    days: int = rest_field()
+    days: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The anchor timestamp after which the expiration policy applies. Required."""
 
     @overload
@@ -6746,9 +7169,6 @@ class VectorStoreExpirationPolicy(_model_base.Model):
 class VectorStoreFile(_model_base.Model):
     """Description of a file attached to a vector store.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: The identifier, which can be referenced in API endpoints. Required.
     :vartype id: str
     :ivar object: The object type, which is always ``vector_store.file``. Required. Default value
@@ -6763,10 +7183,10 @@ class VectorStoreFile(_model_base.Model):
     :vartype created_at: ~datetime.datetime
     :ivar vector_store_id: The ID of the vector store that the file is attached to. Required.
     :vartype vector_store_id: str
-    :ivar status: The status of the vector store file, which can be either ``in_progress``\\ ,
-     ``completed``\\ , ``cancelled``\\ , or ``failed``. The status ``completed`` indicates that the
-     vector store file is ready for use. Required. Known values are: "in_progress", "completed",
-     "failed", and "cancelled".
+    :ivar status: The status of the vector store file, which can be either ``in_progress``,
+     ``completed``, ``cancelled``, or ``failed``. The status ``completed`` indicates that the vector
+     store file is ready for use. Required. Known values are: "in_progress", "completed", "failed",
+     and "cancelled".
     :vartype status: str or ~azure.ai.projects.models.VectorStoreFileStatus
     :ivar last_error: The last error associated with this vector store file. Will be ``null`` if
      there are no errors. Required.
@@ -6775,27 +7195,33 @@ class VectorStoreFile(_model_base.Model):
     :vartype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyResponse
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The identifier, which can be referenced in API endpoints. Required."""
-    object: Literal["vector_store.file"] = rest_field()
+    object: Literal["vector_store.file"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The object type, which is always ``vector_store.file``. Required. Default value is
      \"vector_store.file\"."""
-    usage_bytes: int = rest_field()
+    usage_bytes: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The total vector store usage in bytes. Note that this may be different from the original file
      size. Required."""
-    created_at: datetime.datetime = rest_field(format="unix-timestamp")
+    created_at: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
     """The Unix timestamp (in seconds) for when the vector store file was created. Required."""
-    vector_store_id: str = rest_field()
+    vector_store_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the vector store that the file is attached to. Required."""
-    status: Union[str, "_models.VectorStoreFileStatus"] = rest_field()
+    status: Union[str, "_models.VectorStoreFileStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The status of the vector store file, which can be either ``in_progress``, ``completed``,
-     ``cancelled``, or ``failed``. The status ``completed`` indicates that the vector store file
-     is ready for use. Required. Known values are: \"in_progress\", \"completed\", \"failed\", and
+     ``cancelled``, or ``failed``. The status ``completed`` indicates that the vector store file is
+     ready for use. Required. Known values are: \"in_progress\", \"completed\", \"failed\", and
      \"cancelled\"."""
-    last_error: "_models.VectorStoreFileError" = rest_field()
+    last_error: "_models.VectorStoreFileError" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The last error associated with this vector store file. Will be ``null`` if there are no errors.
      Required."""
-    chunking_strategy: "_models.VectorStoreChunkingStrategyResponse" = rest_field()
+    chunking_strategy: "_models.VectorStoreChunkingStrategyResponse" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The strategy used to chunk the file. Required."""
 
     @overload
@@ -6826,9 +7252,6 @@ class VectorStoreFile(_model_base.Model):
 class VectorStoreFileBatch(_model_base.Model):
     """A batch of files attached to a vector store.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: The identifier, which can be referenced in API endpoints. Required.
     :vartype id: str
     :ivar object: The object type, which is always ``vector_store.file_batch``. Required. Default
@@ -6839,8 +7262,8 @@ class VectorStoreFileBatch(_model_base.Model):
     :vartype created_at: ~datetime.datetime
     :ivar vector_store_id: The ID of the vector store that the file is attached to. Required.
     :vartype vector_store_id: str
-    :ivar status: The status of the vector store files batch, which can be either ``in_progress``\\
-     , ``completed``\\ , ``cancelled`` or ``failed``. Required. Known values are: "in_progress",
+    :ivar status: The status of the vector store files batch, which can be either ``in_progress``,
+     ``completed``, ``cancelled`` or ``failed``. Required. Known values are: "in_progress",
      "completed", "cancelled", and "failed".
     :vartype status: str or ~azure.ai.projects.models.VectorStoreFileBatchStatus
     :ivar file_counts: Files count grouped by status processed or being processed by this vector
@@ -6848,20 +7271,24 @@ class VectorStoreFileBatch(_model_base.Model):
     :vartype file_counts: ~azure.ai.projects.models.VectorStoreFileCount
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The identifier, which can be referenced in API endpoints. Required."""
-    object: Literal["vector_store.files_batch"] = rest_field()
+    object: Literal["vector_store.files_batch"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The object type, which is always ``vector_store.file_batch``. Required. Default value is
      \"vector_store.files_batch\"."""
-    created_at: datetime.datetime = rest_field(format="unix-timestamp")
+    created_at: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
     """The Unix timestamp (in seconds) for when the vector store files batch was created. Required."""
-    vector_store_id: str = rest_field()
+    vector_store_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the vector store that the file is attached to. Required."""
-    status: Union[str, "_models.VectorStoreFileBatchStatus"] = rest_field()
-    """The status of the vector store files batch, which can be either ``in_progress``,
-     ``completed``, ``cancelled`` or ``failed``. Required. Known values are: \"in_progress\",
-     \"completed\", \"cancelled\", and \"failed\"."""
-    file_counts: "_models.VectorStoreFileCount" = rest_field()
+    status: Union[str, "_models.VectorStoreFileBatchStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The status of the vector store files batch, which can be either ``in_progress``, ``completed``,
+     ``cancelled`` or ``failed``. Required. Known values are: \"in_progress\", \"completed\",
+     \"cancelled\", and \"failed\"."""
+    file_counts: "_models.VectorStoreFileCount" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Files count grouped by status processed or being processed by this vector store. Required."""
 
     @overload
@@ -6890,7 +7317,6 @@ class VectorStoreFileBatch(_model_base.Model):
 class VectorStoreFileCount(_model_base.Model):
     """Counts of files processed or being processed by this vector store grouped by status.
 
-
     :ivar in_progress: The number of files that are currently being processed. Required.
     :vartype in_progress: int
     :ivar completed: The number of files that have been successfully processed. Required.
@@ -6903,15 +7329,15 @@ class VectorStoreFileCount(_model_base.Model):
     :vartype total: int
     """
 
-    in_progress: int = rest_field()
+    in_progress: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of files that are currently being processed. Required."""
-    completed: int = rest_field()
+    completed: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of files that have been successfully processed. Required."""
-    failed: int = rest_field()
+    failed: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of files that have failed to process. Required."""
-    cancelled: int = rest_field()
+    cancelled: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of files that were cancelled. Required."""
-    total: int = rest_field()
+    total: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The total number of files. Required."""
 
     @overload
@@ -6939,9 +7365,6 @@ class VectorStoreFileCount(_model_base.Model):
 class VectorStoreFileDeletionStatus(_model_base.Model):
     """Response object for deleting a vector store file relationship.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: The ID of the resource specified for deletion. Required.
     :vartype id: str
     :ivar deleted: A value indicating whether deletion was successful. Required.
@@ -6951,11 +7374,13 @@ class VectorStoreFileDeletionStatus(_model_base.Model):
     :vartype object: str
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the resource specified for deletion. Required."""
-    deleted: bool = rest_field()
+    deleted: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A value indicating whether deletion was successful. Required."""
-    object: Literal["vector_store.file.deleted"] = rest_field()
+    object: Literal["vector_store.file.deleted"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The object type, which is always 'vector_store.deleted'. Required. Default value is
      \"vector_store.file.deleted\"."""
 
@@ -6982,7 +7407,6 @@ class VectorStoreFileDeletionStatus(_model_base.Model):
 class VectorStoreFileError(_model_base.Model):
     """Details on the error that may have occurred while processing a file for this vector store.
 
-
     :ivar code: One of ``server_error`` or ``rate_limit_exceeded``. Required. Known values are:
      "server_error", "invalid_file", and "unsupported_file".
     :vartype code: str or ~azure.ai.projects.models.VectorStoreFileErrorCode
@@ -6990,10 +7414,12 @@ class VectorStoreFileError(_model_base.Model):
     :vartype message: str
     """
 
-    code: Union[str, "_models.VectorStoreFileErrorCode"] = rest_field()
+    code: Union[str, "_models.VectorStoreFileErrorCode"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """One of ``server_error`` or ``rate_limit_exceeded``. Required. Known values are:
      \"server_error\", \"invalid_file\", and \"unsupported_file\"."""
-    message: str = rest_field()
+    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A human-readable description of the error. Required."""
 
     @overload
@@ -7018,7 +7444,6 @@ class VectorStoreFileError(_model_base.Model):
 class VectorStoreStaticChunkingStrategyOptions(_model_base.Model):
     """Options to configure a vector store static chunking strategy.
 
-
     :ivar max_chunk_size_tokens: The maximum number of tokens in each chunk. The default value is
      800. The minimum value is 100 and the maximum value is 4096. Required.
     :vartype max_chunk_size_tokens: int
@@ -7028,10 +7453,10 @@ class VectorStoreStaticChunkingStrategyOptions(_model_base.Model):
     :vartype chunk_overlap_tokens: int
     """
 
-    max_chunk_size_tokens: int = rest_field()
+    max_chunk_size_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The maximum number of tokens in each chunk. The default value is 800. The minimum value is 100
      and the maximum value is 4096. Required."""
-    chunk_overlap_tokens: int = rest_field()
+    chunk_overlap_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of tokens that overlap between chunks. The default value is 400.
      Note that the overlap must not exceed half of max_chunk_size_tokens. Required."""
 
@@ -7057,17 +7482,17 @@ class VectorStoreStaticChunkingStrategyOptions(_model_base.Model):
 class VectorStoreStaticChunkingStrategyRequest(VectorStoreChunkingStrategyRequest, discriminator="static"):
     """A statically configured chunking strategy.
 
-    All required parameters must be populated in order to send to server.
-
     :ivar type: The object type, which is always 'static'. Required.
     :vartype type: str or ~azure.ai.projects.models.STATIC
     :ivar static: The options for the static chunking strategy. Required.
     :vartype static: ~azure.ai.projects.models.VectorStoreStaticChunkingStrategyOptions
     """
 
-    type: Literal[VectorStoreChunkingStrategyRequestType.STATIC] = rest_discriminator(name="type")  # type: ignore
+    type: Literal[VectorStoreChunkingStrategyRequestType.STATIC] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'static'. Required."""
-    static: "_models.VectorStoreStaticChunkingStrategyOptions" = rest_field()
+    static: "_models.VectorStoreStaticChunkingStrategyOptions" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The options for the static chunking strategy. Required."""
 
     @overload
@@ -7093,16 +7518,17 @@ class VectorStoreStaticChunkingStrategyResponse(
 ):  # pylint: disable=name-too-long
     """A statically configured chunking strategy.
 
-
     :ivar type: The object type, which is always 'static'. Required.
     :vartype type: str or ~azure.ai.projects.models.STATIC
     :ivar static: The options for the static chunking strategy. Required.
     :vartype static: ~azure.ai.projects.models.VectorStoreStaticChunkingStrategyOptions
     """
 
-    type: Literal[VectorStoreChunkingStrategyResponseType.STATIC] = rest_discriminator(name="type")  # type: ignore
+    type: Literal[VectorStoreChunkingStrategyResponseType.STATIC] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'static'. Required."""
-    static: "_models.VectorStoreStaticChunkingStrategyOptions" = rest_field()
+    static: "_models.VectorStoreStaticChunkingStrategyOptions" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The options for the static chunking strategy. Required."""
 
     @overload
@@ -7126,12 +7552,13 @@ class VectorStoreStaticChunkingStrategyResponse(
 class WorkspaceProperties(_model_base.Model):
     """workspace properties.
 
-
     :ivar application_insights: Authentication type of the connection target. Required.
     :vartype application_insights: str
     """
 
-    application_insights: str = rest_field(name="applicationInsights")
+    application_insights: str = rest_field(
+        name="applicationInsights", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Authentication type of the connection target. Required."""
 
     @overload

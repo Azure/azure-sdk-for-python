@@ -149,6 +149,18 @@ class RoomsSample(object):
         except HttpResponseError as ex:
             print(ex)
 
+    # Starting in 1.2.0 release, we are introducing a new role called Collaborator
+    def add_or_update_participants_to_collaborator(self, room_id):
+        self.participant_1.role = ParticipantRole.COLLABORATOR
+        participants = [
+            self.participant_1,  # Update participant_1 role from Attendee to Collaborator
+        ]
+
+        try:
+            self.rooms_client.add_or_update_participants(room_id=room_id, participants=participants)
+        except HttpResponseError as ex:
+            print(ex)
+
     def list_participants(self, room_id):
         try:
             get_participants_response = self.rooms_client.list_participants(room_id=room_id)

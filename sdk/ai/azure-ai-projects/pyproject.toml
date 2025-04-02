@@ -35,3 +35,7 @@ extend_skip_glob = [
   "*/doc/*",
   "*/.tox/*",
 ]
+
+[tool.azure-sdk-build]
+whl_no_aio= false
+

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -283,7 +284,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
                 "str", response.headers.get("Operation-Location")
             )
 
-            deserialized = _deserialize(_models.DocumentModelDetails, response.json())
+            deserialized = _deserialize(_models.DocumentModelDetails, response.json().get("result"))
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
@@ -294,7 +295,13 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
 
         if polling is True:
             polling_method: PollingMethod = cast(
-                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+                PollingMethod,
+                LROBasePolling(
+                    lro_delay,
+                    path_format_arguments=path_format_arguments,
+                    lro_options={"final-state-via": "operation-location"},
+                    **kwargs,
+                ),
             )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
@@ -347,7 +354,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
                 "str", response.headers.get("Operation-Location")
             )
 
-            deserialized = _deserialize(_models.DocumentClassifierDetails, response.json())
+            deserialized = _deserialize(_models.DocumentClassifierDetails, response.json().get("result"))
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
@@ -358,7 +365,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
 
         if polling is True:
             polling_method: PollingMethod = cast(
-                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, lro_options={"final-state-via": "operation-location"}, **kwargs)
             )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())

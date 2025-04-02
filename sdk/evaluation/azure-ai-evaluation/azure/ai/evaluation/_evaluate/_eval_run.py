@@ -404,7 +404,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
             LOGGER.warning("The run results file was not found, skipping artifacts upload.")
             return
         # First we will list the files and the appropriate remote paths for them.
-        root_upload_path = posixpath.join("promptflow", "PromptFlowArtifacts", self.info.run_name)
+        root_upload_path = posixpath.join("promptflow", "PromptFlowArtifacts", self.info.run_id)
         remote_paths: Dict[str, List[Dict[str, str]]] = {"paths": []}
         local_paths = []
         # Go over the artifact folder and upload all artifacts.

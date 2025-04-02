@@ -21,11 +21,11 @@ class TestSqlManagementManagedDatabaseMoveOperationsOperationsAsync(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_location(self, resource_group):
+    async def test_managed_database_move_operations_list_by_location(self, resource_group):
         response = self.client.managed_database_move_operations.list_by_location(
             resource_group_name=resource_group.name,
             location_name="str",
-            api_version="2022-05-01-preview",
+            api_version="2024-05-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -33,12 +33,12 @@ class TestSqlManagementManagedDatabaseMoveOperationsOperationsAsync(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_managed_database_move_operations_get(self, resource_group):
         response = await self.client.managed_database_move_operations.get(
             resource_group_name=resource_group.name,
             location_name="str",
             operation_id="str",
-            api_version="2022-05-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
