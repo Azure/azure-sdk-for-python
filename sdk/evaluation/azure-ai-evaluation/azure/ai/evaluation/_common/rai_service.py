@@ -15,7 +15,7 @@ from string import Template
 
 import jwt
 
-from promptflow.core._errors import MissingRequiredPackage
+from azure.ai.evaluation._legacy._adapters._errors import MissingRequiredPackage
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline, get_async_http_client
 from azure.ai.evaluation._model_configurations import AzureAIProject
