@@ -9,13 +9,14 @@ import importlib
 import logging
 
 from contextvars import ContextVar
-from typing import Any, Callable, Generator, Optional, Protocol, Sequence, Tuple
+from typing import Any, Callable, Final, Generator, Optional, Protocol, Sequence, Tuple
 
 from azure.ai.evaluation._legacy._adapters._errors import MissingRequiredPackage
 from azure.ai.evaluation._legacy._batch_engine._result import TokenMetrics
 
 
 _token_metrics: ContextVar[TokenMetrics] = ContextVar("token_metrics", default=TokenMetrics(0, 0, 0))
+KEY_ATTR_ORIGINAL: Final[str] = "_original"
 
 
 class _TokenMetrics(Protocol):
@@ -98,9 +99,10 @@ def inject_openai_api():
     """
     for cls, method, is_async in _openai_api_list():
         # Check if the create method of the openai_api class has already been modified
-        if not hasattr(method, "_original"):
-            setattr(method, "_original", method)
-            setattr(cls, method.__name__, _wrap_openai_api_method(method, is_async))
+        if not hasattr(method, KEY_ATTR_ORIGINAL):
+            wrapper_method: Callable = _wrap_openai_api_method(method, is_async)
+            setattr(wrapper_method, KEY_ATTR_ORIGINAL, method)
+            setattr(cls, method.__name__, wrapper_method)
 
 
 def recover_openai_api():
@@ -108,10 +110,9 @@ def recover_openai_api():
     by assigning them back from the _original attributes of the modified methods.
     """
     for cls, method, _ in _openai_api_list():
-        if hasattr(method, "_original"):
-            original_method = getattr(method, "_original")
+        if hasattr(method, KEY_ATTR_ORIGINAL):
+            original_method = getattr(method, KEY_ATTR_ORIGINAL)
             setattr(cls, method.__name__, original_method)
-            delattr(method, "_original")
 
 
 class CaptureOpenAITokenUsage:
