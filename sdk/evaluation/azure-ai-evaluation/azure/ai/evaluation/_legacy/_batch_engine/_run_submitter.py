@@ -7,12 +7,11 @@ import inspect
 import sys
 
 from concurrent.futures import Executor
-from copy import deepcopy
 from datetime import datetime, timezone
 from typing import Any, Callable, Dict, Mapping, Optional, Sequence, TextIO, Union
 
 from ._run import Run, RunStatus
-from ._trace import start_trace, is_collection_writeable
+from ._trace import start_trace
 from ._run_storage import AbstractRunStorage, NoOpRunStorage
 from .._common._logging import incremental_print, print_red_error
 from ._config import BatchEngineConfig
@@ -35,7 +34,7 @@ class RunSubmitter:
         self._config = config
         self._executor = executor
 
-    def submit(
+    async def submit(
         self,
         dynamic_callable: Callable,
         inputs: Sequence[Mapping[str, Any]],
@@ -72,19 +71,8 @@ class RunSubmitter:
             run=kwargs.pop("run", None),
         )
 
-        logger = self._config.logger
         attributes: Dict[str, Any] = kwargs.get("attributes", {})
-        collection_for_run: Optional[str] = None
-
-        logger.debug("start trace for flow run...")
-        logger.debug("flow path for run.start_trace: %s", run.name)
-
-        if is_collection_writeable():
-            logger.debug("trace collection is writeable, will use flow name as collection...")
-            collection_for_run = run.name
-            logger.debug("collection for run: %s", collection_for_run)
-        else:
-            logger.debug("trace collection is protected, will honor existing collection.")
+        collection_for_run: str = run.name
         start_trace(attributes=attributes, run=run, _collection=collection_for_run)
 
         self._validate_inputs(run=run)
@@ -94,12 +82,12 @@ class RunSubmitter:
             run._status = RunStatus.PREPARING
 
             # unnecessary Flow loading code was removed here. Instead do direct calls to _submit_bulk_run
-            self._submit_bulk_run(run=run, local_storage=local_storage, **kwargs)
+            await self._submit_bulk_run(run=run, local_storage=local_storage, **kwargs)
 
         self.stream_run(run=run, storage=local_storage, raise_on_error=True)
         return run
 
-    def _submit_bulk_run(self, run: Run, local_storage: AbstractRunStorage, **kwargs) -> None:
+    async def _submit_bulk_run(self, run: Run, local_storage: AbstractRunStorage, **kwargs) -> None:
         logger = self._config.logger
 
         logger.info(f"Submitting run {run.name}, log path: {local_storage.logger.file_path}")
@@ -147,7 +135,7 @@ class RunSubmitter:
                 executor=self._executor,
             )
 
-            batch_result = batch_engine.run(data=run.inputs, column_mapping=run.column_mapping, id=run.name)
+            batch_result = await batch_engine.run(data=run.inputs, column_mapping=run.column_mapping, id=run.name)
             run._status = RunStatus.from_batch_result_status(batch_result.status)
 
             error_logs: Sequence[str] = []
@@ -233,10 +221,6 @@ class RunSubmitter:
         :param Run run: The run to stream.
         :param AbstractRunStorage storage: The storage to use for the output.
         """
-
-        # TODO ralphe: This doesn't seem to be do anything useful beyond just print
-        #              a run summary at the end. This is because by the time it gets
-        #              invoked even in the original code, the run has already completed.
 
         if run is None or storage is None:
             return

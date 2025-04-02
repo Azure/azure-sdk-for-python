@@ -82,7 +82,7 @@ class BatchEngine:
         self._executor: Optional[Executor] = executor
         self._is_canceled: bool = False
 
-    def run(
+    async def run(
         self,
         data: Sequence[Mapping[str, Any]],
         column_mapping: Mapping[str, str],
@@ -103,7 +103,7 @@ class BatchEngine:
 
         try:
             id = id or str(uuid4())
-            result: BatchResult = async_run_allowing_running_loop(self._exec_in_task, id, batch_inputs, start_time)
+            result: BatchResult = await self._exec_in_task(id, batch_inputs, start_time)
             return result
         except Exception as ex:
             raise BatchEngineError(

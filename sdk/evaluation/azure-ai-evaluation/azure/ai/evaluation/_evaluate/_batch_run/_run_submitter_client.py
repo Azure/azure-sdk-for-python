@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+import asyncio
 import logging
 import pandas as pd
 import sys
@@ -53,16 +54,20 @@ class RunSubmitterClient:
         if isinstance(flow, HasAsyncCallable):
             flow = flow._to_async()  # pylint: disable=protected-access
 
+        # Start an event loop for async execution on a thread pool thread to separate it
+        # from the caller's thread.
         run_submitter = RunSubmitter(self._config, self._thread_pool)
         run_future = self._thread_pool.submit(
-            run_submitter.submit,
-            dynamic_callable=flow,
-            inputs=inputs,
-            column_mapping=column_mapping,
-            name_prefix=evaluator_name,
-            created_on=kwargs.pop("created_on", None),
-            storage_creator=kwargs.pop("storage_creator", None),
-            **kwargs,
+            asyncio.run,
+            run_submitter.submit(
+                dynamic_callable=flow,
+                inputs=inputs,
+                column_mapping=column_mapping,
+                name_prefix=evaluator_name,
+                created_on=kwargs.pop("created_on", None),
+                storage_creator=kwargs.pop("storage_creator", None),
+                **kwargs,
+            )
         )
 
         return run_future
