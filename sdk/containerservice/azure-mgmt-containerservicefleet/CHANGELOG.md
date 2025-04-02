@@ -24,10 +24,8 @@
   - Added model `FleetStatus`
   - Added model `GenerateResponse`
   - Added enum `UpgradeChannel`
-  - Added model `AutoUpgradeProfileOperationsOperations`
-  - Added model `AutoUpgradeProfilesOperations`
-  - Method `AutoUpgradeProfilesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, fleet_name: str, auto_upgrade_profile_name: str, resource: AutoUpgradeProfile, if_match: Optional[str], if_none_match: Optional[str], content_type: str)`
-  - Method `AutoUpgradeProfilesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, fleet_name: str, auto_upgrade_profile_name: str, resource: IO[bytes], if_match: Optional[str], if_none_match: Optional[str], content_type: str)`
+  - Added operation group `AutoUpgradeProfileOperationsOperations`
+  - Added operation group `AutoUpgradeProfilesOperations`
 
 ## 3.0.0 (2024-10-31)
 
