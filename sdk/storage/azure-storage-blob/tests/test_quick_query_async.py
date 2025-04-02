@@ -129,8 +129,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
             errors.append(error)
 
         reader = await blob_client.query_blob("SELECT * from BlobStorage", on_error=on_error)
-        await reader._setup()
-        data = reader.readall()
+        data = await reader.readall()
         assert len(errors) == 0
         assert len(reader) == len(CSV_DATA)
         assert reader._size == reader._bytes_processed
@@ -146,7 +145,8 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key)
+            credential=storage_account_key
+        )
         await self._setup(bsc)
 
         # upload the csv file
@@ -155,7 +155,6 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         await blob_client.upload_blob(CSV_DATA, overwrite=True)
 
         reader = await blob_client.query_blob("SELECT * from BlobStorage")
-        await reader._setup()
         read_records = reader.records()
 
         # Assert first line has header
