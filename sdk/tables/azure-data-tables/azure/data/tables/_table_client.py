@@ -73,6 +73,7 @@ class TableClient(TablesBaseClient):
         table_name: str,
         *,
         credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, TokenCredential]] = None,
+        audience: Optional[str] = None,
         api_version: Optional[str] = None,
         encoder_map: Optional[EncoderMapType] = None,
         decoder_map: Optional[DecoderMapType] = None,
@@ -91,6 +92,8 @@ class TableClient(TablesBaseClient):
             ~azure.core.credentials.AzureNamedKeyCredential or
             ~azure.core.credentials.AzureSasCredential or
             ~azure.core.credentials.TokenCredential or None
+        :keyword audience: Optional audience to use when authenticating. Defaults to None.
+        :paramtype audience: str or None
         :keyword api_version: Specifies the version of the operation to use for this request. Default value
             is "2019-02-02".
         :paramtype api_version: str or None
@@ -112,7 +115,7 @@ class TableClient(TablesBaseClient):
         self.table_name: str = table_name
         self.encoder = TableEntityEncoder(convert_map=encoder_map)
         self.decoder = TableEntityDecoder(convert_map=decoder_map, flatten_result_entity=flatten_result_entity)
-        super(TableClient, self).__init__(endpoint, credential=credential, api_version=api_version, **kwargs)
+        super(TableClient, self).__init__(endpoint, credential=credential, api_version=api_version, audience=audience, **kwargs)
 
     @classmethod
     def from_connection_string(cls, conn_str: str, table_name: str, **kwargs: Any) -> "TableClient":

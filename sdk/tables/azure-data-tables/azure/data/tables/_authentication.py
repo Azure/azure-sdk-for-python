@@ -246,10 +246,14 @@ def _configure_credential(
         Union[AzureNamedKeyCredential, AzureSasCredential, TokenCredential, SharedKeyCredentialPolicy]
     ],
     cosmos_endpoint: bool = False,
+    audience: Optional[str] = None,
 ) -> Optional[Union[BearerTokenChallengePolicy, AzureSasCredentialPolicy, SharedKeyCredentialPolicy]]:
     if hasattr(credential, "get_token"):
         credential = cast(TokenCredential, credential)
-        scope = COSMOS_OAUTH_SCOPE if cosmos_endpoint else STORAGE_OAUTH_SCOPE
+        if audience:
+            scope = audience + "/.default"
+        else:
+            scope = COSMOS_OAUTH_SCOPE if cosmos_endpoint else STORAGE_OAUTH_SCOPE
         return BearerTokenChallengePolicy(credential, scope)
     if isinstance(credential, SharedKeyCredentialPolicy):
         return credential
