@@ -342,8 +342,6 @@ class TestFaultInjectionTransportAsync:
         finally:
             TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
 
-    # add test for complete failures
-
     async def test_mwr_region_down_succeeds_async(self: "TestFaultInjectionTransportAsync"):
         first_region_uri: str = test_config.TestConfig.local_host.replace("localhost", "127.0.0.1")
         second_region_uri: str = test_config.TestConfig.local_host
