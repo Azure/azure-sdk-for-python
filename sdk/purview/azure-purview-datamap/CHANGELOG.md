@@ -3,7 +3,7 @@
 ## 1.0.0b2 (2025-04-08)
 
 ### Bugs Fixed
-- Updated type of endorsements from str to list[str]
+- Updated type of endorsements from str to list[str] in SuggestResultValue and SuggestResultValue models.
 
 ## 1.0.0b1 (2024-03-05)
 
