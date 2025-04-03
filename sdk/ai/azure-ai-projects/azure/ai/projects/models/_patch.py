@@ -51,6 +51,7 @@ from ._models import (
     AzureFunctionStorageQueue,
     AzureFunctionToolDefinition,
     AzureFunctionBinding,
+    BingCustomSearchToolDefinition,
     BingGroundingToolDefinition,
     CodeInterpreterToolDefinition,
     CodeInterpreterToolResource,
@@ -71,6 +72,8 @@ from ._models import (
     RequiredFunctionToolCall,
     RunStep,
     RunStepDeltaChunk,
+    SearchConfiguration,
+    SearchConfigurationList,
     SharepointToolDefinition,
     SubmitToolOutputsAction,
     ThreadRun,
@@ -1023,6 +1026,28 @@ class BingGroundingTool(ConnectionTool[BingGroundingToolDefinition]):
         """
         return [BingGroundingToolDefinition(bing_grounding=ToolConnectionList(connection_list=self.connection_ids))]
 
+class BingCustomSearchTool(ConnectionTool[BingCustomSearchToolDefinition]):
+    """
+    A tool that searches for information using Bing Custom Search.
+    """
+
+    def __init__(self, connection_id: str, instance_name: str):
+        """
+        Initialize Bing Custom Search with a connection_id.
+
+        :param connection_id: Connection ID used by tool. Bing Custom Search tools allow only one connection.
+        :param instance_name: Config instance name used by tool. 
+        """
+        self.connection_ids = [SearchConfiguration(connection_id=connection_id, instance_name=instance_name)]
+
+    @property
+    def definitions(self) -> List[BingCustomSearchToolDefinition]:
+        """
+        Get the Bing grounding tool definitions.
+
+        :rtype: List[ToolDefinition]
+        """
+        return [BingCustomSearchToolDefinition(bing_custom_search=SearchConfigurationList(search_configurations=self.connection_ids))]
 
 class FabricTool(ConnectionTool[MicrosoftFabricToolDefinition]):
     """
@@ -1859,6 +1884,7 @@ __all__: List[str] = [
     "FileSearchTool",
     "FunctionTool",
     "OpenApiTool",
+    "BingCustomSearchTool",
     "BingGroundingTool",
     "StreamEventData",
     "SharepointTool",
