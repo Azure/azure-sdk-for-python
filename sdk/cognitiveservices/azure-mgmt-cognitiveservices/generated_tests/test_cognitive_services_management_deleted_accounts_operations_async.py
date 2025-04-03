@@ -21,7 +21,7 @@ class TestCognitiveServicesManagementDeletedAccountsOperationsAsync(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_deleted_accounts_get(self, resource_group):
         response = await self.client.deleted_accounts.get(
             location="str",
             resource_group_name=resource_group.name,
@@ -34,7 +34,7 @@ class TestCognitiveServicesManagementDeletedAccountsOperationsAsync(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_purge(self, resource_group):
+    async def test_deleted_accounts_begin_purge(self, resource_group):
         response = await (
             await self.client.deleted_accounts.begin_purge(
                 location="str",
@@ -49,7 +49,7 @@ class TestCognitiveServicesManagementDeletedAccountsOperationsAsync(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_deleted_accounts_list(self, resource_group):
         response = self.client.deleted_accounts.list(
             api_version="2024-10-01",
         )

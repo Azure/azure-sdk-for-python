@@ -21,7 +21,7 @@ class TestCognitiveServicesManagementDeploymentsOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_deployments_list(self, resource_group):
         response = self.client.deployments.list(
             resource_group_name=resource_group.name,
             account_name="str",
@@ -33,7 +33,7 @@ class TestCognitiveServicesManagementDeploymentsOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_deployments_get(self, resource_group):
         response = await self.client.deployments.get(
             resource_group_name=resource_group.name,
             account_name="str",
@@ -46,7 +46,7 @@ class TestCognitiveServicesManagementDeploymentsOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_deployments_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.deployments.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -134,7 +134,7 @@ class TestCognitiveServicesManagementDeploymentsOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_deployments_begin_update(self, resource_group):
         response = await (
             await self.client.deployments.begin_update(
                 resource_group_name=resource_group.name,
@@ -153,7 +153,7 @@ class TestCognitiveServicesManagementDeploymentsOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_deployments_begin_delete(self, resource_group):
         response = await (
             await self.client.deployments.begin_delete(
                 resource_group_name=resource_group.name,
@@ -168,7 +168,7 @@ class TestCognitiveServicesManagementDeploymentsOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_skus(self, resource_group):
+    async def test_deployments_list_skus(self, resource_group):
         response = self.client.deployments.list_skus(
             resource_group_name=resource_group.name,
             account_name="str",

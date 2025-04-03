@@ -20,7 +20,7 @@ class TestCognitiveServicesManagementResourceSkusOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_resource_skus_list(self, resource_group):
         response = self.client.resource_skus.list(
             api_version="2024-10-01",
         )
