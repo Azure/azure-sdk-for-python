@@ -1,10 +1,20 @@
 # Release History
 
-## 5.14.1 (Unreleased)
+## 5.15.0b2 (2025-03-14)
+
+### Features Added
+
+- Implemented a new websockets library so that using `AmqpOverWebsocket` no longer requires separate optional dependency installations.
 
 ### Bugs Fixed
 
 - Fixed a bug where service errors were incorrectly required and expected to have info/description fields.
+
+## 5.15.0b1 (2025-02-13)
+
+### Features Added
+
+- Added support for geo-replication and disaster recovery-enabled Event Hubs. To learn more about geo-replication, refer to this [doc](https://learn.microsoft.com/azure/event-hubs/geo-replication). To enable geo-replication on your Dedicated Event Hubs namespace, refer to [this guide](https://learn.microsoft.com/azure/event-hubs/use-geo-replication).
 
 ## 5.14.0 (2025-02-13)
 
