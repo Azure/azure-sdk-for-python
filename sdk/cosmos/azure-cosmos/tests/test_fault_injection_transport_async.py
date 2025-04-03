@@ -25,7 +25,7 @@ from azure.cosmos.aio._database import DatabaseProxy
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.core.exceptions import ServiceRequestError
 
-MGMT_TIMEOUT = 1.0
+MGMT_TIMEOUT = 5.0
 logger = logging.getLogger('azure.cosmos')
 logger.setLevel(logging.DEBUG)
 logger.addHandler(logging.StreamHandler(sys.stdout))
@@ -33,7 +33,6 @@ logger.addHandler(logging.StreamHandler(sys.stdout))
 host = test_config.TestConfig.host
 master_key = test_config.TestConfig.masterKey
 TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
-single_partition_container_name = os.path.basename(__file__) + str(uuid.uuid4())
 
 @pytest.mark.cosmosEmulator
 @pytest.mark.asyncio
@@ -51,7 +50,7 @@ class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
         cls.database_id = TEST_DATABASE_ID
-        cls.single_partition_container_name = single_partition_container_name
+        cls.single_partition_container_name = os.path.basename(__file__) + str(uuid.uuid4())
 
         cls.mgmt_client = CosmosClient(cls.host, cls.master_key, consistency_level="Session", logger=logger)
         created_database = cls.mgmt_client.get_database_client(cls.database_id)
@@ -77,12 +76,11 @@ class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
             except Exception as closeError:    
                 logger.warning("Exception trying to close client {}. {}".format(created_database.id, closeError))
 
-    @staticmethod
-    async def setup_method_with_custom_transport(custom_transport: AioHttpTransport, default_endpoint=host, **kwargs):
+    async def setup_method_with_custom_transport(self, custom_transport: AioHttpTransport, default_endpoint=host, **kwargs):
         client = CosmosClient(default_endpoint, master_key, consistency_level="Session",
                               transport=custom_transport, logger=logger, enable_diagnostics_logging=True, **kwargs)
         db: DatabaseProxy = client.get_database_client(TEST_DATABASE_ID)
-        container: ContainerProxy = db.get_container_client(single_partition_container_name)
+        container: ContainerProxy = db.get_container_client(self.single_partition_container_name)
         return {"client": client, "db": db, "col": container}
 
     @staticmethod
