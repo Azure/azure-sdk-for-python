@@ -38,7 +38,7 @@ There, you can also find detailed instructions for using the Azure CLI, Azure Po
 Install the Azure Event Hubs client library for Python with pip:
 
 ```
-$ pip install azure-eventhub==5.15.0b1
+$ pip install azure-eventhub
 ```
 
 ### Authenticate the client
