@@ -351,7 +351,7 @@ class TestFaultInjectionTransportAsync:
         # Inject topology transformation that would make Emulator look like a multiple write region account
         # account with two read regions
         is_get_account_predicate: Callable[[HttpRequest], bool] = lambda r: FaultInjectionTransportAsync.predicate_is_database_account_call(r)
-        emulator_as_multi_write_region_account_transformation: Callable[[HttpRequest, Callable[[HttpRequest], asyncio.Task[AsyncHttpResponse]]], AioHttpTransportResponse] = \
+        emulator_as_multi_write_region_account_transformation = \
             lambda r, inner: FaultInjectionTransportAsync.transform_topology_mwr(
                 first_region_name="First Region",
                 second_region_name="Second Region",
