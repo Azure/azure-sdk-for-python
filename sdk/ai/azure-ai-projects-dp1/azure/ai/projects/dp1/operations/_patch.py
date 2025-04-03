@@ -6,195 +6,488 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-import logging
-import inspect
-from typing import List, Optional, Any
-from pathlib import Path
-from azure.storage.blob import ContainerClient
+from ._operations import AgentsOperations as AgentsOperationsGenerated
+from ._operations import build_agents_run_request, build_agents_create_agent_request
+import datetime
+from io import IOBase
+import json
+import sys
+from typing import Any, Callable, Dict, IO, Iterable, List, Literal, Optional, TypeVar, Union, overload
+import urllib.parse
+import uuid
 
-from ._operations import DatasetsOperations as DatasetsOperationsGenerated
-from ..models._models import (
-    DatasetVersion,
-    PendingUploadRequest,
-    PendingUploadType,
-    PendingUploadResponse,
-    CredentialType,
+from azure.core import PipelineClient
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
+    map_error,
 )
-from ..models._enums import (
-    DatasetType,
-)
+from azure.core.paging import ItemPaged
+from azure.core.pipeline import PipelineResponse
+from azure.core.rest import HttpRequest, HttpResponse
+from azure.core.tracing.decorator import distributed_trace
+from azure.core.utils import case_insensitive_dict
 
-logger = logging.getLogger(__name__)
+from ..models import _models as _models
+from .._configuration import AIProjectClientConfiguration
+from .._model_base import SdkJSONEncoder, _deserialize
+from .._serialization import Deserializer, Serializer
+from ..models._enums import PendingUploadType
+from ..models._models import AzureAgentModel, UserMessage, DeveloperMessage, TextContent, ChatMessage
 
-class DatasetsOperations(DatasetsOperationsGenerated):
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+T = TypeVar("T")
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+_Unset: Any = object()
 
-    # Internal helper method to create a new dataset and return a ContainerClient from azure-storage-blob package,
-    # to the dataset's blob storage.
-    def _create_dataset_and_get_its_container_client(
-        self,
-        name: str,
-        version: Optional[str] = None,
-    ) -> ContainerClient:
+__all__: List[str] = []  # Add all objects you want publicly available to users at this package level
 
-        pending_upload_response: PendingUploadResponse = self.start_pending_upload(
-            name=name,
-            version=version,
-            body=PendingUploadRequest(
-                pending_upload_type=PendingUploadType.TEMPORARY_BLOB_REFERENCE
-            ),
-        )
+class AgentsOperations(AgentsOperationsGenerated):
 
-        if not pending_upload_response.blob_reference_for_consumption:
-            raise ValueError("Blob reference for consumption is not present")
-        if not pending_upload_response.blob_reference_for_consumption.credential.type:
-            raise ValueError("Credential type is not present")
-        if pending_upload_response.blob_reference_for_consumption.credential.type != CredentialType.SAS:
-            raise ValueError("Credential type is not SAS")
-        if not pending_upload_response.blob_reference_for_consumption.blob_uri:
-            raise ValueError("Blob URI is not present or empty")
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
 
-        if (logger.getEffectiveLevel() == logging.DEBUG):
-            method = inspect.currentframe().f_code.co_name
-            logger.debug("[%s] pending_upload_response.pending_upload_id = %s.", method, pending_upload_response.pending_upload_id)
-            logger.debug("[%s] pending_upload_response.pending_upload_type = %s.", method, pending_upload_response.pending_upload_type) # == PendingUploadType.TEMPORARY_BLOB_REFERENCE
-            logger.debug("[%s] pending_upload_response.blob_reference_for_consumption.blob_uri = %s.", method, pending_upload_response.blob_reference_for_consumption.blob_uri) # Hosted on behalf of (HOBO) not visible to the user. If the form of: "https://<account>.blob.core.windows.net/<container>?<sasToken>"
-            logger.debug("[%s] pending_upload_response.blob_reference_for_consumption.storage_account_arm_id = %s.", method, pending_upload_response.blob_reference_for_consumption.storage_account_arm_id) # /subscriptions/<>/resourceGroups/<>/Microsoft.Storage/accounts/<>
-            logger.debug("[%s] pending_upload_response.blob_reference_for_consumption.credential.sas_token = %s.", method, pending_upload_response.blob_reference_for_consumption.credential.sas_token)
-            logger.debug("[%s] pending_upload_response.blob_reference_for_consumption.credential.type = %s.", method, pending_upload_response.blob_reference_for_consumption.credential.type) # == CredentialType.SAS
-
-        # For overview on Blob storage SDK in Python see:
-        # https://learn.microsoft.com/azure/storage/blobs/storage-quickstart-blobs-python
-        # https://learn.microsoft.com/azure/storage/blobs/storage-blob-upload-python
-
-        # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.containerclient?view=azure-python#azure-storage-blob-containerclient-from-container-url
-        return ContainerClient.from_container_url(
-            container_url=pending_upload_response.blob_reference_for_consumption.blob_uri, # Of the form: "https://<account>.blob.core.windows.net/<container>?<sasToken>"
-        )
-
-
-    def upload_file_and_create_version(
+    @overload
+    def run(
         self,
         *,
-        name: str,
-        version: Optional[str] = None,
-        file: str,
+        input: List[_models.ChatMessage],
+        content_type: str = "application/json",
+        name: Optional[str] = None,
+        agent_model: Optional[_models.AgentModel] = None,
+        instructions: Optional[List[_models.DeveloperMessage]] = None,
+        tools: Optional[List[_models.AgentToolDefinition]] = None,
+        tool_choice: Optional[_models.ToolChoiceBehavior] = None,
+        agent_id: Optional[str] = None,
+        thread_id: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        options: Optional[_models.RunOptions] = None,
+        user_id: Optional[str] = None,
         **kwargs: Any
-    ) -> DatasetVersion:
-        """Upload file to a blob storage, and create a dataset that references this file.
-        This method uses the `ContainerClient.upload_blob` method from the azure-storage-blob package
-        to upload the file. Any keyword arguments provided will be passed to the `upload_blob` method.
+    ) -> _models.Run:
+        """Creates and waits for a run to finish, returning the completed Run (including its outputs).
 
-        :param name: The name of the dataset. Required.
-        :type name: str
-        :param version: The version identifier for the dataset. Optional.
-        :type version: str or None
-        :param file: The file name (including optional path) to be uploaded. Required.
-        :type file: str
-        :return: The created dataset version.
-        :rtype: ~azure.ai.projects.dp1.models.DatasetVersion
-        :raises ~azure.core.exceptions.HttpResponseError: If an error occurs during the HTTP request.
+        :keyword input: The list of input messages for the run. Required.
+        :paramtype input: list[~azure.ai.projects.dp1.models.ChatMessage]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword name: The name of the agent; used for display purposes and sent to the LLM to identify
+         the agent. Default value is None.
+        :paramtype name: str
+        :keyword agent_model: The model definition for this agent. This is optional (not needed) when
+         doing a run using persistent agent. Default value is None.
+        :paramtype agent_model: ~azure.ai.projects.dp1.models.AgentModel
+        :keyword instructions: Instructions provided to guide how this agent operates. Default value is
+         None.
+        :paramtype instructions: list[~azure.ai.projects.dp1.models.DeveloperMessage]
+        :keyword tools: A list of tool definitions available to the agent. Default value is None.
+        :paramtype tools: list[~azure.ai.projects.dp1.models.AgentToolDefinition]
+        :keyword tool_choice: How the agent should choose among provided tools. Default value is None.
+        :paramtype tool_choice: ~azure.ai.projects.dp1.models.ToolChoiceBehavior
+        :keyword agent_id: Unique identifier for the agent responsible for the run. This is optional
+         (not needeed) when doing a run using ephemeral agent. Default value is None.
+        :paramtype agent_id: str
+        :keyword thread_id: Optional identifier for an existing conversation thread. Default value is
+         None.
+        :paramtype thread_id: str
+        :keyword metadata: Optional metadata associated with the run request. Default value is None.
+        :paramtype metadata: dict[str, str]
+        :keyword options: Optional configuration for run generation. Default value is None.
+        :paramtype options: ~azure.ai.projects.dp1.models.RunOptions
+        :keyword user_id: Identifier for the user making the request. Default value is None.
+        :paramtype user_id: str
+        :return: Run. The Run is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.Run
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        path_file = Path(file)
-        if not path_file.exists():
-            raise ValueError("The provided file does not exist.")
-        if path_file.is_dir():
-            raise ValueError("The provided file is actually a folder. Use method `create_and_upload_folder` instead")
+    @overload
+    def run(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Run:
+        """Creates and waits for a run to finish, returning the completed Run (including its outputs).
 
-        with self._create_dataset_and_get_its_container_client(name=name, version=version) as container_client:
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Run. The Run is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.Run
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
-            with open(file=file, mode="rb") as data:
+    @overload
+    def run(self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any) -> _models.Run:
+        """Creates and waits for a run to finish, returning the completed Run (including its outputs).
 
-                blob_name = path_file.name  # Extract the file name from the path.
-                logger.debug("[%s] Start uploading file `%s` as blob `%s`.", inspect.currentframe().f_code.co_name, file, blob_name)
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Run. The Run is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.Run
+        :raises ~azure.core.exceptions.HttpResponseError:sdk\ai\azure-ai-projects-dp1\azure\ai\projects\dp1\operations
+        """
 
-                # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.containerclient?view=azure-python#azure-storage-blob-containerclient-upload-blob
-                with container_client.upload_blob(
-                    name=blob_name,
-                    data=data,
-                    **kwargs
-                ) as blob_client:
+    @overload
+    def run(self, *, model_id: str, instructions_str: str, message: str, **kwargs: Any) -> _models.Run:
+        """Creates and waits for a run to finish, returning the completed Run (including its outputs).
 
-                    logger.debug("[%s] Done uploading", inspect.currentframe().f_code.co_name)
+        :param model_id: The identifier of the model to use for this run. Required.
+        :type model_id: str
+        :param instructions_str: Instructions provided to guide how this agent operates. Required.
+        :type instructions_str: str
+        :param message: The list of input messages for the run. Required.
+        :type message: str
+        :return: Run. The Run is compatible with MutableMapping
+        """
 
-                    dataset_version = self.create_version(
-                        name=name,
-                        version=version, 
-                        body=DatasetVersion(
-                            # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.blobclient?view=azure-python#azure-storage-blob-blobclient-url
-                            # Per above doc the ".url" contains SAS token... should this be stripped away?
-                            dataset_uri=blob_client.url, # "<account>.blob.windows.core.net/<container>/<file_name>"
-                            dataset_type=DatasetType.URI_FILE,
-                        ),
-                    )
+    @distributed_trace
+    def run(
+        self,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        input: List[_models.ChatMessage] = _Unset,
+        name: Optional[str] = None,
+        agent_model: Optional[_models.AgentModel] = None,
+        instructions: Optional[List[_models.DeveloperMessage]] = None,
+        tools: Optional[List[_models.AgentToolDefinition]] = None,
+        tool_choice: Optional[_models.ToolChoiceBehavior] = None,
+        agent_id: Optional[str] = None,
+        thread_id: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        options: Optional[_models.RunOptions] = None,
+        user_id: Optional[str] = None,
+        model_id: Optional[str] = None,
+        instructions_str: Optional[str] = None,
+        message: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.Run:
+        """Creates and waits for a run to finish, returning the completed Run (including its outputs).
 
-        return dataset_version
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword input: The list of input messages for the run. Required.
+        :paramtype input: list[~azure.ai.projects.dp1.models.ChatMessage]
+        :keyword name: The name of the agent; used for display purposes and sent to the LLM to identify
+         the agent. Default value is None.
+        :paramtype name: str
+        :keyword agent_model: The model definition for this agent. This is optional (not needed) when
+         doing a run using persistent agent. Default value is None.
+        :paramtype agent_model: ~azure.ai.projects.dp1.models.AgentModel
+        :keyword instructions: Instructions provided to guide how this agent operates. Default value is
+         None.
+        :paramtype instructions: list[~azure.ai.projects.dp1.models.DeveloperMessage]
+        :keyword tools: A list of tool definitions available to the agent. Default value is None.
+        :paramtype tools: list[~azure.ai.projects.dp1.models.AgentToolDefinition]
+        :keyword tool_choice: How the agent should choose among provided tools. Default value is None.
+        :paramtype tool_choice: ~azure.ai.projects.dp1.models.ToolChoiceBehavior
+        :keyword agent_id: Unique identifier for the agent responsible for the run. This is optional
+         (not needeed) when doing a run using ephemeral agent. Default value is None.
+        :paramtype agent_id: str
+        :keyword thread_id: Optional identifier for an existing conversation thread. Default value is
+         None.
+        :paramtype thread_id: str
+        :keyword metadata: Optional metadata associated with the run request. Default value is None.
+        :paramtype metadata: dict[str, str]
+        :keyword options: Optional configuration for run generation. Default value is None.
+        :paramtype options: ~azure.ai.projects.dp1.models.RunOptions
+        :keyword user_id: Identifier for the user making the request. Default value is None.
+        :paramtype user_id: str
+        :param model_id: The identifier of the model to use for this run.
+        :type model_id: str
+        :param instructions_str: Instructions provided to guide how this agent operates.
+        :type instructions_str: str
+        :param message: The list of input messages for the run.
+        :type message: str        
+        :return: Run. The Run is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.Run
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-    def upload_folder_and_create_version(
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Run] = kwargs.pop("cls", None)
+
+        if model_id and instructions_str:
+            instructions_content = TextContent(text=instructions_str)
+            instructions_message = DeveloperMessage(content=[instructions_content])
+            instructions = [instructions_message]
+            agent_model = AzureAgentModel(id=model_id)
+            chat_content = TextContent(text=message)
+            chat_message = ChatMessage(content=[chat_content])
+            input = [chat_message]
+
+        if body is _Unset:
+            if input is _Unset:
+                raise TypeError("missing required argument: input")
+            body = {
+                "agentId": agent_id,
+                "agentModel": agent_model,
+                "input": input,
+                "instructions": instructions,
+                "metadata": metadata,
+                "name": name,
+                "options": options,
+                "threadId": thread_id,
+                "toolChoice": tool_choice,
+                "tools": tools,
+                "userId": user_id,
+            }
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agents_run_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.Run, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def create_agent(self, *, model_id: Optional[str] = None, name: Optional[str] = None, instructions_str: Optional[str] = None, **kwargs: Any) -> _models.Agent:
+        """Creates an agent with the specified model and instructions.
+
+        :param model_id: The identifier of the model to use for this agent. Required.
+        :type model_id: str
+        :param name: The name of the agent; used for display purposes and sent to the LLM to identify
+        :type name: str
+        :param instructions_str: Instructions provided to guide how this agent operates. Required.
+        :type instructions_str: str
+        :return: Agent. The Agent is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.Agent
+        """
+
+    @overload
+    def create_agent(
         self,
         *,
-        name: str,
-        version: Optional[str] = None,
-        folder: str,
+        content_type: str = "application/json",
+        name: Optional[str] = None,
+        agent_model: Optional[_models.AgentModel] = None,
+        instructions: Optional[List[_models.DeveloperMessage]] = None,
+        tools: Optional[List[_models.AgentToolDefinition]] = None,
+        tool_choice: Optional[_models.ToolChoiceBehavior] = None,
         **kwargs: Any
-    ) -> DatasetVersion:
-        """Upload all files in a folder and its sub folders to a blob storage, while maintaining 
-        relative paths, and create a dataset that references this folder.
-        This method uses the `ContainerClient.upload_blob` method from the azure-storage-blob package
-        to upload each file. Any keyword arguments provided will be passed to the `upload_blob` method.
+    ) -> _models.Agent:
+        """Creates a new Agent resource and returns it.
 
-        :param name: The name of the dataset. Required.
-        :type name: str
-        :param version: The version identifier for the dataset. Optional.
-        :type version: str or None
-        :param folder: The folder name (including optional path) to be uploaded. Required.
-        :type file: str
-        :return: The created dataset version.
-        :rtype: ~azure.ai.projects.dp1.models.DatasetVersion
-        :raises ~azure.core.exceptions.HttpResponseError: If an error occurs during the HTTP request.
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword name: The name of the agent; used for display purposes and sent to the LLM to identify
+         the agent. Default value is None.
+        :paramtype name: str
+        :keyword agent_model: The model definition for this agent. This is optional (not needed) when
+         doing a run using persistent agent. Default value is None.
+        :paramtype agent_model: ~azure.ai.projects.dp1.models.AgentModel
+        :keyword instructions: Instructions provided to guide how this agent operates. Default value is
+         None.
+        :paramtype instructions: list[~azure.ai.projects.dp1.models.DeveloperMessage]
+        :keyword tools: A list of tool definitions available to the agent. Default value is None.
+        :paramtype tools: list[~azure.ai.projects.dp1.models.AgentToolDefinition]
+        :keyword tool_choice: How the agent should choose among provided tools. Default value is None.
+        :paramtype tool_choice: ~azure.ai.projects.dp1.models.ToolChoiceBehavior
+        :return: Agent. The Agent is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.Agent
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        path_folder = Path(folder)
-        if not Path(path_folder).exists():
-            raise ValueError("The provided folder does not exist.")
-        if Path(path_folder).is_file():
-            raise ValueError("The provided folder is actually a file. Use method `create_and_upload_file` instead.")
 
-        with self._create_dataset_and_get_its_container_client(name=name, version=version) as container_client:
+    @overload
+    def create_agent(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Agent:
+        """Creates a new Agent resource and returns it.
 
-            # Recursively traverse all files in the folder
-            files_uploaded: bool = False
-            for file_path in path_folder.rglob("*"):  # `rglob` matches all files and folders recursively
-                if file_path.is_file():  # Check if the path is a file. Skip folders.
-                    blob_name = file_path.relative_to(path_folder)  # Blob name relative to the folder
-                    logger.debug("[%s] Start uploading file `%s` as blob `%s`.",inspect.currentframe().f_code.co_name, file_path, blob_name)
-                    with file_path.open("rb") as data:  # Open the file for reading in binary mode
-                        # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.containerclient?view=azure-python#azure-storage-blob-containerclient-upload-blob
-                        container_client.upload_blob(name=str(blob_name), data=data, **kwargs)
-                    logger.debug("[%s] Done uploaded.", inspect.currentframe().f_code.co_name)
-                    files_uploaded = True
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Agent. The Agent is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.Agent
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
-            if not files_uploaded:
-                raise ValueError("The provided folder is empty.")
+    @overload
+    def create_agent(self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any) -> _models.Agent:
+        """Creates a new Agent resource and returns it.
 
-            dataset_version = self.create_version(
-                name=name,
-                version=version, 
-                body=DatasetVersion(
-                    # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.blobclient?view=azure-python#azure-storage-blob-blobclient-url
-                    # Per above doc the ".url" contains SAS token... should this be stripped away?
-                    dataset_uri=container_client.url, # "<account>.blob.windows.core.net/<container> ?"
-                    dataset_type=DatasetType.URI_FOLDER,
-                ),
-            )
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Agent. The Agent is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.Agent
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
-        return dataset_version
+    @distributed_trace
+    def create_agent(
+        self,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        name: Optional[str] = None,
+        agent_model: Optional[_models.AgentModel] = None,
+        instructions: Optional[List[_models.DeveloperMessage]] = None,
+        tools: Optional[List[_models.AgentToolDefinition]] = None,
+        tool_choice: Optional[_models.ToolChoiceBehavior] = None,
+        model_id: Optional[str] = None,
+        instructions_str: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.Agent:
+        """Creates a new Agent resource and returns it.
 
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword name: The name of the agent; used for display purposes and sent to the LLM to identify
+         the agent. Default value is None.
+        :paramtype name: str
+        :keyword agent_model: The model definition for this agent. This is optional (not needed) when
+         doing a run using persistent agent. Default value is None.
+        :paramtype agent_model: ~azure.ai.projects.dp1.models.AgentModel
+        :keyword instructions: Instructions provided to guide how this agent operates. Default value is
+         None.
+        :paramtype instructions: list[~azure.ai.projects.dp1.models.DeveloperMessage]
+        :keyword tools: A list of tool definitions available to the agent. Default value is None.
+        :paramtype tools: list[~azure.ai.projects.dp1.models.AgentToolDefinition]
+        :keyword tool_choice: How the agent should choose among provided tools. Default value is None.
+        :paramtype tool_choice: ~azure.ai.projects.dp1.models.ToolChoiceBehavior
+        :return: Agent. The Agent is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.dp1.models.Agent
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Agent] = kwargs.pop("cls", None)
+
+        if model_id and instructions_str:
+            instructions_content = TextContent(text=instructions_str)
+            instructions_message = DeveloperMessage(content=[instructions_content])
+            instructions = [instructions_message]
+            agent_model = AzureAgentModel(id=model_id)
+
+        if body is _Unset:
+            body = {
+                "agentModel": agent_model,
+                "instructions": instructions,
+                "name": name,
+                "toolChoice": tool_choice,
+                "tools": tools,
+            }
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agents_create_agent_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.Agent, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
 __all__: List[str] = [
-    "DatasetsOperations"
+    "AgentsOperations",
 ]  # Add all objects you want publicly available to users at this package level
-
 
 def patch_sdk():
     """Do not remove from this file.
