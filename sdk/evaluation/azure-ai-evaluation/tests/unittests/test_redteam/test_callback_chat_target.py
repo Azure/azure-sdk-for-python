@@ -15,7 +15,7 @@ except ImportError:
 if has_pyrit:   
     from pyrit.common import initialize_pyrit, IN_MEMORY
 
-    from azure.ai.evaluation._red_team._callback_chat_target import _CallbackChatTarget
+    from azure.ai.evaluation.red_team._callback_chat_target import _CallbackChatTarget
 
     initialize_pyrit(memory_db_type=IN_MEMORY)
 
@@ -88,7 +88,7 @@ class TestCallbackChatTargetPrompts:
     async def test_send_prompt_async(self, chat_target, mock_request, mock_callback):
         """Test send_prompt_async method."""
         with patch.object(chat_target, "_memory") as mock_memory, \
-            patch("azure.ai.evaluation._red_team._callback_chat_target.construct_response_from_request") as mock_construct:
+            patch("azure.ai.evaluation.red_team._callback_chat_target.construct_response_from_request") as mock_construct:
             # Setup memory mock
             mock_memory.get_chat_messages_with_conversation_id.return_value = []
             
