@@ -24,7 +24,7 @@ from azure.cosmos.aio._database import DatabaseProxy
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.core.exceptions import ServiceRequestError
 
-MGMT_TIMEOUT = 10.0
+MGMT_TIMEOUT = 1.0
 logger = logging.getLogger('azure.cosmos')
 logger.setLevel(logging.DEBUG)
 logger.addHandler(logging.StreamHandler(sys.stdout))
