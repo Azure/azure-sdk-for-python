@@ -64,6 +64,7 @@ def mock_time(request):
 def mock_run_operations(mock_workspace_scope: OperationScope, mock_aml_services_run_history: Mock) -> RunOperations:
     yield RunOperations(mock_workspace_scope, mock_aml_services_run_history)
 
+
 @pytest.mark.unittest
 @pytest.mark.training_experiences_test
 class TestJobOpsHelper:
@@ -72,6 +73,7 @@ class TestJobOpsHelper:
         assert has_pat_token("https://mypattoken@dev.azure.com/<organization>/<project>/_git/<repo>")
         assert not has_pat_token("https://dev.azure.com/organization/project/_apis/pipelines/1/runs")
         assert not has_pat_token("https://learn.microsoft.com/en-us/ai/?tabs=developer")
+
 
 @pytest.mark.skip("TODO 1907352: Relies on a missing VCR.py recording + test suite needs to be reworked")
 @pytest.mark.unittest

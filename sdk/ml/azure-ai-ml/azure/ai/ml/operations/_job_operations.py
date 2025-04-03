@@ -106,7 +106,12 @@ from ..entities._job.pipeline._io import InputOutputBase, PipelineInput, _GroupA
 from ._component_operations import ComponentOperations
 from ._compute_operations import ComputeOperations
 from ._dataset_dataplane_operations import DatasetDataplaneOperations
-from ._job_ops_helper import get_git_properties, get_job_output_uris_from_dataplane, has_pat_token, stream_logs_until_completion
+from ._job_ops_helper import (
+    get_git_properties,
+    get_job_output_uris_from_dataplane,
+    has_pat_token,
+    stream_logs_until_completion,
+)
 from ._local_job_invoker import is_local_run, start_run_if_local
 from ._model_dataplane_operations import ModelDataplaneOperations
 from ._operation_orchestrator import (

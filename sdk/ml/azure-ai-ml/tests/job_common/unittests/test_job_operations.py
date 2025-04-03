@@ -20,6 +20,7 @@ from azure.ai.ml.operations._run_operations import RunOperations
 from azure.core.credentials import AccessToken
 from azure.identity import DefaultAzureCredential
 
+
 @pytest.fixture
 def mock_datastore_operation(
     mock_workspace_scope: OperationScope,
@@ -288,14 +289,16 @@ class TestJobOperations:
 
     @patch("azure.ai.ml.operations._job_operations.get_git_properties")
     @patch.object(Job, "_from_rest_object")
-    def test_create_or_update_removes_git_props_if_pat_in_repo_url(self, mock_method, mock_get_git_properties, mock_job_operation: JobOperations) -> None:
+    def test_create_or_update_removes_git_props_if_pat_in_repo_url(
+        self, mock_method, mock_get_git_properties, mock_job_operation: JobOperations
+    ) -> None:
         mock_method.return_value = Command(component=None)
 
         mock_get_git_properties.return_value = {
-        GitProperties.PROP_MLFLOW_GIT_REPO_URL: "https://example@mock-repo-url",
-        GitProperties.PROP_MLFLOW_GIT_BRANCH: "mock-branch",
-        GitProperties.PROP_MLFLOW_GIT_COMMIT: "mock-commit",
-        GitProperties.PROP_DIRTY: "True",
+            GitProperties.PROP_MLFLOW_GIT_REPO_URL: "https://example@mock-repo-url",
+            GitProperties.PROP_MLFLOW_GIT_BRANCH: "mock-branch",
+            GitProperties.PROP_MLFLOW_GIT_COMMIT: "mock-commit",
+            GitProperties.PROP_DIRTY: "True",
         }
 
         job = load_job("./tests/test_configs/command_job/simple_train_test.yml")
@@ -304,21 +307,29 @@ class TestJobOperations:
         ):
             mock_job_operation.create_or_update(job=job)
             mock_get_git_properties.assert_called_once()
-            assert GitProperties.PROP_MLFLOW_GIT_REPO_URL not in job.properties, "repoURL key should not exist in job.properties"
-            assert GitProperties.PROP_MLFLOW_GIT_BRANCH not in job.properties, "branch key should not exist in job.properties"
-            assert GitProperties.PROP_MLFLOW_GIT_COMMIT not in job.properties, "commit key should not exist in job.properties"
+            assert (
+                GitProperties.PROP_MLFLOW_GIT_REPO_URL not in job.properties
+            ), "repoURL key should not exist in job.properties"
+            assert (
+                GitProperties.PROP_MLFLOW_GIT_BRANCH not in job.properties
+            ), "branch key should not exist in job.properties"
+            assert (
+                GitProperties.PROP_MLFLOW_GIT_COMMIT not in job.properties
+            ), "commit key should not exist in job.properties"
             assert GitProperties.PROP_DIRTY not in job.properties, "dirty key should not exist in job.properties"
 
     @patch("azure.ai.ml.operations._job_operations.get_git_properties")
     @patch.object(Job, "_from_rest_object")
-    def test_create_or_update_includes_git_props_if_no_pat_in_repo_url(self, mock_method, mock_get_git_properties, mock_job_operation: JobOperations) -> None:
+    def test_create_or_update_includes_git_props_if_no_pat_in_repo_url(
+        self, mock_method, mock_get_git_properties, mock_job_operation: JobOperations
+    ) -> None:
         mock_method.return_value = Command(component=None)
 
         mock_get_git_properties.return_value = {
-        GitProperties.PROP_MLFLOW_GIT_REPO_URL: "https://mock-repo-url",
-        GitProperties.PROP_MLFLOW_GIT_BRANCH: "mock-branch",
-        GitProperties.PROP_MLFLOW_GIT_COMMIT: "mock-commit",
-        GitProperties.PROP_DIRTY: "True",
+            GitProperties.PROP_MLFLOW_GIT_REPO_URL: "https://mock-repo-url",
+            GitProperties.PROP_MLFLOW_GIT_BRANCH: "mock-branch",
+            GitProperties.PROP_MLFLOW_GIT_COMMIT: "mock-commit",
+            GitProperties.PROP_DIRTY: "True",
         }
 
         job = load_job("./tests/test_configs/command_job/simple_train_test.yml")
@@ -327,7 +338,9 @@ class TestJobOperations:
         ):
             mock_job_operation.create_or_update(job=job)
             mock_get_git_properties.assert_called_once()
-            assert GitProperties.PROP_MLFLOW_GIT_REPO_URL in job.properties, "repoURL key should exist in job.properties"
+            assert (
+                GitProperties.PROP_MLFLOW_GIT_REPO_URL in job.properties
+            ), "repoURL key should exist in job.properties"
             assert GitProperties.PROP_MLFLOW_GIT_BRANCH in job.properties, "branch key should exist in job.properties"
             assert GitProperties.PROP_MLFLOW_GIT_COMMIT in job.properties, "commit key should exist in job.properties"
             assert GitProperties.PROP_DIRTY in job.properties, "dirty key should exist in job.properties"
