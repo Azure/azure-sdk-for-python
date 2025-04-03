@@ -23,5 +23,5 @@ service_version_map = {
     "V2020_06_12": ServiceVersion.V2020_06_12,
     "V2020_08_04": ServiceVersion.V2020_08_04,
     "LATEST": ServiceVersion.V2020_08_04,
-    "LATEST_PLUS_1": ServiceVersion.V2020_06_12
+    "LATEST_PLUS_1": ServiceVersion.V2020_06_12,
 }
