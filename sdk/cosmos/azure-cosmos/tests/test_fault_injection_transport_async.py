@@ -9,6 +9,7 @@ import time
 import unittest
 import uuid
 from typing import Any, Callable, Awaitable, Dict
+from unittest import IsolatedAsyncioTestCase
 
 import pytest
 from azure.core.pipeline.transport import AioHttpTransport
@@ -24,7 +25,7 @@ from azure.cosmos.aio._database import DatabaseProxy
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.core.exceptions import ServiceRequestError
 
-MGMT_TIMEOUT = 10.0
+MGMT_TIMEOUT = 5.0
 logger = logging.getLogger('azure.cosmos')
 logger.setLevel(logging.DEBUG)
 logger.addHandler(logging.StreamHandler(sys.stdout))
@@ -32,13 +33,12 @@ logger.addHandler(logging.StreamHandler(sys.stdout))
 host = test_config.TestConfig.host
 master_key = test_config.TestConfig.masterKey
 TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
-single_partition_container_name = os.path.basename(__file__) + str(uuid.uuid4())
 
 @pytest.mark.cosmosEmulator
 @pytest.mark.asyncio
-class TestFaultInjectionTransportAsync:
+class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
     @classmethod
-    def setup_class(cls):
+    async def asyncSetUp(cls):
         logger.info("starting class: {} execution".format(cls.__name__))
         cls.host = host
         cls.master_key = master_key
@@ -50,45 +50,44 @@ class TestFaultInjectionTransportAsync:
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
         cls.database_id = TEST_DATABASE_ID
-        cls.single_partition_container_name = single_partition_container_name
+        cls.single_partition_container_name = os.path.basename(__file__) + str(uuid.uuid4())
 
         cls.mgmt_client = CosmosClient(cls.host, cls.master_key, consistency_level="Session", logger=logger)
         created_database = cls.mgmt_client.get_database_client(cls.database_id)
-        asyncio.run(asyncio.wait_for(
+        await asyncio.wait_for(
             created_database.create_container(
                 cls.single_partition_container_name,
                 partition_key=PartitionKey("/pk")),
-            MGMT_TIMEOUT))
+            MGMT_TIMEOUT)
     
     @classmethod
-    def teardown_class(cls):
+    async def asyncTearDown(cls):
         logger.info("tearing down class: {}".format(cls.__name__))
         created_database = cls.mgmt_client.get_database_client(cls.database_id)
         try:
-            asyncio.run(asyncio.wait_for(
+            await asyncio.wait_for(
                 created_database.delete_container(cls.single_partition_container_name),
-                MGMT_TIMEOUT))
+                MGMT_TIMEOUT)
         except Exception as containerDeleteError:    
             logger.warning("Exception trying to delete database {}. {}".format(created_database.id, containerDeleteError))
         finally:    
             try:
-                asyncio.run(asyncio.wait_for(cls.mgmt_client.close(), MGMT_TIMEOUT))
+                await asyncio.wait_for(cls.mgmt_client.close(), MGMT_TIMEOUT)
             except Exception as closeError:    
                 logger.warning("Exception trying to close client {}. {}".format(created_database.id, closeError))
 
-    @staticmethod
-    def setup_method_with_custom_transport(custom_transport: AioHttpTransport, default_endpoint=host, **kwargs):
+    async def setup_method_with_custom_transport(self, custom_transport: AioHttpTransport, default_endpoint=host, **kwargs):
         client = CosmosClient(default_endpoint, master_key, consistency_level="Session",
                               transport=custom_transport, logger=logger, enable_diagnostics_logging=True, **kwargs)
         db: DatabaseProxy = client.get_database_client(TEST_DATABASE_ID)
-        container: ContainerProxy = db.get_container_client(single_partition_container_name)
+        container: ContainerProxy = db.get_container_client(self.single_partition_container_name)
         return {"client": client, "db": db, "col": container}
 
     @staticmethod
-    def cleanup_method(initialized_objects: Dict[str, Any]):
+    async def cleanup_method(initialized_objects: Dict[str, Any]):
         method_client: CosmosClient = initialized_objects["client"]
         try:
-            asyncio.run(asyncio.wait_for(method_client.close(), MGMT_TIMEOUT))
+            await asyncio.wait_for(method_client.close(), MGMT_TIMEOUT)
         except Exception as close_error:
             logger.warning(f"Exception trying to close method client. {close_error}")
 
@@ -107,7 +106,7 @@ class TestFaultInjectionTransportAsync:
                 status_code=502,
                 message="Some random reverse proxy error."))))
 
-        initialized_objects = self.setup_method_with_custom_transport(custom_transport)
+        initialized_objects = await self.setup_method_with_custom_transport(custom_transport)
         start: float = time.perf_counter()
         try:
             container: ContainerProxy = initialized_objects["col"]
@@ -120,7 +119,7 @@ class TestFaultInjectionTransportAsync:
             if cosmosError.status_code != 502:
                 raise cosmosError
         finally:
-            TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
+            await TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
 
     async def test_swr_mrr_succeeds_async(self: "TestFaultInjectionTransportAsync"):
         expected_read_region_uri: str = test_config.TestConfig.local_host
@@ -152,7 +151,7 @@ class TestFaultInjectionTransportAsync:
                                'name': 'sample document',
                                'key': 'value'}
 
-        initialized_objects = self.setup_method_with_custom_transport(
+        initialized_objects = await self.setup_method_with_custom_transport(
             custom_transport,
             preferred_locations=["Read Region", "Write Region"])
         try:
@@ -171,7 +170,7 @@ class TestFaultInjectionTransportAsync:
                 assert request.url.startswith(expected_read_region_uri)
 
         finally:
-            TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
+            await TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
 
     async def test_swr_mrr_region_down_read_succeeds_async(self: "TestFaultInjectionTransportAsync"):
         expected_read_region_uri: str = test_config.TestConfig.local_host
@@ -211,7 +210,7 @@ class TestFaultInjectionTransportAsync:
                                'name': 'sample document',
                                'key': 'value'}
 
-        initialized_objects = self.setup_method_with_custom_transport(
+        initialized_objects = await self.setup_method_with_custom_transport(
             custom_transport,
             default_endpoint=expected_write_region_uri,
             preferred_locations=["Read Region", "Write Region"])
@@ -231,7 +230,7 @@ class TestFaultInjectionTransportAsync:
                 assert request.url.startswith(expected_write_region_uri)
 
         finally:
-            TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
+            await TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
 
     async def test_swr_mrr_region_down_envoy_read_succeeds_async(self: "TestFaultInjectionTransportAsync"):
         expected_read_region_uri: str = test_config.TestConfig.local_host
@@ -276,7 +275,7 @@ class TestFaultInjectionTransportAsync:
                                'name': 'sample document',
                                'key': 'value'}
 
-        initialized_objects = self.setup_method_with_custom_transport(
+        initialized_objects = await self.setup_method_with_custom_transport(
             custom_transport,
             default_endpoint=expected_write_region_uri,
             preferred_locations=["Read Region", "Write Region"])
@@ -296,7 +295,7 @@ class TestFaultInjectionTransportAsync:
                 assert request.url.startswith(expected_write_region_uri)
 
         finally:
-            TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
+            await TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
 
 
     async def test_mwr_succeeds_async(self: "TestFaultInjectionTransportAsync"):
@@ -321,7 +320,7 @@ class TestFaultInjectionTransportAsync:
                                'name': 'sample document',
                                'key': 'value'}
 
-        initialized_objects = self.setup_method_with_custom_transport(
+        initialized_objects = await self.setup_method_with_custom_transport(
             custom_transport,
             preferred_locations=["First Region", "Second Region"])
         try:
@@ -340,7 +339,7 @@ class TestFaultInjectionTransportAsync:
                 assert request.url.startswith(first_region_uri)
 
         finally:
-            TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
+            await TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
 
     async def test_mwr_region_down_succeeds_async(self: "TestFaultInjectionTransportAsync"):
         first_region_uri: str = test_config.TestConfig.local_host.replace("localhost", "127.0.0.1")
@@ -374,7 +373,7 @@ class TestFaultInjectionTransportAsync:
                                'name': 'sample document',
                                'key': 'value'}
 
-        initialized_objects = self.setup_method_with_custom_transport(
+        initialized_objects = await self.setup_method_with_custom_transport(
             custom_transport,
             preferred_locations=["First Region", "Second Region"])
         try:
@@ -392,7 +391,7 @@ class TestFaultInjectionTransportAsync:
                 assert request.url.startswith(second_region_uri)
 
         finally:
-            TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
+            await TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
 
     async def test_swr_mrr_all_regions_down_for_read_async(self: "TestFaultInjectionTransportAsync"):
         expected_read_region_uri: str = test_config.TestConfig.local_host
@@ -446,7 +445,7 @@ class TestFaultInjectionTransportAsync:
                                'name': 'sample document',
                                'key': 'value'}
 
-        initialized_objects = self.setup_method_with_custom_transport(
+        initialized_objects = await self.setup_method_with_custom_transport(
             custom_transport,
             preferred_locations=["First Region", "Second Region"])
         try:
@@ -455,7 +454,7 @@ class TestFaultInjectionTransportAsync:
             with pytest.raises(ServiceRequestError):
                 await container.read_item(id_value, partition_key=id_value)
         finally:
-            TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
+            await TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
 
     async def test_mwr_all_regions_down_async(self: "TestFaultInjectionTransportAsync"):
 
@@ -499,7 +498,7 @@ class TestFaultInjectionTransportAsync:
                                'name': 'sample document',
                                'key': 'value'}
 
-        initialized_objects = self.setup_method_with_custom_transport(
+        initialized_objects = await self.setup_method_with_custom_transport(
             custom_transport,
             preferred_locations=["First Region", "Second Region"])
         try:
@@ -507,7 +506,7 @@ class TestFaultInjectionTransportAsync:
             with pytest.raises(ServiceRequestError):
                 await container.upsert_item(body=document_definition)
         finally:
-            TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
+            await TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
 
 if __name__ == '__main__':
     unittest.main()
