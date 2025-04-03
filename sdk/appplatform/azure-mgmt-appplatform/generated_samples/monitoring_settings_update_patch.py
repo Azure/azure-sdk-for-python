@@ -44,6 +44,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/appplatform/resource-manager/Microsoft.AppPlatform/stable/2023-12-01/examples/MonitoringSettings_UpdatePatch.json
+# x-ms-original-file: specification/appplatform/resource-manager/Microsoft.AppPlatform/preview/2024-05-01-preview/examples/MonitoringSettings_UpdatePatch.json
 if __name__ == "__main__":
     main()

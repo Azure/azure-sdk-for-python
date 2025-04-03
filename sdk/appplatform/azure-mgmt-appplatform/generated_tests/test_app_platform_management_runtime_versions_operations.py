@@ -20,9 +20,9 @@ class TestAppPlatformManagementRuntimeVersionsOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_runtime_versions(self, resource_group):
+    def test_runtime_versions_list_runtime_versions(self, resource_group):
         response = self.client.runtime_versions.list_runtime_versions(
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself

@@ -20,12 +20,12 @@ class TestAppPlatformManagementAppsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_apps_get(self, resource_group):
         response = self.client.apps.get(
             resource_group_name=resource_group.name,
             service_name="str",
             app_name="str",
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestAppPlatformManagementAppsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_apps_begin_create_or_update(self, resource_group):
         response = self.client.apps.begin_create_or_update(
             resource_group_name=resource_group.name,
             service_name="str",
@@ -68,9 +68,12 @@ class TestAppPlatformManagementAppsOperations(AzureMgmtRecordedTestCase):
                     "persistentDisk": {"mountPath": "str", "sizeInGB": 0, "usedInGB": 0},
                     "provisioningState": "str",
                     "public": bool,
+                    "secrets": [{"name": "str", "value": "str"}],
                     "temporaryDisk": {"mountPath": "/tmp", "sizeInGB": 0},
+                    "testEndpointAuthState": "Enabled",
                     "url": "str",
                     "vnetAddons": {"publicEndpoint": False, "publicEndpointUrl": "str"},
+                    "workloadProfileName": "str",
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -82,7 +85,7 @@ class TestAppPlatformManagementAppsOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -90,12 +93,12 @@ class TestAppPlatformManagementAppsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_apps_begin_delete(self, resource_group):
         response = self.client.apps.begin_delete(
             resource_group_name=resource_group.name,
             service_name="str",
             app_name="str",
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -103,7 +106,7 @@ class TestAppPlatformManagementAppsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update(self, resource_group):
+    def test_apps_begin_update(self, resource_group):
         response = self.client.apps.begin_update(
             resource_group_name=resource_group.name,
             service_name="str",
@@ -138,9 +141,12 @@ class TestAppPlatformManagementAppsOperations(AzureMgmtRecordedTestCase):
                     "persistentDisk": {"mountPath": "str", "sizeInGB": 0, "usedInGB": 0},
                     "provisioningState": "str",
                     "public": bool,
+                    "secrets": [{"name": "str", "value": "str"}],
                     "temporaryDisk": {"mountPath": "/tmp", "sizeInGB": 0},
+                    "testEndpointAuthState": "Enabled",
                     "url": "str",
                     "vnetAddons": {"publicEndpoint": False, "publicEndpointUrl": "str"},
+                    "workloadProfileName": "str",
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -152,7 +158,7 @@ class TestAppPlatformManagementAppsOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -160,11 +166,11 @@ class TestAppPlatformManagementAppsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_apps_list(self, resource_group):
         response = self.client.apps.list(
             resource_group_name=resource_group.name,
             service_name="str",
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -172,12 +178,12 @@ class TestAppPlatformManagementAppsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_resource_upload_url(self, resource_group):
+    def test_apps_get_resource_upload_url(self, resource_group):
         response = self.client.apps.get_resource_upload_url(
             resource_group_name=resource_group.name,
             service_name="str",
             app_name="str",
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -185,13 +191,13 @@ class TestAppPlatformManagementAppsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_set_active_deployments(self, resource_group):
+    def test_apps_begin_set_active_deployments(self, resource_group):
         response = self.client.apps.begin_set_active_deployments(
             resource_group_name=resource_group.name,
             service_name="str",
             app_name="str",
             active_deployment_collection={"activeDeploymentNames": ["str"]},
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -199,13 +205,13 @@ class TestAppPlatformManagementAppsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_validate_domain(self, resource_group):
+    def test_apps_validate_domain(self, resource_group):
         response = self.client.apps.validate_domain(
             resource_group_name=resource_group.name,
             service_name="str",
             app_name="str",
             validate_payload={"name": "str"},
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
