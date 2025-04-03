@@ -24,8 +24,8 @@ USAGE:
 
 import os
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.dp1 import AIProjectClient
-from azure.ai.projects.dp1.models import DatasetVersion, ListViewType
+from azure.ai.projects.1dp import AIProjectClient
+from azure.ai.projects.models import DatasetVersion, ListViewType
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
 dataset_name = os.environ["DATASET_NAME"]

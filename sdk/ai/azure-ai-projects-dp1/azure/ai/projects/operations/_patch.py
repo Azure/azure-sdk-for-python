@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import logging
 import inspect
-from typing import List, Optional, Any
+from typing import List, Optional, Any, Tuple
 from pathlib import Path
 from azure.storage.blob import ContainerClient
 
@@ -35,20 +35,25 @@ class DatasetsOperations(DatasetsOperationsGenerated):
     def _create_dataset_and_get_its_container_client(
         self,
         name: str,
-        version: Optional[str] = None,
-    ) -> ContainerClient:
+        input_version: Optional[str] = None,
+    ) -> Tuple[ContainerClient, str]:
 
-        if version:
+        if input_version:
             pending_upload_response: PendingUploadResponse = self.start_pending_upload_version(
                 name=name,
-                version=version,
+                version=input_version,
                 body=PendingUploadRequest(pending_upload_type=PendingUploadType.TEMPORARY_BLOB_REFERENCE),
             )
+            output_version: str = input_version
         else:
             pending_upload_response: PendingUploadResponse = self.start_pending_upload(
                 name=name,
                 body=PendingUploadRequest(pending_upload_type=PendingUploadType.TEMPORARY_BLOB_REFERENCE),
             )
+            if pending_upload_response.dataset_version:
+                output_version: str = pending_upload_response.dataset_version 
+            else:
+                raise ValueError("Dataset version is not present in the response")
 
         if not pending_upload_response.blob_reference_for_consumption:
             raise ValueError("Blob reference for consumption is not present")
@@ -60,7 +65,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
             raise ValueError("Blob URI is not present or empty")
 
         if logger.getEffectiveLevel() == logging.DEBUG:
-            method = inspect.currentframe().f_code.co_name
+            method = inspect.currentframe().f_code.co_name if inspect.currentframe() else "unknown"
             logger.debug(
                 "[%s] pending_upload_response.pending_upload_id = %s.",
                 method,
@@ -82,9 +87,9 @@ class DatasetsOperations(DatasetsOperationsGenerated):
                 pending_upload_response.blob_reference_for_consumption.storage_account_arm_id,
             )  # /subscriptions/<>/resourceGroups/<>/Microsoft.Storage/accounts/<>
             logger.debug(
-                "[%s] pending_upload_response.blob_reference_for_consumption.credential.sas_token = %s.",
+                "[%s] pending_upload_response.blob_reference_for_consumption.credential.sas_uri = %s.",
                 method,
-                pending_upload_response.blob_reference_for_consumption.credential.sas_token,
+                pending_upload_response.blob_reference_for_consumption.credential.sas_uri,
             )
             logger.debug(
                 "[%s] pending_upload_response.blob_reference_for_consumption.credential.type = %s.",
@@ -99,7 +104,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.containerclient?view=azure-python#azure-storage-blob-containerclient-from-container-url
         return ContainerClient.from_container_url(
             container_url=pending_upload_response.blob_reference_for_consumption.blob_uri,  # Of the form: "https://<account>.blob.core.windows.net/<container>?<sasToken>"
-        )
+        ), output_version
 
     def upload_file_and_create(
         self, *, name: str, version: Optional[str] = None, file: str, **kwargs: Any
@@ -115,7 +120,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         :param file: The file name (including optional path) to be uploaded. Required.
         :type file: str
         :return: The created dataset version.
-        :rtype: ~azure.ai.projects.dp1.models.DatasetVersion
+        :rtype: ~azure.ai.projects.models.DatasetVersion
         :raises ~azure.core.exceptions.HttpResponseError: If an error occurs during the HTTP request.
         """
 
@@ -125,7 +130,9 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         if path_file.is_dir():
             raise ValueError("The provided file is actually a folder. Use method `create_and_upload_folder` instead")
 
-        with self._create_dataset_and_get_its_container_client(name=name, version=version) as container_client:
+        container_client, output_version = self._create_dataset_and_get_its_container_client(name=name, input_version=version)
+
+        with container_client:
 
             with open(file=file, mode="rb") as data:
 
@@ -142,25 +149,16 @@ class DatasetsOperations(DatasetsOperationsGenerated):
 
                     logger.debug("[%s] Done uploading", inspect.currentframe().f_code.co_name)
 
-                    if version:
-                        dataset_version = self.create_version(
-                            name=name,
-                            version=version,
-                            body=DatasetVersion(
-                                # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.blobclient?view=azure-python#azure-storage-blob-blobclient-url
-                                # Per above doc the ".url" contains SAS token... should this be stripped away?
-                                dataset_uri=blob_client.url,  # "<account>.blob.windows.core.net/<container>/<file_name>"
-                                type=DatasetType.URI_FILE,
-                            ),
-                        )
-                    else:
-                        dataset_version = self.create(
-                            name=name,
-                            body=DatasetVersion(
-                                dataset_uri=blob_client.url,
-                                type=DatasetType.URI_FILE,
-                            ),
-                        )
+                    dataset_version = self.create_version(
+                        name=name,
+                        version=output_version,
+                        body=DatasetVersion(
+                            # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.blobclient?view=azure-python#azure-storage-blob-blobclient-url
+                            # Per above doc the ".url" contains SAS token... should this be stripped away?
+                            dataset_uri=blob_client.url,  # "<account>.blob.windows.core.net/<container>/<file_name>"
+                            type=DatasetType.URI_FILE,
+                        ),
+                    )
 
         return dataset_version
 
@@ -179,7 +177,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         :param folder: The folder name (including optional path) to be uploaded. Required.
         :type file: str
         :return: The created dataset version.
-        :rtype: ~azure.ai.projects.dp1.models.DatasetVersion
+        :rtype: ~azure.ai.projects.models.DatasetVersion
         :raises ~azure.core.exceptions.HttpResponseError: If an error occurs during the HTTP request.
         """
         path_folder = Path(folder)
@@ -188,7 +186,9 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         if Path(path_folder).is_file():
             raise ValueError("The provided folder is actually a file. Use method `create_and_upload_file` instead.")
 
-        with self._create_dataset_and_get_its_container_client(name=name, version=version) as container_client:
+        container_client, output_version = self._create_dataset_and_get_its_container_client(name=name, input_version=version)
+
+        with container_client:
 
             # Recursively traverse all files in the folder
             files_uploaded: bool = False
@@ -212,7 +212,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
 
             dataset_version = self.create_version(
                 name=name,
-                version=version,
+                version=output_version,
                 body=DatasetVersion(
                     # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.blobclient?view=azure-python#azure-storage-blob-blobclient-url
                     # Per above doc the ".url" contains SAS token... should this be stripped away?

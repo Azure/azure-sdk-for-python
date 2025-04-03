@@ -24,8 +24,8 @@ USAGE:
 """
 
 import os
-from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import ConnectionType
+from azure.ai.projects.dp1 import AIProjectClient
+from azure.ai.projects.dp1.models import ConnectionType
 from azure.identity import DefaultAzureCredential
 
 endpoint = os.environ["PROJECT_ENDPOINT"]

@@ -28,7 +28,7 @@ from azure.ai.projects.dp1 import AIProjectClient
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
 deployment_name = os.environ["DEPLOYMENT_NAME"]
-model_publisher = os.environ["MODEL_PUBLISHER"]
+#model_publisher = os.environ["MODEL_PUBLISHER"]
 
 with AIProjectClient(
     endpoint=endpoint,
@@ -38,6 +38,7 @@ with AIProjectClient(
     print("List all deployments:")
     for deployment in project_client.deployments.list():
         print(deployment)
+    exit()
 
     print(f"List all deployments by the model publisher `{model_publisher}`:")
     for deployment in project_client.deployments.list(model_publisher=model_publisher):

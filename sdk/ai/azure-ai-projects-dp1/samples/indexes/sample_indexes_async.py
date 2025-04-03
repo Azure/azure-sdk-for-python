@@ -24,7 +24,7 @@ USAGE:
 import asyncio
 import os
 from azure.identity.aio import DefaultAzureCredential
-from azure.ai.projects.dp1.aio import AIProjectClient
+from azure.ai.projects.aio import AIProjectClient
 
 
 async def sample_indexes_async() -> None:

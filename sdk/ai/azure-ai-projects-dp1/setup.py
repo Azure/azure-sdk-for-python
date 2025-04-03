@@ -93,7 +93,7 @@ setup(
     ),
     include_package_data=True,
     package_data={
-        "azure.ai.projects.dp1": ["py.typed"],
+        "azure.ai.projects": ["py.typed"],
     },
     install_requires=[
         "isodate>=0.6.1",

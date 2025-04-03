@@ -25,8 +25,8 @@ USAGE:
 import asyncio
 import os
 from azure.identity.aio import DefaultAzureCredential
-from azure.ai.projects.dp1.aio import AIProjectClient
-from azure.ai.projects.dp1.models import DatasetVersion
+from azure.ai.projects.aio import AIProjectClient
+from azure.ai.projects.models import DatasetVersion
 
 
 async def sample_datasets_async() -> None:

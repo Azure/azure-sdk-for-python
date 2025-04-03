@@ -24,7 +24,7 @@ USAGE:
 
 import os
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.dp1 import AIProjectClient
+from azure.ai.projects.1dp import AIProjectClient
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
 index_name = os.environ["INDEX_NAME"]
