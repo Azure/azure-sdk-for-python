@@ -258,7 +258,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         read_records = reader.records()
 
         # Assert first line does not include header
-        data = await anext(read_records)
+        data = await read_records.__anext__()
         assert data == b'App Configuration,azure-data-appconfiguration,1,appconfiguration,FALSE'
 
         async for record in read_records:
@@ -292,7 +292,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         read_records = reader.records()
 
         # Assert first line does not include header
-        data = await anext(read_records)
+        data = await read_records.__anext__()
         assert data == b'Service,Package,Version,RepoPath,MissingDocs'
 
         async for record in read_records:
