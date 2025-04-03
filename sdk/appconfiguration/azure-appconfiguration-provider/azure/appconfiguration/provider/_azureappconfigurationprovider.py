@@ -366,7 +366,8 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                     if self._feature_flag_refresh_enabled:
                         need_ff_refresh, refresh_on_feature_flags, feature_flags, filters_used = (
                             client.refresh_feature_flags(
-                                self._refresh_on_feature_flags, self._feature_flag_selectors, headers=headers, **kwargs
+                                self._refresh_on_feature_flags,
+                                self._feature_flag_selectors,
                                 headers,
                                 self._origin_endpoint,
                                 **kwargs,
