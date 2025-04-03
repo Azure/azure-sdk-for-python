@@ -15,16 +15,22 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestElasticSanMgmtSkusOperationsAsync(AzureMgmtRecordedTestCase):
+class TestElasticSanMgmtAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(ElasticSanMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_skus_list(self, resource_group):
-        response = self.client.skus.list(
-            api_version="2024-07-01-preview",
-        )
-        result = [r async for r in response]
+    async def test_begin_restore_volume(self, resource_group):
+        response = await (
+            await self.client.begin_restore_volume(
+                resource_group_name=resource_group.name,
+                elastic_san_name="str",
+                volume_group_name="str",
+                volume_name="str",
+                api_version="2024-07-01-preview",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
         # please add some check logic here by yourself
         # ...

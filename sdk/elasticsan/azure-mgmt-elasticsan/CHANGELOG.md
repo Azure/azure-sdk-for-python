@@ -1,5 +1,31 @@
 # Release History
 
+## 1.2.0b2 (2025-04-20)
+
+### Features Added
+
+  - Client `ElasticSanMgmtClient` added method `begin_restore_volume`
+  - Model `ElasticSanMgmtClient` added property `url`
+  - Enum `ProvisioningStates` added member `DELETED`
+  - Enum `ProvisioningStates` added member `RESTORING`
+  - Enum `ProvisioningStates` added member `SOFT_DELETING`
+  - Model `VolumeGroupProperties` added property `delete_retention_policy`
+  - Model `VolumeGroupUpdateProperties` added property `delete_retention_policy`
+  - Added model `DeleteRetentionPolicy`
+  - Added enum `DeleteType`
+  - Added model `DiskSnapshotList`
+  - Added enum `PolicyState`
+  - Added model `PreValidationResponse`
+  - Added model `VolumeNameList`
+  - Added enum `XMsAccessSoftDeletedResources`
+  - Model `VolumesOperations` added method `begin_pre_backup`
+  - Model `VolumesOperations` added method `begin_pre_restore`
+  - Added model `ElasticSanMgmtClientOperationsMixin`
+  - Method `VolumesOperations.begin_pre_backup` has a new overload `def begin_pre_backup(self: None, resource_group_name: str, elastic_san_name: str, volume_group_name: str, parameters: VolumeNameList, content_type: str)`
+  - Method `VolumesOperations.begin_pre_backup` has a new overload `def begin_pre_backup(self: None, resource_group_name: str, elastic_san_name: str, volume_group_name: str, parameters: IO[bytes], content_type: str)`
+  - Method `VolumesOperations.begin_pre_restore` has a new overload `def begin_pre_restore(self: None, resource_group_name: str, elastic_san_name: str, volume_group_name: str, parameters: DiskSnapshotList, content_type: str)`
+  - Method `VolumesOperations.begin_pre_restore` has a new overload `def begin_pre_restore(self: None, resource_group_name: str, elastic_san_name: str, volume_group_name: str, parameters: IO[bytes], content_type: str)`
+
 ## 1.2.0b1 (2024-10-20)
 
 ### Features Added
