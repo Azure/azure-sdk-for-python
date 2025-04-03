@@ -594,9 +594,9 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         assert saved_endpoint["metadata"]["endpoints"]["/content"]["GET"]["js_module"] == "test.js"
 
         # We are setting endpoints and modules to empty to have the UDF tests work since UDE and UDF cannot be created simultaneously.
-        saved_endpoint = {"metadata": {"endpoints": {}}, "modules": []}
-        assert saved_endpoint["metadata"]["endpoints"] == {}
-        assert saved_endpoint["modules"] == []
+        user_endpoint = {"metadata": {"endpoints": {}}, "modules": []}
+        assert user_endpoint["metadata"]["endpoints"] == {}
+        assert user_endpoint["modules"] == []
 
     @ConfidentialLedgerPreparer()
     @recorded_by_proxy
@@ -635,19 +635,14 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
             confidentialledger_endpoint, confidentialledger_id, use_aad_auth=True
         )
 
-        userEndpoint = client.get_user_defined_endpoint()
-        if userEndpoint["metadata"]["endpoints"] == {}:
+        client.create_user_defined_endpoint({"metadata": {"endpoints": {}}, "modules": []})
+        functionId = "myFunction"
 
-            functionId = "myFunction"
+        userFunction = client.create_user_defined_function(functionId, {"code":"export function main() { return true }"} )
+        time.sleep(3)                
 
-            userFunction = client.create_user_defined_function(functionId, {"code":"export function main() { return true }"} )
-            time.sleep(3)
+        client.get_user_defined_function(functionId)
+        assert userFunction["id"] == functionId
 
-            client.get_user_defined_function(functionId)
-            assert userFunction["id"] == functionId
-
-            client.delete_user_defined_function(functionId)
-            time.sleep(3)
-
-        else:
-            return "User defined functions cannot be created when user defined endpoints are defined"
+        client.delete_user_defined_function(functionId)
+        time.sleep(3)
