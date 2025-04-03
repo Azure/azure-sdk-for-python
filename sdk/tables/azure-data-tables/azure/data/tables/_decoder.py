@@ -3,176 +3,167 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any, Optional, Mapping, Union, Dict, Callable, cast
-from datetime import datetime, timezone
-from urllib.parse import quote
+from dataclasses import fields, is_dataclass
+from datetime import timezone, datetime
 from uuid import UUID
+from base64 import b64decode
+from typing import (
+    Any,
+    Mapping,
+    Union,
+    Dict,
+    Callable,
+    Type,
+)
+from typing_extensions import is_typeddict
 
-from ._common_conversion import _decode_base64_to_bytes
-from ._entity import EntityProperty, EdmType, TableEntity, EntityMetadata
+from ._common_conversion import _annotations, _get_annotation_type
+from ._entity import (
+    EntityProperty,
+    EdmType,
+    TableEntity,
+    TablesEntityDatetime,
+)
 
-DecoderMapType = Dict[EdmType, Callable[[Union[str, bool, int, float]], Any]]
-
-
-class TablesEntityDatetime(datetime):
-    _service_value: str
-
-    @property
-    def tables_service_value(self) -> str:
-        try:
-            return self._service_value
-        except AttributeError:
-            return ""
+DecodeCallable = Union[Callable[[str], Any], Callable[[int], Any], Callable[[bool], Any], Callable[[float], Any]]
+DecoderMapType = Mapping[Union[Type, EdmType], DecodeCallable]
 
 
-NO_ODATA = {
-    int: EdmType.INT32,
-    str: EdmType.STRING,
-    bool: EdmType.BOOLEAN,
-    float: EdmType.DOUBLE,
-}
+def _no_op(value: Any) -> Any:
+    return value
+
+
+def _none_op(_: Any) -> None:
+    return None
 
 
 class TableEntityDecoder:
-    def __init__(
-        self,
-        *,
-        flatten_result_entity: bool = False,
-        convert_map: Optional[DecoderMapType] = None,
-    ) -> None:
-        self.convert_map = convert_map
-        self.flatten_result_entity = flatten_result_entity
+    def __init__(self, *, convert_map: DecoderMapType, entity_format: Any) -> None:
+        self._edm_types: Dict[EdmType, DecodeCallable] = {
+            EdmType.BINARY: b64decode,
+            EdmType.INT32: int,
+            EdmType.INT64: self._decode_int64,
+            EdmType.DOUBLE: float,
+            EdmType.DATETIME: deserialize_iso,
+            EdmType.GUID: UUID,
+            EdmType.STRING: str,
+            EdmType.BOOLEAN: self._decode_boolean,
+        }
+        self._decode_types: Dict[Type, Union[EdmType, DecodeCallable]] = {
+            str: EdmType.STRING,
+            int: EdmType.INT32,
+            bool: EdmType.BOOLEAN,
+            datetime: EdmType.DATETIME,
+            float: EdmType.DOUBLE,
+            UUID: EdmType.GUID,
+            bytes: EdmType.BINARY,
+        }
+        for key, value in convert_map.items():
+            if isinstance(key, EdmType):
+                self._edm_types[key] = value
+            else:
+                self._decode_types[key] = value
+        self._property_types: Dict[str, Union[EdmType, DecodeCallable]] = {
+            "PartitionKey": _no_op,
+            "RowKey": _no_op,
+            "Timestamp": _none_op,
+        }
+        if entity_format:
+            property_name: str
+            property_type: Union[Type, EdmType]
+            if is_typeddict(entity_format):
+                # Scrape type encoding from typeddict defintion
+                for property_name, property_type in _annotations(entity_format).items():
+                    property_type = _get_annotation_type(property_type)
+                    self._add_property_type(property_name, property_type)
+            elif is_dataclass(entity_format):
+                # Scrape type decoding from a dataclass definition
+                for entity_field in fields(entity_format):
+                    property_type = _get_annotation_type(entity_field.type)
+                    self._add_property_type(entity_field.name, property_type)
+            else:
+                # Finally, we'll check if it's a simply dict of properties to types.
+                try:
+                    for property_name, property_type in entity_format.items():
+                        property_type = _get_annotation_type(property_type)
+                        self._add_property_type(property_name, property_type)
+                except (AttributeError, TypeError) as e:
+                    raise TypeError(
+                        "The 'entity_format' should be a TypedDict, dataclass definition, "
+                        "or dict in the format '{\"PropertyName\": type}'"
+                    ) from e
+
+    def _add_property_type(self, property_name: str, property_type: Union[Type, EdmType]) -> None:
+        if isinstance(property_type, EdmType):
+            self._property_types[property_name] = property_type
+            return
+        try:
+            self._property_types[property_name] = self._decode_types[property_type]
+        except KeyError as e:
+            raise ValueError(f"Unexpected type in entity format: '{property_type}', please provide decoder.") from e
 
     def __call__(  # pylint: disable=too-many-branches, too-many-statements
         self, response_data: Mapping[str, Any]
     ) -> TableEntity:
-        """Convert json response to entity.
-        The entity format is:
-        {
-        "Address":"Mountain View",
-        "Age":23,
-        "AmountDue":200.23,
-        "CustomerCode@odata.type":"Edm.Guid",
-        "CustomerCode":"c9da6455-213d-42c9-9a79-3e9149a57833",
-        "CustomerSince@odata.type":"Edm.DateTime",
-        "CustomerSince":"2008-07-10T00:00:00",
-        "IsActive":true,
-        "NumberOfOrders@odata.type":"Edm.Int64",
-        "NumberOfOrders":"255",
-        "PartitionKey":"my_partition_key",
-        "RowKey":"my_row_key"
-        }
-
-        :param response_data: The entity in response.
-        :type response_data: Mapping[str, Any]
-        :return: An entity dict with additional metadata.
-        :rtype: dict[str, Any]
-        """
         entity = TableEntity()
-
-        properties = {}
-        edmtypes = {}
-        odata = {}
-
-        for name, value in response_data.items():
-            if name.startswith("odata."):
-                odata[name[6:]] = value
-            elif name.endswith("@odata.type"):
-                edmtypes[name[:-11]] = value
+        entity._metadata = {"etag": None, "timestamp": None}
+        for key, value in response_data.items():
+            if key.startswith("odata."):
+                # TODO: replace with match statement once we drop 3.9
+                if key == "odata.etag":
+                    entity._metadata["etag"] = value
+                elif key == "odata.type":
+                    entity._metadata["type"] = value
+                elif key == "odata.id":
+                    entity._metadata["id"] = value
+                elif key == "odata.editLink":
+                    entity._metadata["editLink"] = value
+            elif key.endswith("@odata.type"):
+                continue
             else:
-                properties[name] = value
-
-        # Partitionkey is a known property
-        partition_key = properties.pop("PartitionKey", None)
-        if partition_key is not None:
-            entity["PartitionKey"] = partition_key
-
-        # Timestamp is a known property
-        timestamp = properties.pop("Timestamp", None)
-
-        for name, value in properties.items():
-            mtype = edmtypes.get(name)
-
-            if not mtype:
-                mtype = NO_ODATA[type(value)]
-
-            convert = None
-            default_convert = None
-            if self.convert_map:
+                if key == "Timestamp":
+                    entity._metadata["timestamp"] = deserialize_iso(value)
                 try:
-                    convert = self.convert_map[mtype]
+                    value = self._convert(self._property_types[key], value)
                 except KeyError:
-                    pass
-            if convert:
-                new_property = convert(value)
-            else:
-                try:
-                    default_convert = _ENTITY_TO_PYTHON_CONVERSIONS[mtype]
-                except KeyError as e:
-                    raise TypeError(f"Unsupported edm type: {mtype}") from e
-                if default_convert is not None:
-                    new_property = default_convert(self, value)
-                else:
-                    new_property = EntityProperty(mtype, value)
-            entity[name] = new_property
-
-        # extract etag from entry
-        etag = odata.pop("etag", None)
-        odata.pop("metadata", None)
-        if timestamp:
-            if not etag:
-                etag = "W/\"datetime'" + quote(timestamp) + "'\""
-            timestamp = self.from_entity_datetime(timestamp)
-        odata.update({"etag": etag, "timestamp": timestamp})
-        if self.flatten_result_entity:
-            for name, value in odata.items():
-                entity[name] = value
-        entity._metadata = cast(EntityMetadata, odata)  # pylint: disable=protected-access
+                    try:
+                        value = self._convert(EdmType(response_data[key + "@odata.type"]), value)
+                    except KeyError:
+                        value = self._convert(self._decode_types[type(value)], value)
+                if value is None:
+                    continue
+                entity[key] = value
         return entity
 
-    def from_entity_binary(self, value: str) -> bytes:
-        return _decode_base64_to_bytes(value)
+    def _convert(self, decoder: Union[EdmType, DecodeCallable], value: Any) -> Any:
+        if isinstance(decoder, EdmType):
+            return self._edm_types[decoder](value)
+        return decoder(value)
 
-    def from_entity_int32(self, value: Union[int, str]) -> int:
-        return int(value)
-
-    def from_entity_int64(self, value: str) -> EntityProperty:
+    def _decode_int64(self, value: str) -> EntityProperty:
         return EntityProperty(int(value), EdmType.INT64)
 
-    def from_entity_datetime(self, value: str) -> Optional[TablesEntityDatetime]:
-        return deserialize_iso(value)
-
-    def from_entity_guid(self, value: str) -> UUID:
-        return UUID(value)
-
-    def from_entity_str(self, value: Union[str, bytes]) -> str:
-        if isinstance(value, bytes):
-            return value.decode("utf-8")
-        return value
-
-
-_ENTITY_TO_PYTHON_CONVERSIONS = {
-    EdmType.BINARY: TableEntityDecoder.from_entity_binary,
-    EdmType.INT32: TableEntityDecoder.from_entity_int32,
-    EdmType.INT64: TableEntityDecoder.from_entity_int64,
-    EdmType.DOUBLE: lambda _, v: float(v),
-    EdmType.DATETIME: TableEntityDecoder.from_entity_datetime,
-    EdmType.GUID: TableEntityDecoder.from_entity_guid,
-    EdmType.STRING: TableEntityDecoder.from_entity_str,
-    EdmType.BOOLEAN: lambda _, v: v,
-}
+    def _decode_boolean(self, value: Union[str, bool, int]) -> bool:
+        try:
+            value = value.lower()  # type: ignore[union-attr]
+        except AttributeError:
+            return bool(value)
+        if value == "true":
+            return True
+        if value == "false":
+            return False
+        return bool(value)
 
 
-def deserialize_iso(value: Optional[str]) -> Optional[TablesEntityDatetime]:
-    if not value:
-        return None
+def deserialize_iso(value: str) -> TablesEntityDatetime:
+    # pylint:disable=protected-access,assigning-non-slot
     # Cosmos returns this with a decimal point that throws an error on deserialization
     cleaned_value = _clean_up_dotnet_timestamps(value)
     try:
         dt_obj = TablesEntityDatetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=timezone.utc)
     except ValueError:
         dt_obj = TablesEntityDatetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
-    dt_obj._service_value = value  # pylint:disable=protected-access,assigning-non-slot
+    dt_obj._service_value = value
     return dt_obj
 
 
@@ -180,11 +171,7 @@ def _clean_up_dotnet_timestamps(value):
     # .NET has more decimal places than Python supports in datetime objects, this truncates
     # values after 6 decimal places.
     value = value.split(".")
-    ms = ""
     if len(value) == 2:
-        ms = value[-1].replace("Z", "")
-        if len(ms) > 6:
-            ms = ms[:6]
-        ms = ms + "Z"
+        ms = value[-1].replace("Z", "")[:6] + "Z"
         return ".".join([value[0], ms])
     return value[0]

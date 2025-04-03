@@ -43,6 +43,8 @@ from ._policies import (
     TablesRetryPolicy,
 )
 from ._sdk_moniker import SDK_MONIKER
+from ._encoder import EncoderMapType
+from ._decoder import DecoderMapType
 
 _SUPPORTED_API_VERSIONS = ["2019-02-02", "2019-07-07", "2020-12-06"]
 # cspell:disable-next-line
@@ -71,6 +73,8 @@ class TablesBaseClient:  # pylint: disable=too-many-instance-attributes
         *,
         credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, TokenCredential]] = None,
         api_version: Optional[str] = None,
+        custom_encode: Optional[EncoderMapType] = None,
+        custom_decode: Optional[DecoderMapType] = None,
         **kwargs: Any,
     ) -> None:
         """
@@ -86,6 +90,14 @@ class TablesBaseClient:  # pylint: disable=too-many-instance-attributes
         :keyword api_version: Specifies the version of the operation to use for this request. Default value
             is "2019-02-02".
         :paramtype api_version: str or None
+        :keyword custom_encode:
+            A mapping of object types and how they should be encoded, either as existing edm type, or by custom callable.
+        :paramtype custom_encode:
+            Mapping[Type, Union[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int, float, datetime, bytes]]]]] or None  # pylint: disable=line-too-long
+        :keyword custom_decode:
+            A mapping of object types or edm types and how they should be decoded by callable.
+        :paramtype custom_decode:
+            Mapping[Union[Type, EdmType], Callable[[Union[str, bool, int, float]], Any]] or None
         """
         try:
             if not endpoint.lower().startswith("http"):
@@ -138,6 +150,8 @@ class TablesBaseClient:  # pylint: disable=too-many-instance-attributes
         self._client._config.version = get_api_version(
             api_version, self._client._config.version
         )  # type: ignore[assignment]
+        self._encoder_map = custom_encode or {}
+        self._decoder_map = custom_decode or {}
 
     @property
     def url(self) -> str:

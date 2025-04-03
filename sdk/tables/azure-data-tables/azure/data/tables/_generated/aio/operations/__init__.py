@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._operations import TableOperations
+from ._patch import TableOperations
 from ._operations import ServiceOperations
 
 from ._patch import __all__ as _patch_all
