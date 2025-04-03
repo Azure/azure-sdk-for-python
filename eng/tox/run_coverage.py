@@ -73,8 +73,4 @@ if __name__ == "__main__":
                         f"Coverage for {pkg_details.name} is below the threshold of {cov_threshold:.2f}% (actual: {total_coverage:.2f}%)"
                     )
                     exit(1)
-                logging.info(
-                    f"Coverage for {pkg_details.name} is {total_coverage:.2f}%)"
-                )
-
 
