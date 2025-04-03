@@ -855,15 +855,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             #other-client--per-operation-configuration>`__.
         :returns: A streaming object (BlobQueryReader)
         :rtype: ~azure.storage.blob.aio.BlobQueryReader
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/blob_samples_query_async.py
-                :start-after: [START query]
-                :end-before: [END query]
-                :language: python
-                :dedent: 4
-                :caption: select/project on blob/or blob snapshot data by providing simple query expressions.
         """
         error_cls = kwargs.pop("error_cls", BlobQueryError)
         encoding = kwargs.pop("encoding", None)
