@@ -638,7 +638,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         client.create_user_defined_endpoint({"metadata": {"endpoints": {}}, "modules": []})
         functionId = "myFunction"
 
-        userFunction = client.create_user_defined_function(functionId, {"code":"export function main() { return true }"} )
+        userFunction = client.create_user_defined_function(functionId, {"code":"export function main() { return true }", "id":functionId} )
         time.sleep(3)                
 
         client.get_user_defined_function(functionId)
