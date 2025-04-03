@@ -1037,42 +1037,48 @@ class TestBaseExporter(unittest.TestCase):
     @mock.patch.dict("os.environ", {
         "APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "Authorization=AAD"
     })
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.logger")
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.ManagedIdentityCredential")
-    def test_get_authentication_credential_system_assigned(self, mock_managed_identity):
+    def test_get_authentication_credential_system_assigned(self, mock_managed_identity, mock_logger):
         MOCK_MANAGED_IDENTITY_CREDENTIAL = "MOCK_MANAGED_IDENTITY_CREDENTIAL"
         mock_managed_identity.return_value = MOCK_MANAGED_IDENTITY_CREDENTIAL
         result = _get_authentication_credential(
             foo="bar"
         )
+        mock_logger.assert_not_called()
         self.assertEqual(result, MOCK_MANAGED_IDENTITY_CREDENTIAL)
         mock_managed_identity.assert_called_once_with()
 
     @mock.patch.dict("os.environ", {
         "APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "Authorization=AAD;ClientId=TEST_CLIENT_ID"
     })
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.logger")
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.ManagedIdentityCredential")
-    def test_get_authentication_credential_client_id(self, mock_managed_identity):
+    def test_get_authentication_credential_client_id(self, mock_managed_identity, mock_logger):
         MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL = "MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL"
         mock_managed_identity.return_value = MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL
         result = _get_authentication_credential(
             foo="bar"
         )
+        mock_logger.assert_not_called()
         self.assertEqual(result, MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL)
         mock_managed_identity.assert_called_once_with(client_id="TEST_CLIENT_ID")
 
     @mock.patch.dict("os.environ", {
         "APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "Authorization=AAD;ClientId=TEST_CLIENT_ID=bar"
     })
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.logger")
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.ManagedIdentityCredential")
-    def test_get_authentication_credential_misformatted(self, mock_managed_identity):
-        # Only key-value pairs should be counted. So, the above auth string should be treated as system assigned.
+    def test_get_authentication_credential_misformatted(self, mock_managed_identity, mock_logger):
+        # Even a single misformatted pair means Entra ID auth is skipped.
         MOCK_MANAGED_IDENTITY_CREDENTIAL = "MOCK_MANAGED_IDENTITY_CREDENTIAL"
         mock_managed_identity.return_value = MOCK_MANAGED_IDENTITY_CREDENTIAL
         result = _get_authentication_credential(
             foo="bar"
         )
-        self.assertEqual(result, MOCK_MANAGED_IDENTITY_CREDENTIAL)
-        mock_managed_identity.assert_called_once_with()
+        mock_logger.error.assert_called_once()
+        self.assertIsNone(result)
+        mock_managed_identity.assert_not_called()
 
     @mock.patch.dict("os.environ", {
         "APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "ClientId=TEST_CLIENT_ID"

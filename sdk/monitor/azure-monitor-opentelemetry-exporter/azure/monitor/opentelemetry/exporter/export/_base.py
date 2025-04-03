@@ -447,23 +447,16 @@ def _get_authentication_credential(**kwargs: Any) -> Optional[ManagedIdentityCre
         if _APPLICATIONINSIGHTS_AUTHENTICATION_STRING in os.environ:
             auth_string = os.getenv(_APPLICATIONINSIGHTS_AUTHENTICATION_STRING, "")
             kv_pairs = auth_string.split(";")
-            auth_string_d = {}
-            for kv_pair in kv_pairs:
-                key_value = kv_pair.split("=")
-                if len(key_value) == 2:
-                    (key, value) = key_value
-                    auth_string_d[key.lower()] = value
-                else:
-                    logger.error("Invalid APPLICATIONINSIGHTS_AUTHENTICATION_STRING format: %s", auth_string)
+            auth_string_d = dict(s.split("=") for s in kv_pairs)
+            auth_string_d = {key.lower(): value for key, value in auth_string_d.items()}
             if "authorization" in auth_string_d and auth_string_d["authorization"] == "AAD":
                 if "clientid" in auth_string_d:
-                    logger.info("ClientId found, trying to authenticate using Managed Identity.")
                     credential = ManagedIdentityCredential(client_id=auth_string_d["clientid"])
                     return credential
-                logger.info("Trying to authenticate using System assigned Managed Identity.")
                 credential = ManagedIdentityCredential()
                 return credential
+    except ValueError as exc:
+        logger.error("APPLICATIONINSIGHTS_AUTHENTICATION_STRING, %s, has invalid format: %s", auth_string, exc)
     except Exception as e:
         logger.error("Failed to get authentication credential and enable AAD: %s", e)
-        #TODO: Diagnostic logs
     return None
