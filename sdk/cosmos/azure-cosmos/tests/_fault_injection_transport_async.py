@@ -26,9 +26,7 @@ import asyncio
 import json
 import logging
 import sys
-from collections.abc import MutableMapping
-from typing import Callable, Optional, Any, Dict, List, Awaitable
-
+from typing import Callable, Optional, Any, Dict, List, Awaitable, MutableMapping
 import aiohttp
 from azure.core.pipeline.transport import AioHttpTransport, AioHttpTransportResponse
 from azure.core.rest import HttpRequest, AsyncHttpResponse

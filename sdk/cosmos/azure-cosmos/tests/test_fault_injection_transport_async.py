@@ -101,17 +101,21 @@ class TestFaultInjectionTransportAsync:
         custom_transport =  FaultInjectionTransportAsync()
         predicate : Callable[[HttpRequest], bool] = lambda r: FaultInjectionTransportAsync.predicate_req_for_document_with_id(r, id_value)
         custom_transport.add_fault(predicate, lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
-            500,
+            10000,
             CosmosHttpResponseError(
                 status_code=502,
                 message="Some random reverse proxy error."))))
 
         initialized_objects = self.setup_method_with_custom_transport(custom_transport)
+        start: float = time.perf_counter()
         try:
             container: ContainerProxy = initialized_objects["col"]
             await container.create_item(body=document_definition)
             pytest.fail("Expected exception not thrown")      
         except CosmosHttpResponseError as cosmosError:
+            end = time.perf_counter() - start
+            # validate response took more than 10 seconds
+            assert end > 10
             if cosmosError.status_code != 502:
                 raise cosmosError
         finally:
@@ -298,7 +302,7 @@ class TestFaultInjectionTransportAsync:
         first_region_uri: str = test_config.TestConfig.local_host.replace("localhost", "127.0.0.1")
         custom_transport = FaultInjectionTransportAsync()
 
-        # Inject topology transformation that would make Emulator look like a single write region
+        # Inject topology transformation that would make Emulator look like a multiple write region account
         # account with two read regions
         is_get_account_predicate: Callable[[HttpRequest], bool] = lambda r: FaultInjectionTransportAsync.predicate_is_database_account_call(r)
         emulator_as_multi_write_region_account_transformation: Callable[[HttpRequest, Callable[[HttpRequest], asyncio.Task[AsyncHttpResponse]]], AioHttpTransportResponse] = \
@@ -337,14 +341,14 @@ class TestFaultInjectionTransportAsync:
         finally:
             TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
 
-    # add a test for delays
     # add test for complete failures
 
     async def test_mwr_region_down_succeeds(self: "TestFaultInjectionTransportAsync"):
+        first_region_uri: str = test_config.TestConfig.local_host.replace("localhost", "127.0.0.1")
         second_region_uri: str = test_config.TestConfig.local_host
         custom_transport = FaultInjectionTransportAsync()
 
-        # Inject topology transformation that would make Emulator look like a single write region
+        # Inject topology transformation that would make Emulator look like a multiple write region account
         # account with two read regions
         is_get_account_predicate: Callable[[HttpRequest], bool] = lambda r: FaultInjectionTransportAsync.predicate_is_database_account_call(r)
         emulator_as_multi_write_region_account_transformation: Callable[[HttpRequest, Callable[[HttpRequest], asyncio.Task[AsyncHttpResponse]]], AioHttpTransportResponse] = \
@@ -355,6 +359,19 @@ class TestFaultInjectionTransportAsync:
         custom_transport.add_response_transformation(
             is_get_account_predicate,
             emulator_as_multi_write_region_account_transformation)
+
+        # Inject rule to simulate regional outage in "First Region"
+        is_request_to_read_region: Callable[[HttpRequest], bool] = lambda \
+                r: FaultInjectionTransportAsync.predicate_targets_region(r, first_region_uri) and \
+                   FaultInjectionTransportAsync.predicate_is_document_operation(r)
+
+        custom_transport.add_fault(
+            is_request_to_read_region,
+            lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
+                500,
+                CosmosHttpResponseError(
+                    status_code=408,
+                    message="Induced Request Timeout"))))
 
         id_value: str = str(uuid.uuid4())
         document_definition = {'id': id_value,
