@@ -319,8 +319,7 @@
 
 # ServiceLabel: %Purview
 # PRLabel: %Purview
-/sdk/purview/                                                        @saxenarahulMs @sangamtandon-ms
-                                                                     @adyabansal-ms
+/sdk/purview/                                                        @saxenarahulMs @adyabansal-ms
 
 # ServiceLabel: %Recovery Services
 # ServiceOwners: @Daya-Patil @Sharmistha-Rai
