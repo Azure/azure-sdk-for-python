@@ -34,10 +34,10 @@ from azure.cosmos import documents
 
 import test_config
 from azure.cosmos.exceptions import CosmosHttpResponseError
-from azure.core.exceptions import ServiceRequestError
+from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 
 class FaultInjectionTransportAsync(AioHttpTransport):
-    logger = logging.getLogger('azure.cosmos.fault_injection_transport')
+    logger = logging.getLogger('azure.cosmos.fault_injection_transport_async')
     logger.setLevel(logging.DEBUG)
 
     def __init__(self, *, session: Optional[aiohttp.ClientSession] = None, loop=None, session_owner: bool = True, **config):
@@ -64,11 +64,11 @@ class FaultInjectionTransportAsync(AioHttpTransport):
         return next((x for x in iterable if condition(x)), None)
 
     async def send(self, request: HttpRequest, *, stream: bool = False, proxies: Optional[MutableMapping[str, str]] = None, **config) -> AsyncHttpResponse:
-        FaultInjectionTransportAsync.logger.info("--> FaultInjectionTransport.Send {} {}".format(request.method, request.url))
+        FaultInjectionTransportAsync.logger.info("--> FaultInjectionTransportAsync.Send {} {}".format(request.method, request.url))
         # find the first fault Factory with matching predicate if any
         first_fault_factory = FaultInjectionTransportAsync.__first_item(iter(self.faults), lambda f: f["predicate"](request))
         if first_fault_factory:
-            FaultInjectionTransportAsync.logger.info("--> FaultInjectionTransport.ApplyFaultInjection")
+            FaultInjectionTransportAsync.logger.info("--> FaultInjectionTransportAsync.ApplyFaultInjection")
             injected_error = await first_fault_factory["apply"](request)
             FaultInjectionTransportAsync.logger.info("Found to-be-injected error {}".format(injected_error))
             raise injected_error
@@ -76,14 +76,14 @@ class FaultInjectionTransportAsync(AioHttpTransport):
         # apply the chain of request transformations with matching predicates if any
         matching_request_transformations = filter(lambda f: f["predicate"](f["predicate"]), iter(self.requestTransformations))
         for currentTransformation in matching_request_transformations:
-            FaultInjectionTransportAsync.logger.info("--> FaultInjectionTransport.ApplyRequestTransformation")
+            FaultInjectionTransportAsync.logger.info("--> FaultInjectionTransportAsync.ApplyRequestTransformation")
             request = await currentTransformation["apply"](request)
 
         first_response_transformation = FaultInjectionTransportAsync.__first_item(iter(self.responseTransformations), lambda f: f["predicate"](request))
 
-        FaultInjectionTransportAsync.logger.info("--> FaultInjectionTransport.BeforeGetResponseTask")
+        FaultInjectionTransportAsync.logger.info("--> FaultInjectionTransportAsync.BeforeGetResponseTask")
         get_response_task =  asyncio.create_task(super().send(request, stream=stream, proxies=proxies, **config))
-        FaultInjectionTransportAsync.logger.info("<-- FaultInjectionTransport.AfterGetResponseTask")
+        FaultInjectionTransportAsync.logger.info("<-- FaultInjectionTransportAsync.AfterGetResponseTask")
 
         if first_response_transformation:
             FaultInjectionTransportAsync.logger.info(f"Invoking response transformation")
@@ -164,6 +164,12 @@ class FaultInjectionTransportAsync(AioHttpTransport):
     async def error_region_down() -> Exception:
         return ServiceRequestError(
             message="Injected region down.",
+        )
+
+    @staticmethod
+    async def error_service_response() -> Exception:
+        return ServiceResponseError(
+            message="Injected Service Response Error.",
         )
 
     @staticmethod

@@ -19,7 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""AioHttpTransport allowing injection of faults between SDK and Cosmos Gateway
+"""RequestTransport allowing injection of faults between SDK and Cosmos Gateway
 """
 
 import json
@@ -36,7 +36,7 @@ from azure.cosmos import documents
 
 import test_config
 from azure.cosmos.exceptions import CosmosHttpResponseError
-from azure.core.exceptions import ServiceRequestError
+from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 
 class FaultInjectionTransport(RequestsTransport):
     logger = logging.getLogger('azure.cosmos.fault_injection_transport')
@@ -166,6 +166,12 @@ class FaultInjectionTransport(RequestsTransport):
     def error_region_down() -> Exception:
         return ServiceRequestError(
             message="Injected region down.",
+        )
+
+    @staticmethod
+    def error_service_response() -> Exception:
+        return ServiceResponseError(
+            message="Injected Service Response Error.",
         )
 
     @staticmethod
