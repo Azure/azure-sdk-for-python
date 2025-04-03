@@ -16,7 +16,7 @@ from azure.cosmos import CosmosClient
 from azure.cosmos.container import ContainerProxy
 from azure.cosmos.database import DatabaseProxy
 from azure.cosmos.exceptions import CosmosHttpResponseError
-from tests._fault_injection_transport import FaultInjectionTransport
+from _fault_injection_transport import FaultInjectionTransport
 from azure.core.exceptions import ServiceRequestError
 
 logger = logging.getLogger('azure.cosmos')
