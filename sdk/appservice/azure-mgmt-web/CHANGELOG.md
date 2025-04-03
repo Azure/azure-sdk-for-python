@@ -1,9 +1,5 @@
 # Release History
 
-## 0.0.0(it should be stable) (2025-04-03)
-
-
-
 ## 8.0.0 (2025-01-23)
 
 ### Breaking Changes
