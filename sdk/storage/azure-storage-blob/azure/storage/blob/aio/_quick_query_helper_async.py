@@ -153,7 +153,7 @@ class QuickQueryStreamer:
         return True
 
     async def __anext__(self):
-        next_part = await anext(self.iterator)
+        next_part = await self.iterator.__anext__()
         self._download_offset += len(next_part)
         return next_part
 
