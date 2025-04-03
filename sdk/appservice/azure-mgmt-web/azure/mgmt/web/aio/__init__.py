@@ -7,5 +7,4 @@
 # --------------------------------------------------------------------------
 
 from ._web_site_management_client import WebSiteManagementClient
-
-__all__ = ["WebSiteManagementClient"]
+__all__ = ['WebSiteManagementClient']

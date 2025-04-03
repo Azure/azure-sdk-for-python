@@ -9,7 +9,6 @@
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.web import WebSiteManagementClient
-
 """
 # PREREQUISITES
     pip install azure-identity
@@ -22,8 +21,6 @@ from azure.mgmt.web import WebSiteManagementClient
     AZURE_CLIENT_SECRET. For more info about how to get the value, please see:
     https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal
 """
-
-
 def main():
     client = WebSiteManagementClient(
         credential=DefaultAzureCredential(),
@@ -31,11 +28,13 @@ def main():
     )
 
     client.web_apps.stop_network_trace(
-        resource_group_name="testrg123",
-        name="SampleApp",
+        resource_group_name='testrg123',
+        name='SampleApp',
     )
-
 
 # x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2024-04-01/examples/StopWebSiteNetworkTrace.json
 if __name__ == "__main__":
     main()
+ame__ == "__main__":
+    main()
+  main()

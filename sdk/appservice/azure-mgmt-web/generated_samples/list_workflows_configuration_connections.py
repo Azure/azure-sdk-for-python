@@ -9,7 +9,6 @@
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.web import WebSiteManagementClient
-
 """
 # PREREQUISITES
     pip install azure-identity
@@ -22,8 +21,6 @@ from azure.mgmt.web import WebSiteManagementClient
     AZURE_CLIENT_SECRET. For more info about how to get the value, please see:
     https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal
 """
-
-
 def main():
     client = WebSiteManagementClient(
         credential=DefaultAzureCredential(),
@@ -31,12 +28,13 @@ def main():
     )
 
     response = client.web_apps.list_workflows_connections(
-        resource_group_name="testrg123",
-        name="testsite2",
+        resource_group_name='testrg123',
+        name='testsite2',
     )
     print(response)
 
-
 # x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2024-04-01/examples/ListWorkflowsConfigurationConnections.json
 if __name__ == "__main__":
+    main()
+__ == "__main__":
     main()
