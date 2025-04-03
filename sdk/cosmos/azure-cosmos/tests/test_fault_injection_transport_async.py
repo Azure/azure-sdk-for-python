@@ -30,7 +30,6 @@ logger.addHandler(logging.StreamHandler(sys.stdout))
 
 host = test_config.TestConfig.host
 master_key = test_config.TestConfig.masterKey
-connection_policy = test_config.TestConfig.connectionPolicy
 TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
 single_partition_container_name = os.path.basename(__file__) + str(uuid.uuid4())
 
@@ -49,13 +48,10 @@ class TestFaultInjectionTransportAsync:
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        
-        cls.connection_policy = connection_policy
         cls.database_id = TEST_DATABASE_ID
         cls.single_partition_container_name = single_partition_container_name
 
-        cls.mgmt_client = CosmosClient(cls.host, cls.master_key, consistency_level="Session",
-                                      connection_policy=cls.connection_policy, logger=logger)
+        cls.mgmt_client = CosmosClient(cls.host, cls.master_key, consistency_level="Session", logger=logger)
         created_database = cls.mgmt_client.get_database_client(cls.database_id)
         asyncio.run(asyncio.wait_for(
             created_database.create_container(
@@ -81,8 +77,7 @@ class TestFaultInjectionTransportAsync:
 
     def setup_method_with_custom_transport(self, custom_transport: AioHttpTransport, default_endpoint=host, **kwargs):
         client = CosmosClient(default_endpoint, master_key, consistency_level="Session",
-                              connection_policy=connection_policy, transport=custom_transport,
-                              logger=logger, enable_diagnostics_logging=True, **kwargs)
+                              transport=custom_transport, logger=logger, enable_diagnostics_logging=True, **kwargs)
         db: DatabaseProxy = client.get_database_client(TEST_DATABASE_ID)
         container: ContainerProxy = db.get_container_client(single_partition_container_name)
         return {"client": client, "db": db, "col": container}
