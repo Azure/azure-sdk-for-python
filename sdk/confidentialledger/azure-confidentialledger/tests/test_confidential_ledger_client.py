@@ -595,9 +595,8 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
 
         # We are setting endpoints and modules to empty to have the UDF tests work since UDE and UDF cannot be created simultaneously.
         saved_endpoint = {"metadata": {"endpoints": {}}, "modules": []}
-        user_endpoint = saved_endpoint
-        assert user_endpoint["metadata"]["endpoints"] == {}
-        assert user_endpoint["modules"] == []
+        assert saved_endpoint["metadata"]["endpoints"] == {}
+        assert saved_endpoint["modules"] == []
 
     @ConfidentialLedgerPreparer()
     @recorded_by_proxy
