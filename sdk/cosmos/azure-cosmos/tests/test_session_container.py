@@ -35,7 +35,7 @@ class TestSessionContainer(unittest.TestCase):
                                              u'id': u'sample collection'}
         create_collection_response_header = {'x-ms-session-token': '0:0#409#24=-1#12=-1',
                                              'x-ms-alt-content-path': 'dbs/sample%20database'}
-        self.session.update_session(create_collection_response_result, create_collection_response_header)
+        self.session.update_session(None, create_collection_response_result, create_collection_response_header)
 
         token = self.session.get_session_token(u'/dbs/sample%20database/colls/sample%20collection')
         assert token == '0:0#409#24=-1#12=-1'
@@ -53,7 +53,7 @@ class TestSessionContainer(unittest.TestCase):
                                            'x-ms-alt-content-path': 'dbs/sample%20database/colls/sample%20collection',
                                            'x-ms-content-path': 'DdAkAPS2rAA='}
 
-        self.session.update_session(create_document_response_result, create_document_response_header)
+        self.session.update_session(None, create_document_response_result, create_document_response_header)
 
         token = self.session.get_session_token(u'dbs/DdAkAA==/colls/DdAkAPS2rAA=/docs/DdAkAPS2rAACAAAAAAAAAA==/')
         assert token == '0:0#406#24=-1#12=-1'

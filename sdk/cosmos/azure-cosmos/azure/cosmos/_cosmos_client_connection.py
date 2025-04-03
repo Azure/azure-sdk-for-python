@@ -2042,6 +2042,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         headers = base.GetHeaders(self, self.default_headers, "patch", path, document_id, resource_type,
                                   documents._OperationType.Patch, options)
+        base.set_session_token_header(self, headers, path, resource_type, documents._OperationType.Patch, options)
         # Patch will use WriteEndpoint since it uses PUT operation
         request_params = RequestObject(resource_type, documents._OperationType.Patch)
         request_data = {}
@@ -2131,6 +2132,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         base._populate_batch_headers(initial_headers)
         headers = base.GetHeaders(self, initial_headers, "post", path, collection_id, "docs",
                                   documents._OperationType.Batch, options)
+        base.set_session_token_header(self, headers, path, "docs", documents._OperationType.Batch, options)
         request_params = RequestObject("docs", documents._OperationType.Batch)
         return cast(
             Tuple[List[Dict[str, Any]], CaseInsensitiveDict],
@@ -2191,6 +2193,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         headers = base.GetHeaders(self, self.default_headers, "post", path, collection_id,
                                   "partitionkey", documents._OperationType.Delete, options)
+        base.set_session_token_header(self, headers, path, "partitionkey", documents._OperationType.Delete,
+                                        options)
         request_params = RequestObject("partitionkey", documents._OperationType.Delete)
         _, last_response_headers = self.__Post(
             path=path,
@@ -2615,7 +2619,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self,
         body: Dict[str, Any],
         path: str,
-        typ: str,
+        resource_type: str,
         id: Optional[str],
         initial_headers: Optional[Mapping[str, Any]],
         options: Optional[Mapping[str, Any]] = None,
@@ -2625,7 +2629,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         :param dict body:
         :param str path:
-        :param str typ:
+        :param str resource_type:
         :param str id:
         :param dict initial_headers:
         :param dict options:
@@ -2642,11 +2646,12 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             options = {}
 
         initial_headers = initial_headers or self.default_headers
-        headers = base.GetHeaders(self, initial_headers, "post", path, id, typ, documents._OperationType.Create,
-                                  options)
+        headers = base.GetHeaders(self, initial_headers, "post", path, id, resource_type,
+                                    documents._OperationType.Create, options)
+        base.set_session_token_header(self, headers, path, resource_type, documents._OperationType.Create, options)
         # Create will use WriteEndpoint since it uses POST operation
 
-        request_params = RequestObject(typ, documents._OperationType.Create)
+        request_params = RequestObject(resource_type, documents._OperationType.Create)
         result, last_response_headers = self.__Post(path, request_params, body, headers, **kwargs)
         self.last_response_headers = last_response_headers
 
@@ -2660,7 +2665,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self,
         body: Dict[str, Any],
         path: str,
-        typ: str,
+        resource_type: str,
         id: Optional[str],
         initial_headers: Optional[Mapping[str, Any]],
         options: Optional[Mapping[str, Any]] = None,
@@ -2670,7 +2675,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         :param dict body:
         :param str path:
-        :param str typ:
+        :param str resource_type:
         :param str id:
         :param dict initial_headers:
         :param dict options:
@@ -2687,12 +2692,13 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             options = {}
 
         initial_headers = initial_headers or self.default_headers
-        headers = base.GetHeaders(self, initial_headers, "post", path, id, typ, documents._OperationType.Upsert,
-                                  options)
+        headers = base.GetHeaders(self, initial_headers, "post", path, id, resource_type,
+                                    documents._OperationType.Upsert, options)
         headers[http_constants.HttpHeaders.IsUpsert] = True
+        base.set_session_token_header(self, headers, path, resource_type, documents._OperationType.Upsert, options)
 
         # Upsert will use WriteEndpoint since it uses POST operation
-        request_params = RequestObject(typ, documents._OperationType.Upsert)
+        request_params = RequestObject(resource_type, documents._OperationType.Upsert)
         result, last_response_headers = self.__Post(path, request_params, body, headers, **kwargs)
         self.last_response_headers = last_response_headers
         # update session for write request
@@ -2705,7 +2711,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self,
         resource: Dict[str, Any],
         path: str,
-        typ: str,
+        resource_type: str,
         id: Optional[str],
         initial_headers: Optional[Mapping[str, Any]],
         options: Optional[Mapping[str, Any]] = None,
@@ -2715,7 +2721,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         :param dict resource:
         :param str path:
-        :param str typ:
+        :param str resource_type:
         :param str id:
         :param dict initial_headers:
         :param dict options:
@@ -2732,10 +2738,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             options = {}
 
         initial_headers = initial_headers or self.default_headers
-        headers = base.GetHeaders(self, initial_headers, "put", path, id, typ, documents._OperationType.Replace,
-                                  options)
+        headers = base.GetHeaders(self, initial_headers, "put", path, id, resource_type,
+                                    documents._OperationType.Replace, options)
+        base.set_session_token_header(self, headers, path, resource_type, documents._OperationType.Replace, options)
         # Replace will use WriteEndpoint since it uses PUT operation
-        request_params = RequestObject(typ, documents._OperationType.Replace)
+        request_params = RequestObject(resource_type, documents._OperationType.Replace)
         result, last_response_headers = self.__Put(path, request_params, resource, headers, **kwargs)
         self.last_response_headers = last_response_headers
 
@@ -2748,7 +2755,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     def Read(
         self,
         path: str,
-        typ: str,
+        resource_type: str,
         id: Optional[str],
         initial_headers: Optional[Mapping[str, Any]],
         options: Optional[Mapping[str, Any]] = None,
@@ -2757,7 +2764,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         """Reads an Azure Cosmos resource and returns it.
 
         :param str path:
-        :param str typ:
+        :param str resource_type:
         :param str id:
         :param dict initial_headers:
         :param dict options:
@@ -2774,9 +2781,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             options = {}
 
         initial_headers = initial_headers or self.default_headers
-        headers = base.GetHeaders(self, initial_headers, "get", path, id, typ, documents._OperationType.Read, options)
+        headers = base.GetHeaders(self, initial_headers, "get", path, id, resource_type,
+                                    documents._OperationType.Read, options)
+        base.set_session_token_header(self, headers, path, resource_type, documents._OperationType.Read, options)
         # Read will use ReadEndpoint since it uses GET operation
-        request_params = RequestObject(typ, documents._OperationType.Read)
+        request_params = RequestObject(resource_type, documents._OperationType.Read)
         result, last_response_headers = self.__Get(path, request_params, headers, **kwargs)
         self.last_response_headers = last_response_headers
         if response_hook:
@@ -2786,7 +2795,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     def DeleteResource(
         self,
         path: str,
-        typ: str,
+        resource_type: str,
         id: Optional[str],
         initial_headers: Optional[Mapping[str, Any]],
         options: Optional[Mapping[str, Any]] = None,
@@ -2812,10 +2821,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             options = {}
 
         initial_headers = initial_headers or self.default_headers
-        headers = base.GetHeaders(self, initial_headers, "delete", path, id, typ, documents._OperationType.Delete,
-                                  options)
+        headers = base.GetHeaders(self, initial_headers, "delete", path, id, resource_type,
+                                    documents._OperationType.Delete, options)
+        base.set_session_token_header(self, headers, path, resource_type, documents._OperationType.Delete, options)
         # Delete will use WriteEndpoint since it uses DELETE operation
-        request_params = RequestObject(typ, documents._OperationType.Delete)
+        request_params = RequestObject(resource_type, documents._OperationType.Delete)
         result, last_response_headers = self.__Delete(path, request_params, headers, **kwargs)
         self.last_response_headers = last_response_headers
 
@@ -3063,6 +3073,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 options,
                 partition_key_range_id
             )
+            base.set_session_token_header(self, headers, path, resource_type, request_params.operation_type, options,
+                                            partition_key_range_id)
 
             change_feed_state: Optional[ChangeFeedState] = options.get("changeFeedState")
             if change_feed_state is not None:
@@ -3101,6 +3113,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             options,
             partition_key_range_id
         )
+        base.set_session_token_header(self, req_headers, path, resource_type, documents._OperationType.SqlQuery,
+                                        options)
 
         # check if query has prefix partition key
         isPrefixPartitionQuery = kwargs.pop("isPrefixPartitionQuery", None)
@@ -3355,7 +3369,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         if is_session_consistency and self.session:
             # update session
-            self.session.update_session(response_result, response_headers)
+            self.session.update_session(self, response_result, response_headers)
 
     def _get_partition_key_definition(self, collection_link: str) -> Optional[Dict[str, Any]]:
         partition_key_definition: Optional[Dict[str, Any]]
