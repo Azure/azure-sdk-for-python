@@ -122,7 +122,7 @@ class GenAIMonitoringSamples(object):
         monitor_settings = MonitorDefinition(
             compute=spark_compute,
             monitoring_target=monitoring_target,
-            monitoring_signals=monitoring_signals,
+            monitoring_signals=monitoring_signals,  # type:ignore
             alert_notification=alert_notification,
         )
 

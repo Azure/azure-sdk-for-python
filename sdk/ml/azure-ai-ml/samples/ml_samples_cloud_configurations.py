@@ -71,7 +71,7 @@ class CloudConfigurationOptions(object):
             subscription_id=subscription_id,
             resource_group_name=resource_group,
             workspace_name="test-ws1",
-            **kwargs,
+            **kwargs,  # type:ignore
         )
         # The client will use the cloud that we passed in
         print("Client is using cloud:", ml_client._cloud)

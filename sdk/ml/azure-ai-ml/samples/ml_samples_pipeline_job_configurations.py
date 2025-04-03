@@ -50,7 +50,7 @@ class PipelineConfigurationOptions(object):
         )
 
         # Define a pipeline with decorator
-        @pipeline(name="sample_pipeline", description="pipeline description")
+        @pipeline(name="sample_pipeline", description="pipeline description")  # type:ignore
         def sample_pipeline_func(pipeline_input1, pipeline_input2):
             # component1 and component2 will be added into the current pipeline
             component1 = component_func(component_in_number=pipeline_input1, component_in_path=uri_file_input)
