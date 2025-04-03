@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -87,7 +87,6 @@ class PageBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Create operation creates a new page blob.
 
         :param content_length: The length of the request. Required.
@@ -287,7 +286,6 @@ class PageBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Upload Pages operation writes a range of pages to a page blob.
 
         :param content_length: The length of the request. Required.
@@ -475,7 +473,6 @@ class PageBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Clear Pages operation clears a set of pages from a page blob.
 
         :param content_length: The length of the request. Required.
@@ -635,7 +632,6 @@ class PageBlobOperations:
         source_modified_access_conditions: Optional[_models.SourceModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Upload Pages operation writes a range of pages to a page blob where the contents are read
         from a URL.
 
@@ -833,7 +829,6 @@ class PageBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> _models.PageList:
-        # pylint: disable=line-too-long
         """The Get Page Ranges operation returns the list of valid page ranges for a page blob or snapshot
         of a page blob.
 
@@ -973,7 +968,6 @@ class PageBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> _models.PageList:
-        # pylint: disable=line-too-long
         """The Get Page Ranges Diff operation returns the list of valid page ranges for a page blob that
         were changed between target blob and previous snapshot.
 
@@ -1124,7 +1118,6 @@ class PageBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """Resize the Blob.
 
         :param blob_content_length: This header specifies the maximum size for the page blob, up to 1
@@ -1251,7 +1244,6 @@ class PageBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """Update the sequence number of the blob.
 
         :param sequence_number_action: Required if the x-ms-blob-sequence-number header is set for the
@@ -1365,7 +1357,6 @@ class PageBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """The Copy Incremental operation copies a snapshot of the source page blob to a destination page
         blob. The snapshot is copied such that only the differential changes between the previously
         copied snapshot are transferred to the destination. The copied snapshots are complete copies of
