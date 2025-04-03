@@ -86,11 +86,7 @@
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
           "TestMarkArgument": "cosmosLong"
-        }
-      }
-    },
-    {
-      "WindowsConfig": {
+        },
         "Windows2022_38_multi_region": {
           "OSVmImage": "env:WINDOWSVMIMAGE",
           "Pool": "env:WINDOWSPOOL",
@@ -110,7 +106,9 @@
           "TestSamples": "false",
           "TestMarkArgument": "cosmosMultiRegion",
           "ArmConfig": {
-            "ArmTemplateParameters": "@{ enableMultipleRegions = $true }"
+            "MultiMaster_MultiRegion": {
+              "ArmTemplateParameters": "@{ enableMultipleRegions = $true }"
+            }
           }
         },
         "Windows2022_312_multi_region": {
@@ -121,7 +119,9 @@
           "TestSamples": "false",
           "TestMarkArgument": "cosmosMultiRegion",
           "ArmConfig": {
-            "ArmTemplateParameters": "@{ enableMultipleRegions = $true }"
+            "MultiMaster_MultiRegion": {
+              "ArmTemplateParameters": "@{ enableMultipleRegions = $true }"
+            }
           }
         }
       }
