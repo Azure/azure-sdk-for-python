@@ -27,7 +27,7 @@ pattern = re.compile(r"\[([^\]]+)\]\(#([^\)]+)\)")
 
 
 # a-b-c => a/b/c
-package_folder_path = PACKAGE_NAME.replace("-", "/")
+package_folder_path = "azure/ai/projects" # TODO: Restore this once we drop the "-dp":  ="PACKAGE_NAME.replace("-", "/")
 
 # Version extraction inspired from 'requests'
 with open(os.path.join(package_folder_path, "_version.py"), "r") as fd:

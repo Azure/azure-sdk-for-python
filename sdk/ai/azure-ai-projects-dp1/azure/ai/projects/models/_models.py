@@ -26,7 +26,7 @@ class Index(_model_base.Model):
 
     :ivar type: Type of index. Required. Known values are: "AzureSearch",
      "CosmosDBNoSqlVectorStore", and "ManagedAzureSearch".
-    :vartype type: str or ~azure.ai.projects.dp1.models.IndexType
+    :vartype type: str or ~azure.ai.projects.models.IndexType
     :ivar stage: Asset stage.
     :vartype stage: str
     :ivar id: A unique identifier for the asset, assetId probably?.
@@ -95,7 +95,7 @@ class AzureAISearchIndex(Index, discriminator="AzureSearch"):
     :ivar tags: Tag dictionary. Tags can be added, removed, and updated.
     :vartype tags: dict[str, str]
     :ivar type: Type of index. Required. Azure search
-    :vartype type: str or ~azure.ai.projects.dp1.models.AZURE_SEARCH
+    :vartype type: str or ~azure.ai.projects.models.AZURE_SEARCH
     :ivar connection_name: Name of connection to Azure AI Search. Required.
     :vartype connection_name: str
     :ivar index_name: Name of index in Azure AI Search resource to attach. Required.
@@ -141,7 +141,7 @@ class BlobReferenceForConsumption(_model_base.Model):
     :ivar storage_account_arm_id: ARM ID of the storage account to use. Required.
     :vartype storage_account_arm_id: str
     :ivar credential: Credential info to access the storage account. Required.
-    :vartype credential: ~azure.ai.projects.dp1.models.SasCredential
+    :vartype credential: ~azure.ai.projects.models.SasCredential
     """
 
     blob_uri: str = rest_field(name="blobUri", visibility=["read", "create", "update", "delete", "query"])
@@ -181,12 +181,12 @@ class Connection(_model_base.Model):
     :vartype name: str
     :ivar type: Category of the connection. Required. Known values are: "AzureOpenAI", "AzureBlob",
      "CognitiveSearch", "CosmosDB", "ApiKey", "AppInsights", and "CustomKeys".
-    :vartype type: str or ~azure.ai.projects.dp1.models.ConnectionType
+    :vartype type: str or ~azure.ai.projects.models.ConnectionType
     :ivar target: The connection URL to be used for this service. Required.
     :vartype target: str
     :ivar auth_type: The authentication type used by the connection. Required. Known values are:
      "ApiKey", "AAD", "SAS", "CustomKeys", and "None".
-    :vartype auth_type: str or ~azure.ai.projects.dp1.models.AuthenticationType
+    :vartype auth_type: str or ~azure.ai.projects.models.AuthenticationType
     :ivar metadata: Metadata of the connection. Required.
     :vartype metadata: dict[str, str]
     """
@@ -221,7 +221,7 @@ class CosmosDBIndex(Index, discriminator="CosmosDBNoSqlVectorStore"):
     :ivar tags: Tag dictionary. Tags can be added, removed, and updated.
     :vartype tags: dict[str, str]
     :ivar type: Type of index. Required. CosmosDB
-    :vartype type: str or ~azure.ai.projects.dp1.models.COSMOS_DB
+    :vartype type: str or ~azure.ai.projects.models.COSMOS_DB
     :ivar connection_name: Name of connection to CosmosDB. Required.
     :vartype connection_name: str
     :ivar database_name: Name of the CosmosDB Database. Required.
@@ -229,7 +229,7 @@ class CosmosDBIndex(Index, discriminator="CosmosDBNoSqlVectorStore"):
     :ivar container_name: Name of CosmosDB Container. Required.
     :vartype container_name: str
     :ivar embedding_configuration: Embedding model configuration. Required.
-    :vartype embedding_configuration: ~azure.ai.projects.dp1.models.EmbeddingConfiguration
+    :vartype embedding_configuration: ~azure.ai.projects.models.EmbeddingConfiguration
     """
 
     type: Literal[IndexType.COSMOS_DB] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -280,7 +280,7 @@ class DatasetVersion(_model_base.Model):
      <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required.
     :vartype dataset_uri: str
     :ivar type: Dataset type. Required. Known values are: "uri_file" and "uri_folder".
-    :vartype type: str or ~azure.ai.projects.dp1.models.DatasetType
+    :vartype type: str or ~azure.ai.projects.models.DatasetType
     :ivar is_reference: Indicates if dataset is reference only or managed by dataset service. If
      true, the underlying data will be deleted when the dataset version is deleted.
     :vartype is_reference: bool
@@ -349,7 +349,7 @@ class Deployment(_model_base.Model):
     ModelDeployment
 
     :ivar type: The type of the deployment. Required. "ModelDeployment"
-    :vartype type: str or ~azure.ai.projects.dp1.models.DeploymentType
+    :vartype type: str or ~azure.ai.projects.models.DeploymentType
     :ivar name: Name of the deployment. Required.
     :vartype name: str
     """
@@ -421,7 +421,7 @@ class Evaluation(_model_base.Model):
     :ivar id: Identifier of the evaluation. Required.
     :vartype id: str
     :ivar data: Data for evaluation. Required.
-    :vartype data: ~azure.ai.projects.dp1.models.InputData
+    :vartype data: ~azure.ai.projects.models.InputData
     :ivar display_name: Display Name for evaluation. It helps to find the evaluation easily in AI
      Foundry. It does not need to be unique.
     :vartype display_name: str
@@ -436,7 +436,7 @@ class Evaluation(_model_base.Model):
      property cannot be removed.
     :vartype properties: dict[str, str]
     :ivar evaluators: Evaluators to be used for the evaluation. Required.
-    :vartype evaluators: dict[str, ~azure.ai.projects.dp1.models.EvaluatorConfiguration]
+    :vartype evaluators: dict[str, ~azure.ai.projects.models.EvaluatorConfiguration]
     :ivar outputs: Read-only result outputs. Example: { 'evaluationResultId':
      'azureai://accounts/{AccountName}/projects/{projectName}/evaluationresults/{name}/{version}',
      'logId':
@@ -503,7 +503,7 @@ class EvaluationResult(_model_base.Model):
 
     :ivar result_type: Type of Evaluation result. Known values are: "Benchmark", "Evaluation",
      "Redteam", and "Simulation".
-    :vartype result_type: str or ~azure.ai.projects.dp1.models.ResultType
+    :vartype result_type: str or ~azure.ai.projects.models.ResultType
     :ivar model_name: Model Name.
     :vartype model_name: str
     :ivar model_version: Model Version.
@@ -667,7 +667,7 @@ class FileDatasetVersion(DatasetVersion, discriminator="uri_file"):
     :ivar tags: Tag dictionary. Tags can be added, removed, and updated.
     :vartype tags: dict[str, str]
     :ivar type: Dataset type. Required. URI file.
-    :vartype type: str or ~azure.ai.projects.dp1.models.URI_FILE
+    :vartype type: str or ~azure.ai.projects.models.URI_FILE
     :ivar open_ai_purpose: Indicates OpenAI Purpose. FileDatasets created with this field will be
      compatible with OpenAI-specific features. Required.
     :vartype open_ai_purpose: str
@@ -724,7 +724,7 @@ class FolderDatasetVersion(DatasetVersion, discriminator="uri_folder"):
     :ivar tags: Tag dictionary. Tags can be added, removed, and updated.
     :vartype tags: dict[str, str]
     :ivar type: Dataset type. Required. URI folder.
-    :vartype type: str or ~azure.ai.projects.dp1.models.URI_FOLDER
+    :vartype type: str or ~azure.ai.projects.models.URI_FOLDER
     """
 
     type: Literal[DatasetType.URI_FOLDER] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -831,7 +831,7 @@ class ManagedAzureAISearchIndex(Index, discriminator="ManagedAzureSearch"):
     :ivar tags: Tag dictionary. Tags can be added, removed, and updated.
     :vartype tags: dict[str, str]
     :ivar type: Type of index. Required. Managed Azure Search
-    :vartype type: str or ~azure.ai.projects.dp1.models.MANAGED_AZURE_SEARCH
+    :vartype type: str or ~azure.ai.projects.models.MANAGED_AZURE_SEARCH
     :ivar vector_store_id: Vector store id of managed index. Required.
     :vartype vector_store_id: str
     """
@@ -868,7 +868,7 @@ class ModelDeployment(Deployment, discriminator="ModelDeployment"):
     :ivar name: Name of the deployment. Required.
     :vartype name: str
     :ivar type: The type of the deployment. Required. Model deployment
-    :vartype type: str or ~azure.ai.projects.dp1.models.MODEL_DEPLOYMENT
+    :vartype type: str or ~azure.ai.projects.models.MODEL_DEPLOYMENT
     :ivar model_name: Publisher-specific name of the deployed model. Required.
     :vartype model_name: str
     :ivar model_version: Publisher-specific version of the deployed model. Required.
@@ -878,7 +878,7 @@ class ModelDeployment(Deployment, discriminator="ModelDeployment"):
     :ivar capabilities: Capabilities of deployed model. Required.
     :vartype capabilities: dict[str, str]
     :ivar sku: Sku of the model deployment. Required.
-    :vartype sku: ~azure.ai.projects.dp1.models.Sku
+    :vartype sku: ~azure.ai.projects.models.Sku
     :ivar connection_name: Name of the connection the deployment comes from.
     :vartype connection_name: str
     """
@@ -924,7 +924,7 @@ class PendingUploadRequest(_model_base.Model):
     :vartype connection_name: str
     :ivar pending_upload_type: TemporaryBlobReference is the only supported type. Required.
      Temporary Blob Reference is the only supported type.
-    :vartype pending_upload_type: str or ~azure.ai.projects.dp1.models.TEMPORARY_BLOB_REFERENCE
+    :vartype pending_upload_type: str or ~azure.ai.projects.models.TEMPORARY_BLOB_REFERENCE
     """
 
     pending_upload_id: Optional[str] = rest_field(
@@ -965,8 +965,7 @@ class PendingUploadResponse(_model_base.Model):
     """Represents the response for a pending upload request.
 
     :ivar blob_reference_for_consumption: Container-level read, write, list SAS. Required.
-    :vartype blob_reference_for_consumption:
-     ~azure.ai.projects.dp1.models.BlobReferenceForConsumption
+    :vartype blob_reference_for_consumption: ~azure.ai.projects.models.BlobReferenceForConsumption
     :ivar pending_upload_id: ID for this upload request. Required.
     :vartype pending_upload_id: str
     :ivar dataset_version: Version of dataset to be created if user did not specify version when
@@ -974,7 +973,7 @@ class PendingUploadResponse(_model_base.Model):
     :vartype dataset_version: str
     :ivar pending_upload_type: TemporaryBlobReference is the only supported type. Required.
      Temporary Blob Reference is the only supported type.
-    :vartype pending_upload_type: str or ~azure.ai.projects.dp1.models.TEMPORARY_BLOB_REFERENCE
+    :vartype pending_upload_type: str or ~azure.ai.projects.models.TEMPORARY_BLOB_REFERENCE
     """
 
     blob_reference_for_consumption: "_models.BlobReferenceForConsumption" = rest_field(
@@ -1028,7 +1027,7 @@ class RedTeam(_model_base.Model):
     :vartype num_turns: int
     :ivar attack_strategy: List of attack strategies or nested lists of attack strategies.
      Required.
-    :vartype attack_strategy: list[str or ~azure.ai.projects.dp1.models.AttackStrategy]
+    :vartype attack_strategy: list[str or ~azure.ai.projects.models.AttackStrategy]
     :ivar simulation_only: Simulation-only or Simulation + Evaluation. Default false, if true the
      scan outputs conversation not evaluation result. Required.
     :vartype simulation_only: bool
@@ -1039,7 +1038,7 @@ class RedTeam(_model_base.Model):
      }. Required.
     :vartype outputs: dict[str, str]
     :ivar risk_categories: List of risk categories to generate attack objectives for. Required.
-    :vartype risk_categories: list[str or ~azure.ai.projects.dp1.models.RiskCategory]
+    :vartype risk_categories: list[str or ~azure.ai.projects.models.RiskCategory]
     :ivar application_scenario: Application scenario for the red team operation, to generate
      scenario specific attacks.
     :vartype application_scenario: str

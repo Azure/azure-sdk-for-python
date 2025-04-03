@@ -11,17 +11,17 @@ import logging
 import inspect
 from typing import List, Optional, Any
 from pathlib import Path
-from azure.storage.blob import ContainerClient
+from azure.storage.blob.aio import ContainerClient
 
 from ._operations import DatasetsOperations as DatasetsOperationsGenerated
-from ..models._models import (
+from ...models._models import (
     DatasetVersion,
     PendingUploadRequest,
     PendingUploadType,
     PendingUploadResponse,
-    CredentialType,
+    AuthenticationType,
 )
-from ..models._enums import (
+from ...models._enums import (
     DatasetType,
 )
 
@@ -32,20 +32,20 @@ class DatasetsOperations(DatasetsOperationsGenerated):
 
     # Internal helper method to create a new dataset and return a ContainerClient from azure-storage-blob package,
     # to the dataset's blob storage.
-    def _create_dataset_and_get_its_container_client(
+    async def _create_dataset_and_get_its_container_client(
         self,
         name: str,
         version: Optional[str] = None,
     ) -> ContainerClient:
 
         if version:
-            pending_upload_response: PendingUploadResponse = self.start_pending_upload_version(
+            pending_upload_response: PendingUploadResponse = await self.start_pending_upload_version(
                 name=name,
                 version=version,
                 body=PendingUploadRequest(pending_upload_type=PendingUploadType.TEMPORARY_BLOB_REFERENCE),
             )
         else:
-            pending_upload_response: PendingUploadResponse = self.start_pending_upload(
+            pending_upload_response: PendingUploadResponse = await self.start_pending_upload(
                 name=name,
                 body=PendingUploadRequest(pending_upload_type=PendingUploadType.TEMPORARY_BLOB_REFERENCE),
             )
@@ -54,7 +54,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
             raise ValueError("Blob reference for consumption is not present")
         if not pending_upload_response.blob_reference_for_consumption.credential.type:
             raise ValueError("Credential type is not present")
-        if pending_upload_response.blob_reference_for_consumption.credential.type != CredentialType.SAS:
+        if pending_upload_response.blob_reference_for_consumption.credential.type != AuthenticationType.SAS:
             raise ValueError("Credential type is not SAS")
         if not pending_upload_response.blob_reference_for_consumption.blob_uri:
             raise ValueError("Blob URI is not present or empty")
@@ -90,18 +90,18 @@ class DatasetsOperations(DatasetsOperationsGenerated):
                 "[%s] pending_upload_response.blob_reference_for_consumption.credential.type = %s.",
                 method,
                 pending_upload_response.blob_reference_for_consumption.credential.type,
-            )  # == CredentialType.SAS
+            )  # == AuthenticationType.SAS
 
         # For overview on Blob storage SDK in Python see:
         # https://learn.microsoft.com/azure/storage/blobs/storage-quickstart-blobs-python
         # https://learn.microsoft.com/azure/storage/blobs/storage-blob-upload-python
 
         # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.containerclient?view=azure-python#azure-storage-blob-containerclient-from-container-url
-        return ContainerClient.from_container_url(
+        return await ContainerClient.from_container_url(
             container_url=pending_upload_response.blob_reference_for_consumption.blob_uri,  # Of the form: "https://<account>.blob.core.windows.net/<container>?<sasToken>"
         )
 
-    def upload_file_and_create(
+    async def upload_file_and_create(
         self, *, name: str, version: Optional[str] = None, file: str, **kwargs: Any
     ) -> DatasetVersion:
         """Upload file to a blob storage, and create a dataset that references this file.
@@ -125,7 +125,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         if path_file.is_dir():
             raise ValueError("The provided file is actually a folder. Use method `create_and_upload_folder` instead")
 
-        with self._create_dataset_and_get_its_container_client(name=name, version=version) as container_client:
+        with await self._create_dataset_and_get_its_container_client(name=name, version=version) as container_client:
 
             with open(file=file, mode="rb") as data:
 
@@ -138,12 +138,12 @@ class DatasetsOperations(DatasetsOperationsGenerated):
                 )
 
                 # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.containerclient?view=azure-python#azure-storage-blob-containerclient-upload-blob
-                with container_client.upload_blob(name=blob_name, data=data, **kwargs) as blob_client:
+                with await container_client.upload_blob(name=blob_name, data=data, **kwargs) as blob_client:
 
                     logger.debug("[%s] Done uploading", inspect.currentframe().f_code.co_name)
 
                     if version:
-                        dataset_version = self.create_version(
+                        dataset_version = await self.create_version(
                             name=name,
                             version=version,
                             body=DatasetVersion(
@@ -154,7 +154,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
                             ),
                         )
                     else:
-                        dataset_version = self.create(
+                        dataset_version = await self.create(
                             name=name,
                             body=DatasetVersion(
                                 dataset_uri=blob_client.url,
@@ -164,7 +164,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
 
         return dataset_version
 
-    def upload_folder_and_create_version(
+    async def upload_folder_and_create_version(
         self, *, name: str, version: Optional[str] = None, folder: str, **kwargs: Any
     ) -> DatasetVersion:
         """Upload all files in a folder and its sub folders to a blob storage, while maintaining
@@ -188,7 +188,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         if Path(path_folder).is_file():
             raise ValueError("The provided folder is actually a file. Use method `create_and_upload_file` instead.")
 
-        with self._create_dataset_and_get_its_container_client(name=name, version=version) as container_client:
+        with await self._create_dataset_and_get_its_container_client(name=name, version=version) as container_client:
 
             # Recursively traverse all files in the folder
             files_uploaded: bool = False
@@ -201,7 +201,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
                         file_path,
                         blob_name,
                     )
-                    with file_path.open("rb") as data:  # Open the file for reading in binary mode
+                    with await file_path.open("rb") as data:  # Open the file for reading in binary mode
                         # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.containerclient?view=azure-python#azure-storage-blob-containerclient-upload-blob
                         container_client.upload_blob(name=str(blob_name), data=data, **kwargs)
                     logger.debug("[%s] Done uploaded.", inspect.currentframe().f_code.co_name)
@@ -210,7 +210,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
             if not files_uploaded:
                 raise ValueError("The provided folder is empty.")
 
-            dataset_version = self.create_version(
+            dataset_version = await self.create_version(
                 name=name,
                 version=version,
                 body=DatasetVersion(

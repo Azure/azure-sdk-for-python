@@ -38,7 +38,6 @@ with AIProjectClient(
 
     print("List the properties of all connections")
     connections = project_client.connections.list()
-    print(f"found {len(connections)} connections):")
     for connection in connections:
         print(connection)
 
@@ -46,7 +45,6 @@ with AIProjectClient(
     connections = project_client.connections.list(
         connection_type=ConnectionType.AZURE_OPEN_AI,
     )
-    print(f"found {len(connections)} connections):")
     for connection in connections:
         print(connection)
 

@@ -7,16 +7,16 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING, Union
+from typing import Any, TYPE_CHECKING, Union
 from typing_extensions import Self
 
-from azure.core import AsyncPipelineClient
+from azure.core import PipelineClient
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
-from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 
-from .._serialization import Deserializer, Serializer
 from ._configuration import AIProjectClientConfiguration
+from ._serialization import Deserializer, Serializer
 from .operations import (
     ConnectionsOperations,
     DatasetsOperations,
@@ -25,48 +25,46 @@ from .operations import (
     EvaluationsOperations,
     IndexesOperations,
     RedTeamsOperations,
-    ServicePatternsOperations,
 )
+from .servicepatterns.operations import ServicePatternsOperations
 
 if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core.credentials import TokenCredential
 
 
 class AIProjectClient:  # pylint: disable=too-many-instance-attributes
     """AIProjectClient.
 
     :ivar service_patterns: ServicePatternsOperations operations
-    :vartype service_patterns: azure.ai.projects.dp1.aio.operations.ServicePatternsOperations
+    :vartype service_patterns: azure.ai.projects.operations.ServicePatternsOperations
     :ivar connections: ConnectionsOperations operations
-    :vartype connections: azure.ai.projects.dp1.aio.operations.ConnectionsOperations
+    :vartype connections: azure.ai.projects.operations.ConnectionsOperations
     :ivar evaluations: EvaluationsOperations operations
-    :vartype evaluations: azure.ai.projects.dp1.aio.operations.EvaluationsOperations
+    :vartype evaluations: azure.ai.projects.operations.EvaluationsOperations
     :ivar datasets: DatasetsOperations operations
-    :vartype datasets: azure.ai.projects.dp1.aio.operations.DatasetsOperations
+    :vartype datasets: azure.ai.projects.operations.DatasetsOperations
     :ivar indexes: IndexesOperations operations
-    :vartype indexes: azure.ai.projects.dp1.aio.operations.IndexesOperations
+    :vartype indexes: azure.ai.projects.operations.IndexesOperations
     :ivar deployments: DeploymentsOperations operations
-    :vartype deployments: azure.ai.projects.dp1.aio.operations.DeploymentsOperations
+    :vartype deployments: azure.ai.projects.operations.DeploymentsOperations
     :ivar evaluation_results: EvaluationResultsOperations operations
-    :vartype evaluation_results: azure.ai.projects.dp1.aio.operations.EvaluationResultsOperations
+    :vartype evaluation_results: azure.ai.projects.operations.EvaluationResultsOperations
     :ivar red_teams: RedTeamsOperations operations
-    :vartype red_teams: azure.ai.projects.dp1.aio.operations.RedTeamsOperations
+    :vartype red_teams: azure.ai.projects.operations.RedTeamsOperations
     :param endpoint: Project endpoint in the form of:
      https://<aiservices-id>.services.ai.azure.com/api/projects/<project-name>. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a key
      credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
-     ~azure.core.credentials_async.AsyncTokenCredential
+     ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
      "2025-05-15-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
 
-    def __init__(
-        self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
-    ) -> None:
+    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
         _endpoint = "{endpoint}"
         self._config = AIProjectClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         _policies = kwargs.pop("policies", None)
@@ -86,7 +84,7 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
                 policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
                 self._config.http_logging_policy,
             ]
-        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
+        self._client: PipelineClient = PipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
@@ -104,16 +102,14 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
         )
         self.red_teams = RedTeamsOperations(self._client, self._config, self._serialize, self._deserialize)
 
-    def send_request(
-        self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
         >>> request = HttpRequest("GET", "https://www.example.org/")
         <HttpRequest [GET], url: 'https://www.example.org/'>
-        >>> response = await client.send_request(request)
-        <AsyncHttpResponse: 200 OK>
+        >>> response = client.send_request(request)
+        <HttpResponse: 200 OK>
 
         For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
@@ -121,7 +117,7 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
         :type request: ~azure.core.rest.HttpRequest
         :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.rest.AsyncHttpResponse
+        :rtype: ~azure.core.rest.HttpResponse
         """
 
         request_copy = deepcopy(request)
@@ -132,12 +128,12 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
-    async def close(self) -> None:
-        await self._client.close()
+    def close(self) -> None:
+        self._client.close()
 
-    async def __aenter__(self) -> Self:
-        await self._client.__aenter__()
+    def __enter__(self) -> Self:
+        self._client.__enter__()
         return self
 
-    async def __aexit__(self, *exc_details: Any) -> None:
-        await self._client.__aexit__(*exc_details)
+    def __exit__(self, *exc_details: Any) -> None:
+        self._client.__exit__(*exc_details)
