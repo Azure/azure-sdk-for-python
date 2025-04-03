@@ -66,6 +66,8 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             _PROFILE_TAG: {
                 None: DEFAULT_API_VERSION,
                 "billing_meters": "2016-03-01",
+                "container_apps": "2023-01-01",
+                "container_apps_revisions": "2023-01-01",
                 "validate_container_settings": "2018-02-01",
             }
         },
@@ -102,7 +104,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
                 policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
                 self._config.http_logging_policy,
             ]
-        self._client = AsyncARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
         super(WebSiteManagementClient, self).__init__(api_version=api_version, profile=profile)
 
     @classmethod
@@ -349,15 +351,12 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
 
         * 2022-09-01: :class:`ContainerAppsOperations<azure.mgmt.web.v2022_09_01.aio.operations.ContainerAppsOperations>`
         * 2023-01-01: :class:`ContainerAppsOperations<azure.mgmt.web.v2023_01_01.aio.operations.ContainerAppsOperations>`
-        * 2024-04-01: :class:`ContainerAppsOperations<azure.mgmt.web.v2024_04_01.aio.operations.ContainerAppsOperations>`
         """
         api_version = self._get_api_version("container_apps")
         if api_version == "2022-09-01":
             from ..v2022_09_01.aio.operations import ContainerAppsOperations as OperationClass
         elif api_version == "2023-01-01":
             from ..v2023_01_01.aio.operations import ContainerAppsOperations as OperationClass
-        elif api_version == "2024-04-01":
-            from ..v2024_04_01.aio.operations import ContainerAppsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'container_apps'".format(api_version))
         self._config.api_version = api_version
@@ -375,15 +374,12 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
 
         * 2022-09-01: :class:`ContainerAppsRevisionsOperations<azure.mgmt.web.v2022_09_01.aio.operations.ContainerAppsRevisionsOperations>`
         * 2023-01-01: :class:`ContainerAppsRevisionsOperations<azure.mgmt.web.v2023_01_01.aio.operations.ContainerAppsRevisionsOperations>`
-        * 2024-04-01: :class:`ContainerAppsRevisionsOperations<azure.mgmt.web.v2024_04_01.aio.operations.ContainerAppsRevisionsOperations>`
         """
         api_version = self._get_api_version("container_apps_revisions")
         if api_version == "2022-09-01":
             from ..v2022_09_01.aio.operations import ContainerAppsRevisionsOperations as OperationClass
         elif api_version == "2023-01-01":
             from ..v2023_01_01.aio.operations import ContainerAppsRevisionsOperations as OperationClass
-        elif api_version == "2024-04-01":
-            from ..v2024_04_01.aio.operations import ContainerAppsRevisionsOperations as OperationClass
         else:
             raise ValueError(
                 "API version {} does not have operation group 'container_apps_revisions'".format(api_version)

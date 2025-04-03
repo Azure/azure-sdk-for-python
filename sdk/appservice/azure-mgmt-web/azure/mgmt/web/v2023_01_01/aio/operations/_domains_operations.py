@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, Type, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -1552,10 +1552,6 @@ class DomainsOperations:
             404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            400: cast(
-                Type[HttpResponseError],
-                lambda response: HttpResponseError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 

@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, Callable, Dict, IO, Iterable, Iterator, Optional, Type, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterable, Iterator, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -2118,10 +2118,6 @@ class DomainsOperations:
             404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            400: cast(
-                Type[HttpResponseError],
-                lambda response: HttpResponseError(response=response, error_format=ARMErrorFormat),
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
