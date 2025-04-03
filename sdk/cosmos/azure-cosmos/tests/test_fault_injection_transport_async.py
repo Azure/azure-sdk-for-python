@@ -87,7 +87,7 @@ class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
     async def cleanup_method(initialized_objects: Dict[str, Any]):
         method_client: CosmosClient = initialized_objects["client"]
         try:
-            asyncio.run(asyncio.wait_for(method_client.close(), MGMT_TIMEOUT))
+            await asyncio.wait_for(method_client.close(), MGMT_TIMEOUT)
         except Exception as close_error:
             logger.warning(f"Exception trying to close method client. {close_error}")
 
