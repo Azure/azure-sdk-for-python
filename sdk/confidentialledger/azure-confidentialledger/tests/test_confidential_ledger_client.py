@@ -545,53 +545,59 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         )
 
         # We need to add the certificate-based user as an Administrator. 
-        client.create_user_defined_endpoint(
+        user_endpoint = client.create_user_defined_endpoint(
             {
-            "metadata": {
-                "endpoints": {
-                    "/content": {
-                        "get": {
-                            "js_module": "test.js",
-                            "js_function": "content",
-                            "forwarding_required": "never",
-                            "redirection_strategy": "none",
-                            "authn_policies": ["no_auth"],
-                            "mode": "readonly",
-                            "openapi": {},
+                "metadata": {
+                    "endpoints": {
+                        "/content": {
+                            "get": {
+                                "js_module": "test.js",
+                                "js_function": "content",
+                                "forwarding_required": "never",
+                                "redirection_strategy": "none",
+                                "authn_policies": ["no_auth"],
+                                "mode": "readonly",
+                                "openapi": {},
+                            }
                         }
                     }
-                }
-            },
-            "modules": [
-                {
-                    "name": "test.js",
-                    "module": """
-                    import { foo } from "./bar/baz.js";
+                },
+                "modules": [
+                    {
+                        "name": "test.js",
+                        "module": """
+                        import { foo } from "./bar/baz.js";
 
-                    export function content(request) {
-                        return {
-                            statusCode: 200,
-                            body: {
-                                payload: foo(),
-                            },
-                        };
-                    }
-                    """,
-                },
-                {
-                    "name": "bar/baz.js",
-                    "module": """
-                    export function foo() {
-                        return "Test content";
-                    }
-                    """,
-                },
-            ],
-        }
+                        export function content(request) {
+                            return {
+                                statusCode: 200,
+                                body: {
+                                    payload: foo(),
+                                },
+                            };
+                        }
+                        """,
+                    },
+                    {
+                        "name": "bar/baz.js",
+                        "module": """
+                        export function foo() {
+                            return "Test content";
+                        }
+                        """,
+                    },
+                ],
+            }
         )
 
         saved_endpoint = client.get_user_defined_endpoint()
         assert saved_endpoint["metadata"]["endpoints"]["/content"]["GET"]["js_module"] == "test.js"
+
+        # We are setting endpoints and modules to empty to have the UDF tests work since UDE and UDF cannot be created simultaneously.
+        saved_endpoint = {"metadata": {"endpoints": {}}, "modules": []}
+        user_endpoint = saved_endpoint
+        assert user_endpoint["metadata"]["endpoints"] == {}
+        assert user_endpoint["modules"] == []
 
     @ConfidentialLedgerPreparer()
     @recorded_by_proxy
@@ -622,3 +628,27 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
 
         client.delete_user_defined_role(role_name=role_name)
         time.sleep(3)
+
+    @ConfidentialLedgerPreparer()
+    @recorded_by_proxy
+    def test_user_defined_function(self, confidentialledger_endpoint, confidentialledger_id):
+        client = self.create_confidentialledger_client(
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=True
+        )
+
+        userEndpoint = client.get_user_defined_endpoint()
+        if userEndpoint["metadata"]["endpoints"] == {}:
+
+            functionId = "myFunction"
+
+            userFunction = client.create_user_defined_function(functionId, {"code":"export function main() { return true }"} )
+            time.sleep(3)
+
+            client.get_user_defined_function(functionId)
+            assert userFunction["id"] == functionId
+
+            client.delete_user_defined_function(functionId)
+            time.sleep(3)
+
+        else:
+            return "User defined functions cannot be created when user defined endpoints are defined"
