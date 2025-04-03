@@ -51,7 +51,7 @@ CE_ZERO_SECONDS: int = -62_135_596_800
 
 def utc_from_timestamp(timestamp: float) -> datetime.datetime:
     """
-    :param int timestamp: Timestamp in seconds to be converted to datetime.
+    :param float timestamp: Timestamp in seconds to be converted to datetime.
     """
     # The AMQP timestamp is the number of seconds since the Unix epoch.
     # AMQP brokers represent the lowest value as -62_135_596_800 (the
