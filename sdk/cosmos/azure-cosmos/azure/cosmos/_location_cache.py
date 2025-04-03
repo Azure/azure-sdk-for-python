@@ -235,7 +235,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         if excluded_locations is None:
             # If excluded locations were only configured on client(connection_policy), use client level
             excluded_locations = self.connection_policy.ExcludedLocations
-        excluded_locations.union(request.excluded_locations_circuit_breaker)
+        excluded_locations.extend(request.excluded_locations_circuit_breaker)
         return excluded_locations
 
     def _get_applicable_read_regional_endpoints(self, request: RequestObject):

@@ -21,7 +21,7 @@
 
 """Represents a request object.
 """
-from typing import Optional, Mapping, Any, Dict, Set
+from typing import Optional, Mapping, Any, Dict, Set, List
 
 
 class RequestObject(object):
@@ -41,7 +41,7 @@ class RequestObject(object):
         self.location_index_to_route: Optional[int] = None
         self.location_endpoint_to_route: Optional[str] = None
         self.last_routed_location_endpoint_within_region: Optional[str] = None
-        self.excluded_locations: Optional[Set[str]] = None
+        self.excluded_locations: Optional[List[str]] = None
         self.excluded_locations_circuit_breaker: Set[str] = set()
 
     def route_to_location_with_preferred_location_flag(  # pylint: disable=name-too-long
