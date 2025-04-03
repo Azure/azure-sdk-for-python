@@ -83,21 +83,19 @@ class BlobQueryReader:  # pylint: disable=too-many-instance-attributes
             if processed_result is not None:
                 yield processed_result
 
-    async def readall(self) -> Union[bytes, str]:
+    async def readall(self) -> bytes:
         """Return all query results.
 
         This operation is blocking until all data is downloaded.
-        If encoding has been configured - this will be used to decode individual
-        records are they are received.
 
         :returns: The query results.
-        :rtype: Union[bytes, str]
+        :rtype: bytes
         """
         stream = BytesIO()
         await self.readinto(stream)
         data = stream.getvalue()
         if self._encoding:
-            return data.decode(self._encoding)
+            return data.decode(self._encoding)  # type: ignore [return-value]
         return data
 
     async def readinto(self, stream: IO) -> None:
@@ -111,21 +109,19 @@ class BlobQueryReader:  # pylint: disable=too-many-instance-attributes
         async for record in self._aiter_stream():
             stream.write(record)
 
-    async def records(self) -> AsyncIterable[Union[bytes, str]]:
+    async def records(self) -> AsyncIterable[bytes]:
         """Returns a record generator for the query result.
 
         Records will be returned line by line.
-        If encoding has been configured - this will be used to decode individual
-        records are they are received.
 
         :returns: A record generator for the query result.
-        :rtype: AsyncIterable[Union[bytes, str]]
+        :rtype: AsyncIterable[bytes]
         """
         delimiter = self.record_delimiter.encode('utf-8')
         async for record_chunk in self._aiter_stream():
             for record in record_chunk.split(delimiter):
                 if self._encoding:
-                    yield record.decode(self._encoding)
+                    yield record.decode(self._encoding)  # type: ignore [misc]
                 else:
                     yield record
 
