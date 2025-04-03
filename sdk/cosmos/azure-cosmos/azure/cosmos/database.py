@@ -26,7 +26,6 @@ from typing import Any, Dict, List, Union, Optional, Mapping, Callable
 
 import warnings
 
-from adodbapi.examples.db_print import kw_args
 from azure.core import MatchConditions
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.paging import ItemPaged

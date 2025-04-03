@@ -109,6 +109,39 @@ class TestQuery(unittest.TestCase):
         self.assertDictEqual(expected_index_metrics, index_metrics)
         self.created_db.delete_container(created_collection.id)
 
+    def test_throughput_bucket(self):
+        throughputBucketNumber = 2
+        created_collection = self.created_db.create_container("query_index_test",
+                                                              PartitionKey(path="/pk"),
+                                                              throughput_bucket=throughputBucketNumber)
+
+
+        doc_id = 'MyId' + str(uuid.uuid4())
+        document_definition = {'pk': 'pk', 'id': doc_id}
+        created_collection.create_item(body=document_definition)
+
+        query = 'SELECT * from c'
+        query_iterable = created_collection.query_items(
+            query=query,
+            partition_key='pk',
+            populate_index_metrics=True
+        )
+
+        iter_list = list(query_iterable)
+        self.assertEqual(iter_list[0]['id'], doc_id)
+
+        INDEX_HEADER_NAME = http_constants.HttpHeaders.ThroughputBucket
+        self.assertTrue(INDEX_HEADER_NAME in created_collection.client_connection.last_response_headers)
+        # index_metrics = created_collection.client_connection.last_response_headers[INDEX_HEADER_NAME]
+        # self.assertIsNotNone(index_metrics)
+        # expected_index_metrics = {'UtilizedSingleIndexes': [{'FilterExpression': '', 'IndexSpec': '/pk/?',
+        #                                                      'FilterPreciseSet': True, 'IndexPreciseSet': True,
+        #                                                      'IndexImpactScore': 'High'}],
+        #                           'PotentialSingleIndexes': [], 'UtilizedCompositeIndexes': [],
+        #                           'PotentialCompositeIndexes': []}
+        # self.assertDictEqual(expected_index_metrics, index_metrics)
+        self.created_db.delete_container(created_collection.id)
+
     # TODO: Need to validate the query request count logic
     @pytest.mark.skip
     def test_max_item_count_honored_in_order_by_query(self):

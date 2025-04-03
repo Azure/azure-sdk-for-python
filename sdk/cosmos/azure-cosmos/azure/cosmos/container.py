@@ -563,6 +563,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         response_hook: Optional[Callable[[Mapping[str, Any],
                                           Union[Dict[str, Any], ItemPaged[Dict[str, Any]]]], None]] = None,
         continuation_token_limit: Optional[int] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """Return all results matching the given `query`.
@@ -604,6 +605,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
             existing indexes and how it could use potential new indexes. Please note that this options will incur
             overhead, so it should be enabled only when debugging slow queries.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :returns: An Iterable of items (dicts).
         :rtype: ItemPaged[Dict[str, Any]]
 
@@ -656,6 +658,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         feed_options["correlatedActivityId"] = correlated_activity_id
         if continuation_token_limit is not None:
             feed_options["responseContinuationTokenLimitInKb"] = continuation_token_limit
+        if throughput_bucket is not None:
+            feed_options["throughputBucket"] = throughput_bucket
         if response_hook and hasattr(response_hook, "clear"):
             response_hook.clear()
         if self.container_link in self.__get_client_container_caches():
