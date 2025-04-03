@@ -27,7 +27,7 @@ import json
 import logging
 import sys
 from collections.abc import MutableMapping
-from typing import Callable, Optional, Any, Dict, List
+from typing import Callable, Optional, Any, Dict, List, Awaitable
 
 import aiohttp
 from azure.core.pipeline.transport import AioHttpTransport, AioHttpTransportResponse
@@ -48,7 +48,7 @@ class FaultInjectionTransportAsync(AioHttpTransport):
         self.responseTransformations: List[Dict[str, Any]] = []
         super().__init__(session=session, loop=loop, session_owner=session_owner, **config)
 
-    def add_fault(self, predicate: Callable[[HttpRequest], bool], fault_factory: Callable[[HttpRequest], asyncio.Task[Exception]]):
+    def add_fault(self, predicate: Callable[[HttpRequest], bool], fault_factory: Callable[[HttpRequest], Awaitable[Exception]]):
         self.faults.append({"predicate": predicate, "apply": fault_factory})
 
     def add_response_transformation(self, predicate: Callable[[HttpRequest], bool], response_transformation: Callable[[HttpRequest, Callable[[HttpRequest], AioHttpTransportResponse]], AioHttpTransportResponse]):
@@ -172,7 +172,7 @@ class FaultInjectionTransportAsync(AioHttpTransport):
     async def transform_topology_swr_mrr(
             write_region_name: str,
             read_region_name: str,
-            inner: Callable[[],asyncio.Task[AioHttpTransportResponse]]) -> AioHttpTransportResponse:
+            inner: Callable[[], Awaitable[AioHttpTransportResponse]]) -> AioHttpTransportResponse:
 
         response = await inner()
         if not FaultInjectionTransportAsync.predicate_is_database_account_call(response.request):
@@ -197,7 +197,7 @@ class FaultInjectionTransportAsync(AioHttpTransport):
     async def transform_topology_mwr(
             first_region_name: str,
             second_region_name: str,
-            inner: Callable[[], asyncio.Task[AioHttpTransportResponse]]) -> AioHttpTransportResponse:
+            inner: Callable[[], Awaitable[AioHttpTransportResponse]]) -> AioHttpTransportResponse:
 
         response = await inner()
         if not FaultInjectionTransportAsync.predicate_is_database_account_call(response.request):

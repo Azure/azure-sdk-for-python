@@ -75,7 +75,8 @@ class TestFaultInjectionTransportAsync:
             except Exception as closeError:    
                 logger.warning("Exception trying to delete database {}. {}".format(created_database.id, closeError))
 
-    def setup_method_with_custom_transport(self, custom_transport: AioHttpTransport, default_endpoint=host, **kwargs):
+    @staticmethod
+    def setup_method_with_custom_transport(custom_transport: AioHttpTransport, default_endpoint=host, **kwargs):
         client = CosmosClient(default_endpoint, master_key, consistency_level="Session",
                               transport=custom_transport, logger=logger, enable_diagnostics_logging=True, **kwargs)
         db: DatabaseProxy = client.get_database_client(TEST_DATABASE_ID)
@@ -247,7 +248,7 @@ class TestFaultInjectionTransportAsync:
         custom_transport.add_fault(
             is_request_to_read_region,
             lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
-                35000,
+                500,
                 CosmosHttpResponseError(
                     status_code=502,
                     message="Some random reverse proxy error."))))
@@ -332,6 +333,50 @@ class TestFaultInjectionTransportAsync:
                 request = read_document.get_response_headers()["_request"]
                 # Validate the response comes from "East US" (the most preferred read-only region)
                 assert request.url.startswith(first_region_uri)
+
+        finally:
+            TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
+
+    # add a test for delays
+    # add test for complete failures
+
+    async def test_mwr_region_down_succeeds(self: "TestFaultInjectionTransportAsync"):
+        second_region_uri: str = test_config.TestConfig.local_host
+        custom_transport = FaultInjectionTransportAsync()
+
+        # Inject topology transformation that would make Emulator look like a single write region
+        # account with two read regions
+        is_get_account_predicate: Callable[[HttpRequest], bool] = lambda r: FaultInjectionTransportAsync.predicate_is_database_account_call(r)
+        emulator_as_multi_write_region_account_transformation: Callable[[HttpRequest, Callable[[HttpRequest], asyncio.Task[AsyncHttpResponse]]], AioHttpTransportResponse] = \
+            lambda r, inner: FaultInjectionTransportAsync.transform_topology_mwr(
+                first_region_name="First Region",
+                second_region_name="Second Region",
+                inner=inner)
+        custom_transport.add_response_transformation(
+            is_get_account_predicate,
+            emulator_as_multi_write_region_account_transformation)
+
+        id_value: str = str(uuid.uuid4())
+        document_definition = {'id': id_value,
+                               'pk': id_value,
+                               'name': 'sample document',
+                               'key': 'value'}
+
+        initialized_objects = self.setup_method_with_custom_transport(
+            custom_transport,
+            preferred_locations=["First Region", "Second Region"])
+        try:
+            container: ContainerProxy = initialized_objects["col"]
+
+            start:float = time.perf_counter()
+            while (time.perf_counter() - start) < 2:
+                upsert_document = await container.upsert_item(body=document_definition)
+                request = upsert_document.get_response_headers()["_request"]
+                assert request.url.startswith(second_region_uri)
+                read_document = await container.read_item(id_value, partition_key=id_value)
+                request = read_document.get_response_headers()["_request"]
+                # Validate the response comes from "East US" (the most preferred read-only region)
+                assert request.url.startswith(second_region_uri)
 
         finally:
             TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
