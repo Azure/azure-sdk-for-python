@@ -221,7 +221,7 @@ class FaultInjectionTransportAsync(AioHttpTransport):
         return response
 
     class MockHttpResponse(AioHttpTransportResponse):
-        def __init__(self, request: HttpRequest, status_code: int, content:Optional[dict[str, Any]]):
+        def __init__(self, request: HttpRequest, status_code: int, content:Optional[Dict[str, Any]]):
             self.request: HttpRequest = request
             # This is actually never None, and set by all implementations after the call to
             # __init__ of this class. This class is also a legacy impl, so it's risky to change it
@@ -232,7 +232,7 @@ class FaultInjectionTransportAsync(AioHttpTransport):
             self.reason: Optional[str] = None
             self.content_type: Optional[str] = None
             self.block_size: int = 4096  # Default to same as R
-            self.content: Optional[dict[str, Any]] = None
+            self.content: Optional[Dict[str, Any]] = None
             self.json_text: Optional[str] = None
             self.bytes: Optional[bytes] = None
             if content:

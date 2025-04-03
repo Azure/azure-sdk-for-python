@@ -8,7 +8,7 @@ import sys
 import time
 import unittest
 import uuid
-from typing import Any, Callable
+from typing import Any, Callable, Awaitable, Dict
 
 import pytest
 from azure.core.pipeline.transport import AioHttpTransport
@@ -24,7 +24,7 @@ from azure.cosmos.aio._database import DatabaseProxy
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.core.exceptions import ServiceRequestError
 
-MGMT_TIMEOUT = 3.0
+MGMT_TIMEOUT = 10.0
 logger = logging.getLogger('azure.cosmos')
 logger.setLevel(logging.DEBUG)
 logger.addHandler(logging.StreamHandler(sys.stdout))
@@ -74,7 +74,7 @@ class TestFaultInjectionTransportAsync:
             try:
                 asyncio.run(asyncio.wait_for(cls.mgmt_client.close(), MGMT_TIMEOUT))
             except Exception as closeError:    
-                logger.warning("Exception trying to delete database {}. {}".format(created_database.id, closeError))
+                logger.warning("Exception trying to close client {}. {}".format(created_database.id, closeError))
 
     @staticmethod
     def setup_method_with_custom_transport(custom_transport: AioHttpTransport, default_endpoint=host, **kwargs):
@@ -85,7 +85,7 @@ class TestFaultInjectionTransportAsync:
         return {"client": client, "db": db, "col": container}
 
     @staticmethod
-    def cleanup_method(initialized_objects: dict[str, Any]):
+    def cleanup_method(initialized_objects: Dict[str, Any]):
         method_client: CosmosClient = initialized_objects["client"]
         try:
             asyncio.run(asyncio.wait_for(method_client.close(), MGMT_TIMEOUT))
@@ -261,7 +261,7 @@ class TestFaultInjectionTransportAsync:
         # Inject topology transformation that would make Emulator look like a single write region
         # account with two read regions
         is_get_account_predicate: Callable[[HttpRequest], bool] = lambda r: FaultInjectionTransportAsync.predicate_is_database_account_call(r)
-        emulator_as_multi_region_sm_account_transformation: Callable[[HttpRequest, Callable[[HttpRequest], asyncio.Task[AsyncHttpResponse]]], AioHttpTransportResponse] = \
+        emulator_as_multi_region_sm_account_transformation: Callable[[HttpRequest, Callable[[HttpRequest], Awaitable[AsyncHttpResponse]]], AioHttpTransportResponse] = \
             lambda r, inner: FaultInjectionTransportAsync.transform_topology_swr_mrr(
                 write_region_name="Write Region",
                 read_region_name="Read Region",
@@ -306,7 +306,7 @@ class TestFaultInjectionTransportAsync:
         # Inject topology transformation that would make Emulator look like a multiple write region account
         # account with two read regions
         is_get_account_predicate: Callable[[HttpRequest], bool] = lambda r: FaultInjectionTransportAsync.predicate_is_database_account_call(r)
-        emulator_as_multi_write_region_account_transformation: Callable[[HttpRequest, Callable[[HttpRequest], asyncio.Task[AsyncHttpResponse]]], AioHttpTransportResponse] = \
+        emulator_as_multi_write_region_account_transformation: Callable[[HttpRequest, Callable[[HttpRequest], Awaitable[AsyncHttpResponse]]], AioHttpTransportResponse] = \
             lambda r, inner: FaultInjectionTransportAsync.transform_topology_mwr(
                 first_region_name="First Region",
                 second_region_name="Second Region",
