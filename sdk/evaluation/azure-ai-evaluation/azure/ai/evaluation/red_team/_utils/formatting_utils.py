@@ -63,24 +63,14 @@ def get_flattened_attack_strategies(attack_strategies: List[Union[AttackStrategy
         attack_strategies_temp.remove(AttackStrategy.EASY)
     
     if AttackStrategy.MODERATE in attack_strategies_temp:
-        # TODO: change these before merging.
         attack_strategies_temp.extend([
-            AttackStrategy.AsciiArt,
-            AttackStrategy.Compose([
-                AttackStrategy.Tense,
-                AttackStrategy.Flip
-            ]),
-        ])
+            AttackStrategy.Tense],
+        )
         attack_strategies_temp.remove(AttackStrategy.MODERATE)
     if AttackStrategy.DIFFICULT in attack_strategies_temp:
-        # TODO: change these before merging.
         attack_strategies_temp.extend([
             AttackStrategy.Compose([
                 AttackStrategy.Tense,
-                AttackStrategy.Morse
-            ]),
-            AttackStrategy.Compose([
-                AttackStrategy.Morse,
                 AttackStrategy.Base64
             ]),
         ])
