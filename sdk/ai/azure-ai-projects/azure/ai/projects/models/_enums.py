@@ -16,7 +16,7 @@ class AgentsApiResponseFormatMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AUTO = "auto"
     """Default value. Let the model handle the return format."""
     NONE = "none"
-    """Setting the value to ``none``\\ , will result in a 400 Bad request."""
+    """Setting the value to ``none``, will result in a 400 Bad request."""
 
 
 class AgentsApiToolChoiceOptionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -45,6 +45,8 @@ class AgentsNamedToolChoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tool type ``sharepoint_grounding``"""
     AZURE_AI_SEARCH = "azure_ai_search"
     """Tool type ``azure_ai_search``"""
+    BING_CUSTOM_SEARCH = "bing_custom_search"
+    """Tool type ``bing_custom_search``"""
 
 
 class AgentStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):

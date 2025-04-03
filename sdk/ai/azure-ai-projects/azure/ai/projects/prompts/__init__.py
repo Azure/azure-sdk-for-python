@@ -12,4 +12,5 @@ except ImportError as exc:
     ) from exc
 
 from ._patch import patch_sdk as _patch_sdk, PromptTemplate
+
 _patch_sdk()
