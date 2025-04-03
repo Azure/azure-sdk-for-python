@@ -1945,6 +1945,22 @@ class PathOperations:
         response_headers["x-ms-lease-duration"] = self._deserialize("str", response.headers.get("x-ms-lease-duration"))
         response_headers["x-ms-lease-state"] = self._deserialize("str", response.headers.get("x-ms-lease-state"))
         response_headers["x-ms-lease-status"] = self._deserialize("str", response.headers.get("x-ms-lease-status"))
+        response_headers["x-ms-server-encrypted"] = self._deserialize(
+            "bool", response.headers.get("x-ms-server-encrypted")
+        )
+        response_headers["x-ms-encryption-key-sha256"] = self._deserialize(
+            "str", response.headers.get("x-ms-encryption-key-sha256")
+        )
+        response_headers["x-ms-encryption-context"] = self._deserialize(
+            "str", response.headers.get("x-ms-encryption-context")
+        )
+        response_headers["x-ms-encryption-scope"] = self._deserialize(
+            "str", response.headers.get("x-ms-encryption-scope")
+        )
+        response_headers["x-ms-creation-time"] = self._deserialize(
+            "rfc-1123", response.headers.get("x-ms-creation-time")
+        )
+        response_headers["x-ms-expiry-time"] = self._deserialize("rfc-1123", response.headers.get("x-ms-expiry-time"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
