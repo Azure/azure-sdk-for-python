@@ -29,7 +29,7 @@ class Agent(_model_base.Model):
     :ivar metadata: Arbitrary metadata associated with this agent.
     :vartype metadata: dict[str, str]
     :ivar name: The name of the agent; used for display purposes and sent to the LLM to identify
-     the agent.
+     the agent. Required.
     :vartype name: str
     :ivar agent_model: The model definition for this agent. This is optional (not needed) when
      doing a run using persistent agent.
@@ -48,8 +48,9 @@ class Agent(_model_base.Model):
     """A description of the agent; used for display purposes and to describe the agent."""
     metadata: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Arbitrary metadata associated with this agent."""
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The name of the agent; used for display purposes and sent to the LLM to identify the agent."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the agent; used for display purposes and sent to the LLM to identify the agent.
+     Required."""
     agent_model: Optional["_models.AgentModel"] = rest_field(
         name="agentModel", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -72,9 +73,9 @@ class Agent(_model_base.Model):
     def __init__(
         self,
         *,
+        name: str,
         description: Optional[str] = None,
         metadata: Optional[Dict[str, str]] = None,
-        name: Optional[str] = None,
         agent_model: Optional["_models.AgentModel"] = None,
         instructions: Optional[List["_models.DeveloperMessage"]] = None,
         tools: Optional[List["_models.AgentToolDefinition"]] = None,
@@ -2556,8 +2557,6 @@ class Run(_model_base.Model):
     :ivar run_outputs: The final outcome of this run, including status, output messages, token
      usage. Required.
     :vartype run_outputs: ~azure.ai.projects.dp1.models.RunOutputs
-    :ivar options: Optional configuration for run generation.
-    :vartype options: ~azure.ai.projects.dp1.models.RunOptions
     :ivar user_id: Identifier for the user making the request.
     :vartype user_id: str
     :ivar store: Flag indicating whether to store the run and associated messages.
@@ -2578,8 +2577,6 @@ class Run(_model_base.Model):
         name="runOutputs", visibility=["read", "create", "update", "delete", "query"]
     )
     """The final outcome of this run, including status, output messages, token usage. Required."""
-    options: Optional["_models.RunOptions"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional configuration for run generation."""
     user_id: Optional[str] = rest_field(name="userId", visibility=["read", "create", "update", "delete", "query"])
     """Identifier for the user making the request."""
     store: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -2593,7 +2590,6 @@ class Run(_model_base.Model):
         completed_at: int,
         run_inputs: "_models.RunInputs",
         run_outputs: "_models.RunOutputs",
-        options: Optional["_models.RunOptions"] = None,
         user_id: Optional[str] = None,
         store: Optional[bool] = None,
     ) -> None: ...
@@ -2621,8 +2617,8 @@ class RunInputs(_model_base.Model):
     :vartype thread_id: str
     :ivar metadata: Optional metadata associated with the run request.
     :vartype metadata: dict[str, str]
-    :ivar options: Optional configuration for run generation.
-    :vartype options: ~azure.ai.projects.dp1.models.RunOptions
+    :ivar truncation_strategy: Strategy for truncating messages when input exceeds model limits.
+    :vartype truncation_strategy: ~azure.ai.projects.dp1.models.TruncationStrategy
     :ivar user_id: Identifier for the user making the request.
     :vartype user_id: str
     """
@@ -2636,8 +2632,10 @@ class RunInputs(_model_base.Model):
     """Optional identifier for an existing conversation thread."""
     metadata: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional metadata associated with the run request."""
-    options: Optional["_models.RunOptions"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional configuration for run generation."""
+    truncation_strategy: Optional["_models.TruncationStrategy"] = rest_field(
+        name="truncationStrategy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Strategy for truncating messages when input exceeds model limits."""
     user_id: Optional[str] = rest_field(name="userId", visibility=["read", "create", "update", "delete", "query"])
     """Identifier for the user making the request."""
 
@@ -2649,38 +2647,8 @@ class RunInputs(_model_base.Model):
         agent_id: Optional[str] = None,
         thread_id: Optional[str] = None,
         metadata: Optional[Dict[str, str]] = None,
-        options: Optional["_models.RunOptions"] = None,
-        user_id: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class RunOptions(_model_base.Model):
-    """Represents advanced options for controlling agent runs.
-
-    :ivar truncation_strategy: Strategy for truncating messages when input exceeds model limits.
-    :vartype truncation_strategy: ~azure.ai.projects.dp1.models.TruncationStrategy
-    """
-
-    truncation_strategy: Optional["_models.TruncationStrategy"] = rest_field(
-        name="truncationStrategy", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Strategy for truncating messages when input exceeds model limits."""
-
-    @overload
-    def __init__(
-        self,
-        *,
         truncation_strategy: Optional["_models.TruncationStrategy"] = None,
+        user_id: Optional[str] = None,
     ) -> None: ...
 
     @overload

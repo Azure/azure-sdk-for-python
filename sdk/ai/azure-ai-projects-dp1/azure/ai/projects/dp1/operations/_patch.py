@@ -209,7 +209,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :param instructions_str: Instructions provided to guide how this agent operates.
         :type instructions_str: str
         :param message: The list of input messages for the run.
-        :type message: str        
+        :type message: str
         :return: Run. The Run is compatible with MutableMapping
         :rtype: ~azure.ai.projects.dp1.models.Run
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -300,7 +300,14 @@ class AgentsOperations(AgentsOperationsGenerated):
         return deserialized  # type: ignore
 
     @overload
-    def create_agent(self, *, model_id: Optional[str] = None, name: Optional[str] = None, instructions_str: Optional[str] = None, **kwargs: Any) -> _models.Agent:
+    def create_agent(
+        self,
+        *,
+        model_id: Optional[str] = None,
+        name: Optional[str] = None,
+        instructions_str: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.Agent:
         """Creates an agent with the specified model and instructions.
 
         :param model_id: The identifier of the model to use for this agent. Required.
@@ -485,9 +492,11 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         return deserialized  # type: ignore
 
+
 __all__: List[str] = [
     "AgentsOperations",
 ]  # Add all objects you want publicly available to users at this package level
+
 
 def patch_sdk():
     """Do not remove from this file.

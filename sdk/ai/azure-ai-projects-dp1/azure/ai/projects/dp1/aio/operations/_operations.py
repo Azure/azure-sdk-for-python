@@ -1074,8 +1074,8 @@ class AgentsOperations:
     async def create_agent(
         self,
         *,
+        name: str,
         content_type: str = "application/json",
-        name: Optional[str] = None,
         agent_model: Optional[_models.AgentModel] = None,
         instructions: Optional[List[_models.DeveloperMessage]] = None,
         tools: Optional[List[_models.AgentToolDefinition]] = None,
@@ -1084,12 +1084,12 @@ class AgentsOperations:
     ) -> _models.Agent:
         """Creates a new Agent resource and returns it.
 
+        :keyword name: The name of the agent; used for display purposes and sent to the LLM to identify
+         the agent. Required.
+        :paramtype name: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword name: The name of the agent; used for display purposes and sent to the LLM to identify
-         the agent. Default value is None.
-        :paramtype name: str
         :keyword agent_model: The model definition for this agent. This is optional (not needed) when
          doing a run using persistent agent. Default value is None.
         :paramtype agent_model: ~azure.ai.projects.dp1.models.AgentModel
@@ -1140,7 +1140,7 @@ class AgentsOperations:
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        name: Optional[str] = None,
+        name: str = _Unset,
         agent_model: Optional[_models.AgentModel] = None,
         instructions: Optional[List[_models.DeveloperMessage]] = None,
         tools: Optional[List[_models.AgentToolDefinition]] = None,
@@ -1152,7 +1152,7 @@ class AgentsOperations:
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
         :keyword name: The name of the agent; used for display purposes and sent to the LLM to identify
-         the agent. Default value is None.
+         the agent. Required.
         :paramtype name: str
         :keyword agent_model: The model definition for this agent. This is optional (not needed) when
          doing a run using persistent agent. Default value is None.
@@ -1183,6 +1183,8 @@ class AgentsOperations:
         cls: ClsType[_models.Agent] = kwargs.pop("cls", None)
 
         if body is _Unset:
+            if name is _Unset:
+                raise TypeError("missing required argument: name")
             body = {
                 "agentModel": agent_model,
                 "instructions": instructions,
@@ -1536,7 +1538,6 @@ class AgentsOperations:
         *,
         input: List[_models.ChatMessage],
         content_type: str = "application/json",
-        name: Optional[str] = None,
         agent_model: Optional[_models.AgentModel] = None,
         instructions: Optional[List[_models.DeveloperMessage]] = None,
         tools: Optional[List[_models.AgentToolDefinition]] = None,
@@ -1544,7 +1545,7 @@ class AgentsOperations:
         agent_id: Optional[str] = None,
         thread_id: Optional[str] = None,
         metadata: Optional[Dict[str, str]] = None,
-        options: Optional[_models.RunOptions] = None,
+        truncation_strategy: Optional[_models.TruncationStrategy] = None,
         user_id: Optional[str] = None,
         **kwargs: Any
     ) -> _models.Run:
@@ -1555,9 +1556,6 @@ class AgentsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword name: The name of the agent; used for display purposes and sent to the LLM to identify
-         the agent. Default value is None.
-        :paramtype name: str
         :keyword agent_model: The model definition for this agent. This is optional (not needed) when
          doing a run using persistent agent. Default value is None.
         :paramtype agent_model: ~azure.ai.projects.dp1.models.AgentModel
@@ -1576,8 +1574,9 @@ class AgentsOperations:
         :paramtype thread_id: str
         :keyword metadata: Optional metadata associated with the run request. Default value is None.
         :paramtype metadata: dict[str, str]
-        :keyword options: Optional configuration for run generation. Default value is None.
-        :paramtype options: ~azure.ai.projects.dp1.models.RunOptions
+        :keyword truncation_strategy: Strategy for truncating messages when input exceeds model limits.
+         Default value is None.
+        :paramtype truncation_strategy: ~azure.ai.projects.dp1.models.TruncationStrategy
         :keyword user_id: Identifier for the user making the request. Default value is None.
         :paramtype user_id: str
         :return: Run. The Run is compatible with MutableMapping
@@ -1619,7 +1618,6 @@ class AgentsOperations:
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         input: List[_models.ChatMessage] = _Unset,
-        name: Optional[str] = None,
         agent_model: Optional[_models.AgentModel] = None,
         instructions: Optional[List[_models.DeveloperMessage]] = None,
         tools: Optional[List[_models.AgentToolDefinition]] = None,
@@ -1627,7 +1625,7 @@ class AgentsOperations:
         agent_id: Optional[str] = None,
         thread_id: Optional[str] = None,
         metadata: Optional[Dict[str, str]] = None,
-        options: Optional[_models.RunOptions] = None,
+        truncation_strategy: Optional[_models.TruncationStrategy] = None,
         user_id: Optional[str] = None,
         **kwargs: Any
     ) -> _models.Run:
@@ -1637,9 +1635,6 @@ class AgentsOperations:
         :type body: JSON or IO[bytes]
         :keyword input: The list of input messages for the run. Required.
         :paramtype input: list[~azure.ai.projects.dp1.models.ChatMessage]
-        :keyword name: The name of the agent; used for display purposes and sent to the LLM to identify
-         the agent. Default value is None.
-        :paramtype name: str
         :keyword agent_model: The model definition for this agent. This is optional (not needed) when
          doing a run using persistent agent. Default value is None.
         :paramtype agent_model: ~azure.ai.projects.dp1.models.AgentModel
@@ -1658,8 +1653,9 @@ class AgentsOperations:
         :paramtype thread_id: str
         :keyword metadata: Optional metadata associated with the run request. Default value is None.
         :paramtype metadata: dict[str, str]
-        :keyword options: Optional configuration for run generation. Default value is None.
-        :paramtype options: ~azure.ai.projects.dp1.models.RunOptions
+        :keyword truncation_strategy: Strategy for truncating messages when input exceeds model limits.
+         Default value is None.
+        :paramtype truncation_strategy: ~azure.ai.projects.dp1.models.TruncationStrategy
         :keyword user_id: Identifier for the user making the request. Default value is None.
         :paramtype user_id: str
         :return: Run. The Run is compatible with MutableMapping
@@ -1689,11 +1685,10 @@ class AgentsOperations:
                 "input": input,
                 "instructions": instructions,
                 "metadata": metadata,
-                "name": name,
-                "options": options,
                 "threadId": thread_id,
                 "toolChoice": tool_choice,
                 "tools": tools,
+                "truncationStrategy": truncation_strategy,
                 "userId": user_id,
             }
             body = {k: v for k, v in body.items() if v is not None}
@@ -1748,7 +1743,6 @@ class AgentsOperations:
         *,
         input: List[_models.ChatMessage],
         content_type: str = "application/json",
-        name: Optional[str] = None,
         agent_model: Optional[_models.AgentModel] = None,
         instructions: Optional[List[_models.DeveloperMessage]] = None,
         tools: Optional[List[_models.AgentToolDefinition]] = None,
@@ -1756,7 +1750,7 @@ class AgentsOperations:
         agent_id: Optional[str] = None,
         thread_id: Optional[str] = None,
         metadata: Optional[Dict[str, str]] = None,
-        options: Optional[_models.RunOptions] = None,
+        truncation_strategy: Optional[_models.TruncationStrategy] = None,
         user_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -1767,9 +1761,6 @@ class AgentsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword name: The name of the agent; used for display purposes and sent to the LLM to identify
-         the agent. Default value is None.
-        :paramtype name: str
         :keyword agent_model: The model definition for this agent. This is optional (not needed) when
          doing a run using persistent agent. Default value is None.
         :paramtype agent_model: ~azure.ai.projects.dp1.models.AgentModel
@@ -1788,8 +1779,9 @@ class AgentsOperations:
         :paramtype thread_id: str
         :keyword metadata: Optional metadata associated with the run request. Default value is None.
         :paramtype metadata: dict[str, str]
-        :keyword options: Optional configuration for run generation. Default value is None.
-        :paramtype options: ~azure.ai.projects.dp1.models.RunOptions
+        :keyword truncation_strategy: Strategy for truncating messages when input exceeds model limits.
+         Default value is None.
+        :paramtype truncation_strategy: ~azure.ai.projects.dp1.models.TruncationStrategy
         :keyword user_id: Identifier for the user making the request. Default value is None.
         :paramtype user_id: str
         :return: None
@@ -1831,7 +1823,6 @@ class AgentsOperations:
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         input: List[_models.ChatMessage] = _Unset,
-        name: Optional[str] = None,
         agent_model: Optional[_models.AgentModel] = None,
         instructions: Optional[List[_models.DeveloperMessage]] = None,
         tools: Optional[List[_models.AgentToolDefinition]] = None,
@@ -1839,7 +1830,7 @@ class AgentsOperations:
         agent_id: Optional[str] = None,
         thread_id: Optional[str] = None,
         metadata: Optional[Dict[str, str]] = None,
-        options: Optional[_models.RunOptions] = None,
+        truncation_strategy: Optional[_models.TruncationStrategy] = None,
         user_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -1849,9 +1840,6 @@ class AgentsOperations:
         :type body: JSON or IO[bytes]
         :keyword input: The list of input messages for the run. Required.
         :paramtype input: list[~azure.ai.projects.dp1.models.ChatMessage]
-        :keyword name: The name of the agent; used for display purposes and sent to the LLM to identify
-         the agent. Default value is None.
-        :paramtype name: str
         :keyword agent_model: The model definition for this agent. This is optional (not needed) when
          doing a run using persistent agent. Default value is None.
         :paramtype agent_model: ~azure.ai.projects.dp1.models.AgentModel
@@ -1870,8 +1858,9 @@ class AgentsOperations:
         :paramtype thread_id: str
         :keyword metadata: Optional metadata associated with the run request. Default value is None.
         :paramtype metadata: dict[str, str]
-        :keyword options: Optional configuration for run generation. Default value is None.
-        :paramtype options: ~azure.ai.projects.dp1.models.RunOptions
+        :keyword truncation_strategy: Strategy for truncating messages when input exceeds model limits.
+         Default value is None.
+        :paramtype truncation_strategy: ~azure.ai.projects.dp1.models.TruncationStrategy
         :keyword user_id: Identifier for the user making the request. Default value is None.
         :paramtype user_id: str
         :return: None
@@ -1901,11 +1890,10 @@ class AgentsOperations:
                 "input": input,
                 "instructions": instructions,
                 "metadata": metadata,
-                "name": name,
-                "options": options,
                 "threadId": thread_id,
                 "toolChoice": tool_choice,
                 "tools": tools,
+                "truncationStrategy": truncation_strategy,
                 "userId": user_id,
             }
             body = {k: v for k, v in body.items() if v is not None}
