@@ -781,7 +781,7 @@ class AzureAISearchTool(Tool[AzureAISearchToolDefinition]):
         :type index_connection_id: str
         :param index_name: Name of Index in search resource to be used by tool.
         :type index_name: str
-        :param query_type: Type of query in an AIIndexResource attached to this agent. 
+        :param query_type: Type of query in an AIIndexResource attached to this agent.
             Default value is AzureAISearchQueryType.SIMPLE.
         :type query_type: AzureAISearchQueryType
         :param filter: Odata filter string for search resource.
