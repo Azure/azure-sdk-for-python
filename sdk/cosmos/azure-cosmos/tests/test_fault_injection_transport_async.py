@@ -22,6 +22,7 @@ from azure.cosmos.aio import CosmosClient
 from azure.cosmos.aio._container import ContainerProxy
 from azure.cosmos.aio._database import DatabaseProxy
 from azure.cosmos.exceptions import CosmosHttpResponseError
+from azure.core.exceptions import ServiceRequestError
 
 MGMT_TIMEOUT = 3.0
 logger = logging.getLogger('azure.cosmos')
@@ -91,7 +92,7 @@ class TestFaultInjectionTransportAsync:
         except Exception as close_error:
             logger.warning(f"Exception trying to close method client. {close_error}")
 
-    async def test_throws_injected_error(self: "TestFaultInjectionTransportAsync"):
+    async def test_throws_injected_error_async(self: "TestFaultInjectionTransportAsync"):
         id_value: str = str(uuid.uuid4())
         document_definition = {'id': id_value,
                                'pk': id_value,
@@ -121,7 +122,7 @@ class TestFaultInjectionTransportAsync:
         finally:
             TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
 
-    async def test_swr_mrr_succeeds(self: "TestFaultInjectionTransportAsync"):
+    async def test_swr_mrr_succeeds_async(self: "TestFaultInjectionTransportAsync"):
         expected_read_region_uri: str = test_config.TestConfig.local_host
         expected_write_region_uri: str = expected_read_region_uri.replace("localhost", "127.0.0.1")
         custom_transport = FaultInjectionTransportAsync()
@@ -172,7 +173,7 @@ class TestFaultInjectionTransportAsync:
         finally:
             TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
 
-    async def test_swr_mrr_region_down_read_succeeds(self: "TestFaultInjectionTransportAsync"):
+    async def test_swr_mrr_region_down_read_succeeds_async(self: "TestFaultInjectionTransportAsync"):
         expected_read_region_uri: str = test_config.TestConfig.local_host
         expected_write_region_uri: str = expected_read_region_uri.replace("localhost", "127.0.0.1")
         custom_transport = FaultInjectionTransportAsync()
@@ -232,7 +233,7 @@ class TestFaultInjectionTransportAsync:
         finally:
             TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
 
-    async def test_swr_mrr_region_down_envoy_read_succeeds(self: "TestFaultInjectionTransportAsync"):
+    async def test_swr_mrr_region_down_envoy_read_succeeds_async(self: "TestFaultInjectionTransportAsync"):
         expected_read_region_uri: str = test_config.TestConfig.local_host
         expected_write_region_uri: str = expected_read_region_uri.replace("localhost", "127.0.0.1")
         custom_transport = FaultInjectionTransportAsync()
@@ -298,7 +299,7 @@ class TestFaultInjectionTransportAsync:
             TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
 
 
-    async def test_mwr_succeeds(self: "TestFaultInjectionTransportAsync"):
+    async def test_mwr_succeeds_async(self: "TestFaultInjectionTransportAsync"):
         first_region_uri: str = test_config.TestConfig.local_host.replace("localhost", "127.0.0.1")
         custom_transport = FaultInjectionTransportAsync()
 
@@ -343,7 +344,7 @@ class TestFaultInjectionTransportAsync:
 
     # add test for complete failures
 
-    async def test_mwr_region_down_succeeds(self: "TestFaultInjectionTransportAsync"):
+    async def test_mwr_region_down_succeeds_async(self: "TestFaultInjectionTransportAsync"):
         first_region_uri: str = test_config.TestConfig.local_host.replace("localhost", "127.0.0.1")
         second_region_uri: str = test_config.TestConfig.local_host
         custom_transport = FaultInjectionTransportAsync()
@@ -361,17 +362,13 @@ class TestFaultInjectionTransportAsync:
             emulator_as_multi_write_region_account_transformation)
 
         # Inject rule to simulate regional outage in "First Region"
-        is_request_to_read_region: Callable[[HttpRequest], bool] = lambda \
+        is_request_to_first_region: Callable[[HttpRequest], bool] = lambda \
                 r: FaultInjectionTransportAsync.predicate_targets_region(r, first_region_uri) and \
                    FaultInjectionTransportAsync.predicate_is_document_operation(r)
 
         custom_transport.add_fault(
-            is_request_to_read_region,
-            lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
-                500,
-                CosmosHttpResponseError(
-                    status_code=408,
-                    message="Induced Request Timeout"))))
+            is_request_to_first_region,
+            lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_region_down()))
 
         id_value: str = str(uuid.uuid4())
         document_definition = {'id': id_value,
@@ -387,6 +384,7 @@ class TestFaultInjectionTransportAsync:
 
             start:float = time.perf_counter()
             while (time.perf_counter() - start) < 2:
+                # reads and writes should failover to second region
                 upsert_document = await container.upsert_item(body=document_definition)
                 request = upsert_document.get_response_headers()["_request"]
                 assert request.url.startswith(second_region_uri)
@@ -395,6 +393,121 @@ class TestFaultInjectionTransportAsync:
                 # Validate the response comes from "East US" (the most preferred read-only region)
                 assert request.url.startswith(second_region_uri)
 
+        finally:
+            TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
+
+    async def test_swr_mrr_all_regions_down_for_read_async(self: "TestFaultInjectionTransportAsync"):
+        expected_read_region_uri: str = test_config.TestConfig.local_host
+        expected_write_region_uri: str = expected_read_region_uri.replace("localhost", "127.0.0.1")
+        custom_transport = FaultInjectionTransportAsync()
+
+        # Inject rule to disallow writes in the read-only region
+        is_write_operation_in_read_region_predicate: Callable[[HttpRequest], bool] = lambda \
+                r: FaultInjectionTransportAsync.predicate_is_write_operation(r, expected_read_region_uri)
+
+        custom_transport.add_fault(
+            is_write_operation_in_read_region_predicate,
+            lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_write_forbidden()))
+
+        # Inject topology transformation that would make Emulator look like a multiple write region account
+        # account with two read regions
+        is_get_account_predicate: Callable[[HttpRequest], bool] = lambda \
+            r: FaultInjectionTransportAsync.predicate_is_database_account_call(r)
+        emulator_as_multi_write_region_account_transformation = \
+            lambda r, inner: FaultInjectionTransportAsync.transform_topology_swr_mrr(
+                write_region_name="Write Region",
+                read_region_name="Read Region",
+                inner=inner)
+        custom_transport.add_response_transformation(
+            is_get_account_predicate,
+            emulator_as_multi_write_region_account_transformation)
+
+        # Inject rule to simulate regional outage in "First Region"
+        is_request_to_first_region: Callable[[HttpRequest], bool] = lambda \
+                r: (FaultInjectionTransportAsync.predicate_targets_region(r, expected_write_region_uri) and
+                   FaultInjectionTransportAsync.predicate_is_document_operation(r) and
+                    not FaultInjectionTransportAsync.predicate_is_write_operation(r, expected_write_region_uri))
+
+
+        # Inject rule to simulate regional outage in "Second Region"
+        is_request_to_second_region: Callable[[HttpRequest], bool] = lambda \
+                r: (FaultInjectionTransportAsync.predicate_targets_region(r, expected_read_region_uri) and
+                   FaultInjectionTransportAsync.predicate_is_document_operation(r) and
+                    not FaultInjectionTransportAsync.predicate_is_write_operation(r, expected_write_region_uri))
+
+        custom_transport.add_fault(
+            is_request_to_first_region,
+            lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_region_down()))
+        custom_transport.add_fault(
+            is_request_to_second_region,
+            lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_region_down()))
+
+        id_value: str = str(uuid.uuid4())
+        document_definition = {'id': id_value,
+                               'pk': id_value,
+                               'name': 'sample document',
+                               'key': 'value'}
+
+        initialized_objects = self.setup_method_with_custom_transport(
+            custom_transport,
+            preferred_locations=["First Region", "Second Region"])
+        try:
+            container: ContainerProxy = initialized_objects["col"]
+            await container.upsert_item(body=document_definition)
+            with pytest.raises(ServiceRequestError):
+                await container.read_item(id_value, partition_key=id_value)
+        finally:
+            TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
+
+    async def test_mwr_all_regions_down_async(self: "TestFaultInjectionTransportAsync"):
+
+        first_region_uri: str = test_config.TestConfig.local_host.replace("localhost", "127.0.0.1")
+        second_region_uri: str = test_config.TestConfig.local_host
+        custom_transport = FaultInjectionTransportAsync()
+
+        # Inject topology transformation that would make Emulator look like a multiple write region account
+        # account with two read regions
+        is_get_account_predicate: Callable[[HttpRequest], bool] = lambda \
+                r: FaultInjectionTransportAsync.predicate_is_database_account_call(r)
+        emulator_as_multi_write_region_account_transformation = \
+            lambda r, inner: FaultInjectionTransportAsync.transform_topology_mwr(
+                first_region_name="First Region",
+                second_region_name="Second Region",
+                inner=inner)
+        custom_transport.add_response_transformation(
+            is_get_account_predicate,
+            emulator_as_multi_write_region_account_transformation)
+
+        # Inject rule to simulate regional outage in "First Region"
+        is_request_to_first_region: Callable[[HttpRequest], bool] = lambda \
+                r: FaultInjectionTransportAsync.predicate_targets_region(r, first_region_uri) and \
+                   FaultInjectionTransportAsync.predicate_is_document_operation(r)
+
+        # Inject rule to simulate regional outage in "Second Region"
+        is_request_to_second_region: Callable[[HttpRequest], bool] = lambda \
+                r: FaultInjectionTransportAsync.predicate_targets_region(r, second_region_uri) and \
+                   FaultInjectionTransportAsync.predicate_is_document_operation(r)
+
+        custom_transport.add_fault(
+            is_request_to_first_region,
+            lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_region_down()))
+        custom_transport.add_fault(
+            is_request_to_second_region,
+            lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_region_down()))
+
+        id_value: str = str(uuid.uuid4())
+        document_definition = {'id': id_value,
+                               'pk': id_value,
+                               'name': 'sample document',
+                               'key': 'value'}
+
+        initialized_objects = self.setup_method_with_custom_transport(
+            custom_transport,
+            preferred_locations=["First Region", "Second Region"])
+        try:
+            container: ContainerProxy = initialized_objects["col"]
+            with pytest.raises(ServiceRequestError):
+                await container.upsert_item(body=document_definition)
         finally:
             TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
 
