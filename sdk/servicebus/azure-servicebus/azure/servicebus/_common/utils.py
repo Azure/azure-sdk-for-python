@@ -65,8 +65,20 @@ if TYPE_CHECKING:
 
 _log = logging.getLogger(__name__)
 
+# Number of seconds between the Unix epoch (1/1/1970) and year 1 CE.
+# This is the lowest value that can be represented by an AMQP timestamp.
+CE_ZERO_SECONDS: int = -62_135_596_800
 
-def utc_from_timestamp(timestamp):
+def utc_from_timestamp(timestamp: int) -> datetime.datetime:
+    """
+    :param int timestamp: Timestamp in seconds to be converted to datetime.
+    """
+    # The AMQP timestamp is the number of seconds since the Unix epoch.
+    # AMQP brokers represent the lowest value as -62_135_596_800 (the
+    # number of seconds between the Unix epoch (1/1/1970) and year 1 CE) as
+    # a sentinel for a time which is not set.
+    if timestamp == CE_ZERO_SECONDS:
+        return datetime.datetime.min.replace(tzinfo=TZ_UTC)
     return datetime.datetime.fromtimestamp(timestamp, tz=timezone.utc)
 
 

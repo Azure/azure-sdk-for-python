@@ -4,11 +4,13 @@
 
 ### Features Added
 
-- Added a class method `from bytes` to create `EventData` from a message payload of bytes. ([#39711](https://github.com/Azure/azure-sdk-for-python/issues/39711))
+- Added a class method `from_bytes` to create `EventData` from a message payload of bytes. ([#39711](https://github.com/Azure/azure-sdk-for-python/issues/39711))
 
 ### Bugs Fixed
 
 - Fixed a bug where service errors were incorrectly required and expected to have info/description fields.
+- Fixed a bug where max number of messages was not being requested when receiving from the service due to an incorrect link credit calculation.
+- Fixed a bug where the lowest possible timestamp returned by the service to represent an unset time was not being parsed correctly.
 
 ## 5.14.0 (2025-02-13)
 
