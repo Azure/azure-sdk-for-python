@@ -18,7 +18,7 @@ TZ_UTC: timezone = timezone.utc
 # This is the lowest value that can be represented by an AMQP timestamp.
 CE_ZERO_SECONDS: int = -62_135_596_800
 
-def utc_from_timestamp(timestamp: int) -> datetime.datetime:
+def utc_from_timestamp(timestamp: float) -> datetime.datetime:
     """
     :param int timestamp: Timestamp in seconds to be converted to datetime.
     """

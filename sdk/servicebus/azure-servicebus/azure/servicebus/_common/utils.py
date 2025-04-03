@@ -65,11 +65,12 @@ if TYPE_CHECKING:
 
 _log = logging.getLogger(__name__)
 
+TZ_UTC: timezone = timezone.utc
 # Number of seconds between the Unix epoch (1/1/1970) and year 1 CE.
 # This is the lowest value that can be represented by an AMQP timestamp.
 CE_ZERO_SECONDS: int = -62_135_596_800
 
-def utc_from_timestamp(timestamp: int) -> datetime.datetime:
+def utc_from_timestamp(timestamp: float) -> datetime.datetime:
     """
     :param int timestamp: Timestamp in seconds to be converted to datetime.
     """
@@ -79,7 +80,7 @@ def utc_from_timestamp(timestamp: int) -> datetime.datetime:
     # a sentinel for a time which is not set.
     if timestamp == CE_ZERO_SECONDS:
         return datetime.datetime.min.replace(tzinfo=TZ_UTC)
-    return datetime.datetime.fromtimestamp(timestamp, tz=timezone.utc)
+    return datetime.datetime.fromtimestamp(timestamp, tz=TZ_UTC)
 
 
 def utc_now():
