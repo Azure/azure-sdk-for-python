@@ -1,5 +1,64 @@
 # Release History
 
+## 9.2.0 (2025-04-20)
+
+### Features Added
+
+  - Model AzurePostgreSqlLinkedService has a new parameter azure_cloud_type
+  - Model AzurePostgreSqlLinkedService has a new parameter credential
+  - Model AzurePostgreSqlLinkedService has a new parameter service_principal_credential_type
+  - Model AzurePostgreSqlLinkedService has a new parameter service_principal_embedded_cert
+  - Model AzurePostgreSqlLinkedService has a new parameter service_principal_embedded_cert_password
+  - Model AzurePostgreSqlLinkedService has a new parameter service_principal_id
+  - Model AzurePostgreSqlLinkedService has a new parameter service_principal_key
+  - Model AzurePostgreSqlLinkedService has a new parameter tenant
+  - Model AzurePostgreSqlSink has a new parameter upsert_settings
+  - Model AzurePostgreSqlSink has a new parameter write_method
+  - Model CommonDataServiceForAppsSink has a new parameter bypass_business_logic_execution
+  - Model CommonDataServiceForAppsSink has a new parameter bypass_power_automate_flows
+  - Model DynamicsCrmSink has a new parameter bypass_business_logic_execution
+  - Model DynamicsCrmSink has a new parameter bypass_power_automate_flows
+  - Model DynamicsSink has a new parameter bypass_business_logic_execution
+  - Model DynamicsSink has a new parameter bypass_power_automate_flows
+  - Model GreenplumLinkedService has a new parameter authentication_type
+  - Model GreenplumLinkedService has a new parameter command_timeout
+  - Model GreenplumLinkedService has a new parameter connection_timeout
+  - Model GreenplumLinkedService has a new parameter database
+  - Model GreenplumLinkedService has a new parameter host
+  - Model GreenplumLinkedService has a new parameter port
+  - Model GreenplumLinkedService has a new parameter ssl_mode
+  - Model GreenplumLinkedService has a new parameter username
+  - Model Office365LinkedService has a new parameter service_principal_credential_type
+  - Model Office365LinkedService has a new parameter service_principal_embedded_cert
+  - Model Office365LinkedService has a new parameter service_principal_embedded_cert_password
+  - Model OracleLinkedService has a new parameter authentication_type
+  - Model OracleLinkedService has a new parameter crypto_checksum_client
+  - Model OracleLinkedService has a new parameter crypto_checksum_types_client
+  - Model OracleLinkedService has a new parameter enable_bulk_load
+  - Model OracleLinkedService has a new parameter encryption_client
+  - Model OracleLinkedService has a new parameter encryption_types_client
+  - Model OracleLinkedService has a new parameter fetch_size
+  - Model OracleLinkedService has a new parameter fetch_tswtz_as_timestamp
+  - Model OracleLinkedService has a new parameter initial_lob_fetch_size
+  - Model OracleLinkedService has a new parameter initialization_string
+  - Model OracleLinkedService has a new parameter server
+  - Model OracleLinkedService has a new parameter statement_cache_size
+  - Model OracleLinkedService has a new parameter support_v1_data_types
+  - Model OracleLinkedService has a new parameter username
+  - Model PrestoLinkedService has a new parameter enable_server_certificate_validation
+  - Model ScriptActivity has a new parameter return_multistatement_result
+  - Model ServiceNowV2ObjectDataset has a new parameter value_type
+  - Model SnowflakeV2LinkedService has a new parameter role
+  - Model SnowflakeV2LinkedService has a new parameter schema
+  - Model TeradataLinkedService has a new parameter character_set
+  - Model TeradataLinkedService has a new parameter https_port_number
+  - Model TeradataLinkedService has a new parameter max_resp_size
+  - Model TeradataLinkedService has a new parameter port_number
+  - Model TeradataLinkedService has a new parameter ssl_mode
+  - Model TeradataLinkedService has a new parameter use_data_encryption
+  - Model TypeConversionSettings has a new parameter date_format
+  - Model TypeConversionSettings has a new parameter time_format
+
 ## 9.1.0 (2024-12-16)
 
 ### Features Added
