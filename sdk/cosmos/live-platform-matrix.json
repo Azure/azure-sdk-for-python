@@ -88,6 +88,43 @@
           "TestMarkArgument": "cosmosLong"
         }
       }
+    },
+    {
+      "WindowsConfig": {
+        "Windows2022_38_multi_region": {
+          "OSVmImage": "env:WINDOWSVMIMAGE",
+          "Pool": "env:WINDOWSPOOL",
+          "PythonVersion": "3.8",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false",
+          "TestMarkArgument": "cosmosMultiRegion",
+          "ArmConfig": {
+            "ArmTemplateParameters": "@{ enableMultipleRegions = $true }"
+          }
+        },
+        "Windows2022_310_multi_region": {
+          "OSVmImage": "env:WINDOWSVMIMAGE",
+          "Pool": "env:WINDOWSPOOL",
+          "PythonVersion": "3.10",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false",
+          "TestMarkArgument": "cosmosMultiRegion",
+          "ArmConfig": {
+            "ArmTemplateParameters": "@{ enableMultipleRegions = $true }"
+          }
+        },
+        "Windows2022_312_multi_region": {
+          "OSVmImage": "env:WINDOWSVMIMAGE",
+          "Pool": "env:WINDOWSPOOL",
+          "PythonVersion": "3.12",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false",
+          "TestMarkArgument": "cosmosMultiRegion",
+          "ArmConfig": {
+            "ArmTemplateParameters": "@{ enableMultipleRegions = $true }"
+          }
+        }
+      }
     }
   ]
 }
