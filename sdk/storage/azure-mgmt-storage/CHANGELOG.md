@@ -1,8 +1,9 @@
 # Release History
 
-## 0.0.0(it should be stable) (2025-04-20)
+## 22.2.0 (2025-04-20)
 
-
+### Features Added
+  - Enum `ProvisioningState` added member `ACCEPTED`
 
 ## 22.1.1 (2025-02-27)
 
