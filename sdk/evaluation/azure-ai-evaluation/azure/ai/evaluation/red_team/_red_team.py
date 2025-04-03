@@ -230,6 +230,19 @@ class RedTeam():
                     f.write(json.dumps({"conversations": redteam_output.redteaming_data or []}))
                 elif redteam_output.red_team_result:
                     json.dump(redteam_output.red_team_result, f)
+
+            eval_info_name = "redteam_info.json"
+            eval_info_path = os.path.join(self.scan_output_dir, eval_info_name)
+            self.logger.debug(f"Saving evaluation info to scan output directory: {eval_info_path}")
+            with open (eval_info_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
+                # Remove evaluation_result from red_team_info before logging
+                red_team_info_logged = {}
+                for strategy, harms_dict in self.red_team_info.items():
+                    red_team_info_logged[strategy] = {}
+                    for harm, info_dict in harms_dict.items():
+                        info_dict.pop("evaluation_result", None)
+                        red_team_info_logged[strategy][harm] = info_dict
+                f.write(json.dumps(red_team_info_logged))
             
             # Also save a human-readable scorecard if available
             if not data_only and redteam_output.red_team_result:
@@ -270,6 +283,7 @@ class RedTeam():
                 # Log the entire directory to MLFlow
                 try:
                     eval_run.log_artifact(tmpdir, artifact_name)
+                    eval_run.log_artifact(tmpdir, eval_info_name)
                     self.logger.debug(f"Successfully logged artifacts directory to MLFlow")
                 except Exception as e:
                     self.logger.warning(f"Failed to log artifacts to MLFlow: {str(e)}")
@@ -675,11 +689,13 @@ class RedTeam():
                         # Set task status to TIMEOUT
                         batch_task_key = f"{strategy_name}_{risk_category}_batch_{batch_idx+1}"
                         self.task_statuses[batch_task_key] = TASK_STATUS["TIMEOUT"]
+                        self.red_team_info[strategy_name][risk_category]["status"] = TASK_STATUS["INCOMPLETE"]
                         # Continue with partial results rather than failing completely
                         continue
                     except Exception as e:
                         log_error(self.logger, f"Error processing batch {batch_idx+1}", e, f"{strategy_name}/{risk_category}")
                         self.logger.debug(f"ERROR: Strategy {strategy_name}, Risk {risk_category}, Batch {batch_idx+1}: {str(e)}")
+                        self.red_team_info[strategy_name][risk_category]["status"] = TASK_STATUS["INCOMPLETE"]
                         # Continue with other batches even if one fails
                         continue
             else:
@@ -699,9 +715,11 @@ class RedTeam():
                     # Set task status to TIMEOUT
                     single_batch_task_key = f"{strategy_name}_{risk_category}_single_batch"
                     self.task_statuses[single_batch_task_key] = TASK_STATUS["TIMEOUT"]
+                    self.red_team_info[strategy_name][risk_category]["status"] = TASK_STATUS["INCOMPLETE"]
                 except Exception as e:
                     log_error(self.logger, "Error processing prompts", e, f"{strategy_name}/{risk_category}")
                     self.logger.debug(f"ERROR: Strategy {strategy_name}, Risk {risk_category}: {str(e)}")
+                    self.red_team_info[strategy_name][risk_category]["status"] = TASK_STATUS["INCOMPLETE"]
             
             self.task_statuses[task_key] = TASK_STATUS["COMPLETED"]
             return orchestrator
@@ -1266,7 +1284,6 @@ class RedTeam():
                 output_path=result_path,
             )
             eval_logger.debug(f"Completed evaluation for {risk_category.value}/{strategy_name}")
-            
         finally:
             # Restore original stdout and stderr
             sys.stdout = original_stdout
@@ -1299,6 +1316,7 @@ class RedTeam():
                 self.logger.warning(f"Failed to clean up logger: {str(e)}")
         self.red_team_info[self._get_strategy_name(strategy)][risk_category.value]["evaluation_result_file"] = str(result_path)
         self.red_team_info[self._get_strategy_name(strategy)][risk_category.value]["evaluation_result"] = evaluate_outputs
+        self.red_team_info[self._get_strategy_name(strategy)][risk_category.value]["status"] = TASK_STATUS["COMPLETED"]
         self.logger.debug(f"Evaluation complete for {strategy_name}/{risk_category.value}, results stored in red_team_info")
 
     async def _process_attack(
@@ -1372,6 +1390,7 @@ class RedTeam():
             except Exception as e:
                 log_error(self.logger, f"Error during evaluation for {strategy_name}/{risk_category.value}", e)
                 print(f"⚠️ Evaluation error for {strategy_name}/{risk_category.value}: {str(e)}")
+                self.red_team_info[strategy_name][risk_category.value]["status"] = TASK_STATUS["FAILED"]
                 # Continue processing even if evaluation fails
             
             async with progress_bar_lock:
