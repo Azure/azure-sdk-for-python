@@ -65,10 +65,7 @@ openapi = OpenApiTool(
 # Create an Agent with OpenApi tool and process Agent run
 with project_client:
     agent = project_client.agents.create_agent(
-        model=model_name,
-        name="my-agent",
-        instructions="You are a helpful agent",
-        tools=openapi.definitions
+        model=model_name, name="my-agent", instructions="You are a helpful agent", tools=openapi.definitions
     )
     print(f"Created agent, ID: {agent.id}")
 

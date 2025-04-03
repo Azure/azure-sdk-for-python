@@ -16,7 +16,7 @@ class AgentsApiResponseFormatMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AUTO = "auto"
     """Default value. Let the model handle the return format."""
     NONE = "none"
-    """Setting the value to ``none``\\ , will result in a 400 Bad request."""
+    """Setting the value to ``none``, will result in a 400 Bad request."""
 
 
 class AgentsApiToolChoiceOptionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):

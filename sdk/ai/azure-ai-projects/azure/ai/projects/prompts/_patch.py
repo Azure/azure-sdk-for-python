@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -109,7 +110,7 @@ class PromptTemplate:
 
         if self.prompty is not None:
             parsed = prepare(self.prompty, data)
-            return parsed # type: ignore
+            return parsed  # type: ignore
         else:
             raise ValueError("Please provide valid prompt template")
 
