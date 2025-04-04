@@ -74,7 +74,7 @@ CLIENT_AND_REQUEST_TEST_DATA = [
     [[L1, L2, L3], [L1, L2, L3], [L1, L2, L3]],
     # 5. No common excluded locations
     [[L1, L2, L3], [L1], [L2, L3]],
-    # 6. Reqeust excluded location not in preferred locations
+    # 6. Request excluded location not in preferred locations
     [[L1, L2, L3], [L1, L2, L3], [L4]],
     # 7. Empty excluded locations, remove all client excluded locations
     [[L1, L2, L3], [L1, L2], []],
