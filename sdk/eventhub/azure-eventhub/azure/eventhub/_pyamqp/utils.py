@@ -23,6 +23,7 @@ def utc_from_timestamp(timestamp: float) -> datetime.datetime:
     """
     :param float timestamp: Timestamp in seconds to be converted to datetime.
     :rtype: datetime.datetime
+    :returns: A datetime object representing the timestamp in UTC.
     """
     # The AMQP timestamp is the number of seconds since the Unix epoch.
     # AMQP brokers represent the lowest value as -62_135_596_800 (the
