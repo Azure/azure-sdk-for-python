@@ -5,6 +5,7 @@
 import logging
 import threading
 import datetime
+import warnings
 from typing import TYPE_CHECKING, List, Literal, Union, Any, Callable, Optional, Dict, Tuple, overload
 
 from ._client_base import ClientBase
@@ -154,7 +155,16 @@ class EventHubConsumerClient(ClientBase):  # pylint: disable=client-accepts-api-
         credential: "CredentialTypes",
         **kwargs: Any,
     ) -> None:
-
+        # Deprecation of uamqp transport
+        if kwargs.get("uamqp_transport"):
+            warnings.warn(
+                "uAMQP legacy support will be removed in the 5.16.0 minor release. "
+                "Please remove the use of `uamqp_transport` keyword argument from the client in order "
+                "to use the pure Python AMQP transport. "
+                "If you rely on this, please comment on [this issue]"
+                "(https://github.com/Azure/azure-sdk-for-python/issues/40347) ",
+                DeprecationWarning, stacklevel=2
+            )
         self._checkpoint_store = kwargs.pop("checkpoint_store", None)
         self._load_balancing_interval = kwargs.pop("load_balancing_interval", None)
         if self._load_balancing_interval is None:
