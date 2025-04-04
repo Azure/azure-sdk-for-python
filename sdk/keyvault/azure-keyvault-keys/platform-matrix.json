@@ -8,7 +8,7 @@
           "ArmTemplateParameters": "@{ enableHsm = $true }"
         }
       },
-      "PythonVersion": "3.9",
+      "PythonVersion": "env:PYVERSION_N4",
       "CoverageArg": ""
     }
   ]
