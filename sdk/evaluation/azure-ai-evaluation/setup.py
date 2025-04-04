@@ -83,7 +83,7 @@ setup(
     ],
     extras_require={
         "redteam": [
-            "pyrit>=0.8.1"
+            "pyrit==0.8.1"
         ]
     },
     project_urls={
