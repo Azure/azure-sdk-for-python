@@ -217,8 +217,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :paramtype if_unmodified_since: ~datetime.datetime
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: bool
-        :rtype: bool
+        :return: BatchFileProperties
+        :rtype: ~azure.batch.models.BatchFileProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -285,8 +285,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :paramtype if_unmodified_since: ~datetime.datetime
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: bool
-        :rtype: bool
+        :return: BatchFileProperties
+        :rtype: ~azure.batch.models.BatchFileProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -473,7 +473,7 @@ class _TaskWorkflowManager:
                     self.tasks_to_add.extendleft(chunk_tasks_to_add[midpoint:])
                     await self._bulk_add_tasks(results_queue, chunk_tasks_to_add[:midpoint])
             # Retry server side errors
-            elif 500 <= e.response.status_code <= 599:
+            elif 500 <= e.response.status_code <= 599: # type: ignore
                 self.tasks_to_add.extendleft(chunk_tasks_to_add)
             else:
                 # Re-add to pending queue as unknown status / don't have result

@@ -228,8 +228,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :paramtype if_unmodified_since: ~datetime.datetime
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: bool
-        :rtype: bool
+        :return: BatchFileProperties
+        :rtype: ~azure.batch.models.BatchFileProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -296,8 +296,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :paramtype if_unmodified_since: ~datetime.datetime
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: bool
-        :rtype: bool
+        :return: BatchFileProperties
+        :rtype: ~azure.batch.models.BatchFileProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
