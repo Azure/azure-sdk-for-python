@@ -41,15 +41,15 @@ jobs:
       condition: and(succeeded(), eq(dependencies.smoke_test_eligibility.outputs['output_eligibility.RunSmokeTests'], true))
     strategy:
       matrix:
-        Python_38_Linux (AzureCloud):
-          PythonVersion: '3.8'
-          Pool: "azsdk-pool-mms-ubuntu-2004-general"
-          OSVmImage: azsdk-pool-mms-ubuntu-2004-1espt
+        Python_Trailing+1_Linux (AzureCloud):
+          PythonVersion: '$(PYVERSION_N3)'
+          Pool: azsdk-pool
+          OSVmImage: $(LINUXVMIMAGE)
         ${{ if eq(parameters.Daily, true) }}:
-          Python_37_Linux (AzureCloud):
-            PythonVersion: '3.7'
-            Pool: azsdk-pool-mms-ubuntu-2004-general
-            OSVmImage: azsdk-pool-mms-ubuntu-2004-1espt
+          Python_Trailing_Linux (AzureCloud):
+            PythonVersion: '$(PYVERSION_N4)'
+            Pool: azsdk-pool
+            OSVmImage: $(LINUXVMIMAGE)
 
     pool:
       name: $(Pool)

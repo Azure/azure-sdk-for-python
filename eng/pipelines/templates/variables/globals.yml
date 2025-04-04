@@ -12,3 +12,12 @@ variables:
   WINDOWS_OUTPUTROOT: $(REPOROOT)\out
   WindowsContainerImage: 'onebranch.azurecr.io/windows/ltsc2019/vse2022:latest'
   GDN_SUPPRESS_FORKED_BUILD_WARNING: true
+
+  # the following variables are referenced from the test matrix files in the repo
+  # these variables will all move one version up when a new version is released
+  PYVERSION_N0: 3.13
+  PYVERSION_N1: 3.12
+  PYVERSION_N2: 3.11
+  PYVERSION_N3: 3.10
+  PYVERSION_N4: 3.9
+  PYPYVERSION_N0: pypy3.9
