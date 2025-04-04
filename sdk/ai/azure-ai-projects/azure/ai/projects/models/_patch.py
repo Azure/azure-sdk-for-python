@@ -837,7 +837,7 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
     this class also supports adding and removing additional API definitions dynamically.
     """
 
-    def __init__(self, name: str, description: str, spec: Any, auth: OpenApiAuthDetails, default_parameters: List[str] = [] ) -> None:
+    def __init__(self, name: str, description: str, spec: Any, auth: OpenApiAuthDetails, default_parameters: List[str] = None ) -> None:
         """
         Constructor initializes the tool with a primary API definition.
 
@@ -849,6 +849,8 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
         :param default_parameters: List of OpenAPI spec parameters that will use user-provided defaults.
         :type default_parameters: OpenApiAuthDetails
         """
+        if default_parameters is None:
+            self._default_parameters = []
         self._default_auth = auth
         self._definitions: List[OpenApiToolDefinition] = [
             OpenApiToolDefinition(
@@ -866,7 +868,7 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
         """
         return self._definitions
 
-    def add_definition(self, name: str, description: str, spec: Any, auth: Optional[OpenApiAuthDetails] = None, default_parameters: List[str] = []) -> None:
+    def add_definition(self, name: str, description: str, spec: Any, auth: Optional[OpenApiAuthDetails] = None, default_parameters: List[str] = None) -> None:
         """
         Adds a new API definition dynamically.
         Raises a ValueError if a definition with the same name already exists.
@@ -884,6 +886,9 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
         :type default_parameters: List[str]
         :raises ValueError: If a definition with the same name exists.
         """
+        if default_parameters is None:
+            default_parameters = []
+
         # Check if a definition with the same name exists.
         if any(definition.openapi.name == name for definition in self._definitions):
             raise ValueError(f"Definition '{name}' already exists and cannot be added again.")
