@@ -21,8 +21,8 @@ def client_raw_response_hook(response):
 
 def request_raw_response_hook(response):
     # if http_constants.HttpHeaders.ThroughputBucket in response.http_request.headers:
-    assert (response.http_request.headers[http_constants.HttpHeaders.ThroughputBucket]
-            == str(request_throughput_bucket_number))
+        assert (response.http_request.headers[http_constants.HttpHeaders.ThroughputBucket]
+                == str(request_throughput_bucket_number))
 
 @pytest.mark.cosmosEmulator
 class TestHeaders(unittest.TestCase):
@@ -132,7 +132,7 @@ class TestHeaders(unittest.TestCase):
     def test_db_read_throughput_bucket(self):
         self.database.read(
             throughput_bucket=request_throughput_bucket_number,
-           raw_response_hook=request_raw_response_hook)
+            raw_response_hook=request_raw_response_hook)
 
     def test_create_container_throughput_bucket(self):
         created_collection = self.database.create_container(
@@ -156,8 +156,8 @@ class TestHeaders(unittest.TestCase):
             PartitionKey(path="/pk"))
         self.database.delete_container(
             created_collection.id,
-           throughput_bucket=request_throughput_bucket_number,
-           raw_response_hook=request_raw_response_hook)
+            throughput_bucket=request_throughput_bucket_number,
+            raw_response_hook=request_raw_response_hook)
 
     def test_list_containers_throughput_bucket(self):
         self.database.list_containers(
@@ -285,11 +285,8 @@ class TestHeaders(unittest.TestCase):
             raw_response_hook=request_raw_response_hook)
 
     def test_container_delete_all_items_by_partition_key_throughput_bucket(self):
-        client = cosmos_client.CosmosClient(self.host, self.masterKey,
-                                            throughput_bucket=client_throughput_bucket_number)
-        created_db = client.create_database("test_db" + str(uuid.uuid4()))
 
-        created_collection = created_db.create_container(
+        created_collection = self.database.create_container(
             id='test_delete_all_items_by_partition_key ' + str(uuid.uuid4()),
             partition_key=PartitionKey(path='/pk', kind='Hash'))
 
@@ -306,9 +303,11 @@ class TestHeaders(unittest.TestCase):
         pk2_item = created_collection.upsert_item(dict(id="item{}".format(3), pk=partition_key2))
 
         # delete all items for partition key 1
-        created_collection.delete_all_items_by_partition_key(partition_key1)
+        created_collection.delete_all_items_by_partition_key(
+            partition_key1,
+            throughput_bucket=request_throughput_bucket_number,
+            raw_response_hook=request_raw_response_hook)
 
-        items = list(created_collection.read_all_items())
 
 if __name__ == "__main__":
     unittest.main()

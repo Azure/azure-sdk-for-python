@@ -291,7 +291,7 @@ class DatabaseProxy(object):
         return ContainerProxy(self.client_connection, self.database_link, result["id"], properties=result)
 
     @distributed_trace
-    def create_container_if_not_exists(  # pylint:disable=docstring-missing-param
+    def  create_container_if_not_exists(  # pylint:disable=docstring-missing-param
         self,
         id: str,
         partition_key: PartitionKey,
@@ -358,6 +358,7 @@ class DatabaseProxy(object):
             container_proxy.read(
                 populate_query_metrics=populate_query_metrics,
                 session_token=session_token,
+                throughput_bucket=throughput_bucket,
                 initial_headers=initial_headers,
                 **kwargs
             )
@@ -539,11 +540,8 @@ class DatabaseProxy(object):
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]
-
         :keyword int throughput_bucket: The desired throughput bucket for the client
-
-
+        :paramtype response_hook: Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]
         :returns: An Iterable of container properties (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
