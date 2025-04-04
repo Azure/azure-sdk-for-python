@@ -285,7 +285,6 @@ class TestHeaders(unittest.TestCase):
             raw_response_hook=request_raw_response_hook)
 
     def test_container_delete_all_items_by_partition_key_throughput_bucket(self):
-
         created_collection = self.database.create_container(
             id='test_delete_all_items_by_partition_key ' + str(uuid.uuid4()),
             partition_key=PartitionKey(path='/pk', kind='Hash'))
