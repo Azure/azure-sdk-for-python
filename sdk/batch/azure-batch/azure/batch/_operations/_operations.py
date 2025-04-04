@@ -9389,8 +9389,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         return deserialized  # type: ignore
 
+    # manually renamed
+    # rename will be through typespec in next version
     @distributed_trace
-    def get_task_file_properties(
+    def _get_task_file_properties_internal(
         self,
         job_id: str,
         task_id: str,
@@ -11254,8 +11256,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         return deserialized  # type: ignore
 
+    # manually renamed
+    # rename will be through typespec in next version
     @distributed_trace
-    def get_node_file_properties(
+    def _get_node_file_properties_internal(
         self,
         pool_id: str,
         node_id: str,

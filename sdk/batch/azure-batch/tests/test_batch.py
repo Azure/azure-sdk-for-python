@@ -343,12 +343,11 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
         # Test Update Pool Options
         params = models.BatchPoolReplaceContent(
-            # certificateReferences=[],
+            certificate_references=[],
             application_package_references=[],
             metadata=[models.MetadataItem(name="foo", value="bar")],
             target_node_communication_mode=models.BatchNodeCommunicationMode.CLASSIC,
         )
-        # certRef = { "certificateReferences": [] }
         response = await wrap_result(client.replace_pool_properties(test_paas_pool.id, params))
         assert response is None
 
@@ -810,21 +809,24 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert len(only_files) >= 2
 
         # Test File Properties from Batch Node
-        props = await wrap_result(client.get_node_file_properties(batch_pool.name, node, only_files[0].name))
-        assert "Content-Length" in props.headers
-        assert "Content-Type" in props.headers
+        if only_files[1].name is not None:
+            props = await wrap_result(client.get_node_file_properties(batch_pool.name, node, only_files[1].name))
+        else:
+            raise ValueError("File path is None")
+        assert props.content_length is not None
+        # assert props.content_type is not None # add content-type to typespec
 
         # Test Get File from Batch Node
         file_length = 0
         with io.BytesIO() as file_handle:
-            response = await wrap_file_result(client.get_node_file(batch_pool.name, node, only_files[0].name))
+            response = await wrap_file_result(client.get_node_file(batch_pool.name, node, only_files[1].name))
             for data in response:
-                file_length += 1
-        assert file_length == int(props.headers["Content-Length"])
+                file_length += len(data)
+        assert file_length == props.content_length
 
         # Test Delete File from Batch Node
         response = await wrap_result(
-            client.delete_node_file(batch_pool.name, node, only_files[0].name)
+            client.delete_node_file(batch_pool.name, node, only_files[1].name)
         )  # TODO: maybe delete stderr to use in the next test for content_length (against "hello world")
         assert response is None
 
@@ -834,11 +836,14 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert len(only_files) >= 1
 
         # Test File Properties from Task
-        props = await wrap_result(
-            client.get_task_file_properties(job_id=batch_job.id, task_id=task_id, file_path=only_files[0].name)
-        )
-        assert "Content-Length" in props.headers
-        assert "Content-Type" in props.headers
+        if only_files[0].name is not None:
+            props = await wrap_result(
+                client.get_task_file_properties(job_id=batch_job.id, task_id=task_id, file_path=only_files[0].name)
+            )
+        else:
+            raise ValueError("File path is None")
+        assert props.content_length is not None
+        # assert props.content_type is not None # add content-type to typespec
 
         # Test Get File from Task
         file_length = 0
@@ -846,7 +851,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             response = await wrap_file_result(client.get_task_file(batch_job.id, task_id, only_files[0].name))
             for data in response:
                 file_length += len(data)
-        assert file_length == int(props.headers["Content-Length"])
+        assert file_length == props.content_length
 
         # Test Delete File from Task
         response = await wrap_result(client.delete_task_file(batch_job.id, task_id, only_files[0].name))

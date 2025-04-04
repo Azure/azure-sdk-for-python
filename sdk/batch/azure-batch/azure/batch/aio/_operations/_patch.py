@@ -10,12 +10,12 @@ import asyncio
 import datetime
 import collections
 import logging
-from typing import Any, AsyncIterator, List, Iterable, Optional, Union
+from typing import Any, Deque, AsyncIterator, List, Iterable, Optional, Union
 
 from azure.batch import models as _models
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError
-from azure.core.rest import HttpResponse
+from azure.core.tracing.decorator import distributed_trace
 
 from ._operations import (
     BatchClientOperationsMixin as BatchClientOperationsMixinGenerated,
@@ -32,6 +32,8 @@ __all__: List[str] = [
 class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
     """Customize generated code"""
 
+    # create_task_collection renamed
+    @distributed_trace
     async def create_tasks(
         self,
         job_id: str,
@@ -86,7 +88,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         kwargs.update({"timeout": timeout, "ocpdate": ocpdate})
 
-        results_queue = collections.deque()
+        results_queue: Deque[_models.BatchTaskAddResult] = collections.deque()
         task_workflow_manager = _TaskWorkflowManager(
             self, job_id=job_id, task_collection=task_collection, **kwargs
         )
@@ -113,6 +115,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             submitted_tasks = _handle_output(results_queue)
             return _models.BatchTaskAddCollectionResult(value=submitted_tasks)
 
+    @distributed_trace
     async def get_node_file(
         self,
         pool_id: str,
@@ -174,6 +177,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         kwargs["stream"] = True
         return await super().get_node_file(*args, **kwargs)
 
+    @distributed_trace
     async def get_node_file_properties(
         self,
         pool_id: str,
@@ -185,7 +189,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> bool:
+    ) -> _models.BatchFileProperties:
         """Gets the properties of the specified Compute Node file.
 
         :param pool_id: The ID of the Pool that contains the Compute Node. Required.
@@ -218,25 +222,30 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        args = [pool_id, node_id, file_path]
-        kwargs.update(
-            {
-                "timeout": timeout,
-                "ocpdate": ocpdate,
-                "if_modified_since": if_modified_since,
-                "if_unmodified_since": if_unmodified_since,
-            }
-        )
-
-        kwargs["cls"] = lambda pipeline_response, json_response, headers: (
-            pipeline_response,
-            json_response,
-            headers,
-        )
-        get_response = await super().get_node_file_properties(*args, **kwargs)
+        cls = lambda pipeline_response, json_response, headers: _models.BatchFileProperties(
+            url=headers["ocp-batch-file-url"],
+            is_directory=headers["ocp-batch-file-isdirectory"],
+            last_modified=headers["Last-Modified"],
+            content_length=headers["Content-Length"],
+            creation_time=headers["ocp-creation-time"],
+            # content_type=headers["Content-Type"], # need to add to typespec
+            file_mode=headers["ocp-batch-file-mode"],
+            )
+    
+        get_response: _models.BatchFileProperties = super()._get_node_file_properties_internal( # type: ignore
+            pool_id, 
+            node_id, 
+            file_path, 
+            timeout=timeout, 
+            ocpdate=ocpdate, 
+            if_modified_since=if_modified_since, 
+            if_unmodified_since=if_unmodified_since, 
+            cls=cls,
+            **kwargs)
 
         return get_response
 
+    @distributed_trace
     async def get_task_file_properties(
         self,
         job_id: str,
@@ -248,7 +257,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> bool:
+    ) -> _models.BatchFileProperties:
         """Gets the properties of the specified Task file.
 
         :param job_id: The ID of the Job that contains the Task. Required.
@@ -281,25 +290,30 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        args = [job_id, task_id, file_path]
-        kwargs.update(
-            {
-                "timeout": timeout,
-                "ocpdate": ocpdate,
-                "if_modified_since": if_modified_since,
-                "if_unmodified_since": if_unmodified_since,
-            }
-        )
-
-        kwargs["cls"] = lambda pipeline_response, json_response, headers: (
-            pipeline_response,
-            json_response,
-            headers,
-        )
-        get_response = await super().get_task_file_properties(*args, **kwargs)
+        cls = lambda pipeline_response, json_response, headers: _models.BatchFileProperties(
+            url=headers["ocp-batch-file-url"],
+            is_directory=headers["ocp-batch-file-isdirectory"],
+            last_modified=headers["Last-Modified"],
+            content_length=headers["Content-Length"],
+            creation_time=headers["ocp-creation-time"],
+            # content_type=headers["Content-Type"], # need to add to typespec
+            file_mode=headers["ocp-batch-file-mode"],
+            )
+    
+        get_response: _models.BatchFileProperties = super()._get_task_file_properties_internal( # type: ignore
+            job_id, 
+            task_id, 
+            file_path, 
+            timeout=timeout, 
+            ocpdate=ocpdate, 
+            if_modified_since=if_modified_since, 
+            if_unmodified_since=if_unmodified_since, 
+            cls=cls,
+            **kwargs)
 
         return get_response
 
+    @distributed_trace
     async def get_task_file(
         self,
         job_id: str,
@@ -384,9 +398,9 @@ class _TaskWorkflowManager:
         **kwargs
     ):
         # List of tasks which failed to add due to a returned client error
-        self.failure_tasks = collections.deque()
+        self.failure_tasks: Deque[_models.BatchTaskAddResult] = collections.deque()
         # List of unknown exceptions which occurred during requests.
-        self.errors = collections.deque()
+        self.errors: Deque[Any] = collections.deque()
 
         # synchronized through lock variables
         self._max_tasks_per_request = MAX_TASKS_PER_REQUEST
