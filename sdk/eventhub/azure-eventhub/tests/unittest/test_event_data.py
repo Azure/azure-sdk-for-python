@@ -18,6 +18,8 @@ except (ModuleNotFoundError, ImportError):
     UamqpTransport = None
 from azure.eventhub._transport._pyamqp_transport import PyamqpTransport
 from azure.eventhub._pyamqp.message import Message, Properties, Header
+from azure.eventhub._utils import CE_ZERO_SECONDS
+from azure.eventhub._constants import PROP_TIMESTAMP
 from azure.eventhub.amqp import AmqpAnnotatedMessage, AmqpMessageHeader, AmqpMessageProperties
 
 from azure.eventhub import _common
@@ -101,7 +103,7 @@ def test_sys_properties(uamqp_transport):
         properties.group_sequence = 1
         properties.reply_to_group_id = "reply_to_group_id"
         message = uamqp.message.Message(properties=properties)
-        message.annotations = {_common.PROP_OFFSET: "@latest"}
+        message.annotations = {_common.PROP_OFFSET: "@latest", PROP_TIMESTAMP: CE_ZERO_SECONDS * 1000}
     else:
         properties = Properties(
             message_id="message_id",
@@ -118,7 +120,7 @@ def test_sys_properties(uamqp_transport):
             group_sequence=1,
             reply_to_group_id="reply_to_group_id",
         )
-        message_annotations = {_common.PROP_OFFSET: "@latest"}
+        message_annotations = {_common.PROP_OFFSET: "@latest", PROP_TIMESTAMP: CE_ZERO_SECONDS * 1000}
         message = Message(properties=properties, message_annotations=message_annotations)
     ed = EventData._from_message(message)  # type: EventData
 
@@ -136,6 +138,7 @@ def test_sys_properties(uamqp_transport):
     assert ed.system_properties[_common.PROP_GROUP_ID] == properties.group_id
     assert ed.system_properties[_common.PROP_GROUP_SEQUENCE] == properties.group_sequence
     assert ed.system_properties[_common.PROP_REPLY_TO_GROUP_ID] == properties.reply_to_group_id
+    assert ed.enqueued_time == datetime.datetime.min.replace(tzinfo=datetime.timezone.utc)
 
 
 def test_event_data_batch(uamqp_transport):
