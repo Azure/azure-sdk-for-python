@@ -6,6 +6,7 @@
 
 - Fixed a bug where service errors were incorrectly expected to have info/description fields set in all cases.
 - Fixed a bug where the type in azure.servicebus.management.AuthorizationRule was not being correctly passed to the request.
+- Fixed a bug where max number of messages was not being requested when receiving from the service due to an incorrect link credit calculation. ([#40156](https://github.com/Azure/azure-sdk-for-python/issues/40156))
 
 ## 7.14.0 (2025-02-13)
 
