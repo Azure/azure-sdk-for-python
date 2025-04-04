@@ -30,6 +30,8 @@ from . import _base
 from . import http_constants
 from ._vector_session_token import VectorSessionToken
 from .exceptions import CosmosHttpResponseError
+from .partition_key import PartitionKey
+from typing import Any, Dict, Optional
 
 
 class SessionContainer(object):
@@ -38,12 +40,24 @@ class SessionContainer(object):
         self.rid_to_session_token = {}
         self.session_lock = threading.RLock()
 
-    def get_session_token(self, resource_path):
-        """Get Session Token for collection_link.
+    def get_session_token(
+            self,
+            resource_path: str,
+            pk_value: str,
+            container_properties_cache: Dict[str, Dict[str, Any]],
+            routing_map_provider: Any,
+            partition_key_range_id: Optional[int]) -> str:
+        """Get Session Token for collection_link and operation_type.
 
         :param str resource_path: Self link / path to the resource
-        :return: Session Token dictionary for the collection_id
-        :rtype: dict
+        :param str operation_type: Operation type (e.g. 'Create', 'Read', 'Upsert', 'Replace')
+        :param str pk_value: The partition key value being used for the operation
+        :param container_properties_cache: Container properties cache used to fetch partition key definitions
+        :type container_properties_cache: Dict[str, Dict[str, Any]]
+        :param int partition_key_range_id: The partition key range ID used for the operation
+        :return: Session Token dictionary for the collection_id, will be empty string if not found or if the operation
+        does not require a session token (single master write operations).
+        :rtype: str
         """
 
         with self.session_lock:
@@ -59,23 +73,91 @@ class SessionContainer(object):
                 else:
                     collection_rid = _base.GetItemContainerLink(resource_path)
 
-                if collection_rid in self.rid_to_session_token:
+                if collection_rid in self.rid_to_session_token and collection_name in container_properties_cache:
                     token_dict = self.rid_to_session_token[collection_rid]
-                    session_token_list = []
-                    for key in token_dict.keys():
-                        session_token_list.append("{0}:{1}".format(key, token_dict[key].convert_to_string()))
-                    session_token = ",".join(session_token_list)
+                    if partition_key_range_id is not None:
+                        session_token = token_dict.get(partition_key_range_id)
+                    else:
+                        collection_pk_definition = container_properties_cache[collection_name].get("partitionKey")
+                        partition_key = PartitionKey(path=collection_pk_definition['paths'],
+                                                     kind=collection_pk_definition['kind'],
+                                                     version=collection_pk_definition['version'])
+                        epk_range = partition_key._get_epk_range_for_partition_key(pk_value=pk_value)
+                        pk_range = routing_map_provider.get_overlapping_ranges(collection_name, [epk_range])
+                        vector_session_token = token_dict.get(pk_range[0]['id'])
+                        session_token = "{0}:{1}".format(pk_range[0]['id'], vector_session_token.session_token)
                     return session_token
-
-                # return empty token if not found
                 return ""
             except Exception:  # pylint: disable=broad-except
                 return ""
 
-    def set_session_token(self, response_result, response_headers):
+    async def get_session_token_async(
+            self,
+            resource_path: str,
+            pk_value: str,
+            container_properties_cache: Dict[str, Dict[str, Any]],
+            routing_map_provider: Any,
+            partition_key_range_id: Optional[str]) -> str:
+        """Get Session Token for collection_link and operation_type.
+
+        :param str resource_path: Self link / path to the resource
+        :param str operation_type: Operation type (e.g. 'Create', 'Read', 'Upsert', 'Replace')
+        :param str pk_value: The partition key value being used for the operation
+        :param container_properties_cache: Container properties cache used to fetch partition key definitions
+        :type container_properties_cache: Dict[str, Dict[str, Any]]
+        :param Any routing_map_provider: The routing map provider containing the partition key range cache logic
+        :param str partition_key_range_id: The partition key range ID used for the operation
+        :return: Session Token dictionary for the collection_id, will be empty string if not found or if the operation
+        does not require a session token (single master write operations).
+        :rtype: str
+        """
+
+        with self.session_lock:
+            is_name_based = _base.IsNameBased(resource_path)
+            collection_rid = ""
+            session_token = ""
+
+            try:
+                if is_name_based:
+                    # get the collection name
+                    collection_name = _base.GetItemContainerLink(resource_path)
+                    collection_rid = self.collection_name_to_rid[collection_name]
+                else:
+                    collection_rid = _base.GetItemContainerLink(resource_path)
+
+                if collection_rid in self.rid_to_session_token and collection_name in container_properties_cache:
+                    token_dict = self.rid_to_session_token[collection_rid]
+                    if partition_key_range_id is not None:
+                        vector_session_token = token_dict.get(partition_key_range_id)
+                        session_token = "{0}:{1}".format(partition_key_range_id, vector_session_token.session_token)
+                    else:
+                        collection_pk_definition = container_properties_cache[collection_name].get("partitionKey")
+                        partition_key = PartitionKey(path=collection_pk_definition['paths'],
+                                                     kind=collection_pk_definition['kind'],
+                                                     version=collection_pk_definition['version'])
+                        epk_range = partition_key._get_epk_range_for_partition_key(pk_value=pk_value)
+                        pk_range = await routing_map_provider.get_overlapping_ranges(collection_name, [epk_range])
+                        session_token_list = []
+                        parents = pk_range[0].get('parents').copy()
+                        parents.append(pk_range[0]['id'])
+                        for parent in parents:
+                            vector_session_token = token_dict.get(parent)
+                            session_token = "{0}:{1}".format(parent, vector_session_token.session_token)
+                            session_token_list.append(session_token)
+                            # if vector_session_token is not None:
+                            #     session_token = "{0}:{1}".format(parent, vector_session_token.session_token)
+                            #     session_token_list.append(session_token)
+                        session_token = ",".join(session_token_list)
+                    return session_token
+                return ""
+            except Exception:  # pylint: disable=broad-except
+                return ""
+
+    def set_session_token(self, client_connection, response_result, response_headers):
         """Session token must only be updated from response of requests that
         successfully mutate resource on the server side (write, replace, delete etc).
 
+        :param client_connection: Client connection used to refresh the partition key range cache if needed
         :param dict response_result:
         :param dict response_headers:
         :return: None
@@ -86,8 +168,6 @@ class SessionContainer(object):
         # x-ms-alt-content-path which is the string representation of the resource
 
         with self.session_lock:
-            collection_rid = ""
-            collection_name = ""
 
             try:
                 self_link = response_result["_self"]
@@ -105,10 +185,15 @@ class SessionContainer(object):
                     response_result_id = response_result[response_result_id_key]
                 else:
                     return
-                collection_rid, collection_name = _base.GetItemContainerInfo(
-                    self_link, alt_content_path, response_result_id
-                )
-
+                collection_rid, collection_name = _base.GetItemContainerInfo(self_link, alt_content_path,
+                                                                             response_result_id)
+                # if the response came in with a new partition key range id after a split, refresh the pk range cache
+                partition_key_range_id = response_headers.get(http_constants.HttpHeaders.PartitionKeyRangeID)
+                collection_ranges = None
+                if client_connection:
+                    collection_ranges = client_connection._routing_map_provider._collection_routing_map_by_item.get(collection_name)
+                if collection_ranges and not collection_ranges._rangeById.get(partition_key_range_id):
+                    client_connection.refresh_routing_map_provider()
             except ValueError:
                 return
             except Exception:  # pylint: disable=broad-except
@@ -194,7 +279,7 @@ class SessionContainer(object):
 
 
 class Session(object):
-    """State of a Azure Cosmos session.
+    """State of an Azure Cosmos session.
 
     This session object can be shared across clients within the same process.
 
@@ -209,8 +294,13 @@ class Session(object):
     def clear_session_token(self, response_headers):
         self.session_container.clear_session_token(response_headers)
 
-    def update_session(self, response_result, response_headers):
-        self.session_container.set_session_token(response_result, response_headers)
+    def update_session(self, client_connection, response_result, response_headers):
+        self.session_container.set_session_token(client_connection, response_result, response_headers)
 
-    def get_session_token(self, resource_path):
-        return self.session_container.get_session_token(resource_path)
+    def get_session_token(self, resource_path, pk_value, container_properties_cache, routing_map_provider, partition_key_range_id):
+        return self.session_container.get_session_token(resource_path, pk_value, container_properties_cache,
+                                                        routing_map_provider, partition_key_range_id)
+
+    async def get_session_token_async(self, resource_path, pk_value, container_properties_cache, routing_map_provider, partition_key_range_id):
+        return await self.session_container.get_session_token_async(resource_path, pk_value, container_properties_cache,
+                                                                    routing_map_provider, partition_key_range_id)
