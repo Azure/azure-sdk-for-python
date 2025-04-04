@@ -110,7 +110,7 @@ class Operations:
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return None, AsyncList(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             _request = prepare_request(next_link)
