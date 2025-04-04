@@ -167,7 +167,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
 
         return dataset_version
 
-    async def upload_folder_and_create_version(
+    async def upload_folder_and_create(
         self, *, name: str, version: Optional[str] = None, folder: str, **kwargs: Any
     ) -> DatasetVersion:
         """Upload all files in a folder and its sub folders to a blob storage, while maintaining
