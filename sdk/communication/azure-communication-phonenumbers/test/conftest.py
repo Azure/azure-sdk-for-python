@@ -11,6 +11,9 @@ from devtools_testutils import (
 )
 
 
+STATIC_RESERVATION_ID = "6227aeb8-8086-4824-9586-05cafe96f37b"
+
+
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     fake_connection_str = "endpoint=https://sanitized.communication.azure.com/;accesskey=fake=="
@@ -44,6 +47,11 @@ def add_sanitizers(test_proxy):
     add_general_regex_sanitizer(regex=r"(?:(?:%2B)|\+)\d{10,15}", value="sanitized")
 
     add_general_regex_sanitizer(regex=r"phoneNumbers/[%2B\d]{10,15}", value="phoneNumbers/sanitized")
+
+    add_general_regex_sanitizer(
+        regex=r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}",
+        value=STATIC_RESERVATION_ID
+    )
 
     add_header_regex_sanitizer(key="P3P", value="sanitized")
     add_header_regex_sanitizer(key="Set-Cookie", value="sanitized")
