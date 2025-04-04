@@ -837,7 +837,13 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
     this class also supports adding and removing additional API definitions dynamically.
     """
 
-    def __init__(self, name: str, description: str, spec: Any, auth: OpenApiAuthDetails, default_parameters: Optional[List[str]] = None ) -> None:
+    def __init__(
+        self, name: str,
+        description: str,
+        spec: Any,
+        auth: OpenApiAuthDetails,
+        default_parameters: Optional[List[str]] = None
+    ) -> None:
         """
         Constructor initializes the tool with a primary API definition.
 
@@ -854,7 +860,13 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
         self._default_auth = auth
         self._definitions: List[OpenApiToolDefinition] = [
             OpenApiToolDefinition(
-                openapi=OpenApiFunctionDefinition(name=name, description=description, spec=spec, auth=auth, default_params=self._default_parameters)
+                openapi=OpenApiFunctionDefinition(
+                    name=name,
+                    description=description,
+                    spec=spec,
+                    auth=auth,
+                    default_params=self._default_parameters
+                )
             )
         ]
 
@@ -868,7 +880,14 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
         """
         return self._definitions
 
-    def add_definition(self, name: str, description: str, spec: Any, auth: Optional[OpenApiAuthDetails] = None, default_parameters: Optional[List[str]] = None) -> None:
+    def add_definition(
+        self,
+        name: str,
+        description: str,
+        spec: Any,
+        auth: Optional[OpenApiAuthDetails] = None,
+        default_parameters: Optional[List[str]] = None
+    ) -> None:
         """
         Adds a new API definition dynamically.
         Raises a ValueError if a definition with the same name already exists.
@@ -897,7 +916,13 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
         auth_to_use = auth if auth is not None else self._default_auth
 
         new_definition = OpenApiToolDefinition(
-            openapi=OpenApiFunctionDefinition(name=name, description=description, spec=spec, auth=auth_to_use, default_params=default_parameters)
+            openapi=OpenApiFunctionDefinition(
+                name=name,
+                description=description,
+                spec=spec,
+                auth=auth_to_use,
+                default_params=default_parameters
+            )
         )
         self._definitions.append(new_definition)
 
@@ -1052,7 +1077,13 @@ class BingCustomSearchTool(Tool[BingCustomSearchToolDefinition]):
 
         :rtype: List[ToolDefinition]
         """
-        return [BingCustomSearchToolDefinition(bing_custom_search=SearchConfigurationList(search_configurations=self.connection_ids))]
+        return [
+            BingCustomSearchToolDefinition(
+                bing_custom_search=SearchConfigurationList(
+                    search_configurations=self.connection_ids
+                )
+            )
+        ]
 
     @property
     def resources(self) -> ToolResources:
