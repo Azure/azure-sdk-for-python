@@ -64,19 +64,13 @@ class RegistryDiscovery:
             base_url=self._base_url,
             **self.kwargs,
         )
-        return service_client_10_2021_dataplanepreview
-
-    def get_registry_service_model_client(self) -> ServiceClientModelDataPlane:
-        self._get_registry_details()
-        self.kwargs.pop("subscription_id", None)
-        self.kwargs.pop("resource_group", None)
         service_model_client_10_2021_dataplanepreview = ServiceClientModelDataPlane(
             credential=self.credential,
             subscription_id=self._subscription_id,
             base_url=self._base_url,
             **self.kwargs,
         )
-        return service_model_client_10_2021_dataplanepreview
+        return service_client_10_2021_dataplanepreview, service_model_client_10_2021_dataplanepreview
 
     @property
     def subscription_id(self) -> str:
@@ -220,30 +214,17 @@ def get_registry_client(credential, registry_name, workspace_location: Optional[
     registry_discovery = RegistryDiscovery(
         credential, registry_name, service_client_registry_discovery_client, **kwargs
     )
-    service_client_10_2021_dataplanepreview = registry_discovery.get_registry_service_client()
+    service_client_10_2021_dataplanepreview, service_model_client_10_2021_dataplanepreview = (
+        registry_discovery.get_registry_service_client()
+    )
     subscription_id = registry_discovery.subscription_id
     resource_group_name = registry_discovery.resource_group
     return (
         service_client_10_2021_dataplanepreview,
         resource_group_name,
         subscription_id,
+        service_model_client_10_2021_dataplanepreview,
     )
-
-
-def get_registry_model_client(credential, registry_name, workspace_location: Optional[str] = None, **kwargs):
-    base_url = _get_registry_discovery_endpoint_from_metadata(_get_default_cloud_name())
-    kwargs.pop("base_url", None)
-
-    service_client_registry_discovery_client = ServiceClientRegistryDiscovery(
-        credential=credential, base_url=base_url, **kwargs
-    )
-    if workspace_location:
-        workspace_kwargs = {"workspace_location": workspace_location}
-        kwargs.update(workspace_kwargs)
-    registry_discovery = RegistryDiscovery(
-        credential, registry_name, service_client_registry_discovery_client, **kwargs
-    )
-    return registry_discovery.get_registry_service_model_client()
 
 
 def _check_region_fqdn(workspace_region, response):
