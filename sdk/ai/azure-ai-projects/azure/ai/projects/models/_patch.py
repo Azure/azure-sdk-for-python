@@ -1026,7 +1026,7 @@ class BingGroundingTool(ConnectionTool[BingGroundingToolDefinition]):
         """
         return [BingGroundingToolDefinition(bing_grounding=ToolConnectionList(connection_list=self.connection_ids))]
 
-class BingCustomSearchTool(ConnectionTool[BingCustomSearchToolDefinition]):
+class BingCustomSearchTool(Tool[BingCustomSearchToolDefinition]):
     """
     A tool that searches for information using Bing Custom Search.
     """
@@ -1048,6 +1048,19 @@ class BingCustomSearchTool(ConnectionTool[BingCustomSearchToolDefinition]):
         :rtype: List[ToolDefinition]
         """
         return [BingCustomSearchToolDefinition(bing_custom_search=SearchConfigurationList(search_configurations=self.connection_ids))]
+
+    @property
+    def resources(self) -> ToolResources:
+        """
+        Get the connection tool resources.
+
+        :rtype: ToolResources
+        """
+        return ToolResources()
+
+    def execute(self, tool_call: Any) -> Any:
+        pass
+
 
 class FabricTool(ConnectionTool[MicrosoftFabricToolDefinition]):
     """
