@@ -210,7 +210,7 @@ def get_registry_client(credential, registry_name, workspace_location: Optional[
     service_client_10_2021_dataplanepreview = registry_discovery.get_registry_service_client()
     subscription_id = registry_discovery.subscription_id
     resource_group_name = registry_discovery.resource_group
-    return service_client_10_2021_dataplanepreview, resource_group_name, subscription_id
+    return service_client_10_2021_dataplanepreview, resource_group_name, subscription_id, registry_discovery._base_url
 
 
 def _check_region_fqdn(workspace_region, response):
