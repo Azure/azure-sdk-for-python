@@ -14,19 +14,20 @@ DESCRIPTION:
 USAGE:
     python datalake_samples_file_system.py
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) DATALAKE_STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
 import os
 
 from azure.core.exceptions import ResourceExistsError
 
-SOURCE_FILE = 'SampleSource.txt'
+current_dir = os.path.dirname(os.path.abspath(__file__))
+SOURCE_FILE = os.path.join(current_dir, "SampleSource.txt")
 
 
 class FileSystemSamples(object):
 
-    connection_string = os.environ['AZURE_STORAGE_CONNECTION_STRING']
+    connection_string = os.environ['DATALAKE_STORAGE_CONNECTION_STRING']
 
     #--Begin File System Samples-----------------------------------------------------------------
 
