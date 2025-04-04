@@ -49,7 +49,7 @@ class TimeoutTransport(RequestsTransport):
         return response
 
 
-@pytest.mark.cosmosLong
+@pytest.mark.cosmosFabric
 class TestCRUDContainerOperations(unittest.TestCase):
     """Python CRUD Tests.
     """

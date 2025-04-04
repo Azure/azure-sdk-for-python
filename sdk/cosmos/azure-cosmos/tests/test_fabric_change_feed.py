@@ -30,7 +30,7 @@ def round_time():
     utc_now = datetime.now(timezone.utc)
     return utc_now - timedelta(microseconds=utc_now.microsecond)
 
-@pytest.mark.cosmosQuery
+@pytest.mark.cosmosFabric
 @pytest.mark.unittest
 @pytest.mark.usefixtures("setup")
 class TestChangeFeed:

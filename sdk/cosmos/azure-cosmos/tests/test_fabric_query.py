@@ -19,6 +19,7 @@ from azure.cosmos.partition_key import PartitionKey
 from tests import fabric_token_credential
 
 
+@pytest.mark.cosmosFabric
 class TestQuery(unittest.TestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
 
