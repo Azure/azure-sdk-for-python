@@ -46,7 +46,7 @@ from azure.core.utils import case_insensitive_dict
 from ... import _model_base, models as _models
 from ..._model_base import SdkJSONEncoder, _deserialize
 from ..._serialization import Deserializer, Serializer
-from ..._vendor import prepare_multipart_form_data
+from ..._vendor import FileType, prepare_multipart_form_data
 from ...operations._operations import (
     build_agents_cancel_run_request,
     build_agents_cancel_vector_store_file_batch_request,
@@ -3450,11 +3450,20 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    async def upload_file(self, body: _models.UploadFileRequest, **kwargs: Any) -> _models.OpenAIFile:
+    async def upload_file(
+        self, *, file: FileType, purpose: Union[str, _models.FilePurpose], filename: Optional[str] = None, **kwargs: Any
+    ) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
-        :param body: Multipart body. Required.
-        :type body: ~azure.ai.projects.models.UploadFileRequest
+        :keyword file: The file data, in bytes. Required.
+        :paramtype file: ~azure.ai.projects._vendor.FileType
+        :keyword purpose: The intended purpose of the uploaded file. Use ``assistants`` for Agents and
+         Message files, ``vision`` for Agents image file inputs, ``batch`` for Batch API, and
+         ``fine-tune`` for Fine-tuning. Known values are: "fine-tune", "fine-tune-results",
+         "assistants", "assistants_output", "batch", "batch_output", and "vision". Required.
+        :paramtype purpose: str or ~azure.ai.projects.models.FilePurpose
+        :keyword filename: The name of the file. Default value is None.
+        :paramtype filename: str
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3464,7 +3473,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     async def upload_file(self, body: JSON, **kwargs: Any) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
-        :param body: Multipart body. Required.
+        :param body: Required.
         :type body: JSON
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.OpenAIFile
@@ -3472,11 +3481,28 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
-    async def upload_file(self, body: Union[_models.UploadFileRequest, JSON], **kwargs: Any) -> _models.OpenAIFile:
+    async def upload_file(
+        self,
+        body: JSON = _Unset,
+        *,
+        file: FileType = _Unset,
+        purpose: Union[str, _models.FilePurpose] = _Unset,
+        filename: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
-        :param body: Multipart body. Is either a UploadFileRequest type or a JSON type. Required.
-        :type body: ~azure.ai.projects.models.UploadFileRequest or JSON
+        :param body: Is one of the following types: JSON Required.
+        :type body: JSON
+        :keyword file: The file data, in bytes. Required.
+        :paramtype file: ~azure.ai.projects._vendor.FileType
+        :keyword purpose: The intended purpose of the uploaded file. Use ``assistants`` for Agents and
+         Message files, ``vision`` for Agents image file inputs, ``batch`` for Batch API, and
+         ``fine-tune`` for Fine-tuning. Known values are: "fine-tune", "fine-tune-results",
+         "assistants", "assistants_output", "batch", "batch_output", and "vision". Required.
+        :paramtype purpose: str or ~azure.ai.projects.models.FilePurpose
+        :keyword filename: The name of the file. Default value is None.
+        :paramtype filename: str
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3494,6 +3520,13 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.OpenAIFile] = kwargs.pop("cls", None)
 
+        if body is _Unset:
+            if file is _Unset:
+                raise TypeError("missing required argument: file")
+            if purpose is _Unset:
+                raise TypeError("missing required argument: purpose")
+            body = {"file": file, "filename": filename, "purpose": purpose}
+            body = {k: v for k, v in body.items() if v is not None}
         _body = body.as_dict() if isinstance(body, _model_base.Model) else body
         _file_fields: List[str] = ["file"]
         _data_fields: List[str] = ["purpose", "filename"]
@@ -3507,16 +3540,12 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
             "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "projectName": self._serialize.url(
-                "self._config.project_name", self._config.project_name, "str", skip_quote=True
-            ),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
