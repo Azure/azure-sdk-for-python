@@ -92,9 +92,9 @@ class RedTeam():
     """
     def __init__(
             self,
-            *,
             azure_ai_project,
             credential,
+            *,
             risk_categories: Optional[List[RiskCategory]] = None,
             num_objectives: int = 10,
             application_scenario: Optional[str] = None,
@@ -1434,8 +1434,8 @@ class RedTeam():
 
     async def scan(
             self,
-            *,        
             target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration, PromptChatTarget],
+            *,
             scan_name: Optional[str] = None,
             num_turns : int = 1,
             attack_strategies: List[Union[AttackStrategy, List[AttackStrategy]]] = [],
