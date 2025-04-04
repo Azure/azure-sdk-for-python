@@ -60,5 +60,6 @@ TASK_STATUS = {
     "RUNNING": "running",
     "COMPLETED": "completed",
     "FAILED": "failed",
-    "TIMEOUT": "timeout"
+    "TIMEOUT": "timeout",
+    "INCOMPLETE": "incomplete",
 }
