@@ -90,14 +90,17 @@ class RedTeam():
     :param max_parallel_tasks: Maximum number of parallel tasks to run when scanning (default: 5)
     :type max_parallel_tasks: int
     """
-    def __init__(self, 
-        azure_ai_project, 
-        credential,
-        risk_categories: Optional[List[RiskCategory]] = None,
-        num_objectives: int = 10,
-        application_scenario: Optional[str] = None,
-        custom_attack_seed_prompts: Optional[str] = None,
-        output_dir=None):
+    def __init__(
+            self,
+            azure_ai_project,
+            credential,
+            *,
+            risk_categories: Optional[List[RiskCategory]] = None,
+            num_objectives: int = 10,
+            application_scenario: Optional[str] = None,
+            custom_attack_seed_prompts: Optional[str] = None,
+            output_dir=None
+        ):
 
         self.azure_ai_project = validate_azure_ai_project(azure_ai_project)
         self.credential = credential
@@ -1430,8 +1433,9 @@ class RedTeam():
         return None
 
     async def scan(
-            self,             
+            self,
             target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration, PromptChatTarget],
+            *,
             scan_name: Optional[str] = None,
             num_turns : int = 1,
             attack_strategies: List[Union[AttackStrategy, List[AttackStrategy]]] = [],
@@ -1440,7 +1444,8 @@ class RedTeam():
             application_scenario: Optional[str] = None,
             parallel_execution: bool = True,
             max_parallel_tasks: int = 5,
-            timeout: int = 120) -> RedTeamOutput:
+            timeout: int = 120
+        ) -> RedTeamOutput:
         """Run a red team scan against the target using the specified strategies.
         
         :param target: The target model or function to scan

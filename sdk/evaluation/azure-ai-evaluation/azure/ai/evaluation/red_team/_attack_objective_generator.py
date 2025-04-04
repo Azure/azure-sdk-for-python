@@ -7,7 +7,10 @@ import os
 from enum import Enum
 from typing import List, Optional, Dict, Any
 from pathlib import Path
+from azure.ai.evaluation._common._experimental import experimental
 
+
+@experimental
 class RiskCategory(str, Enum):
     """Risk categories for attack objectives."""
     HateUnfairness = "hate_unfairness"
