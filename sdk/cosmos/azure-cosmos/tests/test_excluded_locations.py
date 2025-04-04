@@ -34,17 +34,17 @@ ITEM_ID = 'doc1'
 ITEM_PK_VALUE = 'pk'
 TEST_ITEM = {'id': ITEM_ID, PARTITION_KEY: ITEM_PK_VALUE}
 
-# L0 = "Default"
-# L1 = "West US 3"
-# L2 = "West US"
-# L3 = "East US 2"
-# L4 = "Central US"
-
 L0 = "Default"
-L1 = "East US 2"
-L2 = "East US"
-L3 = "West US 2"
+L1 = "West US 3"
+L2 = "West US"
+L3 = "East US 2"
 L4 = "Central US"
+
+# L0 = "Default"
+# L1 = "East US 2"
+# L2 = "East US"
+# L3 = "West US 2"
+# L4 = "Central US"
 
 CLIENT_ONLY_TEST_DATA = [
     # preferred_locations, client_excluded_locations, excluded_locations_request
