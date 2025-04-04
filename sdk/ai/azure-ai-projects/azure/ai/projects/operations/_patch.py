@@ -1821,7 +1821,10 @@ class AgentsOperations(AgentsOperationsGenerated):
                     break
                 # We need tool set only if we are executing local function. In case if
                 # the tool is azure_function we just need to wait when it will be finished.
-                if any(tool_call.type == "function" for tool_call in tool_calls):
+                if (
+                    any(tool_call.type == "function" for tool_call in tool_calls)
+                    and len(self._function_tool.definitions) > 0
+                ):
                     toolset = _models.ToolSet()
                     toolset.add(self._function_tool)
                     tool_outputs = toolset.execute_tool_calls(tool_calls)
@@ -2517,7 +2520,11 @@ class AgentsOperations(AgentsOperationsGenerated):
 
             # We need tool set only if we are executing local function. In case if
             # the tool is azure_function we just need to wait when it will be finished.
-            if any(tool_call.type == "function" for tool_call in tool_calls):
+            if (
+                any(tool_call.type == "function" for tool_call in tool_calls)
+                and len(self._function_tool.definitions) > 0
+            ):
+
                 toolset = _models.ToolSet()
                 toolset.add(self._function_tool)
                 tool_outputs = toolset.execute_tool_calls(tool_calls)
