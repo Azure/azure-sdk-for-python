@@ -129,6 +129,7 @@ class DatabaseProxy(object):
         *,
         session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Read the database properties.
@@ -136,6 +137,7 @@ class DatabaseProxy(object):
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :returns: A dict representing the database properties.
         :rtype: Dict[Str, Any]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given database couldn't be retrieved.
@@ -145,6 +147,8 @@ class DatabaseProxy(object):
             kwargs['session_token'] = session_token
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
         request_options = build_options(kwargs)
         if populate_query_metrics is not None:
             warnings.warn(
@@ -391,6 +395,7 @@ class DatabaseProxy(object):
         initial_headers: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """Delete a container.
@@ -405,6 +410,7 @@ class DatabaseProxy(object):
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the container couldn't be deleted.
         :rtype: None
         """
@@ -416,6 +422,8 @@ class DatabaseProxy(object):
             kwargs['etag'] = etag
         if match_condition is not None:
             kwargs['match_condition'] = match_condition
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
         request_options = build_options(kwargs)
         if populate_query_metrics is not None:
             warnings.warn(
@@ -462,6 +470,7 @@ class DatabaseProxy(object):
         session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """List the containers in the database.
@@ -471,6 +480,7 @@ class DatabaseProxy(object):
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :returns: An Iterable of container properties (dicts).
         :rtype: Iterable[Dict[str, Any]]
 
@@ -487,6 +497,8 @@ class DatabaseProxy(object):
             kwargs['session_token'] = session_token
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
         feed_options = build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
@@ -515,6 +527,7 @@ class DatabaseProxy(object):
         session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """List the properties for containers in the current database.
@@ -527,6 +540,10 @@ class DatabaseProxy(object):
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]
+
+        :keyword int throughput_bucket: The desired throughput bucket for the client
+
+
         :returns: An Iterable of container properties (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
@@ -534,6 +551,8 @@ class DatabaseProxy(object):
             kwargs['session_token'] = session_token
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
         feed_options = build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count

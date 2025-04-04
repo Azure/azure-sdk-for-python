@@ -155,6 +155,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         session_token: Optional[str] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         initial_headers: Optional[Dict[str, str]] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Read the container properties.
@@ -169,6 +170,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be retrieved.
             This includes if the container does not exist.
         :returns: Dict representing the retrieved container.
@@ -180,6 +182,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['priority'] = priority
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
         request_options = build_options(kwargs)
         if populate_query_metrics:
             warnings.warn(
@@ -207,6 +211,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         initial_headers: Optional[Dict[str, str]] = None,
         max_integrated_cache_staleness_in_ms: Optional[int] = None,
         priority: Optional[Literal["High", "Low"]] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> CosmosDict:
         """Get the item identified by `item`.
@@ -225,6 +230,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :returns: A CosmosDict representing the item to be retrieved.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item couldn't be retrieved.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
@@ -245,6 +251,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['initial_headers'] = initial_headers
         if priority is not None:
             kwargs['priority'] = priority
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
         request_options = build_options(kwargs)
 
         request_options["partitionKey"] = self._set_partition_key(partition_key)
@@ -275,6 +283,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         priority: Optional[Literal["High", "Low"]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any],
                                           Union[Dict[str, Any], ItemPaged[Dict[str, Any]]]], None]] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """List all the items in the container.
@@ -292,6 +301,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
@@ -301,6 +311,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['initial_headers'] = initial_headers
         if priority is not None:
             kwargs['priority'] = priority
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
         feed_options = build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
@@ -631,6 +643,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['initial_headers'] = initial_headers
         if priority is not None:
             kwargs['priority'] = priority
+        if throughput_bucket is not None:
+            kwargs["throughputBucket"] = throughput_bucket
         feed_options = build_options(kwargs)
         if enable_cross_partition_query is not None:
             feed_options["enableCrossPartitionQuery"] = enable_cross_partition_query
@@ -658,8 +672,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         feed_options["correlatedActivityId"] = correlated_activity_id
         if continuation_token_limit is not None:
             feed_options["responseContinuationTokenLimitInKb"] = continuation_token_limit
-        if throughput_bucket is not None:
-            feed_options["throughputBucket"] = throughput_bucket
         if response_hook and hasattr(response_hook, "clear"):
             response_hook.clear()
         if self.container_link in self.__get_client_container_caches():
@@ -699,6 +711,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         no_response: Optional[bool] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> CosmosDict:
         """Replaces the specified item if it exists in the container.
@@ -723,6 +736,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword bool no_response: Indicates whether service should be instructed to skip
             sending response payloads. When not specified explicitly here, the default value will be determined from
             kwargs or when also not specified there from client-level kwargs.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The replace operation failed or the item with
             given id does not exist.
         :returns: A CosmosDict representing the item after replace went through. The dict will be empty if `no_response`
@@ -746,6 +760,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['match_condition'] = match_condition
         if no_response is not None:
             kwargs['no_response'] = no_response
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
         request_options = build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = True
         if populate_query_metrics is not None:
@@ -775,6 +791,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         no_response: Optional[bool] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> CosmosDict:
         """Insert or update the specified item.
@@ -798,6 +815,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword bool no_response: Indicates whether service should be instructed to skip sending
             response payloads. When not specified explicitly here, the default value will be determined from kwargs or
             when also not specified there from client-level kwargs.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item could not be upserted.
         :returns: A CosmosDict representing the upserted item. The dict will be empty if `no_response` is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
@@ -818,6 +836,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['match_condition'] = match_condition
         if no_response is not None:
             kwargs['no_response'] = no_response
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
         request_options = build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = True
         if populate_query_metrics is not None:
@@ -935,6 +955,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         no_response: Optional[bool] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> CosmosDict:
         """ Patches the specified item with the provided operations if it
@@ -962,6 +983,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword bool no_response: Indicates whether service should be instructed to skip sending
             response payloads. When not specified explicitly here, the default value will be determined from kwargs or
             when also not specified there from client-level kwargs.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The patch operations failed or the item with
             given id does not exist.
         :returns: A CosmosDict representing the item after the patch operations went through. The dict will be empty
@@ -982,6 +1004,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['match_condition'] = match_condition
         if no_response is not None:
             kwargs['no_response'] = no_response
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
         request_options = build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = True
         request_options["partitionKey"] = self._set_partition_key(partition_key)
@@ -1007,6 +1031,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> CosmosList:
         """ Executes the transactional batch for the specified partition key.
@@ -1025,6 +1050,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :returns: A CosmosList representing the items after the batch operations went through.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The batch failed to execute.
         :raises ~azure.cosmos.exceptions.CosmosBatchOperationError: A transactional batch operation failed in the batch.
@@ -1042,6 +1068,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['match_condition'] = match_condition
         if priority is not None:
             kwargs['priority'] = priority
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
         request_options = build_options(kwargs)
         request_options["partitionKey"] = self._set_partition_key(partition_key)
         request_options["disableAutomaticIdGeneration"] = True
@@ -1063,6 +1091,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """Delete the specified item from the container.
@@ -1084,6 +1113,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The item wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The item does not exist in the container.
         :rtype: None
@@ -1098,6 +1128,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['match_condition'] = match_condition
         if priority is not None:
             kwargs['priority'] = priority
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
         request_options = build_options(kwargs)
         if partition_key is not None:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
@@ -1343,6 +1375,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         session_token: Optional[str] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """The delete by partition key feature is an asynchronous, background operation that allows you to delete all
@@ -1360,6 +1393,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :rtype: None
         """
         if pre_trigger_include is not None:
@@ -1372,6 +1406,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['etag'] = etag
         if match_condition is not None:
             kwargs['match_condition'] = match_condition
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
         request_options = build_options(kwargs)
         # regardless if partition key is valid we set it as invalid partition keys are set to a default empty value
         request_options["partitionKey"] = self._set_partition_key(partition_key)
