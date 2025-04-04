@@ -1,10 +1,12 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
+import fabric_token_credential
 import test_config
 from azure.cosmos import CosmosClient as CosmosSyncClient
 
-cosmos_sync_client = CosmosSyncClient(test_config.TestConfig.host, test_config.TestConfig.masterKey)
+credential = fabric_token_credential.FabricTokenCredential()
+cosmos_sync_client = CosmosSyncClient(test_config.TestConfig.fabric_host, credential=credential)
 
 
 def pytest_configure(config):
@@ -32,7 +34,7 @@ def pytest_sessionfinish(session, exitstatus):
     returning the exit status to the system.
     """
     config = test_config.TestConfig
-    config.try_delete_database(cosmos_sync_client)
+    # config.try_delete_database(cosmos_sync_client)
 
 
 def pytest_unconfigure(config):

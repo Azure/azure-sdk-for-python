@@ -32,6 +32,7 @@ class TestConfig(object):
     masterKey = os.getenv('ACCOUNT_KEY',
                           'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==')
     host = os.getenv('ACCOUNT_HOST', local_host)
+    fabric_host = ""
     connection_str = os.getenv('ACCOUNT_CONNECTION_STR', 'AccountEndpoint={};AccountKey={};'.format(host, masterKey))
 
     connectionPolicy = documents.ConnectionPolicy()
@@ -54,7 +55,7 @@ class TestConfig(object):
     THROUGHPUT_FOR_5_PARTITIONS = 30000
     THROUGHPUT_FOR_1_PARTITION = 400
 
-    TEST_DATABASE_ID = os.getenv('COSMOS_TEST_DATABASE_ID', "Python SDK Test Database " + str(uuid.uuid4()))
+    TEST_DATABASE_ID = os.getenv('COSMOS_TEST_DATABASE_ID', 'dkunda-fabric-cdb')
 
     TEST_SINGLE_PARTITION_CONTAINER_ID = "Single Partition Test Container " + str(uuid.uuid4())
     TEST_MULTI_PARTITION_CONTAINER_ID = "Multi Partition Test Container " + str(uuid.uuid4())
