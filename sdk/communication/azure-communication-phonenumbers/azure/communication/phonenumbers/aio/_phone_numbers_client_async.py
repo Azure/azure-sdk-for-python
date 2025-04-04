@@ -407,13 +407,13 @@ class PhoneNumbersClient:
         :return: PhoneNumbersReservation
         :rtype: ~azure.communication.phonenumbers.PhoneNumbersReservation
         """
-        reservation = await self._phone_number_client.phone_numbers.get_phone_numbers_reservation(
+        reservation = await self._phone_number_client.phone_numbers.get_reservation(
             reservation_id, **kwargs
         )
         return PhoneNumbersReservation._from_generated(reservation)
     
-    @distributed_trace_async
-    async def list_phone_numbers_reservations(
+    @distributed_trace
+    def list_phone_numbers_reservations(
         self, *, max_page_size = 100, **kwargs: Any
     ) -> AsyncItemPaged[PhoneNumbersReservationItem]:
         """Lists all reservations.
@@ -473,7 +473,7 @@ class PhoneNumbersClient:
         )
 
         response = await self._phone_number_client.phone_numbers.create_or_update_reservation(
-            reservation_id=reservation.id, body=res_request, **kwargs
+            reservation.id, res_request, **kwargs
         )
         return PhoneNumbersReservation._from_generated(response)
     
