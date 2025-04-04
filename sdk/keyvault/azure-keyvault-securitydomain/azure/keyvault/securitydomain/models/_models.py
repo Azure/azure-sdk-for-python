@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class CertificateInfoObject(_model_base.Model):
+class CertificateInfo(_model_base.Model):
     """The Security Domain download operation requires customer to provide N certificates (minimum 3
     and maximum 10) containing a public key in JWK format.
 
@@ -82,6 +82,34 @@ class KeyVaultErrorError(_model_base.Model):
     """The error message."""
     inner_error: Optional["_models.KeyVaultErrorError"] = rest_field(name="innererror", visibility=["read"])
     """The key vault server error."""
+
+
+class SecurityDomain(_model_base.Model):
+    """The Security Domain.
+
+    :ivar value: The Security Domain. Required.
+    :vartype value: str
+    """
+
+    value: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Security Domain. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class SecurityDomainJsonWebKey(_model_base.Model):
@@ -150,34 +178,6 @@ class SecurityDomainJsonWebKey(_model_base.Model):
         alg: str,
         use: Optional[str] = None,
         x5_t: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SecurityDomainObject(_model_base.Model):
-    """The Security Domain.
-
-    :ivar value: The Security Domain. Required.
-    :vartype value: str
-    """
-
-    value: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The Security Domain. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: str,
     ) -> None: ...
 
     @overload

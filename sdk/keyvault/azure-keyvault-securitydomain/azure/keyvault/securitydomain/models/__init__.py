@@ -14,11 +14,11 @@ if TYPE_CHECKING:
 
 
 from ._models import (  # type: ignore
-    CertificateInfoObject,
+    CertificateInfo,
     KeyVaultError,
     KeyVaultErrorError,
+    SecurityDomain,
     SecurityDomainJsonWebKey,
-    SecurityDomainObject,
     SecurityDomainOperationStatus,
     TransferKey,
 )
@@ -31,11 +31,11 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "CertificateInfoObject",
+    "CertificateInfo",
     "KeyVaultError",
     "KeyVaultErrorError",
+    "SecurityDomain",
     "SecurityDomainJsonWebKey",
-    "SecurityDomainObject",
     "SecurityDomainOperationStatus",
     "TransferKey",
     "OperationStatus",

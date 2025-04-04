@@ -18,7 +18,7 @@ from azure.core.polling import LROPoller
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 
-from ._client import KeyVaultClient
+from ._client import SecurityDomainClient as KeyVaultClient
 from ._internal import (
     ChallengeAuthPolicy,
     SecurityDomainDownloadNoPolling,
@@ -28,7 +28,7 @@ from ._internal import (
     SecurityDomainUploadPolling,
     SecurityDomainUploadPollingMethod,
 )
-from .models import CertificateInfoObject, SecurityDomainObject, SecurityDomainOperationStatus
+from .models import CertificateInfo, SecurityDomain, SecurityDomainOperationStatus
 from ._serialization import Serializer
 
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
@@ -119,69 +119,70 @@ class SecurityDomainClient(KeyVaultClient):
     @overload  # type: ignore[override]
     def begin_download(
         self,
-        certificate_info_object: CertificateInfoObject,
+        certificate_info: CertificateInfo,
         *,
         content_type: str = "application/json",
-        polling: Optional[Literal[False]] = None,
+        skip_activation_polling: Optional[Literal[True]] = None,
         **kwargs: Any,
-    ) -> LROPoller[SecurityDomainObject]: ...
+    ) -> LROPoller[SecurityDomain]: ...
 
     @overload
     def begin_download(
         self,
-        certificate_info_object: JSON,
+        certificate_info: JSON,
         *,
         content_type: str = "application/json",
-        polling: Optional[Literal[False]] = None,
+        skip_activation_polling: Optional[Literal[True]] = None,
         **kwargs: Any,
-    ) -> LROPoller[SecurityDomainObject]: ...
+    ) -> LROPoller[SecurityDomain]: ...
 
     @overload
     def begin_download(
         self,
-        certificate_info_object: IO[bytes],
+        certificate_info: IO[bytes],
         *,
         content_type: str = "application/json",
-        polling: Optional[Literal[False]] = None,
+        skip_activation_polling: Optional[Literal[True]] = None,
         **kwargs: Any,
-    ) -> LROPoller[SecurityDomainObject]: ...
+    ) -> LROPoller[SecurityDomain]: ...
 
     @distributed_trace
     def begin_download(
         self,
-        certificate_info_object: Union[CertificateInfoObject, JSON, IO[bytes]],
+        certificate_info: Union[CertificateInfo, JSON, IO[bytes]],
         *,
         content_type: str = "application/json",
-        polling: Optional[Literal[False]] = None,
+        skip_activation_polling: Optional[Literal[True]] = None,
         **kwargs: Any,
-    ) -> LROPoller[SecurityDomainObject]:
+    ) -> LROPoller[SecurityDomain]:
         """Retrieves the Security Domain from the managed HSM. Calling this endpoint can
         be used to activate a provisioned managed HSM resource.
 
-        :param certificate_info_object: The Security Domain download operation requires the customer to provide N
+        :param certificate_info: The Security Domain download operation requires the customer to provide N
          certificates (minimum 3 and maximum 10) containing a public key in JWK format. Required in one of the
-         following types: CertificateInfoObject, JSON, or IO[bytes].
-        :type certificate_info_object: ~azure.keyvault.securitydomain.models.CertificateInfoObject or
+         following types: CertificateInfo, JSON, or IO[bytes].
+        :type certificate_info: ~azure.keyvault.securitydomain.models.CertificateInfo or
          JSON or IO[bytes]
         :keyword str content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
-        :keyword bool polling: If set to False, the operation will not poll for completion and calling `.result()` on
-         the poller will return the security domain object immediately. Default value is None.
+        :keyword bool skip_activation_polling: If set to True, the operation will not poll for HSM activation to
+         complete and calling `.result()` on the poller will return the security domain object immediately. Default
+         value is None.
 
-        :return: An instance of LROPoller that returns SecurityDomainObject. The
-         SecurityDomainObject is compatible with MutableMapping
+        :return: An instance of LROPoller that returns SecurityDomain. The
+         SecurityDomain is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.keyvault.securitydomain.models.SecurityDomainObject]
+         ~azure.core.polling.LROPoller[~azure.keyvault.securitydomain.models.SecurityDomain]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         delay = kwargs.pop("polling_interval", self._config.polling_interval)
         polling_method = (
             SecurityDomainDownloadNoPolling()
-            if polling is False
+            if skip_activation_polling is True
             else SecurityDomainDownloadPollingMethod(lro_algorithms=[SecurityDomainDownloadPolling()], timeout=delay)
         )
         return super()._begin_download(  # type: ignore[return-value]
-            certificate_info_object,
+            certificate_info,
             content_type=content_type,
             polling=polling_method,
             **kwargs,
@@ -190,22 +191,23 @@ class SecurityDomainClient(KeyVaultClient):
     @distributed_trace
     def begin_upload(
         self,
-        security_domain: Union[SecurityDomainObject, JSON, IO[bytes]],
+        security_domain: Union[SecurityDomain, JSON, IO[bytes]],
         *,
         content_type: str = "application/json",
-        polling: Optional[Literal[False]] = None,
+        skip_activation_polling: Optional[Literal[True]] = None,
         **kwargs: Any,
     ) -> LROPoller[SecurityDomainOperationStatus]:
         """Restore the provided Security Domain.
 
         :param security_domain: The Security Domain to be restored. Required in one of the following types:
-         SecurityDomainObject, JSON, or IO[bytes].
-        :type security_domain: ~azure.keyvault.securitydomain.models.SecurityDomainObject or JSON or
+         SecurityDomain, JSON, or IO[bytes].
+        :type security_domain: ~azure.keyvault.securitydomain.models.SecurityDomain or JSON or
          IO[bytes]
         :keyword str content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
-        :keyword bool polling: If set to False, the operation will not poll for completion and calling `.result()` on
-         the poller will return the initial response immediately. Default value is None.
+        :keyword bool skip_activation_polling: If set to True, the operation will not poll for HSM activation to
+         complete and calling `.result()` on the poller will return the security domain object immediately. Default
+         value is None.
 
         :return: An instance of LROPoller that returns SecurityDomainOperationStatus. The
          SecurityDomainOperationStatus is compatible with MutableMapping
@@ -216,7 +218,7 @@ class SecurityDomainClient(KeyVaultClient):
         delay = kwargs.pop("polling_interval", self._config.polling_interval)
         polling_method = (
             SecurityDomainUploadNoPolling()
-            if polling is False
+            if skip_activation_polling is True
             else SecurityDomainUploadPollingMethod(lro_algorithms=[SecurityDomainUploadPolling()], timeout=delay)
         )
         return super()._begin_upload(

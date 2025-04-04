@@ -1,16 +1,16 @@
 {
     "CrossLanguagePackageId": "KeyVault",
     "CrossLanguageDefinitionId": {
-        "azure.keyvault.securitydomain.models.CertificateInfoObject": "KeyVault.CertificateInfoObject",
+        "azure.keyvault.securitydomain.models.CertificateInfo": "KeyVault.CertificateInfoObject",
         "azure.keyvault.securitydomain.models.KeyVaultError": "KeyVaultError",
         "azure.keyvault.securitydomain.models.KeyVaultErrorError": "KeyVaultError.error.anonymous",
+        "azure.keyvault.securitydomain.models.SecurityDomain": "KeyVault.SecurityDomainObject",
         "azure.keyvault.securitydomain.models.SecurityDomainJsonWebKey": "KeyVault.SecurityDomainJsonWebKey",
-        "azure.keyvault.securitydomain.models.SecurityDomainObject": "KeyVault.SecurityDomainObject",
         "azure.keyvault.securitydomain.models.SecurityDomainOperationStatus": "KeyVault.SecurityDomainOperationStatus",
         "azure.keyvault.securitydomain.models.TransferKey": "KeyVault.TransferKey",
         "azure.keyvault.securitydomain.models.OperationStatus": "KeyVault.OperationStatus",
-        "azure.keyvault.securitydomain.KeyVaultClient.get_download_status": "ClientCustomizations.KeyVaultClient.getDownloadStatus",
-        "azure.keyvault.securitydomain.KeyVaultClient.get_upload_status": "ClientCustomizations.KeyVaultClient.getUploadStatus",
-        "azure.keyvault.securitydomain.KeyVaultClient.get_transfer_key": "ClientCustomizations.KeyVaultClient.getTransferKey"
+        "azure.keyvault.securitydomain.SecurityDomainClient.get_download_status": "ClientCustomizations.SecurityDomainClient.getDownloadStatus",
+        "azure.keyvault.securitydomain.SecurityDomainClient.get_upload_status": "ClientCustomizations.SecurityDomainClient.getUploadStatus",
+        "azure.keyvault.securitydomain.SecurityDomainClient.get_transfer_key": "ClientCustomizations.SecurityDomainClient.getTransferKey"
     }
 }

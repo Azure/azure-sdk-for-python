@@ -5,7 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=protected-access, broad-except, arguments-differ, signature-differs, no-member
+# pylint: disable=protected-access, broad-except
 
 import copy
 import calendar

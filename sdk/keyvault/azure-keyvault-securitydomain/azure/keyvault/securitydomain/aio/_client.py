@@ -15,15 +15,15 @@ from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._serialization import Deserializer, Serializer
-from ._configuration import KeyVaultClientConfiguration
-from ._operations import KeyVaultClientOperationsMixin
+from ._configuration import SecurityDomainClientConfiguration
+from ._operations import SecurityDomainClientOperationsMixin
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class KeyVaultClient(KeyVaultClientOperationsMixin):
-    """KeyVaultClient.
+class SecurityDomainClient(SecurityDomainClientOperationsMixin):
+    """SecurityDomainClient.
 
     :param vault_base_url: Required.
     :type vault_base_url: str
@@ -36,7 +36,7 @@ class KeyVaultClient(KeyVaultClientOperationsMixin):
 
     def __init__(self, vault_base_url: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         _endpoint = "{vaultBaseUrl}"
-        self._config = KeyVaultClientConfiguration(vault_base_url=vault_base_url, credential=credential, **kwargs)
+        self._config = SecurityDomainClientConfiguration(vault_base_url=vault_base_url, credential=credential, **kwargs)
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
