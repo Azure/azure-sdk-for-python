@@ -43,7 +43,7 @@ from azure.ai.evaluation import evaluate
 from azure.core.credentials import TokenCredential
 
 # Red Teaming imports
-from ._red_team_result import _RedTeamResult, _RedTeamingScorecard, _RedTeamingParameters, RedTeamOutput
+from ._red_team_result import _RedTeamResult, _RedTeamingScorecard, _RedTeamingParameters, RedTeamResult
 from ._attack_strategy import AttackStrategy
 from ._attack_objective_generator import RiskCategory, _AttackObjectiveGenerator
 
@@ -204,7 +204,7 @@ class RedTeam():
 
     async def _log_redteam_results_to_mlflow(
         self,
-        redteam_output: RedTeamOutput,
+        redteam_output: RedTeamResult,
         eval_run: EvalRun,
         data_only: bool = False,
     ) -> Optional[str]:
@@ -1445,7 +1445,7 @@ class RedTeam():
             parallel_execution: bool = True,
             max_parallel_tasks: int = 5,
             timeout: int = 120
-        ) -> RedTeamOutput:
+        ) -> RedTeamResult:
         """Run a red team scan against the target using the specified strategies.
         
         :param target: The target model or function to scan
@@ -1818,9 +1818,9 @@ class RedTeam():
             # Create output with either full results or just conversations
             if data_only:
                 self.logger.info("Data-only mode, creating output with just conversations")
-                output = RedTeamOutput(redteaming_data=red_team_result["redteaming_data"])
+                output = RedTeamResult(redteaming_data=red_team_result["redteaming_data"])
             else:
-                output = RedTeamOutput(
+                output = RedTeamResult(
                     red_team_result=red_team_result, 
                     redteaming_data=red_team_result["redteaming_data"]
                 )

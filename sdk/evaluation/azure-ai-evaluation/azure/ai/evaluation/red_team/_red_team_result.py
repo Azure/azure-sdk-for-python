@@ -120,7 +120,7 @@ class _RedTeamResult(TypedDict):
     studio_url: Optional[str]
 
 @experimental
-class RedTeamOutput():
+class RedTeamResult():
     def __init__(self, red_team_result: Optional[_RedTeamResult] = None, redteaming_data: Optional[List[_Conversation]] = None):
         self.red_team_result = red_team_result
         self.redteaming_data = redteaming_data
