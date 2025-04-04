@@ -81,10 +81,11 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerCore(object):
         # get the partition key range for the given partition key
         target_container_link = None
         for container_link, properties in self.client._container_properties_cache:
-            # TODO: @tvaron3 consider moving this to a constant with other usages
             if properties["_rid"] == container_rid:
                 target_container_link = container_link
-        # throw exception if it is not found
+        if target_container_link:
+            raise RuntimeError("Illegal state: the container cache is not properly initialized.")
+        # TODO: @tvaron3 check different clients and create them in different ways
         pkrange = self.client._routing_map_provider.get_overlapping_range(target_container_link, partition_key)
         return PartitionKeyRangeWrapper(pkrange, container_rid)
 
@@ -98,7 +99,11 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerCore(object):
                 documents._OperationType.IsWriteOperation(request.operation_type)) else EndpointOperationType.ReadType
             location = self.location_cache.get_location_from_endpoint(str(request.location_endpoint_to_route))
             pkrange_wrapper = self._create_pkrange_wrapper(request)
-            self.partition_health_tracker.add_failure(pkrange_wrapper, endpoint_operation_type, location)
+            self.partition_health_tracker.add_failure(pkrange_wrapper, endpoint_operation_type, str(location))
+
+    # TODO: @tvaron3 lower request timeout to 5.5 seconds for recovering
+    # TODO: @tvaron3 exponential backoff for recovering
+
 
     def add_excluded_locations_to_request(self, request: RequestObject) -> RequestObject:
         if self.is_circuit_breaker_applicable(request):
@@ -112,7 +117,7 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerCore(object):
         """
         Mark the partition unavailable from the given request.
         """
-        location = self.location_cache.get_location_from_endpoint(request.location_endpoint_to_route)
+        location = self.location_cache.get_location_from_endpoint(str(request.location_endpoint_to_route))
         pkrange_wrapper = self._create_pkrange_wrapper(request)
         self.partition_health_tracker.mark_partition_unavailable(pkrange_wrapper, location)
 
@@ -124,7 +129,7 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerCore(object):
             #convert operation_type to either Read or Write
             endpoint_operation_type = EndpointOperationType.WriteType if (
                 documents._OperationType.IsWriteOperation(request.operation_type)) else EndpointOperationType.ReadType
-            location = self.location_cache.get_location_from_endpoint(request.location_endpoint_to_route)
+            location = self.location_cache.get_location_from_endpoint(str(request.location_endpoint_to_route))
             pkrange_wrapper = self._create_pkrange_wrapper(request)
             self.partition_health_tracker.add_success(pkrange_wrapper, endpoint_operation_type, location)
 

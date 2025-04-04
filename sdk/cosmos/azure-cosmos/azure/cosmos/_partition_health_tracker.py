@@ -168,7 +168,7 @@ class PartitionHealthTracker(object):
             self,
             pkrange_wrapper: PartitionKeyRangeWrapper,
             operation_type: str,
-            location: Optional[str]
+            location: str
     ) -> None:
         # Retrieve the failure rate threshold from the environment.
         failure_rate_threshold = int(os.getenv(Constants.FAILURE_PERCENTAGE_TOLERATED,
