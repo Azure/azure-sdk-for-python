@@ -1,5 +1,15 @@
 # Release History
 
+## 1.4.1 (2025-04-04)
+
+### Breaking Changes
+
+### Features Added
+
+- New `RedTeam` agent functionality to assess the safety and resilience of AI systems against adversarial prompt attacks
+
+### Bugs Fixed
+
 ## 1.4.0 (2025-03-27)
 
 ### Features Added
