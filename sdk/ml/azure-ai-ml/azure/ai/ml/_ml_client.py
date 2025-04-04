@@ -50,7 +50,7 @@ from azure.ai.ml._user_agent import USER_AGENT
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._preflight_utils import get_deployments_operation
-from azure.ai.ml._utils._registry_utils import get_registry_client
+from azure.ai.ml._utils._registry_utils import get_registry_client, get_registry_model_client
 from azure.ai.ml._utils.utils import _is_https_url
 from azure.ai.ml.constants._common import AzureMLResourceType, DefaultOpenEncoding
 from azure.ai.ml.entities import (
@@ -249,7 +249,6 @@ class MLClient:
 
             (
                 self._service_client_10_2021_dataplanepreview,
-                self._service_client_model_dataplane,
                 resource_group_name,
                 subscription_id,
             ) = get_registry_client(
@@ -258,6 +257,14 @@ class MLClient:
                 workspace_location,
                 **kwargs,
             )
+
+            self._service_client_model_dataplane = get_registry_model_client(
+                self._credential,
+                registry_name if registry_name else registry_reference,
+                workspace_location,
+                **kwargs,
+            )
+
             if not workspace_name:
                 workspace_name = workspace_reference
 
