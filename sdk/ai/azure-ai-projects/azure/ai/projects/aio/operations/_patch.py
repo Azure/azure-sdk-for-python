@@ -33,6 +33,16 @@ from typing import (
 from azure.core.credentials import TokenCredential
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.identity import DefaultAzureCredential
+from azure.core.tracing.decorator import distributed_trace
+from azure.mgmt.applicationinsights import ApplicationInsightsManagementClient
+from azure.mgmt.applicationinsights.v2018_05_01_preview.models import ApplicationInsightsComponent
+from azure.identity import DefaultAzureCredential
+from azure.mgmt.applicationinsights import ApplicationInsightsManagementClient
+from azure.mgmt.applicationinsights.models import ApplicationInsightsComponent
+from azure.mgmt.authorization import AuthorizationManagementClient
+from azure.mgmt.authorization.models import RoleAssignmentCreateParameters
+import uuid
 
 from ... import models as _models
 from ..._vendor import FileType
