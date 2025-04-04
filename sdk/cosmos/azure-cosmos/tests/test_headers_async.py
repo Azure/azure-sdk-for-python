@@ -44,12 +44,12 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
         self.database = self.client.get_database_client(self.configs.TEST_DATABASE_ID)
         self.container = self.database.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
-    async def test_client_level_throughput_bucket(self):
+    async def test_client_level_throughput_bucket_async(self):
         CosmosClient(self.host, self.masterKey,
             throughput_bucket=client_throughput_bucket_number,
             raw_response_hook=client_raw_response_hook)
 
-    async def test_request_precedence_throughput_bucket(self):
+    async def test_request_precedence_throughput_bucket_async(self):
         client = CosmosClient(self.host, self.masterKey,
                                    throughput_bucket=client_throughput_bucket_number)
         created_db = await client.create_database(
@@ -58,7 +58,7 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
             raw_response_hook=request_raw_response_hook)
         client.delete_database(created_db.id)
 
-    async def test_create_db_if_not_exists_and_delete_db_throughput_bucket(self):
+    async def test_create_db_if_not_exists_and_delete_db_throughput_bucket_async(self):
         created_db = await self.client.create_database_if_not_exists(
            "test_db" + str(uuid.uuid4()),
            throughput_bucket=request_throughput_bucket_number,
@@ -68,24 +68,24 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
             throughput_bucket=request_throughput_bucket_number,
             raw_response_hook=request_raw_response_hook)
 
-    async def test_list_db_throughput_bucket(self):
+    async def test_list_db_throughput_bucket_async(self):
         self.client.list_databases(
             throughput_bucket=request_throughput_bucket_number,
             raw_response_hook=request_raw_response_hook)
 
-    async def test_query_db_throughput_bucket(self):
+    async def test_query_db_throughput_bucket_async(self):
         query = 'SELECT * from c'
         self.client.query_databases(
             query=query,
             throughput_bucket=request_throughput_bucket_number,
             raw_response_hook=request_raw_response_hook)
 
-    async def test_db_read_throughput_bucket(self):
+    async def test_db_read_throughput_bucket_async(self):
        await self.database.read(
             throughput_bucket=request_throughput_bucket_number,
            raw_response_hook=request_raw_response_hook)
 
-    async def test_create_container_throughput_bucket(self):
+    async def test_create_container_throughput_bucket_async(self):
         created_collection = await self.database.create_container(
             str(uuid.uuid4()),
             PartitionKey(path="/pk"),
@@ -93,7 +93,7 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
             raw_response_hook=request_raw_response_hook)
         await self.database.delete_container(created_collection.id)
 
-    async def test_create_container_if_not_exists_throughput_bucket(self):
+    async def test_create_container_if_not_exists_throughput_bucket_async(self):
         created_collection = await self.database.create_container_if_not_exists(
             str(uuid.uuid4()),
             PartitionKey(path="/pk"),
@@ -101,7 +101,7 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
             raw_response_hook=request_raw_response_hook)
         await self.database.delete_container(created_collection.id)
 
-    async def test_delete_container_throughput_bucket(self):
+    async def test_delete_container_throughput_bucket_async(self):
         created_collection = await self.database.create_container(
             str(uuid.uuid4()),
             PartitionKey(path="/pk"))
@@ -110,19 +110,19 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
            throughput_bucket=request_throughput_bucket_number,
            raw_response_hook=request_raw_response_hook)
 
-    async def test_list_containers_throughput_bucket(self):
+    async def test_list_containers_throughput_bucket_async(self):
         self.database.list_containers(
            throughput_bucket=request_throughput_bucket_number,
            raw_response_hook=request_raw_response_hook)
 
-    async def test_query_containers_throughput_bucket(self):
+    async def test_query_containers_throughput_bucket_async(self):
         query = 'SELECT * from c'
         self.database.query_containers(
             query=query,
             throughput_bucket=request_throughput_bucket_number,
             raw_response_hook=request_raw_response_hook)
 
-    async def test_replace_container_throughput_bucket(self):
+    async def test_replace_container_throughput_bucket_async(self):
         replaced_collection = await self.database.replace_container(
             self.container,
             PartitionKey(path="/pk"),
@@ -130,12 +130,12 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
             raw_response_hook=request_raw_response_hook)
         self.database.delete_container(replaced_collection.id)
 
-    async def test_container_read_throughput_bucket(self):
+    async def test_container_read_throughput_bucket_async(self):
         await self.container.read(
             throughput_bucket=request_throughput_bucket_number,
             raw_response_hook=request_raw_response_hook)
 
-    async def test_container_read_item_throughput_bucket(self):
+    async def test_container_read_item_throughput_bucket_async(self):
         created_document = await self.container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
         await self.container.read_item(
              item=created_document['id'],
@@ -143,7 +143,7 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
              throughput_bucket=request_throughput_bucket_number,
              raw_response_hook=request_raw_response_hook)
 
-    async def test_container_read_all_items_throughput_bucket(self):
+    async def test_container_read_all_items_throughput_bucket_async(self):
         for i in range(10):
             await self.container.create_item(body={'id': ''.format(i) + str(uuid.uuid4()), 'pk': 'mypk'})
 
@@ -151,7 +151,7 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
             throughput_bucket=request_throughput_bucket_number,
             raw_response_hook=request_raw_response_hook)
 
-    async def test_container_query_items_throughput_bucket(self):
+    async def test_container_query_items_throughput_bucket_async(self):
         doc_id = 'MyId' + str(uuid.uuid4())
         document_definition = {'pk': 'pk', 'id': doc_id}
         await self.container.create_item(body=document_definition)
@@ -163,7 +163,7 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
             throughput_bucket=request_throughput_bucket_number,
             raw_response_hook=request_raw_response_hook)
 
-    async def test_container_replace_item_throughput_bucket(self):
+    async def test_container_replace_item_throughput_bucket_async(self):
         created_document = await self.container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
         await self.container.replace_item(
             item=created_document['id'],
@@ -171,19 +171,19 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
             throughput_bucket=request_throughput_bucket_number,
             raw_response_hook=request_raw_response_hook)
 
-    async def test_container_upsert_item_throughput_bucket(self):
+    async def test_container_upsert_item_throughput_bucket_async(self):
        await self.container.upsert_item(
             body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
             throughput_bucket=request_throughput_bucket_number,
             raw_response_hook=request_raw_response_hook)
 
-    async def test_container_create_item_throughput_bucket(self):
+    async def test_container_create_item_throughput_bucket_async(self):
         await self.container.create_item(
             body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
             throughput_bucket=request_throughput_bucket_number,
             raw_response_hook=request_raw_response_hook)
 
-    async def test_container_patch_item_throughput_bucket(self):
+    async def test_container_patch_item_throughput_bucket_async(self):
         pkValue = "patch_item_pk" + str(uuid.uuid4())
         # Create item to patch
         item = {
@@ -212,7 +212,7 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
             throughput_bucket=request_throughput_bucket_number,
             raw_response_hook=request_raw_response_hook)
 
-    async def test_container_execute_item_batch_throughput_bucket(self):
+    async def test_container_execute_item_batch_throughput_bucket_async(self):
         created_collection = await self.database.create_container(
             id='test_execute_item ' + str(uuid.uuid4()),
             partition_key=PartitionKey(path='/company'))
@@ -228,7 +228,7 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
 
         await self.database.delete_container(created_collection)
 
-    async def test_container_delete_item_throughput_bucket(self):
+    async def test_container_delete_item_throughput_bucket_async(self):
         created_item = await self.container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
 
         await self.container.delete_item(
@@ -237,7 +237,7 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
             throughput_bucket=request_throughput_bucket_number,
             raw_response_hook=request_raw_response_hook)
 
-    async def test_container_delete_all_items_by_partition_key_throughput_bucket(self):
+    async def test_container_delete_all_items_by_partition_key_throughput_bucket_async(self):
         created_collection = await self.database.create_container(
             id='test_delete_all_items_by_partition_key ' + str(uuid.uuid4()),
             partition_key=PartitionKey(path='/pk', kind='Hash'))
