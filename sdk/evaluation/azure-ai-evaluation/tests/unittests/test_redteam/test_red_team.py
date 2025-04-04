@@ -774,13 +774,6 @@ class TestRedTeamOrchestrator:
                     }
                 }
             
-            red_team.red_team_info = {
-                'test_strategy':
-                    {
-                        'test_risk': {}
-                    }
-                }
-            
             result = await red_team._prompt_sending_orchestrator(
                 chat_target=mock_chat_target,
                 all_prompts=mock_prompts,

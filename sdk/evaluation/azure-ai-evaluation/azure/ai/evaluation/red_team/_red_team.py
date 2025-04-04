@@ -1359,7 +1359,7 @@ class RedTeam():
             converter = self._get_converter_for_strategy(strategy)
             try:
                 self.logger.debug(f"Calling orchestrator for {strategy_name} strategy")
-                if not self.chat_target._headers.get("Api-Key", None):
+                if isinstance(self.chat_target,OpenAIChatTarget) and not self.chat_target._headers.get("Api-Key", None):
                     self.chat_target._headers["Authorization"] = f"Bearer {self.chat_target._token_provider()}"
                 orchestrator = await call_orchestrator(self.chat_target, all_prompts, converter, strategy_name, risk_category.value, timeout)
             except PyritException as e:
