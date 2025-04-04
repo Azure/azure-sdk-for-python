@@ -96,8 +96,6 @@ class TestPPCBSmMrrAsync:
 
     @pytest.mark.parametrize("error_code", error_codes())
     async def test_consecutive_failure_threshold_async(self, setup, error_code):
-        expected_read_region_uri = self.host
-        expected_write_region_uri = self.host.replace("localhost", "127.0.0.1")
         custom_transport = await self.create_custom_transport_sm_mrr()
         id_value = 'failoverDoc-' + str(uuid.uuid4())
         document_definition = {'id': id_value,

@@ -448,7 +448,6 @@ class TestRedTeamAttackObjectives:
             risk_category=RiskCategory.Violence,
             application_scenario="Test scenario"
         )
-        import pdb; pdb.set_trace()
         mock_generated_rai_client_instance.get_attack_objectives.assert_called_with(
             risk_category="violence",
             application_scenario="Test scenario",
@@ -767,6 +766,13 @@ class TestRedTeamOrchestrator:
             mock_orchestrator = MagicMock()
             mock_orchestrator.send_prompts_async = AsyncMock()
             mock_orch_class.return_value = mock_orchestrator
+
+            red_team.red_team_info = {
+                'test_strategy':
+                    {
+                        'test_risk': {}
+                    }
+                }
             
             result = await red_team._prompt_sending_orchestrator(
                 chat_target=mock_chat_target,
@@ -785,6 +791,7 @@ class TestRedTeamOrchestrator:
             assert "test_strategy_test_risk_single_batch" in red_team.task_statuses
             assert red_team.task_statuses["test_strategy_test_risk_single_batch"] == "timeout"
             assert red_team.task_statuses["test_strategy_test_risk_orchestrator"] == "completed"
+            assert red_team.red_team_info["test_strategy"]["test_risk"]["status"] == "incomplete"
 
 
 @pytest.mark.unittest

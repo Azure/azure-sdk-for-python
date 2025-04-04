@@ -8,6 +8,10 @@
   ([#40004](https://github.com/Azure/azure-sdk-for-python/pull/40004))
 - Support `server.address` attributes when converting Azure SDK messaging spans to envelopes
   ([#40059](https://github.com/Azure/azure-sdk-for-python/pull/40059))
+- Update AKS check to use KUBERNETES_SERVICE_HOST
+  ([#39941](https://github.com/Azure/azure-sdk-for-python/pull/39941))
+- Enabled Entra ID Credential configuration via env var
+  ([#40237](https://github.com/Azure/azure-sdk-for-python/pull/40237))
 
 ### Breaking Changes
 
@@ -23,8 +27,6 @@
   ([#39886](https://github.com/Azure/azure-sdk-for-python/pull/39886))
 - Populate `client_Ip` on `customEvent` telemetry
   ([#39923](https://github.com/Azure/azure-sdk-for-python/pull/39923))
-- Update AKS check to use KUBERNETES_SERVICE_HOST
-  ([#39941](https://github.com/Azure/azure-sdk-for-python/pull/39941))
 
 ### Bugs Fixed
 
