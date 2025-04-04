@@ -378,7 +378,7 @@ def _quick_query_options(snapshot: Optional[str], query_expression: str, **kwarg
         'timeout': kwargs.pop('timeout', None),
         'cls': return_headers_and_deserialized,
     }
-    options.update(kwargs)
+    options.update({k: v for k, v in kwargs.items() if v is not None})
     return options, delimiter
 
 def _generic_delete_blob_options(delete_snapshots: Optional[str] = None, **kwargs: Any) -> Dict[str, Any]:
