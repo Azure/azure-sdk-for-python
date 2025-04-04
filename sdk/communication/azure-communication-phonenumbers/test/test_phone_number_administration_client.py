@@ -1,5 +1,6 @@
 import os
 import pytest
+import uuid
 from devtools_testutils import recorded_by_proxy
 from _shared.utils import create_token_credential, get_header_policy, get_http_logging_policy
 from azure.communication.phonenumbers import PhoneNumbersClient
@@ -8,6 +9,10 @@ from azure.communication.phonenumbers import (
     PhoneNumberCapabilities,
     PhoneNumberCapabilityType,
     PhoneNumberType,
+    PhoneNumbersBrowseRequest,
+    PhoneNumbersReservation,
+    ReservationStatus,
+    AvailablePhoneNumberStatus
 )
 from azure.communication.phonenumbers._generated.models import PhoneNumberOperationStatus
 from azure.communication.phonenumbers._shared.utils import parse_connection_str
@@ -419,3 +424,70 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
         results = self.phone_number_client.search_operator_information(phone_number)
         assert len(results.values) == 1
         assert results.values[0].phone_number == self.phone_number
+
+    @recorded_by_proxy
+    def test_list_phone_numbers_reservations(self):
+        reservations = self.phone_number_client.list_phone_numbers_reservations()
+        assert reservations.next()
+
+    @recorded_by_proxy
+    def test_browse_available_numbers(self):
+        browse_request = PhoneNumbersBrowseRequest(phone_number_type=PhoneNumberType.TOLL_FREE)
+        result = self.phone_number_client.browse_available_phone_numbers(
+            self.country_code, browse_request
+        )
+
+        assert result
+        assert len(result.phone_numbers) > 0
+
+    # This test does a lot of stuff because pytest doesn't have an easy built-in way to execute tests in a specific order.
+    @recorded_by_proxy
+    def test_phone_numbers_reservation_management(self):
+        reservation_id = str(uuid.uuid4())
+
+        # Test that a reservation can be created without any phone numbers
+        reservation = PhoneNumbersReservation(reservation_id, dict())
+        created_reservation = self.phone_number_client.create_or_update_reservation(reservation)
+
+        assert created_reservation.id == reservation_id
+        assert created_reservation.status == ReservationStatus.ACTIVE
+        assert len(created_reservation.phone_numbers) == 0
+
+        # Test that we can add phone numbers to the reservation
+        browse_request = PhoneNumbersBrowseRequest(phone_number_type=PhoneNumberType.TOLL_FREE)
+        browse_result = self.phone_number_client.browse_available_phone_numbers(
+            self.country_code, browse_request
+        )
+
+        phone_number_to_reserve = browse_result.phone_numbers[0]
+        created_reservation.phone_numbers[phone_number_to_reserve.id] = phone_number_to_reserve
+        updated_reservation = self.phone_number_client.create_or_update_reservation(created_reservation)
+        
+        assert updated_reservation.id == reservation_id
+        assert updated_reservation.status == ReservationStatus.ACTIVE
+        assert updated_reservation.expires_at > created_reservation.expires_at
+        assert phone_number_to_reserve.id in updated_reservation.phone_numbers
+        assert updated_reservation.phone_numbers[phone_number_to_reserve.id].status == AvailablePhoneNumberStatus.RESERVED
+
+        # Test that we can get the reservation by ID
+        retrieved_reservation = self.phone_number_client.get_phone_numbers_reservation(reservation_id)
+
+        assert retrieved_reservation.id == updated_reservation.id
+        assert retrieved_reservation.status == updated_reservation.status
+        assert retrieved_reservation.expires_at == updated_reservation.expires_at
+        assert len(retrieved_reservation.phone_numbers) == len(updated_reservation.phone_numbers)
+
+        # Test that we can remove numbers from the reservation
+        updated_reservation.phone_numbers[phone_number_to_reserve.id] = None
+        reservation_after_remove = self.phone_number_client.create_or_update_reservation(updated_reservation)
+
+        assert reservation_after_remove.id == updated_reservation.id
+        assert reservation_after_remove.status == updated_reservation.status
+        assert reservation_after_remove.expires_at > updated_reservation.expires_at
+        assert phone_number_to_reserve.id not in reservation_after_remove.phone_numbers
+
+        # Test that we can delete the reservation
+        self.phone_number_client.delete_reservation(reservation_id)
+        with pytest.raises(Exception) as ex:
+            self.phone_number_client.get_phone_numbers_reservation(reservation_id)
+        assert ex.value.status_code == 404
