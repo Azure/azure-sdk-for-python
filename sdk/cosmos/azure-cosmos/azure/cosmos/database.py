@@ -291,7 +291,7 @@ class DatabaseProxy(object):
         return ContainerProxy(self.client_connection, self.database_link, result["id"], properties=result)
 
     @distributed_trace
-    def  create_container_if_not_exists(  # pylint:disable=docstring-missing-param
+    def create_container_if_not_exists(  # pylint:disable=docstring-missing-param
         self,
         id: str,
         partition_key: PartitionKey,
