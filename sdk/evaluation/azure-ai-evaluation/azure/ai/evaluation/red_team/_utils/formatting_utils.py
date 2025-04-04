@@ -8,7 +8,7 @@ import math
 from datetime import datetime
 from typing import Dict, List, Union, Any, Optional, cast
 from .._attack_strategy import AttackStrategy
-from .._red_team_result import _RedTeamResult
+from .._red_team_result import RedTeamResult
 from pyrit.models import ChatMessage
 
 
@@ -98,18 +98,18 @@ def get_attack_success(result: str) -> bool:
     return result == EVALUATION_PASS_FAIL_MAPPING.get(False, "true")
 
 
-def format_scorecard(redteam_result: _RedTeamResult) -> str:
-    """Format the _RedTeamResult into a human-readable scorecard.
+def format_scorecard(redteam_result: RedTeamResult) -> str:
+    """Format the RedTeamResult into a human-readable scorecard.
     
     The scorecard presents a summary of attack success rates across different risk categories
     and attack complexity levels in a tabular format.
 
-    :param redteam_result: The _RedTeamResult object to format
+    :param redteam_result: The RedTeamResult object to format
     :type redteam_result: Dict[str, Any]
     :return: A formatted scorecard as a string
     :rtype: str
     """
-    scorecard = redteam_result["redteaming_scorecard"]
+    scorecard = redteam_result["scorecard"]
     risk_summary = scorecard["risk_category_summary"][0] if scorecard["risk_category_summary"] else {}
     overall_asr = risk_summary.get("overall_asr", 0)
     

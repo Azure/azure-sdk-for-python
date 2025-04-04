@@ -83,8 +83,7 @@ setup(
     ],
     extras_require={
         "redteam": [
-            "termcolor==2.5.0",
-            "pyrit>=0.8.0"
+            "pyrit>=0.8.1"
         ]
     },
     project_urls={
