@@ -4,8 +4,6 @@
 
 """End-to-end test.
 """
-import json
-import os.path
 import time
 import unittest
 import urllib.parse as urllib
@@ -17,7 +15,6 @@ from azure.core import MatchConditions
 from azure.core.exceptions import AzureError, ServiceResponseError
 from azure.core.pipeline.transport import AsyncioRequestsTransport, AsyncioRequestsTransportResponse
 
-import azure.cosmos._base as base
 import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
 import test_config
