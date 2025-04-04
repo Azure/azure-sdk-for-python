@@ -88,6 +88,23 @@
           "TestMarkArgument": "cosmosLong"
         }
       }
+    },
+    {
+      "ArmConfig": {
+        "MultiMaster_MultiRegion": {
+          "ArmTemplateParameters": "@{ enableMultipleWriteLocations = $true; defaultConsistencyLevel = 'Session'; enableMultipleRegions = $true }"
+        }
+      },
+      "WindowsConfig": {
+        "Windows2022_312": {
+          "OSVmImage": "env:WINDOWSVMIMAGE",
+          "Pool": "env:WINDOWSPOOL",
+          "PythonVersion": "3.12",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false",
+          "TestMarkArgument": "cosmosMultiRegion"
+        }
+      }
     }
   ]
 }
