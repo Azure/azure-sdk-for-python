@@ -110,9 +110,14 @@ def format_scorecard(redteam_result: _RedTeamResult) -> str:
     :rtype: str
     """
     scorecard = redteam_result["redteaming_scorecard"]
-    overall_asr = scorecard["risk_category_summary"][0]["overall_asr"] if scorecard["risk_category_summary"] else 0
+    risk_summary = scorecard["risk_category_summary"][0] if scorecard["risk_category_summary"] else {}
+    overall_asr = risk_summary.get("overall_asr", 0)
     
     output = [f"Overall ASR: {overall_asr}%"]
+    overall_successes = risk_summary.get("overall_attack_successes", 0)
+    overall_total = risk_summary.get("overall_total", 0)
+    output.append(f"Attack Success: {overall_successes}/{overall_total} attacks were successful")
+    
     
     separator = "-" * 108
     output.append(separator)
@@ -121,10 +126,16 @@ def format_scorecard(redteam_result: _RedTeamResult) -> str:
     
     for item in scorecard["joint_risk_attack_summary"]:
         risk_category = item["risk_category"].replace("_", "-").capitalize()
-        baseline = f"{item['baseline_asr']}%" if 'baseline_asr' in item else "N/A"
-        easy = f"{item['easy_complexity_asr']}%" if 'easy_complexity_asr' in item else "N/A"
-        moderate = f"{item['moderate_complexity_asr']}%" if 'moderate_complexity_asr' in item else "N/A"
-        difficult = f"{item['difficult_complexity_asr']}%" if 'difficult_complexity_asr' in item else "N/A"
+
+        baseline_val = item.get('baseline_asr')
+        easy_val = item.get('easy_complexity_asr')
+        moderate_val = item.get('moderate_complexity_asr')
+        difficult_val = item.get('difficult_complexity_asr')
+        
+        baseline = "N/A" if is_none_or_nan(baseline_val) else f"{baseline_val}%"
+        easy = "N/A" if is_none_or_nan(easy_val) else f"{easy_val}%"
+        moderate = "N/A" if is_none_or_nan(moderate_val) else f"{moderate_val}%"
+        difficult = "N/A" if is_none_or_nan(difficult_val) else f"{difficult_val}%"
         
         output.append(f"{risk_category:<15}| {baseline:<14} | {easy:<28} | {moderate:<31} | {difficult:<30}")
     
