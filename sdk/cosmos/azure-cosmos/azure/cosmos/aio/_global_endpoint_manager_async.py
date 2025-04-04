@@ -25,7 +25,7 @@ database service.
 
 import asyncio # pylint: disable=do-not-import-asyncio
 import logging
-from asyncio import CancelledError
+from asyncio import CancelledError # pylint: disable=do-not-import-asyncio
 from typing import Tuple
 
 from azure.core.exceptions import AzureError
@@ -33,8 +33,8 @@ from azure.cosmos import DatabaseAccount
 
 from .. import _constants as constants
 from .. import exceptions
-from .._location_cache import LocationCache
-
+from .._location_cache import LocationCache, current_time_millis
+from .._request_object import RequestObject
 
 # pylint: disable=protected-access
 
@@ -48,15 +48,12 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
 
     def __init__(self, client):
         self.client = client
-        self.EnableEndpointDiscovery = client.connection_policy.EnableEndpointDiscovery
         self.PreferredLocations = client.connection_policy.PreferredLocations
         self.DefaultEndpoint = client.url_connection
         self.refresh_time_interval_in_ms = self.get_refresh_time_interval_in_ms_stub()
         self.location_cache = LocationCache(
-            self.PreferredLocations,
             self.DefaultEndpoint,
-            self.EnableEndpointDiscovery,
-            client.connection_policy.UseMultipleWriteLocations
+            client.connection_policy
         )
         self.startup = True
         self.refresh_task = None
@@ -64,9 +61,6 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         self.refresh_lock = asyncio.Lock()
         self.last_refresh_time = 0
         self._database_account_cache = None
-
-    def get_use_multiple_write_locations(self):
-        return self.location_cache.can_use_multiple_write_locations()
 
     def get_refresh_time_interval_in_ms_stub(self):
         return constants._Constants.DefaultEndpointsRefreshTime
@@ -105,9 +99,9 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
             try:
                 await self.refresh_task
                 self.refresh_task = None
-            except (Exception, CancelledError) as exception: #pylint: disable=broad-exception-caught
+            except (Exception, asyncio.CancelledError) as exception: #pylint: disable=broad-exception-caught
                 logger.exception("Health check task failed: %s", exception)
-        if self.location_cache.current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms:
+        if current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms:
             self.refresh_needed = True
         if self.refresh_needed:
             async with self.refresh_lock:
@@ -123,11 +117,11 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         if database_account and not self.startup:
             self.location_cache.perform_on_database_account_read(database_account)
             self.refresh_needed = False
-            self.last_refresh_time = self.location_cache.current_time_millis()
+            self.last_refresh_time = current_time_millis()
         else:
             if self.location_cache.should_refresh_endpoints() or self.refresh_needed:
                 self.refresh_needed = False
-                self.last_refresh_time = self.location_cache.current_time_millis()
+                self.last_refresh_time = current_time_millis()
                 if not self.startup:
                     # this will perform getDatabaseAccount calls to check endpoint health
                     # in background
@@ -217,5 +211,5 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
             self.refresh_task.cancel()
             try:
                 await self.refresh_task
-            except (Exception, CancelledError) : #pylint: disable=broad-exception-caught
+            except (Exception, asyncio.CancelledError) : #pylint: disable=broad-exception-caught
                 pass

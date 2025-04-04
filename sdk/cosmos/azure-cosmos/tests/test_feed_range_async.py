@@ -58,7 +58,7 @@ class TestFeedRangeAsync(unittest.IsolatedAsyncioTestCase):
                                                         True,
                                                         False)).to_dict()
         epk_child_feed_range = await self.container_for_test.feed_range_from_partition_key("1")
-        assert self.container_for_test.is_feed_range_subset(epk_parent_feed_range, epk_child_feed_range)
+        assert await self.container_for_test.is_feed_range_subset(epk_parent_feed_range, epk_child_feed_range)
 
 if __name__ == '__main__':
     unittest.main()

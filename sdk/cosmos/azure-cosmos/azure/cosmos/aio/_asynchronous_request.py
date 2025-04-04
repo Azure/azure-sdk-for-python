@@ -101,6 +101,8 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
             read_timeout=read_timeout,
             connection_verify=kwargs.pop("connection_verify", ca_certs),
             connection_cert=kwargs.pop("connection_cert", cert_files),
+            request_params=request_params,
+            global_endpoint_manager=global_endpoint_manager,
             **kwargs
         )
     else:
@@ -111,6 +113,8 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
             read_timeout=read_timeout,
             # If SSL is disabled, verify = false
             connection_verify=kwargs.pop("connection_verify", is_ssl_enabled),
+            request_params=request_params,
+            global_endpoint_manager=global_endpoint_manager,
             **kwargs
         )
 

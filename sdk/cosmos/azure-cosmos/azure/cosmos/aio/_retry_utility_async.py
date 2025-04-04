@@ -28,6 +28,7 @@ import time
 from azure.core.exceptions import AzureError, ClientAuthenticationError, ServiceRequestError, ServiceResponseError
 from azure.core.pipeline.policies import AsyncRetryPolicy
 
+from ._global_partition_endpoint_manager_circuit_breaker_async import _GlobalPartitionEndpointManagerForCircuitBreakerAsync
 from .. import _default_retry_policy, _database_account_retry_policy
 from .. import _endpoint_discovery_retry_policy
 from .. import _gone_retry_policy
@@ -104,6 +105,7 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                 result = await ExecuteFunctionAsync(function, global_endpoint_manager, *args, **kwargs)
             else:
                 result = await ExecuteFunctionAsync(function, *args, **kwargs)
+            global_endpoint_manager.record_success(request)
             if not client.last_response_headers:
                 client.last_response_headers = {}
 
@@ -198,6 +200,7 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
             if client_timeout:
                 kwargs['timeout'] = client_timeout - (time.time() - start_time)
                 if kwargs['timeout'] <= 0:
+                    global_endpoint_manager.record_failure(request)
                     raise exceptions.CosmosClientTimeoutError()
 
         except ServiceRequestError as e:
@@ -255,6 +258,8 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
         """
         absolute_timeout = request.context.options.pop('timeout', None)
         per_request_timeout = request.context.options.pop('connection_timeout', 0)
+        request_params = request.context.options.get('request_params', None)
+        global_endpoint_manager = request.context.options.get('global_endpoint_manager', None)
         retry_error = None
         retry_active = True
         response = None
@@ -279,6 +284,7 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                 # the request ran into a socket timeout or failed to establish a new connection
                 # since request wasn't sent, raise exception immediately to be dealt with in client retry policies
                 if not _has_database_account_header(request.http_request.headers):
+                    global_endpoint_manager.record_failure(request_params)
                     if retry_settings['connect'] > 0:
                         retry_active = self.increment(retry_settings, response=request, error=err)
                         if retry_active:
@@ -296,6 +302,7 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                         ClientConnectionError)
                     if (isinstance(err.inner_exception, ClientConnectionError)
                             or _has_read_retryable_headers(request.http_request.headers)):
+                        global_endpoint_manager.record_failure(request_params)
                         # This logic is based on the _retry.py file from azure-core
                         if retry_settings['read'] > 0:
                             retry_active = self.increment(retry_settings, response=request, error=err)
@@ -310,6 +317,7 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                 if _has_database_account_header(request.http_request.headers):
                     raise err
                 if self._is_method_retryable(retry_settings, request.http_request):
+                    global_endpoint_manager.record_failure(request_params)
                     retry_active = self.increment(retry_settings, response=request, error=err)
                     if retry_active:
                         await self.sleep(retry_settings, request.context.transport)
