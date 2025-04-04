@@ -6,7 +6,7 @@
 
 from io import BytesIO
 from typing import (
-    Any, Dict, Generator, IO, Iterable, Optional, Type, Union,
+    Any, Dict, Generator, IO, Iterable, Optional, Type,
     TYPE_CHECKING
 )
 
