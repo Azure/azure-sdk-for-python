@@ -6399,6 +6399,10 @@ class ThreadMessageOptions(_model_base.Model):
 
      Required. Known values are: \"user\" and \"assistant\".
     """
+    content: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The textual content of the initial message. Currently, robust input including images and
+     annotated text may only be provided via
+     a separate call to the create message API. Required."""
     attachments: Optional[List["_models.MessageAttachment"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
