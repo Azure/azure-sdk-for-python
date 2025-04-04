@@ -383,7 +383,11 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                     if self._feature_flag_refresh_enabled:
                         need_ff_refresh, refresh_on_feature_flags, feature_flags, filters_used = (
                             await client.refresh_feature_flags(
-                                self._refresh_on_feature_flags, self._feature_flag_selectors, headers=headers, **kwargs
+                                self._refresh_on_feature_flags,
+                                self._feature_flag_selectors,
+                                headers,
+                                self._origin_endpoint,
+                                **kwargs,
                             )
                         )
                         if refresh_on_feature_flags:
@@ -442,7 +446,11 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 configuration_settings_processed = await self._process_configurations(configuration_settings)
                 if self._feature_flag_enabled:
                     feature_flags, feature_flag_sentinel_keys, used_filters = await client.load_feature_flags(
-                        self._feature_flag_selectors, self._feature_flag_refresh_enabled, headers=headers, **kwargs
+                        self._feature_flag_selectors,
+                        self._feature_flag_refresh_enabled,
+                        self._origin_endpoint,
+                        headers=headers,
+                        **kwargs,
                     )
                     self._feature_filter_usage = used_filters
                     configuration_settings_processed[FEATURE_MANAGEMENT_KEY] = {}
