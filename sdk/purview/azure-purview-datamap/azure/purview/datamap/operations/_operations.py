@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -2444,7 +2444,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         Existing entity is matched using its unique guid if
         supplied or by its unique attributes eg: qualifiedName.
         Map and array of
-        collections are not well supported. E.g., array<array\\ :code:`<int>`>, array<map<string,
+        collections are not well supported. E.g., array<array<int>>, array<map<string,
         int>>.
         For each contact type, the maximum number of contacts is 20.
 
@@ -2481,7 +2481,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         Existing entity is matched using its unique guid if
         supplied or by its unique attributes eg: qualifiedName.
         Map and array of
-        collections are not well supported. E.g., array<array\\ :code:`<int>`>, array<map<string,
+        collections are not well supported. E.g., array<array<int>>, array<map<string,
         int>>.
         For each contact type, the maximum number of contacts is 20.
 
@@ -2518,7 +2518,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         Existing entity is matched using its unique guid if
         supplied or by its unique attributes eg: qualifiedName.
         Map and array of
-        collections are not well supported. E.g., array<array\\ :code:`<int>`>, array<map<string,
+        collections are not well supported. E.g., array<array<int>>, array<map<string,
         int>>.
         For each contact type, the maximum number of contacts is 20.
 
@@ -2554,7 +2554,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         Existing entity is matched using its unique guid if
         supplied or by its unique attributes eg: qualifiedName.
         Map and array of
-        collections are not well supported. E.g., array<array\\ :code:`<int>`>, array<map<string,
+        collections are not well supported. E.g., array<array<int>>, array<map<string,
         int>>.
         For each contact type, the maximum number of contacts is 20.
 
@@ -2727,7 +2727,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         Existing entity is matched using its unique
         guid if supplied or by its unique attributes eg: qualifiedName.
         Map and array
-        of collections are not well supported. E.g., array<array\\ :code:`<int>`>,
+        of collections are not well supported. E.g., array<array<int>>,
         array<map<string, int>>.
         For each contact type, the maximum number of contacts
         is 20.
@@ -2765,7 +2765,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         Existing entity is matched using its unique
         guid if supplied or by its unique attributes eg: qualifiedName.
         Map and array
-        of collections are not well supported. E.g., array<array\\ :code:`<int>`>,
+        of collections are not well supported. E.g., array<array<int>>,
         array<map<string, int>>.
         For each contact type, the maximum number of contacts
         is 20.
@@ -2803,7 +2803,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         Existing entity is matched using its unique
         guid if supplied or by its unique attributes eg: qualifiedName.
         Map and array
-        of collections are not well supported. E.g., array<array\\ :code:`<int>`>,
+        of collections are not well supported. E.g., array<array<int>>,
         array<map<string, int>>.
         For each contact type, the maximum number of contacts
         is 20.
@@ -2840,7 +2840,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         Existing entity is matched using its unique
         guid if supplied or by its unique attributes eg: qualifiedName.
         Map and array
-        of collections are not well supported. E.g., array<array\\ :code:`<int>`>,
+        of collections are not well supported. E.g., array<array<int>>,
         array<map<string, int>>.
         For each contact type, the maximum number of contacts
         is 20.
@@ -3696,7 +3696,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         In
         addition to the typeName path parameter, attribute key-value pair(s) can be
         provided in the following format:
-        attr:\\\\ :code:`<attrName>`=\\ :code:`<attrValue>`.
+        attr:\\<attrName>=<attrValue>.
 
         NOTE: The
         attrName and attrValue should be unique across entities, eg.
@@ -3793,7 +3793,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         typeName path parameter, attribute key-value pair(s) can be provided in the
         following format:
 
-        attr:\\ :code:`<attrName>`=\\ :code:`<attrValue>`.
+        attr:<attrName>=<attrValue>.
         NOTE: The attrName and
         attrValue should be unique across entities, eg. qualifiedName.
 
@@ -3836,7 +3836,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         typeName path parameter, attribute key-value pair(s) can be provided in the
         following format:
 
-        attr:\\ :code:`<attrName>`=\\ :code:`<attrValue>`.
+        attr:<attrName>=<attrValue>.
         NOTE: The attrName and
         attrValue should be unique across entities, eg. qualifiedName.
 
@@ -3879,7 +3879,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         typeName path parameter, attribute key-value pair(s) can be provided in the
         following format:
 
-        attr:\\ :code:`<attrName>`=\\ :code:`<attrValue>`.
+        attr:<attrName>=<attrValue>.
         NOTE: The attrName and
         attrValue should be unique across entities, eg. qualifiedName.
 
@@ -3921,7 +3921,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         typeName path parameter, attribute key-value pair(s) can be provided in the
         following format:
 
-        attr:\\ :code:`<attrName>`=\\ :code:`<attrValue>`.
+        attr:<attrName>=<attrValue>.
         NOTE: The attrName and
         attrValue should be unique across entities, eg. qualifiedName.
 
@@ -4012,7 +4012,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         In addition to
         the typeName path parameter, attribute key-value pair(s) can be provided in the
         following format:
-        attr:\\\\ :code:`<attrName>`=\\\\ :code:`<attrValue>`.
+        attr:\\<attrName>=\\<attrValue>.
         NOTE: The attrName and
         attrValue should be unique across entities, eg. qualifiedName.
 
@@ -4535,9 +4535,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         provided in the following
         format
 
-        typeName=\\\\ :code:`<typeName>`&attr_1:\\\\ :code:`<attrName>`=\\\\
-        :code:`<attrValue>`&attr_2:\\\\ :code:`<attrName>`=\\\\ :code:`<attrValue>`&attr_3:\\\\
-        :code:`<attrName>`=\\\\ :code:`<attrValue>`
+        typeName=\\<typeName>&attr_1:\\<attrName>=\\<attrValue>&attr_2:\\<attrName>=\\<attrValue>&attr_3:\\<attrName>=\\<attrValue>
 
         NOTE:
         The attrName should be an unique attribute for the given entity-type.
@@ -5616,8 +5614,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         in labels set are non-existing labels, they will be ignored, only existing
         labels will be removed. In addition to the typeName path parameter, attribute
         key-value pair(s) can be provided in the following format:
-        attr:\\ :code:`<attrName>`=\\ :code:`<attrValue>`. NOTE: The attrName and attrValue should be
-        unique
+        attr:<attrName>=<attrValue>. NOTE: The attrName and attrValue should be unique
         across entities, eg. qualifiedName. The REST request would look something like
         this: DELETE
         /v2/entity/uniqueAttribute/type/aType?attr:aTypeAttribute=someValue.
@@ -5657,8 +5654,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         in labels set are non-existing labels, they will be ignored, only existing
         labels will be removed. In addition to the typeName path parameter, attribute
         key-value pair(s) can be provided in the following format:
-        attr:\\ :code:`<attrName>`=\\ :code:`<attrValue>`. NOTE: The attrName and attrValue should be
-        unique
+        attr:<attrName>=<attrValue>. NOTE: The attrName and attrValue should be unique
         across entities, eg. qualifiedName. The REST request would look something like
         this: DELETE
         /v2/entity/uniqueAttribute/type/aType?attr:aTypeAttribute=someValue.
@@ -5697,8 +5693,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         in labels set are non-existing labels, they will be ignored, only existing
         labels will be removed. In addition to the typeName path parameter, attribute
         key-value pair(s) can be provided in the following format:
-        attr:\\ :code:`<attrName>`=\\ :code:`<attrValue>`. NOTE: The attrName and attrValue should be
-        unique
+        attr:<attrName>=<attrValue>. NOTE: The attrName and attrValue should be unique
         across entities, eg. qualifiedName. The REST request would look something like
         this: DELETE
         /v2/entity/uniqueAttribute/type/aType?attr:aTypeAttribute=someValue.
@@ -5785,7 +5780,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         In addition to the
         typeName path parameter, attribute key-value pair(s) can be provided in the
-        following format: attr:\\ :code:`<attrName>`=\\ :code:`<attrValue>`.
+        following format: attr:<attrName>=<attrValue>.
 
         NOTE: The attrName and
         attrValue should be unique across entities, eg. qualifiedName.
@@ -5827,7 +5822,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         In addition to the
         typeName path parameter, attribute key-value pair(s) can be provided in the
-        following format: attr:\\ :code:`<attrName>`=\\ :code:`<attrValue>`.
+        following format: attr:<attrName>=<attrValue>.
 
         NOTE: The attrName and
         attrValue should be unique across entities, eg. qualifiedName.
@@ -5868,7 +5863,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         In addition to the
         typeName path parameter, attribute key-value pair(s) can be provided in the
-        following format: attr:\\ :code:`<attrName>`=\\ :code:`<attrValue>`.
+        following format: attr:<attrName>=<attrValue>.
 
         NOTE: The attrName and
         attrValue should be unique across entities, eg. qualifiedName.
@@ -5959,7 +5954,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         In addition to
         the typeName path parameter, attribute key-value pair(s) can be provided in the
-        following format: attr:\\ :code:`<attrName>`=\\ :code:`<attrValue>`.
+        following format: attr:<attrName>=<attrValue>.
 
         NOTE: The attrName and
         attrValue should be unique across entities, eg. qualifiedName.
@@ -6001,7 +5996,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         In addition to
         the typeName path parameter, attribute key-value pair(s) can be provided in the
-        following format: attr:\\ :code:`<attrName>`=\\ :code:`<attrValue>`.
+        following format: attr:<attrName>=<attrValue>.
 
         NOTE: The attrName and
         attrValue should be unique across entities, eg. qualifiedName.
@@ -6042,7 +6037,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         In addition to
         the typeName path parameter, attribute key-value pair(s) can be provided in the
-        following format: attr:\\ :code:`<attrName>`=\\ :code:`<attrValue>`.
+        following format: attr:<attrName>=<attrValue>.
 
         NOTE: The attrName and
         attrValue should be unique across entities, eg. qualifiedName.

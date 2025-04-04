@@ -23,7 +23,6 @@ from ._shared_private_link_resources_operations import SharedPrivateLinkResource
 from ._usages_operations import UsagesOperations  # type: ignore
 from ._search_management_client_operations import SearchManagementClientOperationsMixin  # type: ignore
 from ._network_security_perimeter_configurations_operations import NetworkSecurityPerimeterConfigurationsOperations  # type: ignore
-from ._service_operations import ServiceOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -41,7 +40,6 @@ __all__ = [
     "UsagesOperations",
     "SearchManagementClientOperationsMixin",
     "NetworkSecurityPerimeterConfigurationsOperations",
-    "ServiceOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

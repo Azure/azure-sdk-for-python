@@ -23,7 +23,7 @@ USAGE:
 
 import os
 import asyncio
-from azure.ai.evaluation import (
+from azure.ai.evaluation.red_team import (
     RedTeam, 
     AttackStrategy, 
     RiskCategory

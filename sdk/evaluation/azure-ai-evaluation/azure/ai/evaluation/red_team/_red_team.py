@@ -230,6 +230,19 @@ class RedTeam():
                     f.write(json.dumps({"conversations": redteam_output.redteaming_data or []}))
                 elif redteam_output.red_team_result:
                     json.dump(redteam_output.red_team_result, f)
+
+            eval_info_name = "redteam_info.json"
+            eval_info_path = os.path.join(self.scan_output_dir, eval_info_name)
+            self.logger.debug(f"Saving evaluation info to scan output directory: {eval_info_path}")
+            with open (eval_info_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
+                # Remove evaluation_result from red_team_info before logging
+                red_team_info_logged = {}
+                for strategy, harms_dict in self.red_team_info.items():
+                    red_team_info_logged[strategy] = {}
+                    for harm, info_dict in harms_dict.items():
+                        info_dict.pop("evaluation_result", None)
+                        red_team_info_logged[strategy][harm] = info_dict
+                f.write(json.dumps(red_team_info_logged))
             
             # Also save a human-readable scorecard if available
             if not data_only and redteam_output.red_team_result:
@@ -270,6 +283,7 @@ class RedTeam():
                 # Log the entire directory to MLFlow
                 try:
                     eval_run.log_artifact(tmpdir, artifact_name)
+                    eval_run.log_artifact(tmpdir, eval_info_name)
                     self.logger.debug(f"Successfully logged artifacts directory to MLFlow")
                 except Exception as e:
                     self.logger.warning(f"Failed to log artifacts to MLFlow: {str(e)}")
@@ -441,11 +455,11 @@ class RedTeam():
                 self.logger.debug(f"API call: get_attack_objectives({risk_cat_value}, app: {application_scenario}, strategy: {strategy})")
                 # strategy param specifies whether to get a strategy-specific dataset from the RAI service
                 # right now, only tense requires strategy-specific dataset
-                if strategy == "tense":
+                if "tense" in strategy:
                     objectives_response = await self.generated_rai_client.get_attack_objectives(
                         risk_category=risk_cat_value,
                         application_scenario=application_scenario or "",
-                        strategy=strategy
+                        strategy="tense"
                     )
                 else: 
                     objectives_response = await self.generated_rai_client.get_attack_objectives(
@@ -675,11 +689,13 @@ class RedTeam():
                         # Set task status to TIMEOUT
                         batch_task_key = f"{strategy_name}_{risk_category}_batch_{batch_idx+1}"
                         self.task_statuses[batch_task_key] = TASK_STATUS["TIMEOUT"]
+                        self.red_team_info[strategy_name][risk_category]["status"] = TASK_STATUS["INCOMPLETE"]
                         # Continue with partial results rather than failing completely
                         continue
                     except Exception as e:
                         log_error(self.logger, f"Error processing batch {batch_idx+1}", e, f"{strategy_name}/{risk_category}")
-                        print(f"❌ ERROR: Strategy {strategy_name}, Risk {risk_category}, Batch {batch_idx+1}: {str(e)}")
+                        self.logger.debug(f"ERROR: Strategy {strategy_name}, Risk {risk_category}, Batch {batch_idx+1}: {str(e)}")
+                        self.red_team_info[strategy_name][risk_category]["status"] = TASK_STATUS["INCOMPLETE"]
                         # Continue with other batches even if one fails
                         continue
             else:
@@ -699,16 +715,18 @@ class RedTeam():
                     # Set task status to TIMEOUT
                     single_batch_task_key = f"{strategy_name}_{risk_category}_single_batch"
                     self.task_statuses[single_batch_task_key] = TASK_STATUS["TIMEOUT"]
+                    self.red_team_info[strategy_name][risk_category]["status"] = TASK_STATUS["INCOMPLETE"]
                 except Exception as e:
                     log_error(self.logger, "Error processing prompts", e, f"{strategy_name}/{risk_category}")
-                    print(f"❌ ERROR: Strategy {strategy_name}, Risk {risk_category}: {str(e)}")
+                    self.logger.debug(f"ERROR: Strategy {strategy_name}, Risk {risk_category}: {str(e)}")
+                    self.red_team_info[strategy_name][risk_category]["status"] = TASK_STATUS["INCOMPLETE"]
             
             self.task_statuses[task_key] = TASK_STATUS["COMPLETED"]
             return orchestrator
             
         except Exception as e:
             log_error(self.logger, "Failed to initialize orchestrator", e, f"{strategy_name}/{risk_category}")
-            print(f"❌ CRITICAL: Failed to create orchestrator for {strategy_name}/{risk_category}: {str(e)}")
+            self.logger.debug(f"CRITICAL: Failed to create orchestrator for {strategy_name}/{risk_category}: {str(e)}")
             self.task_statuses[task_key] = TASK_STATUS["FAILED"]
             raise
 
@@ -1266,7 +1284,6 @@ class RedTeam():
                 output_path=result_path,
             )
             eval_logger.debug(f"Completed evaluation for {risk_category.value}/{strategy_name}")
-            
         finally:
             # Restore original stdout and stderr
             sys.stdout = original_stdout
@@ -1299,6 +1316,7 @@ class RedTeam():
                 self.logger.warning(f"Failed to clean up logger: {str(e)}")
         self.red_team_info[self._get_strategy_name(strategy)][risk_category.value]["evaluation_result_file"] = str(result_path)
         self.red_team_info[self._get_strategy_name(strategy)][risk_category.value]["evaluation_result"] = evaluate_outputs
+        self.red_team_info[self._get_strategy_name(strategy)][risk_category.value]["status"] = TASK_STATUS["COMPLETED"]
         self.logger.debug(f"Evaluation complete for {strategy_name}/{risk_category.value}, results stored in red_team_info")
 
     async def _process_attack(
@@ -1341,10 +1359,12 @@ class RedTeam():
             converter = self._get_converter_for_strategy(strategy)
             try:
                 self.logger.debug(f"Calling orchestrator for {strategy_name} strategy")
+                if isinstance(self.chat_target,OpenAIChatTarget) and not self.chat_target._headers.get("Api-Key", None):
+                    self.chat_target._headers["Authorization"] = f"Bearer {self.chat_target._token_provider()}"
                 orchestrator = await call_orchestrator(self.chat_target, all_prompts, converter, strategy_name, risk_category.value, timeout)
             except PyritException as e:
                 log_error(self.logger, f"Error calling orchestrator for {strategy_name} strategy", e)
-                print(f"❌ Orchestrator error for {strategy_name}/{risk_category.value}: {str(e)}")
+                self.logger.debug(f"Orchestrator error for {strategy_name}/{risk_category.value}: {str(e)}")
                 self.task_statuses[task_key] = TASK_STATUS["FAILED"]
                 self.failed_tasks += 1
                 
@@ -1370,6 +1390,7 @@ class RedTeam():
             except Exception as e:
                 log_error(self.logger, f"Error during evaluation for {strategy_name}/{risk_category.value}", e)
                 print(f"⚠️ Evaluation error for {strategy_name}/{risk_category.value}: {str(e)}")
+                self.red_team_info[strategy_name][risk_category.value]["status"] = TASK_STATUS["FAILED"]
                 # Continue processing even if evaluation fails
             
             async with progress_bar_lock:
@@ -1399,7 +1420,7 @@ class RedTeam():
             
         except Exception as e:
             log_error(self.logger, f"Unexpected error processing {strategy_name} strategy for {risk_category.value}", e)
-            print(f"❌ Critical error in task {strategy_name}/{risk_category.value}: {str(e)}")
+            self.logger.debug(f"Critical error in task {strategy_name}/{risk_category.value}: {str(e)}")
             self.task_statuses[task_key] = TASK_STATUS["FAILED"]
             self.failed_tasks += 1
             
@@ -1419,7 +1440,6 @@ class RedTeam():
             application_scenario: Optional[str] = None,
             parallel_execution: bool = True,
             max_parallel_tasks: int = 5,
-            debug_mode: bool = False,
             timeout: int = 120) -> RedTeamOutput:
         """Run a red team scan against the target using the specified strategies.
         
@@ -1441,8 +1461,6 @@ class RedTeam():
         :type parallel_execution: bool
         :param max_parallel_tasks: Maximum number of parallel orchestrator tasks to run (default: 5)
         :type max_parallel_tasks: int
-        :param debug_mode: Whether to run in debug mode (more verbose output)
-        :type debug_mode: bool
         :param timeout: The timeout in seconds for API calls (default: 120)
         :type timeout: int
         :return: The output from the red team scan
@@ -1522,7 +1540,7 @@ class RedTeam():
         if not self.attack_objective_generator:
             error_msg = "Attack objective generator is required for red team agent."
             log_error(self.logger, error_msg)
-            print(f"❌ {error_msg}")
+            self.logger.debug(f"{error_msg}")
             raise EvaluationException(
                 message=error_msg,
                 internal_message="Attack objective generator is not provided.",
@@ -1676,7 +1694,6 @@ class RedTeam():
                 for risk_category in self.risk_categories:
                     progress_bar.set_postfix({"current": f"fetching {strategy_name}/{risk_category.value}"})
                     self.logger.debug(f"Fetching objectives for {strategy_name} strategy and {risk_category.value} risk category")
-                    
                     objectives = await self._get_attack_objectives(
                         risk_category=risk_category,
                         application_scenario=application_scenario,
@@ -1684,9 +1701,6 @@ class RedTeam():
                     )
                     all_objectives[strategy_name][risk_category.value] = objectives
                     
-                    # Print status about objective count for this strategy/risk
-                    if debug_mode:
-                        print(f"  - {risk_category.value}: {len(objectives)} objectives")
             
             self.logger.info("Completed fetching all attack objectives")
             
@@ -1754,7 +1768,7 @@ class RedTeam():
                         continue
                     except Exception as e:
                         log_error(self.logger, f"Error processing batch {i//max_parallel_tasks+1}", e)
-                        print(f"❌ Error in batch {i//max_parallel_tasks+1}: {str(e)}")
+                        self.logger.debug(f"Error in batch {i//max_parallel_tasks+1}: {str(e)}")
                         continue
             else:
                 # Sequential execution 
@@ -1776,7 +1790,7 @@ class RedTeam():
                         continue
                     except Exception as e:
                         log_error(self.logger, f"Error processing task {i+1}/{len(orchestrator_tasks)}", e)
-                        print(f"❌ Error in task {i+1}: {str(e)}")
+                        self.logger.debug(f"Error in task {i+1}: {str(e)}")
                         continue
             
             progress_bar.close()

@@ -122,7 +122,9 @@
           ]
         }
       ],
-      "properties": {}
+      "properties": {
+        "disableLocalAuth": true
+      }
     },
     {
       "type": "Microsoft.Storage/storageAccounts",
