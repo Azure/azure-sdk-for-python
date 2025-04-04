@@ -25,6 +25,11 @@ from ._generated.models import (
     OperatorInformationResult,
 )
 
+from ._models import (
+    PhoneNumbersReservation,
+    PhoneNumbersReservationItem
+)
+
 __all__ = [
     'PurchasedPhoneNumber',
     'PhoneNumberCapabilities',
@@ -42,5 +47,7 @@ __all__ = [
     'OperatorInformationOptions',
     'OperatorInformation',
     'OperatorInformationResult',
-    'PhoneNumbersClient'
+    'PhoneNumbersClient',
+    'PhoneNumbersReservation',
+    'PhoneNumbersReservationItem',
 ]

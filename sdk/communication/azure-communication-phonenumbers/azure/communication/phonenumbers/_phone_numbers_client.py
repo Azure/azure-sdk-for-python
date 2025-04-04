@@ -5,10 +5,10 @@
 # --------------------------------------------------------------------------
 
 # pylint: disable=docstring-keyword-should-match-keyword-only
-from typing import List, Optional, Union, Any
+from typing import Iterator, List, Optional, Union, Any
 
 from azure.core.credentials import TokenCredential, AzureKeyCredential
-from azure.core.paging import ItemPaged
+from azure.core.paging import ItemPaged, PageIterator
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
@@ -31,11 +31,12 @@ from ._generated.models import (
     PhoneNumberLocality,
     PhoneNumberSearchResult,
     PurchasedPhoneNumber,
-    PhoneNumbersReservation,
     PhoneNumbersBrowseRequest,
     PhoneNumbersBrowseResult,
     PhoneNumbersReservationPurchaseRequest
 )
+from ._models import PhoneNumbersReservation, PhoneNumbersReservationItem
+from ._generated.models import PhoneNumbersReservation as InternalPhoneNumbersReservation
 from ._shared.auth_policy_utils import get_authentication_policy
 from ._shared.utils import parse_connection_str
 from ._version import SDK_MONIKER
@@ -394,14 +395,16 @@ class PhoneNumbersClient:
         :param reservation_id: The id of the reservation. Required.
         :type reservation_id: str
         :return: PhoneNumbersReservation
-        :rtype: ~azure.communication.phonenumbers.models.PhoneNumbersReservation
+        :rtype: ~azure.communication.phonenumbers.PhoneNumbersReservation
         """
-        return self._phone_number_client.phone_numbers.get_reservation(reservation_id, **kwargs)
+        return PhoneNumbersReservation._from_generated(
+            self._phone_number_client.phone_numbers.get_reservation(reservation_id, **kwargs)
+        )
     
     @distributed_trace
     def list_phone_numbers_reservations(
         self, *, max_page_size: int = 100,  **kwargs: Any
-    ) -> ItemPaged[PhoneNumbersReservation]:
+    ) -> ItemPaged[PhoneNumbersReservationItem]:
         """Lists all reservations.
 
         Retrieves a paginated list of all phone number reservations. Note that the reservations will
@@ -410,16 +413,33 @@ class PhoneNumbersClient:
         :keyword max_page_size: An optional parameter for how many entries to return, for pagination
          purposes. The default value is 100. Default value is 100.
         :paramtype max_page_size: int
-        :return: An iterator like instance of PhoneNumbersReservation
+        :return: An iterator like instance of PhoneNumbersReservationItem
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.models.PhoneNumbersReservation]
+         ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.PhoneNumbersReservationItem]
         """
-        return self._phone_number_client.phone_numbers.list_reservations(max_page_size=max_page_size**kwargs)
+
+        # This allows mapping the generated model to the public model.
+        # Internally, the generated client will create an instance of this iterator with each fetched page.
+        class ReservationsIterator(Iterator[PhoneNumbersReservationItem]): # pylint: disable=too-many-ancestors
+            def __init__(self, inner: List[InternalPhoneNumbersReservation]) -> None:
+                self._inner = iter(inner)
+
+            def __iter__(self):
+                return self
+            
+            def __next__(self) -> PhoneNumbersReservation:
+                reservation = next(self._inner)
+                return PhoneNumbersReservationItem(reservation.id, reservation.expires_at, reservation.status)
+
+        return self._phone_number_client.phone_numbers.list_reservations(
+            max_page_size=max_page_size,
+            cls=ReservationsIterator,
+            **kwargs)
     
     @distributed_trace
     def create_or_update_reservation(
-        self, reservation_id: str, body: PhoneNumbersReservation, **kwargs: Any
-    ) -> PurchasedPhoneNumber:
+        self, reservation: PhoneNumbersReservation, **kwargs: Any
+    ) -> PhoneNumbersReservation:
         """Creates or updates a reservation by its ID.
 
         Adds and removes phone numbers from the reservation with the given ID. The response will be the
@@ -432,14 +452,19 @@ class PhoneNumbersClient:
         maximum of 2 hours from creation time. Partial success is possible, in which case the response
         will have a 207 status code.
 
-        :param reservation_id: The id of the reservation. Required.
-        :type reservation_id: str
         :param reservation: A representation of the desired state of the reservation. Required.
-        :type reservation: ~azure.communication.phonenumbers.models.PhoneNumbersReservation
+        :type reservation: ~azure.communication.phonenumbers.PhoneNumbersReservation
         :return: PhoneNumbersReservation
-        :rtype: ~azure.communication.phonenumbers.models.PhoneNumbersReservation
+        :rtype: ~azure.communication.phonenumbers.PhoneNumbersReservation
         """
-        return self._phone_number_client.phone_numbers.create_or_update_reservation(reservation_id, body, **kwargs)
+        res_request = InternalPhoneNumbersReservation(
+            phone_numbers=reservation.phone_numbers,
+        )
+
+        return PhoneNumbersReservation._from_generated(
+            self._phone_number_client.phone_numbers.create_or_update_reservation(
+                reservation.id, res_request, **kwargs)
+            )
     
     @distributed_trace
     def delete_reservation(
@@ -486,7 +511,7 @@ class PhoneNumbersClient:
 
         return self._phone_number_client.phone_numbers.begin_purchase_reservation(
             reservation_id,
-            body=reservation_purchase_request,
+            reservation_purchase_request,
             polling_interval=polling_interval,
             **kwargs
         )
@@ -513,4 +538,8 @@ class PhoneNumbersClient:
         :return: PhoneNumbersBrowseResult
         :rtype: ~azure.communication.phonenumbers.models.PhoneNumbersBrowseResult
         """
-        res = self._phone_number_client.phone_numbers.browse_available_numbers(country_code, phone_numbers_browse_request, **kwargs)
+        return self._phone_number_client.phone_numbers.browse_available_numbers(
+            country_code, 
+            phone_numbers_browse_request, 
+            **kwargs
+        )
