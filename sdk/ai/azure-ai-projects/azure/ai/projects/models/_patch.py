@@ -855,8 +855,7 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
         :param default_parameters: List of OpenAPI spec parameters that will use user-provided defaults.
         :type default_parameters: OpenApiAuthDetails
         """
-        if default_parameters is None:
-            self._default_parameters = []
+        default_params: List[str] = [] if default_parameters is None else default_parameters
         self._default_auth = auth
         self._definitions: List[OpenApiToolDefinition] = [
             OpenApiToolDefinition(
@@ -865,7 +864,7 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
                     description=description,
                     spec=spec,
                     auth=auth,
-                    default_params=self._default_parameters
+                    default_params=default_params
                 )
             )
         ]
@@ -905,8 +904,7 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
         :type default_parameters: List[str]
         :raises ValueError: If a definition with the same name exists.
         """
-        if default_parameters is None:
-            default_parameters = []
+        default_params: List[str] = [] if default_parameters is None else default_parameters
 
         # Check if a definition with the same name exists.
         if any(definition.openapi.name == name for definition in self._definitions):
@@ -921,7 +919,7 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
                 description=description,
                 spec=spec,
                 auth=auth_to_use,
-                default_params=default_parameters
+                default_params=default_params
             )
         )
         self._definitions.append(new_definition)
