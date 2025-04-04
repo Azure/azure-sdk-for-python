@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 from typing import Dict, List, Optional,  TypedDict
 import json
+from azure.ai.evaluation._common._experimental import experimental
 
 class _RiskCategorySummary(TypedDict):
     """Summary of attack success rates across risk categories."""
@@ -118,6 +119,7 @@ class _RedTeamResult(TypedDict):
     redteaming_data: List[_Conversation]
     studio_url: Optional[str]
 
+@experimental
 class RedTeamOutput():
     def __init__(self, red_team_result: Optional[_RedTeamResult] = None, redteaming_data: Optional[List[_Conversation]] = None):
         self.red_team_result = red_team_result
