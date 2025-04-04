@@ -252,6 +252,7 @@ class MLClient:
                 self._service_client_10_2021_dataplanepreview,
                 resource_group_name,
                 subscription_id,
+                registry_base_url
             ) = get_registry_client(
                 self._credential,
                 registry_name if registry_name else registry_reference,
@@ -264,7 +265,7 @@ class MLClient:
             self._service_client_model_dataplane = ServiceClientModelDataPlane(
                 credential=self._credential,
                 subscription_id=subscription_id,
-                base_url=self._service_client_10_2021_dataplanepreview._client._base_url,
+                base_url=registry_base_url,
                 **kwargs,
             )
 
