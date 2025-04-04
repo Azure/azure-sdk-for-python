@@ -15,23 +15,29 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestNetAppManagementBackupsUnderBackupVaultOperationsAsync(AzureMgmtRecordedTestCase):
+class TestNetAppManagementNetAppResourceUsagesOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(NetAppManagementClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_backups_under_backup_vault_begin_restore_files(self, resource_group):
-        response = await (
-            await self.client.backups_under_backup_vault.begin_restore_files(
-                resource_group_name=resource_group.name,
-                account_name="str",
-                backup_vault_name="str",
-                backup_name="str",
-                body={"destinationVolumeId": "str", "fileList": ["str"], "restoreFilePath": "str"},
-                api_version="2025-01-01",
-            )
-        ).result()  # call '.result()' to poll until service return final result
+    async def test_net_app_resource_usages_list(self, resource_group):
+        response = self.client.net_app_resource_usages.list(
+            location="str",
+            api_version="2025-01-01",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_net_app_resource_usages_get(self, resource_group):
+        response = await self.client.net_app_resource_usages.get(
+            location="str",
+            usage_type="str",
+            api_version="2025-01-01",
+        )
 
         # please add some check logic here by yourself
         # ...
