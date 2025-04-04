@@ -222,7 +222,7 @@ class HsmSecurityDomainOperations:
         return deserialized  # type: ignore
 
     def _download_initial(
-        self, certificate_info_object: Union[_models.CertificateInfoObject, JSON, IO[bytes]], **kwargs: Any
+        self, certificate_info_object: Union[_models.CertificateInfo, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -290,7 +290,7 @@ class HsmSecurityDomainOperations:
     @overload
     def begin_download(
         self,
-        certificate_info_object: _models.CertificateInfoObject,
+        certificate_info_object: _models.CertificateInfo,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -301,7 +301,7 @@ class HsmSecurityDomainOperations:
         :param certificate_info_object: The Security Domain download operation requires customer to
          provide N certificates (minimum 3 and maximum 10)
          containing a public key in JWK format. Required.
-        :type certificate_info_object: ~azure.keyvault.securitydomain.models.CertificateInfoObject
+        :type certificate_info_object: ~azure.keyvault.securitydomain.models.CertificateInfo
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -356,16 +356,16 @@ class HsmSecurityDomainOperations:
 
     @distributed_trace
     def begin_download(
-        self, certificate_info_object: Union[_models.CertificateInfoObject, JSON, IO[bytes]], **kwargs: Any
+        self, certificate_info_object: Union[_models.CertificateInfo, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[_models.SecurityDomainOperationStatus]:
         """Retrieves the Security Domain from the managed HSM. Calling this endpoint can
         be used to activate a provisioned managed HSM resource.
 
         :param certificate_info_object: The Security Domain download operation requires customer to
          provide N certificates (minimum 3 and maximum 10)
-         containing a public key in JWK format. Is one of the following types: CertificateInfoObject,
+         containing a public key in JWK format. Is one of the following types: CertificateInfo,
          JSON, IO[bytes] Required.
-        :type certificate_info_object: ~azure.keyvault.securitydomain.models.CertificateInfoObject or
+        :type certificate_info_object: ~azure.keyvault.securitydomain.models.CertificateInfo or
          JSON or IO[bytes]
         :return: An instance of LROPoller that returns SecurityDomainOperationStatus. The
          SecurityDomainOperationStatus is compatible with MutableMapping
@@ -491,7 +491,7 @@ class HsmSecurityDomainOperations:
         return deserialized  # type: ignore
 
     def _upload_initial(
-        self, security_domain: Union[_models.SecurityDomainObject, JSON, IO[bytes]], **kwargs: Any
+        self, security_domain: Union[_models.SecurityDomain, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -559,12 +559,12 @@ class HsmSecurityDomainOperations:
 
     @overload
     def begin_upload(
-        self, security_domain: _models.SecurityDomainObject, *, content_type: str = "application/json", **kwargs: Any
+        self, security_domain: _models.SecurityDomain, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[_models.SecurityDomainOperationStatus]:
         """Restore the provided Security Domain.
 
         :param security_domain: The Security Domain to be restored. Required.
-        :type security_domain: ~azure.keyvault.securitydomain.models.SecurityDomainObject
+        :type security_domain: ~azure.keyvault.securitydomain.models.SecurityDomain
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -613,13 +613,13 @@ class HsmSecurityDomainOperations:
 
     @distributed_trace
     def begin_upload(
-        self, security_domain: Union[_models.SecurityDomainObject, JSON, IO[bytes]], **kwargs: Any
+        self, security_domain: Union[_models.SecurityDomain, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[_models.SecurityDomainOperationStatus]:
         """Restore the provided Security Domain.
 
         :param security_domain: The Security Domain to be restored. Is one of the following types:
-         SecurityDomainObject, JSON, IO[bytes] Required.
-        :type security_domain: ~azure.keyvault.securitydomain.models.SecurityDomainObject or JSON or
+         SecurityDomain, JSON, IO[bytes] Required.
+        :type security_domain: ~azure.keyvault.securitydomain.models.SecurityDomain or JSON or
          IO[bytes]
         :return: An instance of LROPoller that returns SecurityDomainOperationStatus. The
          SecurityDomainOperationStatus is compatible with MutableMapping

@@ -30,7 +30,7 @@ from azure.core.utils import case_insensitive_dict
 from .. import models as _models
 from .._model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._serialization import Serializer
-from .._vendor import KeyVaultClientMixinABC
+from .._vendor import SecurityDomainClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -44,26 +44,21 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_key_vault_get_download_status_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_security_domain_get_download_status_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/securitydomain/download/pending"
 
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
 
 
-def build_key_vault_download_request(**kwargs: Any) -> HttpRequest:
+def build_security_domain_download_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -85,48 +80,38 @@ def build_key_vault_download_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_key_vault_get_upload_status_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_security_domain_get_upload_status_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/securitydomain/upload/pending"
 
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
 
 
-def build_key_vault_upload_request(**kwargs: Any) -> HttpRequest:
+def build_security_domain_upload_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/securitydomain/upload"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
 
 
-def build_key_vault_get_transfer_key_request(**kwargs: Any) -> HttpRequest:
+def build_security_domain_get_transfer_key_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -145,7 +130,7 @@ def build_key_vault_get_transfer_key_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
+class SecurityDomainClientOperationsMixin(SecurityDomainClientMixinABC):
 
     @distributed_trace
     def get_download_status(self, **kwargs: Any) -> _models.SecurityDomainOperationStatus:
@@ -169,8 +154,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
         cls: ClsType[_models.SecurityDomainOperationStatus] = kwargs.pop("cls", None)
 
-        _request = build_key_vault_get_download_status_request(
-            api_version=self._config.api_version,
+        _request = build_security_domain_get_download_status_request(
             headers=_headers,
             params=_params,
         )
@@ -209,7 +193,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         return deserialized  # type: ignore
 
     def _download_initial(
-        self, certificate_info_object: Union[_models.CertificateInfoObject, JSON, IO[bytes]], **kwargs: Any
+        self, certificate_info_object: Union[_models.CertificateInfo, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -232,7 +216,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         else:
             _content = json.dumps(certificate_info_object, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_key_vault_download_request(
+        _request = build_security_domain_download_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -277,11 +261,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
     @overload
     def _begin_download(
-        self,
-        certificate_info_object: _models.CertificateInfoObject,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, certificate_info_object: _models.CertificateInfo, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]: ...
     @overload
     def _begin_download(
@@ -294,16 +274,16 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
     @distributed_trace
     def _begin_download(
-        self, certificate_info_object: Union[_models.CertificateInfoObject, JSON, IO[bytes]], **kwargs: Any
+        self, certificate_info_object: Union[_models.CertificateInfo, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[None]:
         """Retrieves the Security Domain from the managed HSM. Calling this endpoint can be used to
         activate a provisioned managed HSM resource.
 
         :param certificate_info_object: The Security Domain download operation requires customer to
          provide N certificates (minimum 3 and maximum 10) containing a public key in JWK format. Is one
-         of the following types: CertificateInfoObject, JSON, IO[bytes] Required.
-        :type certificate_info_object: ~azure.keyvault.securitydomain.models.CertificateInfoObject or
-         JSON or IO[bytes]
+         of the following types: CertificateInfo, JSON, IO[bytes] Required.
+        :type certificate_info_object: ~azure.keyvault.securitydomain.models.CertificateInfo or JSON or
+         IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -377,8 +357,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
         cls: ClsType[_models.SecurityDomainOperationStatus] = kwargs.pop("cls", None)
 
-        _request = build_key_vault_get_upload_status_request(
-            api_version=self._config.api_version,
+        _request = build_security_domain_get_upload_status_request(
             headers=_headers,
             params=_params,
         )
@@ -417,7 +396,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         return deserialized  # type: ignore
 
     def _upload_initial(
-        self, security_domain: Union[_models.SecurityDomainObject, JSON, IO[bytes]], **kwargs: Any
+        self, security_domain: Union[_models.SecurityDomain, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -440,9 +419,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         else:
             _content = json.dumps(security_domain, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_key_vault_upload_request(
+        _request = build_security_domain_upload_request(
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -486,7 +464,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
     @overload
     def _begin_upload(
-        self, security_domain: _models.SecurityDomainObject, *, content_type: str = "application/json", **kwargs: Any
+        self, security_domain: _models.SecurityDomain, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[_models.SecurityDomainOperationStatus]: ...
     @overload
     def _begin_upload(
@@ -499,13 +477,13 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
     @distributed_trace
     def _begin_upload(
-        self, security_domain: Union[_models.SecurityDomainObject, JSON, IO[bytes]], **kwargs: Any
+        self, security_domain: Union[_models.SecurityDomain, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[_models.SecurityDomainOperationStatus]:
         """Restore the provided Security Domain.
 
         :param security_domain: The Security Domain to be restored. Is one of the following types:
-         SecurityDomainObject, JSON, IO[bytes] Required.
-        :type security_domain: ~azure.keyvault.securitydomain.models.SecurityDomainObject or JSON or
+         SecurityDomain, JSON, IO[bytes] Required.
+        :type security_domain: ~azure.keyvault.securitydomain.models.SecurityDomain or JSON or
          IO[bytes]
         :return: An instance of LROPoller that returns SecurityDomainOperationStatus. The
          SecurityDomainOperationStatus is compatible with MutableMapping
@@ -592,7 +570,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
         cls: ClsType[_models.TransferKey] = kwargs.pop("cls", None)
 
-        _request = build_key_vault_get_transfer_key_request(
+        _request = build_security_domain_get_transfer_key_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,

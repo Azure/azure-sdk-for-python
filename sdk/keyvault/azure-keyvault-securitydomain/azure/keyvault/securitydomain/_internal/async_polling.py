@@ -12,7 +12,7 @@ from azure.core.polling.base_polling import OperationFailed
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .polling import _finished, _is_empty, SecurityDomainDownloadPolling
-from ..models import SecurityDomainObject, SecurityDomainOperationStatus
+from ..models import SecurityDomain, SecurityDomainOperationStatus
 from .._model_base import _deserialize
 from .._serialization import Deserializer
 
@@ -32,7 +32,7 @@ class AsyncPollingTerminationMixin(AsyncLROBasePolling):
     def parse_resource(
         self,
         pipeline_response: PipelineResponse[HttpRequest, AsyncHttpResponse],
-    ) -> Union[SecurityDomainObject, SecurityDomainOperationStatus]:
+    ) -> Union[SecurityDomain, SecurityDomainOperationStatus]:
         """Assuming this response is a resource, use the deserialization callback to parse it.
         If body is empty, assuming no resource to return.
 
@@ -97,28 +97,19 @@ class AsyncSecurityDomainDownloadPollingMethod(AsyncPollingTerminationMixin, Asy
         """
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            deserializer = Deserializer()
-            response_headers["Azure-AsyncOperation"] = deserializer._deserialize(  # pylint: disable=protected-access
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
-            response_headers["Retry-After"] = deserializer._deserialize(
-                "int", response.headers.get("Retry-After")
-            )  # pylint: disable=protected-access
-
-            return _deserialize(SecurityDomainObject, response.json())
+            return _deserialize(SecurityDomain, response.json())
 
         super().initialize(client, initial_response, get_long_running_output)
 
-    def resource(self) -> SecurityDomainObject:
+    def resource(self) -> SecurityDomain:
         """Return the built resource.
 
         :rtype: any
         :return: The built resource.
         """
         # The final response should actually be the security domain object that was returned in the initial response
-        return cast(SecurityDomainObject, self.parse_resource(self._initial_response))
+        return cast(SecurityDomain, self.parse_resource(self._initial_response))
 
 
 class AsyncSecurityDomainDownloadNoPolling(AsyncSecurityDomainDownloadPollingMethod, AsyncNoPollingMixin):
@@ -157,16 +148,7 @@ class AsyncSecurityDomainUploadPollingMethod(AsyncPollingTerminationMixin, Async
         """
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            deserializer = Deserializer()
-            response_headers["Azure-AsyncOperation"] = deserializer._deserialize(  # pylint: disable=protected-access
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
-            response_headers["Retry-After"] = deserializer._deserialize(
-                "int", response.headers.get("Retry-After")
-            )  # pylint: disable=protected-access
-
             return _deserialize(SecurityDomainOperationStatus, response.json())
 
         super().initialize(client, initial_response, get_long_running_output)
