@@ -72,7 +72,7 @@ class TestImageAnalysisClient(ImageAnalysisTestBase):
 
         self._create_client_for_standard_analysis_with_entra_id_auth(sync=True, **kwargs)
 
-        self._do_analysis(image_source=self.IMAGE_URL,visual_features=[sdk.models.VisualFeatures.OBJECTS], **kwargs)
+        self._do_analysis(image_source=self.IMAGE_URL, visual_features=[sdk.models.VisualFeatures.OBJECTS], **kwargs)
 
         self.client.close()
 

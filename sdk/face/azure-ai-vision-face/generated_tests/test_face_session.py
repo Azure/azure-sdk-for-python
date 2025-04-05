@@ -23,8 +23,7 @@ class TestFaceSession(FaceSessionClientTestBase):
                 "deviceCorrelationId": "str",
                 "deviceCorrelationIdSetInClient": bool,
                 "enableSessionImage": bool,
-                "livenessSingleModalModel": "str",
-                "sendResultsToClient": bool,
+                "livenessModelVersion": "str",
             },
         )
 
@@ -55,19 +54,20 @@ class TestFaceSession(FaceSessionClientTestBase):
 
     @FaceSessionPreparer()
     @recorded_by_proxy
-    def test_get_liveness_sessions(self, facesession_endpoint):
+    def test_create_liveness_with_verify_session(self, facesession_endpoint):
         client = self.create_client(endpoint=facesession_endpoint)
-        response = client.get_liveness_sessions()
-
-        # please add some check logic here by yourself
-        # ...
-
-    @FaceSessionPreparer()
-    @recorded_by_proxy
-    def test_get_liveness_session_audit_entries(self, facesession_endpoint):
-        client = self.create_client(endpoint=facesession_endpoint)
-        response = client.get_liveness_session_audit_entries(
-            session_id="str",
+        response = client.create_liveness_with_verify_session(
+            body={
+                "livenessOperationMode": "str",
+                "verifyImage": "filetype",
+                "authTokenTimeToLiveInSeconds": 0,
+                "deviceCorrelationId": "str",
+                "deviceCorrelationIdSetInClient": bool,
+                "enableSessionImage": bool,
+                "livenessModelVersion": "str",
+                "returnVerifyImageHash": bool,
+                "verifyConfidenceThreshold": 0.0,
+            },
         )
 
         # please add some check logic here by yourself
@@ -89,26 +89,6 @@ class TestFaceSession(FaceSessionClientTestBase):
     def test_get_liveness_with_verify_session_result(self, facesession_endpoint):
         client = self.create_client(endpoint=facesession_endpoint)
         response = client.get_liveness_with_verify_session_result(
-            session_id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @FaceSessionPreparer()
-    @recorded_by_proxy
-    def test_get_liveness_with_verify_sessions(self, facesession_endpoint):
-        client = self.create_client(endpoint=facesession_endpoint)
-        response = client.get_liveness_with_verify_sessions()
-
-        # please add some check logic here by yourself
-        # ...
-
-    @FaceSessionPreparer()
-    @recorded_by_proxy
-    def test_get_liveness_with_verify_session_audit_entries(self, facesession_endpoint):
-        client = self.create_client(endpoint=facesession_endpoint)
-        response = client.get_liveness_with_verify_session_audit_entries(
             session_id="str",
         )
 

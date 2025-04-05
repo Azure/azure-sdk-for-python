@@ -893,6 +893,7 @@ class PassFailMetric(_model_base.Model):
      are: "response_time_ms", "latency", "error", "requests", and "requests_per_sec".
     :vartype client_metric: str or ~azure.developer.loadtesting.models.PFMetrics
     :ivar aggregate: The aggregation function to be applied on the client metric. Allowed functions
+
      * ‘percentage’ - for error metric , ‘avg’, percentiles like ‘p50’, ‘p90’, & so on, ‘min’,
      ‘max’ - for response_time_ms and latency metric, ‘avg’ - for requests_per_sec,
      ‘count’ - for requests. Known values are: "count", "percentage", "avg", "p50", "p75", "p90",
@@ -924,6 +925,7 @@ class PassFailMetric(_model_base.Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The aggregation function to be applied on the client metric. Allowed functions
+     
      * ‘percentage’ - for error metric , ‘avg’, percentiles like ‘p50’, ‘p90’, & so on, ‘min’,
      ‘max’ - for response_time_ms and latency metric, ‘avg’ - for requests_per_sec,
      ‘count’ - for requests. Known values are: \"count\", \"percentage\", \"avg\", \"p50\", \"p75\",

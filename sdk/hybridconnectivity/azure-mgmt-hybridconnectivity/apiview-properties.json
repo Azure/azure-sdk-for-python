@@ -13,6 +13,7 @@
         "azure.mgmt.hybridconnectivity.models.ErrorDetail": "Azure.ResourceManager.CommonTypes.ErrorDetail",
         "azure.mgmt.hybridconnectivity.models.ErrorResponse": "Azure.ResourceManager.CommonTypes.ErrorResponse",
         "azure.mgmt.hybridconnectivity.models.GenerateAwsTemplateRequest": "Microsoft.HybridConnectivity.GenerateAwsTemplateRequest",
+        "azure.mgmt.hybridconnectivity.models.GenerateAwsTemplateResponse": "Microsoft.HybridConnectivity.GenerateAwsTemplateResponse",
         "azure.mgmt.hybridconnectivity.models.IngressGatewayResource": "Microsoft.HybridConnectivity.IngressGatewayResource",
         "azure.mgmt.hybridconnectivity.models.IngressProfileProperties": "Microsoft.HybridConnectivity.IngressProfileProperties",
         "azure.mgmt.hybridconnectivity.models.InventoryProperties": "Microsoft.HybridConnectivity.InventoryProperties",

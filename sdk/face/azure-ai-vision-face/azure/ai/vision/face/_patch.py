@@ -289,7 +289,7 @@ class FaceSessionClient(FaceSessionClientGenerated):
         """
         if verify_image is not None:
             if not isinstance(body, _models.CreateLivenessWithVerifySessionContent):
-            # Convert body to CreateLivenessWithVerifySessionContent if necessary
+                # Convert body to CreateLivenessWithVerifySessionContent if necessary
                 body = _models.CreateLivenessWithVerifySessionContent(**body)
             request_body = (
                 _models._models.CreateLivenessWithVerifySessionMultipartContent(  # pylint: disable=protected-access

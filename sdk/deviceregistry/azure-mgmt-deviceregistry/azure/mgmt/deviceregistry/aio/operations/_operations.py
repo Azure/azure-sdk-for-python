@@ -84,9 +84,6 @@ class Operations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    @api_version_validation(
-        params_added_on={"2024-09-01-preview": ["base_url"]},
-    )
     def list(self, **kwargs: Any) -> AsyncIterable["_models.Operation"]:
         """List the operations for the provider.
 
@@ -146,7 +143,7 @@ class Operations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Operation], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.Operation], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -188,9 +185,6 @@ class OperationStatusOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    @api_version_validation(
-        params_added_on={"2024-09-01-preview": ["base_url"]},
-    )
     async def get(self, location: str, operation_id: str, **kwargs: Any) -> _models.OperationStatusResult:
         """Returns the current status of an async operation.
 
@@ -274,9 +268,6 @@ class AssetsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    @api_version_validation(
-        params_added_on={"2024-09-01-preview": ["base_url"]},
-    )
     async def get(self, resource_group_name: str, asset_name: str, **kwargs: Any) -> _models.Asset:
         """Get a Asset.
 
@@ -342,9 +333,6 @@ class AssetsOperations:
 
         return deserialized  # type: ignore
 
-    @api_version_validation(
-        params_added_on={"2024-09-01-preview": ["base_url"]},
-    )
     async def _create_or_replace_initial(
         self, resource_group_name: str, asset_name: str, resource: Union[_models.Asset, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -499,9 +487,6 @@ class AssetsOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        params_added_on={"2024-09-01-preview": ["base_url"]},
-    )
     async def begin_create_or_replace(
         self, resource_group_name: str, asset_name: str, resource: Union[_models.Asset, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[_models.Asset]:
@@ -572,9 +557,6 @@ class AssetsOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    @api_version_validation(
-        params_added_on={"2024-09-01-preview": ["base_url"]},
-    )
     async def _update_initial(
         self,
         resource_group_name: str,
@@ -731,9 +713,6 @@ class AssetsOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        params_added_on={"2024-09-01-preview": ["base_url"]},
-    )
     async def begin_update(
         self,
         resource_group_name: str,
@@ -808,9 +787,6 @@ class AssetsOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    @api_version_validation(
-        params_added_on={"2024-09-01-preview": ["base_url"]},
-    )
     async def _delete_initial(self, resource_group_name: str, asset_name: str, **kwargs: Any) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -867,9 +843,6 @@ class AssetsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    @api_version_validation(
-        params_added_on={"2024-09-01-preview": ["base_url"]},
-    )
     async def begin_delete(self, resource_group_name: str, asset_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
         """Delete a Asset.
 
@@ -927,9 +900,6 @@ class AssetsOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        params_added_on={"2024-09-01-preview": ["base_url"]},
-    )
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.Asset"]:
         """List Asset resources by resource group.
 
@@ -994,7 +964,7 @@ class AssetsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Asset], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.Asset], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1018,9 +988,6 @@ class AssetsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    @api_version_validation(
-        params_added_on={"2024-09-01-preview": ["base_url"]},
-    )
     def list_by_subscription(self, **kwargs: Any) -> AsyncIterable["_models.Asset"]:
         """List Asset resources by subscription ID.
 
@@ -1081,7 +1048,7 @@ class AssetsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Asset], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.Asset], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1123,9 +1090,6 @@ class AssetEndpointProfilesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    @api_version_validation(
-        params_added_on={"2024-09-01-preview": ["base_url"]},
-    )
     async def get(
         self, resource_group_name: str, asset_endpoint_profile_name: str, **kwargs: Any
     ) -> _models.AssetEndpointProfile:
@@ -1193,9 +1157,6 @@ class AssetEndpointProfilesOperations:
 
         return deserialized  # type: ignore
 
-    @api_version_validation(
-        params_added_on={"2024-09-01-preview": ["base_url"]},
-    )
     async def _create_or_replace_initial(
         self,
         resource_group_name: str,
@@ -1357,9 +1318,6 @@ class AssetEndpointProfilesOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        params_added_on={"2024-09-01-preview": ["base_url"]},
-    )
     async def begin_create_or_replace(
         self,
         resource_group_name: str,
@@ -1435,9 +1393,6 @@ class AssetEndpointProfilesOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    @api_version_validation(
-        params_added_on={"2024-09-01-preview": ["base_url"]},
-    )
     async def _update_initial(
         self,
         resource_group_name: str,
@@ -1597,9 +1552,6 @@ class AssetEndpointProfilesOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        params_added_on={"2024-09-01-preview": ["base_url"]},
-    )
     async def begin_update(
         self,
         resource_group_name: str,
@@ -1676,9 +1628,6 @@ class AssetEndpointProfilesOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    @api_version_validation(
-        params_added_on={"2024-09-01-preview": ["base_url"]},
-    )
     async def _delete_initial(
         self, resource_group_name: str, asset_endpoint_profile_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -1737,9 +1686,6 @@ class AssetEndpointProfilesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    @api_version_validation(
-        params_added_on={"2024-09-01-preview": ["base_url"]},
-    )
     async def begin_delete(
         self, resource_group_name: str, asset_endpoint_profile_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
@@ -1799,9 +1745,6 @@ class AssetEndpointProfilesOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        params_added_on={"2024-09-01-preview": ["base_url"]},
-    )
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
     ) -> AsyncIterable["_models.AssetEndpointProfile"]:
@@ -1869,7 +1812,7 @@ class AssetEndpointProfilesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.AssetEndpointProfile], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.AssetEndpointProfile], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1893,9 +1836,6 @@ class AssetEndpointProfilesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    @api_version_validation(
-        params_added_on={"2024-09-01-preview": ["base_url"]},
-    )
     def list_by_subscription(self, **kwargs: Any) -> AsyncIterable["_models.AssetEndpointProfile"]:
         """List AssetEndpointProfile resources by subscription ID.
 
@@ -1957,7 +1897,7 @@ class AssetEndpointProfilesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.AssetEndpointProfile], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.AssetEndpointProfile], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2001,9 +1941,7 @@ class BillingContainersOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2024-09-01-preview",
-        params_added_on={
-            "2024-09-01-preview": ["base_url", "api_version", "subscription_id", "billing_container_name", "accept"]
-        },
+        params_added_on={"2024-09-01-preview": ["api_version", "subscription_id", "billing_container_name", "accept"]},
     )
     async def get(self, billing_container_name: str, **kwargs: Any) -> _models.BillingContainer:
         """Get a BillingContainer.
@@ -2069,7 +2007,7 @@ class BillingContainersOperations:
     @distributed_trace
     @api_version_validation(
         method_added_on="2024-09-01-preview",
-        params_added_on={"2024-09-01-preview": ["base_url", "api_version", "subscription_id", "accept"]},
+        params_added_on={"2024-09-01-preview": ["api_version", "subscription_id", "accept"]},
     )
     def list_by_subscription(self, **kwargs: Any) -> AsyncIterable["_models.BillingContainer"]:
         """List BillingContainer resources by subscription ID.
@@ -2132,7 +2070,7 @@ class BillingContainersOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BillingContainer], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.BillingContainer], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)

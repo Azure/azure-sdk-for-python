@@ -1,0 +1,25 @@
+{
+    "CrossLanguagePackageId": "ImageAnalysis",
+    "CrossLanguageDefinitionId": {
+        "azure.ai.vision.imageanalysis.models.CaptionResult": "ImageAnalysis.CaptionResult",
+        "azure.ai.vision.imageanalysis.models.CropRegion": "ImageAnalysis.CropRegion",
+        "azure.ai.vision.imageanalysis.models.DenseCaption": "ImageAnalysis.DenseCaption",
+        "azure.ai.vision.imageanalysis.models.DenseCaptionsResult": "ImageAnalysis.DenseCaptionsResult",
+        "azure.ai.vision.imageanalysis.models.DetectedObject": "ImageAnalysis.DetectedObject",
+        "azure.ai.vision.imageanalysis.models.DetectedPerson": "ImageAnalysis.DetectedPerson",
+        "azure.ai.vision.imageanalysis.models.DetectedTag": "ImageAnalysis.DetectedTag",
+        "azure.ai.vision.imageanalysis.models.DetectedTextBlock": "ImageAnalysis.DetectedTextBlock",
+        "azure.ai.vision.imageanalysis.models.DetectedTextLine": "ImageAnalysis.DetectedTextLine",
+        "azure.ai.vision.imageanalysis.models.DetectedTextWord": "ImageAnalysis.DetectedTextWord",
+        "azure.ai.vision.imageanalysis.models.ImageAnalysisResult": "ImageAnalysis.ImageAnalysisResult",
+        "azure.ai.vision.imageanalysis.models.ImageBoundingBox": "ImageAnalysis.ImageBoundingBox",
+        "azure.ai.vision.imageanalysis.models.ImageMetadata": "ImageAnalysis.ImageMetadata",
+        "azure.ai.vision.imageanalysis.models.ImagePoint": "ImageAnalysis.ImagePoint",
+        "azure.ai.vision.imageanalysis.models.ObjectsResult": "ImageAnalysis.ObjectsResult",
+        "azure.ai.vision.imageanalysis.models.PeopleResult": "ImageAnalysis.PeopleResult",
+        "azure.ai.vision.imageanalysis.models.ReadResult": "ImageAnalysis.ReadResult",
+        "azure.ai.vision.imageanalysis.models.SmartCropsResult": "ImageAnalysis.SmartCropsResult",
+        "azure.ai.vision.imageanalysis.models.TagsResult": "ImageAnalysis.TagsResult",
+        "azure.ai.vision.imageanalysis.models.VisualFeatures": "ImageAnalysis.VisualFeatures"
+    }
+}

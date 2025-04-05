@@ -29,8 +29,9 @@ class FabricMgmtClientConfiguration:  # pylint: disable=too-many-instance-attrib
     :type subscription_id: str
     :param base_url: Service host. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: The API version to use for this operation. Default value is "2023-11-01".
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Default value is
+     "2025-01-15-preview". Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     """
 
@@ -41,7 +42,7 @@ class FabricMgmtClientConfiguration:  # pylint: disable=too-many-instance-attrib
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        api_version: str = kwargs.pop("api_version", "2023-11-01")
+        api_version: str = kwargs.pop("api_version", "2025-01-15-preview")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

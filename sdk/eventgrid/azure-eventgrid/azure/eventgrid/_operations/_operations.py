@@ -501,8 +501,8 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         self,
         topic_name: str,
         event_subscription_name: str,
-        body: JSON,
         *,
+        lock_tokens: List[str],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.AcknowledgeResult: ...
@@ -511,8 +511,8 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         self,
         topic_name: str,
         event_subscription_name: str,
+        body: JSON,
         *,
-        lock_tokens: List[str],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.AcknowledgeResult: ...
@@ -625,8 +625,8 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         self,
         topic_name: str,
         event_subscription_name: str,
-        body: JSON,
         *,
+        lock_tokens: List[str],
         release_delay_in_seconds: Optional[Union[str, _models.ReleaseDelay]] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -636,8 +636,8 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         self,
         topic_name: str,
         event_subscription_name: str,
+        body: JSON,
         *,
-        lock_tokens: List[str],
         release_delay_in_seconds: Optional[Union[str, _models.ReleaseDelay]] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -656,7 +656,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
 
     @distributed_trace
     @api_version_validation(
-        params_added_on={"2023-10-01-preview": ["release_delay_in_seconds"]},
+        params_added_on={"2024-06-01": ["release_delay_in_seconds"]},
     )
     def _release(
         self,
@@ -759,8 +759,8 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         self,
         topic_name: str,
         event_subscription_name: str,
-        body: JSON,
         *,
+        lock_tokens: List[str],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RejectResult: ...
@@ -769,8 +769,8 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         self,
         topic_name: str,
         event_subscription_name: str,
+        body: JSON,
         *,
-        lock_tokens: List[str],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RejectResult: ...
@@ -882,8 +882,8 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         self,
         topic_name: str,
         event_subscription_name: str,
-        body: JSON,
         *,
+        lock_tokens: List[str],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RenewLocksResult: ...
@@ -892,8 +892,8 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         self,
         topic_name: str,
         event_subscription_name: str,
+        body: JSON,
         *,
-        lock_tokens: List[str],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RenewLocksResult: ...
@@ -910,9 +910,9 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2023-10-01-preview",
+        method_added_on="2024-06-01",
         params_added_on={
-            "2023-10-01-preview": ["api_version", "topic_name", "event_subscription_name", "content_type", "accept"]
+            "2024-06-01": ["api_version", "topic_name", "event_subscription_name", "content_type", "accept"]
         },
     )
     def _renew_locks(

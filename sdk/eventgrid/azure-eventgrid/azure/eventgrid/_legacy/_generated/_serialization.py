@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,line-too-long,useless-suppression
 # --------------------------------------------------------------------------
 #
 # Copyright (c) Microsoft Corporation. All rights reserved.

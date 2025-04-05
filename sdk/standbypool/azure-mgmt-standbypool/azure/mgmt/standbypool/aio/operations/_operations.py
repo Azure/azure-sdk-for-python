@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,23 +9,10 @@
 from io import IOBase
 import json
 import sys
-from typing import (
-    Any,
-    AsyncIterable,
-    AsyncIterator,
-    Callable,
-    Dict,
-    IO,
-    List,
-    Optional,
-    Type,
-    TypeVar,
-    Union,
-    cast,
-    overload,
-)
+from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
+from azure.core import AsyncPipelineClient
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -47,7 +34,8 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
-from ..._model_base import SdkJSONEncoder, _deserialize
+from ..._model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
+from ..._serialization import Deserializer, Serializer
 from ..._validation import api_version_validation
 from ...operations._operations import (
     build_operations_list_request,
@@ -70,11 +58,12 @@ from ...operations._operations import (
     build_standby_virtual_machines_get_request,
     build_standby_virtual_machines_list_by_standby_virtual_machine_pool_resource_request,
 )
+from .._configuration import StandbyPoolMgmtClientConfiguration
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
@@ -92,16 +81,12 @@ class Operations:
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: StandbyPoolMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2023-12-01-preview",
-        params_added_on={"2023-12-01-preview": ["api_version", "accept"]},
-    )
     def list(self, **kwargs: Any) -> AsyncIterable["_models.Operation"]:
         """List the operations for the provider.
 
@@ -114,7 +99,7 @@ class Operations:
 
         cls: ClsType[List[_models.Operation]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -161,7 +146,7 @@ class Operations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Operation], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.Operation], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -177,7 +162,7 @@ class Operations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -197,24 +182,12 @@ class StandbyVirtualMachinePoolsOperations:
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: StandbyPoolMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2023-12-01-preview",
-        params_added_on={
-            "2023-12-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "standby_virtual_machine_pool_name",
-                "accept",
-            ]
-        },
-    )
     async def get(
         self, resource_group_name: str, standby_virtual_machine_pool_name: str, **kwargs: Any
     ) -> _models.StandbyVirtualMachinePoolResource:
@@ -230,7 +203,7 @@ class StandbyVirtualMachinePoolsOperations:
         :rtype: ~azure.mgmt.standbypool.models.StandbyVirtualMachinePoolResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -270,7 +243,7 @@ class StandbyVirtualMachinePoolsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -283,19 +256,6 @@ class StandbyVirtualMachinePoolsOperations:
 
         return deserialized  # type: ignore
 
-    @api_version_validation(
-        method_added_on="2023-12-01-preview",
-        params_added_on={
-            "2023-12-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "standby_virtual_machine_pool_name",
-                "content_type",
-                "accept",
-            ]
-        },
-    )
     async def _create_or_update_initial(
         self,
         resource_group_name: str,
@@ -303,7 +263,7 @@ class StandbyVirtualMachinePoolsOperations:
         resource: Union[_models.StandbyVirtualMachinePoolResource, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -352,7 +312,7 @@ class StandbyVirtualMachinePoolsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -454,19 +414,6 @@ class StandbyVirtualMachinePoolsOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2023-12-01-preview",
-        params_added_on={
-            "2023-12-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "standby_virtual_machine_pool_name",
-                "content_type",
-                "accept",
-            ]
-        },
-    )
     async def begin_create_or_update(
         self,
         resource_group_name: str,
@@ -543,22 +490,10 @@ class StandbyVirtualMachinePoolsOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    @api_version_validation(
-        method_added_on="2023-12-01-preview",
-        params_added_on={
-            "2023-12-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "standby_virtual_machine_pool_name",
-                "accept",
-            ]
-        },
-    )
     async def _delete_initial(
         self, resource_group_name: str, standby_virtual_machine_pool_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -597,7 +532,7 @@ class StandbyVirtualMachinePoolsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -613,18 +548,6 @@ class StandbyVirtualMachinePoolsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2023-12-01-preview",
-        params_added_on={
-            "2023-12-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "standby_virtual_machine_pool_name",
-                "accept",
-            ]
-        },
-    )
     async def begin_delete(
         self, resource_group_name: str, standby_virtual_machine_pool_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
@@ -768,19 +691,6 @@ class StandbyVirtualMachinePoolsOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2023-12-01-preview",
-        params_added_on={
-            "2023-12-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "standby_virtual_machine_pool_name",
-                "content_type",
-                "accept",
-            ]
-        },
-    )
     async def update(
         self,
         resource_group_name: str,
@@ -804,7 +714,7 @@ class StandbyVirtualMachinePoolsOperations:
         :rtype: ~azure.mgmt.standbypool.models.StandbyVirtualMachinePoolResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -854,7 +764,7 @@ class StandbyVirtualMachinePoolsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -868,10 +778,6 @@ class StandbyVirtualMachinePoolsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2023-12-01-preview",
-        params_added_on={"2023-12-01-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
-    )
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
     ) -> AsyncIterable["_models.StandbyVirtualMachinePoolResource"]:
@@ -890,7 +796,7 @@ class StandbyVirtualMachinePoolsOperations:
 
         cls: ClsType[List[_models.StandbyVirtualMachinePoolResource]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -939,7 +845,7 @@ class StandbyVirtualMachinePoolsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.StandbyVirtualMachinePoolResource], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.StandbyVirtualMachinePoolResource], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -955,7 +861,7 @@ class StandbyVirtualMachinePoolsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -963,10 +869,6 @@ class StandbyVirtualMachinePoolsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2023-12-01-preview",
-        params_added_on={"2023-12-01-preview": ["api_version", "subscription_id", "accept"]},
-    )
     def list_by_subscription(self, **kwargs: Any) -> AsyncIterable["_models.StandbyVirtualMachinePoolResource"]:
         """List StandbyVirtualMachinePoolResource resources by subscription ID.
 
@@ -980,7 +882,7 @@ class StandbyVirtualMachinePoolsOperations:
 
         cls: ClsType[List[_models.StandbyVirtualMachinePoolResource]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1028,7 +930,7 @@ class StandbyVirtualMachinePoolsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.StandbyVirtualMachinePoolResource], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.StandbyVirtualMachinePoolResource], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1044,7 +946,7 @@ class StandbyVirtualMachinePoolsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1064,25 +966,12 @@ class StandbyVirtualMachinesOperations:
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: StandbyPoolMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2023-12-01-preview",
-        params_added_on={
-            "2023-12-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "standby_virtual_machine_pool_name",
-                "standby_virtual_machine_name",
-                "accept",
-            ]
-        },
-    )
     async def get(
         self,
         resource_group_name: str,
@@ -1104,7 +993,7 @@ class StandbyVirtualMachinesOperations:
         :rtype: ~azure.mgmt.standbypool.models.StandbyVirtualMachineResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1145,7 +1034,7 @@ class StandbyVirtualMachinesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -1159,18 +1048,6 @@ class StandbyVirtualMachinesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2023-12-01-preview",
-        params_added_on={
-            "2023-12-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "standby_virtual_machine_pool_name",
-                "accept",
-            ]
-        },
-    )  # pylint: disable=name-too-long
     def list_by_standby_virtual_machine_pool_resource(  # pylint: disable=name-too-long
         self, resource_group_name: str, standby_virtual_machine_pool_name: str, **kwargs: Any
     ) -> AsyncIterable["_models.StandbyVirtualMachineResource"]:
@@ -1191,7 +1068,7 @@ class StandbyVirtualMachinesOperations:
 
         cls: ClsType[List[_models.StandbyVirtualMachineResource]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1241,7 +1118,7 @@ class StandbyVirtualMachinesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.StandbyVirtualMachineResource], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.StandbyVirtualMachineResource], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1257,7 +1134,7 @@ class StandbyVirtualMachinesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1277,12 +1154,25 @@ class StandbyVirtualMachinePoolRuntimeViewsOperations:  # pylint: disable=name-t
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: StandbyPoolMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2024-03-01-preview",
+        params_added_on={
+            "2024-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "standby_virtual_machine_pool_name",
+                "runtime_view",
+                "accept",
+            ]
+        },
+    )
     async def get(
         self, resource_group_name: str, standby_virtual_machine_pool_name: str, runtime_view: str, **kwargs: Any
     ) -> _models.StandbyVirtualMachinePoolRuntimeViewResource:
@@ -1302,7 +1192,7 @@ class StandbyVirtualMachinePoolRuntimeViewsOperations:  # pylint: disable=name-t
         :rtype: ~azure.mgmt.standbypool.models.StandbyVirtualMachinePoolRuntimeViewResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1343,7 +1233,7 @@ class StandbyVirtualMachinePoolRuntimeViewsOperations:  # pylint: disable=name-t
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -1357,6 +1247,18 @@ class StandbyVirtualMachinePoolRuntimeViewsOperations:  # pylint: disable=name-t
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2024-03-01-preview",
+        params_added_on={
+            "2024-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "standby_virtual_machine_pool_name",
+                "accept",
+            ]
+        },
+    )
     def list_by_standby_pool(
         self, resource_group_name: str, standby_virtual_machine_pool_name: str, **kwargs: Any
     ) -> AsyncIterable["_models.StandbyVirtualMachinePoolRuntimeViewResource"]:
@@ -1378,7 +1280,7 @@ class StandbyVirtualMachinePoolRuntimeViewsOperations:  # pylint: disable=name-t
 
         cls: ClsType[List[_models.StandbyVirtualMachinePoolRuntimeViewResource]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1429,7 +1331,7 @@ class StandbyVirtualMachinePoolRuntimeViewsOperations:  # pylint: disable=name-t
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.StandbyVirtualMachinePoolRuntimeViewResource], deserialized["value"]
+                List[_models.StandbyVirtualMachinePoolRuntimeViewResource], deserialized.get("value", [])
             )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -1446,7 +1348,7 @@ class StandbyVirtualMachinePoolRuntimeViewsOperations:  # pylint: disable=name-t
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1466,24 +1368,12 @@ class StandbyContainerGroupPoolsOperations:
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: StandbyPoolMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2023-12-01-preview",
-        params_added_on={
-            "2023-12-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "standby_container_group_pool_name",
-                "accept",
-            ]
-        },
-    )
     async def get(
         self, resource_group_name: str, standby_container_group_pool_name: str, **kwargs: Any
     ) -> _models.StandbyContainerGroupPoolResource:
@@ -1499,7 +1389,7 @@ class StandbyContainerGroupPoolsOperations:
         :rtype: ~azure.mgmt.standbypool.models.StandbyContainerGroupPoolResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1539,7 +1429,7 @@ class StandbyContainerGroupPoolsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -1552,19 +1442,6 @@ class StandbyContainerGroupPoolsOperations:
 
         return deserialized  # type: ignore
 
-    @api_version_validation(
-        method_added_on="2023-12-01-preview",
-        params_added_on={
-            "2023-12-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "standby_container_group_pool_name",
-                "content_type",
-                "accept",
-            ]
-        },
-    )
     async def _create_or_update_initial(
         self,
         resource_group_name: str,
@@ -1572,7 +1449,7 @@ class StandbyContainerGroupPoolsOperations:
         resource: Union[_models.StandbyContainerGroupPoolResource, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1621,7 +1498,7 @@ class StandbyContainerGroupPoolsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1723,19 +1600,6 @@ class StandbyContainerGroupPoolsOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2023-12-01-preview",
-        params_added_on={
-            "2023-12-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "standby_container_group_pool_name",
-                "content_type",
-                "accept",
-            ]
-        },
-    )
     async def begin_create_or_update(
         self,
         resource_group_name: str,
@@ -1812,22 +1676,10 @@ class StandbyContainerGroupPoolsOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    @api_version_validation(
-        method_added_on="2023-12-01-preview",
-        params_added_on={
-            "2023-12-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "standby_container_group_pool_name",
-                "accept",
-            ]
-        },
-    )
     async def _delete_initial(
         self, resource_group_name: str, standby_container_group_pool_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1866,7 +1718,7 @@ class StandbyContainerGroupPoolsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1882,18 +1734,6 @@ class StandbyContainerGroupPoolsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2023-12-01-preview",
-        params_added_on={
-            "2023-12-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "standby_container_group_pool_name",
-                "accept",
-            ]
-        },
-    )
     async def begin_delete(
         self, resource_group_name: str, standby_container_group_pool_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
@@ -2037,19 +1877,6 @@ class StandbyContainerGroupPoolsOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2023-12-01-preview",
-        params_added_on={
-            "2023-12-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "standby_container_group_pool_name",
-                "content_type",
-                "accept",
-            ]
-        },
-    )
     async def update(
         self,
         resource_group_name: str,
@@ -2073,7 +1900,7 @@ class StandbyContainerGroupPoolsOperations:
         :rtype: ~azure.mgmt.standbypool.models.StandbyContainerGroupPoolResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2123,7 +1950,7 @@ class StandbyContainerGroupPoolsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -2137,10 +1964,6 @@ class StandbyContainerGroupPoolsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2023-12-01-preview",
-        params_added_on={"2023-12-01-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
-    )
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
     ) -> AsyncIterable["_models.StandbyContainerGroupPoolResource"]:
@@ -2159,7 +1982,7 @@ class StandbyContainerGroupPoolsOperations:
 
         cls: ClsType[List[_models.StandbyContainerGroupPoolResource]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2208,7 +2031,7 @@ class StandbyContainerGroupPoolsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.StandbyContainerGroupPoolResource], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.StandbyContainerGroupPoolResource], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2224,7 +2047,7 @@ class StandbyContainerGroupPoolsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2232,10 +2055,6 @@ class StandbyContainerGroupPoolsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2023-12-01-preview",
-        params_added_on={"2023-12-01-preview": ["api_version", "subscription_id", "accept"]},
-    )
     def list_by_subscription(self, **kwargs: Any) -> AsyncIterable["_models.StandbyContainerGroupPoolResource"]:
         """List StandbyContainerGroupPoolResource resources by subscription ID.
 
@@ -2249,7 +2068,7 @@ class StandbyContainerGroupPoolsOperations:
 
         cls: ClsType[List[_models.StandbyContainerGroupPoolResource]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2297,7 +2116,7 @@ class StandbyContainerGroupPoolsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.StandbyContainerGroupPoolResource], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.StandbyContainerGroupPoolResource], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2313,7 +2132,7 @@ class StandbyContainerGroupPoolsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2333,12 +2152,25 @@ class StandbyContainerGroupPoolRuntimeViewsOperations:  # pylint: disable=name-t
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: StandbyPoolMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2024-03-01-preview",
+        params_added_on={
+            "2024-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "standby_container_group_pool_name",
+                "runtime_view",
+                "accept",
+            ]
+        },
+    )
     async def get(
         self, resource_group_name: str, standby_container_group_pool_name: str, runtime_view: str, **kwargs: Any
     ) -> _models.StandbyContainerGroupPoolRuntimeViewResource:
@@ -2358,7 +2190,7 @@ class StandbyContainerGroupPoolRuntimeViewsOperations:  # pylint: disable=name-t
         :rtype: ~azure.mgmt.standbypool.models.StandbyContainerGroupPoolRuntimeViewResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2399,7 +2231,7 @@ class StandbyContainerGroupPoolRuntimeViewsOperations:  # pylint: disable=name-t
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -2413,6 +2245,18 @@ class StandbyContainerGroupPoolRuntimeViewsOperations:  # pylint: disable=name-t
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2024-03-01-preview",
+        params_added_on={
+            "2024-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "standby_container_group_pool_name",
+                "accept",
+            ]
+        },
+    )
     def list_by_standby_pool(
         self, resource_group_name: str, standby_container_group_pool_name: str, **kwargs: Any
     ) -> AsyncIterable["_models.StandbyContainerGroupPoolRuntimeViewResource"]:
@@ -2434,7 +2278,7 @@ class StandbyContainerGroupPoolRuntimeViewsOperations:  # pylint: disable=name-t
 
         cls: ClsType[List[_models.StandbyContainerGroupPoolRuntimeViewResource]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2485,7 +2329,7 @@ class StandbyContainerGroupPoolRuntimeViewsOperations:  # pylint: disable=name-t
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.StandbyContainerGroupPoolRuntimeViewResource], deserialized["value"]
+                List[_models.StandbyContainerGroupPoolRuntimeViewResource], deserialized.get("value", [])
             )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -2502,7 +2346,7 @@ class StandbyContainerGroupPoolRuntimeViewsOperations:  # pylint: disable=name-t
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response

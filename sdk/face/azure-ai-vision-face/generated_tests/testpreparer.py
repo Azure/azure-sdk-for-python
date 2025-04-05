@@ -10,22 +10,6 @@ from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer
 import functools
 
 
-class FaceAdministrationClientTestBase(AzureRecordedTestCase):
-
-    def create_client(self, endpoint):
-        credential = self.get_credential(FaceAdministrationClient)
-        return self.create_client_from_credential(
-            FaceAdministrationClient,
-            credential=credential,
-            endpoint=endpoint,
-        )
-
-
-FaceAdministrationPreparer = functools.partial(
-    PowerShellPreparer, "faceadministration", faceadministration_endpoint="https://fake_faceadministration_endpoint.com"
-)
-
-
 class FaceClientTestBase(AzureRecordedTestCase):
 
     def create_client(self, endpoint):
@@ -53,4 +37,20 @@ class FaceSessionClientTestBase(AzureRecordedTestCase):
 
 FaceSessionPreparer = functools.partial(
     PowerShellPreparer, "facesession", facesession_endpoint="https://fake_facesession_endpoint.com"
+)
+
+
+class FaceAdministrationClientTestBase(AzureRecordedTestCase):
+
+    def create_client(self, endpoint):
+        credential = self.get_credential(FaceAdministrationClient)
+        return self.create_client_from_credential(
+            FaceAdministrationClient,
+            credential=credential,
+            endpoint=endpoint,
+        )
+
+
+FaceAdministrationPreparer = functools.partial(
+    PowerShellPreparer, "faceadministration", faceadministration_endpoint="https://fake_faceadministration_endpoint.com"
 )

@@ -1,0 +1,24 @@
+{
+    "CrossLanguagePackageId": "Microsoft.AzureTerraform",
+    "CrossLanguageDefinitionId": {
+        "azure.mgmt.terraform.models.BaseExportModel": "Microsoft.AzureTerraform.BaseExportModel",
+        "azure.mgmt.terraform.models.ErrorAdditionalInfo": "Azure.ResourceManager.CommonTypes.ErrorAdditionalInfo",
+        "azure.mgmt.terraform.models.ErrorDetail": "Azure.ResourceManager.CommonTypes.ErrorDetail",
+        "azure.mgmt.terraform.models.ErrorResponse": "Azure.ResourceManager.CommonTypes.ErrorResponse",
+        "azure.mgmt.terraform.models.ExportQuery": "Microsoft.AzureTerraform.ExportQuery",
+        "azure.mgmt.terraform.models.ExportResource": "Microsoft.AzureTerraform.ExportResource",
+        "azure.mgmt.terraform.models.ExportResourceGroup": "Microsoft.AzureTerraform.ExportResourceGroup",
+        "azure.mgmt.terraform.models.ExportResult": "Microsoft.AzureTerraform.ExportResult",
+        "azure.mgmt.terraform.models.Operation": "Azure.ResourceManager.CommonTypes.Operation",
+        "azure.mgmt.terraform.models.OperationDisplay": "Azure.ResourceManager.CommonTypes.OperationDisplay",
+        "azure.mgmt.terraform.models.TerraformOperationStatus": "Microsoft.AzureTerraform.TerraformOperationStatus",
+        "azure.mgmt.terraform.models.Origin": "Azure.ResourceManager.CommonTypes.Origin",
+        "azure.mgmt.terraform.models.ActionType": "Azure.ResourceManager.CommonTypes.ActionType",
+        "azure.mgmt.terraform.models.ResourceProvisioningState": "Azure.ResourceManager.ResourceProvisioningState",
+        "azure.mgmt.terraform.models.Type": "Microsoft.AzureTerraform.Type",
+        "azure.mgmt.terraform.models.TargetProvider": "Microsoft.AzureTerraform.targetProvider",
+        "azure.mgmt.terraform.models.AuthorizationScopeFilter": "Microsoft.AzureTerraform.authorizationScopeFilter",
+        "azure.mgmt.terraform.TerraformMgmtClient.operations.list": "Azure.ResourceManager.Operations.list",
+        "azure.mgmt.terraform.TerraformMgmtClient.terraform.begin_export_terraform": "Microsoft.AzureTerraform.Terraform.exportTerraform"
+    }
+}

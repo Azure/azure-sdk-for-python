@@ -365,7 +365,13 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
 
         if polling is True:
             polling_method: PollingMethod = cast(
-                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, lro_options={"final-state-via": "operation-location"}, **kwargs)
+                PollingMethod,
+                LROBasePolling(
+                    lro_delay,
+                    path_format_arguments=path_format_arguments,
+                    lro_options={"final-state-via": "operation-location"},
+                    **kwargs,
+                ),
             )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())

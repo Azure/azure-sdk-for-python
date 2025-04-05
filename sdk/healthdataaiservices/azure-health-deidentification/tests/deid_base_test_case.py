@@ -66,7 +66,5 @@ class DeidBaseTestCase(AzureRecordedTestCase):
     def get_storage_location(self, kwargs):
         storage_name: str = kwargs.pop("healthdataaiservices_storage_account_name")
         container_name: str = kwargs.pop("healthdataaiservices_storage_container_name")
-        storage_location = (
-            f"https://{storage_name}.blob.core.windows.net/{container_name}"
-        )
+        storage_location = f"https://{storage_name}.blob.core.windows.net/{container_name}"
         return storage_location

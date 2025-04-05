@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,9 +9,10 @@
 from io import IOBase
 import json
 import sys
-from typing import Any, Callable, Dict, IO, Iterable, Iterator, List, Optional, Type, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterable, Iterator, List, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
+from azure.core import PipelineClient
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -32,14 +33,15 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
-from .._model_base import SdkJSONEncoder, _deserialize
-from .._serialization import Serializer
+from .._configuration import StandbyPoolMgmtClientConfiguration
+from .._model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
+from .._serialization import Deserializer, Serializer
 from .._validation import api_version_validation
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
@@ -52,7 +54,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -73,11 +75,11 @@ def build_standby_virtual_machine_pools_get_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StandbyPool/standbyVirtualMachinePools/{standbyVirtualMachinePoolName}"  # pylint: disable=line-too-long
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StandbyPool/standbyVirtualMachinePools/{standbyVirtualMachinePoolName}"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
@@ -104,11 +106,11 @@ def build_standby_virtual_machine_pools_create_or_update_request(  # pylint: dis
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StandbyPool/standbyVirtualMachinePools/{standbyVirtualMachinePoolName}"  # pylint: disable=line-too-long
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StandbyPool/standbyVirtualMachinePools/{standbyVirtualMachinePoolName}"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
@@ -136,11 +138,11 @@ def build_standby_virtual_machine_pools_delete_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StandbyPool/standbyVirtualMachinePools/{standbyVirtualMachinePoolName}"  # pylint: disable=line-too-long
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StandbyPool/standbyVirtualMachinePools/{standbyVirtualMachinePoolName}"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
@@ -167,11 +169,11 @@ def build_standby_virtual_machine_pools_update_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StandbyPool/standbyVirtualMachinePools/{standbyVirtualMachinePoolName}"  # pylint: disable=line-too-long
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StandbyPool/standbyVirtualMachinePools/{standbyVirtualMachinePoolName}"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
@@ -199,11 +201,11 @@ def build_standby_virtual_machine_pools_list_by_resource_group_request(  # pylin
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StandbyPool/standbyVirtualMachinePools"  # pylint: disable=line-too-long
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StandbyPool/standbyVirtualMachinePools"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
@@ -226,7 +228,7 @@ def build_standby_virtual_machine_pools_list_by_subscription_request(  # pylint:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -256,11 +258,11 @@ def build_standby_virtual_machines_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StandbyPool/standbyVirtualMachinePools/{standbyVirtualMachinePoolName}/standbyVirtualMachines/{standbyVirtualMachineName}"  # pylint: disable=line-too-long
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StandbyPool/standbyVirtualMachinePools/{standbyVirtualMachinePoolName}/standbyVirtualMachines/{standbyVirtualMachineName}"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
@@ -289,11 +291,11 @@ def build_standby_virtual_machines_list_by_standby_virtual_machine_pool_resource
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StandbyPool/standbyVirtualMachinePools/{standbyVirtualMachinePoolName}/standbyVirtualMachines"  # pylint: disable=line-too-long
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StandbyPool/standbyVirtualMachinePools/{standbyVirtualMachinePoolName}/standbyVirtualMachines"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
@@ -323,11 +325,11 @@ def build_standby_virtual_machine_pool_runtime_views_get_request(  # pylint: dis
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StandbyPool/standbyVirtualMachinePools/{standbyVirtualMachinePoolName}/runtimeViews/{runtimeView}"  # pylint: disable=line-too-long
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StandbyPool/standbyVirtualMachinePools/{standbyVirtualMachinePoolName}/runtimeViews/{runtimeView}"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
@@ -354,11 +356,11 @@ def build_standby_virtual_machine_pool_runtime_views_list_by_standby_pool_reques
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StandbyPool/standbyVirtualMachinePools/{standbyVirtualMachinePoolName}/runtimeViews"  # pylint: disable=line-too-long
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StandbyPool/standbyVirtualMachinePools/{standbyVirtualMachinePoolName}/runtimeViews"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
@@ -384,11 +386,11 @@ def build_standby_container_group_pools_get_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StandbyPool/standbyContainerGroupPools/{standbyContainerGroupPoolName}"  # pylint: disable=line-too-long
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StandbyPool/standbyContainerGroupPools/{standbyContainerGroupPoolName}"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
@@ -415,11 +417,11 @@ def build_standby_container_group_pools_create_or_update_request(  # pylint: dis
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StandbyPool/standbyContainerGroupPools/{standbyContainerGroupPoolName}"  # pylint: disable=line-too-long
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StandbyPool/standbyContainerGroupPools/{standbyContainerGroupPoolName}"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
@@ -447,11 +449,11 @@ def build_standby_container_group_pools_delete_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StandbyPool/standbyContainerGroupPools/{standbyContainerGroupPoolName}"  # pylint: disable=line-too-long
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StandbyPool/standbyContainerGroupPools/{standbyContainerGroupPoolName}"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
@@ -478,11 +480,11 @@ def build_standby_container_group_pools_update_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StandbyPool/standbyContainerGroupPools/{standbyContainerGroupPoolName}"  # pylint: disable=line-too-long
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StandbyPool/standbyContainerGroupPools/{standbyContainerGroupPoolName}"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
@@ -510,11 +512,11 @@ def build_standby_container_group_pools_list_by_resource_group_request(  # pylin
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StandbyPool/standbyContainerGroupPools"  # pylint: disable=line-too-long
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StandbyPool/standbyContainerGroupPools"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
@@ -537,7 +539,7 @@ def build_standby_container_group_pools_list_by_subscription_request(  # pylint:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -567,11 +569,11 @@ def build_standby_container_group_pool_runtime_views_get_request(  # pylint: dis
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StandbyPool/standbyContainerGroupPools/{standbyContainerGroupPoolName}/runtimeViews/{runtimeView}"  # pylint: disable=line-too-long
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StandbyPool/standbyContainerGroupPools/{standbyContainerGroupPoolName}/runtimeViews/{runtimeView}"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
@@ -598,11 +600,11 @@ def build_standby_container_group_pool_runtime_views_list_by_standby_pool_reques
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StandbyPool/standbyContainerGroupPools/{standbyContainerGroupPoolName}/runtimeViews"  # pylint: disable=line-too-long
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StandbyPool/standbyContainerGroupPools/{standbyContainerGroupPoolName}/runtimeViews"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
@@ -634,16 +636,12 @@ class Operations:
 
     def __init__(self, *args, **kwargs):
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: StandbyPoolMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2023-12-01-preview",
-        params_added_on={"2023-12-01-preview": ["api_version", "accept"]},
-    )
     def list(self, **kwargs: Any) -> Iterable["_models.Operation"]:
         """List the operations for the provider.
 
@@ -656,7 +654,7 @@ class Operations:
 
         cls: ClsType[List[_models.Operation]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -703,7 +701,7 @@ class Operations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Operation], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.Operation], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -719,7 +717,7 @@ class Operations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -739,24 +737,12 @@ class StandbyVirtualMachinePoolsOperations:
 
     def __init__(self, *args, **kwargs):
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: StandbyPoolMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2023-12-01-preview",
-        params_added_on={
-            "2023-12-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "standby_virtual_machine_pool_name",
-                "accept",
-            ]
-        },
-    )
     def get(
         self, resource_group_name: str, standby_virtual_machine_pool_name: str, **kwargs: Any
     ) -> _models.StandbyVirtualMachinePoolResource:
@@ -772,7 +758,7 @@ class StandbyVirtualMachinePoolsOperations:
         :rtype: ~azure.mgmt.standbypool.models.StandbyVirtualMachinePoolResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -812,7 +798,7 @@ class StandbyVirtualMachinePoolsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -825,19 +811,6 @@ class StandbyVirtualMachinePoolsOperations:
 
         return deserialized  # type: ignore
 
-    @api_version_validation(
-        method_added_on="2023-12-01-preview",
-        params_added_on={
-            "2023-12-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "standby_virtual_machine_pool_name",
-                "content_type",
-                "accept",
-            ]
-        },
-    )
     def _create_or_update_initial(
         self,
         resource_group_name: str,
@@ -845,7 +818,7 @@ class StandbyVirtualMachinePoolsOperations:
         resource: Union[_models.StandbyVirtualMachinePoolResource, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -894,7 +867,7 @@ class StandbyVirtualMachinePoolsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -996,19 +969,6 @@ class StandbyVirtualMachinePoolsOperations:
         """
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2023-12-01-preview",
-        params_added_on={
-            "2023-12-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "standby_virtual_machine_pool_name",
-                "content_type",
-                "accept",
-            ]
-        },
-    )
     def begin_create_or_update(
         self,
         resource_group_name: str,
@@ -1085,22 +1045,10 @@ class StandbyVirtualMachinePoolsOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    @api_version_validation(
-        method_added_on="2023-12-01-preview",
-        params_added_on={
-            "2023-12-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "standby_virtual_machine_pool_name",
-                "accept",
-            ]
-        },
-    )
     def _delete_initial(
         self, resource_group_name: str, standby_virtual_machine_pool_name: str, **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1139,7 +1087,7 @@ class StandbyVirtualMachinePoolsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1155,18 +1103,6 @@ class StandbyVirtualMachinePoolsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2023-12-01-preview",
-        params_added_on={
-            "2023-12-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "standby_virtual_machine_pool_name",
-                "accept",
-            ]
-        },
-    )
     def begin_delete(
         self, resource_group_name: str, standby_virtual_machine_pool_name: str, **kwargs: Any
     ) -> LROPoller[None]:
@@ -1310,19 +1246,6 @@ class StandbyVirtualMachinePoolsOperations:
         """
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2023-12-01-preview",
-        params_added_on={
-            "2023-12-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "standby_virtual_machine_pool_name",
-                "content_type",
-                "accept",
-            ]
-        },
-    )
     def update(
         self,
         resource_group_name: str,
@@ -1346,7 +1269,7 @@ class StandbyVirtualMachinePoolsOperations:
         :rtype: ~azure.mgmt.standbypool.models.StandbyVirtualMachinePoolResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1396,7 +1319,7 @@ class StandbyVirtualMachinePoolsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -1410,10 +1333,6 @@ class StandbyVirtualMachinePoolsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2023-12-01-preview",
-        params_added_on={"2023-12-01-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
-    )
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
     ) -> Iterable["_models.StandbyVirtualMachinePoolResource"]:
@@ -1432,7 +1351,7 @@ class StandbyVirtualMachinePoolsOperations:
 
         cls: ClsType[List[_models.StandbyVirtualMachinePoolResource]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1481,7 +1400,7 @@ class StandbyVirtualMachinePoolsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.StandbyVirtualMachinePoolResource], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.StandbyVirtualMachinePoolResource], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1497,7 +1416,7 @@ class StandbyVirtualMachinePoolsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1505,10 +1424,6 @@ class StandbyVirtualMachinePoolsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2023-12-01-preview",
-        params_added_on={"2023-12-01-preview": ["api_version", "subscription_id", "accept"]},
-    )
     def list_by_subscription(self, **kwargs: Any) -> Iterable["_models.StandbyVirtualMachinePoolResource"]:
         """List StandbyVirtualMachinePoolResource resources by subscription ID.
 
@@ -1522,7 +1437,7 @@ class StandbyVirtualMachinePoolsOperations:
 
         cls: ClsType[List[_models.StandbyVirtualMachinePoolResource]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1570,7 +1485,7 @@ class StandbyVirtualMachinePoolsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.StandbyVirtualMachinePoolResource], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.StandbyVirtualMachinePoolResource], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1586,7 +1501,7 @@ class StandbyVirtualMachinePoolsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1606,25 +1521,12 @@ class StandbyVirtualMachinesOperations:
 
     def __init__(self, *args, **kwargs):
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: StandbyPoolMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2023-12-01-preview",
-        params_added_on={
-            "2023-12-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "standby_virtual_machine_pool_name",
-                "standby_virtual_machine_name",
-                "accept",
-            ]
-        },
-    )
     def get(
         self,
         resource_group_name: str,
@@ -1646,7 +1548,7 @@ class StandbyVirtualMachinesOperations:
         :rtype: ~azure.mgmt.standbypool.models.StandbyVirtualMachineResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1687,7 +1589,7 @@ class StandbyVirtualMachinesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -1701,18 +1603,6 @@ class StandbyVirtualMachinesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2023-12-01-preview",
-        params_added_on={
-            "2023-12-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "standby_virtual_machine_pool_name",
-                "accept",
-            ]
-        },
-    )  # pylint: disable=name-too-long
     def list_by_standby_virtual_machine_pool_resource(  # pylint: disable=name-too-long
         self, resource_group_name: str, standby_virtual_machine_pool_name: str, **kwargs: Any
     ) -> Iterable["_models.StandbyVirtualMachineResource"]:
@@ -1733,7 +1623,7 @@ class StandbyVirtualMachinesOperations:
 
         cls: ClsType[List[_models.StandbyVirtualMachineResource]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1783,7 +1673,7 @@ class StandbyVirtualMachinesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.StandbyVirtualMachineResource], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.StandbyVirtualMachineResource], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1799,7 +1689,7 @@ class StandbyVirtualMachinesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1819,12 +1709,25 @@ class StandbyVirtualMachinePoolRuntimeViewsOperations:  # pylint: disable=name-t
 
     def __init__(self, *args, **kwargs):
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: StandbyPoolMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2024-03-01-preview",
+        params_added_on={
+            "2024-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "standby_virtual_machine_pool_name",
+                "runtime_view",
+                "accept",
+            ]
+        },
+    )
     def get(
         self, resource_group_name: str, standby_virtual_machine_pool_name: str, runtime_view: str, **kwargs: Any
     ) -> _models.StandbyVirtualMachinePoolRuntimeViewResource:
@@ -1844,7 +1747,7 @@ class StandbyVirtualMachinePoolRuntimeViewsOperations:  # pylint: disable=name-t
         :rtype: ~azure.mgmt.standbypool.models.StandbyVirtualMachinePoolRuntimeViewResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1885,7 +1788,7 @@ class StandbyVirtualMachinePoolRuntimeViewsOperations:  # pylint: disable=name-t
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -1899,6 +1802,18 @@ class StandbyVirtualMachinePoolRuntimeViewsOperations:  # pylint: disable=name-t
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2024-03-01-preview",
+        params_added_on={
+            "2024-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "standby_virtual_machine_pool_name",
+                "accept",
+            ]
+        },
+    )
     def list_by_standby_pool(
         self, resource_group_name: str, standby_virtual_machine_pool_name: str, **kwargs: Any
     ) -> Iterable["_models.StandbyVirtualMachinePoolRuntimeViewResource"]:
@@ -1920,7 +1835,7 @@ class StandbyVirtualMachinePoolRuntimeViewsOperations:  # pylint: disable=name-t
 
         cls: ClsType[List[_models.StandbyVirtualMachinePoolRuntimeViewResource]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1971,7 +1886,7 @@ class StandbyVirtualMachinePoolRuntimeViewsOperations:  # pylint: disable=name-t
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.StandbyVirtualMachinePoolRuntimeViewResource], deserialized["value"]
+                List[_models.StandbyVirtualMachinePoolRuntimeViewResource], deserialized.get("value", [])
             )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -1988,7 +1903,7 @@ class StandbyVirtualMachinePoolRuntimeViewsOperations:  # pylint: disable=name-t
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2008,24 +1923,12 @@ class StandbyContainerGroupPoolsOperations:
 
     def __init__(self, *args, **kwargs):
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: StandbyPoolMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2023-12-01-preview",
-        params_added_on={
-            "2023-12-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "standby_container_group_pool_name",
-                "accept",
-            ]
-        },
-    )
     def get(
         self, resource_group_name: str, standby_container_group_pool_name: str, **kwargs: Any
     ) -> _models.StandbyContainerGroupPoolResource:
@@ -2041,7 +1944,7 @@ class StandbyContainerGroupPoolsOperations:
         :rtype: ~azure.mgmt.standbypool.models.StandbyContainerGroupPoolResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2081,7 +1984,7 @@ class StandbyContainerGroupPoolsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -2094,19 +1997,6 @@ class StandbyContainerGroupPoolsOperations:
 
         return deserialized  # type: ignore
 
-    @api_version_validation(
-        method_added_on="2023-12-01-preview",
-        params_added_on={
-            "2023-12-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "standby_container_group_pool_name",
-                "content_type",
-                "accept",
-            ]
-        },
-    )
     def _create_or_update_initial(
         self,
         resource_group_name: str,
@@ -2114,7 +2004,7 @@ class StandbyContainerGroupPoolsOperations:
         resource: Union[_models.StandbyContainerGroupPoolResource, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2163,7 +2053,7 @@ class StandbyContainerGroupPoolsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2265,19 +2155,6 @@ class StandbyContainerGroupPoolsOperations:
         """
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2023-12-01-preview",
-        params_added_on={
-            "2023-12-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "standby_container_group_pool_name",
-                "content_type",
-                "accept",
-            ]
-        },
-    )
     def begin_create_or_update(
         self,
         resource_group_name: str,
@@ -2354,22 +2231,10 @@ class StandbyContainerGroupPoolsOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    @api_version_validation(
-        method_added_on="2023-12-01-preview",
-        params_added_on={
-            "2023-12-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "standby_container_group_pool_name",
-                "accept",
-            ]
-        },
-    )
     def _delete_initial(
         self, resource_group_name: str, standby_container_group_pool_name: str, **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2408,7 +2273,7 @@ class StandbyContainerGroupPoolsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2424,18 +2289,6 @@ class StandbyContainerGroupPoolsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2023-12-01-preview",
-        params_added_on={
-            "2023-12-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "standby_container_group_pool_name",
-                "accept",
-            ]
-        },
-    )
     def begin_delete(
         self, resource_group_name: str, standby_container_group_pool_name: str, **kwargs: Any
     ) -> LROPoller[None]:
@@ -2579,19 +2432,6 @@ class StandbyContainerGroupPoolsOperations:
         """
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2023-12-01-preview",
-        params_added_on={
-            "2023-12-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "standby_container_group_pool_name",
-                "content_type",
-                "accept",
-            ]
-        },
-    )
     def update(
         self,
         resource_group_name: str,
@@ -2615,7 +2455,7 @@ class StandbyContainerGroupPoolsOperations:
         :rtype: ~azure.mgmt.standbypool.models.StandbyContainerGroupPoolResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2665,7 +2505,7 @@ class StandbyContainerGroupPoolsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -2679,10 +2519,6 @@ class StandbyContainerGroupPoolsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2023-12-01-preview",
-        params_added_on={"2023-12-01-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
-    )
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
     ) -> Iterable["_models.StandbyContainerGroupPoolResource"]:
@@ -2701,7 +2537,7 @@ class StandbyContainerGroupPoolsOperations:
 
         cls: ClsType[List[_models.StandbyContainerGroupPoolResource]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2750,7 +2586,7 @@ class StandbyContainerGroupPoolsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.StandbyContainerGroupPoolResource], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.StandbyContainerGroupPoolResource], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -2766,7 +2602,7 @@ class StandbyContainerGroupPoolsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2774,10 +2610,6 @@ class StandbyContainerGroupPoolsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2023-12-01-preview",
-        params_added_on={"2023-12-01-preview": ["api_version", "subscription_id", "accept"]},
-    )
     def list_by_subscription(self, **kwargs: Any) -> Iterable["_models.StandbyContainerGroupPoolResource"]:
         """List StandbyContainerGroupPoolResource resources by subscription ID.
 
@@ -2791,7 +2623,7 @@ class StandbyContainerGroupPoolsOperations:
 
         cls: ClsType[List[_models.StandbyContainerGroupPoolResource]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2839,7 +2671,7 @@ class StandbyContainerGroupPoolsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.StandbyContainerGroupPoolResource], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.StandbyContainerGroupPoolResource], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -2855,7 +2687,7 @@ class StandbyContainerGroupPoolsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2875,12 +2707,25 @@ class StandbyContainerGroupPoolRuntimeViewsOperations:  # pylint: disable=name-t
 
     def __init__(self, *args, **kwargs):
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: StandbyPoolMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2024-03-01-preview",
+        params_added_on={
+            "2024-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "standby_container_group_pool_name",
+                "runtime_view",
+                "accept",
+            ]
+        },
+    )
     def get(
         self, resource_group_name: str, standby_container_group_pool_name: str, runtime_view: str, **kwargs: Any
     ) -> _models.StandbyContainerGroupPoolRuntimeViewResource:
@@ -2900,7 +2745,7 @@ class StandbyContainerGroupPoolRuntimeViewsOperations:  # pylint: disable=name-t
         :rtype: ~azure.mgmt.standbypool.models.StandbyContainerGroupPoolRuntimeViewResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2941,7 +2786,7 @@ class StandbyContainerGroupPoolRuntimeViewsOperations:  # pylint: disable=name-t
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -2955,6 +2800,18 @@ class StandbyContainerGroupPoolRuntimeViewsOperations:  # pylint: disable=name-t
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2024-03-01-preview",
+        params_added_on={
+            "2024-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "standby_container_group_pool_name",
+                "accept",
+            ]
+        },
+    )
     def list_by_standby_pool(
         self, resource_group_name: str, standby_container_group_pool_name: str, **kwargs: Any
     ) -> Iterable["_models.StandbyContainerGroupPoolRuntimeViewResource"]:
@@ -2976,7 +2833,7 @@ class StandbyContainerGroupPoolRuntimeViewsOperations:  # pylint: disable=name-t
 
         cls: ClsType[List[_models.StandbyContainerGroupPoolRuntimeViewResource]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3027,7 +2884,7 @@ class StandbyContainerGroupPoolRuntimeViewsOperations:  # pylint: disable=name-t
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.StandbyContainerGroupPoolRuntimeViewResource], deserialized["value"]
+                List[_models.StandbyContainerGroupPoolRuntimeViewResource], deserialized.get("value", [])
             )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -3044,7 +2901,7 @@ class StandbyContainerGroupPoolRuntimeViewsOperations:  # pylint: disable=name-t
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response

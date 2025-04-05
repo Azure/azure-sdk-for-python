@@ -478,11 +478,11 @@ def build_batch_enable_pool_auto_scale_request(  # pylint: disable=name-too-long
     # Construct headers
     if ocpdate is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
         _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
-    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
@@ -560,11 +560,11 @@ def build_batch_resize_pool_request(
     # Construct headers
     if ocpdate is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
         _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
-    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
@@ -690,11 +690,11 @@ def build_batch_remove_nodes_request(
     # Construct headers
     if ocpdate is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
         _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
-    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
@@ -1013,11 +1013,11 @@ def build_batch_disable_job_request(
     # Construct headers
     if ocpdate is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
         _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
-    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
@@ -1114,11 +1114,11 @@ def build_batch_terminate_job_request(
     # Construct headers
     if ocpdate is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
         _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
-    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
@@ -3387,7 +3387,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BatchApplication], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.BatchApplication], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -3610,7 +3610,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BatchPoolUsageMetrics], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.BatchPoolUsageMetrics], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -3814,7 +3814,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BatchPool], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.BatchPool], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -5101,7 +5101,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BatchSupportedImage], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.BatchSupportedImage], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -5214,7 +5214,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BatchPoolNodeCounts], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.BatchPoolNodeCounts], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -6249,7 +6249,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BatchJob], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.BatchJob], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -6375,7 +6375,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BatchJob], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.BatchJob], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -6503,7 +6503,9 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BatchJobPreparationAndReleaseTaskStatus], deserialized["value"])
+            list_of_elem = _deserialize(
+                List[_models.BatchJobPreparationAndReleaseTaskStatus], deserialized.get("value", [])
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -6785,7 +6787,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BatchCertificate], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.BatchCertificate], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -6991,7 +6993,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         ocpdate: Optional[datetime.datetime] = None,
         select: Optional[List[str]] = None,
         **kwargs: Any
-    ) -> _models.GetCertificateResponse:
+    ) -> _models.BatchCertificate:
         """Gets information about the specified Certificate.
 
         :param thumbprint_algorithm: The algorithm used to derive the thumbprint parameter. This must
@@ -7009,8 +7011,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :paramtype ocpdate: ~datetime.datetime
         :keyword select: An OData $select clause. Default value is None.
         :paramtype select: list[str]
-        :return: GetCertificateResponse. The GetCertificateResponse is compatible with MutableMapping
-        :rtype: ~azure.batch.models.GetCertificateResponse
+        :return: BatchCertificate. The BatchCertificate is compatible with MutableMapping
+        :rtype: ~azure.batch.models.BatchCertificate
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -7024,7 +7026,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.GetCertificateResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.BatchCertificate] = kwargs.pop("cls", None)
 
         _request = build_batch_get_certificate_request(
             thumbprint_algorithm=thumbprint_algorithm,
@@ -7067,7 +7069,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.GetCertificateResponse, response.json())
+            deserialized = _deserialize(_models.BatchCertificate, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -8143,7 +8145,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BatchJobSchedule], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.BatchJobSchedule], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -8357,7 +8359,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BatchTask], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.BatchTask], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -8936,7 +8938,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BatchSubtask], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.BatchSubtask], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -9389,10 +9391,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         return deserialized  # type: ignore
 
-    # manually renamed
-    # rename will be through typespec in next version
     @distributed_trace
-    def _get_task_file_properties_internal(
+    def get_task_file_properties(
         self,
         job_id: str,
         task_id: str,
@@ -9597,7 +9597,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BatchNodeFile], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.BatchNodeFile], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -10811,7 +10811,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BatchNode], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.BatchNode], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -11028,7 +11028,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BatchNodeVMExtension], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.BatchNodeVMExtension], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -11256,10 +11256,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         return deserialized  # type: ignore
 
-    # manually renamed
-    # rename will be through typespec in next version
     @distributed_trace
-    def _get_node_file_properties_internal(
+    def get_node_file_properties(
         self,
         pool_id: str,
         node_id: str,
@@ -11462,7 +11460,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BatchNodeFile], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.BatchNodeFile], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)

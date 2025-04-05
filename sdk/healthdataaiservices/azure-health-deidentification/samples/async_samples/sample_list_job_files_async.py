@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -53,9 +54,7 @@ async def sample_list_job_documents_async():
             location=storage_location,
             prefix=inputPrefix,
         ),
-        target_location=TargetStorageLocation(
-            location=storage_location, prefix=outputPrefix
-        ),
+        target_location=TargetStorageLocation(location=storage_location, prefix=outputPrefix),
     )
 
     print(f"Creating job with name: {jobname}")

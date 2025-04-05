@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -39,14 +40,26 @@ def main():
                 "agentProfile": {"kind": "Stateless"},
                 "devCenterProjectResourceId": "/subscriptions/222e81d0-cf38-4dab-baa5-289bf16baaa4/resourceGroups/rg-1es-devcenter/providers/Microsoft.DevCenter/projects/1ES",
                 "fabricProfile": {
-                    "images": [{"resourceId": "/MicrosoftWindowsServer/WindowsServer/2019-Datacenter/latest"}],
+                    "images": [
+                        {
+                            "ephemeralType": "Automatic",
+                            "resourceId": "/MicrosoftWindowsServer/WindowsServer/2019-Datacenter/latest",
+                        }
+                    ],
                     "kind": "Vmss",
+                    "osProfile": {
+                        "secretsManagementSettings": {
+                            "certificateStoreName": "Root",
+                            "keyExportable": False,
+                            "observedCertificates": ["https://abc.vault.azure.net/secrets/one"],
+                        }
+                    },
                     "sku": {"name": "Standard_D4ads_v5"},
                 },
                 "maximumConcurrency": 10,
                 "organizationProfile": {
                     "kind": "AzureDevOps",
-                    "organizations": [{"url": "https://mseng.visualstudio.com"}],
+                    "organizations": [{"openAccess": True, "url": "https://mseng.visualstudio.com"}],
                 },
                 "provisioningState": "Succeeded",
             },
@@ -55,6 +68,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-10-19/CreateOrUpdatePool.json
+# x-ms-original-file: 2025-01-21/CreateOrUpdatePool.json
 if __name__ == "__main__":
     main()

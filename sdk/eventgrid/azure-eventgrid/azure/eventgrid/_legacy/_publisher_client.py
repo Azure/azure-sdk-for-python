@@ -138,7 +138,9 @@ class EventGridPublisherClient(object):
         return policies
 
     @distributed_trace
-    def send(self, events: SendType, *, channel_name: Optional[str] = None, **kwargs: Any) -> None: # pylint:disable=docstring-keyword-should-match-keyword-only
+    def send(
+        self, events: SendType, *, channel_name: Optional[str] = None, **kwargs: Any
+    ) -> None:  # pylint:disable=docstring-keyword-should-match-keyword-only
         """Sends events to a topic or a domain specified during the client initialization.
 
         A single instance or a list of dictionaries, CloudEvents or EventGridEvents are accepted.

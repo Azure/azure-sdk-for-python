@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -30,14 +30,16 @@ class AdvancedSettings(_model_base.Model):
     :vartype internal_certs: ~azure.mgmt.iotoperations.models.CertManagerCertOptions
     """
 
-    clients: Optional["_models.ClientConfig"] = rest_field()
+    clients: Optional["_models.ClientConfig"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Configurations related to All Clients."""
     encrypt_internal_traffic: Optional[Union[str, "_models.OperationalMode"]] = rest_field(
-        name="encryptInternalTraffic"
+        name="encryptInternalTraffic", visibility=["read", "create", "update", "delete", "query"]
     )
     """The setting to enable or disable encryption of internal Traffic. Known values are: \"Enabled\"
      and \"Disabled\"."""
-    internal_certs: Optional["_models.CertManagerCertOptions"] = rest_field(name="internalCerts")
+    internal_certs: Optional["_models.CertManagerCertOptions"] = rest_field(
+        name="internalCerts", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Certificate rotation and private key configuration."""
 
     @overload
@@ -71,9 +73,13 @@ class AuthorizationConfig(_model_base.Model):
     :vartype rules: list[~azure.mgmt.iotoperations.models.AuthorizationRule]
     """
 
-    cache: Optional[Union[str, "_models.OperationalMode"]] = rest_field()
+    cache: Optional[Union[str, "_models.OperationalMode"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Enable caching of the authorization rules. Known values are: \"Enabled\" and \"Disabled\"."""
-    rules: Optional[List["_models.AuthorizationRule"]] = rest_field()
+    rules: Optional[List["_models.AuthorizationRule"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The authorization rules to follow. If no rule is set, but Authorization Resource is used that
      would mean DenyAll."""
 
@@ -99,7 +105,6 @@ class AuthorizationConfig(_model_base.Model):
 class AuthorizationRule(_model_base.Model):
     """AuthorizationConfig Rule Properties.
 
-
     :ivar broker_resources: Give access to Broker methods and topics. Required.
     :vartype broker_resources: list[~azure.mgmt.iotoperations.models.BrokerResourceRule]
     :ivar principals: Give access to clients based on the following properties. Required.
@@ -108,11 +113,15 @@ class AuthorizationRule(_model_base.Model):
     :vartype state_store_resources: list[~azure.mgmt.iotoperations.models.StateStoreResourceRule]
     """
 
-    broker_resources: List["_models.BrokerResourceRule"] = rest_field(name="brokerResources")
+    broker_resources: List["_models.BrokerResourceRule"] = rest_field(
+        name="brokerResources", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Give access to Broker methods and topics. Required."""
-    principals: "_models.PrincipalDefinition" = rest_field()
+    principals: "_models.PrincipalDefinition" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Give access to clients based on the following properties. Required."""
-    state_store_resources: Optional[List["_models.StateStoreResourceRule"]] = rest_field(name="stateStoreResources")
+    state_store_resources: Optional[List["_models.StateStoreResourceRule"]] = rest_field(
+        name="stateStoreResources", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Give access to state store resources."""
 
     @overload
@@ -138,7 +147,6 @@ class AuthorizationRule(_model_base.Model):
 class BackendChain(_model_base.Model):
     """Desired properties of the backend instances of the broker.
 
-
     :ivar partitions: The desired number of physical backend partitions. Required.
     :vartype partitions: int
     :ivar redundancy_factor: The desired numbers of backend replicas (pods) in a physical
@@ -148,11 +156,13 @@ class BackendChain(_model_base.Model):
     :vartype workers: int
     """
 
-    partitions: int = rest_field()
+    partitions: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The desired number of physical backend partitions. Required."""
-    redundancy_factor: int = rest_field(name="redundancyFactor")
+    redundancy_factor: int = rest_field(
+        name="redundancyFactor", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The desired numbers of backend replicas (pods) in a physical partition. Required."""
-    workers: Optional[int] = rest_field()
+    workers: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Number of logical backend workers per replica (pod)."""
 
     @overload
@@ -184,9 +194,13 @@ class BatchingConfiguration(_model_base.Model):
     :vartype max_messages: int
     """
 
-    latency_seconds: Optional[int] = rest_field(name="latencySeconds")
+    latency_seconds: Optional[int] = rest_field(
+        name="latencySeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Batching latency in seconds."""
-    max_messages: Optional[int] = rest_field(name="maxMessages")
+    max_messages: Optional[int] = rest_field(
+        name="maxMessages", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Maximum number of messages in a batch."""
 
     @overload
@@ -211,9 +225,6 @@ class BatchingConfiguration(_model_base.Model):
 class BrokerAuthenticationProperties(_model_base.Model):
     """BrokerAuthentication Resource properties.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar authentication_methods: Defines a set of Broker authentication methods to be used on
      ``BrokerListeners``. For each array element one authenticator type supported. Required.
     :vartype authentication_methods:
@@ -223,7 +234,9 @@ class BrokerAuthenticationProperties(_model_base.Model):
     :vartype provisioning_state: str or ~azure.mgmt.iotoperations.models.ProvisioningState
     """
 
-    authentication_methods: List["_models.BrokerAuthenticatorMethods"] = rest_field(name="authenticationMethods")
+    authentication_methods: List["_models.BrokerAuthenticatorMethods"] = rest_field(
+        name="authenticationMethods", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Defines a set of Broker authentication methods to be used on ``BrokerListeners``. For each
      array element one authenticator type supported. Required."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
@@ -253,10 +266,8 @@ class BrokerAuthenticationProperties(_model_base.Model):
 class Resource(_model_base.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -270,7 +281,7 @@ class Resource(_model_base.Model):
 
     id: Optional[str] = rest_field(visibility=["read"])
     """Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long"""
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
     name: Optional[str] = rest_field(visibility=["read"])
     """The name of the resource."""
     type: Optional[str] = rest_field(visibility=["read"])
@@ -284,10 +295,8 @@ class ProxyResource(Resource):
     """The resource model definition for a Azure Resource Manager proxy resource. It will not have
     tags and a location.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -303,11 +312,8 @@ class ProxyResource(Resource):
 class BrokerAuthenticationResource(ProxyResource):
     """Instance broker authentication resource.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -323,7 +329,9 @@ class BrokerAuthenticationResource(ProxyResource):
     :vartype extended_location: ~azure.mgmt.iotoperations.models.ExtendedLocation
     """
 
-    properties: Optional["_models.BrokerAuthenticationProperties"] = rest_field()
+    properties: Optional["_models.BrokerAuthenticationProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The resource-specific properties for this resource."""
     extended_location: "_models.ExtendedLocation" = rest_field(name="extendedLocation", visibility=["read", "create"])
     """Edge location of the resource. Required."""
@@ -350,12 +358,11 @@ class BrokerAuthenticationResource(ProxyResource):
 class BrokerAuthenticatorCustomAuth(_model_base.Model):
     """Custom Authentication properties.
 
-
     :ivar x509: X509 Custom Auth type details. Required.
     :vartype x509: ~azure.mgmt.iotoperations.models.X509ManualCertificate
     """
 
-    x509: "_models.X509ManualCertificate" = rest_field()
+    x509: "_models.X509ManualCertificate" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """X509 Custom Auth type details. Required."""
 
     @overload
@@ -379,7 +386,6 @@ class BrokerAuthenticatorCustomAuth(_model_base.Model):
 class BrokerAuthenticatorMethodCustom(_model_base.Model):
     """Custom method for BrokerAuthentication.
 
-
     :ivar auth: Optional authentication needed for authenticating with the custom authentication
      server.
     :vartype auth: ~azure.mgmt.iotoperations.models.BrokerAuthenticatorCustomAuth
@@ -393,13 +399,17 @@ class BrokerAuthenticatorMethodCustom(_model_base.Model):
     :vartype headers: dict[str, str]
     """
 
-    auth: Optional["_models.BrokerAuthenticatorCustomAuth"] = rest_field()
+    auth: Optional["_models.BrokerAuthenticatorCustomAuth"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Optional authentication needed for authenticating with the custom authentication server."""
-    ca_cert_config_map: Optional[str] = rest_field(name="caCertConfigMap")
+    ca_cert_config_map: Optional[str] = rest_field(
+        name="caCertConfigMap", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Optional CA certificate for validating the custom authentication server's certificate."""
-    endpoint: str = rest_field()
+    endpoint: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Endpoint of the custom authentication server. Must be an HTTPS endpoint. Required."""
-    headers: Optional[Dict[str, str]] = rest_field()
+    headers: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Additional HTTP headers to pass to the custom authentication server."""
 
     @overload
@@ -426,7 +436,6 @@ class BrokerAuthenticatorMethodCustom(_model_base.Model):
 class BrokerAuthenticatorMethods(_model_base.Model):
     """Set of broker authentication policies. Only one method is supported for each entry.
 
-
     :ivar method: Custom authentication configuration. Required. Known values are: "Custom",
      "ServiceAccountToken", and "X509".
     :vartype method: str or ~azure.mgmt.iotoperations.models.BrokerAuthenticationMethod
@@ -439,16 +448,22 @@ class BrokerAuthenticatorMethods(_model_base.Model):
     :vartype x509_settings: ~azure.mgmt.iotoperations.models.BrokerAuthenticatorMethodX509
     """
 
-    method: Union[str, "_models.BrokerAuthenticationMethod"] = rest_field()
+    method: Union[str, "_models.BrokerAuthenticationMethod"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Custom authentication configuration. Required. Known values are: \"Custom\",
      \"ServiceAccountToken\", and \"X509\"."""
-    custom_settings: Optional["_models.BrokerAuthenticatorMethodCustom"] = rest_field(name="customSettings")
+    custom_settings: Optional["_models.BrokerAuthenticatorMethodCustom"] = rest_field(
+        name="customSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Custom authentication configuration."""
     service_account_token_settings: Optional["_models.BrokerAuthenticatorMethodSat"] = rest_field(
-        name="serviceAccountTokenSettings"
+        name="serviceAccountTokenSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """ServiceAccountToken authentication configuration."""
-    x509_settings: Optional["_models.BrokerAuthenticatorMethodX509"] = rest_field(name="x509Settings")
+    x509_settings: Optional["_models.BrokerAuthenticatorMethodX509"] = rest_field(
+        name="x509Settings", visibility=["read", "create", "update", "delete", "query"]
+    )
     """X.509 authentication configuration."""
 
     @overload
@@ -475,12 +490,11 @@ class BrokerAuthenticatorMethods(_model_base.Model):
 class BrokerAuthenticatorMethodSat(_model_base.Model):
     """Service Account Token for BrokerAuthentication.
 
-
     :ivar audiences: List of allowed audience. Required.
     :vartype audiences: list[str]
     """
 
-    audiences: List[str] = rest_field()
+    audiences: List[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of allowed audience. Required."""
 
     @overload
@@ -512,10 +526,12 @@ class BrokerAuthenticatorMethodX509(_model_base.Model):
     """
 
     authorization_attributes: Optional[Dict[str, "_models.BrokerAuthenticatorMethodX509Attributes"]] = rest_field(
-        name="authorizationAttributes"
+        name="authorizationAttributes", visibility=["read", "create", "update", "delete", "query"]
     )
     """X509 authorization attributes properties."""
-    trusted_client_ca_cert: Optional[str] = rest_field(name="trustedClientCaCert")
+    trusted_client_ca_cert: Optional[str] = rest_field(
+        name="trustedClientCaCert", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Name of the trusted client ca cert resource."""
 
     @overload
@@ -540,16 +556,15 @@ class BrokerAuthenticatorMethodX509(_model_base.Model):
 class BrokerAuthenticatorMethodX509Attributes(_model_base.Model):
     """BrokerAuthenticatorMethodX509Attributes properties.
 
-
     :ivar attributes: Attributes object. Required.
     :vartype attributes: dict[str, str]
     :ivar subject: Subject of the X509 attribute. Required.
     :vartype subject: str
     """
 
-    attributes: Dict[str, str] = rest_field()
+    attributes: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Attributes object. Required."""
-    subject: str = rest_field()
+    subject: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Subject of the X509 attribute. Required."""
 
     @overload
@@ -574,9 +589,6 @@ class BrokerAuthenticatorMethodX509Attributes(_model_base.Model):
 class BrokerAuthorizationProperties(_model_base.Model):
     """BrokerAuthorization Resource properties.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar authorization_policies: The list of authorization policies supported by the Authorization
      Resource. Required.
     :vartype authorization_policies: ~azure.mgmt.iotoperations.models.AuthorizationConfig
@@ -585,7 +597,9 @@ class BrokerAuthorizationProperties(_model_base.Model):
     :vartype provisioning_state: str or ~azure.mgmt.iotoperations.models.ProvisioningState
     """
 
-    authorization_policies: "_models.AuthorizationConfig" = rest_field(name="authorizationPolicies")
+    authorization_policies: "_models.AuthorizationConfig" = rest_field(
+        name="authorizationPolicies", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The list of authorization policies supported by the Authorization Resource. Required."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
@@ -614,11 +628,8 @@ class BrokerAuthorizationProperties(_model_base.Model):
 class BrokerAuthorizationResource(ProxyResource):
     """Instance broker authorizations resource.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -634,7 +645,9 @@ class BrokerAuthorizationResource(ProxyResource):
     :vartype extended_location: ~azure.mgmt.iotoperations.models.ExtendedLocation
     """
 
-    properties: Optional["_models.BrokerAuthorizationProperties"] = rest_field()
+    properties: Optional["_models.BrokerAuthorizationProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The resource-specific properties for this resource."""
     extended_location: "_models.ExtendedLocation" = rest_field(name="extendedLocation", visibility=["read", "create"])
     """Edge location of the resource. Required."""
@@ -671,13 +684,15 @@ class BrokerDiagnostics(_model_base.Model):
     :vartype traces: ~azure.mgmt.iotoperations.models.Traces
     """
 
-    logs: Optional["_models.DiagnosticsLogs"] = rest_field()
+    logs: Optional["_models.DiagnosticsLogs"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Diagnostic log settings for the resource."""
-    metrics: Optional["_models.Metrics"] = rest_field()
+    metrics: Optional["_models.Metrics"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The metrics settings for the resource."""
-    self_check: Optional["_models.SelfCheck"] = rest_field(name="selfCheck")
+    self_check: Optional["_models.SelfCheck"] = rest_field(
+        name="selfCheck", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The self check properties."""
-    traces: Optional["_models.Traces"] = rest_field()
+    traces: Optional["_models.Traces"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The trace properties."""
 
     @overload
@@ -705,9 +720,6 @@ class BrokerListenerProperties(_model_base.Model):
     """Defines a Broker listener. A listener is a collection of ports on which the broker accepts
     connections from clients.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar service_name: Kubernetes Service name of this listener.
     :vartype service_name: str
     :ivar ports: Ports on which this listener accepts client connections. Required.
@@ -720,11 +732,15 @@ class BrokerListenerProperties(_model_base.Model):
     :vartype provisioning_state: str or ~azure.mgmt.iotoperations.models.ProvisioningState
     """
 
-    service_name: Optional[str] = rest_field(name="serviceName")
+    service_name: Optional[str] = rest_field(
+        name="serviceName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Kubernetes Service name of this listener."""
-    ports: List["_models.ListenerPort"] = rest_field()
+    ports: List["_models.ListenerPort"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Ports on which this listener accepts client connections. Required."""
-    service_type: Optional[Union[str, "_models.ServiceType"]] = rest_field(name="serviceType")
+    service_type: Optional[Union[str, "_models.ServiceType"]] = rest_field(
+        name="serviceType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Kubernetes Service type of this listener. Known values are: \"ClusterIp\", \"LoadBalancer\",
      and \"NodePort\"."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
@@ -756,11 +772,8 @@ class BrokerListenerProperties(_model_base.Model):
 class BrokerListenerResource(ProxyResource):
     """Instance broker resource.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -776,7 +789,9 @@ class BrokerListenerResource(ProxyResource):
     :vartype extended_location: ~azure.mgmt.iotoperations.models.ExtendedLocation
     """
 
-    properties: Optional["_models.BrokerListenerProperties"] = rest_field()
+    properties: Optional["_models.BrokerListenerProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The resource-specific properties for this resource."""
     extended_location: "_models.ExtendedLocation" = rest_field(name="extendedLocation", visibility=["read", "create"])
     """Edge location of the resource. Required."""
@@ -803,8 +818,6 @@ class BrokerListenerResource(ProxyResource):
 class BrokerProperties(_model_base.Model):
     """Broker Resource properties.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar advanced: Advanced settings of Broker.
     :vartype advanced: ~azure.mgmt.iotoperations.models.AdvancedSettings
     :ivar cardinality: The cardinality details of the broker.
@@ -830,7 +843,9 @@ class BrokerProperties(_model_base.Model):
     """Advanced settings of Broker."""
     cardinality: Optional["_models.Cardinality"] = rest_field(visibility=["read", "create"])
     """The cardinality details of the broker."""
-    diagnostics: Optional["_models.BrokerDiagnostics"] = rest_field()
+    diagnostics: Optional["_models.BrokerDiagnostics"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Spec defines the desired identities of Broker diagnostics settings."""
     disk_backed_message_buffer: Optional["_models.DiskBackedMessageBuffer"] = rest_field(
         name="diskBackedMessageBuffer", visibility=["read", "create"]
@@ -878,11 +893,8 @@ class BrokerProperties(_model_base.Model):
 class BrokerResource(ProxyResource):
     """Instance broker resource.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -898,7 +910,9 @@ class BrokerResource(ProxyResource):
     :vartype extended_location: ~azure.mgmt.iotoperations.models.ExtendedLocation
     """
 
-    properties: Optional["_models.BrokerProperties"] = rest_field()
+    properties: Optional["_models.BrokerProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The resource-specific properties for this resource."""
     extended_location: "_models.ExtendedLocation" = rest_field(name="extendedLocation", visibility=["read", "create"])
     """Edge location of the resource. Required."""
@@ -926,7 +940,6 @@ class BrokerResourceRule(_model_base.Model):
     """Broker Resource Rule properties. This defines the objects that represent the actions or topics,
     such as - method.Connect, method.Publish, etc.
 
-
     :ivar method: Give access for a Broker method (i.e., Connect, Subscribe, or Publish). Required.
      Known values are: "Connect", "Publish", and "Subscribe".
     :vartype method: str or ~azure.mgmt.iotoperations.models.BrokerResourceDefinitionMethods
@@ -939,14 +952,18 @@ class BrokerResourceRule(_model_base.Model):
     :vartype topics: list[str]
     """
 
-    method: Union[str, "_models.BrokerResourceDefinitionMethods"] = rest_field()
+    method: Union[str, "_models.BrokerResourceDefinitionMethods"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Give access for a Broker method (i.e., Connect, Subscribe, or Publish). Required. Known values
      are: \"Connect\", \"Publish\", and \"Subscribe\"."""
-    client_ids: Optional[List[str]] = rest_field(name="clientIds")
+    client_ids: Optional[List[str]] = rest_field(
+        name="clientIds", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of client IDs that match the clients. The client IDs are case-sensitive and must match
      the client IDs provided by the clients during connection. This subfield may be set if the
      method is Connect."""
-    topics: Optional[List[str]] = rest_field()
+    topics: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of topics or topic patterns that match the topics that the clients can publish or
      subscribe to. This subfield is required if the method is Publish or Subscribe."""
 
@@ -973,16 +990,17 @@ class BrokerResourceRule(_model_base.Model):
 class Cardinality(_model_base.Model):
     """Cardinality properties.
 
-
     :ivar backend_chain: The backend broker desired properties. Required.
     :vartype backend_chain: ~azure.mgmt.iotoperations.models.BackendChain
     :ivar frontend: The frontend desired properties. Required.
     :vartype frontend: ~azure.mgmt.iotoperations.models.Frontend
     """
 
-    backend_chain: "_models.BackendChain" = rest_field(name="backendChain")
+    backend_chain: "_models.BackendChain" = rest_field(
+        name="backendChain", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The backend broker desired properties. Required."""
-    frontend: "_models.Frontend" = rest_field()
+    frontend: "_models.Frontend" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The frontend desired properties. Required."""
 
     @overload
@@ -1007,7 +1025,6 @@ class Cardinality(_model_base.Model):
 class CertManagerCertificateSpec(_model_base.Model):
     """Automatic TLS server certificate management with cert-manager.
 
-
     :ivar duration: Lifetime of certificate. Must be specified using a Go time.Duration format
      (h|m|s). E.g. 240h for 240 hours and 45m for 45 minutes.
     :vartype duration: str
@@ -1026,20 +1043,28 @@ class CertManagerCertificateSpec(_model_base.Model):
     :vartype san: ~azure.mgmt.iotoperations.models.SanForCert
     """
 
-    duration: Optional[str] = rest_field()
+    duration: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Lifetime of certificate. Must be specified using a Go time.Duration format (h|m|s). E.g. 240h
      for 240 hours and 45m for 45 minutes."""
-    secret_name: Optional[str] = rest_field(name="secretName")
+    secret_name: Optional[str] = rest_field(
+        name="secretName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Secret for storing server certificate. Any existing data will be overwritten. This is a
      reference to the secret through an identifying name, not the secret itself."""
-    renew_before: Optional[str] = rest_field(name="renewBefore")
+    renew_before: Optional[str] = rest_field(
+        name="renewBefore", visibility=["read", "create", "update", "delete", "query"]
+    )
     """When to begin renewing certificate. Must be specified using a Go time.Duration format (h|m|s).
      E.g. 240h for 240 hours and 45m for 45 minutes."""
-    issuer_ref: "_models.CertManagerIssuerRef" = rest_field(name="issuerRef")
+    issuer_ref: "_models.CertManagerIssuerRef" = rest_field(
+        name="issuerRef", visibility=["read", "create", "update", "delete", "query"]
+    )
     """cert-manager issuerRef. Required."""
-    private_key: Optional["_models.CertManagerPrivateKey"] = rest_field(name="privateKey")
+    private_key: Optional["_models.CertManagerPrivateKey"] = rest_field(
+        name="privateKey", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Type of certificate private key."""
-    san: Optional["_models.SanForCert"] = rest_field()
+    san: Optional["_models.SanForCert"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Additional Subject Alternative Names (SANs) to include in the certificate."""
 
     @overload
@@ -1068,7 +1093,6 @@ class CertManagerCertificateSpec(_model_base.Model):
 class CertManagerCertOptions(_model_base.Model):
     """Cert Manager Cert properties.
 
-
     :ivar duration: Lifetime of certificate. Must be specified using a Go time.Duration format
      (h|m|s). E.g. 240h for 240 hours and 45m for 45 minutes. Required.
     :vartype duration: str
@@ -1079,13 +1103,15 @@ class CertManagerCertOptions(_model_base.Model):
     :vartype private_key: ~azure.mgmt.iotoperations.models.CertManagerPrivateKey
     """
 
-    duration: str = rest_field()
+    duration: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Lifetime of certificate. Must be specified using a Go time.Duration format (h|m|s). E.g. 240h
      for 240 hours and 45m for 45 minutes. Required."""
-    renew_before: str = rest_field(name="renewBefore")
+    renew_before: str = rest_field(name="renewBefore", visibility=["read", "create", "update", "delete", "query"])
     """When to begin renewing certificate. Must be specified using a Go time.Duration format (h|m|s).
      E.g. 240h for 240 hours and 45m for 45 minutes. Required."""
-    private_key: "_models.CertManagerPrivateKey" = rest_field(name="privateKey")
+    private_key: "_models.CertManagerPrivateKey" = rest_field(
+        name="privateKey", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Configuration of certificate private key. Required."""
 
     @overload
@@ -1111,7 +1137,6 @@ class CertManagerCertOptions(_model_base.Model):
 class CertManagerIssuerRef(_model_base.Model):
     """Cert-Manager issuerRef properties.
 
-
     :ivar group: group of issuer. Required.
     :vartype group: str
     :ivar kind: kind of issuer (Issuer or ClusterIssuer). Required. Known values are: "Issuer" and
@@ -1121,12 +1146,14 @@ class CertManagerIssuerRef(_model_base.Model):
     :vartype name: str
     """
 
-    group: str = rest_field()
+    group: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """group of issuer. Required."""
-    kind: Union[str, "_models.CertManagerIssuerKind"] = rest_field()
+    kind: Union[str, "_models.CertManagerIssuerKind"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """kind of issuer (Issuer or ClusterIssuer). Required. Known values are: \"Issuer\" and
      \"ClusterIssuer\"."""
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """name of issuer. Required."""
 
     @overload
@@ -1152,7 +1179,6 @@ class CertManagerIssuerRef(_model_base.Model):
 class CertManagerPrivateKey(_model_base.Model):
     """Cert Manager private key properties.
 
-
     :ivar algorithm: algorithm for private key. Required. Known values are: "Ec256", "Ec384",
      "Ec521", "Ed25519", "Rsa2048", "Rsa4096", and "Rsa8192".
     :vartype algorithm: str or ~azure.mgmt.iotoperations.models.PrivateKeyAlgorithm
@@ -1161,10 +1187,14 @@ class CertManagerPrivateKey(_model_base.Model):
     :vartype rotation_policy: str or ~azure.mgmt.iotoperations.models.PrivateKeyRotationPolicy
     """
 
-    algorithm: Union[str, "_models.PrivateKeyAlgorithm"] = rest_field()
+    algorithm: Union[str, "_models.PrivateKeyAlgorithm"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """algorithm for private key. Required. Known values are: \"Ec256\", \"Ec384\", \"Ec521\",
      \"Ed25519\", \"Rsa2048\", \"Rsa4096\", and \"Rsa8192\"."""
-    rotation_policy: Union[str, "_models.PrivateKeyRotationPolicy"] = rest_field(name="rotationPolicy")
+    rotation_policy: Union[str, "_models.PrivateKeyRotationPolicy"] = rest_field(
+        name="rotationPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
     """cert-manager private key rotationPolicy. Required. Known values are: \"Always\" and \"Never\"."""
 
     @overload
@@ -1204,17 +1234,29 @@ class ClientConfig(_model_base.Model):
     :vartype max_keep_alive_seconds: int
     """
 
-    max_session_expiry_seconds: Optional[int] = rest_field(name="maxSessionExpirySeconds")
+    max_session_expiry_seconds: Optional[int] = rest_field(
+        name="maxSessionExpirySeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Upper bound of Session Expiry Interval, in seconds."""
-    max_message_expiry_seconds: Optional[int] = rest_field(name="maxMessageExpirySeconds")
+    max_message_expiry_seconds: Optional[int] = rest_field(
+        name="maxMessageExpirySeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Upper bound of Message Expiry Interval, in seconds."""
-    max_packet_size_bytes: Optional[int] = rest_field(name="maxPacketSizeBytes")
+    max_packet_size_bytes: Optional[int] = rest_field(
+        name="maxPacketSizeBytes", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Max message size for a packet in Bytes."""
-    subscriber_queue_limit: Optional["_models.SubscriberQueueLimit"] = rest_field(name="subscriberQueueLimit")
+    subscriber_queue_limit: Optional["_models.SubscriberQueueLimit"] = rest_field(
+        name="subscriberQueueLimit", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The limit on the number of queued messages for a subscriber."""
-    max_receive_maximum: Optional[int] = rest_field(name="maxReceiveMaximum")
+    max_receive_maximum: Optional[int] = rest_field(
+        name="maxReceiveMaximum", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Upper bound of Receive Maximum that a client can request in the CONNECT packet."""
-    max_keep_alive_seconds: Optional[int] = rest_field(name="maxKeepAliveSeconds")
+    max_keep_alive_seconds: Optional[int] = rest_field(
+        name="maxKeepAliveSeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Upper bound of a client's Keep Alive, in seconds."""
 
     @overload
@@ -1243,7 +1285,6 @@ class ClientConfig(_model_base.Model):
 class DataflowBuiltInTransformationDataset(_model_base.Model):
     """Dataflow BuiltIn Transformation dataset properties.
 
-
     :ivar key: The key of the dataset. Required.
     :vartype key: str
     :ivar description: A user provided optional description of the dataset.
@@ -1258,15 +1299,15 @@ class DataflowBuiltInTransformationDataset(_model_base.Model):
     :vartype expression: str
     """
 
-    key: str = rest_field()
+    key: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The key of the dataset. Required."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A user provided optional description of the dataset."""
-    schema_ref: Optional[str] = rest_field(name="schemaRef")
+    schema_ref: Optional[str] = rest_field(name="schemaRef", visibility=["read", "create", "update", "delete", "query"])
     """The reference to the schema that describes the dataset. Allowed: JSON Schema/draft-7."""
-    inputs: List[str] = rest_field()
+    inputs: List[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of fields for enriching from the Broker State Store. Required."""
-    expression: Optional[str] = rest_field()
+    expression: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Condition to enrich data from Broker State Store. Example: $1 < 0 || $1 > $2 (Assuming inputs
      section $1 and $2 are provided)."""
 
@@ -1295,7 +1336,6 @@ class DataflowBuiltInTransformationDataset(_model_base.Model):
 class DataflowBuiltInTransformationFilter(_model_base.Model):
     """Dataflow BuiltIn Transformation filter properties.
 
-
     :ivar type: The type of dataflow operation. "Filter"
     :vartype type: str or ~azure.mgmt.iotoperations.models.FilterType
     :ivar description: A user provided optional description of the filter.
@@ -1308,13 +1348,15 @@ class DataflowBuiltInTransformationFilter(_model_base.Model):
     :vartype expression: str
     """
 
-    type: Optional[Union[str, "_models.FilterType"]] = rest_field()
+    type: Optional[Union[str, "_models.FilterType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The type of dataflow operation. \"Filter\""""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A user provided optional description of the filter."""
-    inputs: List[str] = rest_field()
+    inputs: List[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of fields for filtering in JSON path expression. Required."""
-    expression: str = rest_field()
+    expression: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Condition to filter data. Can reference input fields with {n} where n is the index of the input
      field starting from 1. Example: $1 < 0 || $1 > $2 (Assuming inputs section $1 and $2 are
      provided). Required."""
@@ -1343,7 +1385,6 @@ class DataflowBuiltInTransformationFilter(_model_base.Model):
 class DataflowBuiltInTransformationMap(_model_base.Model):
     """Dataflow BuiltIn Transformation map properties.
 
-
     :ivar type: Type of transformation. Known values are: "NewProperties", "Rename", "Compute",
      "PassThrough", and "BuiltInFunction".
     :vartype type: str or ~azure.mgmt.iotoperations.models.DataflowMappingType
@@ -1358,17 +1399,19 @@ class DataflowBuiltInTransformationMap(_model_base.Model):
     :vartype output: str
     """
 
-    type: Optional[Union[str, "_models.DataflowMappingType"]] = rest_field()
+    type: Optional[Union[str, "_models.DataflowMappingType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Type of transformation. Known values are: \"NewProperties\", \"Rename\", \"Compute\",
      \"PassThrough\", and \"BuiltInFunction\"."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A user provided optional description of the mapping function."""
-    inputs: List[str] = rest_field()
+    inputs: List[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of fields for mapping in JSON path expression. Required."""
-    expression: Optional[str] = rest_field()
+    expression: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Modify the inputs field(s) to the final output field. Example: $1 * 2.2 (Assuming inputs
      section $1 is provided)."""
-    output: str = rest_field()
+    output: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Where and how the input fields to be organized in the output record. Required."""
 
     @overload
@@ -1412,17 +1455,23 @@ class DataflowBuiltInTransformationSettings(_model_base.Model):
     """
 
     serialization_format: Optional[Union[str, "_models.TransformationSerializationFormat"]] = rest_field(
-        name="serializationFormat"
+        name="serializationFormat", visibility=["read", "create", "update", "delete", "query"]
     )
     """Serialization format. Optional; defaults to JSON. Allowed value JSON Schema/draft-7, Parquet.
      Default: Json. Known values are: \"Delta\", \"Json\", and \"Parquet\"."""
-    schema_ref: Optional[str] = rest_field(name="schemaRef")
+    schema_ref: Optional[str] = rest_field(name="schemaRef", visibility=["read", "create", "update", "delete", "query"])
     """Reference to the schema that describes the output of the transformation."""
-    datasets: Optional[List["_models.DataflowBuiltInTransformationDataset"]] = rest_field()
+    datasets: Optional[List["_models.DataflowBuiltInTransformationDataset"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Enrich data from Broker State Store. Dataset references a key in Broker State Store."""
-    filter: Optional[List["_models.DataflowBuiltInTransformationFilter"]] = rest_field()
+    filter: Optional[List["_models.DataflowBuiltInTransformationFilter"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Filters input record or datapoints based on condition."""
-    map: Optional[List["_models.DataflowBuiltInTransformationMap"]] = rest_field()
+    map: Optional[List["_models.DataflowBuiltInTransformationMap"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Maps input to output message."""
 
     @overload
@@ -1452,7 +1501,6 @@ class DataflowBuiltInTransformationSettings(_model_base.Model):
 class DataflowDestinationOperationSettings(_model_base.Model):
     """Dataflow Destination Operation properties.
 
-
     :ivar endpoint_ref: Reference to the Endpoint CR. Can be of Broker, Kafka, Fabric, ADLS, ADX
      type. Required.
     :vartype endpoint_ref: str
@@ -1462,9 +1510,11 @@ class DataflowDestinationOperationSettings(_model_base.Model):
     :vartype data_destination: str
     """
 
-    endpoint_ref: str = rest_field(name="endpointRef")
+    endpoint_ref: str = rest_field(name="endpointRef", visibility=["read", "create", "update", "delete", "query"])
     """Reference to the Endpoint CR. Can be of Broker, Kafka, Fabric, ADLS, ADX type. Required."""
-    data_destination: str = rest_field(name="dataDestination")
+    data_destination: str = rest_field(
+        name="dataDestination", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Destination location, can be a topic or table name. Supports dynamic values with $topic,
      $systemProperties, $userProperties, $payload, $context, and $subscription. Required."""
 
@@ -1490,12 +1540,11 @@ class DataflowDestinationOperationSettings(_model_base.Model):
 class DataflowEndpointAuthenticationAccessToken(_model_base.Model):  # pylint: disable=name-too-long
     """DataflowEndpoint Authentication Access Token properties.
 
-
     :ivar secret_ref: Token secret name. Required.
     :vartype secret_ref: str
     """
 
-    secret_ref: str = rest_field(name="secretRef")
+    secret_ref: str = rest_field(name="secretRef", visibility=["read", "create", "update", "delete", "query"])
     """Token secret name. Required."""
 
     @overload
@@ -1519,7 +1568,6 @@ class DataflowEndpointAuthenticationAccessToken(_model_base.Model):  # pylint: d
 class DataflowEndpointAuthenticationSasl(_model_base.Model):
     """DataflowEndpoint Authentication Sasl properties.
 
-
     :ivar sasl_type: Type of SASL authentication. Can be PLAIN, SCRAM-SHA-256, or SCRAM-SHA-512.
      Required. Known values are: "Plain", "ScramSha256", and "ScramSha512".
     :vartype sasl_type: str or
@@ -1528,10 +1576,12 @@ class DataflowEndpointAuthenticationSasl(_model_base.Model):
     :vartype secret_ref: str
     """
 
-    sasl_type: Union[str, "_models.DataflowEndpointAuthenticationSaslType"] = rest_field(name="saslType")
+    sasl_type: Union[str, "_models.DataflowEndpointAuthenticationSaslType"] = rest_field(
+        name="saslType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Type of SASL authentication. Can be PLAIN, SCRAM-SHA-256, or SCRAM-SHA-512. Required. Known
      values are: \"Plain\", \"ScramSha256\", and \"ScramSha512\"."""
-    secret_ref: str = rest_field(name="secretRef")
+    secret_ref: str = rest_field(name="secretRef", visibility=["read", "create", "update", "delete", "query"])
     """Token secret name. Required."""
 
     @overload
@@ -1556,13 +1606,12 @@ class DataflowEndpointAuthenticationSasl(_model_base.Model):
 class DataflowEndpointAuthenticationServiceAccountToken(_model_base.Model):  # pylint: disable=name-too-long
     """Service Account Token for BrokerAuthentication.
 
-
     :ivar audience: Audience of the service account. Optional, defaults to the broker internal
      service account audience. Required.
     :vartype audience: str
     """
 
-    audience: str = rest_field()
+    audience: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Audience of the service account. Optional, defaults to the broker internal service account
      audience. Required."""
 
@@ -1592,7 +1641,7 @@ class DataflowEndpointAuthenticationSystemAssignedManagedIdentity(_model_base.Mo
     :vartype audience: str
     """
 
-    audience: Optional[str] = rest_field()
+    audience: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Audience of the service to authenticate against. Optional; defaults to the audience for Service
      host configuration."""
 
@@ -1617,7 +1666,6 @@ class DataflowEndpointAuthenticationSystemAssignedManagedIdentity(_model_base.Mo
 class DataflowEndpointAuthenticationUserAssignedManagedIdentity(_model_base.Model):  # pylint: disable=name-too-long
     """DataflowEndpoint Authentication UserAssignedManagedIdentity properties.
 
-
     :ivar client_id: Client ID for the user-assigned managed identity. Required.
     :vartype client_id: str
     :ivar scope: Resource identifier (application ID URI) of the resource, affixed with the
@@ -1627,11 +1675,11 @@ class DataflowEndpointAuthenticationUserAssignedManagedIdentity(_model_base.Mode
     :vartype tenant_id: str
     """
 
-    client_id: str = rest_field(name="clientId")
+    client_id: str = rest_field(name="clientId", visibility=["read", "create", "update", "delete", "query"])
     """Client ID for the user-assigned managed identity. Required."""
-    scope: Optional[str] = rest_field()
+    scope: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource identifier (application ID URI) of the resource, affixed with the .default suffix."""
-    tenant_id: str = rest_field(name="tenantId")
+    tenant_id: str = rest_field(name="tenantId", visibility=["read", "create", "update", "delete", "query"])
     """Tenant ID. Required."""
 
     @overload
@@ -1657,12 +1705,11 @@ class DataflowEndpointAuthenticationUserAssignedManagedIdentity(_model_base.Mode
 class DataflowEndpointAuthenticationX509(_model_base.Model):
     """DataflowEndpoint Authentication X509 properties.
 
-
     :ivar secret_ref: Secret reference of the X.509 certificate. Required.
     :vartype secret_ref: str
     """
 
-    secret_ref: str = rest_field(name="secretRef")
+    secret_ref: str = rest_field(name="secretRef", visibility=["read", "create", "update", "delete", "query"])
     """Secret reference of the X.509 certificate. Required."""
 
     @overload
@@ -1686,29 +1733,31 @@ class DataflowEndpointAuthenticationX509(_model_base.Model):
 class DataflowEndpointDataExplorer(_model_base.Model):
     """Azure Data Explorer endpoint properties.
 
-
     :ivar authentication: Authentication configuration. NOTE - only authentication property is
      allowed per entry. Required.
     :vartype authentication:
      ~azure.mgmt.iotoperations.models.DataflowEndpointDataExplorerAuthentication
     :ivar database: Database name. Required.
     :vartype database: str
-    :ivar host: Host of the Azure Data Explorer in the form of
-     :code:`<cluster>`.:code:`<region>`.kusto.windows.net . Required.
+    :ivar host: Host of the Azure Data Explorer in the form of <cluster>.<region>.kusto.windows.net
+     . Required.
     :vartype host: str
     :ivar batching: Azure Data Explorer endpoint batching configuration.
     :vartype batching: ~azure.mgmt.iotoperations.models.BatchingConfiguration
     """
 
-    authentication: "_models.DataflowEndpointDataExplorerAuthentication" = rest_field()
+    authentication: "_models.DataflowEndpointDataExplorerAuthentication" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Authentication configuration. NOTE - only authentication property is allowed per entry.
      Required."""
-    database: str = rest_field()
+    database: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Database name. Required."""
-    host: str = rest_field()
-    """Host of the Azure Data Explorer in the form of
-     :code:`<cluster>`.:code:`<region>`.kusto.windows.net . Required."""
-    batching: Optional["_models.BatchingConfiguration"] = rest_field()
+    host: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Host of the Azure Data Explorer in the form of <cluster>.<region>.kusto.windows.net . Required."""
+    batching: Optional["_models.BatchingConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Azure Data Explorer endpoint batching configuration."""
 
     @overload
@@ -1736,7 +1785,6 @@ class DataflowEndpointDataExplorerAuthentication(_model_base.Model):  # pylint: 
     """Azure Data Explorer Authentication properties. NOTE - only authentication property is allowed
     per entry.
 
-
     :ivar method: Mode of Authentication. Required. Known values are:
      "SystemAssignedManagedIdentity" and "UserAssignedManagedIdentity".
     :vartype method: str or ~azure.mgmt.iotoperations.models.DataExplorerAuthMethod
@@ -1749,16 +1797,22 @@ class DataflowEndpointDataExplorerAuthentication(_model_base.Model):  # pylint: 
      ~azure.mgmt.iotoperations.models.DataflowEndpointAuthenticationUserAssignedManagedIdentity
     """
 
-    method: Union[str, "_models.DataExplorerAuthMethod"] = rest_field()
+    method: Union[str, "_models.DataExplorerAuthMethod"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Mode of Authentication. Required. Known values are: \"SystemAssignedManagedIdentity\" and
      \"UserAssignedManagedIdentity\"."""
     system_assigned_managed_identity_settings: Optional[
         "_models.DataflowEndpointAuthenticationSystemAssignedManagedIdentity"
-    ] = rest_field(name="systemAssignedManagedIdentitySettings")
+    ] = rest_field(
+        name="systemAssignedManagedIdentitySettings", visibility=["read", "create", "update", "delete", "query"]
+    )
     """System-assigned managed identity authentication."""
     user_assigned_managed_identity_settings: Optional[
         "_models.DataflowEndpointAuthenticationUserAssignedManagedIdentity"
-    ] = rest_field(name="userAssignedManagedIdentitySettings")
+    ] = rest_field(
+        name="userAssignedManagedIdentitySettings", visibility=["read", "create", "update", "delete", "query"]
+    )
     """User-assigned managed identity authentication."""
 
     @overload
@@ -1788,24 +1842,27 @@ class DataflowEndpointDataExplorerAuthentication(_model_base.Model):  # pylint: 
 class DataflowEndpointDataLakeStorage(_model_base.Model):
     """Azure Data Lake endpoint properties.
 
-
     :ivar authentication: Authentication configuration. NOTE - only authentication property is
      allowed per entry. Required.
     :vartype authentication:
      ~azure.mgmt.iotoperations.models.DataflowEndpointDataLakeStorageAuthentication
-    :ivar host: Host of the Azure Data Lake in the form of :code:`<account>`.blob.core.windows.net
-     . Required.
+    :ivar host: Host of the Azure Data Lake in the form of <account>.blob.core.windows.net .
+     Required.
     :vartype host: str
     :ivar batching: Azure Data Lake endpoint batching configuration.
     :vartype batching: ~azure.mgmt.iotoperations.models.BatchingConfiguration
     """
 
-    authentication: "_models.DataflowEndpointDataLakeStorageAuthentication" = rest_field()
+    authentication: "_models.DataflowEndpointDataLakeStorageAuthentication" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Authentication configuration. NOTE - only authentication property is allowed per entry.
      Required."""
-    host: str = rest_field()
-    """Host of the Azure Data Lake in the form of :code:`<account>`.blob.core.windows.net . Required."""
-    batching: Optional["_models.BatchingConfiguration"] = rest_field()
+    host: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Host of the Azure Data Lake in the form of <account>.blob.core.windows.net . Required."""
+    batching: Optional["_models.BatchingConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Azure Data Lake endpoint batching configuration."""
 
     @overload
@@ -1832,7 +1889,6 @@ class DataflowEndpointDataLakeStorageAuthentication(_model_base.Model):  # pylin
     """Azure Data Lake endpoint Authentication properties.  NOTE Enum - Only one method is supported
     for one entry.
 
-
     :ivar method: Mode of Authentication. Required. Known values are:
      "SystemAssignedManagedIdentity", "UserAssignedManagedIdentity", and "AccessToken".
     :vartype method: str or ~azure.mgmt.iotoperations.models.DataLakeStorageAuthMethod
@@ -1848,20 +1904,26 @@ class DataflowEndpointDataLakeStorageAuthentication(_model_base.Model):  # pylin
      ~azure.mgmt.iotoperations.models.DataflowEndpointAuthenticationUserAssignedManagedIdentity
     """
 
-    method: Union[str, "_models.DataLakeStorageAuthMethod"] = rest_field()
+    method: Union[str, "_models.DataLakeStorageAuthMethod"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Mode of Authentication. Required. Known values are: \"SystemAssignedManagedIdentity\",
      \"UserAssignedManagedIdentity\", and \"AccessToken\"."""
     access_token_settings: Optional["_models.DataflowEndpointAuthenticationAccessToken"] = rest_field(
-        name="accessTokenSettings"
+        name="accessTokenSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """SAS token authentication."""
     system_assigned_managed_identity_settings: Optional[
         "_models.DataflowEndpointAuthenticationSystemAssignedManagedIdentity"
-    ] = rest_field(name="systemAssignedManagedIdentitySettings")
+    ] = rest_field(
+        name="systemAssignedManagedIdentitySettings", visibility=["read", "create", "update", "delete", "query"]
+    )
     """System-assigned managed identity authentication."""
     user_assigned_managed_identity_settings: Optional[
         "_models.DataflowEndpointAuthenticationUserAssignedManagedIdentity"
-    ] = rest_field(name="userAssignedManagedIdentitySettings")
+    ] = rest_field(
+        name="userAssignedManagedIdentitySettings", visibility=["read", "create", "update", "delete", "query"]
+    )
     """User-assigned managed identity authentication."""
 
     @overload
@@ -1892,7 +1954,6 @@ class DataflowEndpointDataLakeStorageAuthentication(_model_base.Model):  # pylin
 class DataflowEndpointFabricOneLake(_model_base.Model):
     """Microsoft Fabric endpoint properties.
 
-
     :ivar authentication: Authentication configuration. NOTE - only one authentication property is
      allowed per entry. Required.
     :vartype authentication:
@@ -1903,25 +1964,32 @@ class DataflowEndpointFabricOneLake(_model_base.Model):
      or files. Required. Known values are: "Files" and "Tables".
     :vartype one_lake_path_type: str or
      ~azure.mgmt.iotoperations.models.DataflowEndpointFabricPathType
-    :ivar host: Host of the Microsoft Fabric in the form of
-     https://:code:`<host>`.fabric.microsoft.com. Required.
+    :ivar host: Host of the Microsoft Fabric in the form of https://<host>.fabric.microsoft.com.
+     Required.
     :vartype host: str
     :ivar batching: Batching configuration.
     :vartype batching: ~azure.mgmt.iotoperations.models.BatchingConfiguration
     """
 
-    authentication: "_models.DataflowEndpointFabricOneLakeAuthentication" = rest_field()
+    authentication: "_models.DataflowEndpointFabricOneLakeAuthentication" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Authentication configuration. NOTE - only one authentication property is allowed per entry.
      Required."""
-    names: "_models.DataflowEndpointFabricOneLakeNames" = rest_field()
+    names: "_models.DataflowEndpointFabricOneLakeNames" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Names of the workspace and lakehouse. Required."""
-    one_lake_path_type: Union[str, "_models.DataflowEndpointFabricPathType"] = rest_field(name="oneLakePathType")
+    one_lake_path_type: Union[str, "_models.DataflowEndpointFabricPathType"] = rest_field(
+        name="oneLakePathType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Type of location of the data in the workspace. Can be either tables or files. Required. Known
      values are: \"Files\" and \"Tables\"."""
-    host: str = rest_field()
-    """Host of the Microsoft Fabric in the form of https://:code:`<host>`.fabric.microsoft.com.
-     Required."""
-    batching: Optional["_models.BatchingConfiguration"] = rest_field()
+    host: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Host of the Microsoft Fabric in the form of https://<host>.fabric.microsoft.com. Required."""
+    batching: Optional["_models.BatchingConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Batching configuration."""
 
     @overload
@@ -1950,7 +2018,6 @@ class DataflowEndpointFabricOneLakeAuthentication(_model_base.Model):  # pylint:
     """Microsoft Fabric endpoint. Authentication properties. NOTE - Only one method is supported for
     one entry.
 
-
     :ivar method: Mode of Authentication. Required. Known values are:
      "SystemAssignedManagedIdentity" and "UserAssignedManagedIdentity".
     :vartype method: str or ~azure.mgmt.iotoperations.models.FabricOneLakeAuthMethod
@@ -1963,16 +2030,22 @@ class DataflowEndpointFabricOneLakeAuthentication(_model_base.Model):  # pylint:
      ~azure.mgmt.iotoperations.models.DataflowEndpointAuthenticationUserAssignedManagedIdentity
     """
 
-    method: Union[str, "_models.FabricOneLakeAuthMethod"] = rest_field()
+    method: Union[str, "_models.FabricOneLakeAuthMethod"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Mode of Authentication. Required. Known values are: \"SystemAssignedManagedIdentity\" and
      \"UserAssignedManagedIdentity\"."""
     system_assigned_managed_identity_settings: Optional[
         "_models.DataflowEndpointAuthenticationSystemAssignedManagedIdentity"
-    ] = rest_field(name="systemAssignedManagedIdentitySettings")
+    ] = rest_field(
+        name="systemAssignedManagedIdentitySettings", visibility=["read", "create", "update", "delete", "query"]
+    )
     """System-assigned managed identity authentication."""
     user_assigned_managed_identity_settings: Optional[
         "_models.DataflowEndpointAuthenticationUserAssignedManagedIdentity"
-    ] = rest_field(name="userAssignedManagedIdentitySettings")
+    ] = rest_field(
+        name="userAssignedManagedIdentitySettings", visibility=["read", "create", "update", "delete", "query"]
+    )
     """User-assigned managed identity authentication."""
 
     @overload
@@ -2002,16 +2075,15 @@ class DataflowEndpointFabricOneLakeAuthentication(_model_base.Model):  # pylint:
 class DataflowEndpointFabricOneLakeNames(_model_base.Model):
     """Microsoft Fabric endpoint Names properties.
 
-
     :ivar lakehouse_name: Lakehouse name. Required.
     :vartype lakehouse_name: str
     :ivar workspace_name: Workspace name. Required.
     :vartype workspace_name: str
     """
 
-    lakehouse_name: str = rest_field(name="lakehouseName")
+    lakehouse_name: str = rest_field(name="lakehouseName", visibility=["read", "create", "update", "delete", "query"])
     """Lakehouse name. Required."""
-    workspace_name: str = rest_field(name="workspaceName")
+    workspace_name: str = rest_field(name="workspaceName", visibility=["read", "create", "update", "delete", "query"])
     """Workspace name. Required."""
 
     @overload
@@ -2035,7 +2107,6 @@ class DataflowEndpointFabricOneLakeNames(_model_base.Model):
 
 class DataflowEndpointKafka(_model_base.Model):
     """Kafka endpoint properties.
-
 
     :ivar authentication: Authentication configuration. NOTE - only authentication property is
      allowed per entry. Required.
@@ -2069,33 +2140,45 @@ class DataflowEndpointKafka(_model_base.Model):
      ~azure.mgmt.iotoperations.models.CloudEventAttributeType
     """
 
-    authentication: "_models.DataflowEndpointKafkaAuthentication" = rest_field()
+    authentication: "_models.DataflowEndpointKafkaAuthentication" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Authentication configuration. NOTE - only authentication property is allowed per entry.
      Required."""
-    consumer_group_id: Optional[str] = rest_field(name="consumerGroupId")
+    consumer_group_id: Optional[str] = rest_field(
+        name="consumerGroupId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Consumer group ID."""
-    host: str = rest_field()
+    host: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Kafka endpoint host. Required."""
-    batching: Optional["_models.DataflowEndpointKafkaBatching"] = rest_field()
+    batching: Optional["_models.DataflowEndpointKafkaBatching"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Batching configuration."""
-    copy_mqtt_properties: Optional[Union[str, "_models.OperationalMode"]] = rest_field(name="copyMqttProperties")
+    copy_mqtt_properties: Optional[Union[str, "_models.OperationalMode"]] = rest_field(
+        name="copyMqttProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Copy Broker properties. No effect if the endpoint is used as a source or if the dataflow
      doesn't have an Broker source. Known values are: \"Enabled\" and \"Disabled\"."""
-    compression: Optional[Union[str, "_models.DataflowEndpointKafkaCompression"]] = rest_field()
+    compression: Optional[Union[str, "_models.DataflowEndpointKafkaCompression"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Compression. Can be none, gzip, lz4, or snappy. No effect if the endpoint is used as a source.
      Known values are: \"None\", \"Gzip\", \"Snappy\", and \"Lz4\"."""
-    kafka_acks: Optional[Union[str, "_models.DataflowEndpointKafkaAcks"]] = rest_field(name="kafkaAcks")
+    kafka_acks: Optional[Union[str, "_models.DataflowEndpointKafkaAcks"]] = rest_field(
+        name="kafkaAcks", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Kafka acks. Can be all, one, or zero. No effect if the endpoint is used as a source. Known
      values are: \"Zero\", \"One\", and \"All\"."""
     partition_strategy: Optional[Union[str, "_models.DataflowEndpointKafkaPartitionStrategy"]] = rest_field(
-        name="partitionStrategy"
+        name="partitionStrategy", visibility=["read", "create", "update", "delete", "query"]
     )
     """Partition handling strategy. Can be default or static. No effect if the endpoint is used as a
      source. Known values are: \"Default\", \"Static\", \"Topic\", and \"Property\"."""
-    tls: Optional["_models.TlsProperties"] = rest_field()
+    tls: Optional["_models.TlsProperties"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """TLS configuration."""
     cloud_event_attributes: Optional[Union[str, "_models.CloudEventAttributeType"]] = rest_field(
-        name="cloudEventAttributes"
+        name="cloudEventAttributes", visibility=["read", "create", "update", "delete", "query"]
     )
     """Cloud event mapping config. Known values are: \"Propagate\" and \"CreateOrRemap\"."""
 
@@ -2130,7 +2213,6 @@ class DataflowEndpointKafkaAuthentication(_model_base.Model):
     """Kafka endpoint Authentication properties. NOTE - only authentication property is allowed per
     entry.
 
-
     :ivar method: Mode of Authentication. Required. Known values are:
      "SystemAssignedManagedIdentity", "UserAssignedManagedIdentity", "Sasl", "X509Certificate", and
      "Anonymous".
@@ -2149,21 +2231,29 @@ class DataflowEndpointKafkaAuthentication(_model_base.Model):
      ~azure.mgmt.iotoperations.models.DataflowEndpointAuthenticationX509
     """
 
-    method: Union[str, "_models.KafkaAuthMethod"] = rest_field()
+    method: Union[str, "_models.KafkaAuthMethod"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Mode of Authentication. Required. Known values are: \"SystemAssignedManagedIdentity\",
      \"UserAssignedManagedIdentity\", \"Sasl\", \"X509Certificate\", and \"Anonymous\"."""
     system_assigned_managed_identity_settings: Optional[
         "_models.DataflowEndpointAuthenticationSystemAssignedManagedIdentity"
-    ] = rest_field(name="systemAssignedManagedIdentitySettings")
+    ] = rest_field(
+        name="systemAssignedManagedIdentitySettings", visibility=["read", "create", "update", "delete", "query"]
+    )
     """System-assigned managed identity authentication."""
     user_assigned_managed_identity_settings: Optional[
         "_models.DataflowEndpointAuthenticationUserAssignedManagedIdentity"
-    ] = rest_field(name="userAssignedManagedIdentitySettings")
+    ] = rest_field(
+        name="userAssignedManagedIdentitySettings", visibility=["read", "create", "update", "delete", "query"]
+    )
     """User-assigned managed identity authentication."""
-    sasl_settings: Optional["_models.DataflowEndpointAuthenticationSasl"] = rest_field(name="saslSettings")
+    sasl_settings: Optional["_models.DataflowEndpointAuthenticationSasl"] = rest_field(
+        name="saslSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
     """SASL authentication."""
     x509_certificate_settings: Optional["_models.DataflowEndpointAuthenticationX509"] = rest_field(
-        name="x509CertificateSettings"
+        name="x509CertificateSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """X.509 certificate authentication."""
 
@@ -2206,13 +2296,17 @@ class DataflowEndpointKafkaBatching(_model_base.Model):
     :vartype max_messages: int
     """
 
-    mode: Optional[Union[str, "_models.OperationalMode"]] = rest_field()
+    mode: Optional[Union[str, "_models.OperationalMode"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Mode for batching. Known values are: \"Enabled\" and \"Disabled\"."""
-    latency_ms: Optional[int] = rest_field(name="latencyMs")
+    latency_ms: Optional[int] = rest_field(name="latencyMs", visibility=["read", "create", "update", "delete", "query"])
     """Batching latency in milliseconds."""
-    max_bytes: Optional[int] = rest_field(name="maxBytes")
+    max_bytes: Optional[int] = rest_field(name="maxBytes", visibility=["read", "create", "update", "delete", "query"])
     """Maximum number of bytes in a batch."""
-    max_messages: Optional[int] = rest_field(name="maxMessages")
+    max_messages: Optional[int] = rest_field(
+        name="maxMessages", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Maximum number of messages in a batch."""
 
     @overload
@@ -2239,12 +2333,13 @@ class DataflowEndpointKafkaBatching(_model_base.Model):
 class DataflowEndpointLocalStorage(_model_base.Model):
     """Local persistent volume endpoint properties.
 
-
     :ivar persistent_volume_claim_ref: Persistent volume claim name. Required.
     :vartype persistent_volume_claim_ref: str
     """
 
-    persistent_volume_claim_ref: str = rest_field(name="persistentVolumeClaimRef")
+    persistent_volume_claim_ref: str = rest_field(
+        name="persistentVolumeClaimRef", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Persistent volume claim name. Required."""
 
     @overload
@@ -2268,15 +2363,14 @@ class DataflowEndpointLocalStorage(_model_base.Model):
 class DataflowEndpointMqtt(_model_base.Model):
     """Broker endpoint properties.
 
-
     :ivar authentication: authentication properties. DEFAULT: kubernetes.audience=aio-internal.
      NOTE - Enum field only property is allowed. Required.
     :vartype authentication: ~azure.mgmt.iotoperations.models.DataflowEndpointMqttAuthentication
-    :ivar client_id_prefix: Client ID prefix. Client ID generated by the dataflow is
-     :code:`<prefix>`-TBD. Optional; no prefix if omitted.
+    :ivar client_id_prefix: Client ID prefix. Client ID generated by the dataflow is <prefix>-TBD.
+     Optional; no prefix if omitted.
     :vartype client_id_prefix: str
-    :ivar host: Host of the Broker in the form of :code:`<hostname>`::code:`<port>`. Optional;
-     connects to Broker if omitted.
+    :ivar host: Host of the Broker in the form of <hostname>:<port>. Optional; connects to Broker
+     if omitted.
     :vartype host: str
     :ivar protocol: Enable or disable websockets. Known values are: "Mqtt" and "WebSockets".
     :vartype protocol: str or ~azure.mgmt.iotoperations.models.BrokerProtocolType
@@ -2300,32 +2394,45 @@ class DataflowEndpointMqtt(_model_base.Model):
      ~azure.mgmt.iotoperations.models.CloudEventAttributeType
     """
 
-    authentication: "_models.DataflowEndpointMqttAuthentication" = rest_field()
+    authentication: "_models.DataflowEndpointMqttAuthentication" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """authentication properties. DEFAULT: kubernetes.audience=aio-internal. NOTE - Enum field only
      property is allowed. Required."""
-    client_id_prefix: Optional[str] = rest_field(name="clientIdPrefix")
-    """Client ID prefix. Client ID generated by the dataflow is :code:`<prefix>`-TBD. Optional; no
-     prefix if omitted."""
-    host: Optional[str] = rest_field()
-    """Host of the Broker in the form of :code:`<hostname>`::code:`<port>`. Optional; connects to
-     Broker if omitted."""
-    protocol: Optional[Union[str, "_models.BrokerProtocolType"]] = rest_field()
+    client_id_prefix: Optional[str] = rest_field(
+        name="clientIdPrefix", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Client ID prefix. Client ID generated by the dataflow is <prefix>-TBD. Optional; no prefix if
+     omitted."""
+    host: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Host of the Broker in the form of <hostname>:<port>. Optional; connects to Broker if omitted."""
+    protocol: Optional[Union[str, "_models.BrokerProtocolType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Enable or disable websockets. Known values are: \"Mqtt\" and \"WebSockets\"."""
-    keep_alive_seconds: Optional[int] = rest_field(name="keepAliveSeconds")
+    keep_alive_seconds: Optional[int] = rest_field(
+        name="keepAliveSeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Broker KeepAlive for connection in seconds."""
-    retain: Optional[Union[str, "_models.MqttRetainType"]] = rest_field()
+    retain: Optional[Union[str, "_models.MqttRetainType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Whether or not to keep the retain setting. Known values are: \"Keep\" and \"Never\"."""
-    max_inflight_messages: Optional[int] = rest_field(name="maxInflightMessages")
+    max_inflight_messages: Optional[int] = rest_field(
+        name="maxInflightMessages", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The max number of messages to keep in flight. For subscribe, this is the receive maximum. For
      publish, this is the maximum number of messages to send before waiting for an ack."""
-    qos: Optional[int] = rest_field()
+    qos: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Qos for Broker connection."""
-    session_expiry_seconds: Optional[int] = rest_field(name="sessionExpirySeconds")
+    session_expiry_seconds: Optional[int] = rest_field(
+        name="sessionExpirySeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Session expiry in seconds."""
-    tls: Optional["_models.TlsProperties"] = rest_field()
+    tls: Optional["_models.TlsProperties"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """TLS configuration."""
     cloud_event_attributes: Optional[Union[str, "_models.CloudEventAttributeType"]] = rest_field(
-        name="cloudEventAttributes"
+        name="cloudEventAttributes", visibility=["read", "create", "update", "delete", "query"]
     )
     """Cloud event mapping config. Known values are: \"Propagate\" and \"CreateOrRemap\"."""
 
@@ -2361,7 +2468,6 @@ class DataflowEndpointMqttAuthentication(_model_base.Model):
     """Mqtt endpoint Authentication properties. NOTE - only authentication property is allowed per
     entry.
 
-
     :ivar method: Mode of Authentication. Required. Known values are:
      "SystemAssignedManagedIdentity", "UserAssignedManagedIdentity", "ServiceAccountToken",
      "X509Certificate", and "Anonymous".
@@ -2382,24 +2488,30 @@ class DataflowEndpointMqttAuthentication(_model_base.Model):
      ~azure.mgmt.iotoperations.models.DataflowEndpointAuthenticationX509
     """
 
-    method: Union[str, "_models.MqttAuthMethod"] = rest_field()
+    method: Union[str, "_models.MqttAuthMethod"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Mode of Authentication. Required. Known values are: \"SystemAssignedManagedIdentity\",
      \"UserAssignedManagedIdentity\", \"ServiceAccountToken\", \"X509Certificate\", and
      \"Anonymous\"."""
     system_assigned_managed_identity_settings: Optional[
         "_models.DataflowEndpointAuthenticationSystemAssignedManagedIdentity"
-    ] = rest_field(name="systemAssignedManagedIdentitySettings")
+    ] = rest_field(
+        name="systemAssignedManagedIdentitySettings", visibility=["read", "create", "update", "delete", "query"]
+    )
     """System-assigned managed identity authentication."""
     user_assigned_managed_identity_settings: Optional[
         "_models.DataflowEndpointAuthenticationUserAssignedManagedIdentity"
-    ] = rest_field(name="userAssignedManagedIdentitySettings")
+    ] = rest_field(
+        name="userAssignedManagedIdentitySettings", visibility=["read", "create", "update", "delete", "query"]
+    )
     """User-assigned managed identity authentication."""
     service_account_token_settings: Optional["_models.DataflowEndpointAuthenticationServiceAccountToken"] = rest_field(
-        name="serviceAccountTokenSettings"
+        name="serviceAccountTokenSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """Kubernetes service account token authentication. Default audience if not set is aio-internal."""
     x509_certificate_settings: Optional["_models.DataflowEndpointAuthenticationX509"] = rest_field(
-        name="x509CertificateSettings"
+        name="x509CertificateSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """X.509 certificate authentication."""
 
@@ -2433,9 +2545,6 @@ class DataflowEndpointProperties(_model_base.Model):
     """DataflowEndpoint Resource properties. NOTE - Only one type of endpoint is supported for one
     Resource.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar endpoint_type: Endpoint Type. Required. Known values are: "DataExplorer",
      "DataLakeStorage", "FabricOneLake", "Kafka", "LocalStorage", and "Mqtt".
     :vartype endpoint_type: str or ~azure.mgmt.iotoperations.models.EndpointType
@@ -2458,24 +2567,34 @@ class DataflowEndpointProperties(_model_base.Model):
     :vartype provisioning_state: str or ~azure.mgmt.iotoperations.models.ProvisioningState
     """
 
-    endpoint_type: Union[str, "_models.EndpointType"] = rest_field(name="endpointType")
+    endpoint_type: Union[str, "_models.EndpointType"] = rest_field(
+        name="endpointType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Endpoint Type. Required. Known values are: \"DataExplorer\", \"DataLakeStorage\",
      \"FabricOneLake\", \"Kafka\", \"LocalStorage\", and \"Mqtt\"."""
-    data_explorer_settings: Optional["_models.DataflowEndpointDataExplorer"] = rest_field(name="dataExplorerSettings")
+    data_explorer_settings: Optional["_models.DataflowEndpointDataExplorer"] = rest_field(
+        name="dataExplorerSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Azure Data Explorer endpoint."""
     data_lake_storage_settings: Optional["_models.DataflowEndpointDataLakeStorage"] = rest_field(
-        name="dataLakeStorageSettings"
+        name="dataLakeStorageSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """Azure Data Lake endpoint."""
     fabric_one_lake_settings: Optional["_models.DataflowEndpointFabricOneLake"] = rest_field(
-        name="fabricOneLakeSettings"
+        name="fabricOneLakeSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """Microsoft Fabric endpoint."""
-    kafka_settings: Optional["_models.DataflowEndpointKafka"] = rest_field(name="kafkaSettings")
+    kafka_settings: Optional["_models.DataflowEndpointKafka"] = rest_field(
+        name="kafkaSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Kafka endpoint."""
-    local_storage_settings: Optional["_models.DataflowEndpointLocalStorage"] = rest_field(name="localStorageSettings")
+    local_storage_settings: Optional["_models.DataflowEndpointLocalStorage"] = rest_field(
+        name="localStorageSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Local persistent volume endpoint."""
-    mqtt_settings: Optional["_models.DataflowEndpointMqtt"] = rest_field(name="mqttSettings")
+    mqtt_settings: Optional["_models.DataflowEndpointMqtt"] = rest_field(
+        name="mqttSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Broker endpoint."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
@@ -2510,11 +2629,8 @@ class DataflowEndpointProperties(_model_base.Model):
 class DataflowEndpointResource(ProxyResource):
     """Instance dataflowEndpoint resource.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2530,7 +2646,9 @@ class DataflowEndpointResource(ProxyResource):
     :vartype extended_location: ~azure.mgmt.iotoperations.models.ExtendedLocation
     """
 
-    properties: Optional["_models.DataflowEndpointProperties"] = rest_field()
+    properties: Optional["_models.DataflowEndpointProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The resource-specific properties for this resource."""
     extended_location: "_models.ExtendedLocation" = rest_field(name="extendedLocation", visibility=["read", "create"])
     """Edge location of the resource. Required."""
@@ -2557,7 +2675,6 @@ class DataflowEndpointResource(ProxyResource):
 class DataflowOperation(_model_base.Model):
     """Dataflow Operation properties. NOTE - One only method is allowed to be used for one entry.
 
-
     :ivar operation_type: Type of operation. Required. Known values are: "Source", "Destination",
      and "BuiltInTransformation".
     :vartype operation_type: str or ~azure.mgmt.iotoperations.models.OperationType
@@ -2573,19 +2690,23 @@ class DataflowOperation(_model_base.Model):
      ~azure.mgmt.iotoperations.models.DataflowDestinationOperationSettings
     """
 
-    operation_type: Union[str, "_models.OperationType"] = rest_field(name="operationType")
+    operation_type: Union[str, "_models.OperationType"] = rest_field(
+        name="operationType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Type of operation. Required. Known values are: \"Source\", \"Destination\", and
      \"BuiltInTransformation\"."""
-    name: Optional[str] = rest_field()
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional user provided name of the transformation."""
-    source_settings: Optional["_models.DataflowSourceOperationSettings"] = rest_field(name="sourceSettings")
+    source_settings: Optional["_models.DataflowSourceOperationSettings"] = rest_field(
+        name="sourceSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Source configuration."""
     built_in_transformation_settings: Optional["_models.DataflowBuiltInTransformationSettings"] = rest_field(
-        name="builtInTransformationSettings"
+        name="builtInTransformationSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """Built In Transformation configuration."""
     destination_settings: Optional["_models.DataflowDestinationOperationSettings"] = rest_field(
-        name="destinationSettings"
+        name="destinationSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """Destination configuration."""
 
@@ -2614,8 +2735,6 @@ class DataflowOperation(_model_base.Model):
 class DataflowProfileProperties(_model_base.Model):
     """DataflowProfile Resource properties.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar diagnostics: Spec defines the desired identities of NBC diagnostics settings.
     :vartype diagnostics: ~azure.mgmt.iotoperations.models.ProfileDiagnostics
     :ivar instance_count: To manually scale the dataflow profile, specify the maximum number of
@@ -2626,9 +2745,13 @@ class DataflowProfileProperties(_model_base.Model):
     :vartype provisioning_state: str or ~azure.mgmt.iotoperations.models.ProvisioningState
     """
 
-    diagnostics: Optional["_models.ProfileDiagnostics"] = rest_field()
+    diagnostics: Optional["_models.ProfileDiagnostics"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Spec defines the desired identities of NBC diagnostics settings."""
-    instance_count: Optional[int] = rest_field(name="instanceCount")
+    instance_count: Optional[int] = rest_field(
+        name="instanceCount", visibility=["read", "create", "update", "delete", "query"]
+    )
     """To manually scale the dataflow profile, specify the maximum number of instances you want to
      run."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
@@ -2659,11 +2782,8 @@ class DataflowProfileProperties(_model_base.Model):
 class DataflowProfileResource(ProxyResource):
     """Instance dataflowProfile resource.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2679,7 +2799,9 @@ class DataflowProfileResource(ProxyResource):
     :vartype extended_location: ~azure.mgmt.iotoperations.models.ExtendedLocation
     """
 
-    properties: Optional["_models.DataflowProfileProperties"] = rest_field()
+    properties: Optional["_models.DataflowProfileProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The resource-specific properties for this resource."""
     extended_location: "_models.ExtendedLocation" = rest_field(name="extendedLocation", visibility=["read", "create"])
     """Edge location of the resource. Required."""
@@ -2706,9 +2828,6 @@ class DataflowProfileResource(ProxyResource):
 class DataflowProperties(_model_base.Model):
     """Dataflow Resource properties.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar mode: Mode for Dataflow. Optional; defaults to Enabled. Known values are: "Enabled" and
      "Disabled".
     :vartype mode: str or ~azure.mgmt.iotoperations.models.OperationalMode
@@ -2720,10 +2839,14 @@ class DataflowProperties(_model_base.Model):
     :vartype provisioning_state: str or ~azure.mgmt.iotoperations.models.ProvisioningState
     """
 
-    mode: Optional[Union[str, "_models.OperationalMode"]] = rest_field()
+    mode: Optional[Union[str, "_models.OperationalMode"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Mode for Dataflow. Optional; defaults to Enabled. Known values are: \"Enabled\" and
      \"Disabled\"."""
-    operations: List["_models.DataflowOperation"] = rest_field()
+    operations: List["_models.DataflowOperation"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """List of operations including source and destination references as well as transformation.
      Required."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
@@ -2754,11 +2877,8 @@ class DataflowProperties(_model_base.Model):
 class DataflowResource(ProxyResource):
     """Instance dataflowProfile dataflow resource.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2774,7 +2894,9 @@ class DataflowResource(ProxyResource):
     :vartype extended_location: ~azure.mgmt.iotoperations.models.ExtendedLocation
     """
 
-    properties: Optional["_models.DataflowProperties"] = rest_field()
+    properties: Optional["_models.DataflowProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The resource-specific properties for this resource."""
     extended_location: "_models.ExtendedLocation" = rest_field(name="extendedLocation", visibility=["read", "create"])
     """Edge location of the resource. Required."""
@@ -2801,7 +2923,6 @@ class DataflowResource(ProxyResource):
 class DataflowSourceOperationSettings(_model_base.Model):
     """Dataflow Source Operation properties.
 
-
     :ivar endpoint_ref: Reference to the Dataflow Endpoint resource. Can only be of Broker and
      Kafka type. Required.
     :vartype endpoint_ref: str
@@ -2819,19 +2940,19 @@ class DataflowSourceOperationSettings(_model_base.Model):
     :vartype data_sources: list[str]
     """
 
-    endpoint_ref: str = rest_field(name="endpointRef")
+    endpoint_ref: str = rest_field(name="endpointRef", visibility=["read", "create", "update", "delete", "query"])
     """Reference to the Dataflow Endpoint resource. Can only be of Broker and Kafka type. Required."""
-    asset_ref: Optional[str] = rest_field(name="assetRef")
+    asset_ref: Optional[str] = rest_field(name="assetRef", visibility=["read", "create", "update", "delete", "query"])
     """Reference to the resource in Azure Device Registry where the data in the endpoint originates
      from."""
     serialization_format: Optional[Union[str, "_models.SourceSerializationFormat"]] = rest_field(
-        name="serializationFormat"
+        name="serializationFormat", visibility=["read", "create", "update", "delete", "query"]
     )
     """Content is a JSON Schema. Allowed: JSON Schema/draft-7. \"Json\""""
-    schema_ref: Optional[str] = rest_field(name="schemaRef")
+    schema_ref: Optional[str] = rest_field(name="schemaRef", visibility=["read", "create", "update", "delete", "query"])
     """Schema CR reference. Data will be deserialized according to the schema, and dropped if it
      doesn't match."""
-    data_sources: List[str] = rest_field(name="dataSources")
+    data_sources: List[str] = rest_field(name="dataSources", visibility=["read", "create", "update", "delete", "query"])
     """List of source locations. Can be Broker or Kafka topics. Supports wildcards # and +. Required."""
 
     @overload
@@ -2863,7 +2984,7 @@ class DiagnosticsLogs(_model_base.Model):
     :vartype level: str
     """
 
-    level: Optional[str] = rest_field()
+    level: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The log level. Examples - 'debug', 'info', 'warn', 'error', 'trace'."""
 
     @overload
@@ -2887,37 +3008,42 @@ class DiagnosticsLogs(_model_base.Model):
 class DiskBackedMessageBuffer(_model_base.Model):
     """DiskBackedMessageBuffer properties.
 
-
     :ivar max_size: The max size of the message buffer on disk. If a PVC template is specified
      using one of ephemeralVolumeClaimSpec or persistentVolumeClaimSpec, then this size is used as
      the request and limit sizes of that template. If neither ephemeralVolumeClaimSpec nor
      persistentVolumeClaimSpec are specified, then an emptyDir volume is mounted with this size as
-     its limit. See https://kubernetes.io/docs/concepts/storage/volumes/#emptydir for details.
-     Required.
+     its limit. See `https://kubernetes.io/docs/concepts/storage/volumes/#emptydir
+     <https://kubernetes.io/docs/concepts/storage/volumes/#emptydir>`_ for details. Required.
     :vartype max_size: str
     :ivar ephemeral_volume_claim_spec: Use the specified persistent volume claim template to mount
      a "generic ephemeral volume" for the message buffer. See
-     https://kubernetes.io/docs/concepts/storage/ephemeral-volumes/#generic-ephemeral-volumes for
-     details.
+     `https://kubernetes.io/docs/concepts/storage/ephemeral-volumes/#generic-ephemeral-volumes
+     <https://kubernetes.io/docs/concepts/storage/ephemeral-volumes/#generic-ephemeral-volumes>`_
+     for details.
     :vartype ephemeral_volume_claim_spec: ~azure.mgmt.iotoperations.models.VolumeClaimSpec
     :ivar persistent_volume_claim_spec: Use the specified persistent volume claim template to mount
      a persistent volume for the message buffer.
     :vartype persistent_volume_claim_spec: ~azure.mgmt.iotoperations.models.VolumeClaimSpec
     """
 
-    max_size: str = rest_field(name="maxSize")
+    max_size: str = rest_field(name="maxSize", visibility=["read", "create", "update", "delete", "query"])
     """The max size of the message buffer on disk. If a PVC template is specified using one of
      ephemeralVolumeClaimSpec or persistentVolumeClaimSpec, then this size is used as the request
      and limit sizes of that template. If neither ephemeralVolumeClaimSpec nor
      persistentVolumeClaimSpec are specified, then an emptyDir volume is mounted with this size as
-     its limit. See https://kubernetes.io/docs/concepts/storage/volumes/#emptydir for details.
-     Required."""
-    ephemeral_volume_claim_spec: Optional["_models.VolumeClaimSpec"] = rest_field(name="ephemeralVolumeClaimSpec")
+     its limit. See `https://kubernetes.io/docs/concepts/storage/volumes/#emptydir
+     <https://kubernetes.io/docs/concepts/storage/volumes/#emptydir>`_ for details. Required."""
+    ephemeral_volume_claim_spec: Optional["_models.VolumeClaimSpec"] = rest_field(
+        name="ephemeralVolumeClaimSpec", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Use the specified persistent volume claim template to mount a \"generic ephemeral volume\" for
      the message buffer. See
-     https://kubernetes.io/docs/concepts/storage/ephemeral-volumes/#generic-ephemeral-volumes for
-     details."""
-    persistent_volume_claim_spec: Optional["_models.VolumeClaimSpec"] = rest_field(name="persistentVolumeClaimSpec")
+     `https://kubernetes.io/docs/concepts/storage/ephemeral-volumes/#generic-ephemeral-volumes
+     <https://kubernetes.io/docs/concepts/storage/ephemeral-volumes/#generic-ephemeral-volumes>`_
+     for details."""
+    persistent_volume_claim_spec: Optional["_models.VolumeClaimSpec"] = rest_field(
+        name="persistentVolumeClaimSpec", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Use the specified persistent volume claim template to mount a persistent volume for the message
      buffer."""
 
@@ -2944,8 +3070,6 @@ class DiskBackedMessageBuffer(_model_base.Model):
 class ErrorAdditionalInfo(_model_base.Model):
     """The resource management error additional info.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
@@ -2960,8 +3084,6 @@ class ErrorAdditionalInfo(_model_base.Model):
 
 class ErrorDetail(_model_base.Model):
     """The error detail.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar code: The error code.
     :vartype code: str
@@ -2997,7 +3119,7 @@ class ErrorResponse(_model_base.Model):
     :vartype error: ~azure.mgmt.iotoperations.models.ErrorDetail
     """
 
-    error: Optional["_models.ErrorDetail"] = rest_field()
+    error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The error object."""
 
     @overload
@@ -3022,16 +3144,17 @@ class ExtendedLocation(_model_base.Model):
     """Extended location is an extension of Azure locations. They provide a way to use their Azure ARC
     enabled Kubernetes clusters as target locations for deploying Azure services instances.
 
-
     :ivar name: The name of the extended location. Required.
     :vartype name: str
     :ivar type: Type of ExtendedLocation. Required. "CustomLocation"
     :vartype type: str or ~azure.mgmt.iotoperations.models.ExtendedLocationType
     """
 
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the extended location. Required."""
-    type: Union[str, "_models.ExtendedLocationType"] = rest_field()
+    type: Union[str, "_models.ExtendedLocationType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Type of ExtendedLocation. Required. \"CustomLocation\""""
 
     @overload
@@ -3056,16 +3179,15 @@ class ExtendedLocation(_model_base.Model):
 class Frontend(_model_base.Model):
     """The desired properties of the frontend instances of the Broker.
 
-
     :ivar replicas: The desired number of frontend instances (pods). Required.
     :vartype replicas: int
     :ivar workers: Number of logical frontend workers per instance (pod).
     :vartype workers: int
     """
 
-    replicas: int = rest_field()
+    replicas: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The desired number of frontend instances (pods). Required."""
-    workers: Optional[int] = rest_field()
+    workers: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Number of logical frontend workers per instance (pod)."""
 
     @overload
@@ -3095,7 +3217,9 @@ class GenerateResourceLimits(_model_base.Model):
     :vartype cpu: str or ~azure.mgmt.iotoperations.models.OperationalMode
     """
 
-    cpu: Optional[Union[str, "_models.OperationalMode"]] = rest_field()
+    cpu: Optional[Union[str, "_models.OperationalMode"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The toggle to enable/disable cpu resource limits. Known values are: \"Enabled\" and
      \"Disabled\"."""
 
@@ -3104,6 +3228,43 @@ class GenerateResourceLimits(_model_base.Model):
         self,
         *,
         cpu: Optional[Union[str, "_models.OperationalMode"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class InstanceFeature(_model_base.Model):
+    """The features of the AIO Instance.
+
+    :ivar mode: The state of the feature. Known values are: "Stable", "Preview", and "Disabled".
+    :vartype mode: str or ~azure.mgmt.iotoperations.models.InstanceFeatureMode
+    :ivar settings: The settings of the feature.
+    :vartype settings: dict[str, str or ~azure.mgmt.iotoperations.models.OperationalMode]
+    """
+
+    mode: Optional[Union[str, "_models.InstanceFeatureMode"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The state of the feature. Known values are: \"Stable\", \"Preview\", and \"Disabled\"."""
+    settings: Optional[Dict[str, Union[str, "_models.OperationalMode"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The settings of the feature."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        mode: Optional[Union[str, "_models.InstanceFeatureMode"]] = None,
+        settings: Optional[Dict[str, Union[str, "_models.OperationalMode"]]] = None,
     ) -> None: ...
 
     @overload
@@ -3126,9 +3287,11 @@ class InstancePatchModel(_model_base.Model):
     :vartype identity: ~azure.mgmt.iotoperations.models.ManagedServiceIdentity
     """
 
-    tags: Optional[Dict[str, str]] = rest_field()
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
-    identity: Optional["_models.ManagedServiceIdentity"] = rest_field()
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The managed service identities assigned to this resource."""
 
     @overload
@@ -3153,9 +3316,6 @@ class InstancePatchModel(_model_base.Model):
 class InstanceProperties(_model_base.Model):
     """The properties of the Instance resource.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar description: Detailed description of the Instance.
     :vartype description: str
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
@@ -3166,9 +3326,11 @@ class InstanceProperties(_model_base.Model):
     :ivar schema_registry_ref: The reference to the Schema Registry for this AIO Instance.
      Required.
     :vartype schema_registry_ref: ~azure.mgmt.iotoperations.models.SchemaRegistryRef
+    :ivar features: The features of the AIO Instance.
+    :vartype features: dict[str, ~azure.mgmt.iotoperations.models.InstanceFeature]
     """
 
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Detailed description of the Instance."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
@@ -3177,8 +3339,14 @@ class InstanceProperties(_model_base.Model):
      \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
     version: Optional[str] = rest_field(visibility=["read"])
     """The Azure IoT Operations version."""
-    schema_registry_ref: "_models.SchemaRegistryRef" = rest_field(name="schemaRegistryRef")
+    schema_registry_ref: "_models.SchemaRegistryRef" = rest_field(
+        name="schemaRegistryRef", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The reference to the Schema Registry for this AIO Instance. Required."""
+    features: Optional[Dict[str, "_models.InstanceFeature"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The features of the AIO Instance."""
 
     @overload
     def __init__(
@@ -3186,6 +3354,7 @@ class InstanceProperties(_model_base.Model):
         *,
         schema_registry_ref: "_models.SchemaRegistryRef",
         description: Optional[str] = None,
+        features: Optional[Dict[str, "_models.InstanceFeature"]] = None,
     ) -> None: ...
 
     @overload
@@ -3203,11 +3372,8 @@ class TrackedResource(Resource):
     """The resource model definition for an Azure Resource Manager tracked top level resource which
     has 'tags' and a 'location'.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3223,7 +3389,7 @@ class TrackedResource(Resource):
     :vartype location: str
     """
 
-    tags: Optional[Dict[str, str]] = rest_field()
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     location: str = rest_field(visibility=["read", "create"])
     """The geo-location where the resource lives. Required."""
@@ -3250,11 +3416,8 @@ class TrackedResource(Resource):
 class InstanceResource(TrackedResource):
     """A Instance resource is a logical container for a set of child resources.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3276,11 +3439,15 @@ class InstanceResource(TrackedResource):
     :vartype identity: ~azure.mgmt.iotoperations.models.ManagedServiceIdentity
     """
 
-    properties: Optional["_models.InstanceProperties"] = rest_field()
+    properties: Optional["_models.InstanceProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The resource-specific properties for this resource."""
     extended_location: "_models.ExtendedLocation" = rest_field(name="extendedLocation", visibility=["read", "create"])
     """Edge location of the resource. Required."""
-    identity: Optional["_models.ManagedServiceIdentity"] = rest_field()
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The managed service identities assigned to this resource."""
 
     @overload
@@ -3308,7 +3475,6 @@ class InstanceResource(TrackedResource):
 class KubernetesReference(_model_base.Model):
     """Kubernetes reference.
 
-
     :ivar api_group: APIGroup is the group for the resource being referenced. If APIGroup is not
      specified, the specified Kind must be in the core API group. For any other third-party types,
      APIGroup is required.
@@ -3322,15 +3488,15 @@ class KubernetesReference(_model_base.Model):
     :vartype namespace: str
     """
 
-    api_group: Optional[str] = rest_field(name="apiGroup")
+    api_group: Optional[str] = rest_field(name="apiGroup", visibility=["read", "create", "update", "delete", "query"])
     """APIGroup is the group for the resource being referenced. If APIGroup is not specified, the
      specified Kind must be in the core API group. For any other third-party types, APIGroup is
      required."""
-    kind: str = rest_field()
+    kind: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Kind is the type of resource being referenced. Required."""
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Name is the name of resource being referenced. Required."""
-    namespace: Optional[str] = rest_field()
+    namespace: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Namespace is the namespace of the resource being referenced. This field is required when the
      resource has a namespace."""
 
@@ -3358,7 +3524,6 @@ class KubernetesReference(_model_base.Model):
 class ListenerPort(_model_base.Model):
     """Defines a TCP port on which a ``BrokerListener`` listens.
 
-
     :ivar authentication_ref: Reference to client authentication settings. Omit to disable
      authentication.
     :vartype authentication_ref: str
@@ -3377,17 +3542,23 @@ class ListenerPort(_model_base.Model):
     :vartype tls: ~azure.mgmt.iotoperations.models.TlsCertMethod
     """
 
-    authentication_ref: Optional[str] = rest_field(name="authenticationRef")
+    authentication_ref: Optional[str] = rest_field(
+        name="authenticationRef", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Reference to client authentication settings. Omit to disable authentication."""
-    authorization_ref: Optional[str] = rest_field(name="authorizationRef")
+    authorization_ref: Optional[str] = rest_field(
+        name="authorizationRef", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Reference to client authorization settings. Omit to disable authorization."""
-    node_port: Optional[int] = rest_field(name="nodePort")
+    node_port: Optional[int] = rest_field(name="nodePort", visibility=["read", "create", "update", "delete", "query"])
     """Kubernetes node port. Only relevant when this port is associated with a ``NodePort`` listener."""
-    port: int = rest_field()
+    port: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """TCP port for accepting client connections. Required."""
-    protocol: Optional[Union[str, "_models.BrokerProtocolType"]] = rest_field()
+    protocol: Optional[Union[str, "_models.BrokerProtocolType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Protocol to use for client connections. Known values are: \"Mqtt\" and \"WebSockets\"."""
-    tls: Optional["_models.TlsCertMethod"] = rest_field()
+    tls: Optional["_models.TlsCertMethod"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """TLS server certificate settings for this port. Omit to disable TLS."""
 
     @overload
@@ -3416,7 +3587,6 @@ class ListenerPort(_model_base.Model):
 class LocalKubernetesReference(_model_base.Model):
     """Kubernetes reference.
 
-
     :ivar api_group: APIGroup is the group for the resource being referenced. If APIGroup is not
      specified, the specified Kind must be in the core API group. For any other third-party types,
      APIGroup is required.
@@ -3427,13 +3597,13 @@ class LocalKubernetesReference(_model_base.Model):
     :vartype name: str
     """
 
-    api_group: Optional[str] = rest_field(name="apiGroup")
+    api_group: Optional[str] = rest_field(name="apiGroup", visibility=["read", "create", "update", "delete", "query"])
     """APIGroup is the group for the resource being referenced. If APIGroup is not specified, the
      specified Kind must be in the core API group. For any other third-party types, APIGroup is
      required."""
-    kind: str = rest_field()
+    kind: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Kind is the type of resource being referenced. Required."""
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Name is the name of resource being referenced. Required."""
 
     @overload
@@ -3459,9 +3629,6 @@ class LocalKubernetesReference(_model_base.Model):
 class ManagedServiceIdentity(_model_base.Model):
     """Managed service identity (system assigned and/or user assigned identities).
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar principal_id: The service principal ID of the system assigned identity. This property
      will only be provided for a system assigned identity.
     :vartype principal_id: str
@@ -3482,11 +3649,13 @@ class ManagedServiceIdentity(_model_base.Model):
     tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read"])
     """The tenant ID of the system assigned identity. This property will only be provided for a system
      assigned identity."""
-    type: Union[str, "_models.ManagedServiceIdentityType"] = rest_field()
+    type: Union[str, "_models.ManagedServiceIdentityType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The type of managed identity assigned to this resource. Required. Known values are: \"None\",
      \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned,UserAssigned\"."""
     user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = rest_field(
-        name="userAssignedIdentities"
+        name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
     )
     """The identities assigned to this resource by the user."""
 
@@ -3516,7 +3685,9 @@ class Metrics(_model_base.Model):
     :vartype prometheus_port: int
     """
 
-    prometheus_port: Optional[int] = rest_field(name="prometheusPort")
+    prometheus_port: Optional[int] = rest_field(
+        name="prometheusPort", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The prometheus port to expose the metrics."""
 
     @overload
@@ -3539,8 +3710,6 @@ class Metrics(_model_base.Model):
 
 class Operation(_model_base.Model):
     """Details of a REST API operation, returned from the Resource Provider Operations API.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
      "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
@@ -3566,13 +3735,15 @@ class Operation(_model_base.Model):
     is_data_action: Optional[bool] = rest_field(name="isDataAction", visibility=["read"])
     """Whether the operation applies to data-plane. This is \"true\" for data-plane operations and
      \"false\" for Azure Resource Manager/control-plane operations."""
-    display: Optional["_models.OperationDisplay"] = rest_field(visibility=["read"])
+    display: Optional["_models.OperationDisplay"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Localized display information for this particular operation."""
     origin: Optional[Union[str, "_models.Origin"]] = rest_field(visibility=["read"])
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
      logs UX. Default value is \"user,system\". Known values are: \"user\", \"system\", and
      \"user,system\"."""
-    action_type: Optional[Union[str, "_models.ActionType"]] = rest_field(name="actionType")
+    action_type: Optional[Union[str, "_models.ActionType"]] = rest_field(name="actionType", visibility=["read"])
     """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for
      internal only APIs. \"Internal\""""
 
@@ -3580,7 +3751,7 @@ class Operation(_model_base.Model):
     def __init__(
         self,
         *,
-        action_type: Optional[Union[str, "_models.ActionType"]] = None,
+        display: Optional["_models.OperationDisplay"] = None,
     ) -> None: ...
 
     @overload
@@ -3596,8 +3767,6 @@ class Operation(_model_base.Model):
 
 class OperationDisplay(_model_base.Model):
     """Localized display information for and operation.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
@@ -3642,13 +3811,15 @@ class PrincipalDefinition(_model_base.Model):
     :vartype usernames: list[str]
     """
 
-    attributes: Optional[List[Dict[str, str]]] = rest_field()
+    attributes: Optional[List[Dict[str, str]]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of key-value pairs that match the attributes of the clients. The attributes are
      case-sensitive and must match the attributes provided by the clients during authentication."""
-    client_ids: Optional[List[str]] = rest_field(name="clientIds")
+    client_ids: Optional[List[str]] = rest_field(
+        name="clientIds", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of client IDs that match the clients. The client IDs are case-sensitive and must match
      the client IDs provided by the clients during connection."""
-    usernames: Optional[List[str]] = rest_field()
+    usernames: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of usernames that match the clients. The usernames are case-sensitive and must match the
      usernames provided by the clients during authentication."""
 
@@ -3681,9 +3852,9 @@ class ProfileDiagnostics(_model_base.Model):
     :vartype metrics: ~azure.mgmt.iotoperations.models.Metrics
     """
 
-    logs: Optional["_models.DiagnosticsLogs"] = rest_field()
+    logs: Optional["_models.DiagnosticsLogs"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Diagnostic log settings for the resource."""
-    metrics: Optional["_models.Metrics"] = rest_field()
+    metrics: Optional["_models.Metrics"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The metrics settings for the resource."""
 
     @overload
@@ -3708,16 +3879,15 @@ class ProfileDiagnostics(_model_base.Model):
 class SanForCert(_model_base.Model):
     """Subject Alternative Names (SANs) for certificate.
 
-
     :ivar dns: DNS SANs. Required.
     :vartype dns: list[str]
     :ivar ip: IP address SANs. Required.
     :vartype ip: list[str]
     """
 
-    dns: List[str] = rest_field()
+    dns: List[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """DNS SANs. Required."""
-    ip: List[str] = rest_field()
+    ip: List[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """IP address SANs. Required."""
 
     @overload
@@ -3742,12 +3912,11 @@ class SanForCert(_model_base.Model):
 class SchemaRegistryRef(_model_base.Model):
     """The reference to the Schema Registry for this AIO Instance.
 
-
     :ivar resource_id: The resource ID of the Schema Registry. Required.
     :vartype resource_id: str
     """
 
-    resource_id: str = rest_field(name="resourceId")
+    resource_id: str = rest_field(name="resourceId", visibility=["read", "create", "update", "delete", "query"])
     """The resource ID of the Schema Registry. Required."""
 
     @overload
@@ -3780,11 +3949,17 @@ class SelfCheck(_model_base.Model):
     :vartype timeout_seconds: int
     """
 
-    mode: Optional[Union[str, "_models.OperationalMode"]] = rest_field()
+    mode: Optional[Union[str, "_models.OperationalMode"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The toggle to enable/disable self check. Known values are: \"Enabled\" and \"Disabled\"."""
-    interval_seconds: Optional[int] = rest_field(name="intervalSeconds")
+    interval_seconds: Optional[int] = rest_field(
+        name="intervalSeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The self check interval."""
-    timeout_seconds: Optional[int] = rest_field(name="timeoutSeconds")
+    timeout_seconds: Optional[int] = rest_field(
+        name="timeoutSeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The timeout for self check."""
 
     @overload
@@ -3817,9 +3992,13 @@ class SelfTracing(_model_base.Model):
     :vartype interval_seconds: int
     """
 
-    mode: Optional[Union[str, "_models.OperationalMode"]] = rest_field()
+    mode: Optional[Union[str, "_models.OperationalMode"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The toggle to enable/disable self tracing. Known values are: \"Enabled\" and \"Disabled\"."""
-    interval_seconds: Optional[int] = rest_field(name="intervalSeconds")
+    interval_seconds: Optional[int] = rest_field(
+        name="intervalSeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The self tracing interval."""
 
     @overload
@@ -3844,29 +4023,32 @@ class SelfTracing(_model_base.Model):
 class StateStoreResourceRule(_model_base.Model):
     """State Store Resource Rule properties.
 
-
     :ivar key_type: Allowed keyTypes pattern, string, binary. The key type used for matching, for
      example pattern tries to match the key to a glob-style pattern and string checks key is equal
      to value provided in keys. Required. Known values are: "Pattern", "String", and "Binary".
     :vartype key_type: str or ~azure.mgmt.iotoperations.models.StateStoreResourceKeyTypes
     :ivar keys_property: Give access to state store keys for the corresponding principals defined.
-     When key type is pattern set glob-style pattern (e.g., '\\ *', 'clients/*\\ '). Required.
+     When key type is pattern set glob-style pattern (e.g., '*', 'clients/*'). Required.
     :vartype keys_property: list[str]
-    :ivar method: Give access for ``Read``\\ , ``Write`` and ``ReadWrite`` access level. Required.
+    :ivar method: Give access for ``Read``, ``Write`` and ``ReadWrite`` access level. Required.
      Known values are: "Read", "Write", and "ReadWrite".
     :vartype method: str or ~azure.mgmt.iotoperations.models.StateStoreResourceDefinitionMethods
     """
 
-    key_type: Union[str, "_models.StateStoreResourceKeyTypes"] = rest_field(name="keyType")
+    key_type: Union[str, "_models.StateStoreResourceKeyTypes"] = rest_field(
+        name="keyType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Allowed keyTypes pattern, string, binary. The key type used for matching, for example pattern
      tries to match the key to a glob-style pattern and string checks key is equal to value provided
      in keys. Required. Known values are: \"Pattern\", \"String\", and \"Binary\"."""
-    keys_property: List[str] = rest_field(name="keys")
+    keys_property: List[str] = rest_field(name="keys", visibility=["read", "create", "update", "delete", "query"])
     """Give access to state store keys for the corresponding principals defined. When key type is
-     pattern set glob-style pattern (e.g., '\ *', 'clients/*\ '). Required."""
-    method: Union[str, "_models.StateStoreResourceDefinitionMethods"] = rest_field()
-    """Give access for ``Read``\ , ``Write`` and ``ReadWrite`` access level. Required. Known values
-     are: \"Read\", \"Write\", and \"ReadWrite\"."""
+     pattern set glob-style pattern (e.g., '*', 'clients/*'). Required."""
+    method: Union[str, "_models.StateStoreResourceDefinitionMethods"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Give access for ``Read``, ``Write`` and ``ReadWrite`` access level. Required. Known values are:
+     \"Read\", \"Write\", and \"ReadWrite\"."""
 
     @overload
     def __init__(
@@ -3898,9 +4080,11 @@ class SubscriberQueueLimit(_model_base.Model):
     :vartype strategy: str or ~azure.mgmt.iotoperations.models.SubscriberMessageDropStrategy
     """
 
-    length: Optional[int] = rest_field()
+    length: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The maximum length of the queue before messages start getting dropped."""
-    strategy: Optional[Union[str, "_models.SubscriberMessageDropStrategy"]] = rest_field()
+    strategy: Optional[Union[str, "_models.SubscriberMessageDropStrategy"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The strategy to use for dropping messages from the queue. Known values are: \"None\" and
      \"DropOldest\"."""
 
@@ -3942,19 +4126,29 @@ class SystemData(_model_base.Model):
     :vartype last_modified_at: ~datetime.datetime
     """
 
-    created_by: Optional[str] = rest_field(name="createdBy")
+    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read", "create", "update", "delete", "query"])
     """The identity that created the resource."""
-    created_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(name="createdByType")
+    created_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(
+        name="createdByType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The type of identity that created the resource. Known values are: \"User\", \"Application\",
      \"ManagedIdentity\", and \"Key\"."""
-    created_at: Optional[datetime.datetime] = rest_field(name="createdAt", format="rfc3339")
+    created_at: Optional[datetime.datetime] = rest_field(
+        name="createdAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The timestamp of resource creation (UTC)."""
-    last_modified_by: Optional[str] = rest_field(name="lastModifiedBy")
+    last_modified_by: Optional[str] = rest_field(
+        name="lastModifiedBy", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The identity that last modified the resource."""
-    last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(name="lastModifiedByType")
+    last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(
+        name="lastModifiedByType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The type of identity that last modified the resource. Known values are: \"User\",
      \"Application\", \"ManagedIdentity\", and \"Key\"."""
-    last_modified_at: Optional[datetime.datetime] = rest_field(name="lastModifiedAt", format="rfc3339")
+    last_modified_at: Optional[datetime.datetime] = rest_field(
+        name="lastModifiedAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The timestamp of resource last modification (UTC)."""
 
     @overload
@@ -3983,7 +4177,6 @@ class SystemData(_model_base.Model):
 class TlsCertMethod(_model_base.Model):
     """Collection of different TLS types, NOTE- Enum at a time only one of them needs to be supported.
 
-
     :ivar mode: Mode of TLS server certificate management. Required. Known values are: "Automatic"
      and "Manual".
     :vartype mode: str or ~azure.mgmt.iotoperations.models.TlsCertMethodMode
@@ -3995,14 +4188,18 @@ class TlsCertMethod(_model_base.Model):
     :vartype manual: ~azure.mgmt.iotoperations.models.X509ManualCertificate
     """
 
-    mode: Union[str, "_models.TlsCertMethodMode"] = rest_field()
+    mode: Union[str, "_models.TlsCertMethodMode"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Mode of TLS server certificate management. Required. Known values are: \"Automatic\" and
      \"Manual\"."""
     cert_manager_certificate_spec: Optional["_models.CertManagerCertificateSpec"] = rest_field(
-        name="certManagerCertificateSpec"
+        name="certManagerCertificateSpec", visibility=["read", "create", "update", "delete", "query"]
     )
     """Option 1 - Automatic TLS server certificate management with cert-manager."""
-    manual: Optional["_models.X509ManualCertificate"] = rest_field()
+    manual: Optional["_models.X509ManualCertificate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Option 2 - Manual TLS server certificate management through a defined secret."""
 
     @overload
@@ -4034,9 +4231,13 @@ class TlsProperties(_model_base.Model):
     :vartype trusted_ca_certificate_config_map_ref: str
     """
 
-    mode: Optional[Union[str, "_models.OperationalMode"]] = rest_field()
+    mode: Optional[Union[str, "_models.OperationalMode"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Mode for TLS. Known values are: \"Enabled\" and \"Disabled\"."""
-    trusted_ca_certificate_config_map_ref: Optional[str] = rest_field(name="trustedCaCertificateConfigMapRef")
+    trusted_ca_certificate_config_map_ref: Optional[str] = rest_field(
+        name="trustedCaCertificateConfigMapRef", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Trusted CA certificate config map."""
 
     @overload
@@ -4071,13 +4272,21 @@ class Traces(_model_base.Model):
     :vartype span_channel_capacity: int
     """
 
-    mode: Optional[Union[str, "_models.OperationalMode"]] = rest_field()
+    mode: Optional[Union[str, "_models.OperationalMode"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The toggle to enable/disable traces. Known values are: \"Enabled\" and \"Disabled\"."""
-    cache_size_megabytes: Optional[int] = rest_field(name="cacheSizeMegabytes")
+    cache_size_megabytes: Optional[int] = rest_field(
+        name="cacheSizeMegabytes", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The cache size in megabytes."""
-    self_tracing: Optional["_models.SelfTracing"] = rest_field(name="selfTracing")
+    self_tracing: Optional["_models.SelfTracing"] = rest_field(
+        name="selfTracing", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The self tracing properties."""
-    span_channel_capacity: Optional[int] = rest_field(name="spanChannelCapacity")
+    span_channel_capacity: Optional[int] = rest_field(
+        name="spanChannelCapacity", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The span channel capacity."""
 
     @overload
@@ -4104,41 +4313,43 @@ class Traces(_model_base.Model):
 class UserAssignedIdentity(_model_base.Model):
     """User assigned identity properties.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar principal_id: The principal ID of the assigned identity.
-    :vartype principal_id: str
     :ivar client_id: The client ID of the assigned identity.
     :vartype client_id: str
+    :ivar principal_id: The principal ID of the assigned identity.
+    :vartype principal_id: str
     """
 
-    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
-    """The principal ID of the assigned identity."""
     client_id: Optional[str] = rest_field(name="clientId", visibility=["read"])
     """The client ID of the assigned identity."""
+    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
+    """The principal ID of the assigned identity."""
 
 
 class VolumeClaimResourceRequirements(_model_base.Model):
     """VolumeClaimResourceRequirements properties.
 
     :ivar limits: Limits describes the maximum amount of compute resources allowed. More info:
-     https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/.
+     `https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+     <https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/>`_.
     :vartype limits: dict[str, str]
     :ivar requests: Requests describes the minimum amount of compute resources required. If
      Requests is omitted for a container, it defaults to Limits if that is explicitly specified,
      otherwise to an implementation-defined value. More info:
-     https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/.
+     `https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+     <https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/>`_.
     :vartype requests: dict[str, str]
     """
 
-    limits: Optional[Dict[str, str]] = rest_field()
+    limits: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Limits describes the maximum amount of compute resources allowed. More info:
-     https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/."""
-    requests: Optional[Dict[str, str]] = rest_field()
+     `https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+     <https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/>`_."""
+    requests: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Requests describes the minimum amount of compute resources required. If Requests is omitted for
      a container, it defaults to Limits if that is explicitly specified, otherwise to an
      implementation-defined value. More info:
-     https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/."""
+     `https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+     <https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/>`_."""
 
     @overload
     def __init__(
@@ -4169,10 +4380,12 @@ class VolumeClaimSpec(_model_base.Model):
      Filesystem is implied when not included in claim spec. This is a beta feature.
     :vartype volume_mode: str
     :ivar storage_class_name: Name of the StorageClass required by the claim. More info:
-     https://kubernetes.io/docs/concepts/storage/persistent-volumes#class-1.
+     `https://kubernetes.io/docs/concepts/storage/persistent-volumes#class-1
+     <https://kubernetes.io/docs/concepts/storage/persistent-volumes#class-1>`_.
     :vartype storage_class_name: str
     :ivar access_modes: AccessModes contains the desired access modes the volume should have. More
-     info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#access-modes-1.
+     info: `https://kubernetes.io/docs/concepts/storage/persistent-volumes#access-modes-1
+     <https://kubernetes.io/docs/concepts/storage/persistent-volumes#access-modes-1>`_.
     :vartype access_modes: list[str]
     :ivar data_source: This field can be used to specify either: * An existing VolumeSnapshot
      object (snapshot.storage.k8s.io/VolumeSnapshot) * An existing PVC (PersistentVolumeClaim) If
@@ -4199,31 +4412,46 @@ class VolumeClaimSpec(_model_base.Model):
      RecoverVolumeExpansionFailure feature is enabled users are allowed to specify resource
      requirements that are lower than previous value but must still be higher than capacity recorded
      in the status field of the claim. More info:
-     https://kubernetes.io/docs/concepts/storage/persistent-volumes#resources.
+     `https://kubernetes.io/docs/concepts/storage/persistent-volumes#resources
+     <https://kubernetes.io/docs/concepts/storage/persistent-volumes#resources>`_.
     :vartype resources: ~azure.mgmt.iotoperations.models.VolumeClaimResourceRequirements
     :ivar selector: A label query over volumes to consider for binding.
     :vartype selector: ~azure.mgmt.iotoperations.models.VolumeClaimSpecSelector
     """
 
-    volume_name: Optional[str] = rest_field(name="volumeName")
+    volume_name: Optional[str] = rest_field(
+        name="volumeName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """VolumeName is the binding reference to the PersistentVolume backing this claim."""
-    volume_mode: Optional[str] = rest_field(name="volumeMode")
+    volume_mode: Optional[str] = rest_field(
+        name="volumeMode", visibility=["read", "create", "update", "delete", "query"]
+    )
     """volumeMode defines what type of volume is required by the claim. Value of Filesystem is implied
      when not included in claim spec. This is a beta feature."""
-    storage_class_name: Optional[str] = rest_field(name="storageClassName")
+    storage_class_name: Optional[str] = rest_field(
+        name="storageClassName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Name of the StorageClass required by the claim. More info:
-     https://kubernetes.io/docs/concepts/storage/persistent-volumes#class-1."""
-    access_modes: Optional[List[str]] = rest_field(name="accessModes")
+     `https://kubernetes.io/docs/concepts/storage/persistent-volumes#class-1
+     <https://kubernetes.io/docs/concepts/storage/persistent-volumes#class-1>`_."""
+    access_modes: Optional[List[str]] = rest_field(
+        name="accessModes", visibility=["read", "create", "update", "delete", "query"]
+    )
     """AccessModes contains the desired access modes the volume should have. More info:
-     https://kubernetes.io/docs/concepts/storage/persistent-volumes#access-modes-1."""
-    data_source: Optional["_models.LocalKubernetesReference"] = rest_field(name="dataSource")
+     `https://kubernetes.io/docs/concepts/storage/persistent-volumes#access-modes-1
+     <https://kubernetes.io/docs/concepts/storage/persistent-volumes#access-modes-1>`_."""
+    data_source: Optional["_models.LocalKubernetesReference"] = rest_field(
+        name="dataSource", visibility=["read", "create", "update", "delete", "query"]
+    )
     """This field can be used to specify either: * An existing VolumeSnapshot object
      (snapshot.storage.k8s.io/VolumeSnapshot) * An existing PVC (PersistentVolumeClaim) If the
      provisioner or an external controller can support the specified data source, it will create a
      new volume based on the contents of the specified data source. If the AnyVolumeDataSource
      feature gate is enabled, this field will always have the same contents as the DataSourceRef
      field."""
-    data_source_ref: Optional["_models.KubernetesReference"] = rest_field(name="dataSourceRef")
+    data_source_ref: Optional["_models.KubernetesReference"] = rest_field(
+        name="dataSourceRef", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Specifies the object from which to populate the volume with data, if a non-empty volume is
      desired. This may be any local object from a non-empty API group (non core object) or a
      PersistentVolumeClaim object. When this field is specified, volume binding will only succeed if
@@ -4237,13 +4465,18 @@ class VolumeClaimSpec(_model_base.Model):
      DataSource ignores disallowed values (dropping them), DataSourceRef preserves all values, and
      generates an error if a disallowed value is specified. (Beta) Using this field requires the
      AnyVolumeDataSource feature gate to be enabled."""
-    resources: Optional["_models.VolumeClaimResourceRequirements"] = rest_field()
+    resources: Optional["_models.VolumeClaimResourceRequirements"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Resources represents the minimum resources the volume should have. If
      RecoverVolumeExpansionFailure feature is enabled users are allowed to specify resource
      requirements that are lower than previous value but must still be higher than capacity recorded
      in the status field of the claim. More info:
-     https://kubernetes.io/docs/concepts/storage/persistent-volumes#resources."""
-    selector: Optional["_models.VolumeClaimSpecSelector"] = rest_field()
+     `https://kubernetes.io/docs/concepts/storage/persistent-volumes#resources
+     <https://kubernetes.io/docs/concepts/storage/persistent-volumes#resources>`_."""
+    selector: Optional["_models.VolumeClaimSpecSelector"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A label query over volumes to consider for binding."""
 
     @overload
@@ -4285,10 +4518,12 @@ class VolumeClaimSpecSelector(_model_base.Model):
     """
 
     match_expressions: Optional[List["_models.VolumeClaimSpecSelectorMatchExpressions"]] = rest_field(
-        name="matchExpressions"
+        name="matchExpressions", visibility=["read", "create", "update", "delete", "query"]
     )
     """MatchExpressions is a list of label selector requirements. The requirements are ANDed."""
-    match_labels: Optional[Dict[str, str]] = rest_field(name="matchLabels")
+    match_labels: Optional[Dict[str, str]] = rest_field(
+        name="matchLabels", visibility=["read", "create", "update", "delete", "query"]
+    )
     """MatchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is
      equivalent to an element of matchExpressions, whose key field is \"key\", the operator is
      \"In\", and the values array contains only \"value\". The requirements are ANDed."""
@@ -4315,7 +4550,6 @@ class VolumeClaimSpecSelector(_model_base.Model):
 class VolumeClaimSpecSelectorMatchExpressions(_model_base.Model):
     """VolumeClaimSpecSelectorMatchExpressions properties.
 
-
     :ivar key: key is the label key that the selector applies to. Required.
     :vartype key: str
     :ivar operator: operator represents a key's relationship to a set of values. Valid operators
@@ -4328,13 +4562,17 @@ class VolumeClaimSpecSelectorMatchExpressions(_model_base.Model):
     :vartype values_property: list[str]
     """
 
-    key: str = rest_field()
+    key: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """key is the label key that the selector applies to. Required."""
-    operator: Union[str, "_models.OperatorValues"] = rest_field()
+    operator: Union[str, "_models.OperatorValues"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """operator represents a key's relationship to a set of values. Valid operators are In, NotIn,
      Exists and DoesNotExist. Required. Known values are: \"In\", \"NotIn\", \"Exists\", and
      \"DoesNotExist\"."""
-    values_property: Optional[List[str]] = rest_field(name="values")
+    values_property: Optional[List[str]] = rest_field(
+        name="values", visibility=["read", "create", "update", "delete", "query"]
+    )
     """values is an array of string values. If the operator is In or NotIn, the values array must be
      non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This
      array is replaced during a strategic merge patch."""
@@ -4362,13 +4600,12 @@ class VolumeClaimSpecSelectorMatchExpressions(_model_base.Model):
 class X509ManualCertificate(_model_base.Model):
     """X509 Certificate Authentication properties.
 
-
     :ivar secret_ref: Kubernetes secret containing an X.509 client certificate. This is a reference
      to the secret through an identifying name, not the secret itself. Required.
     :vartype secret_ref: str
     """
 
-    secret_ref: str = rest_field(name="secretRef")
+    secret_ref: str = rest_field(name="secretRef", visibility=["read", "create", "update", "delete", "query"])
     """Kubernetes secret containing an X.509 client certificate. This is a reference to the secret
      through an identifying name, not the secret itself. Required."""
 

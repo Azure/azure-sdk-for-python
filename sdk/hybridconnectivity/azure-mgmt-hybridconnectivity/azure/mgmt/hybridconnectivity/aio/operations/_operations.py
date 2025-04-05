@@ -1929,7 +1929,7 @@ class GenerateAwsTemplateOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> Any:
+    ) -> _models.GenerateAwsTemplateResponse:
         """Retrieve AWS Cloud Formation template.
 
         :param generate_aws_template_request: ConnectorId and SolutionTypes and their properties to
@@ -1939,15 +1939,16 @@ class GenerateAwsTemplateOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: any
-        :rtype: any
+        :return: GenerateAwsTemplateResponse. The GenerateAwsTemplateResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.hybridconnectivity.models.GenerateAwsTemplateResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def post(
         self, generate_aws_template_request: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> Any:
+    ) -> _models.GenerateAwsTemplateResponse:
         """Retrieve AWS Cloud Formation template.
 
         :param generate_aws_template_request: ConnectorId and SolutionTypes and their properties to
@@ -1956,15 +1957,16 @@ class GenerateAwsTemplateOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: any
-        :rtype: any
+        :return: GenerateAwsTemplateResponse. The GenerateAwsTemplateResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.hybridconnectivity.models.GenerateAwsTemplateResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def post(
         self, generate_aws_template_request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> Any:
+    ) -> _models.GenerateAwsTemplateResponse:
         """Retrieve AWS Cloud Formation template.
 
         :param generate_aws_template_request: ConnectorId and SolutionTypes and their properties to
@@ -1973,15 +1975,16 @@ class GenerateAwsTemplateOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: any
-        :rtype: any
+        :return: GenerateAwsTemplateResponse. The GenerateAwsTemplateResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.hybridconnectivity.models.GenerateAwsTemplateResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
     async def post(
         self, generate_aws_template_request: Union[_models.GenerateAwsTemplateRequest, JSON, IO[bytes]], **kwargs: Any
-    ) -> Any:
+    ) -> _models.GenerateAwsTemplateResponse:
         """Retrieve AWS Cloud Formation template.
 
         :param generate_aws_template_request: ConnectorId and SolutionTypes and their properties to
@@ -1989,8 +1992,9 @@ class GenerateAwsTemplateOperations:
          IO[bytes] Required.
         :type generate_aws_template_request:
          ~azure.mgmt.hybridconnectivity.models.GenerateAwsTemplateRequest or JSON or IO[bytes]
-        :return: any
-        :rtype: any
+        :return: GenerateAwsTemplateResponse. The GenerateAwsTemplateResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.hybridconnectivity.models.GenerateAwsTemplateResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2005,7 +2009,7 @@ class GenerateAwsTemplateOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Any] = kwargs.pop("cls", None)
+        cls: ClsType[_models.GenerateAwsTemplateResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -2047,7 +2051,7 @@ class GenerateAwsTemplateOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(Any, response.json())
+            deserialized = _deserialize(_models.GenerateAwsTemplateResponse, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

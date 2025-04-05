@@ -27,10 +27,11 @@ class NotificationMessagesClient(NotificationMessagesClientOperationsMixin):
     """NotificationMessagesClient.
 
     :param endpoint: The communication resource, for example
-     https://my-resource.communication.azure.com. Required.
+     `https://my-resource.communication.azure.com <https://my-resource.communication.azure.com>`_.
+     Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a token
-     credential type or a AzureKeyCredential type. Required.
+     credential type or a key credential type. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential or
      ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: The API version to use for this operation. Default value is
@@ -110,10 +111,11 @@ class MessageTemplateClient(MessageTemplateClientOperationsMixin):
     """MessageTemplateClient.
 
     :param endpoint: The communication resource, for example
-     https://my-resource.communication.azure.com. Required.
+     `https://my-resource.communication.azure.com <https://my-resource.communication.azure.com>`_.
+     Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a token
-     credential type or a AzureKeyCredential type. Required.
+     credential type or a key credential type. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential or
      ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: The API version to use for this operation. Default value is

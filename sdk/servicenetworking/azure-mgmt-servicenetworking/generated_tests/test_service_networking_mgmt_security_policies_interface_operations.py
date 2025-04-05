@@ -41,7 +41,14 @@ class TestServiceNetworkingMgmtSecurityPoliciesInterfaceOperations(AzureMgmtReco
                 "location": "str",
                 "id": "str",
                 "name": "str",
-                "properties": {"policyType": "str", "provisioningState": "str", "wafPolicy": {"id": "str"}},
+                "properties": {
+                    "ipAccessRulesPolicy": {
+                        "rules": [{"action": "str", "name": "str", "priority": 0, "sourceAddressPrefixes": ["str"]}]
+                    },
+                    "policyType": "str",
+                    "provisioningState": "str",
+                    "wafPolicy": {"id": "str"},
+                },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
                     "createdBy": "str",
@@ -65,7 +72,15 @@ class TestServiceNetworkingMgmtSecurityPoliciesInterfaceOperations(AzureMgmtReco
             resource_group_name=resource_group.name,
             traffic_controller_name="str",
             security_policy_name="str",
-            properties={"properties": {"wafPolicy": {"id": "str"}}, "tags": {"str": "str"}},
+            properties={
+                "properties": {
+                    "ipAccessRulesPolicy": {
+                        "rules": [{"action": "str", "name": "str", "priority": 0, "sourceAddressPrefixes": ["str"]}]
+                    },
+                    "wafPolicy": {"id": "str"},
+                },
+                "tags": {"str": "str"},
+            },
         )
 
         # please add some check logic here by yourself

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -52,8 +53,7 @@ async def sample_ocr_image_url_entra_id_auth_async():
 
     # Extract text (OCR) from an image URL, asynchronously.
     result = await client.analyze_from_url(
-        image_url="https://aka.ms/azsdk/image-analysis/sample.jpg",
-        visual_features=[VisualFeatures.READ]
+        image_url="https://aka.ms/azsdk/image-analysis/sample.jpg", visual_features=[VisualFeatures.READ]
     )
 
     await client.close()
@@ -65,7 +65,9 @@ async def sample_ocr_image_url_entra_id_auth_async():
         for line in result.read.blocks[0].lines:
             print(f"   Line: '{line.text}', Bounding box {line.bounding_polygon}")
             for word in line.words:
-                print(f"     Word: '{word.text}', Bounding polygon {word.bounding_polygon}, Confidence {word.confidence:.4f}")
+                print(
+                    f"     Word: '{word.text}', Bounding polygon {word.bounding_polygon}, Confidence {word.confidence:.4f}"
+                )
     print(f" Image height: {result.metadata.height}")
     print(f" Image width: {result.metadata.width}")
     print(f" Model version: {result.model_version}")

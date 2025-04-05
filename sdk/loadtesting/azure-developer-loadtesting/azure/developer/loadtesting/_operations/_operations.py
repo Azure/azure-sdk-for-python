@@ -1851,7 +1851,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.TestFileInfo], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.TestFileInfo], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1960,7 +1960,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Test], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.Test], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -2556,7 +2556,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.TestProfile], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.TestProfile], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -3399,7 +3399,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[str], deserialized["value"])
+            list_of_elem = _deserialize(List[str], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -3788,7 +3788,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.TimeSeriesElement], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.TimeSeriesElement], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -3903,7 +3903,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.TestRun], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.TestRun], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -4345,7 +4345,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.TestProfileRun], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.TestProfileRun], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)

@@ -6,11 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
 from azure.core.pipeline import policies
 
 from .._version import VERSION
+
+if TYPE_CHECKING:
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class JobRouterAdministrationClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
@@ -21,20 +24,26 @@ class JobRouterAdministrationClientConfiguration:  # pylint: disable=too-many-in
 
     :param endpoint: Uri of your Communication resource. Required.
     :type endpoint: str
+    :param credential: Credential used to authenticate requests to the service. Required.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
      "2024-01-18-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, **kwargs: Any) -> None:
+    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         api_version: str = kwargs.pop("api_version", "2024-01-18-preview")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
+        if credential is None:
+            raise ValueError("Parameter 'credential' must not be None.")
 
         self.endpoint = endpoint
+        self.credential = credential
         self.api_version = api_version
+        self.credential_scopes = kwargs.pop("credential_scopes", ["https://communication.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "communication-jobrouter/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
@@ -49,9 +58,13 @@ class JobRouterAdministrationClientConfiguration:  # pylint: disable=too-many-in
         self.redirect_policy = kwargs.get("redirect_policy") or policies.AsyncRedirectPolicy(**kwargs)
         self.retry_policy = kwargs.get("retry_policy") or policies.AsyncRetryPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")
+        if self.credential and not self.authentication_policy:
+            self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(
+                self.credential, *self.credential_scopes, **kwargs
+            )
 
 
-class JobRouterClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+class JobRouterClientConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for JobRouterClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -59,20 +72,26 @@ class JobRouterClientConfiguration:  # pylint: disable=too-many-instance-attribu
 
     :param endpoint: Uri of your Communication resource. Required.
     :type endpoint: str
+    :param credential: Credential used to authenticate requests to the service. Required.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
      "2024-01-18-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, **kwargs: Any) -> None:
+    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         api_version: str = kwargs.pop("api_version", "2024-01-18-preview")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
+        if credential is None:
+            raise ValueError("Parameter 'credential' must not be None.")
 
         self.endpoint = endpoint
+        self.credential = credential
         self.api_version = api_version
+        self.credential_scopes = kwargs.pop("credential_scopes", ["https://communication.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "communication-jobrouter/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
@@ -87,3 +106,7 @@ class JobRouterClientConfiguration:  # pylint: disable=too-many-instance-attribu
         self.redirect_policy = kwargs.get("redirect_policy") or policies.AsyncRedirectPolicy(**kwargs)
         self.retry_policy = kwargs.get("retry_policy") or policies.AsyncRetryPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")
+        if self.credential and not self.authentication_policy:
+            self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(
+                self.credential, *self.credential_scopes, **kwargs
+            )

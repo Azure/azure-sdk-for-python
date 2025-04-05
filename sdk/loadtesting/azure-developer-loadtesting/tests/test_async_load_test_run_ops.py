@@ -17,6 +17,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 DISPLAY_NAME = "TestingResourcePyTest"
 NON_EXISTING_RESOURCE = "nonexistingresource"
 
+
 class TestLoadTestRunOperations(LoadTestingAsyncTest):
 
     # Pre-requisite: Test creation is needed for test run related tests
@@ -37,8 +38,18 @@ class TestLoadTestRunOperations(LoadTestingAsyncTest):
                 },
                 "passFailCriteria": {
                     "passFailMetrics": {
-                        "condition1": {"clientmetric": "response_time_ms", "aggregate": "avg", "condition": ">", "value": 300},
-                        "condition2": {"clientmetric": "error", "aggregate": "percentage", "condition": ">", "value": 50},
+                        "condition1": {
+                            "clientmetric": "response_time_ms",
+                            "aggregate": "avg",
+                            "condition": ">",
+                            "value": 300,
+                        },
+                        "condition2": {
+                            "clientmetric": "error",
+                            "aggregate": "percentage",
+                            "condition": ">",
+                            "value": 50,
+                        },
                         "condition3": {
                             "clientmetric": "latency",
                             "aggregate": "avg",
@@ -50,7 +61,8 @@ class TestLoadTestRunOperations(LoadTestingAsyncTest):
                 },
                 "secrets": {},
                 "environmentVariables": {"my-variable": "value"},
-        })
+            },
+        )
 
         assert result is not None
 
@@ -66,7 +78,7 @@ class TestLoadTestRunOperations(LoadTestingAsyncTest):
         assert result is not None
 
         await self.close_admin_client()
-    
+
     @LoadTestingPreparer()
     @recorded_by_proxy_async
     async def test_upload_test_file(self, loadtesting_endpoint, loadtesting_test_id):
@@ -154,7 +166,7 @@ class TestLoadTestRunOperations(LoadTestingAsyncTest):
         result = run_client.list_test_runs()
         assert result is not None
         items = [item async for item in result]
-        assert len(items) > 0 # Atleast one item in the page
+        assert len(items) > 0  # Atleast one item in the page
 
         await self.close_run_client()
 
@@ -217,9 +229,7 @@ class TestLoadTestRunOperations(LoadTestingAsyncTest):
 
     @LoadTestingPreparer()
     @recorded_by_proxy_async
-    async def test_get_app_component(
-        self, loadtesting_endpoint, loadtesting_test_run_id
-    ):
+    async def test_get_app_component(self, loadtesting_endpoint, loadtesting_test_run_id):
         set_bodiless_matcher()
 
         run_client = self.create_run_client(loadtesting_endpoint)
@@ -260,9 +270,7 @@ class TestLoadTestRunOperations(LoadTestingAsyncTest):
 
     @LoadTestingPreparer()
     @recorded_by_proxy_async
-    async def test_get_server_metrics_config(
-        self, loadtesting_endpoint, loadtesting_test_run_id
-    ):
+    async def test_get_server_metrics_config(self, loadtesting_endpoint, loadtesting_test_run_id):
         set_bodiless_matcher()
 
         run_client = self.create_run_client(loadtesting_endpoint)
@@ -302,7 +310,7 @@ class TestLoadTestRunOperations(LoadTestingAsyncTest):
         assert result is None
 
         await self.close_run_client()
-    
+
     @LoadTestingPreparer()
     @recorded_by_proxy_async
     async def test_delete_test(self, loadtesting_endpoint, loadtesting_test_id):
@@ -314,6 +322,7 @@ class TestLoadTestRunOperations(LoadTestingAsyncTest):
         assert result is None
 
         await self.close_admin_client()
+
 
 class TestTestProfileRunOperations(LoadTestingAsyncTest):
 
@@ -335,8 +344,18 @@ class TestTestProfileRunOperations(LoadTestingAsyncTest):
                 },
                 "passFailCriteria": {
                     "passFailMetrics": {
-                        "condition1": {"clientmetric": "response_time_ms", "aggregate": "avg", "condition": ">", "value": 300},
-                        "condition2": {"clientmetric": "error", "aggregate": "percentage", "condition": ">", "value": 50},
+                        "condition1": {
+                            "clientmetric": "response_time_ms",
+                            "aggregate": "avg",
+                            "condition": ">",
+                            "value": 300,
+                        },
+                        "condition2": {
+                            "clientmetric": "error",
+                            "aggregate": "percentage",
+                            "condition": ">",
+                            "value": 50,
+                        },
                         "condition3": {
                             "clientmetric": "latency",
                             "aggregate": "avg",
@@ -398,7 +417,9 @@ class TestTestProfileRunOperations(LoadTestingAsyncTest):
 
     @LoadTestingPreparer()
     @recorded_by_proxy_async
-    async def test_create_or_update_test_profile(self, loadtesting_endpoint, loadtesting_test_id, loadtesting_test_profile_id, loadtesting_target_resource_id):
+    async def test_create_or_update_test_profile(
+        self, loadtesting_endpoint, loadtesting_test_id, loadtesting_test_profile_id, loadtesting_target_resource_id
+    ):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
@@ -412,16 +433,10 @@ class TestTestProfileRunOperations(LoadTestingAsyncTest):
                 "targetResourceConfigurations": {
                     "kind": "FunctionsFlexConsumption",
                     "configurations": {
-                        "config1": {
-                            "instanceMemoryMB": 2048,
-                            "httpConcurrency": 20
-                        },
-                        "config2": {
-                            "instanceMemoryMB": 4096,
-                            "httpConcurrency": 100
-                        },
-                    }
-                }
+                        "config1": {"instanceMemoryMB": 2048, "httpConcurrency": 20},
+                        "config2": {"instanceMemoryMB": 4096, "httpConcurrency": 100},
+                    },
+                },
             },
         )
         assert result is not None
@@ -441,7 +456,9 @@ class TestTestProfileRunOperations(LoadTestingAsyncTest):
 
     @LoadTestingPreparer()
     @recorded_by_proxy_async
-    async def test_begin_test_profile_run(self, loadtesting_endpoint, loadtesting_test_profile_id, loadtesting_test_profile_run_id):
+    async def test_begin_test_profile_run(
+        self, loadtesting_endpoint, loadtesting_test_profile_id, loadtesting_test_profile_run_id
+    ):
         set_bodiless_matcher()
 
         run_client = self.create_run_client(loadtesting_endpoint)

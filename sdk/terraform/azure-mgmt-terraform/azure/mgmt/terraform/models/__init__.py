@@ -29,6 +29,7 @@ from ._models import (  # type: ignore
 
 from ._enums import (  # type: ignore
     ActionType,
+    AuthorizationScopeFilter,
     Origin,
     ResourceProvisioningState,
     TargetProvider,
@@ -51,6 +52,7 @@ __all__ = [
     "OperationDisplay",
     "TerraformOperationStatus",
     "ActionType",
+    "AuthorizationScopeFilter",
     "Origin",
     "ResourceProvisioningState",
     "TargetProvider",

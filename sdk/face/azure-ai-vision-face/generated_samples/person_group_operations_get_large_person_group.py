@@ -17,7 +17,7 @@ from azure.ai.vision.face import FaceAdministrationClient
 
 
 def main():
-    client = FaceAdministrationClient(
+    client = FaceClient(
         endpoint="ENDPOINT",
         credential="CREDENTIAL",
     )
@@ -28,6 +28,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: v1.2-preview.1/PersonGroupOperations_GetLargePersonGroup.json
+# x-ms-original-file: v1.2/PersonGroupOperations_GetLargePersonGroup.json
 if __name__ == "__main__":
     main()

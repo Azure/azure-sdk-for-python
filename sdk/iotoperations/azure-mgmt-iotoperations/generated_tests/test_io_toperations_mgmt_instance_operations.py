@@ -49,6 +49,7 @@ class TestIoTOperationsMgmtInstanceOperations(AzureMgmtRecordedTestCase):
                 "properties": {
                     "schemaRegistryRef": {"resourceId": "str"},
                     "description": "str",
+                    "features": {"str": {"mode": "str", "settings": {"str": "str"}}},
                     "provisioningState": "str",
                     "version": "str",
                 },

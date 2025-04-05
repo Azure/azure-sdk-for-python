@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -47,10 +48,7 @@ def sample_ocr_image_file():
         exit()
 
     # Create an Image Analysis client
-    client = ImageAnalysisClient(
-        endpoint=endpoint,
-        credential=AzureKeyCredential(key)
-    )
+    client = ImageAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # [START read]
     # Load image to analyze into a 'bytes' object
@@ -58,10 +56,7 @@ def sample_ocr_image_file():
         image_data = f.read()
 
     # Extract text (OCR) from an image stream. This will be a synchronously (blocking) call.
-    result = client.analyze(
-        image_data=image_data,
-        visual_features=[VisualFeatures.READ]
-    )
+    result = client.analyze(image_data=image_data, visual_features=[VisualFeatures.READ])
 
     # Print text (OCR) analysis results to the console
     print("Image analysis results:")
@@ -70,7 +65,9 @@ def sample_ocr_image_file():
         for line in result.read.blocks[0].lines:
             print(f"   Line: '{line.text}', Bounding box {line.bounding_polygon}")
             for word in line.words:
-                print(f"     Word: '{word.text}', Bounding polygon {word.bounding_polygon}, Confidence {word.confidence:.4f}")
+                print(
+                    f"     Word: '{word.text}', Bounding polygon {word.bounding_polygon}, Confidence {word.confidence:.4f}"
+                )
     # [END read]
     print(f" Image height: {result.metadata.height}")
     print(f" Image width: {result.metadata.width}")
