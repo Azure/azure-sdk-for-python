@@ -463,11 +463,7 @@ print(conn_id)
 
 # Initialize agent AI search tool and add the search index connection id
 ai_search = AzureAISearchTool(
-    index_connection_id=conn_id,
-    index_name="sample_index",
-    query_type=AzureAISearchQueryType.SIMPLE,
-    top_k=3,
-    filter=""
+    index_connection_id=conn_id, index_name="sample_index", query_type=AzureAISearchQueryType.SIMPLE, top_k=3, filter=""
 )
 
 # Create agent with AI search tool and process assistant run
@@ -793,10 +789,10 @@ auth = OpenApiAnonymousAuthDetails()
 
 # Initialize agent OpenApi tool using the read in OpenAPI spec
 openapi_tool = OpenApiTool(
-    name="get_weather", spec=openapi_weather, description="Retrieve weather information for a location", auth=auth
+    name="get_weather", spec=openapi_weather, description="Retrieve weather information for a location", auth=auth, default_parameters=["format"]
 )
 openapi_tool.add_definition(
-    name="get_countries", spec=openapi_countries, description="Retrieve a list of countries", auth=auth
+    name="get_countries", spec=openapi_countries, description="Retrieve a list of countries", auth=auth,
 )
 
 # Create agent with OpenApi tool and process assistant run
