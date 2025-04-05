@@ -17,6 +17,7 @@ from ._constants import (
     EPOCH_SYMBOL,
     TIMEOUT_SYMBOL,
     RECEIVER_RUNTIME_METRIC_SYMBOL,
+    GEOREPLICATION_SYMBOL,
 )
 
 if TYPE_CHECKING:
@@ -131,7 +132,12 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             self._offset,
             event_position_selector(self._offset, self._offset_inclusive),
         )
-        desired_capabilities = [RECEIVER_RUNTIME_METRIC_SYMBOL] if self._track_last_enqueued_event_properties else None
+        desired_capabilities = (
+            [RECEIVER_RUNTIME_METRIC_SYMBOL,
+             GEOREPLICATION_SYMBOL]
+             if self._track_last_enqueued_event_properties
+             else [GEOREPLICATION_SYMBOL]
+        )
 
         self._handler = self._amqp_transport.create_receive_client(
             config=self._client._config,  # pylint:disable=protected-access

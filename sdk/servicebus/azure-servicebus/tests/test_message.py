@@ -7,7 +7,7 @@ try:
     from azure.servicebus._transport._uamqp_transport import UamqpTransport
 except (ModuleNotFoundError, ImportError):
     uamqp = None
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from azure.servicebus import (
     ServiceBusClient,
     ServiceBusMessage,
@@ -20,6 +20,10 @@ from azure.servicebus._common.constants import (
     _X_OPT_PARTITION_KEY,
     _X_OPT_VIA_PARTITION_KEY,
     _X_OPT_SCHEDULED_ENQUEUE_TIME,
+    _X_OPT_ENQUEUED_TIME,
+)
+from azure.servicebus._common.utils import (
+    CE_ZERO_SECONDS,
 )
 from azure.servicebus.amqp import AmqpAnnotatedMessage, AmqpMessageBodyType, AmqpMessageProperties, AmqpMessageHeader
 from azure.servicebus._pyamqp.message import Message
@@ -69,6 +73,15 @@ def test_servicebus_message_repr_with_props():
         in message.__repr__()
     )
 
+def test_servicebus_message_min_timestamp():
+    received_message = Message(
+        data=[b"data"],
+        message_annotations={
+            _X_OPT_ENQUEUED_TIME: CE_ZERO_SECONDS*1000,
+        },
+    )
+    received_message = ServiceBusReceivedMessage(received_message, receiver=None)
+    assert received_message.enqueued_time_utc == datetime.min.replace(tzinfo=timezone.utc)
 
 @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
 def test_servicebus_received_message_repr(uamqp_transport):
@@ -80,6 +93,7 @@ def test_servicebus_received_message_repr(uamqp_transport):
                 _X_OPT_PARTITION_KEY: b"r_key",
                 _X_OPT_VIA_PARTITION_KEY: b"r_via_key",
                 _X_OPT_SCHEDULED_ENQUEUE_TIME: 123424566,
+                _X_OPT_ENQUEUED_TIME: CE_ZERO_SECONDS * 1000,
             },
             properties={},
         )
