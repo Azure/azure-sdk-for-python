@@ -280,6 +280,8 @@ class RedTeam():
                         continue
                     if file.endswith('.log') and not os.environ.get('DEBUG'):
                         continue
+                    if file == artifact_name or file == eval_info_name:
+                        continue
                     
                     try:
                         shutil.copy(file_path, os.path.join(tmpdir, file))
