@@ -43,7 +43,7 @@ from azure.ai.evaluation import evaluate
 from azure.core.credentials import TokenCredential
 
 # Red Teaming imports
-from ._red_team_result import _RedTeamResult, _RedTeamingScorecard, _RedTeamingParameters, RedTeamOutput
+from ._red_team_result import RedTeamResult, RedTeamingScorecard, RedTeamingParameters, ScanResult
 from ._attack_strategy import AttackStrategy
 from ._attack_objective_generator import RiskCategory, _AttackObjectiveGenerator
 
@@ -204,7 +204,7 @@ class RedTeam():
 
     async def _log_redteam_results_to_mlflow(
         self,
-        redteam_output: RedTeamOutput,
+        redteam_output: RedTeamResult,
         eval_run: EvalRun,
         data_only: bool = False,
     ) -> Optional[str]:
@@ -230,9 +230,9 @@ class RedTeam():
             with open(artifact_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
                 if data_only:
                     # In data_only mode, we write the conversations in conversation/messages format
-                    f.write(json.dumps({"conversations": redteam_output.redteaming_data or []}))
-                elif redteam_output.red_team_result:
-                    json.dump(redteam_output.red_team_result, f)
+                    f.write(json.dumps({"conversations": redteam_output.attack_details or []}))
+                elif redteam_output.scan_result:
+                    json.dump(redteam_output.scan_result, f)
 
             eval_info_name = "redteam_info.json"
             eval_info_path = os.path.join(self.scan_output_dir, eval_info_name)
@@ -248,10 +248,10 @@ class RedTeam():
                 f.write(json.dumps(red_team_info_logged))
             
             # Also save a human-readable scorecard if available
-            if not data_only and redteam_output.red_team_result:
+            if not data_only and redteam_output.scan_result:
                 scorecard_path = os.path.join(self.scan_output_dir, "scorecard.txt")
                 with open(scorecard_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
-                    f.write(self._to_scorecard(redteam_output.red_team_result))
+                    f.write(self._to_scorecard(redteam_output.scan_result))
                 self.logger.debug(f"Saved scorecard to: {scorecard_path}")
                 
             # Create a dedicated artifacts directory with proper structure for MLFlow
@@ -262,9 +262,9 @@ class RedTeam():
                 # First, create the main artifact file that MLFlow expects
                 with open(os.path.join(tmpdir, artifact_name), "w", encoding=DefaultOpenEncoding.WRITE) as f:
                     if data_only:
-                        f.write(json.dumps({"conversations": redteam_output.redteaming_data or []}))
-                    elif redteam_output.red_team_result:
-                        json.dump(redteam_output.red_team_result, f)
+                        f.write(json.dumps({"conversations": redteam_output.attack_details or []}))
+                    elif redteam_output.scan_result:
+                        json.dump(redteam_output.scan_result, f)
                 
                 # Copy all relevant files to the temp directory
                 import shutil
@@ -303,9 +303,9 @@ class RedTeam():
                 artifact_file = Path(tmpdir) / artifact_name
                 with open(artifact_file, "w", encoding=DefaultOpenEncoding.WRITE) as f:
                     if data_only:
-                        f.write(json.dumps({"conversations": redteam_output.redteaming_data or []}))
-                    elif redteam_output.red_team_result:
-                        json.dump(redteam_output.red_team_result, f)
+                        f.write(json.dumps({"conversations": redteam_output.attack_details or []}))
+                    elif redteam_output.scan_result:
+                        json.dump(redteam_output.scan_result, f)
                 eval_run.log_artifact(tmpdir, artifact_name)
                 self.logger.debug(f"Logged artifact: {artifact_name}")
 
@@ -316,8 +316,8 @@ class RedTeam():
             "_azureml.evaluate_artifacts": json.dumps([{"path": artifact_name, "type": "table"}]),
         })
 
-        if redteam_output.red_team_result:
-            scorecard = redteam_output.red_team_result["redteaming_scorecard"]
+        if redteam_output.scan_result:
+            scorecard = redteam_output.scan_result["scorecard"]
             joint_attack_summary = scorecard["joint_risk_attack_summary"]
             
             if joint_attack_summary:
@@ -793,13 +793,13 @@ class RedTeam():
         from ._utils.formatting_utils import get_attack_success
         return get_attack_success(result)
 
-    def _to_red_team_result(self) -> _RedTeamResult:
-        """Convert tracking data from red_team_info to the _RedTeamResult format.
+    def _to_red_team_result(self) -> RedTeamResult:
+        """Convert tracking data from red_team_info to the RedTeamResult format.
         
-        Uses only the red_team_info tracking dictionary to build the _RedTeamResult.
+        Uses only the red_team_info tracking dictionary to build the RedTeamResult.
         
         :return: Structured red team agent results
-        :rtype: _RedTeamResult
+        :rtype: RedTeamResult
         """
         converters = []
         complexity_levels = []
@@ -812,7 +812,7 @@ class RedTeam():
             summary_file = os.path.join(self.scan_output_dir, "attack_summary.csv")
             self.logger.debug(f"Creating attack summary CSV file: {summary_file}")
         
-        self.logger.info(f"Building _RedTeamResult from red_team_info with {len(self.red_team_info)} strategies")
+        self.logger.info(f"Building RedTeamResult from red_team_info with {len(self.red_team_info)} strategies")
         
         # Process each strategy and risk category from red_team_info
         for strategy_name, risk_data in self.red_team_info.items():
@@ -1155,20 +1155,20 @@ class RedTeam():
                     complexity_converters = complexity_df["converter"].unique().tolist()
                     redteaming_parameters["techniques_used"][complexity] = complexity_converters
         
-        self.logger.info("_RedTeamResult creation completed")
+        self.logger.info("RedTeamResult creation completed")
         
         # Create the final result
-        red_team_result = _RedTeamResult(
-            redteaming_scorecard=cast(_RedTeamingScorecard, scorecard),
-            redteaming_parameters=cast(_RedTeamingParameters, redteaming_parameters),
-            redteaming_data=conversations,
+        red_team_result = ScanResult(
+            scorecard=cast(RedTeamingScorecard, scorecard),
+            parameters=cast(RedTeamingParameters, redteaming_parameters),
+            attack_details=conversations,
             studio_url=self.ai_studio_url or None
         )
         
         return red_team_result
 
     # Replace with utility function
-    def _to_scorecard(self, redteam_result: _RedTeamResult) -> str:
+    def _to_scorecard(self, redteam_result: RedTeamResult) -> str:
         from ._utils.formatting_utils import format_scorecard
         return format_scorecard(redteam_result)
     
@@ -1362,8 +1362,6 @@ class RedTeam():
             converter = self._get_converter_for_strategy(strategy)
             try:
                 self.logger.debug(f"Calling orchestrator for {strategy_name} strategy")
-                if isinstance(self.chat_target,OpenAIChatTarget) and not self.chat_target._headers.get("Api-Key", None):
-                    self.chat_target._headers["Authorization"] = f"Bearer {self.chat_target._token_provider()}"
                 orchestrator = await call_orchestrator(self.chat_target, all_prompts, converter, strategy_name, risk_category.value, timeout)
             except PyritException as e:
                 log_error(self.logger, f"Error calling orchestrator for {strategy_name} strategy", e)
@@ -1445,7 +1443,7 @@ class RedTeam():
             parallel_execution: bool = True,
             max_parallel_tasks: int = 5,
             timeout: int = 120
-        ) -> RedTeamOutput:
+        ) -> RedTeamResult:
         """Run a red team scan against the target using the specified strategies.
         
         :param target: The target model or function to scan
@@ -1812,17 +1810,23 @@ class RedTeam():
             # Process results
             log_section_header(self.logger, "Processing results")
             
-            # Convert results to _RedTeamResult using only red_team_info
+            # Convert results to RedTeamResult using only red_team_info
             red_team_result = self._to_red_team_result()
+            scan_result = ScanResult(
+                scorecard=red_team_result["scorecard"],
+                parameters=red_team_result["parameters"],
+                attack_details=red_team_result["attack_details"],
+                studio_url=red_team_result["studio_url"],
+            )
             
             # Create output with either full results or just conversations
             if data_only:
                 self.logger.info("Data-only mode, creating output with just conversations")
-                output = RedTeamOutput(redteaming_data=red_team_result["redteaming_data"])
+                output = RedTeamResult(scan_result=scan_result, attack_details=red_team_result["attack_details"])
             else:
-                output = RedTeamOutput(
-                    red_team_result=red_team_result, 
-                    redteaming_data=red_team_result["redteaming_data"]
+                output = RedTeamResult(
+                    scan_result=red_team_result, 
+                    attack_details=red_team_result["attack_details"]
                 )
             
             # Log results to MLFlow
@@ -1837,26 +1841,26 @@ class RedTeam():
             self.logger.info("Data-only mode, returning results without evaluation")
             return output
         
-        if output_path and output.red_team_result:
+        if output_path and output.scan_result:
             # Ensure output_path is an absolute path
             abs_output_path = output_path if os.path.isabs(output_path) else os.path.abspath(output_path)
             self.logger.info(f"Writing output to {abs_output_path}")
-            _write_output(abs_output_path, output.red_team_result)
+            _write_output(abs_output_path, output.scan_result)
             
             # Also save a copy to the scan output directory if available
             if hasattr(self, 'scan_output_dir') and self.scan_output_dir:
                 final_output = os.path.join(self.scan_output_dir, "final_results.json")
-                _write_output(final_output, output.red_team_result)
+                _write_output(final_output, output.scan_result)
                 self.logger.info(f"Also saved a copy to {final_output}")
-        elif output.red_team_result and hasattr(self, 'scan_output_dir') and self.scan_output_dir:
+        elif output.scan_result and hasattr(self, 'scan_output_dir') and self.scan_output_dir:
             # If no output_path was specified but we have scan_output_dir, save there
             final_output = os.path.join(self.scan_output_dir, "final_results.json")
-            _write_output(final_output, output.red_team_result)
+            _write_output(final_output, output.scan_result)
             self.logger.info(f"Saved results to {final_output}")
         
-        if output.red_team_result:
+        if output.scan_result:
             self.logger.debug("Generating scorecard")
-            scorecard = self._to_scorecard(output.red_team_result)
+            scorecard = self._to_scorecard(output.scan_result)
             # Store scorecard in a variable for accessing later if needed
             self.scorecard = scorecard
             
@@ -1864,7 +1868,7 @@ class RedTeam():
             print(scorecard)
             
             # Print URL for detailed results (once only)
-            studio_url = output.red_team_result.get("studio_url", "")
+            studio_url = output.scan_result.get("studio_url", "")
             if studio_url:
                 print(f"\nDetailed results available at:\n{studio_url}")
             
