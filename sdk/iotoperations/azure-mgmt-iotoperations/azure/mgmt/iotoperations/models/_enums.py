@@ -227,6 +227,17 @@ class FilterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Filter type"""
 
 
+class InstanceFeatureMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The enum defining mode of a feature."""
+
+    STABLE = "Stable"
+    """Opt in to enable a stable feature"""
+    PREVIEW = "Preview"
+    """Opt in to enable a preview feature"""
+    DISABLED = "Disabled"
+    """Opt out of a feature"""
+
+
 class KafkaAuthMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DataflowEndpoint Kafka Authentication Method properties."""
 

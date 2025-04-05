@@ -24,9 +24,7 @@ class TestHealthDeidentificationCreateJobWaitUntil(DeidBaseTestCase):
                 location=storage_location,
                 prefix=inputPrefix,
             ),
-            target_location=TargetStorageLocation(
-                location=storage_location, prefix=self.OUTPUT_PATH
-            ),
+            target_location=TargetStorageLocation(location=storage_location, prefix=self.OUTPUT_PATH),
             operation=OperationType.SURROGATE,
             data_type=DocumentDataType.PLAINTEXT,
         )

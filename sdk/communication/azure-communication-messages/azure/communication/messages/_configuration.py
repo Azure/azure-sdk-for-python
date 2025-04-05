@@ -24,10 +24,11 @@ class NotificationMessagesClientConfiguration:  # pylint: disable=too-many-insta
     attributes.
 
     :param endpoint: The communication resource, for example
-     https://my-resource.communication.azure.com. Required.
+     `https://my-resource.communication.azure.com <https://my-resource.communication.azure.com>`_.
+     Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a token
-     credential type or a AzureKeyCredential type. Required.
+     credential type or a key credential type. Required.
     :type credential: ~azure.core.credentials.TokenCredential or
      ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: The API version to use for this operation. Default value is
@@ -80,10 +81,11 @@ class MessageTemplateClientConfiguration:  # pylint: disable=too-many-instance-a
     attributes.
 
     :param endpoint: The communication resource, for example
-     https://my-resource.communication.azure.com. Required.
+     `https://my-resource.communication.azure.com <https://my-resource.communication.azure.com>`_.
+     Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a token
-     credential type or a AzureKeyCredential type. Required.
+     credential type or a key credential type. Required.
     :type credential: ~azure.core.credentials.TokenCredential or
      ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: The API version to use for this operation. Default value is

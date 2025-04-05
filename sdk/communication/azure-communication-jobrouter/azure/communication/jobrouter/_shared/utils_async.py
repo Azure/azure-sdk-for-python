@@ -6,6 +6,7 @@
 # pylint: disable=C4763
 from asyncio import sleep, ensure_future
 
+
 class AsyncTimer:
     """A non-blocking timer, that calls a function after a specified number of seconds:
     :param int interval: time interval in seconds

@@ -1069,7 +1069,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                 "str", response.headers.get("Operation-Location")
             )
 
-            deserialized = _deserialize(_models.AnalyzeResult, response.json().get("analyzeResult"))
+            deserialized = _deserialize(_models.AnalyzeResult, response.json().get("analyzeResult", {}))
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
@@ -1607,7 +1607,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                 "str", response.headers.get("Operation-Location")
             )
 
-            deserialized = _deserialize(_models.AnalyzeBatchResult, response.json().get("result"))
+            deserialized = _deserialize(_models.AnalyzeBatchResult, response.json().get("result", {}))
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
@@ -1699,7 +1699,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.AnalyzeBatchOperation], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.AnalyzeBatchOperation], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -2082,7 +2082,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                 "str", response.headers.get("Operation-Location")
             )
 
-            deserialized = _deserialize(_models.AnalyzeResult, response.json().get("analyzeResult"))
+            deserialized = _deserialize(_models.AnalyzeResult, response.json().get("analyzeResult", {}))
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
@@ -2271,7 +2271,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                 "str", response.headers.get("Operation-Location")
             )
 
-            deserialized = _deserialize(_models.DocumentModelDetails, response.json().get("result"))
+            deserialized = _deserialize(_models.DocumentModelDetails, response.json().get("result", {}))
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
@@ -2455,7 +2455,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                 "str", response.headers.get("Operation-Location")
             )
 
-            deserialized = _deserialize(_models.DocumentModelDetails, response.json().get("result"))
+            deserialized = _deserialize(_models.DocumentModelDetails, response.json().get("result", {}))
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
@@ -2783,7 +2783,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                 "str", response.headers.get("Operation-Location")
             )
 
-            deserialized = _deserialize(_models.DocumentModelDetails, response.json().get("result"))
+            deserialized = _deserialize(_models.DocumentModelDetails, response.json().get("result", {}))
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
@@ -2938,7 +2938,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DocumentModelDetails], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.DocumentModelDetails], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -3202,7 +3202,9 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DocumentIntelligenceOperationDetails], deserialized["value"])
+            list_of_elem = _deserialize(
+                List[_models.DocumentIntelligenceOperationDetails], deserialized.get("value", [])
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -3381,7 +3383,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                 "str", response.headers.get("Operation-Location")
             )
 
-            deserialized = _deserialize(_models.DocumentClassifierDetails, response.json().get("result"))
+            deserialized = _deserialize(_models.DocumentClassifierDetails, response.json().get("result", {}))
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
@@ -3715,7 +3717,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                 "str", response.headers.get("Operation-Location")
             )
 
-            deserialized = _deserialize(_models.DocumentClassifierDetails, response.json().get("result"))
+            deserialized = _deserialize(_models.DocumentClassifierDetails, response.json().get("result", {}))
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
@@ -3871,7 +3873,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DocumentClassifierDetails], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.DocumentClassifierDetails], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)

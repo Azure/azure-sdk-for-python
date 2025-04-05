@@ -5203,7 +5203,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.BulkImportResult:
         """Upload the file for creating Business Metadata in BULK.
 
-        :param body: Body parameter. Required.
+        :param body: Multipart body. Required.
         :type body: ~azure.purview.datamap.models.BusinessMetadataOptions
         :return: BulkImportResult. The BulkImportResult is compatible with MutableMapping
         :rtype: ~azure.purview.datamap.models.BulkImportResult
@@ -5214,7 +5214,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
     def import_business_metadata(self, body: JSON, **kwargs: Any) -> _models.BulkImportResult:
         """Upload the file for creating Business Metadata in BULK.
 
-        :param body: Body parameter. Required.
+        :param body: Multipart body. Required.
         :type body: JSON
         :return: BulkImportResult. The BulkImportResult is compatible with MutableMapping
         :rtype: ~azure.purview.datamap.models.BulkImportResult
@@ -5227,7 +5227,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.BulkImportResult:
         """Upload the file for creating Business Metadata in BULK.
 
-        :param body: Body parameter. Is either a BusinessMetadataOptions type or a JSON type. Required.
+        :param body: Multipart body. Is either a BusinessMetadataOptions type or a JSON type. Required.
         :type body: ~azure.purview.datamap.models.BusinessMetadataOptions or JSON
         :return: BulkImportResult. The BulkImportResult is compatible with MutableMapping
         :rtype: ~azure.purview.datamap.models.BulkImportResult

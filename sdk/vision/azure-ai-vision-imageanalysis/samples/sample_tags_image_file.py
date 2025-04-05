@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -42,10 +43,7 @@ def sample_tags_image_file():
         exit()
 
     # Create an Image Analysis client
-    client = ImageAnalysisClient(
-        endpoint=endpoint,
-        credential=AzureKeyCredential(key)
-    )
+    client = ImageAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # Load image to analyze into a 'bytes' object
     with open("sample.jpg", "rb") as f:
