@@ -51,6 +51,7 @@ from ._models import (
     AzureFunctionStorageQueue,
     AzureFunctionToolDefinition,
     AzureFunctionBinding,
+    BingCustomSearchToolDefinition,
     BingGroundingToolDefinition,
     CodeInterpreterToolDefinition,
     CodeInterpreterToolResource,
@@ -71,6 +72,8 @@ from ._models import (
     RequiredFunctionToolCall,
     RunStep,
     RunStepDeltaChunk,
+    SearchConfiguration,
+    SearchConfigurationList,
     SharepointToolDefinition,
     SubmitToolOutputsAction,
     ThreadRun,
@@ -834,7 +837,13 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
     this class also supports adding and removing additional API definitions dynamically.
     """
 
-    def __init__(self, name: str, description: str, spec: Any, auth: OpenApiAuthDetails):
+    def __init__(
+        self, name: str,
+        description: str,
+        spec: Any,
+        auth: OpenApiAuthDetails,
+        default_parameters: Optional[List[str]] = None
+    ) -> None:
         """
         Constructor initializes the tool with a primary API definition.
 
@@ -843,11 +852,20 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
         :param spec: The API specification.
         :param auth: Authentication details for the API.
         :type auth: OpenApiAuthDetails
+        :param default_parameters: List of OpenAPI spec parameters that will use user-provided defaults.
+        :type default_parameters: OpenApiAuthDetails
         """
+        default_params: List[str] = [] if default_parameters is None else default_parameters
         self._default_auth = auth
         self._definitions: List[OpenApiToolDefinition] = [
             OpenApiToolDefinition(
-                openapi=OpenApiFunctionDefinition(name=name, description=description, spec=spec, auth=auth)
+                openapi=OpenApiFunctionDefinition(
+                    name=name,
+                    description=description,
+                    spec=spec,
+                    auth=auth,
+                    default_params=default_params
+                )
             )
         ]
 
@@ -861,7 +879,14 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
         """
         return self._definitions
 
-    def add_definition(self, name: str, description: str, spec: Any, auth: Optional[OpenApiAuthDetails] = None) -> None:
+    def add_definition(
+        self,
+        name: str,
+        description: str,
+        spec: Any,
+        auth: Optional[OpenApiAuthDetails] = None,
+        default_parameters: Optional[List[str]] = None
+    ) -> None:
         """
         Adds a new API definition dynamically.
         Raises a ValueError if a definition with the same name already exists.
@@ -875,8 +900,12 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
         :param auth: Optional authentication details for this particular API definition.
                      If not provided, the tool's default authentication details will be used.
         :type auth: Optional[OpenApiAuthDetails]
+        :param default_parameters: List of OpenAPI spec parameters that will use user-provided defaults.
+        :type default_parameters: List[str]
         :raises ValueError: If a definition with the same name exists.
         """
+        default_params: List[str] = [] if default_parameters is None else default_parameters
+
         # Check if a definition with the same name exists.
         if any(definition.openapi.name == name for definition in self._definitions):
             raise ValueError(f"Definition '{name}' already exists and cannot be added again.")
@@ -885,7 +914,13 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
         auth_to_use = auth if auth is not None else self._default_auth
 
         new_definition = OpenApiToolDefinition(
-            openapi=OpenApiFunctionDefinition(name=name, description=description, spec=spec, auth=auth_to_use)
+            openapi=OpenApiFunctionDefinition(
+                name=name,
+                description=description,
+                spec=spec,
+                auth=auth_to_use,
+                default_params=default_params
+            )
         )
         self._definitions.append(new_definition)
 
@@ -1018,6 +1053,47 @@ class BingGroundingTool(ConnectionTool[BingGroundingToolDefinition]):
         :rtype: List[ToolDefinition]
         """
         return [BingGroundingToolDefinition(bing_grounding=ToolConnectionList(connection_list=self.connection_ids))]
+
+class BingCustomSearchTool(Tool[BingCustomSearchToolDefinition]):
+    """
+    A tool that searches for information using Bing Custom Search.
+    """
+
+    def __init__(self, connection_id: str, instance_name: str):
+        """
+        Initialize Bing Custom Search with a connection_id.
+
+        :param connection_id: Connection ID used by tool. Bing Custom Search tools allow only one connection.
+        :param instance_name: Config instance name used by tool. 
+        """
+        self.connection_ids = [SearchConfiguration(connection_id=connection_id, instance_name=instance_name)]
+
+    @property
+    def definitions(self) -> List[BingCustomSearchToolDefinition]:
+        """
+        Get the Bing grounding tool definitions.
+
+        :rtype: List[ToolDefinition]
+        """
+        return [
+            BingCustomSearchToolDefinition(
+                bing_custom_search=SearchConfigurationList(
+                    search_configurations=self.connection_ids
+                )
+            )
+        ]
+
+    @property
+    def resources(self) -> ToolResources:
+        """
+        Get the connection tool resources.
+
+        :rtype: ToolResources
+        """
+        return ToolResources()
+
+    def execute(self, tool_call: Any) -> Any:
+        pass
 
 
 class FabricTool(ConnectionTool[MicrosoftFabricToolDefinition]):
@@ -1855,6 +1931,7 @@ __all__: List[str] = [
     "FileSearchTool",
     "FunctionTool",
     "OpenApiTool",
+    "BingCustomSearchTool",
     "BingGroundingTool",
     "StreamEventData",
     "SharepointTool",
