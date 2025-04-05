@@ -6,6 +6,7 @@ from datetime import datetime
 import json
 import os
 import re
+import logging
 import shutil
 import subprocess
 import sys
@@ -26,8 +27,11 @@ from .._internal import (
 from .._internal.decorators import log_get_token
 
 
+_LOGGER = logging.getLogger(__name__)
+
 CLI_NOT_FOUND = "Azure CLI not found on path"
-COMMAND_LINE = "az account get-access-token --output json --resource {}"
+# COMMAND_LINE = "account get-access-token --output json --resource {}"
+COMMAND_LINE = ["account", "get-access-token", "--output", "json"]
 EXECUTABLE_NAME = "az"
 NOT_LOGGED_IN = "Please run 'az login' to set up an account"
 
@@ -129,7 +133,7 @@ class AzureCliCredential:
         :keyword options: A dictionary of options for the token request. Unknown options will be ignored. Optional.
         :paramtype options: ~azure.core.credentials.TokenRequestOptions
 
-        :rtype: AccessTokenInfo
+        :rtype: ~azure.core.credentials.AccessTokenInfo
         :return: An AccessTokenInfo instance containing information about the token.
 
         :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke the Azure CLI.
@@ -149,7 +153,7 @@ class AzureCliCredential:
             validate_scope(scope)
 
         resource = _scopes_to_resource(*scopes)
-        command = COMMAND_LINE.format(resource)
+        command_args = COMMAND_LINE + ["--resource", resource]
         tenant = resolve_tenant(
             default_tenant=self.tenant_id,
             tenant_id=tenant_id,
@@ -157,11 +161,11 @@ class AzureCliCredential:
             **kwargs,
         )
         if tenant:
-            command += " --tenant " + tenant
+            command_args += ["--tenant", tenant]
 
         if self.subscription:
-            command += f' --subscription "{self.subscription}"'
-        output = _run_command(command, self._process_timeout)
+            command_args += ["--subscription", self.subscription]
+        output = _run_command(command_args, self._process_timeout)
 
         token = parse_token(output)
         if not token:
@@ -228,15 +232,13 @@ def sanitize_output(output: str) -> str:
     return re.sub(r"\"accessToken\": \"(.*?)(\"|$)", "****", output)
 
 
-def _run_command(command: str, timeout: int) -> str:
+def _run_command(command_args: List[str], timeout: int) -> str:
     # Ensure executable exists in PATH first. This avoids a subprocess call that would fail anyway.
-    if shutil.which(EXECUTABLE_NAME) is None:
+    az_path = shutil.which(EXECUTABLE_NAME)
+    if not az_path:
         raise CredentialUnavailableError(message=CLI_NOT_FOUND)
 
-    if sys.platform.startswith("win"):
-        args = ["cmd", "/c", command]
-    else:
-        args = ["/bin/sh", "-c", command]
+    args = [az_path] + command_args
     try:
         working_directory = get_safe_working_dir()
 
@@ -248,6 +250,7 @@ def _run_command(command: str, timeout: int) -> str:
             "timeout": timeout,
             "env": dict(os.environ, AZURE_CORE_NO_COLOR="true"),
         }
+        _LOGGER.debug("Executing subprocess with the following arguments %s", args)
         return subprocess.check_output(args, **kwargs)
     except subprocess.CalledProcessError as ex:
         # non-zero return from shell

@@ -1,5 +1,46 @@
 # Release History
 
+## 23.3.0 (2025-02-24)
+
+### Features Added
+
+  - Model DeploymentProperties has a new parameter validation_level
+  - Model DeploymentPropertiesExtended has a new parameter diagnostics
+  - Model DeploymentPropertiesExtended has a new parameter validation_level
+  - Model DeploymentValidateResult has a new parameter id
+  - Model DeploymentValidateResult has a new parameter name
+  - Model DeploymentValidateResult has a new parameter type
+  - Model DeploymentWhatIfProperties has a new parameter validation_level
+  - Model ExportTemplateRequest has a new parameter output_format
+  - Model PolicyAssignment has a new parameter effective_definition_version
+  - Model PolicyAssignment has a new parameter latest_definition_version
+  - Model PolicyDefinitionReference has a new parameter effective_definition_version
+  - Model PolicyDefinitionReference has a new parameter latest_definition_version
+  - Model ResourceGroupExportResult has a new parameter output
+  - Model WhatIfChange has a new parameter deployment_id
+  - Model WhatIfChange has a new parameter identifiers
+  - Model WhatIfChange has a new parameter symbolic_name
+  - Model WhatIfOperationResult has a new parameter diagnostics
+  - Model WhatIfOperationResult has a new parameter potential_changes
+  - Operation PolicyAssignmentsOperations.get has a new optional parameter expand
+  - Operation PolicyAssignmentsOperations.get_by_id has a new optional parameter expand
+  - Operation PolicyAssignmentsOperations.list has a new optional parameter expand
+  - Operation PolicyAssignmentsOperations.list_for_management_group has a new optional parameter expand
+  - Operation PolicyAssignmentsOperations.list_for_resource has a new optional parameter expand
+  - Operation PolicyAssignmentsOperations.list_for_resource_group has a new optional parameter expand
+  - Operation PolicySetDefinitionVersionsOperations.get has a new optional parameter expand
+  - Operation PolicySetDefinitionVersionsOperations.get_at_management_group has a new optional parameter expand
+  - Operation PolicySetDefinitionVersionsOperations.get_built_in has a new optional parameter expand
+  - Operation PolicySetDefinitionVersionsOperations.list has a new optional parameter expand
+  - Operation PolicySetDefinitionVersionsOperations.list_built_in has a new optional parameter expand
+  - Operation PolicySetDefinitionVersionsOperations.list_by_management_group has a new optional parameter expand
+  - Operation PolicySetDefinitionsOperations.get has a new optional parameter expand
+  - Operation PolicySetDefinitionsOperations.get_at_management_group has a new optional parameter expand
+  - Operation PolicySetDefinitionsOperations.get_built_in has a new optional parameter expand
+  - Operation PolicySetDefinitionsOperations.list has a new optional parameter expand
+  - Operation PolicySetDefinitionsOperations.list_built_in has a new optional parameter expand
+  - Operation PolicySetDefinitionsOperations.list_by_management_group has a new optional parameter expand
+
 ## 23.2.0 (2024-10-24)
 
 ### Features Added

@@ -6,7 +6,7 @@ Read more about Azure Communication Services [here](https://learn.microsoft.com/
 [Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/communication/azure-communication-chat)
 | [Package (Pypi)](https://pypi.org/project/azure-communication-chat/)
 | [Package (Conda)](https://anaconda.org/microsoft/azure-communication/)
-| [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-communication-chat/1.0.0b5/index.html)
+| [API reference documentation](https://azuresdkdocs.z19.web.core.windows.net/python/azure-communication-chat/latest/index.html)
 | [Product documentation](https://learn.microsoft.com/azure/communication-services/)
 
 ## _Disclaimer_
@@ -573,4 +573,4 @@ More sample code should go [here](https://github.com/Azure/azure-sdk-for-python/
 
 If you encounter any bugs or have suggestions, please file an issue in the [Issues](<https://github.com/Azure/azure-sdk-for-python/issues>) section of the project.
 
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Ftemplate%2Fazure-template%2FREADME.png)
+

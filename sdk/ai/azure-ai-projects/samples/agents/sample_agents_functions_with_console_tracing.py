@@ -35,6 +35,7 @@ import os, sys, time, json
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects.models import FunctionTool, RequiredFunctionToolCall, SubmitToolOutputsAction, ToolOutput
+from azure.ai.projects.telemetry import trace_function
 from opentelemetry import trace
 
 project_client = AIProjectClient.from_connection_string(
@@ -50,9 +51,9 @@ scenario = os.path.basename(__file__)
 tracer = trace.get_tracer(__name__)
 
 
-# The tracer.start_as_current_span decorator will trace the function call and enable adding additional attributes
+# The trace_func decorator will trace the function call and enable adding additional attributes
 # to the span in the function implementation. Note that this will trace the function parameters and their values.
-@tracer.start_as_current_span("fetch_weather")  # type: ignore
+@trace_function()
 def fetch_weather(location: str) -> str:
     """
     Fetches the weather information for the specified location.
@@ -103,7 +104,7 @@ with tracer.start_as_current_span(scenario):
         )
         print(f"Created message, ID: {message.id}")
 
-        run = project_client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+        run = project_client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
         print(f"Created run, ID: {run.id}")
 
         while run.status in ["queued", "in_progress", "requires_action"]:

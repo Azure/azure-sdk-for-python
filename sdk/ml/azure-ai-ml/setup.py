@@ -52,6 +52,7 @@ setup(
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
@@ -87,6 +88,8 @@ setup(
         "azure-common>=1.1",
         "typing-extensions",
         "azure-monitor-opentelemetry",
+        # TODO: remove six after using new autorest
+        "six>=1.11.0",
     ],
     extras_require={
         # user can run `pip install azure-ai-ml[designer]` to install mldesigner along with this package
@@ -97,7 +100,7 @@ setup(
         # user can run `pip install azure-ai-ml[mount]` to install azureml-dataprep-rslex along with this package
         # so user can call data.mount() and datastore.mount() operations supported by it.
         "mount": [
-            "azureml-dataprep-rslex>=2.22.0",
+            "azureml-dataprep-rslex>=2.22.0; python_version < '3.13'",
         ],
     },
     project_urls={

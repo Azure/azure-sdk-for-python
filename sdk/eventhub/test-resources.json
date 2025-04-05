@@ -69,6 +69,8 @@
     "contributorRoleId": "b24988ac-6180-42a0-ab88-20f7382dd24c",
     "eventHubsDataOwnerRoleId": "f526a384-b230-433a-b45c-95f59c4a2dec",
     "storageBlobDataOwnerRoleId": "b7e6dc6d-f1e8-4753-8033-0f276bb0955b",
+    "storageBlobDataContributorRoleId": "ba92f5b4-2d11-453d-a403-e96b0029c9fe",
+    "storageBlobDataReaderRoleId": "2a2b9908-6ea1-4ae2-8e65-a410df84e7d1",
     "eventHubsNamespace": "[concat('eh-', parameters('baseName'))]",
     "eventHubName": "[concat('eh-', parameters('baseName'), '-hub')]",
     "eventHubAuthRuleName": "[concat('eh-', parameters('baseName'), '-hub-auth-rule')]",
@@ -79,6 +81,7 @@
     "storageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccount'))]",
     "tablesMgmtApiVersion": "2019-04-01",
     "tablesAuthorizationApiVersion": "2018-09-01-preview",
+    "storageAuthorizationApiVersion": "2022-04-01",
     "tableDataContributorRoleId": "0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3"
   },
   "resources": [
@@ -119,7 +122,9 @@
           ]
         }
       ],
-      "properties": {}
+      "properties": {
+        "disableLocalAuth": true
+      }
     },
     {
       "type": "Microsoft.Storage/storageAccounts",
@@ -177,10 +182,28 @@
     },
     {
       "type": "Microsoft.Authorization/roleAssignments",
-      "apiVersion": "[variables('tablesAuthorizationApiVersion')]",
+      "apiVersion": "[variables('storageAuthorizationApiVersion')]",
       "name": "[guid(concat('storageBlobDataOwnerRoleId', resourceGroup().id))]",
       "properties": {
           "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', variables('storageBlobDataOwnerRoleId'))]",
+          "principalId": "[parameters('testApplicationOid')]"
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "[variables('storageAuthorizationApiVersion')]",
+      "name": "[guid(concat('storageBlobDataReaderRoleId', resourceGroup().id))]",
+      "properties": {
+          "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', variables('storageBlobDataReaderRoleId'))]",
+          "principalId": "[parameters('testApplicationOid')]"
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "[variables('storageAuthorizationApiVersion')]",
+      "name": "[guid(concat('storageBlobDataContributorRoleId', resourceGroup().id))]",
+      "properties": {
+          "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', variables('storageBlobDataContributorRoleId'))]",
           "principalId": "[parameters('testApplicationOid')]"
       }
     }

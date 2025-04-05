@@ -1,0 +1,56 @@
+{
+    "id": "/subscriptions/sub-id/resourceGroups/some-res-group/providers/Microsoft.MachineLearningServices/workspaces/some-ws/batchEndpoints/achauhan-endpoint-name/deployments/hello-world-1",
+    "name": "hello-world-1",
+    "type": "Microsoft.MachineLearningServices/workspaces/batchEndpoints/deployments",
+    "properties": {
+        "description": "some description",
+        "properties": {
+            "AzureAsyncOperationUri": "azure-operation"
+        },
+        "codeConfiguration": {
+            "codeId": "/subscriptions/sub-id/resourceGroups/some-rg/providers/Microsoft.MachineLearningServices/workspaces/some-ws/onlineEndpoints/some-endpoint/deployments/blue",
+            "scoringScript": "score.py"
+        },
+        "environmentId": "/subscriptions/sub-id/resourceGroups/some-rg/providers/Microsoft.MachineLearningServices/workspaces/some-ws/onlineEndpoints/some-endpoint/deployments/blue",
+        "environmentVariables": {},
+        "compute": "/subscriptions/sub-id/resourceGroups/some-rg/providers/Microsoft.MachineLearningServices/workspaces/some-ws/onlineEndpoints/some-endpoint/deployments/blue",
+        "errorThreshold": -1,
+        "retrySettings": {
+            "maxRetries": 3,
+            "timeout": "PT30S"
+        },
+        "miniBatchSize": 10,
+        "loggingLevel": "Info",
+        "model": {
+            "referenceType": "Id",
+            "assetId": "/subscriptions/sub-id/resourceGroups/some-rg/providers/Microsoft.MachineLearningServices/workspaces/some-ws/onlineEndpoints/some-endpoint/deployments/blue"
+        },
+        "maxConcurrencyPerInstance": 1,
+        "outputAction": "AppendRow",
+        "outputFileName": "predictions.csv",
+        "resources": {
+            "instanceCount": 1,
+            "instanceType": null,
+            "locations": null,
+            "properties": null
+        },
+        "provisioningState": "Succeeded"
+    },
+    "systemData": {
+        "createdAt": "2025-02-01T17:51:56.513702+00:00",
+        "createdBy": "some-one"
+    },
+    "tags": {
+        "tag1": "value1"
+    },
+    "location": "eastus",
+    "identity": {
+        "type": "SystemAssigned",
+        "userAssignedIdentities": {
+            "key": {
+                "principalId": "some-principalId",
+                "clientId": "some-clientId"
+            }
+        }
+    }
+}

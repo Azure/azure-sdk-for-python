@@ -1,23 +1,34 @@
 # Release History
 
-## 1.6.5 (Unreleased)
+## 1.6.6 (Unreleased)
 
 ### Features Added
 
-- Only add OpenTelemetry LoggingHandler if current logger does not have it
-    ([#38549](https://github.com/Azure/azure-sdk-for-python/pull/38549))
-- Distro to automatically configure event logger provider
-    ([#38543](https://github.com/Azure/azure-sdk-for-python/pull/38543))
-- Configure live metrics first in pipeline to detect statsbeat usage
-    ([#37694](https://github.com/Azure/azure-sdk-for-python/pull/37694))
-- Ignore backoff warning from distro if in functions environment
-    ([#38787](https://github.com/Azure/azure-sdk-for-python/pull/38787))
+- Add `logging_format` as configuration option in api
+    ([#40057](https://github.com/Azure/azure-sdk-for-python/pull/40057))
+- Enable Azure AI Agents instrumentation
+    ([#40043](https://github.com/Azure/azure-sdk-for-python/pull/40043))
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.6.5 (2025-02-14)
+
+### Features Added
+
+- Add more diagnostic log options
+    ([#39701](https://github.com/Azure/azure-sdk-for-python/pull/39701))
+- Only add OpenTelemetry LoggingHandler if current logger does not have it
+    ([#38549](https://github.com/Azure/azure-sdk-for-python/pull/38549))
+- Distro to automatically configure event logger provider
+    ([#38543](https://github.com/Azure/azure-sdk-for-python/pull/38543))
+- Configure live metrics first in pipeline to detect statsbeat usage
+    ([#38556](https://github.com/Azure/azure-sdk-for-python/pull/38556))
+- Ignore backoff warning from distro if in functions environment
+    ([#38787](https://github.com/Azure/azure-sdk-for-python/pull/38787))
 
 ## 1.6.4 (2024-11-06)
 

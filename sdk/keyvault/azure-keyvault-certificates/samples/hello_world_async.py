@@ -76,9 +76,7 @@ async def run_sample():
     # After one year, the bank account is still active, and we have decided to update the tags.
     print("\n.. Update a certificate by name")
     tags = {"a": "b"}
-    updated_certificate = await client.update_certificate_properties(
-        certificate_name=bank_certificate.name, tags=tags
-    )
+    updated_certificate = await client.update_certificate_properties(certificate_name=bank_certificate.name, tags=tags)
     assert updated_certificate.properties
     print(
         f"Certificate with name '{bank_certificate.name}' was updated on date "

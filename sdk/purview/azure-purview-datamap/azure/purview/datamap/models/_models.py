@@ -50,32 +50,48 @@ class AtlasAttributeDef(_model_base.Model):
     :vartype values_min_count: int
     """
 
-    cardinality: Optional[Union[str, "_models.CardinalityValue"]] = rest_field()
+    cardinality: Optional[Union[str, "_models.CardinalityValue"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """single-valued attribute or multi-valued attribute. Known values are: \"SINGLE\", \"LIST\", and
      \"SET\"."""
-    constraints: Optional[List["_models.AtlasConstraintDef"]] = rest_field()
+    constraints: Optional[List["_models.AtlasConstraintDef"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of constraints."""
-    default_value: Optional[str] = rest_field(name="defaultValue")
+    default_value: Optional[str] = rest_field(
+        name="defaultValue", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The default value of the attribute."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The description of the attribute."""
-    include_in_notification: Optional[bool] = rest_field(name="includeInNotification")
+    include_in_notification: Optional[bool] = rest_field(
+        name="includeInNotification", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Determines if it is included in notification."""
-    is_indexable: Optional[bool] = rest_field(name="isIndexable")
+    is_indexable: Optional[bool] = rest_field(
+        name="isIndexable", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Determines if it is indexable."""
-    is_optional: Optional[bool] = rest_field(name="isOptional")
+    is_optional: Optional[bool] = rest_field(
+        name="isOptional", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Determines if it is optional."""
-    is_unique: Optional[bool] = rest_field(name="isUnique")
+    is_unique: Optional[bool] = rest_field(name="isUnique", visibility=["read", "create", "update", "delete", "query"])
     """Determines if it unique."""
-    name: Optional[str] = rest_field()
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the attribute."""
-    options: Optional[Dict[str, str]] = rest_field()
+    options: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The options for the attribute."""
-    type_name: Optional[str] = rest_field(name="typeName")
+    type_name: Optional[str] = rest_field(name="typeName", visibility=["read", "create", "update", "delete", "query"])
     """The name of the type."""
-    values_max_count: Optional[int] = rest_field(name="valuesMaxCount")
+    values_max_count: Optional[int] = rest_field(
+        name="valuesMaxCount", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The maximum count of the values."""
-    values_min_count: Optional[int] = rest_field(name="valuesMinCount")
+    values_min_count: Optional[int] = rest_field(
+        name="valuesMinCount", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The minimum count of the values."""
 
     @overload
@@ -145,37 +161,53 @@ class AtlasBusinessMetadataDef(_model_base.Model):
     :vartype attribute_defs: list[~azure.purview.datamap.models.AtlasAttributeDef]
     """
 
-    category: Optional[Union[str, "_models.TypeCategory"]] = rest_field()
+    category: Optional[Union[str, "_models.TypeCategory"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The enum of type category. Known values are: \"PRIMITIVE\", \"OBJECT_ID_TYPE\", \"ENUM\",
      \"STRUCT\", \"CLASSIFICATION\", \"ENTITY\", \"ARRAY\", \"MAP\", \"RELATIONSHIP\", and
      \"TERM_TEMPLATE\"."""
-    create_time: Optional[int] = rest_field(name="createTime")
+    create_time: Optional[int] = rest_field(
+        name="createTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The created time of the record."""
-    created_by: Optional[str] = rest_field(name="createdBy")
+    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read", "create", "update", "delete", "query"])
     """The user who created the record."""
-    date_formatter: Optional["_models.DateFormat"] = rest_field(name="dateFormatter")
+    date_formatter: Optional["_models.DateFormat"] = rest_field(
+        name="dateFormatter", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The date format."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The description of the type definition."""
-    guid: Optional[str] = rest_field()
+    guid: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The GUID of the type definition."""
-    name: Optional[str] = rest_field()
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the type definition."""
-    options: Optional[Dict[str, str]] = rest_field()
+    options: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The options for the type definition."""
-    service_type: Optional[str] = rest_field(name="serviceType")
+    service_type: Optional[str] = rest_field(
+        name="serviceType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The service type."""
-    type_version: Optional[str] = rest_field(name="typeVersion")
+    type_version: Optional[str] = rest_field(
+        name="typeVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The version of the type."""
-    update_time: Optional[int] = rest_field(name="updateTime")
+    update_time: Optional[int] = rest_field(
+        name="updateTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The update time of the record."""
-    updated_by: Optional[str] = rest_field(name="updatedBy")
+    updated_by: Optional[str] = rest_field(name="updatedBy", visibility=["read", "create", "update", "delete", "query"])
     """The user who updated the record."""
-    version: Optional[int] = rest_field()
+    version: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The version of the record."""
-    last_modified_ts: Optional[str] = rest_field(name="lastModifiedTS")
+    last_modified_ts: Optional[str] = rest_field(
+        name="lastModifiedTS", visibility=["read", "create", "update", "delete", "query"]
+    )
     """ETag for concurrency control."""
-    attribute_defs: Optional[List["_models.AtlasAttributeDef"]] = rest_field(name="attributeDefs")
+    attribute_defs: Optional[List["_models.AtlasAttributeDef"]] = rest_field(
+        name="attributeDefs", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of attribute definitions."""
 
     @overload
@@ -232,20 +264,30 @@ class AtlasClassification(_model_base.Model):
     :vartype validity_periods: list[~azure.purview.datamap.models.TimeBoundary]
     """
 
-    attributes: Optional[Dict[str, Any]] = rest_field()
+    attributes: Optional[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The attributes of the struct."""
-    type_name: Optional[str] = rest_field(name="typeName")
+    type_name: Optional[str] = rest_field(name="typeName", visibility=["read", "create", "update", "delete", "query"])
     """The name of the type."""
-    last_modified_ts: Optional[str] = rest_field(name="lastModifiedTS")
+    last_modified_ts: Optional[str] = rest_field(
+        name="lastModifiedTS", visibility=["read", "create", "update", "delete", "query"]
+    )
     """ETag for concurrency control."""
-    entity_guid: Optional[str] = rest_field(name="entityGuid")
+    entity_guid: Optional[str] = rest_field(
+        name="entityGuid", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The GUID of the entity."""
-    entity_status: Optional[Union[str, "_models.EntityStatus"]] = rest_field(name="entityStatus")
+    entity_status: Optional[Union[str, "_models.EntityStatus"]] = rest_field(
+        name="entityStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Status of the entity - can be active or deleted. Deleted entities are not
      removed. Known values are: \"ACTIVE\" and \"DELETED\"."""
-    remove_propagations_on_entity_delete: Optional[bool] = rest_field(name="removePropagationsOnEntityDelete")
+    remove_propagations_on_entity_delete: Optional[bool] = rest_field(
+        name="removePropagationsOnEntityDelete", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Determines if propagations will be removed on entity deletion."""
-    validity_periods: Optional[List["_models.TimeBoundary"]] = rest_field(name="validityPeriods")
+    validity_periods: Optional[List["_models.TimeBoundary"]] = rest_field(
+        name="validityPeriods", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of time boundaries indicating validity periods."""
 
     @overload
@@ -336,39 +378,57 @@ class AtlasClassificationDef(_model_base.Model):
     :vartype super_types: list[str]
     """
 
-    category: Optional[Union[str, "_models.TypeCategory"]] = rest_field()
+    category: Optional[Union[str, "_models.TypeCategory"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The enum of type category. Known values are: \"PRIMITIVE\", \"OBJECT_ID_TYPE\", \"ENUM\",
      \"STRUCT\", \"CLASSIFICATION\", \"ENTITY\", \"ARRAY\", \"MAP\", \"RELATIONSHIP\", and
      \"TERM_TEMPLATE\"."""
-    create_time: Optional[int] = rest_field(name="createTime")
+    create_time: Optional[int] = rest_field(
+        name="createTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The created time of the record."""
-    created_by: Optional[str] = rest_field(name="createdBy")
+    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read", "create", "update", "delete", "query"])
     """The user who created the record."""
-    date_formatter: Optional["_models.DateFormat"] = rest_field(name="dateFormatter")
+    date_formatter: Optional["_models.DateFormat"] = rest_field(
+        name="dateFormatter", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The date format."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The description of the type definition."""
-    guid: Optional[str] = rest_field()
+    guid: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The GUID of the type definition."""
-    name: Optional[str] = rest_field()
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the type definition."""
-    options: Optional[Dict[str, str]] = rest_field()
+    options: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The options for the type definition."""
-    service_type: Optional[str] = rest_field(name="serviceType")
+    service_type: Optional[str] = rest_field(
+        name="serviceType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The service type."""
-    type_version: Optional[str] = rest_field(name="typeVersion")
+    type_version: Optional[str] = rest_field(
+        name="typeVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The version of the type."""
-    update_time: Optional[int] = rest_field(name="updateTime")
+    update_time: Optional[int] = rest_field(
+        name="updateTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The update time of the record."""
-    updated_by: Optional[str] = rest_field(name="updatedBy")
+    updated_by: Optional[str] = rest_field(name="updatedBy", visibility=["read", "create", "update", "delete", "query"])
     """The user who updated the record."""
-    version: Optional[int] = rest_field()
+    version: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The version of the record."""
-    last_modified_ts: Optional[str] = rest_field(name="lastModifiedTS")
+    last_modified_ts: Optional[str] = rest_field(
+        name="lastModifiedTS", visibility=["read", "create", "update", "delete", "query"]
+    )
     """ETag for concurrency control."""
-    attribute_defs: Optional[List["_models.AtlasAttributeDef"]] = rest_field(name="attributeDefs")
+    attribute_defs: Optional[List["_models.AtlasAttributeDef"]] = rest_field(
+        name="attributeDefs", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of attribute definitions."""
-    entity_types: Optional[List[str]] = rest_field(name="entityTypes")
+    entity_types: Optional[List[str]] = rest_field(
+        name="entityTypes", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Specifying a list of entityType names in the classificationDef, ensures that
      classifications can
      only be applied to those entityTypes.
@@ -390,9 +450,13 @@ class AtlasClassificationDef(_model_base.Model):
      If a list of entityTypes are supplied, where one inherits
      from another, this will be rejected. This should encourage cleaner
      classificationsDefs."""
-    sub_types: Optional[List[str]] = rest_field(name="subTypes")
+    sub_types: Optional[List[str]] = rest_field(
+        name="subTypes", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of sub types."""
-    super_types: Optional[List[str]] = rest_field(name="superTypes")
+    super_types: Optional[List[str]] = rest_field(
+        name="superTypes", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of super types."""
 
     @overload
@@ -448,18 +512,24 @@ class AtlasClassifications(_model_base.Model):
     :vartype total_count: int
     """
 
-    list: Optional[List[Any]] = rest_field()
+    list: Optional[List[Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An array of objects."""
-    page_size: Optional[int] = rest_field(name="pageSize")
+    page_size: Optional[int] = rest_field(name="pageSize", visibility=["read", "create", "update", "delete", "query"])
     """The size of the page."""
-    sort_by: Optional[str] = rest_field(name="sortBy")
+    sort_by: Optional[str] = rest_field(name="sortBy", visibility=["read", "create", "update", "delete", "query"])
     """The sorted by field."""
-    sort_type: Optional[Union[str, "_models.SortType"]] = rest_field(name="sortType")
+    sort_type: Optional[Union[str, "_models.SortType"]] = rest_field(
+        name="sortType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """to specify whether the result should be sorted? If yes, whether asc or desc. Known values are:
      \"NONE\", \"ASC\", and \"DESC\"."""
-    start_index: Optional[int] = rest_field(name="startIndex")
+    start_index: Optional[int] = rest_field(
+        name="startIndex", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The start index of the page."""
-    total_count: Optional[int] = rest_field(name="totalCount")
+    total_count: Optional[int] = rest_field(
+        name="totalCount", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The total count of items."""
 
     @overload
@@ -494,9 +564,9 @@ class AtlasConstraintDef(_model_base.Model):
     :vartype type: str
     """
 
-    params: Optional[Dict[str, Any]] = rest_field()
+    params: Optional[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The parameters of the constraint definition."""
-    type: Optional[str] = rest_field()
+    type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The type of the constraint."""
 
     @overload
@@ -528,9 +598,13 @@ class AtlasEntitiesWithExtInfo(_model_base.Model):
     :vartype entities: list[~azure.purview.datamap.models.AtlasEntity]
     """
 
-    referred_entities: Optional[Dict[str, "_models.AtlasEntity"]] = rest_field(name="referredEntities")
+    referred_entities: Optional[Dict[str, "_models.AtlasEntity"]] = rest_field(
+        name="referredEntities", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The referred entities."""
-    entities: Optional[List["_models.AtlasEntity"]] = rest_field()
+    entities: Optional[List["_models.AtlasEntity"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of entities."""
 
     @overload
@@ -554,8 +628,6 @@ class AtlasEntitiesWithExtInfo(_model_base.Model):
 
 class AtlasEntity(_model_base.Model):
     """An instance of an entity - like hive_table, hive_database.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar attributes: The attributes of the struct.
     :vartype attributes: dict[str, any]
@@ -605,50 +677,74 @@ class AtlasEntity(_model_base.Model):
     :vartype contacts: dict[str, list[~azure.purview.datamap.models.ContactInfo]]
     """
 
-    attributes: Optional[Dict[str, Any]] = rest_field()
+    attributes: Optional[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The attributes of the struct."""
-    type_name: Optional[str] = rest_field(name="typeName")
+    type_name: Optional[str] = rest_field(name="typeName", visibility=["read", "create", "update", "delete", "query"])
     """The name of the type."""
-    last_modified_ts: Optional[str] = rest_field(name="lastModifiedTS")
+    last_modified_ts: Optional[str] = rest_field(
+        name="lastModifiedTS", visibility=["read", "create", "update", "delete", "query"]
+    )
     """ETag for concurrency control."""
-    business_attributes: Optional[Dict[str, Any]] = rest_field(name="businessAttributes")
+    business_attributes: Optional[Dict[str, Any]] = rest_field(
+        name="businessAttributes", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Business attributes."""
-    classifications: Optional[List["_models.AtlasClassification"]] = rest_field()
+    classifications: Optional[List["_models.AtlasClassification"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of classifications."""
-    create_time: Optional[int] = rest_field(name="createTime")
+    create_time: Optional[int] = rest_field(
+        name="createTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The created time of the record."""
-    created_by: Optional[str] = rest_field(name="createdBy")
+    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read", "create", "update", "delete", "query"])
     """The user who created the record."""
-    custom_attributes: Optional[Dict[str, str]] = rest_field(name="customAttributes")
+    custom_attributes: Optional[Dict[str, str]] = rest_field(
+        name="customAttributes", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Custom Attribute."""
-    guid: Optional[str] = rest_field()
+    guid: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The GUID of the entity."""
-    home_id: Optional[str] = rest_field(name="homeId")
+    home_id: Optional[str] = rest_field(name="homeId", visibility=["read", "create", "update", "delete", "query"])
     """The home ID of the entity."""
     collection_id: Optional[str] = rest_field(name="collectionId", visibility=["read"])
     """The collection ID of the entity."""
-    is_incomplete: Optional[bool] = rest_field(name="isIncomplete")
+    is_incomplete: Optional[bool] = rest_field(
+        name="isIncomplete", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Whether it is a shell entity."""
-    labels: Optional[List[str]] = rest_field()
+    labels: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """labels."""
-    meanings: Optional[List["_models.AtlasTermAssignmentHeader"]] = rest_field()
+    meanings: Optional[List["_models.AtlasTermAssignmentHeader"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of term assignment headers indicating the meanings of the entity."""
-    provenance_type: Optional[int] = rest_field(name="provenanceType")
+    provenance_type: Optional[int] = rest_field(
+        name="provenanceType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Used to record the provenance of an instance of an entity or relationship."""
-    proxy: Optional[bool] = rest_field()
+    proxy: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Determines if there's a proxy."""
-    relationship_attributes: Optional[Dict[str, Any]] = rest_field(name="relationshipAttributes")
+    relationship_attributes: Optional[Dict[str, Any]] = rest_field(
+        name="relationshipAttributes", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The attributes of relationship."""
-    status: Optional[Union[str, "_models.EntityStatus"]] = rest_field()
+    status: Optional[Union[str, "_models.EntityStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Status of the entity - can be active or deleted. Deleted entities are not
      removed. Known values are: \"ACTIVE\" and \"DELETED\"."""
-    update_time: Optional[int] = rest_field(name="updateTime")
+    update_time: Optional[int] = rest_field(
+        name="updateTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The update time of the record."""
-    updated_by: Optional[str] = rest_field(name="updatedBy")
+    updated_by: Optional[str] = rest_field(name="updatedBy", visibility=["read", "create", "update", "delete", "query"])
     """The user who updated the record."""
-    version: Optional[int] = rest_field()
+    version: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The version of the entity."""
-    contacts: Optional[Dict[str, List["_models.ContactInfo"]]] = rest_field()
+    contacts: Optional[Dict[str, List["_models.ContactInfo"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The dictionary of contacts for entities. Key could be Expert or Owner."""
 
     @overload
@@ -733,44 +829,64 @@ class AtlasEntityDef(_model_base.Model):
      list[~azure.purview.datamap.models.AtlasRelationshipAttributeDef]
     """
 
-    category: Optional[Union[str, "_models.TypeCategory"]] = rest_field()
+    category: Optional[Union[str, "_models.TypeCategory"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The enum of type category. Known values are: \"PRIMITIVE\", \"OBJECT_ID_TYPE\", \"ENUM\",
      \"STRUCT\", \"CLASSIFICATION\", \"ENTITY\", \"ARRAY\", \"MAP\", \"RELATIONSHIP\", and
      \"TERM_TEMPLATE\"."""
-    create_time: Optional[int] = rest_field(name="createTime")
+    create_time: Optional[int] = rest_field(
+        name="createTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The created time of the record."""
-    created_by: Optional[str] = rest_field(name="createdBy")
+    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read", "create", "update", "delete", "query"])
     """The user who created the record."""
-    date_formatter: Optional["_models.DateFormat"] = rest_field(name="dateFormatter")
+    date_formatter: Optional["_models.DateFormat"] = rest_field(
+        name="dateFormatter", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The date format."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The description of the type definition."""
-    guid: Optional[str] = rest_field()
+    guid: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The GUID of the type definition."""
-    name: Optional[str] = rest_field()
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the type definition."""
-    options: Optional[Dict[str, str]] = rest_field()
+    options: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The options for the type definition."""
-    service_type: Optional[str] = rest_field(name="serviceType")
+    service_type: Optional[str] = rest_field(
+        name="serviceType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The service type."""
-    type_version: Optional[str] = rest_field(name="typeVersion")
+    type_version: Optional[str] = rest_field(
+        name="typeVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The version of the type."""
-    update_time: Optional[int] = rest_field(name="updateTime")
+    update_time: Optional[int] = rest_field(
+        name="updateTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The update time of the record."""
-    updated_by: Optional[str] = rest_field(name="updatedBy")
+    updated_by: Optional[str] = rest_field(name="updatedBy", visibility=["read", "create", "update", "delete", "query"])
     """The user who updated the record."""
-    version: Optional[int] = rest_field()
+    version: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The version of the record."""
-    last_modified_ts: Optional[str] = rest_field(name="lastModifiedTS")
+    last_modified_ts: Optional[str] = rest_field(
+        name="lastModifiedTS", visibility=["read", "create", "update", "delete", "query"]
+    )
     """ETag for concurrency control."""
-    attribute_defs: Optional[List["_models.AtlasAttributeDef"]] = rest_field(name="attributeDefs")
+    attribute_defs: Optional[List["_models.AtlasAttributeDef"]] = rest_field(
+        name="attributeDefs", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of attribute definitions."""
-    sub_types: Optional[List[str]] = rest_field(name="subTypes")
+    sub_types: Optional[List[str]] = rest_field(
+        name="subTypes", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of sub types."""
-    super_types: Optional[List[str]] = rest_field(name="superTypes")
+    super_types: Optional[List[str]] = rest_field(
+        name="superTypes", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of super types."""
     relationship_attribute_defs: Optional[List["_models.AtlasRelationshipAttributeDef"]] = rest_field(
-        name="relationshipAttributeDefs"
+        name="relationshipAttributeDefs", visibility=["read", "create", "update", "delete", "query"]
     )
     """An array of relationship attributes."""
 
@@ -839,29 +955,45 @@ class AtlasEntityHeader(_model_base.Model):
     :vartype status: str or ~azure.purview.datamap.models.EntityStatus
     """
 
-    attributes: Optional[Dict[str, Any]] = rest_field()
+    attributes: Optional[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The attributes of the struct."""
-    type_name: Optional[str] = rest_field(name="typeName")
+    type_name: Optional[str] = rest_field(name="typeName", visibility=["read", "create", "update", "delete", "query"])
     """The name of the type."""
-    last_modified_ts: Optional[str] = rest_field(name="lastModifiedTS")
+    last_modified_ts: Optional[str] = rest_field(
+        name="lastModifiedTS", visibility=["read", "create", "update", "delete", "query"]
+    )
     """ETag for concurrency control."""
-    classification_names: Optional[List[str]] = rest_field(name="classificationNames")
+    classification_names: Optional[List[str]] = rest_field(
+        name="classificationNames", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of classification names."""
-    classifications: Optional[List["_models.AtlasClassification"]] = rest_field()
+    classifications: Optional[List["_models.AtlasClassification"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of classifications."""
-    display_text: Optional[str] = rest_field(name="displayText")
+    display_text: Optional[str] = rest_field(
+        name="displayText", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The display text."""
-    guid: Optional[str] = rest_field()
+    guid: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The GUID of the record."""
-    is_incomplete: Optional[bool] = rest_field(name="isIncomplete")
+    is_incomplete: Optional[bool] = rest_field(
+        name="isIncomplete", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Whether it is a shell entity."""
-    labels: Optional[List[str]] = rest_field()
+    labels: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """labels."""
-    meaning_names: Optional[List[str]] = rest_field(name="meaningNames")
+    meaning_names: Optional[List[str]] = rest_field(
+        name="meaningNames", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of meanings."""
-    meanings: Optional[List["_models.AtlasTermAssignmentHeader"]] = rest_field()
+    meanings: Optional[List["_models.AtlasTermAssignmentHeader"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of term assignment headers."""
-    status: Optional[Union[str, "_models.EntityStatus"]] = rest_field()
+    status: Optional[Union[str, "_models.EntityStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Status of the entity - can be active or deleted. Deleted entities are not
      removed. Known values are: \"ACTIVE\" and \"DELETED\"."""
 
@@ -901,7 +1033,9 @@ class AtlasEntityHeaders(_model_base.Model):
     :vartype guid_header_map: dict[str, ~azure.purview.datamap.models.AtlasEntityHeader]
     """
 
-    guid_header_map: Optional[Dict[str, "_models.AtlasEntityHeader"]] = rest_field(name="guidHeaderMap")
+    guid_header_map: Optional[Dict[str, "_models.AtlasEntityHeader"]] = rest_field(
+        name="guidHeaderMap", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The description of the guid header map,."""
 
     @overload
@@ -932,9 +1066,11 @@ class AtlasEntityWithExtInfo(_model_base.Model):
     :vartype entity: ~azure.purview.datamap.models.AtlasEntity
     """
 
-    referred_entities: Optional[Dict[str, "_models.AtlasEntity"]] = rest_field(name="referredEntities")
+    referred_entities: Optional[Dict[str, "_models.AtlasEntity"]] = rest_field(
+        name="referredEntities", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The referred entities."""
-    entity: Optional["_models.AtlasEntity"] = rest_field()
+    entity: Optional["_models.AtlasEntity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An instance of an entity - like hive_table, hive_database."""
 
     @overload
@@ -995,39 +1131,57 @@ class AtlasEnumDef(_model_base.Model):
     :vartype element_defs: list[~azure.purview.datamap.models.AtlasEnumElementDef]
     """
 
-    category: Optional[Union[str, "_models.TypeCategory"]] = rest_field()
+    category: Optional[Union[str, "_models.TypeCategory"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The enum of type category. Known values are: \"PRIMITIVE\", \"OBJECT_ID_TYPE\", \"ENUM\",
      \"STRUCT\", \"CLASSIFICATION\", \"ENTITY\", \"ARRAY\", \"MAP\", \"RELATIONSHIP\", and
      \"TERM_TEMPLATE\"."""
-    create_time: Optional[int] = rest_field(name="createTime")
+    create_time: Optional[int] = rest_field(
+        name="createTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The created time of the record."""
-    created_by: Optional[str] = rest_field(name="createdBy")
+    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read", "create", "update", "delete", "query"])
     """The user who created the record."""
-    date_formatter: Optional["_models.DateFormat"] = rest_field(name="dateFormatter")
+    date_formatter: Optional["_models.DateFormat"] = rest_field(
+        name="dateFormatter", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The date format."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The description of the type definition."""
-    guid: Optional[str] = rest_field()
+    guid: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The GUID of the type definition."""
-    name: Optional[str] = rest_field()
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the type definition."""
-    options: Optional[Dict[str, str]] = rest_field()
+    options: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The options for the type definition."""
-    service_type: Optional[str] = rest_field(name="serviceType")
+    service_type: Optional[str] = rest_field(
+        name="serviceType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The service type."""
-    type_version: Optional[str] = rest_field(name="typeVersion")
+    type_version: Optional[str] = rest_field(
+        name="typeVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The version of the type."""
-    update_time: Optional[int] = rest_field(name="updateTime")
+    update_time: Optional[int] = rest_field(
+        name="updateTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The update time of the record."""
-    updated_by: Optional[str] = rest_field(name="updatedBy")
+    updated_by: Optional[str] = rest_field(name="updatedBy", visibility=["read", "create", "update", "delete", "query"])
     """The user who updated the record."""
-    version: Optional[int] = rest_field()
+    version: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The version of the record."""
-    last_modified_ts: Optional[str] = rest_field(name="lastModifiedTS")
+    last_modified_ts: Optional[str] = rest_field(
+        name="lastModifiedTS", visibility=["read", "create", "update", "delete", "query"]
+    )
     """ETag for concurrency control."""
-    default_value: Optional[str] = rest_field(name="defaultValue")
+    default_value: Optional[str] = rest_field(
+        name="defaultValue", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The default value."""
-    element_defs: Optional[List["_models.AtlasEnumElementDef"]] = rest_field(name="elementDefs")
+    element_defs: Optional[List["_models.AtlasEnumElementDef"]] = rest_field(
+        name="elementDefs", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of enum element definitions."""
 
     @overload
@@ -1074,11 +1228,11 @@ class AtlasEnumElementDef(_model_base.Model):
     :vartype value: str
     """
 
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The description of the enum element definition."""
-    ordinal: Optional[int] = rest_field()
+    ordinal: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ordinal of the enum element definition."""
-    value: Optional[str] = rest_field()
+    value: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The value of the enum element definition."""
 
     @overload
@@ -1112,11 +1266,13 @@ class AtlasErrorResponse(_model_base.Model):
     :vartype error_message: str
     """
 
-    request_id: Optional[str] = rest_field(name="requestId")
+    request_id: Optional[str] = rest_field(name="requestId", visibility=["read", "create", "update", "delete", "query"])
     """The request ID."""
-    error_code: Optional[str] = rest_field(name="errorCode")
+    error_code: Optional[str] = rest_field(name="errorCode", visibility=["read", "create", "update", "delete", "query"])
     """The error code."""
-    error_message: Optional[str] = rest_field(name="errorMessage")
+    error_message: Optional[str] = rest_field(
+        name="errorMessage", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The error message."""
 
     @overload
@@ -1174,35 +1330,53 @@ class AtlasGlossary(_model_base.Model):
     :vartype usage: str
     """
 
-    guid: Optional[str] = rest_field()
+    guid: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The GUID of the object."""
-    classifications: Optional[List["_models.AtlasClassification"]] = rest_field()
+    classifications: Optional[List["_models.AtlasClassification"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of classifications."""
-    long_description: Optional[str] = rest_field(name="longDescription")
+    long_description: Optional[str] = rest_field(
+        name="longDescription", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The long version description."""
-    name: Optional[str] = rest_field()
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the glossary object."""
-    qualified_name: Optional[str] = rest_field(name="qualifiedName")
+    qualified_name: Optional[str] = rest_field(
+        name="qualifiedName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The qualified name of the glossary object."""
-    short_description: Optional[str] = rest_field(name="shortDescription")
+    short_description: Optional[str] = rest_field(
+        name="shortDescription", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The short version of description."""
-    last_modified_ts: Optional[str] = rest_field(name="lastModifiedTS")
+    last_modified_ts: Optional[str] = rest_field(
+        name="lastModifiedTS", visibility=["read", "create", "update", "delete", "query"]
+    )
     """ETag for concurrency control."""
-    create_time: Optional[int] = rest_field(name="createTime")
+    create_time: Optional[int] = rest_field(
+        name="createTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The created time of the record."""
-    created_by: Optional[str] = rest_field(name="createdBy")
+    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read", "create", "update", "delete", "query"])
     """The user who created the record."""
-    update_time: Optional[int] = rest_field(name="updateTime")
+    update_time: Optional[int] = rest_field(
+        name="updateTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The update time of the record."""
-    updated_by: Optional[str] = rest_field(name="updatedBy")
+    updated_by: Optional[str] = rest_field(name="updatedBy", visibility=["read", "create", "update", "delete", "query"])
     """The user who updated the record."""
-    categories: Optional[List["_models.AtlasRelatedCategoryHeader"]] = rest_field()
+    categories: Optional[List["_models.AtlasRelatedCategoryHeader"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of categories."""
-    language: Optional[str] = rest_field()
+    language: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The language of the glossary."""
-    terms: Optional[List["_models.AtlasRelatedTermHeader"]] = rest_field()
+    terms: Optional[List["_models.AtlasRelatedTermHeader"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of related term headers."""
-    usage: Optional[str] = rest_field()
+    usage: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The usage of the glossary."""
 
     @overload
@@ -1272,35 +1446,57 @@ class AtlasGlossaryCategory(_model_base.Model):
     :vartype terms: list[~azure.purview.datamap.models.AtlasRelatedTermHeader]
     """
 
-    guid: Optional[str] = rest_field()
+    guid: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The GUID of the object."""
-    classifications: Optional[List["_models.AtlasClassification"]] = rest_field()
+    classifications: Optional[List["_models.AtlasClassification"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of classifications."""
-    long_description: Optional[str] = rest_field(name="longDescription")
+    long_description: Optional[str] = rest_field(
+        name="longDescription", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The long version description."""
-    name: Optional[str] = rest_field()
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the glossary object."""
-    qualified_name: Optional[str] = rest_field(name="qualifiedName")
+    qualified_name: Optional[str] = rest_field(
+        name="qualifiedName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The qualified name of the glossary object."""
-    short_description: Optional[str] = rest_field(name="shortDescription")
+    short_description: Optional[str] = rest_field(
+        name="shortDescription", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The short version of description."""
-    last_modified_ts: Optional[str] = rest_field(name="lastModifiedTS")
+    last_modified_ts: Optional[str] = rest_field(
+        name="lastModifiedTS", visibility=["read", "create", "update", "delete", "query"]
+    )
     """ETag for concurrency control."""
-    create_time: Optional[int] = rest_field(name="createTime")
+    create_time: Optional[int] = rest_field(
+        name="createTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The created time of the record."""
-    created_by: Optional[str] = rest_field(name="createdBy")
+    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read", "create", "update", "delete", "query"])
     """The user who created the record."""
-    update_time: Optional[int] = rest_field(name="updateTime")
+    update_time: Optional[int] = rest_field(
+        name="updateTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The update time of the record."""
-    updated_by: Optional[str] = rest_field(name="updatedBy")
+    updated_by: Optional[str] = rest_field(name="updatedBy", visibility=["read", "create", "update", "delete", "query"])
     """The user who updated the record."""
-    anchor: Optional["_models.AtlasGlossaryHeader"] = rest_field()
+    anchor: Optional["_models.AtlasGlossaryHeader"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The glossary header with basic information."""
-    children_categories: Optional[List["_models.AtlasRelatedCategoryHeader"]] = rest_field(name="childrenCategories")
+    children_categories: Optional[List["_models.AtlasRelatedCategoryHeader"]] = rest_field(
+        name="childrenCategories", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of children categories."""
-    parent_category: Optional["_models.AtlasRelatedCategoryHeader"] = rest_field(name="parentCategory")
+    parent_category: Optional["_models.AtlasRelatedCategoryHeader"] = rest_field(
+        name="parentCategory", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The header of the related category."""
-    terms: Optional[List["_models.AtlasRelatedTermHeader"]] = rest_field()
+    terms: Optional[List["_models.AtlasRelatedTermHeader"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of related term headers."""
 
     @overload
@@ -1374,39 +1570,61 @@ class AtlasGlossaryExtInfo(_model_base.Model):
     :vartype term_info: dict[str, ~azure.purview.datamap.models.AtlasGlossaryTerm]
     """
 
-    guid: Optional[str] = rest_field()
+    guid: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The GUID of the object."""
-    classifications: Optional[List["_models.AtlasClassification"]] = rest_field()
+    classifications: Optional[List["_models.AtlasClassification"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of classifications."""
-    long_description: Optional[str] = rest_field(name="longDescription")
+    long_description: Optional[str] = rest_field(
+        name="longDescription", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The long version description."""
-    name: Optional[str] = rest_field()
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the glossary object."""
-    qualified_name: Optional[str] = rest_field(name="qualifiedName")
+    qualified_name: Optional[str] = rest_field(
+        name="qualifiedName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The qualified name of the glossary object."""
-    short_description: Optional[str] = rest_field(name="shortDescription")
+    short_description: Optional[str] = rest_field(
+        name="shortDescription", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The short version of description."""
-    last_modified_ts: Optional[str] = rest_field(name="lastModifiedTS")
+    last_modified_ts: Optional[str] = rest_field(
+        name="lastModifiedTS", visibility=["read", "create", "update", "delete", "query"]
+    )
     """ETag for concurrency control."""
-    create_time: Optional[int] = rest_field(name="createTime")
+    create_time: Optional[int] = rest_field(
+        name="createTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The created time of the record."""
-    created_by: Optional[str] = rest_field(name="createdBy")
+    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read", "create", "update", "delete", "query"])
     """The user who created the record."""
-    update_time: Optional[int] = rest_field(name="updateTime")
+    update_time: Optional[int] = rest_field(
+        name="updateTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The update time of the record."""
-    updated_by: Optional[str] = rest_field(name="updatedBy")
+    updated_by: Optional[str] = rest_field(name="updatedBy", visibility=["read", "create", "update", "delete", "query"])
     """The user who updated the record."""
-    categories: Optional[List["_models.AtlasRelatedCategoryHeader"]] = rest_field()
+    categories: Optional[List["_models.AtlasRelatedCategoryHeader"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of categories."""
-    language: Optional[str] = rest_field()
+    language: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The language of the glossary."""
-    terms: Optional[List["_models.AtlasRelatedTermHeader"]] = rest_field()
+    terms: Optional[List["_models.AtlasRelatedTermHeader"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of related term headers."""
-    usage: Optional[str] = rest_field()
+    usage: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The usage of the glossary."""
-    category_info: Optional[Dict[str, "_models.AtlasGlossaryCategory"]] = rest_field(name="categoryInfo")
+    category_info: Optional[Dict[str, "_models.AtlasGlossaryCategory"]] = rest_field(
+        name="categoryInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The glossary category information."""
-    term_info: Optional[Dict[str, "_models.AtlasGlossaryTerm"]] = rest_field(name="termInfo")
+    term_info: Optional[Dict[str, "_models.AtlasGlossaryTerm"]] = rest_field(
+        name="termInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The glossary term information."""
 
     @overload
@@ -1454,11 +1672,17 @@ class AtlasGlossaryHeader(_model_base.Model):
     :vartype relation_guid: str
     """
 
-    display_text: Optional[str] = rest_field(name="displayText")
+    display_text: Optional[str] = rest_field(
+        name="displayText", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The display text."""
-    glossary_guid: Optional[str] = rest_field(name="glossaryGuid")
+    glossary_guid: Optional[str] = rest_field(
+        name="glossaryGuid", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The GUID of the glossary."""
-    relation_guid: Optional[str] = rest_field(name="relationGuid")
+    relation_guid: Optional[str] = rest_field(
+        name="relationGuid", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The GUID of the relationship."""
 
     @overload
@@ -1563,82 +1787,140 @@ class AtlasGlossaryTerm(_model_base.Model):
     :vartype valid_values_for: list[~azure.purview.datamap.models.AtlasRelatedTermHeader]
     """
 
-    guid: Optional[str] = rest_field()
+    guid: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The GUID of the object."""
-    classifications: Optional[List["_models.AtlasClassification"]] = rest_field()
+    classifications: Optional[List["_models.AtlasClassification"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of classifications."""
-    long_description: Optional[str] = rest_field(name="longDescription")
+    long_description: Optional[str] = rest_field(
+        name="longDescription", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The long version description."""
-    name: Optional[str] = rest_field()
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the glossary object."""
-    qualified_name: Optional[str] = rest_field(name="qualifiedName")
+    qualified_name: Optional[str] = rest_field(
+        name="qualifiedName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The qualified name of the glossary object."""
-    short_description: Optional[str] = rest_field(name="shortDescription")
+    short_description: Optional[str] = rest_field(
+        name="shortDescription", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The short version of description."""
-    last_modified_ts: Optional[str] = rest_field(name="lastModifiedTS")
+    last_modified_ts: Optional[str] = rest_field(
+        name="lastModifiedTS", visibility=["read", "create", "update", "delete", "query"]
+    )
     """ETag for concurrency control."""
-    create_time: Optional[int] = rest_field(name="createTime")
+    create_time: Optional[int] = rest_field(
+        name="createTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The created time of the record."""
-    created_by: Optional[str] = rest_field(name="createdBy")
+    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read", "create", "update", "delete", "query"])
     """The user who created the record."""
-    update_time: Optional[int] = rest_field(name="updateTime")
+    update_time: Optional[int] = rest_field(
+        name="updateTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The update time of the record."""
-    updated_by: Optional[str] = rest_field(name="updatedBy")
+    updated_by: Optional[str] = rest_field(name="updatedBy", visibility=["read", "create", "update", "delete", "query"])
     """The user who updated the record."""
-    abbreviation: Optional[str] = rest_field()
+    abbreviation: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The abbreviation of the term."""
-    template_name: Optional[List[Any]] = rest_field(name="templateName")
+    template_name: Optional[List[Any]] = rest_field(
+        name="templateName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The name of the template."""
-    anchor: Optional["_models.AtlasGlossaryHeader"] = rest_field()
+    anchor: Optional["_models.AtlasGlossaryHeader"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The glossary header with basic information."""
-    antonyms: Optional[List["_models.AtlasRelatedTermHeader"]] = rest_field()
+    antonyms: Optional[List["_models.AtlasRelatedTermHeader"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of related term headers as antonyms."""
-    status: Optional[Union[str, "_models.TermStatus"]] = rest_field()
+    status: Optional[Union[str, "_models.TermStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Status of the AtlasGlossaryTerm. Known values are: \"Draft\", \"Approved\", \"Alert\", and
      \"Expired\"."""
-    nick_name: Optional[str] = rest_field(name="nickName")
+    nick_name: Optional[str] = rest_field(name="nickName", visibility=["read", "create", "update", "delete", "query"])
     """The nick name of the term."""
-    hierarchy_info: Optional[List["_models.PurviewObjectId"]] = rest_field(name="hierarchyInfo")
+    hierarchy_info: Optional[List["_models.PurviewObjectId"]] = rest_field(
+        name="hierarchyInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The hierarchy information of the term."""
-    resources: Optional[List["_models.ResourceLink"]] = rest_field()
+    resources: Optional[List["_models.ResourceLink"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of resource link for term."""
-    contacts: Optional[Dict[str, List["_models.ContactInfo"]]] = rest_field()
+    contacts: Optional[Dict[str, List["_models.ContactInfo"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The dictionary of contacts for terms. Key could be Expert or Steward."""
-    attributes: Optional[Dict[str, Dict[str, Any]]] = rest_field()
+    attributes: Optional[Dict[str, Dict[str, Any]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The custom attributes of the term, which is map<string,map<string,object>>.
      The
      key of the first layer map is term template name."""
-    assigned_entities: Optional[List["_models.AtlasRelatedObjectId"]] = rest_field(name="assignedEntities")
+    assigned_entities: Optional[List["_models.AtlasRelatedObjectId"]] = rest_field(
+        name="assignedEntities", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of related object IDs."""
-    categories: Optional[List["_models.AtlasTermCategorizationHeader"]] = rest_field()
+    categories: Optional[List["_models.AtlasTermCategorizationHeader"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of term categorization headers."""
-    classifies: Optional[List["_models.AtlasRelatedTermHeader"]] = rest_field()
+    classifies: Optional[List["_models.AtlasRelatedTermHeader"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of related term headers."""
-    examples: Optional[List[str]] = rest_field()
+    examples: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An array of examples."""
-    is_a: Optional[List["_models.AtlasRelatedTermHeader"]] = rest_field(name="isA")
+    is_a: Optional[List["_models.AtlasRelatedTermHeader"]] = rest_field(
+        name="isA", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of related term headers indicating the is-a relationship."""
-    preferred_terms: Optional[List["_models.AtlasRelatedTermHeader"]] = rest_field(name="preferredTerms")
+    preferred_terms: Optional[List["_models.AtlasRelatedTermHeader"]] = rest_field(
+        name="preferredTerms", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of preferred related term headers."""
-    preferred_to_terms: Optional[List["_models.AtlasRelatedTermHeader"]] = rest_field(name="preferredToTerms")
+    preferred_to_terms: Optional[List["_models.AtlasRelatedTermHeader"]] = rest_field(
+        name="preferredToTerms", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of related term headers that are preferred to."""
-    replaced_by: Optional[List["_models.AtlasRelatedTermHeader"]] = rest_field(name="replacedBy")
+    replaced_by: Optional[List["_models.AtlasRelatedTermHeader"]] = rest_field(
+        name="replacedBy", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of related term headers that are replaced by."""
-    replacement_terms: Optional[List["_models.AtlasRelatedTermHeader"]] = rest_field(name="replacementTerms")
+    replacement_terms: Optional[List["_models.AtlasRelatedTermHeader"]] = rest_field(
+        name="replacementTerms", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of related term headers for replacement."""
-    see_also: Optional[List["_models.AtlasRelatedTermHeader"]] = rest_field(name="seeAlso")
+    see_also: Optional[List["_models.AtlasRelatedTermHeader"]] = rest_field(
+        name="seeAlso", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of related term headers for see also."""
-    synonyms: Optional[List["_models.AtlasRelatedTermHeader"]] = rest_field()
+    synonyms: Optional[List["_models.AtlasRelatedTermHeader"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of related term headers as synonyms."""
-    translated_terms: Optional[List["_models.AtlasRelatedTermHeader"]] = rest_field(name="translatedTerms")
+    translated_terms: Optional[List["_models.AtlasRelatedTermHeader"]] = rest_field(
+        name="translatedTerms", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of translated related term headers."""
-    translation_terms: Optional[List["_models.AtlasRelatedTermHeader"]] = rest_field(name="translationTerms")
+    translation_terms: Optional[List["_models.AtlasRelatedTermHeader"]] = rest_field(
+        name="translationTerms", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of related term headers for translation."""
-    usage: Optional[str] = rest_field()
+    usage: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The usage of the term."""
-    valid_values: Optional[List["_models.AtlasRelatedTermHeader"]] = rest_field(name="validValues")
+    valid_values: Optional[List["_models.AtlasRelatedTermHeader"]] = rest_field(
+        name="validValues", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of related term headers as valid values."""
-    valid_values_for: Optional[List["_models.AtlasRelatedTermHeader"]] = rest_field(name="validValuesFor")
+    valid_values_for: Optional[List["_models.AtlasRelatedTermHeader"]] = rest_field(
+        name="validValuesFor", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of related term headers as valid values for other records."""
 
     @overload
@@ -1719,23 +2001,41 @@ class AtlasLineageInfo(_model_base.Model):
     :vartype relations: list[~azure.purview.datamap.models.LineageRelation]
     """
 
-    base_entity_guid: Optional[str] = rest_field(name="baseEntityGuid")
+    base_entity_guid: Optional[str] = rest_field(
+        name="baseEntityGuid", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The GUID of the base entity."""
-    guid_entity_map: Optional[Dict[str, "_models.AtlasEntityHeader"]] = rest_field(name="guidEntityMap")
+    guid_entity_map: Optional[Dict[str, "_models.AtlasEntityHeader"]] = rest_field(
+        name="guidEntityMap", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The GUID entity map."""
-    width_counts: Optional[Dict[str, Dict[str, Any]]] = rest_field(name="widthCounts")
+    width_counts: Optional[Dict[str, Dict[str, Any]]] = rest_field(
+        name="widthCounts", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The entity count in specific direction."""
-    lineage_depth: Optional[int] = rest_field(name="lineageDepth")
+    lineage_depth: Optional[int] = rest_field(
+        name="lineageDepth", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The depth of lineage."""
-    lineage_width: Optional[int] = rest_field(name="lineageWidth")
+    lineage_width: Optional[int] = rest_field(
+        name="lineageWidth", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The width of lineage."""
-    children_count: Optional[int] = rest_field(name="childrenCount")
+    children_count: Optional[int] = rest_field(
+        name="childrenCount", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The number of children node."""
-    lineage_direction: Optional[Union[str, "_models.LineageDirection"]] = rest_field(name="lineageDirection")
+    lineage_direction: Optional[Union[str, "_models.LineageDirection"]] = rest_field(
+        name="lineageDirection", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The enum of lineage direction. Known values are: \"INPUT\", \"OUTPUT\", and \"BOTH\"."""
-    parent_relations: Optional[List["_models.ParentRelation"]] = rest_field(name="parentRelations")
+    parent_relations: Optional[List["_models.ParentRelation"]] = rest_field(
+        name="parentRelations", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of parentRelations relations."""
-    relations: Optional[List["_models.LineageRelation"]] = rest_field()
+    relations: Optional[List["_models.LineageRelation"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of lineage relations."""
 
     @overload
@@ -1775,11 +2075,13 @@ class AtlasObjectId(_model_base.Model):
     :vartype unique_attributes: dict[str, any]
     """
 
-    guid: Optional[str] = rest_field()
+    guid: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The GUID of the object."""
-    type_name: Optional[str] = rest_field(name="typeName")
+    type_name: Optional[str] = rest_field(name="typeName", visibility=["read", "create", "update", "delete", "query"])
     """The name of the type."""
-    unique_attributes: Optional[Dict[str, Any]] = rest_field(name="uniqueAttributes")
+    unique_attributes: Optional[Dict[str, Any]] = rest_field(
+        name="uniqueAttributes", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The unique attributes of the object."""
 
     @overload
@@ -1817,15 +2119,23 @@ class AtlasRelatedCategoryHeader(_model_base.Model):
     :vartype relation_guid: str
     """
 
-    category_guid: Optional[str] = rest_field(name="categoryGuid")
+    category_guid: Optional[str] = rest_field(
+        name="categoryGuid", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The GUID of the category."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The description of the category header."""
-    display_text: Optional[str] = rest_field(name="displayText")
+    display_text: Optional[str] = rest_field(
+        name="displayText", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The display text."""
-    parent_category_guid: Optional[str] = rest_field(name="parentCategoryGuid")
+    parent_category_guid: Optional[str] = rest_field(
+        name="parentCategoryGuid", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The GUID of the parent category."""
-    relation_guid: Optional[str] = rest_field(name="relationGuid")
+    relation_guid: Optional[str] = rest_field(
+        name="relationGuid", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The GUID of the relationship."""
 
     @overload
@@ -1878,25 +2188,39 @@ class AtlasRelatedObjectId(_model_base.Model):
     :vartype relationship_status: str or ~azure.purview.datamap.models.StatusAtlasRelationship
     """
 
-    guid: Optional[str] = rest_field()
+    guid: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The GUID of the object."""
-    type_name: Optional[str] = rest_field(name="typeName")
+    type_name: Optional[str] = rest_field(name="typeName", visibility=["read", "create", "update", "delete", "query"])
     """The name of the type."""
-    unique_attributes: Optional[Dict[str, Any]] = rest_field(name="uniqueAttributes")
+    unique_attributes: Optional[Dict[str, Any]] = rest_field(
+        name="uniqueAttributes", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The unique attributes of the object."""
-    display_text: Optional[str] = rest_field(name="displayText")
+    display_text: Optional[str] = rest_field(
+        name="displayText", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The display text."""
-    entity_status: Optional[Union[str, "_models.EntityStatus"]] = rest_field(name="entityStatus")
+    entity_status: Optional[Union[str, "_models.EntityStatus"]] = rest_field(
+        name="entityStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Status of the entity - can be active or deleted. Deleted entities are not
      removed. Known values are: \"ACTIVE\" and \"DELETED\"."""
-    relationship_type: Optional[str] = rest_field(name="relationshipType")
+    relationship_type: Optional[str] = rest_field(
+        name="relationshipType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Relationship type."""
-    relationship_attributes: Optional["_models.AtlasStruct"] = rest_field(name="relationshipAttributes")
+    relationship_attributes: Optional["_models.AtlasStruct"] = rest_field(
+        name="relationshipAttributes", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Captures details of struct contents. Not instantiated directly, used only via
      AtlasEntity, AtlasClassification."""
-    relationship_guid: Optional[str] = rest_field(name="relationshipGuid")
+    relationship_guid: Optional[str] = rest_field(
+        name="relationshipGuid", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The GUID of the relationship."""
-    relationship_status: Optional[Union[str, "_models.StatusAtlasRelationship"]] = rest_field(name="relationshipStatus")
+    relationship_status: Optional[Union[str, "_models.StatusAtlasRelationship"]] = rest_field(
+        name="relationshipStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The enum of relationship status. Known values are: \"ACTIVE\" and \"DELETED\"."""
 
     @overload
@@ -1945,20 +2269,26 @@ class AtlasRelatedTermHeader(_model_base.Model):
     :vartype term_guid: str
     """
 
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The description of the related term."""
-    display_text: Optional[str] = rest_field(name="displayText")
+    display_text: Optional[str] = rest_field(
+        name="displayText", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The display text."""
-    expression: Optional[str] = rest_field()
+    expression: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The expression of the term."""
-    relation_guid: Optional[str] = rest_field(name="relationGuid")
+    relation_guid: Optional[str] = rest_field(
+        name="relationGuid", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The GUID of the relationship."""
-    status: Optional[Union[str, "_models.AtlasTermRelationshipStatus"]] = rest_field()
+    status: Optional[Union[str, "_models.AtlasTermRelationshipStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The status of term relationship. Known values are: \"DRAFT\", \"ACTIVE\", \"DEPRECATED\",
      \"OBSOLETE\", and \"OTHER\"."""
-    steward: Optional[str] = rest_field()
+    steward: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The steward of the term."""
-    term_guid: Optional[str] = rest_field(name="termGuid")
+    term_guid: Optional[str] = rest_field(name="termGuid", visibility=["read", "create", "update", "delete", "query"])
     """The GUID of the term."""
 
     @overload
@@ -2021,35 +2351,45 @@ class AtlasRelationship(_model_base.Model):
     :vartype version: int
     """
 
-    attributes: Optional[Dict[str, Any]] = rest_field()
+    attributes: Optional[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The attributes of the struct."""
-    type_name: Optional[str] = rest_field(name="typeName")
+    type_name: Optional[str] = rest_field(name="typeName", visibility=["read", "create", "update", "delete", "query"])
     """The name of the type."""
-    last_modified_ts: Optional[str] = rest_field(name="lastModifiedTS")
+    last_modified_ts: Optional[str] = rest_field(
+        name="lastModifiedTS", visibility=["read", "create", "update", "delete", "query"]
+    )
     """ETag for concurrency control."""
-    create_time: Optional[int] = rest_field(name="createTime")
+    create_time: Optional[int] = rest_field(
+        name="createTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The created time of the record."""
-    created_by: Optional[str] = rest_field(name="createdBy")
+    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read", "create", "update", "delete", "query"])
     """The user who created the record."""
-    end1: Optional["_models.AtlasObjectId"] = rest_field()
+    end1: Optional["_models.AtlasObjectId"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Reference to an object-instance of a type - like entity."""
-    end2: Optional["_models.AtlasObjectId"] = rest_field()
+    end2: Optional["_models.AtlasObjectId"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Reference to an object-instance of a type - like entity."""
-    guid: Optional[str] = rest_field()
+    guid: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The GUID of the relationship."""
-    home_id: Optional[str] = rest_field(name="homeId")
+    home_id: Optional[str] = rest_field(name="homeId", visibility=["read", "create", "update", "delete", "query"])
     """The home ID of the relationship."""
-    label: Optional[str] = rest_field()
+    label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The label of the relationship."""
-    provenance_type: Optional[int] = rest_field(name="provenanceType")
+    provenance_type: Optional[int] = rest_field(
+        name="provenanceType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Used to record the provenance of an instance of an entity or relationship."""
-    status: Optional[Union[str, "_models.StatusAtlasRelationship"]] = rest_field()
+    status: Optional[Union[str, "_models.StatusAtlasRelationship"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The enum of relationship status. Known values are: \"ACTIVE\" and \"DELETED\"."""
-    update_time: Optional[int] = rest_field(name="updateTime")
+    update_time: Optional[int] = rest_field(
+        name="updateTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The update time of the record."""
-    updated_by: Optional[str] = rest_field(name="updatedBy")
+    updated_by: Optional[str] = rest_field(name="updatedBy", visibility=["read", "create", "update", "delete", "query"])
     """The user who updated the record."""
-    version: Optional[int] = rest_field()
+    version: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The version of the relationship."""
 
     @overload
@@ -2123,36 +2463,56 @@ class AtlasRelationshipAttributeDef(_model_base.Model):
     :vartype relationship_type_name: str
     """
 
-    cardinality: Optional[Union[str, "_models.CardinalityValue"]] = rest_field()
+    cardinality: Optional[Union[str, "_models.CardinalityValue"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """single-valued attribute or multi-valued attribute. Known values are: \"SINGLE\", \"LIST\", and
      \"SET\"."""
-    constraints: Optional[List["_models.AtlasConstraintDef"]] = rest_field()
+    constraints: Optional[List["_models.AtlasConstraintDef"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of constraints."""
-    default_value: Optional[str] = rest_field(name="defaultValue")
+    default_value: Optional[str] = rest_field(
+        name="defaultValue", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The default value of the attribute."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The description of the attribute."""
-    include_in_notification: Optional[bool] = rest_field(name="includeInNotification")
+    include_in_notification: Optional[bool] = rest_field(
+        name="includeInNotification", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Determines if it is included in notification."""
-    is_indexable: Optional[bool] = rest_field(name="isIndexable")
+    is_indexable: Optional[bool] = rest_field(
+        name="isIndexable", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Determines if it is indexable."""
-    is_optional: Optional[bool] = rest_field(name="isOptional")
+    is_optional: Optional[bool] = rest_field(
+        name="isOptional", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Determines if it is optional."""
-    is_unique: Optional[bool] = rest_field(name="isUnique")
+    is_unique: Optional[bool] = rest_field(name="isUnique", visibility=["read", "create", "update", "delete", "query"])
     """Determines if it unique."""
-    name: Optional[str] = rest_field()
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the attribute."""
-    options: Optional[Dict[str, str]] = rest_field()
+    options: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The options for the attribute."""
-    type_name: Optional[str] = rest_field(name="typeName")
+    type_name: Optional[str] = rest_field(name="typeName", visibility=["read", "create", "update", "delete", "query"])
     """The name of the type."""
-    values_max_count: Optional[int] = rest_field(name="valuesMaxCount")
+    values_max_count: Optional[int] = rest_field(
+        name="valuesMaxCount", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The maximum count of the values."""
-    values_min_count: Optional[int] = rest_field(name="valuesMinCount")
+    values_min_count: Optional[int] = rest_field(
+        name="valuesMinCount", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The minimum count of the values."""
-    is_legacy_attribute: Optional[bool] = rest_field(name="isLegacyAttribute")
+    is_legacy_attribute: Optional[bool] = rest_field(
+        name="isLegacyAttribute", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Determines if it is a legacy attribute."""
-    relationship_type_name: Optional[str] = rest_field(name="relationshipTypeName")
+    relationship_type_name: Optional[str] = rest_field(
+        name="relationshipTypeName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The name of the relationship type."""
 
     @overload
@@ -2284,50 +2644,70 @@ class AtlasRelationshipDef(_model_base.Model):
     :vartype relationship_label: str
     """
 
-    category: Optional[Union[str, "_models.TypeCategory"]] = rest_field()
+    category: Optional[Union[str, "_models.TypeCategory"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The enum of type category. Known values are: \"PRIMITIVE\", \"OBJECT_ID_TYPE\", \"ENUM\",
      \"STRUCT\", \"CLASSIFICATION\", \"ENTITY\", \"ARRAY\", \"MAP\", \"RELATIONSHIP\", and
      \"TERM_TEMPLATE\"."""
-    create_time: Optional[int] = rest_field(name="createTime")
+    create_time: Optional[int] = rest_field(
+        name="createTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The created time of the record."""
-    created_by: Optional[str] = rest_field(name="createdBy")
+    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read", "create", "update", "delete", "query"])
     """The user who created the record."""
-    date_formatter: Optional["_models.DateFormat"] = rest_field(name="dateFormatter")
+    date_formatter: Optional["_models.DateFormat"] = rest_field(
+        name="dateFormatter", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The date format."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The description of the type definition."""
-    guid: Optional[str] = rest_field()
+    guid: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The GUID of the type definition."""
-    name: Optional[str] = rest_field()
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the type definition."""
-    options: Optional[Dict[str, str]] = rest_field()
+    options: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The options for the type definition."""
-    service_type: Optional[str] = rest_field(name="serviceType")
+    service_type: Optional[str] = rest_field(
+        name="serviceType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The service type."""
-    type_version: Optional[str] = rest_field(name="typeVersion")
+    type_version: Optional[str] = rest_field(
+        name="typeVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The version of the type."""
-    update_time: Optional[int] = rest_field(name="updateTime")
+    update_time: Optional[int] = rest_field(
+        name="updateTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The update time of the record."""
-    updated_by: Optional[str] = rest_field(name="updatedBy")
+    updated_by: Optional[str] = rest_field(name="updatedBy", visibility=["read", "create", "update", "delete", "query"])
     """The user who updated the record."""
-    version: Optional[int] = rest_field()
+    version: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The version of the record."""
-    last_modified_ts: Optional[str] = rest_field(name="lastModifiedTS")
+    last_modified_ts: Optional[str] = rest_field(
+        name="lastModifiedTS", visibility=["read", "create", "update", "delete", "query"]
+    )
     """ETag for concurrency control."""
-    attribute_defs: Optional[List["_models.AtlasAttributeDef"]] = rest_field(name="attributeDefs")
+    attribute_defs: Optional[List["_models.AtlasAttributeDef"]] = rest_field(
+        name="attributeDefs", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of attribute definitions."""
-    end_def1: Optional["_models.AtlasRelationshipEndDef"] = rest_field(name="endDef1")
+    end_def1: Optional["_models.AtlasRelationshipEndDef"] = rest_field(
+        name="endDef1", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The relationshipEndDef represents an end of the relationship. The end of the
      relationship is defined by a type, an
      attribute name, cardinality and whether
      it  is the container end of the relationship."""
-    end_def2: Optional["_models.AtlasRelationshipEndDef"] = rest_field(name="endDef2")
+    end_def2: Optional["_models.AtlasRelationshipEndDef"] = rest_field(
+        name="endDef2", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The relationshipEndDef represents an end of the relationship. The end of the
      relationship is defined by a type, an
      attribute name, cardinality and whether
      it  is the container end of the relationship."""
     relationship_category: Optional[Union[str, "_models.RelationshipCategory"]] = rest_field(
-        name="relationshipCategory"
+        name="relationshipCategory", visibility=["read", "create", "update", "delete", "query"]
     )
     """The Relationship category determines the style of relationship around
      containment and lifecycle.
@@ -2338,7 +2718,9 @@ class AtlasRelationshipDef(_model_base.Model):
      In the COMPOSITION case, the children cannot exist without the container.
      For AGGREGATION, the life cycles of the container and children are totally independent. Known
      values are: \"ASSOCIATION\", \"AGGREGATION\", and \"COMPOSITION\"."""
-    relationship_label: Optional[str] = rest_field(name="relationshipLabel")
+    relationship_label: Optional[str] = rest_field(
+        name="relationshipLabel", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The label of the relationship."""
 
     @overload
@@ -2398,18 +2780,24 @@ class AtlasRelationshipEndDef(_model_base.Model):
     :vartype type: str
     """
 
-    cardinality: Optional[Union[str, "_models.CardinalityValue"]] = rest_field()
+    cardinality: Optional[Union[str, "_models.CardinalityValue"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """single-valued attribute or multi-valued attribute. Known values are: \"SINGLE\", \"LIST\", and
      \"SET\"."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The description of the relationship end definition."""
-    is_container: Optional[bool] = rest_field(name="isContainer")
+    is_container: Optional[bool] = rest_field(
+        name="isContainer", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Determines if it is container."""
-    is_legacy_attribute: Optional[bool] = rest_field(name="isLegacyAttribute")
+    is_legacy_attribute: Optional[bool] = rest_field(
+        name="isLegacyAttribute", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Determines if it is a legacy attribute."""
-    name: Optional[str] = rest_field()
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the relationship end definition."""
-    type: Optional[str] = rest_field()
+    type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The type of the relationship end."""
 
     @overload
@@ -2444,9 +2832,13 @@ class AtlasRelationshipWithExtInfo(_model_base.Model):
     :vartype relationship: ~azure.purview.datamap.models.AtlasRelationship
     """
 
-    referred_entities: Optional[Dict[str, "_models.AtlasEntityHeader"]] = rest_field(name="referredEntities")
+    referred_entities: Optional[Dict[str, "_models.AtlasEntityHeader"]] = rest_field(
+        name="referredEntities", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The referred entity header."""
-    relationship: Optional["_models.AtlasRelationship"] = rest_field()
+    relationship: Optional["_models.AtlasRelationship"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Atlas relationship instance."""
 
     @overload
@@ -2480,11 +2872,13 @@ class AtlasStruct(_model_base.Model):
     :vartype last_modified_ts: str
     """
 
-    attributes: Optional[Dict[str, Any]] = rest_field()
+    attributes: Optional[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The attributes of the struct."""
-    type_name: Optional[str] = rest_field(name="typeName")
+    type_name: Optional[str] = rest_field(name="typeName", visibility=["read", "create", "update", "delete", "query"])
     """The name of the type."""
-    last_modified_ts: Optional[str] = rest_field(name="lastModifiedTS")
+    last_modified_ts: Optional[str] = rest_field(
+        name="lastModifiedTS", visibility=["read", "create", "update", "delete", "query"]
+    )
     """ETag for concurrency control."""
 
     @overload
@@ -2544,37 +2938,53 @@ class AtlasStructDef(_model_base.Model):
     :vartype attribute_defs: list[~azure.purview.datamap.models.AtlasAttributeDef]
     """
 
-    category: Optional[Union[str, "_models.TypeCategory"]] = rest_field()
+    category: Optional[Union[str, "_models.TypeCategory"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The enum of type category. Known values are: \"PRIMITIVE\", \"OBJECT_ID_TYPE\", \"ENUM\",
      \"STRUCT\", \"CLASSIFICATION\", \"ENTITY\", \"ARRAY\", \"MAP\", \"RELATIONSHIP\", and
      \"TERM_TEMPLATE\"."""
-    create_time: Optional[int] = rest_field(name="createTime")
+    create_time: Optional[int] = rest_field(
+        name="createTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The created time of the record."""
-    created_by: Optional[str] = rest_field(name="createdBy")
+    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read", "create", "update", "delete", "query"])
     """The user who created the record."""
-    date_formatter: Optional["_models.DateFormat"] = rest_field(name="dateFormatter")
+    date_formatter: Optional["_models.DateFormat"] = rest_field(
+        name="dateFormatter", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The date format."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The description of the type definition."""
-    guid: Optional[str] = rest_field()
+    guid: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The GUID of the type definition."""
-    name: Optional[str] = rest_field()
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the type definition."""
-    options: Optional[Dict[str, str]] = rest_field()
+    options: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The options for the type definition."""
-    service_type: Optional[str] = rest_field(name="serviceType")
+    service_type: Optional[str] = rest_field(
+        name="serviceType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The service type."""
-    type_version: Optional[str] = rest_field(name="typeVersion")
+    type_version: Optional[str] = rest_field(
+        name="typeVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The version of the type."""
-    update_time: Optional[int] = rest_field(name="updateTime")
+    update_time: Optional[int] = rest_field(
+        name="updateTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The update time of the record."""
-    updated_by: Optional[str] = rest_field(name="updatedBy")
+    updated_by: Optional[str] = rest_field(name="updatedBy", visibility=["read", "create", "update", "delete", "query"])
     """The user who updated the record."""
-    version: Optional[int] = rest_field()
+    version: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The version of the record."""
-    last_modified_ts: Optional[str] = rest_field(name="lastModifiedTS")
+    last_modified_ts: Optional[str] = rest_field(
+        name="lastModifiedTS", visibility=["read", "create", "update", "delete", "query"]
+    )
     """ETag for concurrency control."""
-    attribute_defs: Optional[List["_models.AtlasAttributeDef"]] = rest_field(name="attributeDefs")
+    attribute_defs: Optional[List["_models.AtlasAttributeDef"]] = rest_field(
+        name="attributeDefs", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of attribute definitions."""
 
     @overload
@@ -2633,24 +3043,30 @@ class AtlasTermAssignmentHeader(_model_base.Model):
     :vartype term_guid: str
     """
 
-    confidence: Optional[int] = rest_field()
+    confidence: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The confidence of the term assignment."""
-    created_by: Optional[str] = rest_field(name="createdBy")
+    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read", "create", "update", "delete", "query"])
     """The user who created the record."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The description of the term assignment."""
-    display_text: Optional[str] = rest_field(name="displayText")
+    display_text: Optional[str] = rest_field(
+        name="displayText", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The display text."""
-    expression: Optional[str] = rest_field()
+    expression: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The expression of the term assignment."""
-    relation_guid: Optional[str] = rest_field(name="relationGuid")
+    relation_guid: Optional[str] = rest_field(
+        name="relationGuid", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The GUID of the relationship."""
-    status: Optional[Union[str, "_models.AtlasTermAssignmentStatus"]] = rest_field()
+    status: Optional[Union[str, "_models.AtlasTermAssignmentStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The status of terms assignment. Known values are: \"DISCOVERED\", \"PROPOSED\", \"IMPORTED\",
      \"VALIDATED\", \"DEPRECATED\", \"OBSOLETE\", and \"OTHER\"."""
-    steward: Optional[str] = rest_field()
+    steward: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The steward of the term."""
-    term_guid: Optional[str] = rest_field(name="termGuid")
+    term_guid: Optional[str] = rest_field(name="termGuid", visibility=["read", "create", "update", "delete", "query"])
     """The GUID of the term."""
 
     @overload
@@ -2695,15 +3111,23 @@ class AtlasTermCategorizationHeader(_model_base.Model):
     :vartype status: str or ~azure.purview.datamap.models.AtlasTermRelationshipStatus
     """
 
-    category_guid: Optional[str] = rest_field(name="categoryGuid")
+    category_guid: Optional[str] = rest_field(
+        name="categoryGuid", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The GUID of the category."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The description of the record."""
-    display_text: Optional[str] = rest_field(name="displayText")
+    display_text: Optional[str] = rest_field(
+        name="displayText", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The display text."""
-    relation_guid: Optional[str] = rest_field(name="relationGuid")
+    relation_guid: Optional[str] = rest_field(
+        name="relationGuid", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The GUID of the relationship."""
-    status: Optional[Union[str, "_models.AtlasTermRelationshipStatus"]] = rest_field()
+    status: Optional[Union[str, "_models.AtlasTermRelationshipStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The status of term relationship. Known values are: \"DRAFT\", \"ACTIVE\", \"DEPRECATED\",
      \"OBSOLETE\", and \"OTHER\"."""
 
@@ -2825,37 +3249,53 @@ class AtlasTypeDef(_model_base.Model):
     :vartype attribute_defs: list[~azure.purview.datamap.models.AtlasAttributeDef]
     """
 
-    category: Optional[Union[str, "_models.TypeCategory"]] = rest_field()
+    category: Optional[Union[str, "_models.TypeCategory"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The enum of type category. Known values are: \"PRIMITIVE\", \"OBJECT_ID_TYPE\", \"ENUM\",
      \"STRUCT\", \"CLASSIFICATION\", \"ENTITY\", \"ARRAY\", \"MAP\", \"RELATIONSHIP\", and
      \"TERM_TEMPLATE\"."""
-    create_time: Optional[int] = rest_field(name="createTime")
+    create_time: Optional[int] = rest_field(
+        name="createTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The created time of the record."""
-    created_by: Optional[str] = rest_field(name="createdBy")
+    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read", "create", "update", "delete", "query"])
     """The user who created the record."""
-    date_formatter: Optional["_models.DateFormat"] = rest_field(name="dateFormatter")
+    date_formatter: Optional["_models.DateFormat"] = rest_field(
+        name="dateFormatter", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The date format."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The description of the type definition."""
-    guid: Optional[str] = rest_field()
+    guid: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The GUID of the type definition."""
-    name: Optional[str] = rest_field()
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the type definition."""
-    options: Optional[Dict[str, str]] = rest_field()
+    options: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The options for the type definition."""
-    service_type: Optional[str] = rest_field(name="serviceType")
+    service_type: Optional[str] = rest_field(
+        name="serviceType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The service type."""
-    type_version: Optional[str] = rest_field(name="typeVersion")
+    type_version: Optional[str] = rest_field(
+        name="typeVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The version of the type."""
-    update_time: Optional[int] = rest_field(name="updateTime")
+    update_time: Optional[int] = rest_field(
+        name="updateTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The update time of the record."""
-    updated_by: Optional[str] = rest_field(name="updatedBy")
+    updated_by: Optional[str] = rest_field(name="updatedBy", visibility=["read", "create", "update", "delete", "query"])
     """The user who updated the record."""
-    version: Optional[int] = rest_field()
+    version: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The version of the record."""
-    last_modified_ts: Optional[str] = rest_field(name="lastModifiedTS")
+    last_modified_ts: Optional[str] = rest_field(
+        name="lastModifiedTS", visibility=["read", "create", "update", "delete", "query"]
+    )
     """ETag for concurrency control."""
-    entity_types: Optional[List[str]] = rest_field(name="entityTypes")
+    entity_types: Optional[List[str]] = rest_field(
+        name="entityTypes", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Specifying a list of entityType names in the classificationDef, ensures that
      classifications can
      only be applied to those entityTypes.
@@ -2877,30 +3317,42 @@ class AtlasTypeDef(_model_base.Model):
      If a list of entityTypes are supplied, where one inherits
      from another, this will be rejected. This should encourage cleaner
      classificationsDefs."""
-    sub_types: Optional[List[str]] = rest_field(name="subTypes")
+    sub_types: Optional[List[str]] = rest_field(
+        name="subTypes", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of sub types."""
-    super_types: Optional[List[str]] = rest_field(name="superTypes")
+    super_types: Optional[List[str]] = rest_field(
+        name="superTypes", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of super types."""
     relationship_attribute_defs: Optional[List["_models.AtlasRelationshipAttributeDef"]] = rest_field(
-        name="relationshipAttributeDefs"
+        name="relationshipAttributeDefs", visibility=["read", "create", "update", "delete", "query"]
     )
     """An array of relationship attributes."""
-    default_value: Optional[str] = rest_field(name="defaultValue")
+    default_value: Optional[str] = rest_field(
+        name="defaultValue", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The default value."""
-    element_defs: Optional[List["_models.AtlasEnumElementDef"]] = rest_field(name="elementDefs")
+    element_defs: Optional[List["_models.AtlasEnumElementDef"]] = rest_field(
+        name="elementDefs", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of enum element definitions."""
-    end_def1: Optional["_models.AtlasRelationshipEndDef"] = rest_field(name="endDef1")
+    end_def1: Optional["_models.AtlasRelationshipEndDef"] = rest_field(
+        name="endDef1", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The relationshipEndDef represents an end of the relationship. The end of the
      relationship is defined by a type, an
      attribute name, cardinality and whether
      it  is the container end of the relationship."""
-    end_def2: Optional["_models.AtlasRelationshipEndDef"] = rest_field(name="endDef2")
+    end_def2: Optional["_models.AtlasRelationshipEndDef"] = rest_field(
+        name="endDef2", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The relationshipEndDef represents an end of the relationship. The end of the
      relationship is defined by a type, an
      attribute name, cardinality and whether
      it  is the container end of the relationship."""
     relationship_category: Optional[Union[str, "_models.RelationshipCategory"]] = rest_field(
-        name="relationshipCategory"
+        name="relationshipCategory", visibility=["read", "create", "update", "delete", "query"]
     )
     """The Relationship category determines the style of relationship around
      containment and lifecycle.
@@ -2913,9 +3365,13 @@ class AtlasTypeDef(_model_base.Model):
      In the COMPOSITION case, the children cannot exist without the container.
      For AGGREGATION, the life cycles of the container and children are totally independent. Known
      values are: \"ASSOCIATION\", \"AGGREGATION\", and \"COMPOSITION\"."""
-    relationship_label: Optional[str] = rest_field(name="relationshipLabel")
+    relationship_label: Optional[str] = rest_field(
+        name="relationshipLabel", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The label of the relationship."""
-    attribute_defs: Optional[List["_models.AtlasAttributeDef"]] = rest_field(name="attributeDefs")
+    attribute_defs: Optional[List["_models.AtlasAttributeDef"]] = rest_field(
+        name="attributeDefs", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of attribute definitions."""
 
     @overload
@@ -2973,13 +3429,15 @@ class AtlasTypeDefHeader(_model_base.Model):
     :vartype name: str
     """
 
-    category: Optional[Union[str, "_models.TypeCategory"]] = rest_field()
+    category: Optional[Union[str, "_models.TypeCategory"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The enum of type category. Known values are: \"PRIMITIVE\", \"OBJECT_ID_TYPE\", \"ENUM\",
      \"STRUCT\", \"CLASSIFICATION\", \"ENTITY\", \"ARRAY\", \"MAP\", \"RELATIONSHIP\", and
      \"TERM_TEMPLATE\"."""
-    guid: Optional[str] = rest_field()
+    guid: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The GUID of the type definition."""
-    name: Optional[str] = rest_field()
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the type definition."""
 
     @overload
@@ -3021,19 +3479,33 @@ class AtlasTypesDef(_model_base.Model):
     :vartype term_template_defs: list[~azure.purview.datamap.models.TermTemplateDef]
     """
 
-    business_metadata_defs: Optional[List["_models.AtlasBusinessMetadataDef"]] = rest_field(name="businessMetadataDefs")
+    business_metadata_defs: Optional[List["_models.AtlasBusinessMetadataDef"]] = rest_field(
+        name="businessMetadataDefs", visibility=["read", "create", "update", "delete", "query"]
+    )
     """businessMetadataDefs."""
-    classification_defs: Optional[List["_models.AtlasClassificationDef"]] = rest_field(name="classificationDefs")
+    classification_defs: Optional[List["_models.AtlasClassificationDef"]] = rest_field(
+        name="classificationDefs", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of classification definitions."""
-    entity_defs: Optional[List["_models.AtlasEntityDef"]] = rest_field(name="entityDefs")
+    entity_defs: Optional[List["_models.AtlasEntityDef"]] = rest_field(
+        name="entityDefs", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of entity definitions."""
-    enum_defs: Optional[List["_models.AtlasEnumDef"]] = rest_field(name="enumDefs")
+    enum_defs: Optional[List["_models.AtlasEnumDef"]] = rest_field(
+        name="enumDefs", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of enum definitions."""
-    relationship_defs: Optional[List["_models.AtlasRelationshipDef"]] = rest_field(name="relationshipDefs")
+    relationship_defs: Optional[List["_models.AtlasRelationshipDef"]] = rest_field(
+        name="relationshipDefs", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of relationship definitions."""
-    struct_defs: Optional[List["_models.AtlasStructDef"]] = rest_field(name="structDefs")
+    struct_defs: Optional[List["_models.AtlasStructDef"]] = rest_field(
+        name="structDefs", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of struct definitions."""
-    term_template_defs: Optional[List["_models.TermTemplateDef"]] = rest_field(name="termTemplateDefs")
+    term_template_defs: Optional[List["_models.TermTemplateDef"]] = rest_field(
+        name="termTemplateDefs", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of term template definitions."""
 
     @overload
@@ -3073,13 +3545,13 @@ class AutoCompleteOptions(_model_base.Model):
     :vartype filter: any
     """
 
-    keywords: Optional[str] = rest_field()
+    keywords: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The keywords applied to all fields that support autocomplete operation. It must
      be at least 1 character, and no more than 100 characters."""
-    limit: Optional[int] = rest_field()
+    limit: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of autocomplete results we hope to return. The default value is 50.
      The value must be a number between 1 and 100."""
-    filter: Optional[Any] = rest_field()
+    filter: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The filter for the autocomplete request."""
 
     @overload
@@ -3109,7 +3581,9 @@ class AutoCompleteResult(_model_base.Model):
     :vartype value: list[~azure.purview.datamap.models.AutoCompleteResultValue]
     """
 
-    value: Optional[List["_models.AutoCompleteResultValue"]] = rest_field()
+    value: Optional[List["_models.AutoCompleteResultValue"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The result value."""
 
     @overload
@@ -3139,9 +3613,11 @@ class AutoCompleteResultValue(_model_base.Model):
     :vartype query_plus_text: str
     """
 
-    text: Optional[str] = rest_field()
+    text: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The completed term or phrase."""
-    query_plus_text: Optional[str] = rest_field(name="queryPlusText")
+    query_plus_text: Optional[str] = rest_field(
+        name="queryPlusText", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The completed search query text."""
 
     @overload
@@ -3172,9 +3648,13 @@ class BulkImportResult(_model_base.Model):
     :vartype success_import_info_list: list[~azure.purview.datamap.models.ImportInfo]
     """
 
-    failed_import_info_list: Optional[List["_models.ImportInfo"]] = rest_field(name="failedImportInfoList")
+    failed_import_info_list: Optional[List["_models.ImportInfo"]] = rest_field(
+        name="failedImportInfoList", visibility=["read", "create", "update", "delete", "query"]
+    )
     """failed importInfoList."""
-    success_import_info_list: Optional[List["_models.ImportInfo"]] = rest_field(name="successImportInfoList")
+    success_import_info_list: Optional[List["_models.ImportInfo"]] = rest_field(
+        name="successImportInfoList", visibility=["read", "create", "update", "delete", "query"]
+    )
     """successful importInfoList."""
 
     @overload
@@ -3199,13 +3679,13 @@ class BulkImportResult(_model_base.Model):
 class BusinessMetadataOptions(_model_base.Model):
     """Business metadata to send to the service.
 
-    All required parameters must be populated in order to send to server.
-
     :ivar file: InputStream of file. Required.
     :vartype file: ~azure.purview.datamap._vendor.FileType
     """
 
-    file: FileType = rest_field(is_multipart_file_input=True)
+    file: FileType = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], is_multipart_file_input=True
+    )
     """InputStream of file. Required."""
 
     @overload
@@ -3236,10 +3716,14 @@ class ClassificationAssociateOptions(_model_base.Model):
     :vartype entity_guids: list[str]
     """
 
-    classification: Optional["_models.AtlasClassification"] = rest_field()
+    classification: Optional["_models.AtlasClassification"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """An instance of a classification; it doesn't have an identity, this object
      exists only when associated with an entity."""
-    entity_guids: Optional[List[str]] = rest_field(name="entityGuids")
+    entity_guids: Optional[List[str]] = rest_field(
+        name="entityGuids", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The GUID of the entity."""
 
     @overload
@@ -3270,9 +3754,9 @@ class ContactInfo(_model_base.Model):
     :vartype info: str
     """
 
-    id: Optional[str] = rest_field()
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Azure Active Directory object Id."""
-    info: Optional[str] = rest_field()
+    info: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """additional information to describe this contact."""
 
     @overload
@@ -3306,11 +3790,13 @@ class ContactSearchResultValue(_model_base.Model):
     :vartype contact_type: str
     """
 
-    id: Optional[str] = rest_field()
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The GUID of the contact."""
-    info: Optional[str] = rest_field()
+    info: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The description of the contact."""
-    contact_type: Optional[str] = rest_field(name="contactType")
+    contact_type: Optional[str] = rest_field(
+        name="contactType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The type of the contact. It can be Expert or Owner for an entity. It can be
      Expert or Steward for a glossary term."""
 
@@ -3357,23 +3843,35 @@ class DateFormat(_model_base.Model):
     :vartype time_zone: ~azure.purview.datamap.models.TimeZone
     """
 
-    available_locales: Optional[List[str]] = rest_field(name="availableLocales")
+    available_locales: Optional[List[str]] = rest_field(
+        name="availableLocales", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of available locales."""
-    calendar: Optional[float] = rest_field()
+    calendar: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Calendar."""
-    date_instance: Optional["_models.DateFormat"] = rest_field(name="dateInstance")
+    date_instance: Optional["_models.DateFormat"] = rest_field(
+        name="dateInstance", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The date format."""
-    date_time_instance: Optional["_models.DateFormat"] = rest_field(name="dateTimeInstance")
+    date_time_instance: Optional["_models.DateFormat"] = rest_field(
+        name="dateTimeInstance", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The date format."""
-    instance: Optional["_models.DateFormat"] = rest_field()
+    instance: Optional["_models.DateFormat"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The date format."""
-    lenient: Optional[bool] = rest_field()
+    lenient: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Determines the leniency of the date format."""
-    number_format: Optional["_models.NumberFormat"] = rest_field(name="numberFormat")
+    number_format: Optional["_models.NumberFormat"] = rest_field(
+        name="numberFormat", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The number format."""
-    time_instance: Optional["_models.DateFormat"] = rest_field(name="timeInstance")
+    time_instance: Optional["_models.DateFormat"] = rest_field(
+        name="timeInstance", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The date format."""
-    time_zone: Optional["_models.TimeZone"] = rest_field(name="timeZone")
+    time_zone: Optional["_models.TimeZone"] = rest_field(
+        name="timeZone", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The timezone information."""
 
     @overload
@@ -3413,11 +3911,17 @@ class EntityMutationResult(_model_base.Model):
     :vartype partial_updated_entities: list[~azure.purview.datamap.models.AtlasEntityHeader]
     """
 
-    guid_assignments: Optional[Dict[str, str]] = rest_field(name="guidAssignments")
+    guid_assignments: Optional[Dict[str, str]] = rest_field(
+        name="guidAssignments", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A map of GUID assignments with entities."""
-    mutated_entities: Optional[Dict[str, List["_models.AtlasEntityHeader"]]] = rest_field(name="mutatedEntities")
+    mutated_entities: Optional[Dict[str, List["_models.AtlasEntityHeader"]]] = rest_field(
+        name="mutatedEntities", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The entity headers of mutated entities."""
-    partial_updated_entities: Optional[List["_models.AtlasEntityHeader"]] = rest_field(name="partialUpdatedEntities")
+    partial_updated_entities: Optional[List["_models.AtlasEntityHeader"]] = rest_field(
+        name="partialUpdatedEntities", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of entity headers that partially updated."""
 
     @overload
@@ -3453,13 +3957,19 @@ class ImportInfo(_model_base.Model):
     :vartype remarks: str
     """
 
-    child_object_name: Optional[str] = rest_field(name="childObjectName")
+    child_object_name: Optional[str] = rest_field(
+        name="childObjectName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """childObjectName."""
-    import_status: Optional[Union[str, "_models.ImportStatus"]] = rest_field(name="importStatus")
+    import_status: Optional[Union[str, "_models.ImportStatus"]] = rest_field(
+        name="importStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
     """importStatus. Known values are: \"SUCCESS\" and \"FAILED\"."""
-    parent_object_name: Optional[str] = rest_field(name="parentObjectName")
+    parent_object_name: Optional[str] = rest_field(
+        name="parentObjectName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """parentObjectName."""
-    remarks: Optional[str] = rest_field()
+    remarks: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """remarks."""
 
     @overload
@@ -3494,11 +4004,17 @@ class LineageRelation(_model_base.Model):
     :vartype to_entity_id: str
     """
 
-    from_entity_id: Optional[str] = rest_field(name="fromEntityId")
+    from_entity_id: Optional[str] = rest_field(
+        name="fromEntityId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The GUID of from-entity."""
-    relationship_id: Optional[str] = rest_field(name="relationshipId")
+    relationship_id: Optional[str] = rest_field(
+        name="relationshipId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The GUID of relationship."""
-    to_entity_id: Optional[str] = rest_field(name="toEntityId")
+    to_entity_id: Optional[str] = rest_field(
+        name="toEntityId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The GUID of to-entity."""
 
     @overload
@@ -3528,7 +4044,9 @@ class MoveEntitiesOptions(_model_base.Model):
     :vartype entity_guids: list[str]
     """
 
-    entity_guids: Optional[List[str]] = rest_field(name="entityGuids")
+    entity_guids: Optional[List[str]] = rest_field(
+        name="entityGuids", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of entity guids to be moved to target collection."""
 
     @overload
@@ -3583,33 +4101,57 @@ class NumberFormat(_model_base.Model):
     :vartype rounding_mode: str or ~azure.purview.datamap.models.RoundingMode
     """
 
-    available_locales: Optional[List[str]] = rest_field(name="availableLocales")
+    available_locales: Optional[List[str]] = rest_field(
+        name="availableLocales", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The number format."""
-    currency: Optional[str] = rest_field()
+    currency: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The currency."""
-    currency_instance: Optional["_models.NumberFormat"] = rest_field(name="currencyInstance")
+    currency_instance: Optional["_models.NumberFormat"] = rest_field(
+        name="currencyInstance", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The number format."""
-    grouping_used: Optional[bool] = rest_field(name="groupingUsed")
+    grouping_used: Optional[bool] = rest_field(
+        name="groupingUsed", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Determines if grouping is used."""
-    instance: Optional["_models.NumberFormat"] = rest_field()
+    instance: Optional["_models.NumberFormat"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number format."""
-    integer_instance: Optional["_models.NumberFormat"] = rest_field(name="integerInstance")
+    integer_instance: Optional["_models.NumberFormat"] = rest_field(
+        name="integerInstance", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The number format."""
-    maximum_fraction_digits: Optional[int] = rest_field(name="maximumFractionDigits")
+    maximum_fraction_digits: Optional[int] = rest_field(
+        name="maximumFractionDigits", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The maximum of fraction digits."""
-    maximum_integer_digits: Optional[int] = rest_field(name="maximumIntegerDigits")
+    maximum_integer_digits: Optional[int] = rest_field(
+        name="maximumIntegerDigits", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The maximum of integer digits."""
-    minimum_fraction_digits: Optional[int] = rest_field(name="minimumFractionDigits")
+    minimum_fraction_digits: Optional[int] = rest_field(
+        name="minimumFractionDigits", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The minimum of fraction digits."""
-    minimum_integer_digits: Optional[int] = rest_field(name="minimumIntegerDigits")
+    minimum_integer_digits: Optional[int] = rest_field(
+        name="minimumIntegerDigits", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The minimum of integer digits."""
-    number_instance: Optional["_models.NumberFormat"] = rest_field(name="numberInstance")
+    number_instance: Optional["_models.NumberFormat"] = rest_field(
+        name="numberInstance", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The number format."""
-    parse_integer_only: Optional[bool] = rest_field(name="parseIntegerOnly")
+    parse_integer_only: Optional[bool] = rest_field(
+        name="parseIntegerOnly", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Determines if only integer is parsed."""
-    percent_instance: Optional["_models.NumberFormat"] = rest_field(name="percentInstance")
+    percent_instance: Optional["_models.NumberFormat"] = rest_field(
+        name="percentInstance", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The number format."""
-    rounding_mode: Optional[Union[str, "_models.RoundingMode"]] = rest_field(name="roundingMode")
+    rounding_mode: Optional[Union[str, "_models.RoundingMode"]] = rest_field(
+        name="roundingMode", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The enum of rounding mode. Known values are: \"UP\", \"DOWN\", \"CEILING\", \"FLOOR\",
      \"HALF_UP\", \"HALF_DOWN\", \"HALF_EVEN\", and \"UNNECESSARY\"."""
 
@@ -3655,11 +4197,17 @@ class ParentRelation(_model_base.Model):
     :vartype parent_entity_id: str
     """
 
-    child_entity_id: Optional[str] = rest_field(name="childEntityId")
+    child_entity_id: Optional[str] = rest_field(
+        name="childEntityId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The GUID of child entity."""
-    relationship_id: Optional[str] = rest_field(name="relationshipId")
+    relationship_id: Optional[str] = rest_field(
+        name="relationshipId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The GUID of relationship."""
-    parent_entity_id: Optional[str] = rest_field(name="parentEntityId")
+    parent_entity_id: Optional[str] = rest_field(
+        name="parentEntityId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The GUID of parent entity."""
 
     @overload
@@ -3699,26 +4247,32 @@ class PurviewObjectId(_model_base.Model):
     :vartype item_path: str
     :ivar resource_id: Resource Id.
     :vartype resource_id: str
-    :ivar properties: Dictionary of :code:`<any>`.
+    :ivar properties: Dictionary of <any>.
     :vartype properties: dict[str, any]
     """
 
-    guid: Optional[str] = rest_field()
+    guid: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The GUID of the object."""
-    type_name: Optional[str] = rest_field(name="typeName")
+    type_name: Optional[str] = rest_field(name="typeName", visibility=["read", "create", "update", "delete", "query"])
     """The name of the type."""
-    unique_attributes: Optional[Dict[str, Any]] = rest_field(name="uniqueAttributes")
+    unique_attributes: Optional[Dict[str, Any]] = rest_field(
+        name="uniqueAttributes", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The unique attributes of the object."""
-    name: Optional[str] = rest_field()
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Name."""
-    display_text: Optional[str] = rest_field(name="displayText")
+    display_text: Optional[str] = rest_field(
+        name="displayText", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Display text."""
-    item_path: Optional[str] = rest_field(name="itemPath")
+    item_path: Optional[str] = rest_field(name="itemPath", visibility=["read", "create", "update", "delete", "query"])
     """Item path."""
-    resource_id: Optional[str] = rest_field(name="resourceId")
+    resource_id: Optional[str] = rest_field(
+        name="resourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Resource Id."""
-    properties: Optional[Dict[str, Any]] = rest_field()
-    """Dictionary of :code:`<any>`."""
+    properties: Optional[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Dictionary of <any>."""
 
     @overload
     def __init__(
@@ -3767,21 +4321,27 @@ class QueryOptions(_model_base.Model):
     :vartype taxonomy_setting: ~azure.purview.datamap.models.SearchTaxonomySetting
     """
 
-    keywords: Optional[str] = rest_field()
+    keywords: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The keywords applied to all searchable fields."""
-    limit: Optional[int] = rest_field()
+    limit: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The limit of the number of the search result. default value is 50; maximum
      value is 1000."""
-    continuation_token: Optional[str] = rest_field(name="continuationToken")
+    continuation_token: Optional[str] = rest_field(
+        name="continuationToken", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The token used to get next batch of data. Default 'Null' to get the first
      batch, and will return new token in each response unless there's no more data."""
-    orderby: Optional[List[Any]] = rest_field()
+    orderby: Optional[List[Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The sort order of search results, can specify multiple fields."""
-    filter: Optional[Any] = rest_field()
+    filter: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The filter for the search. See examples for the usage of supported filters."""
-    facets: Optional[List["_models.SearchFacetItem"]] = rest_field()
+    facets: Optional[List["_models.SearchFacetItem"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The facets for search. See examples for the usage of supported facets."""
-    taxonomy_setting: Optional["_models.SearchTaxonomySetting"] = rest_field(name="taxonomySetting")
+    taxonomy_setting: Optional["_models.SearchTaxonomySetting"] = rest_field(
+        name="taxonomySetting", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The taxonomy setting for search."""
 
     @overload
@@ -3828,18 +4388,28 @@ class QueryResult(_model_base.Model):
     :vartype value: list[~azure.purview.datamap.models.SearchResultValue]
     """
 
-    search_count: Optional[int] = rest_field(name="@search.count")
+    search_count: Optional[int] = rest_field(
+        name="@search.count", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The total number of search results (not the number of documents in a single
      page)."""
-    search_count_approximate: Optional[bool] = rest_field(name="@search.count.approximate")
+    search_count_approximate: Optional[bool] = rest_field(
+        name="@search.count.approximate", visibility=["read", "create", "update", "delete", "query"]
+    )
     """'True' if the '@search.count' is an approximate value and vise versa."""
-    continuation_token: Optional[str] = rest_field(name="continuationToken")
+    continuation_token: Optional[str] = rest_field(
+        name="continuationToken", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The token used to get next batch of data. Absent if there's no more data."""
-    search_facets: Optional["_models.SearchFacetResultValue"] = rest_field(name="@search.facets")
+    search_facets: Optional["_models.SearchFacetResultValue"] = rest_field(
+        name="@search.facets", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A facet list that consists of index fields assetType ,classification,
      contactId, and label. When the facet is specified in the request, the value of
      the facet is returned as an element of @search.facets."""
-    value: Optional[List["_models.SearchResultValue"]] = rest_field()
+    value: Optional[List["_models.SearchResultValue"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Search result value."""
 
     @overload
@@ -3873,9 +4443,11 @@ class ResourceLink(_model_base.Model):
     :vartype url: str
     """
 
-    display_name: Optional[str] = rest_field(name="displayName")
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Display name for url."""
-    url: Optional[str] = rest_field()
+    url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """web url. http or https."""
 
     @overload
@@ -3908,11 +4480,11 @@ class SearchFacetItem(_model_base.Model):
     :vartype sort: ~azure.purview.datamap.models.SearchFacetSort
     """
 
-    count: Optional[int] = rest_field()
+    count: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The count of the facet item."""
-    facet: Optional[str] = rest_field()
+    facet: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the facet item."""
-    sort: Optional["_models.SearchFacetSort"] = rest_field()
+    sort: Optional["_models.SearchFacetSort"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Define the sorting criteria for items."""
 
     @overload
@@ -3944,9 +4516,9 @@ class SearchFacetItemValue(_model_base.Model):
     :vartype value: str
     """
 
-    count: Optional[int] = rest_field()
+    count: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The count of the facet item."""
-    value: Optional[str] = rest_field()
+    value: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the facet item."""
 
     @overload
@@ -3995,25 +4567,45 @@ class SearchFacetResultValue(_model_base.Model):
     :vartype term_template: list[~azure.purview.datamap.models.SearchFacetItemValue]
     """
 
-    entity_type: Optional[List["_models.SearchFacetItemValue"]] = rest_field(name="entityType")
+    entity_type: Optional[List["_models.SearchFacetItemValue"]] = rest_field(
+        name="entityType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Entity type."""
-    asset_type: Optional[List["_models.SearchFacetItemValue"]] = rest_field(name="assetType")
+    asset_type: Optional[List["_models.SearchFacetItemValue"]] = rest_field(
+        name="assetType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Asset type."""
-    classification: Optional[List["_models.SearchFacetItemValue"]] = rest_field()
+    classification: Optional[List["_models.SearchFacetItemValue"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Classification."""
-    term: Optional[List["_models.SearchFacetItemValue"]] = rest_field()
+    term: Optional[List["_models.SearchFacetItemValue"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Term."""
-    contact_id: Optional[List["_models.SearchFacetItemValue"]] = rest_field(name="contactId")
+    contact_id: Optional[List["_models.SearchFacetItemValue"]] = rest_field(
+        name="contactId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Contact id."""
-    contact_type: Optional[List["_models.SearchFacetItemValue"]] = rest_field(name="contactType")
+    contact_type: Optional[List["_models.SearchFacetItemValue"]] = rest_field(
+        name="contactType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Contact type."""
-    label: Optional[List["_models.SearchFacetItemValue"]] = rest_field()
+    label: Optional[List["_models.SearchFacetItemValue"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Label."""
-    glossary_type: Optional[List["_models.SearchFacetItemValue"]] = rest_field(name="glossaryType")
+    glossary_type: Optional[List["_models.SearchFacetItemValue"]] = rest_field(
+        name="glossaryType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Glossary type."""
-    term_status: Optional[List["_models.SearchFacetItemValue"]] = rest_field(name="termStatus")
+    term_status: Optional[List["_models.SearchFacetItemValue"]] = rest_field(
+        name="termStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Term status."""
-    term_template: Optional[List["_models.SearchFacetItemValue"]] = rest_field(name="termTemplate")
+    term_template: Optional[List["_models.SearchFacetItemValue"]] = rest_field(
+        name="termTemplate", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Term template."""
 
     @overload
@@ -4052,9 +4644,13 @@ class SearchFacetSort(_model_base.Model):
     :vartype value: str or ~azure.purview.datamap.models.SearchSortOrder
     """
 
-    count: Optional[Union[str, "_models.SearchSortOrder"]] = rest_field()
+    count: Optional[Union[str, "_models.SearchSortOrder"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Order by count. Known values are: \"asc\" and \"desc\"."""
-    value: Optional[Union[str, "_models.SearchSortOrder"]] = rest_field()
+    value: Optional[Union[str, "_models.SearchSortOrder"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Order by value. Known values are: \"asc\" and \"desc\"."""
 
     @overload
@@ -4094,15 +4690,19 @@ class SearchHighlights(_model_base.Model):
     :vartype entity_type: list[str]
     """
 
-    id: Optional[List[str]] = rest_field()
+    id: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Id."""
-    qualified_name: Optional[List[str]] = rest_field(name="qualifiedName")
+    qualified_name: Optional[List[str]] = rest_field(
+        name="qualifiedName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Qualified name."""
-    name: Optional[List[str]] = rest_field()
+    name: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Name."""
-    description: Optional[List[str]] = rest_field()
+    description: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Description."""
-    entity_type: Optional[List[str]] = rest_field(name="entityType")
+    entity_type: Optional[List[str]] = rest_field(
+        name="entityType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Entity type."""
 
     @overload
@@ -4158,7 +4758,7 @@ class SearchResultValue(_model_base.Model):
     :ivar description: The description of the asset.
     :vartype description: str
     :ivar endorsement: The endorsement of the asset.
-    :vartype endorsement: str
+    :vartype endorsement: list[str]
     :ivar owner: The owner of the record.
     :vartype owner: str
     :ivar classification: The classifications of the record.
@@ -4184,55 +4784,83 @@ class SearchResultValue(_model_base.Model):
     :vartype long_description: str
     """
 
-    search_score: Optional[float] = rest_field(name="@search.score")
+    search_score: Optional[float] = rest_field(
+        name="@search.score", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The search score calculated by the search engine. The results are ordered by
      search score by default."""
-    search_highlights: Optional["_models.SearchHighlights"] = rest_field(name="@search.highlights")
+    search_highlights: Optional["_models.SearchHighlights"] = rest_field(
+        name="@search.highlights", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A highlight list that consists of index fields id ,qualifiedName, name,
      description, entityType. When the keyword appears in those fields, the value of
      the field, attached with emphasis mark, is returned as an element of
      @search.highlights."""
-    object_type: Optional[str] = rest_field(name="objectType")
+    object_type: Optional[str] = rest_field(
+        name="objectType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The object type of the record. Object type is the top-level property to
      distinguish whether a record is an asset or a term."""
-    create_time: Optional[int] = rest_field(name="createTime")
+    create_time: Optional[int] = rest_field(
+        name="createTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The create time of the record. The Unix epoch format."""
-    update_time: Optional[int] = rest_field(name="updateTime")
+    update_time: Optional[int] = rest_field(
+        name="updateTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The last update time of the record. The Unix epoch format."""
-    id: Optional[str] = rest_field()
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The GUID of the record."""
-    name: Optional[str] = rest_field()
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the record."""
-    qualified_name: Optional[str] = rest_field(name="qualifiedName")
+    qualified_name: Optional[str] = rest_field(
+        name="qualifiedName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The qualified name of the record."""
-    entity_type: Optional[str] = rest_field(name="entityType")
+    entity_type: Optional[str] = rest_field(
+        name="entityType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The type name of the asset."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The description of the asset."""
-    endorsement: Optional[str] = rest_field()
+    endorsement: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The endorsement of the asset."""
-    owner: Optional[str] = rest_field()
+    owner: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The owner of the record."""
-    classification: Optional[List[str]] = rest_field()
+    classification: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The classifications of the record."""
-    label: Optional[List[str]] = rest_field()
+    label: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The labels of the asset."""
-    term: Optional[List["_models.TermSearchResultValue"]] = rest_field()
+    term: Optional[List["_models.TermSearchResultValue"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The terms assigned to the asset."""
-    contact: Optional[List["_models.ContactSearchResultValue"]] = rest_field()
+    contact: Optional[List["_models.ContactSearchResultValue"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The contacts of the asset."""
-    asset_type: Optional[List[str]] = rest_field(name="assetType")
+    asset_type: Optional[List[str]] = rest_field(
+        name="assetType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The asset types of the asset."""
-    glossary_type: Optional[str] = rest_field(name="glossaryType")
+    glossary_type: Optional[str] = rest_field(
+        name="glossaryType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The type name of the term. Could be AtlasGlossary, AtlasGlossaryTerm or
      AtlasGlossaryCategory."""
-    glossary: Optional[str] = rest_field()
+    glossary: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The glossary name of the term."""
-    term_status: Optional[str] = rest_field(name="termStatus")
+    term_status: Optional[str] = rest_field(
+        name="termStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The status of the term."""
-    term_template: Optional[List[str]] = rest_field(name="termTemplate")
+    term_template: Optional[List[str]] = rest_field(
+        name="termTemplate", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The term template names used by the term."""
-    long_description: Optional[str] = rest_field(name="longDescription")
+    long_description: Optional[str] = rest_field(
+        name="longDescription", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The definition of the term."""
 
     @overload
@@ -4249,7 +4877,7 @@ class SearchResultValue(_model_base.Model):
         qualified_name: Optional[str] = None,
         entity_type: Optional[str] = None,
         description: Optional[str] = None,
-        endorsement: Optional[str] = None,
+        endorsement: Optional[List[str]] = None,
         owner: Optional[str] = None,
         classification: Optional[List[str]] = None,
         label: Optional[List[str]] = None,
@@ -4283,9 +4911,11 @@ class SearchTaxonomySetting(_model_base.Model):
     :vartype facet: ~azure.purview.datamap.models.SearchFacetItem
     """
 
-    asset_types: Optional[List[str]] = rest_field(name="assetTypes")
+    asset_types: Optional[List[str]] = rest_field(
+        name="assetTypes", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Asset types."""
-    facet: Optional["_models.SearchFacetItem"] = rest_field()
+    facet: Optional["_models.SearchFacetItem"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The content of a search facet result item."""
 
     @overload
@@ -4322,15 +4952,15 @@ class SuggestOptions(_model_base.Model):
     :vartype filter: any
     """
 
-    keywords: Optional[str] = rest_field()
+    keywords: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The keywords applied to all fields that support suggest operation. It must be
      at least 1 character, and no more than 100 characters. In the index schema we
      defined a default suggester which lists all the supported fields and specifies
      a search mode."""
-    limit: Optional[int] = rest_field()
+    limit: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of suggestions we hope to return. The default value is 5. The value
      must be a number between 1 and 100."""
-    filter: Optional[Any] = rest_field()
+    filter: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The filter for the search."""
 
     @overload
@@ -4360,7 +4990,9 @@ class SuggestResult(_model_base.Model):
     :vartype value: list[~azure.purview.datamap.models.SuggestResultValue]
     """
 
-    value: Optional[List["_models.SuggestResultValue"]] = rest_field()
+    value: Optional[List["_models.SuggestResultValue"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The result value."""
 
     @overload
@@ -4409,7 +5041,7 @@ class SuggestResultValue(_model_base.Model):
     :ivar description: The description of the asset.
     :vartype description: str
     :ivar endorsement: The endorsement of the asset.
-    :vartype endorsement: str
+    :vartype endorsement: list[str]
     :ivar owner: The owner of the record.
     :vartype owner: str
     :ivar classification: The classifications of the record.
@@ -4435,53 +5067,81 @@ class SuggestResultValue(_model_base.Model):
     :vartype long_description: str
     """
 
-    search_score: Optional[float] = rest_field(name="@search.score")
+    search_score: Optional[float] = rest_field(
+        name="@search.score", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The search score calculated by the search engine. The results are ordered by
      search score by default."""
-    search_text: Optional[str] = rest_field(name="@search.text")
+    search_text: Optional[str] = rest_field(
+        name="@search.text", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The target text that contains the keyword as prefix. The keyword is wrapped
      with emphasis mark."""
-    object_type: Optional[str] = rest_field(name="objectType")
+    object_type: Optional[str] = rest_field(
+        name="objectType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The object type of the record. Object type is the top-level property to
      distinguish whether a record is an asset or a term."""
-    create_time: Optional[int] = rest_field(name="createTime")
+    create_time: Optional[int] = rest_field(
+        name="createTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The create time of the record. The Unix epoch format."""
-    update_time: Optional[int] = rest_field(name="updateTime")
+    update_time: Optional[int] = rest_field(
+        name="updateTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The last update time of the record. The Unix epoch format."""
-    id: Optional[str] = rest_field()
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The GUID of the record."""
-    name: Optional[str] = rest_field()
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the record."""
-    qualified_name: Optional[str] = rest_field(name="qualifiedName")
+    qualified_name: Optional[str] = rest_field(
+        name="qualifiedName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The qualified name of the record."""
-    entity_type: Optional[str] = rest_field(name="entityType")
+    entity_type: Optional[str] = rest_field(
+        name="entityType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The type name of the asset."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The description of the asset."""
-    endorsement: Optional[str] = rest_field()
+    endorsement: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The endorsement of the asset."""
-    owner: Optional[str] = rest_field()
+    owner: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The owner of the record."""
-    classification: Optional[List[str]] = rest_field()
+    classification: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The classifications of the record."""
-    label: Optional[List[str]] = rest_field()
+    label: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The labels of the asset."""
-    term: Optional[List["_models.TermSearchResultValue"]] = rest_field()
+    term: Optional[List["_models.TermSearchResultValue"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The terms assigned to the asset."""
-    contact: Optional[List["_models.ContactSearchResultValue"]] = rest_field()
+    contact: Optional[List["_models.ContactSearchResultValue"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The contacts of the asset."""
-    asset_type: Optional[List[str]] = rest_field(name="assetType")
+    asset_type: Optional[List[str]] = rest_field(
+        name="assetType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The asset types of the asset."""
-    glossary_type: Optional[str] = rest_field(name="glossaryType")
+    glossary_type: Optional[str] = rest_field(
+        name="glossaryType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The type name of the term. Could be AtlasGlossary, AtlasGlossaryTerm or
      AtlasGlossaryCategory."""
-    glossary: Optional[str] = rest_field()
+    glossary: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The glossary name of the term."""
-    term_status: Optional[str] = rest_field(name="termStatus")
+    term_status: Optional[str] = rest_field(
+        name="termStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The status of the term."""
-    term_template: Optional[List[str]] = rest_field(name="termTemplate")
+    term_template: Optional[List[str]] = rest_field(
+        name="termTemplate", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The term template names used by the term."""
-    long_description: Optional[str] = rest_field(name="longDescription")
+    long_description: Optional[str] = rest_field(
+        name="longDescription", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The definition of the term."""
 
     @overload
@@ -4498,7 +5158,7 @@ class SuggestResultValue(_model_base.Model):
         qualified_name: Optional[str] = None,
         entity_type: Optional[str] = None,
         description: Optional[str] = None,
-        endorsement: Optional[str] = None,
+        endorsement: Optional[List[str]] = None,
         owner: Optional[str] = None,
         classification: Optional[List[str]] = None,
         label: Optional[List[str]] = None,
@@ -4534,11 +5194,13 @@ class TermSearchResultValue(_model_base.Model):
     :vartype guid: str
     """
 
-    name: Optional[str] = rest_field()
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the term."""
-    glossary_name: Optional[str] = rest_field(name="glossaryName")
+    glossary_name: Optional[str] = rest_field(
+        name="glossaryName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The name of the glossary which contains the term."""
-    guid: Optional[str] = rest_field()
+    guid: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The GUID of the term."""
 
     @overload
@@ -4598,37 +5260,53 @@ class TermTemplateDef(_model_base.Model):
     :vartype attribute_defs: list[~azure.purview.datamap.models.AtlasAttributeDef]
     """
 
-    category: Optional[Union[str, "_models.TypeCategory"]] = rest_field()
+    category: Optional[Union[str, "_models.TypeCategory"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The enum of type category. Known values are: \"PRIMITIVE\", \"OBJECT_ID_TYPE\", \"ENUM\",
      \"STRUCT\", \"CLASSIFICATION\", \"ENTITY\", \"ARRAY\", \"MAP\", \"RELATIONSHIP\", and
      \"TERM_TEMPLATE\"."""
-    create_time: Optional[int] = rest_field(name="createTime")
+    create_time: Optional[int] = rest_field(
+        name="createTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The created time of the record."""
-    created_by: Optional[str] = rest_field(name="createdBy")
+    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read", "create", "update", "delete", "query"])
     """The user who created the record."""
-    date_formatter: Optional["_models.DateFormat"] = rest_field(name="dateFormatter")
+    date_formatter: Optional["_models.DateFormat"] = rest_field(
+        name="dateFormatter", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The date format."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The description of the type definition."""
-    guid: Optional[str] = rest_field()
+    guid: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The GUID of the type definition."""
-    name: Optional[str] = rest_field()
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the type definition."""
-    options: Optional[Dict[str, str]] = rest_field()
+    options: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The options for the type definition."""
-    service_type: Optional[str] = rest_field(name="serviceType")
+    service_type: Optional[str] = rest_field(
+        name="serviceType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The service type."""
-    type_version: Optional[str] = rest_field(name="typeVersion")
+    type_version: Optional[str] = rest_field(
+        name="typeVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The version of the type."""
-    update_time: Optional[int] = rest_field(name="updateTime")
+    update_time: Optional[int] = rest_field(
+        name="updateTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The update time of the record."""
-    updated_by: Optional[str] = rest_field(name="updatedBy")
+    updated_by: Optional[str] = rest_field(name="updatedBy", visibility=["read", "create", "update", "delete", "query"])
     """The user who updated the record."""
-    version: Optional[int] = rest_field()
+    version: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The version of the record."""
-    last_modified_ts: Optional[str] = rest_field(name="lastModifiedTS")
+    last_modified_ts: Optional[str] = rest_field(
+        name="lastModifiedTS", visibility=["read", "create", "update", "delete", "query"]
+    )
     """ETag for concurrency control."""
-    attribute_defs: Optional[List["_models.AtlasAttributeDef"]] = rest_field(name="attributeDefs")
+    attribute_defs: Optional[List["_models.AtlasAttributeDef"]] = rest_field(
+        name="attributeDefs", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of attribute definitions."""
 
     @overload
@@ -4674,11 +5352,11 @@ class TimeBoundary(_model_base.Model):
     :vartype time_zone: str
     """
 
-    end_time: Optional[str] = rest_field(name="endTime")
+    end_time: Optional[str] = rest_field(name="endTime", visibility=["read", "create", "update", "delete", "query"])
     """The end of the time boundary."""
-    start_time: Optional[str] = rest_field(name="startTime")
+    start_time: Optional[str] = rest_field(name="startTime", visibility=["read", "create", "update", "delete", "query"])
     """The start of the time boundary."""
-    time_zone: Optional[str] = rest_field(name="timeZone")
+    time_zone: Optional[str] = rest_field(name="timeZone", visibility=["read", "create", "update", "delete", "query"])
     """The timezone of the time boundary."""
 
     @overload
@@ -4718,17 +5396,23 @@ class TimeZone(_model_base.Model):
     :vartype raw_offset: int
     """
 
-    dst_savings: Optional[int] = rest_field(name="dstSavings")
+    dst_savings: Optional[int] = rest_field(
+        name="dstSavings", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The value of the daylight saving time."""
-    id: Optional[str] = rest_field()
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the timezone."""
-    available_ids: Optional[List[str]] = rest_field(name="availableIds")
+    available_ids: Optional[List[str]] = rest_field(
+        name="availableIds", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of available IDs."""
-    default: Optional["_models.TimeZone"] = rest_field()
+    default: Optional["_models.TimeZone"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The timezone information."""
-    display_name: Optional[str] = rest_field(name="displayName")
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The display name of the timezone."""
-    raw_offset: Optional[int] = rest_field(name="rawOffset")
+    raw_offset: Optional[int] = rest_field(name="rawOffset", visibility=["read", "create", "update", "delete", "query"])
     """The raw offset of the timezone."""
 
     @overload

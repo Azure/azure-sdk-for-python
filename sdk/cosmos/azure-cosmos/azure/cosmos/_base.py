@@ -89,7 +89,8 @@ def _get_match_headers(kwargs: Dict[str, Any]) -> Tuple[Optional[str], Optional[
     elif match_condition == MatchConditions.IfMissing:
         if_none_match = '*'
     elif match_condition is None:
-        if 'etag' in kwargs:
+        etag = kwargs.pop('etag', None)
+        if etag is not None:
             raise ValueError("'etag' specified without 'match_condition'.")
     else:
         raise TypeError("Invalid match condition: {}".format(match_condition))
@@ -119,6 +120,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         operation_type: str,
         options: Mapping[str, Any],
         partition_key_range_id: Optional[str] = None,
+        client_id: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Gets HTTP request headers.
 
@@ -131,6 +133,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     :param str operation_type:
     :param dict options:
     :param str partition_key_range_id:
+    :param str client_id:
     :return: The HTTP request headers.
     :rtype: dict
     """
@@ -279,6 +282,9 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
 
     if partition_key_range_id is not None:
         headers[http_constants.HttpHeaders.PartitionKeyRangeID] = partition_key_range_id
+
+    if client_id is not None:
+        headers[http_constants.HttpHeaders.ClientId] = client_id
 
     if options.get("enableScriptLogging"):
         headers[http_constants.HttpHeaders.EnableScriptLogging] = options["enableScriptLogging"]

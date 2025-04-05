@@ -191,7 +191,6 @@ class KeyClient(AsyncKeyVaultClientBase):
         )
 
         bundle = await self._client.create_key(
-            vault_base_url=self.vault_url,
             key_name=name,
             parameters=parameters,
             **kwargs,
@@ -436,7 +435,6 @@ class KeyClient(AsyncKeyVaultClientBase):
         if polling_interval is None:
             polling_interval = 2
         pipeline_response, deleted_key_bundle = await self._client.delete_key(
-            vault_base_url=self.vault_url,
             key_name=name,
             cls=lambda pipeline_response, deserialized, _: (pipeline_response, deserialized),
             **kwargs,
@@ -483,7 +481,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         if version is None:
             version = ""
 
-        bundle = await self._client.get_key(self.vault_url, name, version, **kwargs)
+        bundle = await self._client.get_key(name, version, **kwargs)
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace_async
@@ -508,7 +506,7 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: Get a deleted key
                 :dedent: 8
         """
-        bundle = await self._client.get_deleted_key(self.vault_url, name, **kwargs)
+        bundle = await self._client.get_deleted_key(name, **kwargs)
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     @distributed_trace
@@ -529,7 +527,6 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         return self._client.get_deleted_keys(
-            self.vault_url,
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [DeletedKey._from_deleted_key_item(x) for x in objs],
             **kwargs,
@@ -553,7 +550,6 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         return self._client.get_keys(
-            self.vault_url,
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [KeyProperties._from_key_item(x) for x in objs],
             **kwargs,
@@ -579,7 +575,6 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         return self._client.get_key_versions(
-            self.vault_url,
             name,
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [KeyProperties._from_key_item(x) for x in objs],
@@ -611,7 +606,7 @@ class KeyClient(AsyncKeyVaultClientBase):
                 await key_client.purge_deleted_key("key-name")
 
         """
-        await self._client.purge_deleted_key(self.vault_url, name, **kwargs)
+        await self._client.purge_deleted_key(name, **kwargs)
 
     @distributed_trace_async
     async def recover_deleted_key(self, name: str, **kwargs: Any) -> KeyVaultKey:
@@ -640,7 +635,6 @@ class KeyClient(AsyncKeyVaultClientBase):
         if polling_interval is None:
             polling_interval = 2
         pipeline_response, recovered_key_bundle = await self._client.recover_deleted_key(
-            vault_base_url=self.vault_url,
             key_name=name,
             cls=lambda pipeline_response, deserialized, _: (pipeline_response, deserialized),
             **kwargs,
@@ -723,7 +717,6 @@ class KeyClient(AsyncKeyVaultClientBase):
         )
 
         bundle = await self._client.update_key(
-            self.vault_url,
             name,
             key_version=version or "",
             parameters=parameters,
@@ -755,7 +748,7 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: Get a key backup
                 :dedent: 8
         """
-        backup_result = await self._client.backup_key(self.vault_url, name, **kwargs)
+        backup_result = await self._client.backup_key(name, **kwargs)
         return backup_result.value
 
     @distributed_trace_async
@@ -783,7 +776,6 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         bundle = await self._client.restore_key(
-            self.vault_url,
             parameters=self._models.KeyRestoreParameters(key_bundle_backup=backup),
             **kwargs,
         )
@@ -850,7 +842,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         )
 
         bundle = await self._client.import_key(
-            self.vault_url, name, parameters=parameters, **kwargs
+            name, parameters=parameters, **kwargs
         )
         return KeyVaultKey._from_key_bundle(bundle)
 
@@ -886,7 +878,6 @@ class KeyClient(AsyncKeyVaultClientBase):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         result = await self._client.release(
-            vault_base_url=self._vault_url,
             key_name=name,
             key_version=version or "",
             parameters=self._models.KeyReleaseParameters(
@@ -921,7 +912,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         if count < 1:
             raise ValueError("At least one random byte must be requested")
         parameters = self._models.GetRandomBytesRequest(count=count)
-        result = await self._client.get_random_bytes(vault_base_url=self._vault_url, parameters=parameters, **kwargs)
+        result = await self._client.get_random_bytes(parameters=parameters, **kwargs)
         return result.value
 
     @distributed_trace_async
@@ -935,7 +926,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        policy = await self._client.get_key_rotation_policy(vault_base_url=self._vault_url, key_name=key_name, **kwargs)
+        policy = await self._client.get_key_rotation_policy(key_name=key_name, **kwargs)
         return KeyRotationPolicy._from_generated(policy)
 
     @distributed_trace_async
@@ -951,11 +942,11 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        bundle = await self._client.rotate_key(vault_base_url=self._vault_url, key_name=name, **kwargs)
+        bundle = await self._client.rotate_key(key_name=name, **kwargs)
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace_async
-    async def update_key_rotation_policy(
+    async def update_key_rotation_policy(  # pylint: disable=unused-argument
         self,
         key_name: str,
         policy: KeyRotationPolicy,
@@ -999,10 +990,28 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         attributes = self._models.KeyRotationPolicyAttributes(expiry_time=expires_in or policy.expires_in)
         new_policy = self._models.KeyRotationPolicy(lifetime_actions=actions or [], attributes=attributes)
-        result = await self._client.update_key_rotation_policy(
-            vault_base_url=self._vault_url, key_name=key_name, key_rotation_policy=new_policy, **kwargs
-        )
+        result = await self._client.update_key_rotation_policy(key_name=key_name, key_rotation_policy=new_policy)
         return KeyRotationPolicy._from_generated(result)
+
+    @distributed_trace_async
+    async def get_key_attestation(self, name: str, version: Optional[str] = None, **kwargs: Any) -> KeyVaultKey:
+        """Get a key and its attestation blob.
+        
+        This method is applicable to any key stored in Azure Key Vault Managed HSM. This operation requires the keys/get
+        permission.
+
+        :param str name: The name of the key.
+        :param version: (optional) A specific version of the key to get. If not specified, gets the latest version
+            of the key.
+        :type version: str or None
+
+        :return: The key attestation.
+        :rtype: ~azure.keyvault.keys.KeyAttestation
+
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        bundle = await self._client.get_key_attestation(key_name=name, key_version=version or "", **kwargs)
+        return KeyVaultKey._from_key_bundle(bundle)
 
     async def __aenter__(self) -> "KeyClient":
         await self._client.__aenter__()
