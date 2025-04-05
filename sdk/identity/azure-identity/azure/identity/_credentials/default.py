@@ -4,7 +4,7 @@
 # ------------------------------------
 import logging
 import os
-from typing import List, Any, Optional, cast
+from typing import List, Any, Optional, cast, Dict
 
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions, SupportsTokenInfo, TokenCredential
 from .._constants import EnvironmentVariables
@@ -48,22 +48,11 @@ class DefaultAzureCredential(ChainedTokenCredential):
     :keyword str authority: Authority of a Microsoft Entra endpoint, for example 'login.microsoftonline.com',
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds. Managed identities ignore this because they reside in a single cloud.
-    :keyword bool exclude_workload_identity_credential: Whether to exclude the workload identity from the credential.
-        Defaults to **False**.
-    :keyword bool exclude_developer_cli_credential: Whether to exclude the Azure Developer CLI
-        from the credential. Defaults to **False**.
-    :keyword bool exclude_cli_credential: Whether to exclude the Azure CLI from the credential. Defaults to **False**.
-    :keyword bool exclude_environment_credential: Whether to exclude a service principal configured by environment
-        variables from the credential. Defaults to **False**.
-    :keyword bool exclude_managed_identity_credential: Whether to exclude managed identity from the credential.
-        Defaults to **False**.
-    :keyword bool exclude_powershell_credential: Whether to exclude Azure PowerShell. Defaults to **False**.
-    :keyword bool exclude_visual_studio_code_credential: Whether to exclude stored credential from VS Code.
-        Defaults to **True**.
-    :keyword bool exclude_shared_token_cache_credential: Whether to exclude the shared token cache. Defaults to
-        **False**.
-    :keyword bool exclude_interactive_browser_credential: Whether to exclude interactive browser authentication (see
-        :class:`~azure.identity.InteractiveBrowserCredential`). Defaults to **True**.
+    :keyword list[str] default_credential_allow_list: A list of credential names.
+        The default is to try all available credentials. If this is set, only the credentials in the list are tried.
+        e.g. ["ENVIRONMENT","CLI","MANAGED_IDENTITY"] will only try EnvironmentCredential, AzureCliCredential, and
+        ManagedIdentityCredential. All valid credential names are "DEVELOPER_CLI", "WORKLOAD_IDENTITY", "CLI",
+        "ENVIRONMENT", "MANAGED_IDENTITY", "POWERSHELL" and "SHARED_CACHE".
     :keyword str interactive_browser_tenant_id: Tenant ID to use when authenticating a user through
         :class:`~azure.identity.InteractiveBrowserCredential`. Defaults to the value of environment variable
         AZURE_TENANT_ID, if any. If unspecified, users will authenticate in their home tenants.
@@ -96,11 +85,12 @@ class DefaultAzureCredential(ChainedTokenCredential):
             :caption: Create a DefaultAzureCredential.
     """
 
-    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=too-many-statements, too-many-locals
+    def __init__(self, **kwargs: Any) -> None:
+        # pylint: disable=too-many-statements, too-many-locals
         if "tenant_id" in kwargs:
             raise TypeError("'tenant_id' is not supported in DefaultAzureCredential.")
 
-        authority = kwargs.pop("authority", None)
+        authority: Optional[str] = kwargs.pop("authority", None)
 
         vscode_tenant_id = kwargs.pop(
             "visual_studio_code_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
@@ -144,45 +134,67 @@ class DefaultAzureCredential(ChainedTokenCredential):
         exclude_powershell_credential = kwargs.pop("exclude_powershell_credential", False)
 
         credentials: List[SupportsTokenInfo] = []
+        valid_credentials: List[str] = []
+        avail_credentials: Dict[str, Any] = {}
         within_dac.set(True)
+
         if not exclude_environment_credential:
-            credentials.append(EnvironmentCredential(authority=authority, _within_dac=True, **kwargs))
+            valid_credentials.append("ENVIRONMENT")
+            env_cred = EnvironmentCredential(authority=authority, _within_dac=True, **kwargs)
+            avail_credentials["ENVIRONMENT"] = env_cred
+            credentials.append(env_cred)
         if not exclude_workload_identity_credential:
+            valid_credentials.append("WORKLOAD_IDENTITY")
             if all(os.environ.get(var) for var in EnvironmentVariables.WORKLOAD_IDENTITY_VARS):
                 client_id = workload_identity_client_id
-                credentials.append(
-                    WorkloadIdentityCredential(
-                        client_id=cast(str, client_id),
-                        tenant_id=workload_identity_tenant_id,
-                        token_file_path=os.environ[EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE],
-                        **kwargs
-                    )
+                workload_cred = WorkloadIdentityCredential(
+                    client_id=cast(str, client_id),
+                    tenant_id=workload_identity_tenant_id,
+                    token_file_path=os.environ[EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE],
+                    **kwargs,
                 )
+                avail_credentials["WORKLOAD_IDENTITY"] = workload_cred
+                credentials.append(workload_cred)
         if not exclude_managed_identity_credential:
-            credentials.append(
-                ManagedIdentityCredential(
-                    client_id=managed_identity_client_id,
-                    _exclude_workload_identity_credential=exclude_workload_identity_credential,
-                    **kwargs
-                )
+            valid_credentials.append("MANAGED_IDENTITY")
+            mi_cred = ManagedIdentityCredential(
+                client_id=managed_identity_client_id,
+                _exclude_workload_identity_credential=exclude_workload_identity_credential,
+                **kwargs,
             )
-        if not exclude_shared_token_cache_credential and SharedTokenCacheCredential.supported():
-            try:
-                # username and/or tenant_id are only required when the cache contains tokens for multiple identities
-                shared_cache = SharedTokenCacheCredential(
-                    username=shared_cache_username, tenant_id=shared_cache_tenant_id, authority=authority, **kwargs
-                )
-                credentials.append(shared_cache)
-            except Exception as ex:  # pylint:disable=broad-except
-                _LOGGER.info("Shared token cache is unavailable: '%s'", ex)
+            avail_credentials["MANAGED_IDENTITY"] = mi_cred
+            credentials.append(mi_cred)
+        if not exclude_shared_token_cache_credential:
+            valid_credentials.append("SHARED_CACHE")
+            if SharedTokenCacheCredential.supported():
+                try:
+                    # username and/or tenant_id are only required when the cache contains tokens for multiple identities
+                    shared_cache = SharedTokenCacheCredential(
+                        username=shared_cache_username, tenant_id=shared_cache_tenant_id, authority=authority, **kwargs
+                    )
+                    avail_credentials["SHARED_CACHE"] = shared_cache
+                    credentials.append(shared_cache)
+                except Exception as ex:  # pylint:disable=broad-except
+                    _LOGGER.info("Shared token cache is unavailable: '%s'", ex)
         if not exclude_visual_studio_code_credential:
-            credentials.append(VisualStudioCodeCredential(**vscode_args))
+            vscode_cred = VisualStudioCodeCredential(**vscode_args)
+            avail_credentials["VISUAL_STUDIO_CODE"] = vscode_cred
+            credentials.append(vscode_cred)
         if not exclude_cli_credential:
-            credentials.append(AzureCliCredential(process_timeout=process_timeout))
+            valid_credentials.append("CLI")
+            cli_cred = AzureCliCredential(process_timeout=process_timeout)
+            avail_credentials["CLI"] = cli_cred
+            credentials.append(cli_cred)
         if not exclude_powershell_credential:
-            credentials.append(AzurePowerShellCredential(process_timeout=process_timeout))
+            valid_credentials.append("POWERSHELL")
+            ps_cred = AzurePowerShellCredential(process_timeout=process_timeout)
+            avail_credentials["POWERSHELL"] = ps_cred
+            credentials.append(ps_cred)
         if not exclude_developer_cli_credential:
-            credentials.append(AzureDeveloperCliCredential(process_timeout=process_timeout))
+            valid_credentials.append("DEVELOPER_CLI")
+            dev_cli_cred = AzureDeveloperCliCredential(process_timeout=process_timeout)
+            avail_credentials["DEVELOPER_CLI"] = dev_cli_cred
+            credentials.append(dev_cli_cred)
         if not exclude_interactive_browser_credential:
             if interactive_browser_client_id:
                 credentials.append(
@@ -192,6 +204,14 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 )
             else:
                 credentials.append(InteractiveBrowserCredential(tenant_id=interactive_browser_tenant_id, **kwargs))
+        cred_types: Optional[List[str]] = kwargs.pop("default_credential_allow_list", None)
+        if cred_types is None:
+            default_credential_allow_list = os.environ.get("AZURE_DEFAULT_CREDENTIAL_ALLOW_LIST")
+            if default_credential_allow_list:
+                default_credential_allow_list = default_credential_allow_list.upper()
+                cred_types = parse_azure_dac(default_credential_allow_list)
+        if cred_types:
+            credentials = resolve_credentials(cred_types, valid_credentials, avail_credentials)
         within_dac.set(False)
         super(DefaultAzureCredential, self).__init__(*credentials)
 
@@ -256,3 +276,27 @@ class DefaultAzureCredential(ChainedTokenCredential):
         token_info = cast(SupportsTokenInfo, super()).get_token_info(*scopes, options=options)
         within_dac.set(False)
         return token_info
+
+
+def parse_azure_dac(az_dac):
+    striped_az_dac = az_dac.strip()
+    if striped_az_dac.endswith(";"):
+        striped_az_dac = striped_az_dac[:-1]
+    creds = [cred.strip() for cred in striped_az_dac.split(";")]
+    return creds
+
+
+def resolve_credentials(creds, valid_credentials, avail_credentials):
+    credentials = []
+
+    for cred in creds:
+        if cred not in valid_credentials:
+            raise ValueError(
+                f"The credential '{cred}' in AZURE_DEFAULT_CREDENTIAL_ALLOW_LIST is invalid or excluded. "
+                f"Available credentials are {', '.join(valid_credentials)}."
+            )
+        credential = avail_credentials.get(cred)
+        if credential:
+            credentials.append(credential)
+
+    return credentials
