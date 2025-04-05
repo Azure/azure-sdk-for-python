@@ -70,6 +70,7 @@ async def main() -> None:
             toolset = AsyncToolSet()
             toolset.add(functions)
 
+            project_client.agents.set_toolcalls(functions=user_async_functions)
             agent = await project_client.agents.create_agent(
                 model=os.environ["MODEL_DEPLOYMENT_NAME"],
                 name="my-assistant",

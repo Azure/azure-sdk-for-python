@@ -280,6 +280,9 @@ toolset = ToolSet()
 toolset.add(functions)
 toolset.add(code_interpreter)
 
+# To enable tool calls executed automatically
+project_client.agents.set_toolcalls(toolset=toolset)
+
 agent = project_client.agents.create_agent(
     model=os.environ["MODEL_DEPLOYMENT_NAME"],
     name="my-assistant",
@@ -509,10 +512,7 @@ for message in messages.data:
 
 #### Create Agent with Function Call
 
-You can enhance your Agents by defining callback functions as function tools. These can be provided to `create_agent` via either the `toolset` parameter or the combination of `tools` and `tool_resources`. Here are the distinctions:
-
-- `toolset`: When using the `toolset` parameter, you provide not only the function definitions and descriptions but also their implementations. The SDK will execute these functions within `create_and_run_process` or `streaming` . These functions will be invoked based on their definitions.
-- `tools` and `tool_resources`: When using the `tools` and `tool_resources` parameters, only the function definitions and descriptions are provided to `create_agent`, without the implementations. The `Run` or `event handler of stream` will raise a `requires_action` status based on the function definitions. Your code must handle this status and call the appropriate functions.
+You can enhance your Agents by defining callback functions as function tools. These can be provided to `create_agent` via either the `toolset` parameter or the combination of `tools` and `tool_resources`.
 
 For more details about calling functions by code, refer to [`sample_agents_stream_eventhandler_with_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/sample_agents_stream_eventhandler_with_functions.py) and [`sample_agents_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/sample_agents_functions.py).
 
@@ -525,6 +525,7 @@ Here is an example to use [user functions](https://github.com/Azure/azure-sdk-fo
 functions = FunctionTool(user_functions)
 toolset = ToolSet()
 toolset.add(functions)
+project_client.agents.set_toolcalls(toolset=toolset)
 
 agent = project_client.agents.create_agent(
     model=os.environ["MODEL_DEPLOYMENT_NAME"],
@@ -549,6 +550,7 @@ functions = AsyncFunctionTool(user_async_functions)
 
 toolset = AsyncToolSet()
 toolset.add(functions)
+project_client.agents.set_toolcalls(toolset=toolset)
 
 agent = await project_client.agents.create_agent(
     model=os.environ["MODEL_DEPLOYMENT_NAME"],
@@ -984,7 +986,7 @@ while run.status in ["queued", "in_progress", "requires_action"]:
 
 <!-- END SNIPPET -->
 
-To have the SDK poll on your behalf and call `function tools`, use the `create_and_process_run` method. Note that `function tools` will only be invoked if they are provided as `toolset` during the `create_agent` call.
+To have the SDK poll on your behalf and call `function tools`, use the `create_and_process_run` method. Note that `function tools` will only be invoked if they are provided by `set_toolcalls`.
 
 Here is an example:
 
