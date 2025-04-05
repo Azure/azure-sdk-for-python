@@ -264,6 +264,10 @@ class RedTeam():
                     if data_only:
                         f.write(json.dumps({"conversations": redteam_output.attack_details or []}))
                     elif redteam_output.scan_result:
+                        redteam_output.scan_result["redteaming_scorecard"] = redteam_output.scan_result.get("scorecard", None)
+                        redteam_output.scan_result["redteaming_parameters"] = redteam_output.scan_result.get("parameters", None)
+                        redteam_output.scan_result["redteaming_data"] = redteam_output.scan_result.get("attack_details", None)
+
                         json.dump(redteam_output.scan_result, f)
                 
                 # Copy all relevant files to the temp directory
@@ -275,6 +279,8 @@ class RedTeam():
                     if os.path.isdir(file_path):
                         continue
                     if file.endswith('.log') and not os.environ.get('DEBUG'):
+                        continue
+                    if file == artifact_name or file == eval_info_name:
                         continue
                     
                     try:
