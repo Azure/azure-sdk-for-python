@@ -21,10 +21,10 @@ class TestContainerAppsAPIUsagesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_usages_list(self, resource_group):
         response = self.client.usages.list(
             location="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

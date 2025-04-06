@@ -20,11 +20,11 @@ class TestContainerAppsAPIManagedEnvironmentsDiagnosticsOperations(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_root(self, resource_group):
+    def test_managed_environments_diagnostics_get_root(self, resource_group):
         response = self.client.managed_environments_diagnostics.get_root(
             resource_group_name=resource_group.name,
             environment_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
