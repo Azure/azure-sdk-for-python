@@ -282,7 +282,7 @@ class MLWorkspace(Resource, Generic[MachineLearningWorkspaceResourceType]):
             if not current_properties["properties"]["workspaceHubConfig"].get("defaultWorkspaceResourceGroup"):
                 current_properties["properties"]["workspaceHubConfig"]["defaultWorkspaceResourceGroup"] = RGSymbol().id
 
-            for searchservices in self._find_all_resource_match(fields, resource=ResourceIdentifiers.search):
+            for searchservices in self._find_all_resource_match(fields, resource_types=[ResourceIdentifiers.search]):
                 search_connection = AIConnection(
                     {
                         # We have to do this to prevent infinit recursion on calling self.parent.__bicep__()
@@ -305,7 +305,7 @@ class MLWorkspace(Resource, Generic[MachineLearningWorkspaceResourceType]):
                 )
                 search_connection.__bicep__(fields, parameters=parameters)
             # TODO: Support "OpenaI" cognitive services once it supports AAD.
-            for aiservices in self._find_all_resource_match(fields, resource=ResourceIdentifiers.ai_services):
+            for aiservices in self._find_all_resource_match(fields, resource_types=[ResourceIdentifiers.ai_services]):
 
                 # TODO: This will actually fail if there's more than one.... should more than one even be supported?
                 ai_connection = AIConnection(

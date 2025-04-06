@@ -6,6 +6,7 @@
 # pylint: disable=arguments-differ, too-many-statements, too-many-return-statements, too-many-branches
 
 from collections import defaultdict
+from urllib.parse import urlparse
 from typing import (
     TYPE_CHECKING,
     Dict,
@@ -29,6 +30,7 @@ from ...._bicep.expressions import Output, Parameter, ResourceSymbol
 from ...._setting import StoredPrioritizedSetting
 from ...._resource import (
     ExtensionResources,
+    FieldsType,
     ResourceReference,
     _ClientResource,
     _build_envs,
@@ -155,6 +157,9 @@ class AIDeployment(_ClientResource, Generic[AIDeploymentResourceType]):
         self._settings["model_version"] = StoredPrioritizedSetting(
             name="model_version", env_vars=_build_envs(self._prefixes, ["MODEL_VERSION"]), suffix=self._suffix
         )
+        self._settings["model_format"] = StoredPrioritizedSetting(
+            name="model_format", env_vars=_build_envs(self._prefixes, ["MODEL_FORMAT"]), suffix=self._suffix
+        )
 
     @property
     def resource(self) -> Literal["Microsoft.CognitiveServices/accounts/deployments"]:
@@ -185,10 +190,14 @@ class AIDeployment(_ClientResource, Generic[AIDeploymentResourceType]):
         return cast(AIDeployment[ResourceReference], existing)
 
     def _build_endpoint(self, *, config_store: Optional[Mapping[str, Any]]) -> str:
-        return (
-            f"https://{self.parent._settings['name'](config_store=config_store)}.openai.azure.com/openai/"  # pylint: disable=protected-access
-            + f"deployments/{self._settings['name'](config_store=config_store)}"
-        )
+        format = self._settings["model_format"](config_store=config_store)
+        if format == "OpenAI":
+            return (
+                f"https://{self.parent._settings['name'](config_store=config_store)}.openai.azure.com/openai/"  # pylint: disable=protected-access
+                + f"deployments/{self._settings['name'](config_store=config_store)}"
+            )
+        else:
+            return f"https://{self.parent._settings['name'](config_store=config_store)}.services.ai.azure.com/models"  # pylint: disable=protected-access
 
     def _outputs(  # type: ignore[override]  # Parameter subset
         self,
@@ -203,25 +212,59 @@ class AIDeployment(_ClientResource, Generic[AIDeploymentResourceType]):
         outputs["model_version"] = Output(
             f"AZURE_AI_DEPLOYMENT_MODEL_VERSION{self._suffix}", "properties.model.version", symbol
         )
-        outputs["endpoint"] = Output(
-            f"AZURE_AI_DEPLOYMENT_ENDPOINT{self._suffix}",
-            Output("", "properties.endpoint", parents[0]).format("{}openai/deployments/") + outputs["name"].format(),
-        )
+        outputs["model_format"] = Output(f"AZURE_AI_DEPLOYMENT_MODEL_FORMAT{self._suffix}", "properties.model.format", symbol)
         return outputs
 
+    def _merge_properties(  # type: ignore[override]  # Parameter superset
+        self,
+        # We override the type-hints here to be resource-specific to make writing and validating the merge easier.
+        current_properties: "DeploymentResource",  # type: ignore[arg-type]
+        new_properties: "DeploymentResource",  # type: ignore[arg-type]
+        *,
+        parameters: Dict[str, Parameter],
+        symbol: ResourceSymbol,
+        fields: FieldsType,
+        resource_group: ResourceSymbol,
+        **kwargs,
+    ) -> Dict[str, Any]:
+        output_config = super()._merge_properties(
+            cast(Dict[str, Any], current_properties),
+            cast(Dict[str, Any], new_properties),
+            symbol=symbol,
+            fields=fields,
+            resource_group=resource_group,
+            parameters=parameters,
+            **kwargs,
+        )
+        # We need to do this because multiple models cannot be deployed in parallel without
+        # creating conflict errors for the parent AIServices account.
+        for field in self._find_all_resource_match(
+            fields, resource_types=[
+                ResourceIdentifiers.ai_deployment,
+                ResourceIdentifiers.ai_chat_deployment,
+                ResourceIdentifiers.ai_embeddings_deployment
+            ]
+        ):
+            if field.name != current_properties.get("name"):
+                current_properties["dependsOn"] = [field.symbol]
+                break
+            continue
+        return output_config
 
+
+_DEFAULT_CHAT_MODEL = Parameter("aiChatModel", default="o1-mini", type="string")
 _DEFAULT_AI_CHAT: "DeploymentResource" = {
-    "name": GLOBAL_PARAMS["defaultName"].format("{}-chat-deployment"),
+    "name": _DEFAULT_CHAT_MODEL,
     "properties": {
         "model": {
-            "name": Parameter("aiChatModel", default="gpt-4o-mini"),
-            "format": Parameter("aiChatModelFormat", default="OpenAI"),
-            "version": Parameter("aiChatModelVersion", default="2024-07-18"),
+            "name": _DEFAULT_CHAT_MODEL,
+            "format": Parameter("aiChatModelFormat", default="OpenAI", type="string"),
+            "version": Parameter("aiChatModelVersion", default="2024-09-12", type="string"),
         }
     },
     "sku": {
-        "name": Parameter("aiChatModelSku", default="Standard"),
-        "capacity": Parameter("aiChatModelCapacity", default=30),
+        "name": Parameter("aiChatModelSku", default="GlobalStandard", type="string"),
+        "capacity": Parameter("aiChatModelCapacity", default=1, type="int"),
     },
 }
 
@@ -261,12 +304,6 @@ class AIChat(AIDeployment[AIDeploymentResourceType]):
         existing = super().reference(name=name, account=account, resource_group=resource_group)
         return cast(AIChat[ResourceReference], existing)
 
-    def _build_endpoint(self, *, config_store: Optional[Mapping[str, Any]]) -> str:
-        return (
-            f"https://{self.parent._settings['name'](config_store=config_store)}.openai.azure.com/openai/"  # pylint: disable=protected-access
-            + f"deployments/{self._settings['name'](config_store=config_store)}"  # /chat/completions"
-        )
-
     def _build_symbol(self) -> ResourceSymbol:
         symbol = super()._build_symbol()
         symbol._value = "chat_" + symbol.value  # pylint: disable=protected-access
@@ -285,11 +322,7 @@ class AIChat(AIDeployment[AIDeploymentResourceType]):
         outputs["model_version"] = Output(
             f"AZURE_AI_CHAT_MODEL_VERSION{self._suffix}", "properties.model.version", symbol
         )
-        outputs["endpoint"] = Output(
-            f"AZURE_AI_CHAT_ENDPOINT{self._suffix}",
-            Output("", "properties.endpoint", parents[0]).format("{}openai/deployments/")
-            + outputs["name"].format(),  # + "/chat/completions"
-        )
+        outputs["model_format"] = Output(f"AZURE_AI_CHAT_MODEL_FORMAT{self._suffix}", "properties.model.format", symbol)
         return outputs
 
     @overload
@@ -366,15 +399,17 @@ class AIChat(AIDeployment[AIDeploymentResourceType]):
             config_store = _load_dev_environment()
 
         endpoint = self._settings["endpoint"](config_store=config_store)
-        # TODO: AI endpoints!!!
-        endpoint = endpoint.replace("cognitiveservices.azure.com", "openai.azure.com")
         client_kwargs = {}
         client_kwargs.update(client_options)
         try:
             client_kwargs["api_version"] = self._settings["api_version"](api_version, config_store=config_store)
         except RuntimeError:
             # TODO: What to do about API version?
-            client_kwargs["api_version"] = "2024-08-01-preview"
+            try:
+                if self._settings["model_format"](config_store=config_store) == "OpenAI":
+                    client_kwargs["api_version"] = "2024-10-21"
+            except RuntimeError:
+                pass
         try:
             audience = self._settings["audience"](audience, config_store=config_store)
         except RuntimeError:
@@ -394,34 +429,26 @@ class AIChat(AIDeployment[AIDeploymentResourceType]):
 
         # These are the synchronous OpenAI clients.
         # TODO: Find a better way to identify them than just the class name.
-        if cls.__name__ in ["AzureOpenAI", "Chat", "Completions"]:
+        if cls.__name__ in ["AzureOpenAI"]:
             from openai import AzureOpenAI
             from azure.identity import get_bearer_token_provider
 
+            parsed_endpoint = urlparse(endpoint)
             credential = self._build_credential(cls, use_async=False, credential=credential)
             token_provider = get_bearer_token_provider(credential, f"{audience}/.default")
             client = AzureOpenAI(
-                azure_endpoint=endpoint,
+                azure_endpoint=f"{parsed_endpoint.scheme}://{parsed_endpoint.netloc}",
                 azure_ad_token_provider=token_provider,
                 azure_deployment=self._settings["name"](config_store=config_store),
                 http_client=client_kwargs.pop("http_client", transport),
                 **client_kwargs,
             )
-            # TODO: Better check than just class name?
-            if cls.__name__ == "Chat":
-                if return_credential:
-                    return client.chat, credential
-                return client.chat
-            if cls.__name__ == "Completions":
-                if return_credential:
-                    return client.chat.completions, credential
-                return client.chat.completions
             if return_credential:
                 return client, credential
             return client
 
         # These are the asynchronous OpenAI clients.
-        if cls.__name__ in ["AsyncAzureOpenAI", "AsyncChat", "AsyncCompletions"]:
+        if cls.__name__ in ["AsyncAzureOpenAI"]:
             from openai import AsyncAzureOpenAI
             from azure.identity.aio import get_bearer_token_provider as async_get_bearer_token_provider
 
@@ -434,14 +461,6 @@ class AIChat(AIDeployment[AIDeploymentResourceType]):
                 http_client=client_kwargs.pop("http_client", transport),
                 **client_kwargs,
             )
-            if cls.__name__ == "AsyncChat":
-                if return_credential:
-                    return async_client.chat, credential
-                return async_client.chat
-            if cls.__name__ == "AsyncCompletions":
-                if return_credential:
-                    return async_client.chat.completions, credential
-                return async_client.chat.completions
             if return_credential:
                 return async_client, credential
             return async_client
@@ -449,11 +468,14 @@ class AIChat(AIDeployment[AIDeploymentResourceType]):
         if cls.__name__ == "ChatCompletionsClient":
             # TODO: Remove this once the inference constructor has been fixed to use 'audience'.
             client_kwargs["credential_scopes"] = [f"{audience}/.default"]
+            if "model" not in client_kwargs:
+                client_kwargs["model"] = self._settings["model_name"](config_store=config_store)
         else:
             client_kwargs["audience"] = audience
         credential = self._build_credential(cls, use_async=use_async, credential=credential)
         if transport is not None:
             client_kwargs["transport"] = transport
+
         client = cls(endpoint, credential=credential, **client_kwargs)
         if return_credential:
             return client, credential
@@ -509,12 +531,6 @@ class AIEmbeddings(AIDeployment[AIDeploymentResourceType]):
     ) -> "AIEmbeddings[ResourceReference]":
         existing = super().reference(name=name, account=account, resource_group=resource_group)
         return cast(AIEmbeddings[ResourceReference], existing)
-
-    def _build_endpoint(self, *, config_store: Optional[Mapping[str, Any]]) -> str:
-        return (
-            f"https://{self.parent._settings['name'](config_store=config_store)}.openai.azure.com/openai/"  # pylint: disable=protected-access
-            + f"deployments/{self._settings['name'](config_store=config_store)}"  # /embeddings"
-        )
 
     def _build_symbol(self) -> ResourceSymbol:
         symbol = super()._build_symbol()

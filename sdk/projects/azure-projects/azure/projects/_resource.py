@@ -334,13 +334,13 @@ class Resource:  # pylint: disable=too-many-instance-attributes
         self,
         fields: FieldsType,
         *,
-        resource: Optional[ResourceIdentifiers] = None,
+        resource_types: Optional[List[ResourceIdentifiers]] = None,
         resource_group: Optional[ResourceSymbol] = None,
         name: Optional[Union[str, Expression]] = None,
         parent: Optional[ResourceSymbol] = None,
     ) -> Generator[FieldType, None, None]:
-        resource = resource or self.identifier
-        for field in (f for f in reversed(list(fields.values())) if f.identifier == resource):
+        resources = resource_types or [self.identifier]
+        for field in (f for f in reversed(list(fields.values())) if f.identifier in resources):
             if name and resource_group:
                 if field.name == name and field.resource_group == resource_group:
                     yield field
@@ -369,7 +369,7 @@ class Resource:  # pylint: disable=too-many-instance-attributes
         parent: Optional[ResourceSymbol] = None,
     ) -> Optional[FieldType]:
         matches = self._find_all_resource_match(
-            fields, resource=resource, resource_group=resource_group, name=name, parent=parent
+            fields, resource_types=[resource], resource_group=resource_group, name=name, parent=parent
         )
         try:
             return next(matches)

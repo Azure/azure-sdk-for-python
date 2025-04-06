@@ -9,6 +9,35 @@ import asyncio
 import threading
 from typing import Coroutine, Any
 from typing_extensions import TypeVar
+import importlib.util
+import sys
+import os
+
+
+def import_from_path(file_path):
+    full_path = os.path.abspath(file_path)
+    module_name = os.path.basename(full_path)
+    if os.path.isdir(full_path):
+        full_path = os.path.join(full_path, "__init__.py")
+    elif os.path.isfile(full_path):
+        module_name = os.path.splitext(module_name)[0]
+    else:
+        raise ImportError(f"Module {module_name} not found at {file_path}")
+    spec = importlib.util.spec_from_file_location(module_name, file_path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[module_name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def lazy_import(name):
+    spec = importlib.util.find_spec(name)
+    loader = importlib.util.LazyLoader(spec.loader)
+    spec.loader = loader
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
+    loader.exec_module(module)
+    return module
 
 
 T = TypeVar("T")

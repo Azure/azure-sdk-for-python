@@ -434,7 +434,7 @@ _DEFAULT_AI_SERVICES: "CognitiveServicesAccountResource" = {
         "publicNetworkAccess": "Enabled",
         "disableLocalAuth": True,
         "customSubDomainName": GLOBAL_PARAMS["defaultName"].format("{}-aiservices"),
-        "networkAcls": {"defaultAction": "Allow", "virtualNetworkRules": [], "ipRules": []},
+        "networkAcls": {"defaultAction": "Allow"},
     },
     "identity": {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["managedIdentityId"]: {}}},
 }
@@ -474,7 +474,7 @@ class AIServices(CognitiveServicesAccount[CognitiveServicesAccountResourceType])
         )
 
     def _build_endpoint(self, *, config_store: Optional[Mapping[str, Any]]) -> str:
-        return f"https://{self._settings['name'](config_store=config_store)}.openai.azure.com/"
+        return f"https://{self._settings['name'](config_store=config_store)}.services.ai.azure.com/models"
 
     @classmethod
     def reference(  # type: ignore[override]  # Parameter subset and renames

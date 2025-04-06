@@ -43,6 +43,8 @@ class ResourceIdentifiers(Enum):
     ai_connection = "ai:connection"
     config_store = "appconfig"
     config_setting = "appconfig.setting"
+    app_service_plan = "appservice:plan"
+    app_service_site = "appservice:site"
 
     def resource(  # pylint: disable=too-many-branches,too-many-statements,too-many-return-statements
         self,
@@ -149,6 +151,10 @@ class ResourceIdentifiers(Enum):
             from .appconfig.setting._resource import ConfigSetting
 
             return ConfigSetting
+        if self == self.app_service_plan:
+            from .appservice._resource import AppServicePlan
+
+            return AppServicePlan
         raise TypeError(f"Unknown resource identifier: {self}")
 
 

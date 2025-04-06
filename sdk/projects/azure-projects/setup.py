@@ -78,6 +78,15 @@ setup(
         "azure-appconfiguration-provider>=2.0.0",  # TODO: This needs to be removed.
     ],
     python_requires=">=3.8",
+    entry_points={
+        'console_scripts': ['azproj=azure.projects._command:command'],
+    },
+    extras_require={
+        "mcp": [
+            "mcp>=1.6",
+            "makefun>=1.15",
+        ],
+    },
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",
         "Source": "https://github.com/Azure/azure-sdk-for-python",

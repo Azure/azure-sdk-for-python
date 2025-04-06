@@ -66,14 +66,17 @@ def get_mro_annotations(cls: Type, base_cls: Type) -> Mapping[str, Tuple[Any, An
     }
 
 
-def get_optional_annotation(annotation: Any) -> Type:
-    if get_origin(annotation) is Union:
+def get_optional_annotation(annotation: Any) -> Optional[Type]:
+    type_hint = get_origin(annotation)
+    if type_hint is Union:
         union_args = get_args(annotation)
         if len(union_args) > 2 or union_args[1] is not type(None):
             raise TypeError(
                 f"Unsupported type annotation: {annotation}. Only 'Optional' or 'Union' with None is supported."
             )
         return union_args[0]
+    if type_hint is list:
+        return None
     return annotation
 
 
@@ -501,24 +504,26 @@ class AzureApp(Generic[InfrastructureType], metaclass=AzureAppComponent):
             fields = []
             for attr, (annotation, _) in mro_annotations.items():
                 annotation = get_optional_annotation(annotation)
-                if annotation.__name__ in RESOURCE_FROM_CLIENT_ANNOTATION:
+                if annotation and annotation.__name__ in RESOURCE_FROM_CLIENT_ANNOTATION:
                     resource_cls = RESOURCE_FROM_CLIENT_ANNOTATION[annotation.__name__].resource()
                     attr_map[attr] = attr
                     fields.append((attr, resource_cls, field(default=resource_cls())))
                 elif attr == "config_store" and not config_store:
                     # We special case this one.
                     attr_map[attr] = attr
-            infra = make_infra(f"AutoInfra{cls.__name__}", fields)()
+            infra = make_infra(cls.__name__, fields)()
         if attr_map:
             kwargs = {app_attr: getattr(infra, infra_attr) for app_attr, infra_attr in attr_map.items()}
         else:
             infra_resources = {r.identifier: r for r in infra.__dict__.values() if isinstance(r, Resource)}
+            print("INFRA", infra_resources)
             kwargs = {}
             for attr, (annotation, _) in mro_annotations.items():
+                print("ATTR", attr, annotation, _)
                 annotation = get_optional_annotation(annotation)
                 # TODO: This doesn't support alias
                 if (
-                    annotation.__name__ in RESOURCE_FROM_CLIENT_ANNOTATION
+                    annotation and annotation.__name__ in RESOURCE_FROM_CLIENT_ANNOTATION
                     and RESOURCE_FROM_CLIENT_ANNOTATION[annotation.__name__] in infra_resources
                 ):
                     kwargs[attr] = infra_resources[RESOURCE_FROM_CLIENT_ANNOTATION[annotation.__name__]]
@@ -569,14 +574,15 @@ class AzureApp(Generic[InfrastructureType], metaclass=AzureAppComponent):
             attr_map = {}
             fields = []
             for attr, (annotation, _) in mro_annotations.items():
-                if annotation.__name__ in RESOURCE_FROM_CLIENT_ANNOTATION:
+                annotation = get_optional_annotation(annotation)
+                if annotation and annotation.__name__ in RESOURCE_FROM_CLIENT_ANNOTATION:
                     resource_cls = RESOURCE_FROM_CLIENT_ANNOTATION[annotation.__name__].resource()
                     attr_map[attr] = attr
                     fields.append((attr, resource_cls, field(default=resource_cls())))
                 elif attr == "config_store":
                     # We special case this one.
                     attr_map[attr] = attr
-            infra = make_infra(f"AutoInfra{cls.__name__}", fields)()
+            infra = make_infra(cls.__name__, fields)()
         dev_env = provision(infra, config_store=parameters, **kwargs)
         # The dev env returned here is a ChainMap of the deployed settings along with the user
         # provided config. If there's a config_store provided with the infra deployment, this
