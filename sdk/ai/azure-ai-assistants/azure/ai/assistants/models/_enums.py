@@ -10,7 +10,7 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AgentsApiResponseFormatMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class AssistantsApiResponseFormatMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents the mode in which the model will handle the return format of a tool call."""
 
     AUTO = "auto"
@@ -19,7 +19,7 @@ class AgentsApiResponseFormatMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Setting the value to ``none``, will result in a 400 Bad request."""
 
 
-class AgentsApiToolChoiceOptionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class AssistantsApiToolChoiceOptionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies how the tool choice will be used."""
 
     NONE = "none"
@@ -28,8 +28,8 @@ class AgentsApiToolChoiceOptionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta
     """The model can pick between generating a message or calling a function."""
 
 
-class AgentsNamedToolChoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Available tool types for agents named tools."""
+class AssistantsNamedToolChoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Available tool types for assistants named tools."""
 
     FUNCTION = "function"
     """Tool type ``function``"""
@@ -49,7 +49,7 @@ class AgentsNamedToolChoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tool type ``bing_custom_search``"""
 
 
-class AgentStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class AssistantStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Each event in a server-sent events stream has an ``event`` and ``data`` property:
 
 
@@ -61,7 +61,7 @@ class AgentStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     We emit events whenever a new object is created, transitions to a new state, or is being
     streamed in parts (deltas). For example, we emit ``thread.run.created`` when a new run
-    is created, ``thread.run.completed`` when a run completes, and so on. When an Agent chooses
+    is created, ``thread.run.completed`` when a run completes, and so on. When an Assistant chooses
     to create a message during a run, we emit a ``thread.message.created event``, a
     ``thread.message.in_progress`` event, many ``thread.message.delta`` events, and finally a
     ``thread.message.completed`` event.
@@ -71,7 +71,7 @@ class AgentStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     THREAD_CREATED = "thread.created"
-    """Event sent when a new thread is created. The data of this event is of type AgentThread"""
+    """Event sent when a new thread is created. The data of this event is of type AssistantThread"""
     THREAD_RUN_CREATED = "thread.run.created"
     """Event sent when a new run is created. The data of this event is of type ThreadRun"""
     THREAD_RUN_QUEUED = "thread.run.queued"
@@ -165,10 +165,10 @@ class FilePurpose(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates a file is used for fine tuning input."""
     FINE_TUNE_RESULTS = "fine-tune-results"
     """Indicates a file is used for fine tuning results."""
-    AGENTS = "assistants"
-    """Indicates a file is used as input to agents."""
-    AGENTS_OUTPUT = "assistants_output"
-    """Indicates a file is used as output by agents."""
+    ASSISTANTS = "assistants"
+    """Indicates a file is used as input to assistants."""
+    ASSISTANTS_OUTPUT = "assistants_output"
+    """Indicates a file is used as output by assistants."""
     BATCH = "batch"
     """Indicates a file is used as input to ."""
     BATCH_OUTPUT = "batch_output"
@@ -245,8 +245,8 @@ class MessageRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     USER = "user"
     """The role representing the end-user."""
-    AGENT = "assistant"
-    """The role representing the agent."""
+    ASSISTANT = "assistant"
+    """The role representing the assistant."""
 
 
 class MessageStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -307,7 +307,7 @@ class RunAdditionalFieldList(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class RunStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Possible values for the status of an agent thread run."""
+    """Possible values for the status of an assistant thread run."""
 
     QUEUED = "queued"
     """Represents a run that is queued to start."""
@@ -413,7 +413,7 @@ class ThreadStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Thread operation related streaming events."""
 
     THREAD_CREATED = "thread.created"
-    """Event sent when a new thread is created. The data of this event is of type AgentThread"""
+    """Event sent when a new thread is created. The data of this event is of type AssistantThread"""
 
 
 class TruncationStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):

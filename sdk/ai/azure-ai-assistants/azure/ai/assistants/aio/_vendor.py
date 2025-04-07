@@ -8,7 +8,7 @@
 from abc import ABC
 from typing import TYPE_CHECKING
 
-from ._configuration import AIAssistantClientConfiguration
+from ._configuration import AssistantsClientConfiguration
 
 if TYPE_CHECKING:
     from azure.core import AsyncPipelineClient
@@ -16,10 +16,10 @@ if TYPE_CHECKING:
     from .._serialization import Deserializer, Serializer
 
 
-class AIAssistantClientMixinABC(ABC):
+class AssistantsClientMixinABC(ABC):
     """DO NOT use this class. It is for internal typing use only."""
 
     _client: "AsyncPipelineClient"
-    _config: AIAssistantClientConfiguration
+    _config: AssistantsClientConfiguration
     _serialize: "Serializer"
     _deserialize: "Deserializer"

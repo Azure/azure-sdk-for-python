@@ -29,7 +29,7 @@ from azure.core.utils import case_insensitive_dict
 from .. import _model_base, models as _models
 from .._model_base import SdkJSONEncoder, _deserialize
 from .._serialization import Serializer
-from .._vendor import AIAssistantClientMixinABC, prepare_multipart_form_data
+from .._vendor import AssistantsClientMixinABC, prepare_multipart_form_data
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -47,7 +47,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_ai_assistant_create_agent_request(**kwargs: Any) -> HttpRequest:
+def build_assistants_create_assistant_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -69,7 +69,7 @@ def build_ai_assistant_create_agent_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ai_assistant_list_agents_request(
+def build_assistants_list_assistants_request(
     *,
     limit: Optional[int] = None,
     order: Optional[Union[str, _models.ListSortOrder]] = None,
@@ -103,7 +103,7 @@ def build_ai_assistant_list_agents_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ai_assistant_get_agent_request(agent_id: str, **kwargs: Any) -> HttpRequest:
+def build_assistants_get_assistant_request(assistant_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -113,7 +113,7 @@ def build_ai_assistant_get_agent_request(agent_id: str, **kwargs: Any) -> HttpRe
     # Construct URL
     _url = "/assistants/{assistantId}"
     path_format_arguments = {
-        "assistantId": _SERIALIZER.url("agent_id", agent_id, "str"),
+        "assistantId": _SERIALIZER.url("assistant_id", assistant_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -127,7 +127,9 @@ def build_ai_assistant_get_agent_request(agent_id: str, **kwargs: Any) -> HttpRe
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ai_assistant_update_agent_request(agent_id: str, **kwargs: Any) -> HttpRequest:
+def build_assistants_update_assistant_request(  # pylint: disable=name-too-long
+    assistant_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -138,7 +140,7 @@ def build_ai_assistant_update_agent_request(agent_id: str, **kwargs: Any) -> Htt
     # Construct URL
     _url = "/assistants/{assistantId}"
     path_format_arguments = {
-        "assistantId": _SERIALIZER.url("agent_id", agent_id, "str"),
+        "assistantId": _SERIALIZER.url("assistant_id", assistant_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -154,7 +156,9 @@ def build_ai_assistant_update_agent_request(agent_id: str, **kwargs: Any) -> Htt
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ai_assistant_delete_agent_request(agent_id: str, **kwargs: Any) -> HttpRequest:
+def build_assistants_delete_assistant_request(  # pylint: disable=name-too-long
+    assistant_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -164,7 +168,7 @@ def build_ai_assistant_delete_agent_request(agent_id: str, **kwargs: Any) -> Htt
     # Construct URL
     _url = "/assistants/{assistantId}"
     path_format_arguments = {
-        "assistantId": _SERIALIZER.url("agent_id", agent_id, "str"),
+        "assistantId": _SERIALIZER.url("assistant_id", assistant_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -178,7 +182,7 @@ def build_ai_assistant_delete_agent_request(agent_id: str, **kwargs: Any) -> Htt
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ai_assistant_create_thread_request(**kwargs: Any) -> HttpRequest:
+def build_assistants_create_thread_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -200,7 +204,7 @@ def build_ai_assistant_create_thread_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ai_assistant_get_thread_request(thread_id: str, **kwargs: Any) -> HttpRequest:
+def build_assistants_get_thread_request(thread_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -224,7 +228,7 @@ def build_ai_assistant_get_thread_request(thread_id: str, **kwargs: Any) -> Http
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ai_assistant_update_thread_request(thread_id: str, **kwargs: Any) -> HttpRequest:
+def build_assistants_update_thread_request(thread_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -251,7 +255,7 @@ def build_ai_assistant_update_thread_request(thread_id: str, **kwargs: Any) -> H
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ai_assistant_delete_thread_request(thread_id: str, **kwargs: Any) -> HttpRequest:
+def build_assistants_delete_thread_request(thread_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -275,9 +279,7 @@ def build_ai_assistant_delete_thread_request(thread_id: str, **kwargs: Any) -> H
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ai_assistant_create_message_request(  # pylint: disable=name-too-long
-    thread_id: str, **kwargs: Any
-) -> HttpRequest:
+def build_assistants_create_message_request(thread_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -304,7 +306,7 @@ def build_ai_assistant_create_message_request(  # pylint: disable=name-too-long
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ai_assistant_list_messages_request(
+def build_assistants_list_messages_request(
     thread_id: str,
     *,
     run_id: Optional[str] = None,
@@ -347,7 +349,7 @@ def build_ai_assistant_list_messages_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ai_assistant_get_message_request(thread_id: str, message_id: str, **kwargs: Any) -> HttpRequest:
+def build_assistants_get_message_request(thread_id: str, message_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -372,9 +374,7 @@ def build_ai_assistant_get_message_request(thread_id: str, message_id: str, **kw
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ai_assistant_update_message_request(  # pylint: disable=name-too-long
-    thread_id: str, message_id: str, **kwargs: Any
-) -> HttpRequest:
+def build_assistants_update_message_request(thread_id: str, message_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -402,7 +402,7 @@ def build_ai_assistant_update_message_request(  # pylint: disable=name-too-long
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ai_assistant_create_run_request(
+def build_assistants_create_run_request(
     thread_id: str, *, include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -433,7 +433,7 @@ def build_ai_assistant_create_run_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ai_assistant_list_runs_request(
+def build_assistants_list_runs_request(
     thread_id: str,
     *,
     limit: Optional[int] = None,
@@ -473,7 +473,7 @@ def build_ai_assistant_list_runs_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ai_assistant_get_run_request(thread_id: str, run_id: str, **kwargs: Any) -> HttpRequest:
+def build_assistants_get_run_request(thread_id: str, run_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -498,7 +498,7 @@ def build_ai_assistant_get_run_request(thread_id: str, run_id: str, **kwargs: An
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ai_assistant_update_run_request(thread_id: str, run_id: str, **kwargs: Any) -> HttpRequest:
+def build_assistants_update_run_request(thread_id: str, run_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -526,7 +526,7 @@ def build_ai_assistant_update_run_request(thread_id: str, run_id: str, **kwargs:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ai_assistant_submit_tool_outputs_to_run_request(  # pylint: disable=name-too-long
+def build_assistants_submit_tool_outputs_to_run_request(  # pylint: disable=name-too-long
     thread_id: str, run_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -556,7 +556,7 @@ def build_ai_assistant_submit_tool_outputs_to_run_request(  # pylint: disable=na
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ai_assistant_cancel_run_request(thread_id: str, run_id: str, **kwargs: Any) -> HttpRequest:
+def build_assistants_cancel_run_request(thread_id: str, run_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -581,7 +581,7 @@ def build_ai_assistant_cancel_run_request(thread_id: str, run_id: str, **kwargs:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ai_assistant_create_thread_and_run_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_assistants_create_thread_and_run_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -603,7 +603,7 @@ def build_ai_assistant_create_thread_and_run_request(**kwargs: Any) -> HttpReque
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ai_assistant_get_run_step_request(
+def build_assistants_get_run_step_request(
     thread_id: str,
     run_id: str,
     step_id: str,
@@ -638,7 +638,7 @@ def build_ai_assistant_get_run_step_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ai_assistant_list_run_steps_request(  # pylint: disable=name-too-long
+def build_assistants_list_run_steps_request(
     thread_id: str,
     run_id: str,
     *,
@@ -683,7 +683,7 @@ def build_ai_assistant_list_run_steps_request(  # pylint: disable=name-too-long
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ai_assistant_list_files_request(
+def build_assistants_list_files_request(
     *, purpose: Optional[Union[str, _models.FilePurpose]] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -706,7 +706,7 @@ def build_ai_assistant_list_files_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ai_assistant_upload_file_request(**kwargs: Any) -> HttpRequest:
+def build_assistants_upload_file_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -725,7 +725,7 @@ def build_ai_assistant_upload_file_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ai_assistant_delete_file_request(file_id: str, **kwargs: Any) -> HttpRequest:
+def build_assistants_delete_file_request(file_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -749,7 +749,7 @@ def build_ai_assistant_delete_file_request(file_id: str, **kwargs: Any) -> HttpR
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ai_assistant_get_file_request(file_id: str, **kwargs: Any) -> HttpRequest:
+def build_assistants_get_file_request(file_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -773,7 +773,7 @@ def build_ai_assistant_get_file_request(file_id: str, **kwargs: Any) -> HttpRequ
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ai_assistant_get_file_content_request(  # pylint: disable=name-too-long
+def build_assistants_get_file_content_request(  # pylint: disable=name-too-long
     file_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -799,7 +799,7 @@ def build_ai_assistant_get_file_content_request(  # pylint: disable=name-too-lon
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ai_assistant_list_vector_stores_request(  # pylint: disable=name-too-long
+def build_assistants_list_vector_stores_request(  # pylint: disable=name-too-long
     *,
     limit: Optional[int] = None,
     order: Optional[Union[str, _models.ListSortOrder]] = None,
@@ -833,7 +833,7 @@ def build_ai_assistant_list_vector_stores_request(  # pylint: disable=name-too-l
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ai_assistant_create_vector_store_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_assistants_create_vector_store_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -855,7 +855,7 @@ def build_ai_assistant_create_vector_store_request(**kwargs: Any) -> HttpRequest
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ai_assistant_get_vector_store_request(  # pylint: disable=name-too-long
+def build_assistants_get_vector_store_request(  # pylint: disable=name-too-long
     vector_store_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -881,7 +881,7 @@ def build_ai_assistant_get_vector_store_request(  # pylint: disable=name-too-lon
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ai_assistant_modify_vector_store_request(  # pylint: disable=name-too-long
+def build_assistants_modify_vector_store_request(  # pylint: disable=name-too-long
     vector_store_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -910,7 +910,7 @@ def build_ai_assistant_modify_vector_store_request(  # pylint: disable=name-too-
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ai_assistant_delete_vector_store_request(  # pylint: disable=name-too-long
+def build_assistants_delete_vector_store_request(  # pylint: disable=name-too-long
     vector_store_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -936,7 +936,7 @@ def build_ai_assistant_delete_vector_store_request(  # pylint: disable=name-too-
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ai_assistant_list_vector_store_files_request(  # pylint: disable=name-too-long
+def build_assistants_list_vector_store_files_request(  # pylint: disable=name-too-long
     vector_store_id: str,
     *,
     filter: Optional[Union[str, _models.VectorStoreFileStatusFilter]] = None,
@@ -979,7 +979,7 @@ def build_ai_assistant_list_vector_store_files_request(  # pylint: disable=name-
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ai_assistant_create_vector_store_file_request(  # pylint: disable=name-too-long
+def build_assistants_create_vector_store_file_request(  # pylint: disable=name-too-long
     vector_store_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1008,7 +1008,7 @@ def build_ai_assistant_create_vector_store_file_request(  # pylint: disable=name
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ai_assistant_get_vector_store_file_request(  # pylint: disable=name-too-long
+def build_assistants_get_vector_store_file_request(  # pylint: disable=name-too-long
     vector_store_id: str, file_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1035,7 +1035,7 @@ def build_ai_assistant_get_vector_store_file_request(  # pylint: disable=name-to
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ai_assistant_delete_vector_store_file_request(  # pylint: disable=name-too-long
+def build_assistants_delete_vector_store_file_request(  # pylint: disable=name-too-long
     vector_store_id: str, file_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1062,7 +1062,7 @@ def build_ai_assistant_delete_vector_store_file_request(  # pylint: disable=name
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ai_assistant_create_vector_store_file_batch_request(  # pylint: disable=name-too-long
+def build_assistants_create_vector_store_file_batch_request(  # pylint: disable=name-too-long
     vector_store_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1091,7 +1091,7 @@ def build_ai_assistant_create_vector_store_file_batch_request(  # pylint: disabl
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ai_assistant_get_vector_store_file_batch_request(  # pylint: disable=name-too-long
+def build_assistants_get_vector_store_file_batch_request(  # pylint: disable=name-too-long
     vector_store_id: str, batch_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1118,7 +1118,7 @@ def build_ai_assistant_get_vector_store_file_batch_request(  # pylint: disable=n
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ai_assistant_cancel_vector_store_file_batch_request(  # pylint: disable=name-too-long
+def build_assistants_cancel_vector_store_file_batch_request(  # pylint: disable=name-too-long
     vector_store_id: str, batch_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1145,7 +1145,7 @@ def build_ai_assistant_cancel_vector_store_file_batch_request(  # pylint: disabl
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ai_assistant_list_vector_store_file_batch_files_request(  # pylint: disable=name-too-long
+def build_assistants_list_vector_store_file_batch_files_request(  # pylint: disable=name-too-long
     vector_store_id: str,
     batch_id: str,
     *,
@@ -1190,10 +1190,10 @@ def build_ai_assistant_list_vector_store_file_batch_files_request(  # pylint: di
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: disable=too-many-public-methods
+class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disable=too-many-public-methods
 
     @overload
-    def create_agent(
+    def create_assistant(
         self,
         *,
         model: str,
@@ -1205,27 +1205,28 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         tool_resources: Optional[_models.ToolResources] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        response_format: Optional["_types.AssistantsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
-    ) -> _models.Agent:
-        """Creates a new agent.
+    ) -> _models.Assistant:
+        """Creates a new assistant.
 
         :keyword model: The ID of the model to use. Required.
         :paramtype model: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword name: The name of the new agent. Default value is None.
+        :keyword name: The name of the new assistant. Default value is None.
         :paramtype name: str
-        :keyword description: The description of the new agent. Default value is None.
+        :keyword description: The description of the new assistant. Default value is None.
         :paramtype description: str
-        :keyword instructions: The system instructions for the new agent to use. Default value is None.
+        :keyword instructions: The system instructions for the new assistant to use. Default value is
+         None.
         :paramtype instructions: str
-        :keyword tools: The collection of tools to enable for the new agent. Default value is None.
+        :keyword tools: The collection of tools to enable for the new assistant. Default value is None.
         :paramtype tools: list[~azure.ai.assistants.models.ToolDefinition]
-        :keyword tool_resources: A set of resources that are used by the agent's tools. The resources
-         are specific to the type of tool. For example, the ``code_interpreter``
+        :keyword tool_resources: A set of resources that are used by the assistant's tools. The
+         resources are specific to the type of tool. For example, the ``code_interpreter``
          tool requires a list of file IDs, while the ``file_search`` tool requires a list of vector
          store IDs. Default value is None.
         :paramtype tool_resources: ~azure.ai.assistants.models.ToolResources
@@ -1240,53 +1241,57 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
 
          We generally recommend altering this or temperature but not both. Default value is None.
         :paramtype top_p: float
-        :keyword response_format: The response format of the tool calls used by this agent. Is one of
-         the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
+        :keyword response_format: The response format of the tool calls used by this assistant. Is one
+         of the following types: str, Union[str, "_models.AssistantsApiResponseFormatMode"],
+         AssistantsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
         :paramtype response_format: str or str or
-         ~azure.ai.assistants.models.AgentsApiResponseFormatMode or
-         ~azure.ai.assistants.models.AgentsApiResponseFormat or
+         ~azure.ai.assistants.models.AssistantsApiResponseFormatMode or
+         ~azure.ai.assistants.models.AssistantsApiResponseFormat or
          ~azure.ai.assistants.models.ResponseFormatJsonSchemaType
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
-        :return: Agent. The Agent is compatible with MutableMapping
-        :rtype: ~azure.ai.assistants.models.Agent
+        :return: Assistant. The Assistant is compatible with MutableMapping
+        :rtype: ~azure.ai.assistants.models.Assistant
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def create_agent(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Agent:
-        """Creates a new agent.
+    def create_assistant(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Assistant:
+        """Creates a new assistant.
 
         :param body: Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Agent. The Agent is compatible with MutableMapping
-        :rtype: ~azure.ai.assistants.models.Agent
+        :return: Assistant. The Assistant is compatible with MutableMapping
+        :rtype: ~azure.ai.assistants.models.Assistant
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def create_agent(self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any) -> _models.Agent:
-        """Creates a new agent.
+    def create_assistant(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Assistant:
+        """Creates a new assistant.
 
         :param body: Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Agent. The Agent is compatible with MutableMapping
-        :rtype: ~azure.ai.assistants.models.Agent
+        :return: Assistant. The Assistant is compatible with MutableMapping
+        :rtype: ~azure.ai.assistants.models.Assistant
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
-    def create_agent(
+    def create_assistant(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -1298,26 +1303,27 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         tool_resources: Optional[_models.ToolResources] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        response_format: Optional["_types.AssistantsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
-    ) -> _models.Agent:
-        """Creates a new agent.
+    ) -> _models.Assistant:
+        """Creates a new assistant.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
         :keyword model: The ID of the model to use. Required.
         :paramtype model: str
-        :keyword name: The name of the new agent. Default value is None.
+        :keyword name: The name of the new assistant. Default value is None.
         :paramtype name: str
-        :keyword description: The description of the new agent. Default value is None.
+        :keyword description: The description of the new assistant. Default value is None.
         :paramtype description: str
-        :keyword instructions: The system instructions for the new agent to use. Default value is None.
+        :keyword instructions: The system instructions for the new assistant to use. Default value is
+         None.
         :paramtype instructions: str
-        :keyword tools: The collection of tools to enable for the new agent. Default value is None.
+        :keyword tools: The collection of tools to enable for the new assistant. Default value is None.
         :paramtype tools: list[~azure.ai.assistants.models.ToolDefinition]
-        :keyword tool_resources: A set of resources that are used by the agent's tools. The resources
-         are specific to the type of tool. For example, the ``code_interpreter``
+        :keyword tool_resources: A set of resources that are used by the assistant's tools. The
+         resources are specific to the type of tool. For example, the ``code_interpreter``
          tool requires a list of file IDs, while the ``file_search`` tool requires a list of vector
          store IDs. Default value is None.
         :paramtype tool_resources: ~azure.ai.assistants.models.ToolResources
@@ -1332,20 +1338,20 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
 
          We generally recommend altering this or temperature but not both. Default value is None.
         :paramtype top_p: float
-        :keyword response_format: The response format of the tool calls used by this agent. Is one of
-         the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
+        :keyword response_format: The response format of the tool calls used by this assistant. Is one
+         of the following types: str, Union[str, "_models.AssistantsApiResponseFormatMode"],
+         AssistantsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
         :paramtype response_format: str or str or
-         ~azure.ai.assistants.models.AgentsApiResponseFormatMode or
-         ~azure.ai.assistants.models.AgentsApiResponseFormat or
+         ~azure.ai.assistants.models.AssistantsApiResponseFormatMode or
+         ~azure.ai.assistants.models.AssistantsApiResponseFormat or
          ~azure.ai.assistants.models.ResponseFormatJsonSchemaType
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
-        :return: Agent. The Agent is compatible with MutableMapping
-        :rtype: ~azure.ai.assistants.models.Agent
+        :return: Assistant. The Assistant is compatible with MutableMapping
+        :rtype: ~azure.ai.assistants.models.Assistant
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1360,7 +1366,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Agent] = kwargs.pop("cls", None)
+        cls: ClsType[_models.Assistant] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if model is _Unset:
@@ -1385,7 +1391,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_ai_assistant_create_agent_request(
+        _request = build_assistants_create_assistant_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -1394,6 +1400,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -1416,7 +1431,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.Agent, response.json())
+            deserialized = _deserialize(_models.Assistant, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1424,7 +1439,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_agents(
+    def list_assistants(
         self,
         *,
         limit: Optional[int] = None,
@@ -1432,8 +1447,8 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         after: Optional[str] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.OpenAIPageableListOfAgent:
-        """Gets a list of agents that were previously created.
+    ) -> _models.OpenAIPageableListOfAssistant:
+        """Gets a list of assistants that were previously created.
 
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
          100, and the default is 20. Default value is None.
@@ -1451,9 +1466,9 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
          obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of
          the list. Default value is None.
         :paramtype before: str
-        :return: OpenAIPageableListOfAgent. The OpenAIPageableListOfAgent is compatible with
+        :return: OpenAIPageableListOfAssistant. The OpenAIPageableListOfAssistant is compatible with
          MutableMapping
-        :rtype: ~azure.ai.assistants.models.OpenAIPageableListOfAgent
+        :rtype: ~azure.ai.assistants.models.OpenAIPageableListOfAssistant
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1467,9 +1482,9 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.OpenAIPageableListOfAgent] = kwargs.pop("cls", None)
+        cls: ClsType[_models.OpenAIPageableListOfAssistant] = kwargs.pop("cls", None)
 
-        _request = build_ai_assistant_list_agents_request(
+        _request = build_assistants_list_assistants_request(
             limit=limit,
             order=order,
             after=after,
@@ -1480,6 +1495,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -1502,7 +1526,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.OpenAIPageableListOfAgent, response.json())
+            deserialized = _deserialize(_models.OpenAIPageableListOfAssistant, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1510,13 +1534,13 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_agent(self, agent_id: str, **kwargs: Any) -> _models.Agent:
-        """Retrieves an existing agent.
+    def get_assistant(self, assistant_id: str, **kwargs: Any) -> _models.Assistant:
+        """Retrieves an existing assistant.
 
-        :param agent_id: Identifier of the agent. Required.
-        :type agent_id: str
-        :return: Agent. The Agent is compatible with MutableMapping
-        :rtype: ~azure.ai.assistants.models.Agent
+        :param assistant_id: Identifier of the assistant. Required.
+        :type assistant_id: str
+        :return: Assistant. The Assistant is compatible with MutableMapping
+        :rtype: ~azure.ai.assistants.models.Assistant
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1530,16 +1554,25 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.Agent] = kwargs.pop("cls", None)
+        cls: ClsType[_models.Assistant] = kwargs.pop("cls", None)
 
-        _request = build_ai_assistant_get_agent_request(
-            agent_id=agent_id,
+        _request = build_assistants_get_assistant_request(
+            assistant_id=assistant_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -1562,7 +1595,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.Agent, response.json())
+            deserialized = _deserialize(_models.Assistant, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1570,9 +1603,9 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         return deserialized  # type: ignore
 
     @overload
-    def update_agent(
+    def update_assistant(
         self,
-        agent_id: str,
+        assistant_id: str,
         *,
         content_type: str = "application/json",
         model: Optional[str] = None,
@@ -1583,31 +1616,31 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         tool_resources: Optional[_models.ToolResources] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        response_format: Optional["_types.AssistantsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
-    ) -> _models.Agent:
-        """Modifies an existing agent.
+    ) -> _models.Assistant:
+        """Modifies an existing assistant.
 
-        :param agent_id: The ID of the agent to modify. Required.
-        :type agent_id: str
+        :param assistant_id: The ID of the assistant to modify. Required.
+        :type assistant_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword model: The ID of the model to use. Default value is None.
         :paramtype model: str
-        :keyword name: The modified name for the agent to use. Default value is None.
+        :keyword name: The modified name for the assistant to use. Default value is None.
         :paramtype name: str
-        :keyword description: The modified description for the agent to use. Default value is None.
+        :keyword description: The modified description for the assistant to use. Default value is None.
         :paramtype description: str
-        :keyword instructions: The modified system instructions for the new agent to use. Default value
-         is None.
+        :keyword instructions: The modified system instructions for the new assistant to use. Default
+         value is None.
         :paramtype instructions: str
-        :keyword tools: The modified collection of tools to enable for the agent. Default value is
+        :keyword tools: The modified collection of tools to enable for the assistant. Default value is
          None.
         :paramtype tools: list[~azure.ai.assistants.models.ToolDefinition]
-        :keyword tool_resources: A set of resources that are used by the agent's tools. The resources
-         are specific to the type of tool. For example,
+        :keyword tool_resources: A set of resources that are used by the assistant's tools. The
+         resources are specific to the type of tool. For example,
          the ``code_interpreter`` tool requires a list of file IDs, while the ``file_search`` tool
          requires a list of vector store IDs. Default value is None.
         :paramtype tool_resources: ~azure.ai.assistants.models.ToolResources
@@ -1622,63 +1655,63 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
 
          We generally recommend altering this or temperature but not both. Default value is None.
         :paramtype top_p: float
-        :keyword response_format: The response format of the tool calls used by this agent. Is one of
-         the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
+        :keyword response_format: The response format of the tool calls used by this assistant. Is one
+         of the following types: str, Union[str, "_models.AssistantsApiResponseFormatMode"],
+         AssistantsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
         :paramtype response_format: str or str or
-         ~azure.ai.assistants.models.AgentsApiResponseFormatMode or
-         ~azure.ai.assistants.models.AgentsApiResponseFormat or
+         ~azure.ai.assistants.models.AssistantsApiResponseFormatMode or
+         ~azure.ai.assistants.models.AssistantsApiResponseFormat or
          ~azure.ai.assistants.models.ResponseFormatJsonSchemaType
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
-        :return: Agent. The Agent is compatible with MutableMapping
-        :rtype: ~azure.ai.assistants.models.Agent
+        :return: Assistant. The Assistant is compatible with MutableMapping
+        :rtype: ~azure.ai.assistants.models.Assistant
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def update_agent(
-        self, agent_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Agent:
-        """Modifies an existing agent.
+    def update_assistant(
+        self, assistant_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Assistant:
+        """Modifies an existing assistant.
 
-        :param agent_id: The ID of the agent to modify. Required.
-        :type agent_id: str
+        :param assistant_id: The ID of the assistant to modify. Required.
+        :type assistant_id: str
         :param body: Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Agent. The Agent is compatible with MutableMapping
-        :rtype: ~azure.ai.assistants.models.Agent
+        :return: Assistant. The Assistant is compatible with MutableMapping
+        :rtype: ~azure.ai.assistants.models.Assistant
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def update_agent(
-        self, agent_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Agent:
-        """Modifies an existing agent.
+    def update_assistant(
+        self, assistant_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Assistant:
+        """Modifies an existing assistant.
 
-        :param agent_id: The ID of the agent to modify. Required.
-        :type agent_id: str
+        :param assistant_id: The ID of the assistant to modify. Required.
+        :type assistant_id: str
         :param body: Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Agent. The Agent is compatible with MutableMapping
-        :rtype: ~azure.ai.assistants.models.Agent
+        :return: Assistant. The Assistant is compatible with MutableMapping
+        :rtype: ~azure.ai.assistants.models.Assistant
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
-    def update_agent(
+    def update_assistant(
         self,
-        agent_id: str,
+        assistant_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         model: Optional[str] = None,
@@ -1689,30 +1722,30 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         tool_resources: Optional[_models.ToolResources] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        response_format: Optional["_types.AssistantsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
-    ) -> _models.Agent:
-        """Modifies an existing agent.
+    ) -> _models.Assistant:
+        """Modifies an existing assistant.
 
-        :param agent_id: The ID of the agent to modify. Required.
-        :type agent_id: str
+        :param assistant_id: The ID of the assistant to modify. Required.
+        :type assistant_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
         :keyword model: The ID of the model to use. Default value is None.
         :paramtype model: str
-        :keyword name: The modified name for the agent to use. Default value is None.
+        :keyword name: The modified name for the assistant to use. Default value is None.
         :paramtype name: str
-        :keyword description: The modified description for the agent to use. Default value is None.
+        :keyword description: The modified description for the assistant to use. Default value is None.
         :paramtype description: str
-        :keyword instructions: The modified system instructions for the new agent to use. Default value
-         is None.
+        :keyword instructions: The modified system instructions for the new assistant to use. Default
+         value is None.
         :paramtype instructions: str
-        :keyword tools: The modified collection of tools to enable for the agent. Default value is
+        :keyword tools: The modified collection of tools to enable for the assistant. Default value is
          None.
         :paramtype tools: list[~azure.ai.assistants.models.ToolDefinition]
-        :keyword tool_resources: A set of resources that are used by the agent's tools. The resources
-         are specific to the type of tool. For example,
+        :keyword tool_resources: A set of resources that are used by the assistant's tools. The
+         resources are specific to the type of tool. For example,
          the ``code_interpreter`` tool requires a list of file IDs, while the ``file_search`` tool
          requires a list of vector store IDs. Default value is None.
         :paramtype tool_resources: ~azure.ai.assistants.models.ToolResources
@@ -1727,20 +1760,20 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
 
          We generally recommend altering this or temperature but not both. Default value is None.
         :paramtype top_p: float
-        :keyword response_format: The response format of the tool calls used by this agent. Is one of
-         the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
+        :keyword response_format: The response format of the tool calls used by this assistant. Is one
+         of the following types: str, Union[str, "_models.AssistantsApiResponseFormatMode"],
+         AssistantsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
         :paramtype response_format: str or str or
-         ~azure.ai.assistants.models.AgentsApiResponseFormatMode or
-         ~azure.ai.assistants.models.AgentsApiResponseFormat or
+         ~azure.ai.assistants.models.AssistantsApiResponseFormatMode or
+         ~azure.ai.assistants.models.AssistantsApiResponseFormat or
          ~azure.ai.assistants.models.ResponseFormatJsonSchemaType
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
-        :return: Agent. The Agent is compatible with MutableMapping
-        :rtype: ~azure.ai.assistants.models.Agent
+        :return: Assistant. The Assistant is compatible with MutableMapping
+        :rtype: ~azure.ai.assistants.models.Assistant
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1755,7 +1788,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Agent] = kwargs.pop("cls", None)
+        cls: ClsType[_models.Assistant] = kwargs.pop("cls", None)
 
         if body is _Unset:
             body = {
@@ -1778,8 +1811,8 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_ai_assistant_update_agent_request(
-            agent_id=agent_id,
+        _request = build_assistants_update_assistant_request(
+            assistant_id=assistant_id,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -1788,6 +1821,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -1810,7 +1852,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.Agent, response.json())
+            deserialized = _deserialize(_models.Assistant, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1818,13 +1860,13 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         return deserialized  # type: ignore
 
     @distributed_trace
-    def delete_agent(self, agent_id: str, **kwargs: Any) -> _models.AgentDeletionStatus:
-        """Deletes an agent.
+    def delete_assistant(self, assistant_id: str, **kwargs: Any) -> _models.AssistantDeletionStatus:
+        """Deletes an assistant.
 
-        :param agent_id: Identifier of the agent. Required.
-        :type agent_id: str
-        :return: AgentDeletionStatus. The AgentDeletionStatus is compatible with MutableMapping
-        :rtype: ~azure.ai.assistants.models.AgentDeletionStatus
+        :param assistant_id: Identifier of the assistant. Required.
+        :type assistant_id: str
+        :return: AssistantDeletionStatus. The AssistantDeletionStatus is compatible with MutableMapping
+        :rtype: ~azure.ai.assistants.models.AssistantDeletionStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1838,16 +1880,25 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AgentDeletionStatus] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AssistantDeletionStatus] = kwargs.pop("cls", None)
 
-        _request = build_ai_assistant_delete_agent_request(
-            agent_id=agent_id,
+        _request = build_assistants_delete_assistant_request(
+            assistant_id=assistant_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -1870,7 +1921,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AgentDeletionStatus, response.json())
+            deserialized = _deserialize(_models.AssistantDeletionStatus, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1886,8 +1937,8 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         tool_resources: Optional[_models.ToolResources] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
-    ) -> _models.AgentThread:
-        """Creates a new thread. Threads contain messages and can be run by agents.
+    ) -> _models.AssistantThread:
+        """Creates a new thread. Threads contain messages and can be run by assistants.
 
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1895,7 +1946,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         :keyword messages: The initial messages to associate with the new thread. Default value is
          None.
         :paramtype messages: list[~azure.ai.assistants.models.ThreadMessageOptions]
-        :keyword tool_resources: A set of resources that are made available to the agent's tools in
+        :keyword tool_resources: A set of resources that are made available to the assistant's tools in
          this thread. The resources are specific to the
          type of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while
          the ``file_search`` tool requires
@@ -1906,40 +1957,40 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
-        :return: AgentThread. The AgentThread is compatible with MutableMapping
-        :rtype: ~azure.ai.assistants.models.AgentThread
+        :return: AssistantThread. The AssistantThread is compatible with MutableMapping
+        :rtype: ~azure.ai.assistants.models.AssistantThread
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def create_thread(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentThread:
-        """Creates a new thread. Threads contain messages and can be run by agents.
+    ) -> _models.AssistantThread:
+        """Creates a new thread. Threads contain messages and can be run by assistants.
 
         :param body: Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AgentThread. The AgentThread is compatible with MutableMapping
-        :rtype: ~azure.ai.assistants.models.AgentThread
+        :return: AssistantThread. The AssistantThread is compatible with MutableMapping
+        :rtype: ~azure.ai.assistants.models.AssistantThread
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def create_thread(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentThread:
-        """Creates a new thread. Threads contain messages and can be run by agents.
+    ) -> _models.AssistantThread:
+        """Creates a new thread. Threads contain messages and can be run by assistants.
 
         :param body: Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AgentThread. The AgentThread is compatible with MutableMapping
-        :rtype: ~azure.ai.assistants.models.AgentThread
+        :return: AssistantThread. The AssistantThread is compatible with MutableMapping
+        :rtype: ~azure.ai.assistants.models.AssistantThread
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1952,15 +2003,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         tool_resources: Optional[_models.ToolResources] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
-    ) -> _models.AgentThread:
-        """Creates a new thread. Threads contain messages and can be run by agents.
+    ) -> _models.AssistantThread:
+        """Creates a new thread. Threads contain messages and can be run by assistants.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
         :keyword messages: The initial messages to associate with the new thread. Default value is
          None.
         :paramtype messages: list[~azure.ai.assistants.models.ThreadMessageOptions]
-        :keyword tool_resources: A set of resources that are made available to the agent's tools in
+        :keyword tool_resources: A set of resources that are made available to the assistant's tools in
          this thread. The resources are specific to the
          type of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while
          the ``file_search`` tool requires
@@ -1971,8 +2022,8 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
-        :return: AgentThread. The AgentThread is compatible with MutableMapping
-        :rtype: ~azure.ai.assistants.models.AgentThread
+        :return: AssistantThread. The AssistantThread is compatible with MutableMapping
+        :rtype: ~azure.ai.assistants.models.AssistantThread
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1987,7 +2038,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AgentThread] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AssistantThread] = kwargs.pop("cls", None)
 
         if body is _Unset:
             body = {"messages": messages, "metadata": metadata, "tool_resources": tool_resources}
@@ -1999,7 +2050,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_ai_assistant_create_thread_request(
+        _request = build_assistants_create_thread_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -2008,6 +2059,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2030,7 +2090,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AgentThread, response.json())
+            deserialized = _deserialize(_models.AssistantThread, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2038,13 +2098,13 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_thread(self, thread_id: str, **kwargs: Any) -> _models.AgentThread:
+    def get_thread(self, thread_id: str, **kwargs: Any) -> _models.AssistantThread:
         """Gets information about an existing thread.
 
         :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
-        :return: AgentThread. The AgentThread is compatible with MutableMapping
-        :rtype: ~azure.ai.assistants.models.AgentThread
+        :return: AssistantThread. The AssistantThread is compatible with MutableMapping
+        :rtype: ~azure.ai.assistants.models.AssistantThread
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2058,9 +2118,9 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AgentThread] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AssistantThread] = kwargs.pop("cls", None)
 
-        _request = build_ai_assistant_get_thread_request(
+        _request = build_assistants_get_thread_request(
             thread_id=thread_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -2068,6 +2128,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2090,7 +2159,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AgentThread, response.json())
+            deserialized = _deserialize(_models.AssistantThread, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2106,7 +2175,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         tool_resources: Optional[_models.ToolResources] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
-    ) -> _models.AgentThread:
+    ) -> _models.AssistantThread:
         """Modifies an existing thread.
 
         :param thread_id: The ID of the thread to modify. Required.
@@ -2114,7 +2183,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword tool_resources: A set of resources that are made available to the agent's tools in
+        :keyword tool_resources: A set of resources that are made available to the assistant's tools in
          this thread. The resources are specific to the
          type of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while
          the ``file_search`` tool requires
@@ -2125,15 +2194,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
-        :return: AgentThread. The AgentThread is compatible with MutableMapping
-        :rtype: ~azure.ai.assistants.models.AgentThread
+        :return: AssistantThread. The AssistantThread is compatible with MutableMapping
+        :rtype: ~azure.ai.assistants.models.AssistantThread
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def update_thread(
         self, thread_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentThread:
+    ) -> _models.AssistantThread:
         """Modifies an existing thread.
 
         :param thread_id: The ID of the thread to modify. Required.
@@ -2143,15 +2212,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AgentThread. The AgentThread is compatible with MutableMapping
-        :rtype: ~azure.ai.assistants.models.AgentThread
+        :return: AssistantThread. The AssistantThread is compatible with MutableMapping
+        :rtype: ~azure.ai.assistants.models.AssistantThread
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def update_thread(
         self, thread_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentThread:
+    ) -> _models.AssistantThread:
         """Modifies an existing thread.
 
         :param thread_id: The ID of the thread to modify. Required.
@@ -2161,8 +2230,8 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AgentThread. The AgentThread is compatible with MutableMapping
-        :rtype: ~azure.ai.assistants.models.AgentThread
+        :return: AssistantThread. The AssistantThread is compatible with MutableMapping
+        :rtype: ~azure.ai.assistants.models.AssistantThread
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2175,14 +2244,14 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         tool_resources: Optional[_models.ToolResources] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
-    ) -> _models.AgentThread:
+    ) -> _models.AssistantThread:
         """Modifies an existing thread.
 
         :param thread_id: The ID of the thread to modify. Required.
         :type thread_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword tool_resources: A set of resources that are made available to the agent's tools in
+        :keyword tool_resources: A set of resources that are made available to the assistant's tools in
          this thread. The resources are specific to the
          type of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while
          the ``file_search`` tool requires
@@ -2193,8 +2262,8 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
-        :return: AgentThread. The AgentThread is compatible with MutableMapping
-        :rtype: ~azure.ai.assistants.models.AgentThread
+        :return: AssistantThread. The AssistantThread is compatible with MutableMapping
+        :rtype: ~azure.ai.assistants.models.AssistantThread
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2209,7 +2278,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AgentThread] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AssistantThread] = kwargs.pop("cls", None)
 
         if body is _Unset:
             body = {"metadata": metadata, "tool_resources": tool_resources}
@@ -2221,7 +2290,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_ai_assistant_update_thread_request(
+        _request = build_assistants_update_thread_request(
             thread_id=thread_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -2231,6 +2300,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2253,7 +2331,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AgentThread, response.json())
+            deserialized = _deserialize(_models.AssistantThread, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2283,7 +2361,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
 
         cls: ClsType[_models.ThreadDeletionStatus] = kwargs.pop("cls", None)
 
-        _request = build_ai_assistant_delete_thread_request(
+        _request = build_assistants_delete_thread_request(
             thread_id=thread_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -2291,6 +2369,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2340,8 +2427,8 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
 
          * `user`: Indicates the message is sent by an actual user and should be used in most
          cases to represent user-generated messages.
-         * `assistant`: Indicates the message is generated by the agent. Use this value to insert
-         messages from the agent into the
+         * `assistant`: Indicates the message is generated by the assistant. Use this value to insert
+         messages from the assistant into the
          conversation. Known values are: "user" and "assistant". Required.
         :paramtype role: str or ~azure.ai.assistants.models.MessageRole
         :keyword content: The textual content of the initial message. Currently, robust input including
@@ -2422,8 +2509,8 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
 
          * `user`: Indicates the message is sent by an actual user and should be used in most
          cases to represent user-generated messages.
-         * `assistant`: Indicates the message is generated by the agent. Use this value to insert
-         messages from the agent into the
+         * `assistant`: Indicates the message is generated by the assistant. Use this value to insert
+         messages from the assistant into the
          conversation. Known values are: "user" and "assistant". Required.
         :paramtype role: str or ~azure.ai.assistants.models.MessageRole
         :keyword content: The textual content of the initial message. Currently, robust input including
@@ -2470,7 +2557,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_ai_assistant_create_message_request(
+        _request = build_assistants_create_message_request(
             thread_id=thread_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -2480,6 +2567,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2561,7 +2657,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
 
         cls: ClsType[_models.OpenAIPageableListOfThreadMessage] = kwargs.pop("cls", None)
 
-        _request = build_ai_assistant_list_messages_request(
+        _request = build_assistants_list_messages_request(
             thread_id=thread_id,
             run_id=run_id,
             limit=limit,
@@ -2574,6 +2670,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2628,7 +2733,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
 
         cls: ClsType[_models.ThreadMessage] = kwargs.pop("cls", None)
 
-        _request = build_ai_assistant_get_message_request(
+        _request = build_assistants_get_message_request(
             thread_id=thread_id,
             message_id=message_id,
             api_version=self._config.api_version,
@@ -2637,6 +2742,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2786,7 +2900,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_ai_assistant_update_message_request(
+        _request = build_assistants_update_message_request(
             thread_id=thread_id,
             message_id=message_id,
             content_type=content_type,
@@ -2797,6 +2911,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2831,7 +2954,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         self,
         thread_id: str,
         *,
-        agent_id: str,
+        assistant_id: str,
         include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
         content_type: str = "application/json",
         model: Optional[str] = None,
@@ -2845,18 +2968,18 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         max_prompt_tokens: Optional[int] = None,
         max_completion_tokens: Optional[int] = None,
         truncation_strategy: Optional[_models.TruncationObject] = None,
-        tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        tool_choice: Optional["_types.AssistantsApiToolChoiceOption"] = None,
+        response_format: Optional["_types.AssistantsApiResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.ThreadRun:
-        """Creates a new run for an agent thread.
+        """Creates a new run for an assistant thread.
 
         :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
-        :keyword agent_id: The ID of the agent that should run the thread. Required.
-        :paramtype agent_id: str
+        :keyword assistant_id: The ID of the assistant that should run the thread. Required.
+        :paramtype assistant_id: str
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
@@ -2865,11 +2988,11 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword model: The overridden model name that the agent should use to run the thread. Default
-         value is None.
+        :keyword model: The overridden model name that the assistant should use to run the thread.
+         Default value is None.
         :paramtype model: str
-        :keyword instructions: The overridden system instructions that the agent should use to run the
-         thread. Default value is None.
+        :keyword instructions: The overridden system instructions that the assistant should use to run
+         the thread. Default value is None.
         :paramtype instructions: str
         :keyword additional_instructions: Additional instructions to append at the end of the
          instructions for the run. This is useful for modifying the behavior
@@ -2878,7 +3001,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         :keyword additional_messages: Adds additional messages to the thread before creating the run.
          Default value is None.
         :paramtype additional_messages: list[~azure.ai.assistants.models.ThreadMessageOptions]
-        :keyword tools: The overridden list of enabled tools that the agent should use to run the
+        :keyword tools: The overridden list of enabled tools that the assistant should use to run the
          thread. Default value is None.
         :paramtype tools: list[~azure.ai.assistants.models.ToolDefinition]
         :keyword stream_parameter: If ``true``, returns a stream of events that happen during the Run
@@ -2916,16 +3039,17 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
          moves forward. Default value is None.
         :paramtype truncation_strategy: ~azure.ai.assistants.models.TruncationObject
         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
-         the following types: str, Union[str, "_models.AgentsApiToolChoiceOptionMode"],
-         AgentsNamedToolChoice Default value is None.
-        :paramtype tool_choice: str or str or ~azure.ai.assistants.models.AgentsApiToolChoiceOptionMode
-         or ~azure.ai.assistants.models.AgentsNamedToolChoice
+         the following types: str, Union[str, "_models.AssistantsApiToolChoiceOptionMode"],
+         AssistantsNamedToolChoice Default value is None.
+        :paramtype tool_choice: str or str or
+         ~azure.ai.assistants.models.AssistantsApiToolChoiceOptionMode or
+         ~azure.ai.assistants.models.AssistantsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
-         following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
+         following types: str, Union[str, "_models.AssistantsApiResponseFormatMode"],
+         AssistantsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
         :paramtype response_format: str or str or
-         ~azure.ai.assistants.models.AgentsApiResponseFormatMode or
-         ~azure.ai.assistants.models.AgentsApiResponseFormat or
+         ~azure.ai.assistants.models.AssistantsApiResponseFormatMode or
+         ~azure.ai.assistants.models.AssistantsApiResponseFormat or
          ~azure.ai.assistants.models.ResponseFormatJsonSchemaType
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
@@ -2950,7 +3074,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ThreadRun:
-        """Creates a new run for an agent thread.
+        """Creates a new run for an assistant thread.
 
         :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
@@ -2979,7 +3103,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ThreadRun:
-        """Creates a new run for an agent thread.
+        """Creates a new run for an assistant thread.
 
         :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
@@ -3004,7 +3128,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         thread_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        agent_id: str = _Unset,
+        assistant_id: str = _Unset,
         include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
         model: Optional[str] = None,
         instructions: Optional[str] = None,
@@ -3017,30 +3141,30 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         max_prompt_tokens: Optional[int] = None,
         max_completion_tokens: Optional[int] = None,
         truncation_strategy: Optional[_models.TruncationObject] = None,
-        tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        tool_choice: Optional["_types.AssistantsApiToolChoiceOption"] = None,
+        response_format: Optional["_types.AssistantsApiResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.ThreadRun:
-        """Creates a new run for an agent thread.
+        """Creates a new run for an assistant thread.
 
         :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword agent_id: The ID of the agent that should run the thread. Required.
-        :paramtype agent_id: str
+        :keyword assistant_id: The ID of the assistant that should run the thread. Required.
+        :paramtype assistant_id: str
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
          content. Default value is None.
         :paramtype include: list[str or ~azure.ai.assistants.models.RunAdditionalFieldList]
-        :keyword model: The overridden model name that the agent should use to run the thread. Default
-         value is None.
+        :keyword model: The overridden model name that the assistant should use to run the thread.
+         Default value is None.
         :paramtype model: str
-        :keyword instructions: The overridden system instructions that the agent should use to run the
-         thread. Default value is None.
+        :keyword instructions: The overridden system instructions that the assistant should use to run
+         the thread. Default value is None.
         :paramtype instructions: str
         :keyword additional_instructions: Additional instructions to append at the end of the
          instructions for the run. This is useful for modifying the behavior
@@ -3049,7 +3173,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         :keyword additional_messages: Adds additional messages to the thread before creating the run.
          Default value is None.
         :paramtype additional_messages: list[~azure.ai.assistants.models.ThreadMessageOptions]
-        :keyword tools: The overridden list of enabled tools that the agent should use to run the
+        :keyword tools: The overridden list of enabled tools that the assistant should use to run the
          thread. Default value is None.
         :paramtype tools: list[~azure.ai.assistants.models.ToolDefinition]
         :keyword stream_parameter: If ``true``, returns a stream of events that happen during the Run
@@ -3087,16 +3211,17 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
          moves forward. Default value is None.
         :paramtype truncation_strategy: ~azure.ai.assistants.models.TruncationObject
         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
-         the following types: str, Union[str, "_models.AgentsApiToolChoiceOptionMode"],
-         AgentsNamedToolChoice Default value is None.
-        :paramtype tool_choice: str or str or ~azure.ai.assistants.models.AgentsApiToolChoiceOptionMode
-         or ~azure.ai.assistants.models.AgentsNamedToolChoice
+         the following types: str, Union[str, "_models.AssistantsApiToolChoiceOptionMode"],
+         AssistantsNamedToolChoice Default value is None.
+        :paramtype tool_choice: str or str or
+         ~azure.ai.assistants.models.AssistantsApiToolChoiceOptionMode or
+         ~azure.ai.assistants.models.AssistantsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
-         following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
+         following types: str, Union[str, "_models.AssistantsApiResponseFormatMode"],
+         AssistantsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
         :paramtype response_format: str or str or
-         ~azure.ai.assistants.models.AgentsApiResponseFormatMode or
-         ~azure.ai.assistants.models.AgentsApiResponseFormat or
+         ~azure.ai.assistants.models.AssistantsApiResponseFormatMode or
+         ~azure.ai.assistants.models.AssistantsApiResponseFormat or
          ~azure.ai.assistants.models.ResponseFormatJsonSchemaType
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
@@ -3125,12 +3250,12 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         cls: ClsType[_models.ThreadRun] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            if agent_id is _Unset:
-                raise TypeError("missing required argument: agent_id")
+            if assistant_id is _Unset:
+                raise TypeError("missing required argument: assistant_id")
             body = {
                 "additional_instructions": additional_instructions,
                 "additional_messages": additional_messages,
-                "assistant_id": agent_id,
+                "assistant_id": assistant_id,
                 "instructions": instructions,
                 "max_completion_tokens": max_completion_tokens,
                 "max_prompt_tokens": max_prompt_tokens,
@@ -3153,7 +3278,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_ai_assistant_create_run_request(
+        _request = build_assistants_create_run_request(
             thread_id=thread_id,
             include=include,
             content_type=content_type,
@@ -3164,6 +3289,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -3242,7 +3376,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
 
         cls: ClsType[_models.OpenAIPageableListOfThreadRun] = kwargs.pop("cls", None)
 
-        _request = build_ai_assistant_list_runs_request(
+        _request = build_assistants_list_runs_request(
             thread_id=thread_id,
             limit=limit,
             order=order,
@@ -3254,6 +3388,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -3308,7 +3451,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
 
         cls: ClsType[_models.ThreadRun] = kwargs.pop("cls", None)
 
-        _request = build_ai_assistant_get_run_request(
+        _request = build_assistants_get_run_request(
             thread_id=thread_id,
             run_id=run_id,
             api_version=self._config.api_version,
@@ -3317,6 +3460,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -3466,7 +3618,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_ai_assistant_update_run_request(
+        _request = build_assistants_update_run_request(
             thread_id=thread_id,
             run_id=run_id,
             content_type=content_type,
@@ -3477,6 +3629,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -3638,7 +3799,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_ai_assistant_submit_tool_outputs_to_run_request(
+        _request = build_assistants_submit_tool_outputs_to_run_request(
             thread_id=thread_id,
             run_id=run_id,
             content_type=content_type,
@@ -3649,6 +3810,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -3703,7 +3873,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
 
         cls: ClsType[_models.ThreadRun] = kwargs.pop("cls", None)
 
-        _request = build_ai_assistant_cancel_run_request(
+        _request = build_assistants_cancel_run_request(
             thread_id=thread_id,
             run_id=run_id,
             api_version=self._config.api_version,
@@ -3712,6 +3882,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -3745,9 +3924,9 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
     def create_thread_and_run(
         self,
         *,
-        agent_id: str,
+        assistant_id: str,
         content_type: str = "application/json",
-        thread: Optional[_models.AgentThreadCreationOptions] = None,
+        thread: Optional[_models.AssistantThreadCreationOptions] = None,
         model: Optional[str] = None,
         instructions: Optional[str] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
@@ -3758,33 +3937,34 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         max_prompt_tokens: Optional[int] = None,
         max_completion_tokens: Optional[int] = None,
         truncation_strategy: Optional[_models.TruncationObject] = None,
-        tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        tool_choice: Optional["_types.AssistantsApiToolChoiceOption"] = None,
+        response_format: Optional["_types.AssistantsApiResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.ThreadRun:
-        """Creates a new agent thread and immediately starts a run using that new thread.
+        """Creates a new assistant thread and immediately starts a run using that new thread.
 
-        :keyword agent_id: The ID of the agent for which the thread should be created. Required.
-        :paramtype agent_id: str
+        :keyword assistant_id: The ID of the assistant for which the thread should be created.
+         Required.
+        :paramtype assistant_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword thread: The details used to create the new thread. If no thread is provided, an empty
          one will be created. Default value is None.
-        :paramtype thread: ~azure.ai.assistants.models.AgentThreadCreationOptions
-        :keyword model: The overridden model that the agent should use to run the thread. Default value
-         is None.
+        :paramtype thread: ~azure.ai.assistants.models.AssistantThreadCreationOptions
+        :keyword model: The overridden model that the assistant should use to run the thread. Default
+         value is None.
         :paramtype model: str
-        :keyword instructions: The overridden system instructions the agent should use to run the
+        :keyword instructions: The overridden system instructions the assistant should use to run the
          thread. Default value is None.
         :paramtype instructions: str
-        :keyword tools: The overridden list of enabled tools the agent should use to run the thread.
-         Default value is None.
+        :keyword tools: The overridden list of enabled tools the assistant should use to run the
+         thread. Default value is None.
         :paramtype tools: list[~azure.ai.assistants.models.ToolDefinition]
-        :keyword tool_resources: Override the tools the agent can use for this run. This is useful for
-         modifying the behavior on a per-run basis. Default value is None.
+        :keyword tool_resources: Override the tools the assistant can use for this run. This is useful
+         for modifying the behavior on a per-run basis. Default value is None.
         :paramtype tool_resources: ~azure.ai.assistants.models.UpdateToolResourcesOptions
         :keyword stream_parameter: If ``true``, returns a stream of events that happen during the Run
          as server-sent events,
@@ -3821,16 +4001,17 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
          moves forward. Default value is None.
         :paramtype truncation_strategy: ~azure.ai.assistants.models.TruncationObject
         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
-         the following types: str, Union[str, "_models.AgentsApiToolChoiceOptionMode"],
-         AgentsNamedToolChoice Default value is None.
-        :paramtype tool_choice: str or str or ~azure.ai.assistants.models.AgentsApiToolChoiceOptionMode
-         or ~azure.ai.assistants.models.AgentsNamedToolChoice
+         the following types: str, Union[str, "_models.AssistantsApiToolChoiceOptionMode"],
+         AssistantsNamedToolChoice Default value is None.
+        :paramtype tool_choice: str or str or
+         ~azure.ai.assistants.models.AssistantsApiToolChoiceOptionMode or
+         ~azure.ai.assistants.models.AssistantsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
-         following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
+         following types: str, Union[str, "_models.AssistantsApiResponseFormatMode"],
+         AssistantsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
         :paramtype response_format: str or str or
-         ~azure.ai.assistants.models.AgentsApiResponseFormatMode or
-         ~azure.ai.assistants.models.AgentsApiResponseFormat or
+         ~azure.ai.assistants.models.AssistantsApiResponseFormatMode or
+         ~azure.ai.assistants.models.AssistantsApiResponseFormat or
          ~azure.ai.assistants.models.ResponseFormatJsonSchemaType
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
@@ -3849,7 +4030,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
     def create_thread_and_run(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ThreadRun:
-        """Creates a new agent thread and immediately starts a run using that new thread.
+        """Creates a new assistant thread and immediately starts a run using that new thread.
 
         :param body: Required.
         :type body: JSON
@@ -3865,7 +4046,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
     def create_thread_and_run(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ThreadRun:
-        """Creates a new agent thread and immediately starts a run using that new thread.
+        """Creates a new assistant thread and immediately starts a run using that new thread.
 
         :param body: Required.
         :type body: IO[bytes]
@@ -3882,8 +4063,8 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        agent_id: str = _Unset,
-        thread: Optional[_models.AgentThreadCreationOptions] = None,
+        assistant_id: str = _Unset,
+        thread: Optional[_models.AssistantThreadCreationOptions] = None,
         model: Optional[str] = None,
         instructions: Optional[str] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
@@ -3894,32 +4075,33 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         max_prompt_tokens: Optional[int] = None,
         max_completion_tokens: Optional[int] = None,
         truncation_strategy: Optional[_models.TruncationObject] = None,
-        tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        tool_choice: Optional["_types.AssistantsApiToolChoiceOption"] = None,
+        response_format: Optional["_types.AssistantsApiResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.ThreadRun:
-        """Creates a new agent thread and immediately starts a run using that new thread.
+        """Creates a new assistant thread and immediately starts a run using that new thread.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword agent_id: The ID of the agent for which the thread should be created. Required.
-        :paramtype agent_id: str
+        :keyword assistant_id: The ID of the assistant for which the thread should be created.
+         Required.
+        :paramtype assistant_id: str
         :keyword thread: The details used to create the new thread. If no thread is provided, an empty
          one will be created. Default value is None.
-        :paramtype thread: ~azure.ai.assistants.models.AgentThreadCreationOptions
-        :keyword model: The overridden model that the agent should use to run the thread. Default value
-         is None.
+        :paramtype thread: ~azure.ai.assistants.models.AssistantThreadCreationOptions
+        :keyword model: The overridden model that the assistant should use to run the thread. Default
+         value is None.
         :paramtype model: str
-        :keyword instructions: The overridden system instructions the agent should use to run the
+        :keyword instructions: The overridden system instructions the assistant should use to run the
          thread. Default value is None.
         :paramtype instructions: str
-        :keyword tools: The overridden list of enabled tools the agent should use to run the thread.
-         Default value is None.
+        :keyword tools: The overridden list of enabled tools the assistant should use to run the
+         thread. Default value is None.
         :paramtype tools: list[~azure.ai.assistants.models.ToolDefinition]
-        :keyword tool_resources: Override the tools the agent can use for this run. This is useful for
-         modifying the behavior on a per-run basis. Default value is None.
+        :keyword tool_resources: Override the tools the assistant can use for this run. This is useful
+         for modifying the behavior on a per-run basis. Default value is None.
         :paramtype tool_resources: ~azure.ai.assistants.models.UpdateToolResourcesOptions
         :keyword stream_parameter: If ``true``, returns a stream of events that happen during the Run
          as server-sent events,
@@ -3956,16 +4138,17 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
          moves forward. Default value is None.
         :paramtype truncation_strategy: ~azure.ai.assistants.models.TruncationObject
         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
-         the following types: str, Union[str, "_models.AgentsApiToolChoiceOptionMode"],
-         AgentsNamedToolChoice Default value is None.
-        :paramtype tool_choice: str or str or ~azure.ai.assistants.models.AgentsApiToolChoiceOptionMode
-         or ~azure.ai.assistants.models.AgentsNamedToolChoice
+         the following types: str, Union[str, "_models.AssistantsApiToolChoiceOptionMode"],
+         AssistantsNamedToolChoice Default value is None.
+        :paramtype tool_choice: str or str or
+         ~azure.ai.assistants.models.AssistantsApiToolChoiceOptionMode or
+         ~azure.ai.assistants.models.AssistantsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
-         following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
+         following types: str, Union[str, "_models.AssistantsApiResponseFormatMode"],
+         AssistantsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
         :paramtype response_format: str or str or
-         ~azure.ai.assistants.models.AgentsApiResponseFormatMode or
-         ~azure.ai.assistants.models.AgentsApiResponseFormat or
+         ~azure.ai.assistants.models.AssistantsApiResponseFormatMode or
+         ~azure.ai.assistants.models.AssistantsApiResponseFormat or
          ~azure.ai.assistants.models.ResponseFormatJsonSchemaType
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
@@ -3994,10 +4177,10 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         cls: ClsType[_models.ThreadRun] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            if agent_id is _Unset:
-                raise TypeError("missing required argument: agent_id")
+            if assistant_id is _Unset:
+                raise TypeError("missing required argument: assistant_id")
             body = {
-                "assistant_id": agent_id,
+                "assistant_id": assistant_id,
                 "instructions": instructions,
                 "max_completion_tokens": max_completion_tokens,
                 "max_prompt_tokens": max_prompt_tokens,
@@ -4022,7 +4205,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_ai_assistant_create_thread_and_run_request(
+        _request = build_assistants_create_thread_and_run_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -4031,6 +4214,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4100,7 +4292,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
 
         cls: ClsType[_models.RunStep] = kwargs.pop("cls", None)
 
-        _request = build_ai_assistant_get_run_step_request(
+        _request = build_assistants_get_run_step_request(
             thread_id=thread_id,
             run_id=run_id,
             step_id=step_id,
@@ -4111,6 +4303,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4198,7 +4399,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
 
         cls: ClsType[_models.OpenAIPageableListOfRunStep] = kwargs.pop("cls", None)
 
-        _request = build_ai_assistant_list_run_steps_request(
+        _request = build_assistants_list_run_steps_request(
             thread_id=thread_id,
             run_id=run_id,
             include=include,
@@ -4212,6 +4413,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4268,7 +4478,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
 
         cls: ClsType[_models.FileListResponse] = kwargs.pop("cls", None)
 
-        _request = build_ai_assistant_list_files_request(
+        _request = build_assistants_list_files_request(
             purpose=purpose,
             api_version=self._config.api_version,
             headers=_headers,
@@ -4276,6 +4486,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4355,7 +4574,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         _data_fields: List[str] = ["purpose", "filename"]
         _files, _data = prepare_multipart_form_data(_body, _file_fields, _data_fields)
 
-        _request = build_ai_assistant_upload_file_request(
+        _request = build_assistants_upload_file_request(
             api_version=self._config.api_version,
             files=_files,
             data=_data,
@@ -4364,6 +4583,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4416,7 +4644,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
 
         cls: ClsType[_models.FileDeletionStatus] = kwargs.pop("cls", None)
 
-        _request = build_ai_assistant_delete_file_request(
+        _request = build_assistants_delete_file_request(
             file_id=file_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -4424,6 +4652,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4476,7 +4713,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
 
         cls: ClsType[_models.OpenAIFile] = kwargs.pop("cls", None)
 
-        _request = build_ai_assistant_get_file_request(
+        _request = build_assistants_get_file_request(
             file_id=file_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -4484,6 +4721,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4536,7 +4782,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_ai_assistant_get_file_content_request(
+        _request = build_assistants_get_file_content_request(
             file_id=file_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -4544,6 +4790,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4616,7 +4871,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
 
         cls: ClsType[_models.OpenAIPageableListOfVectorStore] = kwargs.pop("cls", None)
 
-        _request = build_ai_assistant_list_vector_stores_request(
+        _request = build_assistants_list_vector_stores_request(
             limit=limit,
             order=order,
             after=after,
@@ -4627,6 +4882,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4799,7 +5063,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_ai_assistant_create_vector_store_request(
+        _request = build_assistants_create_vector_store_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -4808,6 +5072,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4860,7 +5133,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
 
         cls: ClsType[_models.VectorStore] = kwargs.pop("cls", None)
 
-        _request = build_ai_assistant_get_vector_store_request(
+        _request = build_assistants_get_vector_store_request(
             vector_store_id=vector_store_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -4868,6 +5141,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5019,7 +5301,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_ai_assistant_modify_vector_store_request(
+        _request = build_assistants_modify_vector_store_request(
             vector_store_id=vector_store_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -5029,6 +5311,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5082,7 +5373,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
 
         cls: ClsType[_models.VectorStoreDeletionStatus] = kwargs.pop("cls", None)
 
-        _request = build_ai_assistant_delete_vector_store_request(
+        _request = build_assistants_delete_vector_store_request(
             vector_store_id=vector_store_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -5090,6 +5381,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5172,7 +5472,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
 
         cls: ClsType[_models.OpenAIPageableListOfVectorStoreFile] = kwargs.pop("cls", None)
 
-        _request = build_ai_assistant_list_vector_store_files_request(
+        _request = build_assistants_list_vector_store_files_request(
             vector_store_id=vector_store_id,
             filter=filter,
             limit=limit,
@@ -5185,6 +5485,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5332,7 +5641,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_ai_assistant_create_vector_store_file_request(
+        _request = build_assistants_create_vector_store_file_request(
             vector_store_id=vector_store_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -5342,6 +5651,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5396,7 +5714,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
 
         cls: ClsType[_models.VectorStoreFile] = kwargs.pop("cls", None)
 
-        _request = build_ai_assistant_get_vector_store_file_request(
+        _request = build_assistants_get_vector_store_file_request(
             vector_store_id=vector_store_id,
             file_id=file_id,
             api_version=self._config.api_version,
@@ -5405,6 +5723,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5464,7 +5791,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
 
         cls: ClsType[_models.VectorStoreFileDeletionStatus] = kwargs.pop("cls", None)
 
-        _request = build_ai_assistant_delete_vector_store_file_request(
+        _request = build_assistants_delete_vector_store_file_request(
             vector_store_id=vector_store_id,
             file_id=file_id,
             api_version=self._config.api_version,
@@ -5473,6 +5800,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5620,7 +5956,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_ai_assistant_create_vector_store_file_batch_request(
+        _request = build_assistants_create_vector_store_file_batch_request(
             vector_store_id=vector_store_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -5630,6 +5966,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5686,7 +6031,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
 
         cls: ClsType[_models.VectorStoreFileBatch] = kwargs.pop("cls", None)
 
-        _request = build_ai_assistant_get_vector_store_file_batch_request(
+        _request = build_assistants_get_vector_store_file_batch_request(
             vector_store_id=vector_store_id,
             batch_id=batch_id,
             api_version=self._config.api_version,
@@ -5695,6 +6040,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5752,7 +6106,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
 
         cls: ClsType[_models.VectorStoreFileBatch] = kwargs.pop("cls", None)
 
-        _request = build_ai_assistant_cancel_vector_store_file_batch_request(
+        _request = build_assistants_cancel_vector_store_file_batch_request(
             vector_store_id=vector_store_id,
             batch_id=batch_id,
             api_version=self._config.api_version,
@@ -5761,6 +6115,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5846,7 +6209,7 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
 
         cls: ClsType[_models.OpenAIPageableListOfVectorStoreFile] = kwargs.pop("cls", None)
 
-        _request = build_ai_assistant_list_vector_store_file_batch_files_request(
+        _request = build_assistants_list_vector_store_file_batch_files_request(
             vector_store_id=vector_store_id,
             batch_id=batch_id,
             filter=filter,
@@ -5860,6 +6223,15 @@ class AIAssistantClientOperationsMixin(AIAssistantClientMixinABC):  # pylint: di
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 

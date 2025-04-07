@@ -25,8 +25,62 @@ if TYPE_CHECKING:
     from .. import _types, models as _models
 
 
-class Agent(_model_base.Model):
-    """Represents an agent that can call the model and use tools.
+class AISearchIndexResource(_model_base.Model):
+    """A AI Search Index resource.
+
+    :ivar index_connection_id: An index connection id in an IndexResource attached to this
+     assistant. Required.
+    :vartype index_connection_id: str
+    :ivar index_name: The name of an index in an IndexResource attached to this assistant.
+     Required.
+    :vartype index_name: str
+    :ivar query_type: Type of query in an AIIndexResource attached to this assistant. Known values
+     are: "simple", "semantic", "vector", "vector_simple_hybrid", and "vector_semantic_hybrid".
+    :vartype query_type: str or ~azure.ai.assistants.models.AzureAISearchQueryType
+    :ivar top_k: Number of documents to retrieve from search and present to the model.
+    :vartype top_k: int
+    :ivar filter: Odata filter string for search resource.
+    :vartype filter: str
+    """
+
+    index_connection_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An index connection id in an IndexResource attached to this assistant. Required."""
+    index_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of an index in an IndexResource attached to this assistant. Required."""
+    query_type: Optional[Union[str, "_models.AzureAISearchQueryType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Type of query in an AIIndexResource attached to this assistant. Known values are: \"simple\",
+     \"semantic\", \"vector\", \"vector_simple_hybrid\", and \"vector_semantic_hybrid\"."""
+    top_k: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Number of documents to retrieve from search and present to the model."""
+    filter: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Odata filter string for search resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index_connection_id: str,
+        index_name: str,
+        query_type: Optional[Union[str, "_models.AzureAISearchQueryType"]] = None,
+        top_k: Optional[int] = None,
+        filter: Optional[str] = None,  # pylint: disable=redefined-builtin
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Assistant(_model_base.Model):
+    """Represents an assistant that can call the model and use tools.
 
     :ivar id: The identifier, which can be referenced in API endpoints. Required.
     :vartype id: str
@@ -36,18 +90,18 @@ class Agent(_model_base.Model):
     :ivar created_at: The Unix timestamp, in seconds, representing when this object was created.
      Required.
     :vartype created_at: ~datetime.datetime
-    :ivar name: The name of the agent. Required.
+    :ivar name: The name of the assistant. Required.
     :vartype name: str
-    :ivar description: The description of the agent. Required.
+    :ivar description: The description of the assistant. Required.
     :vartype description: str
     :ivar model: The ID of the model to use. Required.
     :vartype model: str
-    :ivar instructions: The system instructions for the agent to use. Required.
+    :ivar instructions: The system instructions for the assistant to use. Required.
     :vartype instructions: str
-    :ivar tools: The collection of tools enabled for the agent. Required.
+    :ivar tools: The collection of tools enabled for the assistant. Required.
     :vartype tools: list[~azure.ai.assistants.models.ToolDefinition]
-    :ivar tool_resources: A set of resources that are used by the agent's tools. The resources are
-     specific to the type of tool. For example, the ``code_interpreter``
+    :ivar tool_resources: A set of resources that are used by the assistant's tools. The resources
+     are specific to the type of tool. For example, the ``code_interpreter``
      tool requires a list of file IDs, while the ``file_search`` tool requires a list of vector
      store IDs. Required.
     :vartype tool_resources: ~azure.ai.assistants.models.ToolResources
@@ -61,11 +115,12 @@ class Agent(_model_base.Model):
 
      We generally recommend altering this or temperature but not both. Required.
     :vartype top_p: float
-    :ivar response_format: The response format of the tool calls used by this agent. Is one of the
-     following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-     AgentsApiResponseFormat, ResponseFormatJsonSchemaType
-    :vartype response_format: str or str or ~azure.ai.assistants.models.AgentsApiResponseFormatMode
-     or ~azure.ai.assistants.models.AgentsApiResponseFormat or
+    :ivar response_format: The response format of the tool calls used by this assistant. Is one of
+     the following types: str, Union[str, "_models.AssistantsApiResponseFormatMode"],
+     AssistantsApiResponseFormat, ResponseFormatJsonSchemaType
+    :vartype response_format: str or str or
+     ~azure.ai.assistants.models.AssistantsApiResponseFormatMode or
+     ~azure.ai.assistants.models.AssistantsApiResponseFormat or
      ~azure.ai.assistants.models.ResponseFormatJsonSchemaType
     :ivar metadata: A set of up to 16 key/value pairs that can be attached to an object, used for
      storing additional information about that object in a structured format. Keys may be up to 64
@@ -82,18 +137,18 @@ class Agent(_model_base.Model):
     )
     """The Unix timestamp, in seconds, representing when this object was created. Required."""
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The name of the agent. Required."""
+    """The name of the assistant. Required."""
     description: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The description of the agent. Required."""
+    """The description of the assistant. Required."""
     model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the model to use. Required."""
     instructions: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The system instructions for the agent to use. Required."""
+    """The system instructions for the assistant to use. Required."""
     tools: List["_models.ToolDefinition"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The collection of tools enabled for the agent. Required."""
+    """The collection of tools enabled for the assistant. Required."""
     tool_resources: "_models.ToolResources" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """A set of resources that are used by the agent's tools. The resources are specific to the type
-     of tool. For example, the ``code_interpreter``
+    """A set of resources that are used by the assistant's tools. The resources are specific to the
+     type of tool. For example, the ``code_interpreter``
      tool requires a list of file IDs, while the ``file_search`` tool requires a list of vector
      store IDs. Required."""
     temperature: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -106,11 +161,11 @@ class Agent(_model_base.Model):
      So 0.1 means only the tokens comprising the top 10% probability mass are considered.
      
      We generally recommend altering this or temperature but not both. Required."""
-    response_format: Optional["_types.AgentsApiResponseFormatOption"] = rest_field(
+    response_format: Optional["_types.AssistantsApiResponseFormatOption"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The response format of the tool calls used by this agent. Is one of the following types: str,
-     Union[str, \"_models.AgentsApiResponseFormatMode\"], AgentsApiResponseFormat,
+    """The response format of the tool calls used by this assistant. Is one of the following types:
+     str, Union[str, \"_models.AssistantsApiResponseFormatMode\"], AssistantsApiResponseFormat,
      ResponseFormatJsonSchemaType"""
     metadata: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A set of up to 16 key/value pairs that can be attached to an object, used for storing
@@ -132,7 +187,7 @@ class Agent(_model_base.Model):
         temperature: float,
         top_p: float,
         metadata: Dict[str, str],
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        response_format: Optional["_types.AssistantsApiResponseFormatOption"] = None,
     ) -> None: ...
 
     @overload
@@ -147,8 +202,8 @@ class Agent(_model_base.Model):
         self.object: Literal["assistant"] = "assistant"
 
 
-class AgentDeletionStatus(_model_base.Model):
-    """The status of an agent deletion operation.
+class AssistantDeletionStatus(_model_base.Model):
+    """The status of an assistant deletion operation.
 
     :ivar id: The ID of the resource specified for deletion. Required.
     :vartype id: str
@@ -187,7 +242,7 @@ class AgentDeletionStatus(_model_base.Model):
         self.object: Literal["assistant.deleted"] = "assistant.deleted"
 
 
-class AgentsApiResponseFormat(_model_base.Model):
+class AssistantsApiResponseFormat(_model_base.Model):
     """An object describing the expected output of the model. If ``json_object`` only ``function``
     type ``tools`` are allowed to be passed to the Run.
     If ``text`` the model can return text or any value needed.
@@ -220,18 +275,18 @@ class AgentsApiResponseFormat(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentsNamedToolChoice(_model_base.Model):
+class AssistantsNamedToolChoice(_model_base.Model):
     """Specifies a tool the model should use. Use to force the model to call a specific tool.
 
     :ivar type: the type of tool. If type is ``function``, the function name must be set. Required.
      Known values are: "function", "code_interpreter", "file_search", "bing_grounding",
      "fabric_dataagent", "sharepoint_grounding", "azure_ai_search", and "bing_custom_search".
-    :vartype type: str or ~azure.ai.assistants.models.AgentsNamedToolChoiceType
+    :vartype type: str or ~azure.ai.assistants.models.AssistantsNamedToolChoiceType
     :ivar function: The name of the function to call.
     :vartype function: ~azure.ai.assistants.models.FunctionName
     """
 
-    type: Union[str, "_models.AgentsNamedToolChoiceType"] = rest_field(
+    type: Union[str, "_models.AssistantsNamedToolChoiceType"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """the type of tool. If type is ``function``, the function name must be set. Required. Known
@@ -245,7 +300,7 @@ class AgentsNamedToolChoice(_model_base.Model):
     def __init__(
         self,
         *,
-        type: Union[str, "_models.AgentsNamedToolChoiceType"],
+        type: Union[str, "_models.AssistantsNamedToolChoiceType"],
         function: Optional["_models.FunctionName"] = None,
     ) -> None: ...
 
@@ -260,8 +315,8 @@ class AgentsNamedToolChoice(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentThread(_model_base.Model):
-    """Information about a single thread associated with an agent.
+class AssistantThread(_model_base.Model):
+    """Information about a single thread associated with an assistant.
 
     :ivar id: The identifier, which can be referenced in API endpoints. Required.
     :vartype id: str
@@ -270,8 +325,8 @@ class AgentThread(_model_base.Model):
     :ivar created_at: The Unix timestamp, in seconds, representing when this object was created.
      Required.
     :vartype created_at: ~datetime.datetime
-    :ivar tool_resources: A set of resources that are made available to the agent's tools in this
-     thread. The resources are specific to the type
+    :ivar tool_resources: A set of resources that are made available to the assistant's tools in
+     this thread. The resources are specific to the type
      of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while the
      ``file_search`` tool requires a list
      of vector store IDs. Required.
@@ -291,8 +346,8 @@ class AgentThread(_model_base.Model):
     )
     """The Unix timestamp, in seconds, representing when this object was created. Required."""
     tool_resources: "_models.ToolResources" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """A set of resources that are made available to the agent's tools in this thread. The resources
-     are specific to the type
+    """A set of resources that are made available to the assistant's tools in this thread. The
+     resources are specific to the type
      of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while the
      ``file_search`` tool requires a list
      of vector store IDs. Required."""
@@ -323,13 +378,13 @@ class AgentThread(_model_base.Model):
         self.object: Literal["thread"] = "thread"
 
 
-class AgentThreadCreationOptions(_model_base.Model):
-    """The details used to create a new agent thread.
+class AssistantThreadCreationOptions(_model_base.Model):
+    """The details used to create a new assistant thread.
 
     :ivar messages: The initial messages to associate with the new thread.
     :vartype messages: list[~azure.ai.assistants.models.ThreadMessageOptions]
-    :ivar tool_resources: A set of resources that are made available to the agent's tools in this
-     thread. The resources are specific to the
+    :ivar tool_resources: A set of resources that are made available to the assistant's tools in
+     this thread. The resources are specific to the
      type of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while the
      ``file_search`` tool requires
      a list of vector store IDs.
@@ -347,8 +402,8 @@ class AgentThreadCreationOptions(_model_base.Model):
     tool_resources: Optional["_models.ToolResources"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """A set of resources that are made available to the agent's tools in this thread. The resources
-     are specific to the
+    """A set of resources that are made available to the assistant's tools in this thread. The
+     resources are specific to the
      type of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while the
      ``file_search`` tool requires
      a list of vector store IDs."""
@@ -377,72 +432,19 @@ class AgentThreadCreationOptions(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AISearchIndexResource(_model_base.Model):
-    """A AI Search Index resource.
-
-    :ivar index_connection_id: An index connection id in an IndexResource attached to this agent.
-     Required.
-    :vartype index_connection_id: str
-    :ivar index_name: The name of an index in an IndexResource attached to this agent. Required.
-    :vartype index_name: str
-    :ivar query_type: Type of query in an AIIndexResource attached to this agent. Known values are:
-     "simple", "semantic", "vector", "vector_simple_hybrid", and "vector_semantic_hybrid".
-    :vartype query_type: str or ~azure.ai.assistants.models.AzureAISearchQueryType
-    :ivar top_k: Number of documents to retrieve from search and present to the model.
-    :vartype top_k: int
-    :ivar filter: Odata filter string for search resource.
-    :vartype filter: str
-    """
-
-    index_connection_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """An index connection id in an IndexResource attached to this agent. Required."""
-    index_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The name of an index in an IndexResource attached to this agent. Required."""
-    query_type: Optional[Union[str, "_models.AzureAISearchQueryType"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Type of query in an AIIndexResource attached to this agent. Known values are: \"simple\",
-     \"semantic\", \"vector\", \"vector_simple_hybrid\", and \"vector_semantic_hybrid\"."""
-    top_k: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Number of documents to retrieve from search and present to the model."""
-    filter: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Odata filter string for search resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        index_connection_id: str,
-        index_name: str,
-        query_type: Optional[Union[str, "_models.AzureAISearchQueryType"]] = None,
-        top_k: Optional[int] = None,
-        filter: Optional[str] = None,  # pylint: disable=redefined-builtin
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class AzureAISearchResource(_model_base.Model):
     """A set of index resources used by the ``azure_ai_search`` tool.
 
-    :ivar index_list: The indices attached to this agent. There can be a maximum of 1 index
-     resource attached to the agent.
+    :ivar index_list: The indices attached to this assistant. There can be a maximum of 1 index
+     resource attached to the assistant.
     :vartype index_list: list[~azure.ai.assistants.models.AISearchIndexResource]
     """
 
     index_list: Optional[List["_models.AISearchIndexResource"]] = rest_field(
         name="indexes", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The indices attached to this agent. There can be a maximum of 1 index
-     resource attached to the agent."""
+    """The indices attached to this assistant. There can be a maximum of 1 index
+     resource attached to the assistant."""
 
     @overload
     def __init__(
@@ -463,7 +465,7 @@ class AzureAISearchResource(_model_base.Model):
 
 
 class ToolDefinition(_model_base.Model):
-    """An abstract representation of an input tool definition that an agent can use.
+    """An abstract representation of an input tool definition that an assistant can use.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureAISearchToolDefinition, AzureFunctionToolDefinition, BingCustomSearchToolDefinition,
@@ -498,7 +500,7 @@ class ToolDefinition(_model_base.Model):
 
 
 class AzureAISearchToolDefinition(ToolDefinition, discriminator="azure_ai_search"):
-    """The input definition information for an Azure AI search tool as used to configure an agent.
+    """The input definition information for an Azure AI search tool as used to configure an assistant.
 
     :ivar type: The object type, which is always 'azure_ai_search'. Required. Default value is
      "azure_ai_search".
@@ -645,7 +647,7 @@ class AzureFunctionStorageQueue(_model_base.Model):
 
 
 class AzureFunctionToolDefinition(ToolDefinition, discriminator="azure_function"):
-    """The input definition information for a azure function tool as used to configure an agent.
+    """The input definition information for a azure function tool as used to configure an assistant.
 
     :ivar type: The object type, which is always 'azure_function'. Required. Default value is
      "azure_function".
@@ -682,7 +684,8 @@ class AzureFunctionToolDefinition(ToolDefinition, discriminator="azure_function"
 
 
 class BingCustomSearchToolDefinition(ToolDefinition, discriminator="bing_custom_search"):
-    """The input definition information for a Bing custom search tool as used to configure an agent.
+    """The input definition information for a Bing custom search tool as used to configure an
+    assistant.
 
     :ivar type: The object type, which is always 'bing_custom_search'. Required. Default value is
      "bing_custom_search".
@@ -720,7 +723,7 @@ class BingCustomSearchToolDefinition(ToolDefinition, discriminator="bing_custom_
 
 class BingGroundingToolDefinition(ToolDefinition, discriminator="bing_grounding"):
     """The input definition information for a bing grounding search tool as used to configure an
-    agent.
+    assistant.
 
     :ivar type: The object type, which is always 'bing_grounding'. Required. Default value is
      "bing_grounding".
@@ -756,7 +759,7 @@ class BingGroundingToolDefinition(ToolDefinition, discriminator="bing_grounding"
 
 
 class CodeInterpreterToolDefinition(ToolDefinition, discriminator="code_interpreter"):
-    """The input definition information for a code interpreter tool as used to configure an agent.
+    """The input definition information for a code interpreter tool as used to configure an assistant.
 
     :ivar type: The object type, which is always 'code_interpreter'. Required. Default value is
      "code_interpreter".
@@ -810,35 +813,6 @@ class CodeInterpreterToolResource(_model_base.Model):
         *,
         file_ids: Optional[List[str]] = None,
         data_sources: Optional[List["_models.VectorStoreDataSource"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ErrorResponse(_model_base.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed
-    operations.
-
-    :ivar error: The error object.
-    :vartype error: ~azure.ai.assistants.models.ErrorDetail
-    """
-
-    error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The error object."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        error: Optional["_models.ErrorDetail"] = None,
     ) -> None: ...
 
     @overload
@@ -990,7 +964,7 @@ class FileSearchToolCallContent(_model_base.Model):
 
 
 class FileSearchToolDefinition(ToolDefinition, discriminator="file_search"):
-    """The input definition information for a file search tool as used to configure an agent.
+    """The input definition information for a file search tool as used to configure an assistant.
 
     :ivar type: The object type, which is always 'file_search'. Required. Default value is
      "file_search".
@@ -1071,9 +1045,9 @@ class FileSearchToolDefinitionDetails(_model_base.Model):
 class FileSearchToolResource(_model_base.Model):
     """A set of resources that are used by the ``file_search`` tool.
 
-    :ivar vector_store_ids: The ID of the vector store attached to this agent. There can be a
+    :ivar vector_store_ids: The ID of the vector store attached to this assistant. There can be a
      maximum of 1 vector
-     store attached to the agent.
+     store attached to the assistant.
     :vartype vector_store_ids: list[str]
     :ivar vector_stores: The list of vector store configuration objects from Azure.
      This list is limited to one element.
@@ -1082,8 +1056,8 @@ class FileSearchToolResource(_model_base.Model):
     """
 
     vector_store_ids: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The ID of the vector store attached to this agent. There can be a maximum of 1 vector
-     store attached to the agent."""
+    """The ID of the vector store attached to this assistant. There can be a maximum of 1 vector
+     store attached to the assistant."""
     vector_stores: Optional[List["_models.VectorStoreConfigurations"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1180,7 +1154,7 @@ class FunctionName(_model_base.Model):
 
 
 class FunctionToolDefinition(ToolDefinition, discriminator="function"):
-    """The input definition information for a function tool as used to configure an agent.
+    """The input definition information for a function tool as used to configure an assistant.
 
     :ivar type: The object type, which is always 'function'. Required. Default value is "function".
     :vartype type: str
@@ -1786,7 +1760,7 @@ class MessageDeltaTextFilePathAnnotationObject(_model_base.Model):
 
 class MessageDeltaTextUrlCitationAnnotation(MessageDeltaTextAnnotation, discriminator="url_citation"):
     """A citation within the message that points to a specific URL associated with the message.
-    Generated when the agent uses tools such as 'bing_grounding' to search the Internet.
+    Generated when the assistant uses tools such as 'bing_grounding' to search the Internet.
 
     :ivar index: The index of the annotation within a text content part. Required.
     :vartype index: int
@@ -2034,7 +2008,7 @@ class MessageTextContent(MessageContent, discriminator="text"):
 
 
 class MessageTextDetails(_model_base.Model):
-    """The text and associated annotations for a single item of agent thread message content.
+    """The text and associated annotations for a single item of assistant thread message content.
 
     :ivar value: The text data. Required.
     :vartype value: str
@@ -2070,8 +2044,8 @@ class MessageTextDetails(_model_base.Model):
 
 class MessageTextFileCitationAnnotation(MessageTextAnnotation, discriminator="file_citation"):
     """A citation within the message that points to a specific quote from a specific File associated
-    with the agent or the message. Generated when the agent uses the 'file_search' tool to search
-    files.
+    with the assistant or the message. Generated when the assistant uses the 'file_search' tool to
+    search files.
 
     :ivar text: The textual content associated with this text annotation item. Required.
     :vartype text: str
@@ -2080,7 +2054,7 @@ class MessageTextFileCitationAnnotation(MessageTextAnnotation, discriminator="fi
     :vartype type: str
     :ivar file_citation: A citation within the message that points to a specific quote from a
      specific file.
-     Generated when the agent uses the "file_search" tool to search files. Required.
+     Generated when the assistant uses the "file_search" tool to search files. Required.
     :vartype file_citation: ~azure.ai.assistants.models.MessageTextFileCitationDetails
     :ivar start_index: The first text index associated with this text annotation.
     :vartype start_index: int
@@ -2094,7 +2068,7 @@ class MessageTextFileCitationAnnotation(MessageTextAnnotation, discriminator="fi
         visibility=["read", "create", "update", "delete", "query"]
     )
     """A citation within the message that points to a specific quote from a specific file.
-     Generated when the agent uses the \"file_search\" tool to search files. Required."""
+     Generated when the assistant uses the \"file_search\" tool to search files. Required."""
     start_index: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The first text index associated with this text annotation."""
     end_index: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -2163,8 +2137,8 @@ class MessageTextFilePathAnnotation(MessageTextAnnotation, discriminator="file_p
     :ivar type: The object type, which is always 'file_path'. Required. Default value is
      "file_path".
     :vartype type: str
-    :ivar file_path: A URL for the file that's generated when the agent used the code_interpreter
-     tool to generate a file. Required.
+    :ivar file_path: A URL for the file that's generated when the assistant used the
+     code_interpreter tool to generate a file. Required.
     :vartype file_path: ~azure.ai.assistants.models.MessageTextFilePathDetails
     :ivar start_index: The first text index associated with this text annotation.
     :vartype start_index: int
@@ -2177,8 +2151,8 @@ class MessageTextFilePathAnnotation(MessageTextAnnotation, discriminator="file_p
     file_path: "_models.MessageTextFilePathDetails" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """A URL for the file that's generated when the agent used the code_interpreter tool to generate a
-     file. Required."""
+    """A URL for the file that's generated when the assistant used the code_interpreter tool to
+     generate a file. Required."""
     start_index: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The first text index associated with this text annotation."""
     end_index: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -2235,7 +2209,7 @@ class MessageTextFilePathDetails(_model_base.Model):
 
 class MessageTextUrlCitationAnnotation(MessageTextAnnotation, discriminator="url_citation"):
     """A citation within the message that points to a specific URL associated with the message.
-    Generated when the agent uses tools such as 'bing_grounding' to search the Internet.
+    Generated when the assistant uses tools such as 'bing_grounding' to search the Internet.
 
     :ivar text: The textual content associated with this text annotation item. Required.
     :vartype text: str
@@ -2316,7 +2290,7 @@ class MessageTextUrlCitationDetails(_model_base.Model):
 
 
 class MicrosoftFabricToolDefinition(ToolDefinition, discriminator="fabric_dataagent"):
-    """The input definition information for a Microsoft Fabric tool as used to configure an agent.
+    """The input definition information for a Microsoft Fabric tool as used to configure an assistant.
 
     :ivar type: The object type, which is always 'fabric_dataagent'. Required. Default value is
      "fabric_dataagent".
@@ -2352,7 +2326,7 @@ class MicrosoftFabricToolDefinition(ToolDefinition, discriminator="fabric_dataag
 
 
 class OpenAIFile(_model_base.Model):
-    """Represents an agent that can call the model and use tools.
+    """Represents an assistant that can call the model and use tools.
 
     :ivar object: The object type, which is always 'file'. Required. Default value is "file".
     :vartype object: str
@@ -2427,13 +2401,13 @@ class OpenAIFile(_model_base.Model):
         self.object: Literal["file"] = "file"
 
 
-class OpenAIPageableListOfAgent(_model_base.Model):
+class OpenAIPageableListOfAssistant(_model_base.Model):
     """The response data for a requested list of items.
 
     :ivar object: The object type, which is always list. Required. Default value is "list".
     :vartype object: str
     :ivar data: The requested list of items. Required.
-    :vartype data: list[~azure.ai.assistants.models.Agent]
+    :vartype data: list[~azure.ai.assistants.models.Assistant]
     :ivar first_id: The first ID represented in this list. Required.
     :vartype first_id: str
     :ivar last_id: The last ID represented in this list. Required.
@@ -2445,7 +2419,7 @@ class OpenAIPageableListOfAgent(_model_base.Model):
 
     object: Literal["list"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The object type, which is always list. Required. Default value is \"list\"."""
-    data: List["_models.Agent"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    data: List["_models.Assistant"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The requested list of items. Required."""
     first_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The first ID represented in this list. Required."""
@@ -2459,7 +2433,7 @@ class OpenAIPageableListOfAgent(_model_base.Model):
     def __init__(
         self,
         *,
-        data: List["_models.Agent"],
+        data: List["_models.Assistant"],
         first_id: str,
         last_id: str,
         has_more: bool,
@@ -2863,8 +2837,6 @@ class OpenApiFunctionDefinition(_model_base.Model):
     :vartype auth: ~azure.ai.assistants.models.OpenApiAuthDetails
     :ivar default_params: List of OpenAPI spec parameters that will use user-provided defaults.
     :vartype default_params: list[str]
-    :ivar functions: List of functions returned in response.
-    :vartype functions: list[~azure.ai.assistants.models.FunctionDefinition]
     """
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -2878,10 +2850,6 @@ class OpenApiFunctionDefinition(_model_base.Model):
     """Open API authentication details. Required."""
     default_params: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of OpenAPI spec parameters that will use user-provided defaults."""
-    functions: Optional[List["_models.FunctionDefinition"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """List of functions returned in response."""
 
     @overload
     def __init__(
@@ -2892,7 +2860,6 @@ class OpenApiFunctionDefinition(_model_base.Model):
         auth: "_models.OpenApiAuthDetails",
         description: Optional[str] = None,
         default_params: Optional[List[str]] = None,
-        functions: Optional[List["_models.FunctionDefinition"]] = None,
     ) -> None: ...
 
     @overload
@@ -2969,7 +2936,7 @@ class OpenApiManagedSecurityScheme(_model_base.Model):
 
 
 class OpenApiToolDefinition(ToolDefinition, discriminator="openapi"):
-    """The input definition information for an OpenAPI tool as used to configure an agent.
+    """The input definition information for an OpenAPI tool as used to configure an assistant.
 
     :ivar type: The object type, which is always 'openapi'. Required. Default value is "openapi".
     :vartype type: str
@@ -3003,7 +2970,7 @@ class OpenApiToolDefinition(ToolDefinition, discriminator="openapi"):
 
 
 class RequiredAction(_model_base.Model):
-    """An abstract representation of a required action for an agent thread run to continue.
+    """An abstract representation of a required action for an assistant thread run to continue.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     SubmitToolOutputsAction
@@ -3268,7 +3235,7 @@ class RunCompletionUsage(_model_base.Model):
 
 
 class RunError(_model_base.Model):
-    """The details of an error as encountered by an agent thread run.
+    """The details of an error as encountered by an assistant thread run.
 
     :ivar code: The status for the error. Required.
     :vartype code: str
@@ -3301,7 +3268,7 @@ class RunError(_model_base.Model):
 
 
 class RunStep(_model_base.Model):
-    """Detailed information about a single step of an agent thread run.
+    """Detailed information about a single step of an assistant thread run.
 
     :ivar id: The identifier, which can be referenced in API endpoints. Required.
     :vartype id: str
@@ -3311,8 +3278,8 @@ class RunStep(_model_base.Model):
     :ivar type: The type of run step, which can be either message_creation or tool_calls. Required.
      Known values are: "message_creation" and "tool_calls".
     :vartype type: str or ~azure.ai.assistants.models.RunStepType
-    :ivar agent_id: The ID of the agent associated with the run step. Required.
-    :vartype agent_id: str
+    :ivar assistant_id: The ID of the assistant associated with the run step. Required.
+    :vartype assistant_id: str
     :ivar thread_id: The ID of the thread that was run. Required.
     :vartype thread_id: str
     :ivar run_id: The ID of the run that this run step is a part of. Required.
@@ -3355,8 +3322,8 @@ class RunStep(_model_base.Model):
     type: Union[str, "_models.RunStepType"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The type of run step, which can be either message_creation or tool_calls. Required. Known
      values are: \"message_creation\" and \"tool_calls\"."""
-    agent_id: str = rest_field(name="assistant_id", visibility=["read", "create", "update", "delete", "query"])
-    """The ID of the agent associated with the run step. Required."""
+    assistant_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the assistant associated with the run step. Required."""
     thread_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the thread that was run. Required."""
     run_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3404,7 +3371,7 @@ class RunStep(_model_base.Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         type: Union[str, "_models.RunStepType"],
-        agent_id: str,
+        assistant_id: str,
         thread_id: str,
         run_id: str,
         status: Union[str, "_models.RunStepStatus"],
@@ -4998,7 +4965,7 @@ class SearchConfigurationList(_model_base.Model):
 
 
 class SharepointToolDefinition(ToolDefinition, discriminator="sharepoint_grounding"):
-    """The input definition information for a sharepoint tool as used to configure an agent.
+    """The input definition information for a sharepoint tool as used to configure an assistant.
 
     :ivar type: The object type, which is always 'sharepoint_grounding'. Required. Default value is
      "sharepoint_grounding".
@@ -5034,7 +5001,8 @@ class SharepointToolDefinition(ToolDefinition, discriminator="sharepoint_groundi
 
 
 class SubmitToolOutputsAction(RequiredAction, discriminator="submit_tool_outputs"):
-    """The details for required tool calls that must be submitted for an agent thread run to continue.
+    """The details for required tool calls that must be submitted for an assistant thread run to
+    continue.
 
     :ivar type: The object type, which is always 'submit_tool_outputs'. Required. Default value is
      "submit_tool_outputs".
@@ -5073,7 +5041,7 @@ class SubmitToolOutputsAction(RequiredAction, discriminator="submit_tool_outputs
 class SubmitToolOutputsDetails(_model_base.Model):
     """The details describing tools that should be called to submit tool outputs.
 
-    :ivar tool_calls: The list of tool calls that must be resolved for the agent thread run to
+    :ivar tool_calls: The list of tool calls that must be resolved for the assistant thread run to
      continue. Required.
     :vartype tool_calls: list[~azure.ai.assistants.models.RequiredToolCall]
     """
@@ -5081,7 +5049,8 @@ class SubmitToolOutputsDetails(_model_base.Model):
     tool_calls: List["_models.RequiredToolCall"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The list of tool calls that must be resolved for the agent thread run to continue. Required."""
+    """The list of tool calls that must be resolved for the assistant thread run to continue.
+     Required."""
 
     @overload
     def __init__(
@@ -5142,7 +5111,7 @@ class ThreadDeletionStatus(_model_base.Model):
 
 
 class ThreadMessage(_model_base.Model):
-    """A single, existing message within an agent thread.
+    """A single, existing message within an assistant thread.
 
     :ivar id: The identifier, which can be referenced in API endpoints. Required.
     :vartype id: str
@@ -5166,13 +5135,15 @@ class ThreadMessage(_model_base.Model):
     :ivar incomplete_at: The Unix timestamp (in seconds) for when the message was marked as
      incomplete. Required.
     :vartype incomplete_at: ~datetime.datetime
-    :ivar role: The role associated with the agent thread message. Required. Known values are:
+    :ivar role: The role associated with the assistant thread message. Required. Known values are:
      "user" and "assistant".
     :vartype role: str or ~azure.ai.assistants.models.MessageRole
-    :ivar content: The list of content items associated with the agent thread message. Required.
+    :ivar content: The list of content items associated with the assistant thread message.
+     Required.
     :vartype content: list[~azure.ai.assistants.models.MessageContent]
-    :ivar agent_id: If applicable, the ID of the agent that authored this message. Required.
-    :vartype agent_id: str
+    :ivar assistant_id: If applicable, the ID of the assistant that authored this message.
+     Required.
+    :vartype assistant_id: str
     :ivar run_id: If applicable, the ID of the run associated with the authoring of this message.
      Required.
     :vartype run_id: str
@@ -5212,12 +5183,12 @@ class ThreadMessage(_model_base.Model):
     )
     """The Unix timestamp (in seconds) for when the message was marked as incomplete. Required."""
     role: Union[str, "_models.MessageRole"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The role associated with the agent thread message. Required. Known values are: \"user\" and
+    """The role associated with the assistant thread message. Required. Known values are: \"user\" and
      \"assistant\"."""
     content: List["_models.MessageContent"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The list of content items associated with the agent thread message. Required."""
-    agent_id: str = rest_field(name="assistant_id", visibility=["read", "create", "update", "delete", "query"])
-    """If applicable, the ID of the agent that authored this message. Required."""
+    """The list of content items associated with the assistant thread message. Required."""
+    assistant_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """If applicable, the ID of the assistant that authored this message. Required."""
     run_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """If applicable, the ID of the run associated with the authoring of this message. Required."""
     attachments: List["_models.MessageAttachment"] = rest_field(
@@ -5242,7 +5213,7 @@ class ThreadMessage(_model_base.Model):
         incomplete_at: datetime.datetime,
         role: Union[str, "_models.MessageRole"],
         content: List["_models.MessageContent"],
-        agent_id: str,
+        assistant_id: str,
         run_id: str,
         attachments: List["_models.MessageAttachment"],
         metadata: Dict[str, str],
@@ -5261,15 +5232,15 @@ class ThreadMessage(_model_base.Model):
 
 
 class ThreadMessageOptions(_model_base.Model):
-    """A single message within an agent thread, as provided during that thread's creation for its
+    """A single message within an assistant thread, as provided during that thread's creation for its
     initial state.
 
     :ivar role: The role of the entity that is creating the message. Allowed values include:
 
      * `user`: Indicates the message is sent by an actual user and should be used in most
      cases to represent user-generated messages.
-     * `assistant`: Indicates the message is generated by the agent. Use this value to insert
-     messages from the agent into the
+     * `assistant`: Indicates the message is generated by the assistant. Use this value to insert
+     messages from the assistant into the
      conversation. Required. Known values are: "user" and "assistant".
     :vartype role: str or ~azure.ai.assistants.models.MessageRole
     :ivar content: The textual content of the initial message. Currently, robust input including
@@ -5290,8 +5261,8 @@ class ThreadMessageOptions(_model_base.Model):
      
      * `user`: Indicates the message is sent by an actual user and should be used in most
      cases to represent user-generated messages.
-     * `assistant`: Indicates the message is generated by the agent. Use this value to insert
-     messages from the agent into the
+     * `assistant`: Indicates the message is generated by the assistant. Use this value to insert
+     messages from the assistant into the
      conversation. Required. Known values are: \"user\" and \"assistant\"."""
     content: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The textual content of the initial message. Currently, robust input including images and
@@ -5328,7 +5299,7 @@ class ThreadMessageOptions(_model_base.Model):
 
 
 class ThreadRun(_model_base.Model):
-    """Data representing a single evaluation run of an agent thread.
+    """Data representing a single evaluation run of an assistant thread.
 
     :ivar id: The identifier, which can be referenced in API endpoints. Required.
     :vartype id: str
@@ -5337,23 +5308,24 @@ class ThreadRun(_model_base.Model):
     :vartype object: str
     :ivar thread_id: The ID of the thread associated with this run. Required.
     :vartype thread_id: str
-    :ivar agent_id: The ID of the agent associated with the thread this run was performed against.
-     Required.
-    :vartype agent_id: str
-    :ivar status: The status of the agent thread run. Required. Known values are: "queued",
+    :ivar assistant_id: The ID of the assistant associated with the thread this run was performed
+     against. Required.
+    :vartype assistant_id: str
+    :ivar status: The status of the assistant thread run. Required. Known values are: "queued",
      "in_progress", "requires_action", "cancelling", "cancelled", "failed", "completed", and
      "expired".
     :vartype status: str or ~azure.ai.assistants.models.RunStatus
-    :ivar required_action: The details of the action required for the agent thread run to continue.
+    :ivar required_action: The details of the action required for the assistant thread run to
+     continue.
     :vartype required_action: ~azure.ai.assistants.models.RequiredAction
-    :ivar last_error: The last error, if any, encountered by this agent thread run. Required.
+    :ivar last_error: The last error, if any, encountered by this assistant thread run. Required.
     :vartype last_error: ~azure.ai.assistants.models.RunError
     :ivar model: The ID of the model to use. Required.
     :vartype model: str
-    :ivar instructions: The overridden system instructions used for this agent thread run.
+    :ivar instructions: The overridden system instructions used for this assistant thread run.
      Required.
     :vartype instructions: str
-    :ivar tools: The overridden enabled tools used for this agent thread run. Required.
+    :ivar tools: The overridden enabled tools used for this assistant thread run. Required.
     :vartype tools: list[~azure.ai.assistants.models.ToolDefinition]
     :ivar created_at: The Unix timestamp, in seconds, representing when this object was created.
      Required.
@@ -5391,21 +5363,23 @@ class ThreadRun(_model_base.Model):
      moves forward. Required.
     :vartype truncation_strategy: ~azure.ai.assistants.models.TruncationObject
     :ivar tool_choice: Controls whether or not and which tool is called by the model. Required. Is
-     one of the following types: str, Union[str, "_models.AgentsApiToolChoiceOptionMode"],
-     AgentsNamedToolChoice
-    :vartype tool_choice: str or str or ~azure.ai.assistants.models.AgentsApiToolChoiceOptionMode
-     or ~azure.ai.assistants.models.AgentsNamedToolChoice
+     one of the following types: str, Union[str, "_models.AssistantsApiToolChoiceOptionMode"],
+     AssistantsNamedToolChoice
+    :vartype tool_choice: str or str or
+     ~azure.ai.assistants.models.AssistantsApiToolChoiceOptionMode or
+     ~azure.ai.assistants.models.AssistantsNamedToolChoice
     :ivar response_format: The response format of the tool calls used in this run. Required. Is one
-     of the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-     AgentsApiResponseFormat, ResponseFormatJsonSchemaType
-    :vartype response_format: str or str or ~azure.ai.assistants.models.AgentsApiResponseFormatMode
-     or ~azure.ai.assistants.models.AgentsApiResponseFormat or
+     of the following types: str, Union[str, "_models.AssistantsApiResponseFormatMode"],
+     AssistantsApiResponseFormat, ResponseFormatJsonSchemaType
+    :vartype response_format: str or str or
+     ~azure.ai.assistants.models.AssistantsApiResponseFormatMode or
+     ~azure.ai.assistants.models.AssistantsApiResponseFormat or
      ~azure.ai.assistants.models.ResponseFormatJsonSchemaType
     :ivar metadata: A set of up to 16 key/value pairs that can be attached to an object, used for
      storing additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length. Required.
     :vartype metadata: dict[str, str]
-    :ivar tool_resources: Override the tools the agent can use for this run. This is useful for
+    :ivar tool_resources: Override the tools the assistant can use for this run. This is useful for
      modifying the behavior on a per-run basis.
     :vartype tool_resources: ~azure.ai.assistants.models.UpdateToolResourcesOptions
     :ivar parallel_tool_calls: Determines if tools can be executed in parallel within the run.
@@ -5419,23 +5393,24 @@ class ThreadRun(_model_base.Model):
     """The object type, which is always 'thread.run'. Required. Default value is \"thread.run\"."""
     thread_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the thread associated with this run. Required."""
-    agent_id: str = rest_field(name="assistant_id", visibility=["read", "create", "update", "delete", "query"])
-    """The ID of the agent associated with the thread this run was performed against. Required."""
+    assistant_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the assistant associated with the thread this run was performed against. Required."""
     status: Union[str, "_models.RunStatus"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The status of the agent thread run. Required. Known values are: \"queued\", \"in_progress\",
-     \"requires_action\", \"cancelling\", \"cancelled\", \"failed\", \"completed\", and \"expired\"."""
+    """The status of the assistant thread run. Required. Known values are: \"queued\",
+     \"in_progress\", \"requires_action\", \"cancelling\", \"cancelled\", \"failed\", \"completed\",
+     and \"expired\"."""
     required_action: Optional["_models.RequiredAction"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The details of the action required for the agent thread run to continue."""
+    """The details of the action required for the assistant thread run to continue."""
     last_error: "_models.RunError" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The last error, if any, encountered by this agent thread run. Required."""
+    """The last error, if any, encountered by this assistant thread run. Required."""
     model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the model to use. Required."""
     instructions: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The overridden system instructions used for this agent thread run. Required."""
+    """The overridden system instructions used for this assistant thread run. Required."""
     tools: List["_models.ToolDefinition"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The overridden enabled tools used for this agent thread run. Required."""
+    """The overridden enabled tools used for this assistant thread run. Required."""
     created_at: datetime.datetime = rest_field(
         visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
     )
@@ -5481,18 +5456,18 @@ class ThreadRun(_model_base.Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The strategy to use for dropping messages as the context windows moves forward. Required."""
-    tool_choice: "_types.AgentsApiToolChoiceOption" = rest_field(
+    tool_choice: "_types.AssistantsApiToolChoiceOption" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Controls whether or not and which tool is called by the model. Required. Is one of the
-     following types: str, Union[str, \"_models.AgentsApiToolChoiceOptionMode\"],
-     AgentsNamedToolChoice"""
-    response_format: "_types.AgentsApiResponseFormatOption" = rest_field(
+     following types: str, Union[str, \"_models.AssistantsApiToolChoiceOptionMode\"],
+     AssistantsNamedToolChoice"""
+    response_format: "_types.AssistantsApiResponseFormatOption" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The response format of the tool calls used in this run. Required. Is one of the following
-     types: str, Union[str, \"_models.AgentsApiResponseFormatMode\"], AgentsApiResponseFormat,
-     ResponseFormatJsonSchemaType"""
+     types: str, Union[str, \"_models.AssistantsApiResponseFormatMode\"],
+     AssistantsApiResponseFormat, ResponseFormatJsonSchemaType"""
     metadata: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A set of up to 16 key/value pairs that can be attached to an object, used for storing
      additional information about that object in a structured format. Keys may be up to 64
@@ -5500,8 +5475,8 @@ class ThreadRun(_model_base.Model):
     tool_resources: Optional["_models.UpdateToolResourcesOptions"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Override the tools the agent can use for this run. This is useful for modifying the behavior on
-     a per-run basis."""
+    """Override the tools the assistant can use for this run. This is useful for modifying the
+     behavior on a per-run basis."""
     parallel_tool_calls: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Determines if tools can be executed in parallel within the run. Required."""
 
@@ -5511,7 +5486,7 @@ class ThreadRun(_model_base.Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         thread_id: str,
-        agent_id: str,
+        assistant_id: str,
         status: Union[str, "_models.RunStatus"],
         last_error: "_models.RunError",
         model: str,
@@ -5528,8 +5503,8 @@ class ThreadRun(_model_base.Model):
         max_prompt_tokens: int,
         max_completion_tokens: int,
         truncation_strategy: "_models.TruncationObject",
-        tool_choice: "_types.AgentsApiToolChoiceOption",
-        response_format: "_types.AgentsApiResponseFormatOption",
+        tool_choice: "_types.AssistantsApiToolChoiceOption",
+        response_format: "_types.AssistantsApiResponseFormatOption",
         metadata: Dict[str, str],
         parallel_tool_calls: bool,
         required_action: Optional["_models.RequiredAction"] = None,
@@ -5649,8 +5624,8 @@ class ToolOutput(_model_base.Model):
 
 
 class ToolResources(_model_base.Model):
-    """A set of resources that are used by the agent's tools. The resources are specific to the type
-    of
+    """A set of resources that are used by the assistant's tools. The resources are specific to the
+    type of
     tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while the
     ``file_search``
     tool requires a list of vector store IDs.
@@ -5749,12 +5724,12 @@ class TruncationObject(_model_base.Model):
 class UpdateCodeInterpreterToolResourceOptions(_model_base.Model):
     """Request object to update ``code_interpreted`` tool resources.
 
-    :ivar file_ids: A list of file IDs to override the current list of the agent.
+    :ivar file_ids: A list of file IDs to override the current list of the assistant.
     :vartype file_ids: list[str]
     """
 
     file_ids: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """A list of file IDs to override the current list of the agent."""
+    """A list of file IDs to override the current list of the assistant."""
 
     @overload
     def __init__(
@@ -5777,12 +5752,13 @@ class UpdateCodeInterpreterToolResourceOptions(_model_base.Model):
 class UpdateFileSearchToolResourceOptions(_model_base.Model):
     """Request object to update ``file_search`` tool resources.
 
-    :ivar vector_store_ids: A list of vector store IDs to override the current list of the agent.
+    :ivar vector_store_ids: A list of vector store IDs to override the current list of the
+     assistant.
     :vartype vector_store_ids: list[str]
     """
 
     vector_store_ids: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """A list of vector store IDs to override the current list of the agent."""
+    """A list of vector store IDs to override the current list of the assistant."""
 
     @overload
     def __init__(
@@ -5803,7 +5779,7 @@ class UpdateFileSearchToolResourceOptions(_model_base.Model):
 
 
 class UpdateToolResourcesOptions(_model_base.Model):
-    """Request object. A set of resources that are used by the agent's tools. The resources are
+    """Request object. A set of resources that are used by the assistant's tools. The resources are
     specific to the type of tool.
     For example, the ``code_interpreter`` tool requires a list of file IDs, while the
     ``file_search`` tool requires a list of
@@ -5813,8 +5789,8 @@ class UpdateToolResourcesOptions(_model_base.Model):
      ``code_interpreter`` tool. There can be a maximum of 20 files
      associated with the tool.
     :vartype code_interpreter: ~azure.ai.assistants.models.UpdateCodeInterpreterToolResourceOptions
-    :ivar file_search: Overrides the vector store attached to this agent. There can be a maximum of
-     1 vector store attached to the agent.
+    :ivar file_search: Overrides the vector store attached to this assistant. There can be a
+     maximum of 1 vector store attached to the assistant.
     :vartype file_search: ~azure.ai.assistants.models.UpdateFileSearchToolResourceOptions
     :ivar azure_ai_search: Overrides the resources to be used by the ``azure_ai_search`` tool
      consisting of index IDs and names.
@@ -5830,8 +5806,8 @@ class UpdateToolResourcesOptions(_model_base.Model):
     file_search: Optional["_models.UpdateFileSearchToolResourceOptions"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Overrides the vector store attached to this agent. There can be a maximum of 1 vector store
-     attached to the agent."""
+    """Overrides the vector store attached to this assistant. There can be a maximum of 1 vector store
+     attached to the assistant."""
     azure_ai_search: Optional["_models.AzureAISearchResource"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5863,8 +5839,8 @@ class UploadFileRequest(_model_base.Model):
 
     :ivar file: The file data, in bytes. Required.
     :vartype file: ~azure.ai.assistants._vendor.FileType
-    :ivar purpose: The intended purpose of the uploaded file. Use ``assistants`` for Agents and
-     Message files, ``vision`` for Agents image file inputs, ``batch`` for Batch API, and
+    :ivar purpose: The intended purpose of the uploaded file. Use ``assistants`` for Assistants and
+     Message files, ``vision`` for Assistants image file inputs, ``batch`` for Batch API, and
      ``fine-tune`` for Fine-tuning. Required. Known values are: "fine-tune", "fine-tune-results",
      "assistants", "assistants_output", "batch", "batch_output", and "vision".
     :vartype purpose: str or ~azure.ai.assistants.models.FilePurpose
@@ -5877,8 +5853,8 @@ class UploadFileRequest(_model_base.Model):
     )
     """The file data, in bytes. Required."""
     purpose: Union[str, "_models.FilePurpose"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The intended purpose of the uploaded file. Use ``assistants`` for Agents and Message files,
-     ``vision`` for Agents image file inputs, ``batch`` for Batch API, and ``fine-tune`` for
+    """The intended purpose of the uploaded file. Use ``assistants`` for Assistants and Message files,
+     ``vision`` for Assistants image file inputs, ``batch`` for Batch API, and ``fine-tune`` for
      Fine-tuning. Required. Known values are: \"fine-tune\", \"fine-tune-results\", \"assistants\",
      \"assistants_output\", \"batch\", \"batch_output\", and \"vision\"."""
     filename: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
