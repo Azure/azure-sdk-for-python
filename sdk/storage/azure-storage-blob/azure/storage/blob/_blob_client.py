@@ -1340,11 +1340,11 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             **kwargs
         )
         try:
-            cls_method = kwargs.pop('cls', None)
+            cls_method = options.pop('cls', None)
             if cls_method:
-                kwargs['cls'] = partial(deserialize_pipeline_response_into_cls, cls_method)
+                options['cls'] = partial(deserialize_pipeline_response_into_cls, cls_method)
             blob_props = cast(BlobProperties, self._client.blob.get_properties(
-                cls=kwargs.pop('cls', None) or deserialize_blob_properties,
+                cls=options.pop('cls', None) or deserialize_blob_properties,
                 **options
             ))
         except HttpResponseError as error:
