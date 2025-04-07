@@ -44,6 +44,7 @@ from ._blob_client_helpers import (
     _set_blob_tags_options,
     _set_http_headers_options,
     _set_sequence_number_options,
+    _set_standard_blob_tier_options,
     _stage_block_from_url_options,
     _stage_block_options,
     _start_copy_from_url_options,
@@ -1963,7 +1964,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
     def start_copy_from_url(
         self, source_url: str,
         metadata: Optional[Dict[str, str]] = None,
-        incremental_copy: Optional[bool] = False,
+        incremental_copy: bool = False,
         *,
         tags: Optional[Union[Dict[str, str], Literal["COPY"]]] = None,
         immutability_policy: Optional["ImmutabilityPolicy"] = None,
@@ -2312,7 +2313,16 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         return lease
 
     @distributed_trace
-    def set_standard_blob_tier(self, standard_blob_tier: Union[str, "StandardBlobTier"], **kwargs: Any) -> None:
+    def set_standard_blob_tier(
+        self, standard_blob_tier: Union[str, "StandardBlobTier"],
+        *,
+        rehydrate_priority: Optional["RehydratePriority"] = None,
+        version_id: Optional[str] = None,
+        if_tags_match_condition: Optional[str] = None,
+        lease: Optional[Union["BlobLeaseClient", str]] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
         """This operation sets the tier on a block blob.
 
         A block blob's tier determines Hot/Cool/Archive storage type.
@@ -2341,34 +2351,30 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
             .. versionadded:: 12.4.0
 
+        :keyword lease:
+            Required if the blob has an active lease. Value can be a BlobLeaseClient object
+            or the lease ID as a string.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :keyword lease:
-            Required if the blob has an active lease. Value can be a BlobLeaseClient object
-            or the lease ID as a string.
         :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
         :rtype: None
         """
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = get_modify_conditions(kwargs)
-        version_id = get_version_id(self.version_id, kwargs)
-        if standard_blob_tier is None:
-            raise ValueError("A StandardBlobTier must be specified")
-        if self.snapshot and kwargs.get('version_id'):
-            raise ValueError("Snapshot and version_id cannot be set at the same time")
+        options = _set_standard_blob_tier_options(
+            version_id,
+            self.snapshot,
+            standard_blob_tier=standard_blob_tier,
+            timeout=timeout,
+            lease=lease,
+            rehydrate_priority=rehydrate_priority,
+            if_tags_match_condition=if_tags_match_condition,
+            **kwargs
+        )
         try:
-            self._client.blob.set_tier(
-                tier=standard_blob_tier,
-                snapshot=self.snapshot,
-                timeout=kwargs.pop('timeout', None),
-                modified_access_conditions=mod_conditions,
-                lease_access_conditions=access_conditions,
-                version_id=version_id,
-                **kwargs)
+            self._client.blob.set_tier(**options)
         except HttpResponseError as error:
             process_storage_error(error)
 

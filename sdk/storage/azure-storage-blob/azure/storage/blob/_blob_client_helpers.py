@@ -1324,3 +1324,23 @@ def _get_blob_properties_options(version_id: Optional[str], snapshot: Optional[s
     }
     options.update({k: v for k, v in kwargs.items() if v is not None})
     return options
+
+
+def _set_standard_blob_tier_options(version_id: Optional[str], snapshot: Optional[str], **kwargs):
+    access_conditions = get_access_conditions(kwargs.pop("lease", None))
+    mod_conditions = get_modify_conditions(kwargs)
+    standard_blob_tier = kwargs.pop("standard_blob_tier", None)
+    if standard_blob_tier is None:
+        raise ValueError("A StandardBlobTier must be specified")
+    if snapshot and version_id:
+        raise ValueError("Snapshot and version_id cannot be set at the same time")
+    options = {
+        'version_id': version_id,
+        'tier': standard_blob_tier,
+        'timeout': kwargs.pop('timeout', None),
+        'lease_access_conditions': access_conditions,
+        'modified_access_conditions': mod_conditions,
+        'snapshot': snapshot,
+    }
+    options.update({k: v for k, v in kwargs.items() if v is not None})
+    return options
