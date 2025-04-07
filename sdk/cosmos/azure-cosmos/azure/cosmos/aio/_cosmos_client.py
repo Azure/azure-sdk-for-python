@@ -84,6 +84,7 @@ def _build_connection_policy(kwargs: Dict[str, Any]) -> ConnectionPolicy:
     policy.ProxyConfiguration = kwargs.pop('proxy_config', policy.ProxyConfiguration)
     policy.EnableEndpointDiscovery = kwargs.pop('enable_endpoint_discovery', policy.EnableEndpointDiscovery)
     policy.PreferredLocations = kwargs.pop('preferred_locations', policy.PreferredLocations)
+    policy.ExcludedLocations = kwargs.pop('excluded_locations', policy.ExcludedLocations)
     policy.UseMultipleWriteLocations = kwargs.pop('multiple_write_locations', policy.UseMultipleWriteLocations)
 
     # SSL config
