@@ -1350,6 +1350,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
     @distributed_trace_async
     async def set_immutability_policy(
         self, immutability_policy: "ImmutabilityPolicy",
+        *,
+        version_id: Optional[str] = None,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, str]:
         """The Set Immutability Policy operation sets the immutability policy on the blob.
@@ -1380,10 +1383,19 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         kwargs['immutability_policy_expiry'] = immutability_policy.expiry_time
         kwargs['immutability_policy_mode'] = immutability_policy.policy_mode
         return cast(Dict[str, str], await self._client.blob.set_immutability_policy(
-            cls=return_response_headers,version_id=version_id, **kwargs))
+            cls=return_response_headers,
+            version_id=version_id or self.version_id,
+            timeout=timeout,
+            **kwargs
+        ))
 
     @distributed_trace_async
-    async def delete_immutability_policy(self, **kwargs: Any) -> None:
+    async def delete_immutability_policy(
+        self, *,
+        version_id: Optional[str] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
         """The Delete Immutability Policy operation deletes the immutability policy on the blob.
 
         .. versionadded:: 12.10.0
@@ -1401,9 +1413,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         :returns: Key value pairs of blob tags.
         :rtype: Dict[str, str]
         """
-
-        version_id = get_version_id(self.version_id, kwargs)
-        await self._client.blob.delete_immutability_policy(version_id=version_id, **kwargs)
+        await self._client.blob.delete_immutability_policy(
+            version_id=version_id or self.version_id,
+            timeout=timeout,
+            **kwargs
+        )
 
     @distributed_trace_async
     async def set_legal_hold(self, legal_hold: bool, **kwargs: Any) -> Dict[str, Union[str, datetime, bool]]:
