@@ -633,7 +633,7 @@ def _start_copy_from_url_options(  # pylint:disable=too-many-statements
     source_url = _encode_source_url(source_url=source_url)
     headers = kwargs.pop('headers', {})
     headers.update(add_metadata_headers(metadata))
-    if 'source_lease' in kwargs:
+    if kwargs.get('source_lease') is not None:
         source_lease = kwargs.pop('source_lease')
         try:
             headers['x-ms-source-lease-id'] = source_lease.id
@@ -703,7 +703,7 @@ def _start_copy_from_url_options(  # pylint:disable=too-many-statements
         options['source_modified_access_conditions'] = source_mod_conditions
         options['lease_access_conditions'] = dest_access_conditions
         options['tier'] = tier.value if tier else None
-    options.update(kwargs)
+    options.update({k: v for k, v in kwargs.items() if v is not None})
     return options
 
 
@@ -716,7 +716,8 @@ def _abort_copy_options(copy_id: Union[str, Dict[str, Any], BlobProperties], **k
     options = {
         'copy_id': copy_id,
         'lease_access_conditions': access_conditions,
-        'timeout': kwargs.pop('timeout', None)}
+        'timeout': kwargs.pop('timeout', None)
+    }
     options.update(kwargs)
     return options
 

@@ -10,7 +10,7 @@ from datetime import datetime
 from functools import partial
 from typing import (
     Any, AnyStr, AsyncIterable, Awaitable, Callable, cast, Dict,
-    IO, Iterable, List, Optional, overload, Tuple, Union,
+    IO, Iterable, List, Literal, Optional, overload, Tuple, Union,
     TYPE_CHECKING
 )
 from typing_extensions import Self
@@ -83,6 +83,7 @@ if TYPE_CHECKING:
     from azure.core.pipeline.policies import AsyncHTTPPolicy
     from azure.storage.blob import CustomerProvidedEncryptionKey
     from azure.storage.blob.aio import ContainerClient
+    from .._generated.models import RehydratePriority
     from .._models import (
         ContentSettings,
         ImmutabilityPolicy,
@@ -1816,6 +1817,28 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         self, source_url: str,
         metadata: Optional[Dict[str, str]] = None,
         incremental_copy: bool = False,
+        *,
+        tags: Optional[Union[Dict[str, str], Literal["COPY"]]] = None,
+        immutability_policy: Optional["ImmutabilityPolicy"] = None,
+        legal_hold: Optional[bool] = None,
+        source_if_modified_since: Optional[datetime] = None,
+        source_if_unmodified_since: Optional[datetime] = None,
+        source_etag: Optional[str] = None,
+        source_match_condition: Optional["MatchConditions"] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional["MatchConditions"] = None,
+        destination_lease: Optional[Union[BlobLeaseClient, str]] = None,
+        source_lease: Optional[Union[BlobLeaseClient, str]] = None,
+        premium_page_blob_tier: Optional["PremiumPageBlobTier"] = None,
+        standard_blob_tier: Optional["StandardBlobTier"] = None,
+        rehydrate_priority: Optional["RehydratePriority"] = None,
+        seal_destination_blob: Optional[bool] = None,
+        requires_sync: Optional[bool] = None,
+        source_authorization: Optional[str] = None,
+        encryption_scope: Optional[str] = None,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Union[str, datetime]]:
         """Copies a blob from the given URL.
@@ -1951,12 +1974,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             Specify this to perform the Copy Blob operation only if
             the lease ID given matches the active lease ID of the source blob.
         :paramtype source_lease: ~azure.storage.blob.aio.BlobLeaseClient or str
-        :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see
-            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
-            This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`__.
         :keyword ~azure.storage.blob.PremiumPageBlobTier premium_page_blob_tier:
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
@@ -1988,6 +2005,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
 
             .. versionadded:: 12.10.0
 
+        :keyword int timeout:
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`__.
         :returns: A dictionary of copy properties (etag, last_modified, copy_id, copy_status).
         :rtype: dict[str, Union[str, ~datetime.datetime]]
 
@@ -2004,7 +2027,29 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             source_url=source_url,
             metadata=metadata,
             incremental_copy=incremental_copy,
-            **kwargs)
+            tags=tags,
+            immutability_policy=immutability_policy,
+            legal_hold=legal_hold,
+            source_if_modified_since=source_if_modified_since,
+            source_if_unmodified_since=source_if_unmodified_since,
+            source_etag=source_etag,
+            source_match_condition=source_match_condition,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_condition=match_condition,
+            destination_lease=destination_lease,
+            source_lease=source_lease,
+            premium_page_blob_tier=premium_page_blob_tier,
+            standard_blob_tier=standard_blob_tier,
+            rehydrate_priority=rehydrate_priority,
+            seal_destination_blob=seal_destination_blob,
+            requires_sync=requires_sync,
+            source_authorization=source_authorization,
+            encryption_scope=encryption_scope,
+            timeout=timeout,
+            **kwargs
+        )
         try:
             if incremental_copy:
                 return cast(Dict[str, Union[str, datetime]], await self._client.page_blob.copy_incremental(**options))
@@ -2045,7 +2090,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
 
     @distributed_trace_async
     async def acquire_lease(
-        self, lease_duration: int =-1,
+        self, lease_duration: int = -1,
         lease_id: Optional[str] = None,
         **kwargs: Any
     ) -> BlobLeaseClient:
