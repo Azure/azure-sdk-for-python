@@ -244,13 +244,13 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             )
     
         get_response: _models.BatchFileProperties = super()._get_node_file_properties_internal( # type: ignore
-            pool_id, 
-            node_id, 
-            file_path, 
-            timeout=timeout, 
-            ocpdate=ocpdate, 
-            if_modified_since=if_modified_since, 
-            if_unmodified_since=if_unmodified_since, 
+            pool_id,
+            node_id,
+            file_path,
+            timeout=timeout,
+            ocpdate=ocpdate,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             cls=cls,
             **kwargs)
 
@@ -312,13 +312,13 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             )
     
         get_response: _models.BatchFileProperties = super()._get_task_file_properties_internal( # type: ignore
-            job_id, 
-            task_id, 
-            file_path, 
-            timeout=timeout, 
-            ocpdate=ocpdate, 
-            if_modified_since=if_modified_since, 
-            if_unmodified_since=if_unmodified_since, 
+            job_id,
+            task_id,
+            file_path,
+            timeout=timeout,
+            ocpdate=ocpdate,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             cls=cls,
             **kwargs)
 
