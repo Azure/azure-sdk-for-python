@@ -25,7 +25,7 @@ class TestNetAppManagementPoolsOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.pools.list(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-09-01",
+            api_version="2025-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestNetAppManagementPoolsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",
-            api_version="2024-09-01",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -77,7 +77,7 @@ class TestNetAppManagementPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                     "type": "str",
                     "utilizedThroughputMibps": 0.0,
                 },
-                api_version="2024-09-01",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -102,7 +102,7 @@ class TestNetAppManagementPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-09-01",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -117,7 +117,7 @@ class TestNetAppManagementPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 account_name="str",
                 pool_name="str",
-                api_version="2024-09-01",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

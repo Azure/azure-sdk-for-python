@@ -390,6 +390,10 @@ class Backup(ProxyResource):
     :vartype backup_id: str
     :ivar creation_date: The creation date of the backup.
     :vartype creation_date: ~datetime.datetime
+    :ivar snapshot_creation_date: The snapshot creation date of the backup.
+    :vartype snapshot_creation_date: ~datetime.datetime
+    :ivar completion_date: The completion date of the backup.
+    :vartype completion_date: ~datetime.datetime
     :ivar provisioning_state: Azure lifecycle management.
     :vartype provisioning_state: str
     :ivar size: Size of backup in bytes.
@@ -410,6 +414,8 @@ class Backup(ProxyResource):
     :vartype snapshot_name: str
     :ivar backup_policy_resource_id: ResourceId used to identify the backup policy.
     :vartype backup_policy_resource_id: str
+    :ivar is_large_volume: Specifies if the backup is for a large volume.
+    :vartype is_large_volume: bool
     """
 
     _validation = {
@@ -424,12 +430,15 @@ class Backup(ProxyResource):
             "pattern": r"^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
         },
         "creation_date": {"readonly": True},
+        "snapshot_creation_date": {"readonly": True},
+        "completion_date": {"readonly": True},
         "provisioning_state": {"readonly": True},
         "size": {"readonly": True},
         "backup_type": {"readonly": True},
         "failure_reason": {"readonly": True},
         "volume_resource_id": {"required": True},
         "backup_policy_resource_id": {"readonly": True},
+        "is_large_volume": {"readonly": True},
     }
 
     _attribute_map = {
@@ -439,6 +448,8 @@ class Backup(ProxyResource):
         "system_data": {"key": "systemData", "type": "SystemData"},
         "backup_id": {"key": "properties.backupId", "type": "str"},
         "creation_date": {"key": "properties.creationDate", "type": "iso-8601"},
+        "snapshot_creation_date": {"key": "properties.snapshotCreationDate", "type": "iso-8601"},
+        "completion_date": {"key": "properties.completionDate", "type": "iso-8601"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "size": {"key": "properties.size", "type": "int"},
         "label": {"key": "properties.label", "type": "str"},
@@ -448,6 +459,7 @@ class Backup(ProxyResource):
         "use_existing_snapshot": {"key": "properties.useExistingSnapshot", "type": "bool"},
         "snapshot_name": {"key": "properties.snapshotName", "type": "str"},
         "backup_policy_resource_id": {"key": "properties.backupPolicyResourceId", "type": "str"},
+        "is_large_volume": {"key": "properties.isLargeVolume", "type": "bool"},
     }
 
     def __init__(
@@ -473,6 +485,8 @@ class Backup(ProxyResource):
         super().__init__(**kwargs)
         self.backup_id = None
         self.creation_date = None
+        self.snapshot_creation_date = None
+        self.completion_date = None
         self.provisioning_state = None
         self.size = None
         self.label = label
@@ -482,6 +496,7 @@ class Backup(ProxyResource):
         self.use_existing_snapshot = use_existing_snapshot
         self.snapshot_name = snapshot_name
         self.backup_policy_resource_id = None
+        self.is_large_volume = None
 
 
 class BackupPatch(_serialization.Model):
@@ -1571,6 +1586,54 @@ class DailySchedule(_serialization.Model):
         self.used_bytes = used_bytes
 
 
+class DestinationReplication(_serialization.Model):
+    """Destination replication properties.
+
+    :ivar resource_id: The resource ID of the remote volume.
+    :vartype resource_id: str
+    :ivar replication_type: Indicates whether the replication is cross zone or cross region. Known
+     values are: "CrossRegionReplication" and "CrossZoneReplication".
+    :vartype replication_type: str or ~azure.mgmt.netapp.models.ReplicationType
+    :ivar region: The remote region for the destination volume.
+    :vartype region: str
+    :ivar zone: The remote zone for the destination volume.
+    :vartype zone: str
+    """
+
+    _attribute_map = {
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "replication_type": {"key": "replicationType", "type": "str"},
+        "region": {"key": "region", "type": "str"},
+        "zone": {"key": "zone", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        resource_id: Optional[str] = None,
+        replication_type: Optional[Union[str, "_models.ReplicationType"]] = None,
+        region: Optional[str] = None,
+        zone: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword resource_id: The resource ID of the remote volume.
+        :paramtype resource_id: str
+        :keyword replication_type: Indicates whether the replication is cross zone or cross region.
+         Known values are: "CrossRegionReplication" and "CrossZoneReplication".
+        :paramtype replication_type: str or ~azure.mgmt.netapp.models.ReplicationType
+        :keyword region: The remote region for the destination volume.
+        :paramtype region: str
+        :keyword zone: The remote zone for the destination volume.
+        :paramtype zone: str
+        """
+        super().__init__(**kwargs)
+        self.resource_id = resource_id
+        self.replication_type = replication_type
+        self.region = region
+        self.zone = zone
+
+
 class Dimension(_serialization.Model):
     """Dimension of blobs, possibly be blob type or access tier.
 
@@ -1609,6 +1672,9 @@ class EncryptionIdentity(_serialization.Model):
      authenticate with key vault. Applicable if identity.type has 'UserAssigned'. It should match
      key of identity.userAssignedIdentities.
     :vartype user_assigned_identity: str
+    :ivar federated_client_id: ClientId of the multi-tenant AAD Application. Used to access
+     cross-tenant keyvaults.
+    :vartype federated_client_id: str
     """
 
     _validation = {
@@ -1618,18 +1684,25 @@ class EncryptionIdentity(_serialization.Model):
     _attribute_map = {
         "principal_id": {"key": "principalId", "type": "str"},
         "user_assigned_identity": {"key": "userAssignedIdentity", "type": "str"},
+        "federated_client_id": {"key": "federatedClientId", "type": "str"},
     }
 
-    def __init__(self, *, user_assigned_identity: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, user_assigned_identity: Optional[str] = None, federated_client_id: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword user_assigned_identity: The ARM resource identifier of the user assigned identity used
          to authenticate with key vault. Applicable if identity.type has 'UserAssigned'. It should match
          key of identity.userAssignedIdentities.
         :paramtype user_assigned_identity: str
+        :keyword federated_client_id: ClientId of the multi-tenant AAD Application. Used to access
+         cross-tenant keyvaults.
+        :paramtype federated_client_id: str
         """
         super().__init__(**kwargs)
         self.principal_id = None
         self.user_assigned_identity = user_assigned_identity
+        self.federated_client_id = federated_client_id
 
 
 class EncryptionTransitionRequest(_serialization.Model):
@@ -2698,6 +2771,12 @@ class NetAppAccount(TrackedResource):
     :ivar disable_showmount: Shows the status of disableShowmount for all volumes under the
      subscription, null equals false.
     :vartype disable_showmount: bool
+    :ivar nfs_v4_id_domain: Domain for NFSv4 user ID mapping. This property will be set for all
+     NetApp accounts in the subscription and region and only affect non ldap NFSv4 volumes.
+    :vartype nfs_v4_id_domain: str
+    :ivar multi_ad_status: MultiAD Status for the account. Known values are: "Disabled" and
+     "Enabled".
+    :vartype multi_ad_status: str or ~azure.mgmt.netapp.models.MultiAdStatus
     """
 
     _validation = {
@@ -2709,6 +2788,8 @@ class NetAppAccount(TrackedResource):
         "etag": {"readonly": True},
         "provisioning_state": {"readonly": True},
         "disable_showmount": {"readonly": True},
+        "nfs_v4_id_domain": {"max_length": 255, "pattern": r"^[a-zA-Z0-9][a-zA-Z0-9.-]{0,253}[a-zA-Z0-9]$"},
+        "multi_ad_status": {"readonly": True},
     }
 
     _attribute_map = {
@@ -2724,6 +2805,8 @@ class NetAppAccount(TrackedResource):
         "active_directories": {"key": "properties.activeDirectories", "type": "[ActiveDirectory]"},
         "encryption": {"key": "properties.encryption", "type": "AccountEncryption"},
         "disable_showmount": {"key": "properties.disableShowmount", "type": "bool"},
+        "nfs_v4_id_domain": {"key": "properties.nfsV4IDDomain", "type": "str"},
+        "multi_ad_status": {"key": "properties.multiAdStatus", "type": "str"},
     }
 
     def __init__(
@@ -2734,6 +2817,7 @@ class NetAppAccount(TrackedResource):
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         active_directories: Optional[List["_models.ActiveDirectory"]] = None,
         encryption: Optional["_models.AccountEncryption"] = None,
+        nfs_v4_id_domain: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2747,6 +2831,9 @@ class NetAppAccount(TrackedResource):
         :paramtype active_directories: list[~azure.mgmt.netapp.models.ActiveDirectory]
         :keyword encryption: Encryption settings.
         :paramtype encryption: ~azure.mgmt.netapp.models.AccountEncryption
+        :keyword nfs_v4_id_domain: Domain for NFSv4 user ID mapping. This property will be set for all
+         NetApp accounts in the subscription and region and only affect non ldap NFSv4 volumes.
+        :paramtype nfs_v4_id_domain: str
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.etag = None
@@ -2755,6 +2842,8 @@ class NetAppAccount(TrackedResource):
         self.active_directories = active_directories
         self.encryption = encryption
         self.disable_showmount = None
+        self.nfs_v4_id_domain = nfs_v4_id_domain
+        self.multi_ad_status = None
 
 
 class NetAppAccountList(_serialization.Model):
@@ -2811,6 +2900,12 @@ class NetAppAccountPatch(_serialization.Model):
     :ivar disable_showmount: Shows the status of disableShowmount for all volumes under the
      subscription, null equals false.
     :vartype disable_showmount: bool
+    :ivar nfs_v4_id_domain: Domain for NFSv4 user ID mapping. This property will be set for all
+     NetApp accounts in the subscription and region and only affect non ldap NFSv4 volumes.
+    :vartype nfs_v4_id_domain: str
+    :ivar multi_ad_status: MultiAD Status for the account. Known values are: "Disabled" and
+     "Enabled".
+    :vartype multi_ad_status: str or ~azure.mgmt.netapp.models.MultiAdStatus
     """
 
     _validation = {
@@ -2819,6 +2914,8 @@ class NetAppAccountPatch(_serialization.Model):
         "type": {"readonly": True},
         "provisioning_state": {"readonly": True},
         "disable_showmount": {"readonly": True},
+        "nfs_v4_id_domain": {"max_length": 255, "pattern": r"^[a-zA-Z0-9][a-zA-Z0-9.-]{0,253}[a-zA-Z0-9]$"},
+        "multi_ad_status": {"readonly": True},
     }
 
     _attribute_map = {
@@ -2832,6 +2929,8 @@ class NetAppAccountPatch(_serialization.Model):
         "active_directories": {"key": "properties.activeDirectories", "type": "[ActiveDirectory]"},
         "encryption": {"key": "properties.encryption", "type": "AccountEncryption"},
         "disable_showmount": {"key": "properties.disableShowmount", "type": "bool"},
+        "nfs_v4_id_domain": {"key": "properties.nfsV4IDDomain", "type": "str"},
+        "multi_ad_status": {"key": "properties.multiAdStatus", "type": "str"},
     }
 
     def __init__(
@@ -2842,6 +2941,7 @@ class NetAppAccountPatch(_serialization.Model):
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         active_directories: Optional[List["_models.ActiveDirectory"]] = None,
         encryption: Optional["_models.AccountEncryption"] = None,
+        nfs_v4_id_domain: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2855,6 +2955,9 @@ class NetAppAccountPatch(_serialization.Model):
         :paramtype active_directories: list[~azure.mgmt.netapp.models.ActiveDirectory]
         :keyword encryption: Encryption settings.
         :paramtype encryption: ~azure.mgmt.netapp.models.AccountEncryption
+        :keyword nfs_v4_id_domain: Domain for NFSv4 user ID mapping. This property will be set for all
+         NetApp accounts in the subscription and region and only affect non ldap NFSv4 volumes.
+        :paramtype nfs_v4_id_domain: str
         """
         super().__init__(**kwargs)
         self.location = location
@@ -2867,6 +2970,8 @@ class NetAppAccountPatch(_serialization.Model):
         self.active_directories = active_directories
         self.encryption = encryption
         self.disable_showmount = None
+        self.nfs_v4_id_domain = nfs_v4_id_domain
+        self.multi_ad_status = None
 
 
 class NetworkSiblingSet(_serialization.Model):
@@ -3075,12 +3180,21 @@ class OperationListResult(_serialization.Model):
     """Result of the request to list Cloud Volume operations. It contains a list of operations and a
     URL link to get the next set of results.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :ivar value: List of Storage operations supported by the Storage resource provider.
     :vartype value: list[~azure.mgmt.netapp.models.Operation]
+    :ivar next_link: URL to get the next set of operation list results (if there are any).
+    :vartype next_link: str
     """
+
+    _validation = {
+        "next_link": {"readonly": True},
+    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(self, *, value: Optional[List["_models.Operation"]] = None, **kwargs: Any) -> None:
@@ -3090,6 +3204,7 @@ class OperationListResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
+        self.next_link = None
 
 
 class PeerClusterForVolumeMigrationRequest(_serialization.Model):
@@ -3618,10 +3733,13 @@ class ReplicationObject(_serialization.Model):
     :vartype remote_path: ~azure.mgmt.netapp.models.RemotePath
     :ivar remote_volume_region: The remote region for the other end of the Volume Replication.
     :vartype remote_volume_region: str
+    :ivar destination_replications: A list of destination replications.
+    :vartype destination_replications: list[~azure.mgmt.netapp.models.DestinationReplication]
     """
 
     _validation = {
         "replication_id": {"readonly": True},
+        "destination_replications": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3631,6 +3749,7 @@ class ReplicationObject(_serialization.Model):
         "remote_volume_resource_id": {"key": "remoteVolumeResourceId", "type": "str"},
         "remote_path": {"key": "remotePath", "type": "RemotePath"},
         "remote_volume_region": {"key": "remoteVolumeRegion", "type": "str"},
+        "destination_replications": {"key": "destinationReplications", "type": "[DestinationReplication]"},
     }
 
     def __init__(
@@ -3666,6 +3785,7 @@ class ReplicationObject(_serialization.Model):
         self.remote_volume_resource_id = remote_volume_resource_id
         self.remote_path = remote_path
         self.remote_volume_region = remote_volume_region
+        self.destination_replications = None
 
 
 class ReplicationStatus(_serialization.Model):
@@ -4792,6 +4912,103 @@ class UpdateNetworkSiblingSetRequest(_serialization.Model):
         self.network_features = network_features
 
 
+class UsageName(_serialization.Model):
+    """The name of the usage.
+
+    :ivar value: The name of the usage.
+    :vartype value: str
+    :ivar localized_value: The localized name of the usage.
+    :vartype localized_value: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "str"},
+        "localized_value": {"key": "localizedValue", "type": "str"},
+    }
+
+    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: The name of the usage.
+        :paramtype value: str
+        :keyword localized_value: The localized name of the usage.
+        :paramtype localized_value: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.localized_value = localized_value
+
+
+class UsageResult(_serialization.Model):
+    """Usages entity model.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The id of the usage.
+    :vartype id: str
+    :ivar name: The name of the usage.
+    :vartype name: ~azure.mgmt.netapp.models.UsageName
+    :ivar current_value: The current usage value for the subscription.
+    :vartype current_value: int
+    :ivar limit: The limit of the usage.
+    :vartype limit: int
+    :ivar unit: The unit of the usage.
+    :vartype unit: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "current_value": {"readonly": True},
+        "limit": {"readonly": True},
+        "unit": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "UsageName"},
+        "current_value": {"key": "properties.currentValue", "type": "int"},
+        "limit": {"key": "properties.limit", "type": "int"},
+        "unit": {"key": "properties.unit", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.current_value = None
+        self.limit = None
+        self.unit = None
+
+
+class UsagesListResult(_serialization.Model):
+    """Usages result.
+
+    :ivar value: A list of usages.
+    :vartype value: list[~azure.mgmt.netapp.models.UsageResult]
+    :ivar next_link: URL to get the next set of results.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[UsageResult]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[List["_models.UsageResult"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: A list of usages.
+        :paramtype value: list[~azure.mgmt.netapp.models.UsageResult]
+        :keyword next_link: URL to get the next set of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
 class UserAssignedIdentity(_serialization.Model):
     """User assigned identity properties.
 
@@ -5058,6 +5275,7 @@ class Volume(TrackedResource):
         },
         "storage_to_network_proximity": {"readonly": True},
         "mount_targets": {"readonly": True},
+        "is_restoring": {"readonly": True},
         "actual_throughput_mibps": {"readonly": True},
         "coolness_period": {"maximum": 183, "minimum": 2},
         "unix_permissions": {"max_length": 4, "min_length": 4},
@@ -5160,7 +5378,6 @@ class Volume(TrackedResource):
         network_features: Union[str, "_models.NetworkFeatures"] = "Basic",
         volume_type: Optional[str] = None,
         data_protection: Optional["_models.VolumePropertiesDataProtection"] = None,
-        is_restoring: Optional[bool] = None,
         snapshot_directory_visible: bool = True,
         kerberos_enabled: bool = False,
         security_style: Union[str, "_models.SecurityStyle"] = "unix",
@@ -5231,8 +5448,6 @@ class Volume(TrackedResource):
         :keyword data_protection: DataProtection type volumes include an object containing details of
          the replication.
         :paramtype data_protection: ~azure.mgmt.netapp.models.VolumePropertiesDataProtection
-        :keyword is_restoring: Restoring.
-        :paramtype is_restoring: bool
         :keyword snapshot_directory_visible: If enabled (true) the volume will contain a read-only
          snapshot directory which provides access to each of the volume's snapshots (defaults to true).
         :paramtype snapshot_directory_visible: bool
@@ -5349,7 +5564,7 @@ class Volume(TrackedResource):
         self.mount_targets = None
         self.volume_type = volume_type
         self.data_protection = data_protection
-        self.is_restoring = is_restoring
+        self.is_restoring = None
         self.snapshot_directory_visible = snapshot_directory_visible
         self.kerberos_enabled = kerberos_enabled
         self.security_style = security_style
@@ -5895,6 +6110,7 @@ class VolumeGroupVolumeProperties(_serialization.Model):
         },
         "storage_to_network_proximity": {"readonly": True},
         "mount_targets": {"readonly": True},
+        "is_restoring": {"readonly": True},
         "actual_throughput_mibps": {"readonly": True},
         "coolness_period": {"maximum": 183, "minimum": 2},
         "unix_permissions": {"max_length": 4, "min_length": 4},
@@ -5994,7 +6210,6 @@ class VolumeGroupVolumeProperties(_serialization.Model):
         network_features: Union[str, "_models.NetworkFeatures"] = "Basic",
         volume_type: Optional[str] = None,
         data_protection: Optional["_models.VolumePropertiesDataProtection"] = None,
-        is_restoring: Optional[bool] = None,
         snapshot_directory_visible: bool = True,
         kerberos_enabled: bool = False,
         security_style: Union[str, "_models.SecurityStyle"] = "unix",
@@ -6065,8 +6280,6 @@ class VolumeGroupVolumeProperties(_serialization.Model):
         :keyword data_protection: DataProtection type volumes include an object containing details of
          the replication.
         :paramtype data_protection: ~azure.mgmt.netapp.models.VolumePropertiesDataProtection
-        :keyword is_restoring: Restoring.
-        :paramtype is_restoring: bool
         :keyword snapshot_directory_visible: If enabled (true) the volume will contain a read-only
          snapshot directory which provides access to each of the volume's snapshots (defaults to true).
         :paramtype snapshot_directory_visible: bool
@@ -6186,7 +6399,7 @@ class VolumeGroupVolumeProperties(_serialization.Model):
         self.mount_targets = None
         self.volume_type = volume_type
         self.data_protection = data_protection
-        self.is_restoring = is_restoring
+        self.is_restoring = None
         self.snapshot_directory_visible = snapshot_directory_visible
         self.kerberos_enabled = kerberos_enabled
         self.security_style = security_style

@@ -230,6 +230,15 @@ class MirrorState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BROKEN = "Broken"
 
 
+class MultiAdStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """MultiAD Status for the account."""
+
+    DISABLED = "Disabled"
+    """Account is MultiAD disabled, Means its a SharedAD or SingleAD account."""
+    ENABLED = "Enabled"
+    """Account is MultiAD enabled"""
+
+
 class NetworkFeatures(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Network features available to the volume, or current state of update."""
 
@@ -311,6 +320,15 @@ class ReplicationSchedule(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DAILY = "daily"
 
 
+class ReplicationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates whether the replication is cross zone or cross region."""
+
+    CROSS_REGION_REPLICATION = "CrossRegionReplication"
+    """Cross region replication"""
+    CROSS_ZONE_REPLICATION = "CrossZoneReplication"
+    """Cross zone replication"""
+
+
 class SecurityStyle(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The security style of volume, default unix, defaults to ntfs for dual protocol or CIFS
     protocol.
@@ -330,7 +348,7 @@ class ServiceLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ULTRA = "Ultra"
     """Ultra service level"""
     STANDARD_ZRS = "StandardZRS"
-    """Zone redundant storage service level"""
+    """Zone redundant storage service level. This will be deprecated soon."""
 
 
 class SmbAccessBasedEnumeration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
