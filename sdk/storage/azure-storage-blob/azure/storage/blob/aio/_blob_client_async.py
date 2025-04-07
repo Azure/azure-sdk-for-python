@@ -1259,6 +1259,16 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
     @distributed_trace_async
     async def set_blob_metadata(
         self, metadata: Optional[Dict[str, str]] = None,
+        *,
+        lease: Optional[Union[BlobLeaseClient, str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional["MatchConditions"] = None,
+        if_tags_match_condition: Optional[str] = None,
+        cpk: Optional["CustomerProvidedEncryptionKey"] = None,
+        encryption_scope: Optional[str] = None,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Union[str, datetime]]:
         """Sets user-defined metadata for the blob as one or more name-value pairs.
@@ -1317,9 +1327,21 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         :returns: Blob-updated property dict (Etag and last modified)
         :rtype: Dict[str, Union[str, datetime]]
         """
-        if kwargs.get('cpk') and self.scheme.lower() != 'https':
+        if cpk and self.scheme.lower() != 'https':
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
-        options = _set_blob_metadata_options(metadata=metadata, **kwargs)
+        options = _set_blob_metadata_options(
+            metadata=metadata,
+            lease=lease,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_condition=match_condition,
+            if_tags_match_condition=if_tags_match_condition,
+            cpk=cpk,
+            encryption_scope=encryption_scope,
+            timeout=timeout,
+            **kwargs
+        )
         try:
             return cast(Dict[str, Union[str, datetime]], await self._client.blob.set_metadata(**options))
         except HttpResponseError as error:
