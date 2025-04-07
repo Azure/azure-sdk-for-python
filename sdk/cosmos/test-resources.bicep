@@ -41,12 +41,6 @@ var multiRegionConfiguration = [
     failoverPriority: 1
     isZoneRedundant: false
   }
-  {
-    locationName: 'East US 2'
-    provisioningState: 'Succeeded'
-    failoverPriority: 2
-    isZoneRedundant: false
-  }
 ]
 var locationsConfiguration = (enableMultipleRegions ? multiRegionConfiguration : singleRegionConfiguration)
 var roleDefinitionId = guid(baseName, 'roleDefinitionId')
