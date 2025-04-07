@@ -79,7 +79,7 @@ class StorageTaskAssignmentsInstancesReportOperations:  # pylint: disable=name-t
         :type maxpagesize: int
         :param filter: Optional. When specified, it can be used to query using reporting properties.
          See `Constructing Filter Strings
-         <https://learn.microsoft.com/en-us/rest/api/storageservices/querying-tables-and-entities#constructing-filter-strings>`_
+         <https://learn.microsoft.com/rest/api/storageservices/querying-tables-and-entities#constructing-filter-strings>`_
          for details. Default value is None.
         :type filter: str
         :return: An iterator like instance of either StorageTaskReportInstance or the result of
