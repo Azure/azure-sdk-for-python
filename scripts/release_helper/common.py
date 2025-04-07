@@ -65,6 +65,7 @@ class IssueProcess:
         self.date_from_target = 0
         self.is_open = True
         self.issue_title = issue_package.issue.title.split(": ", 1)[-1]
+        self.full_issue_title = issue_package.issue.title
         self.spec_repo = Path(os.getenv('SPEC_REPO'))
         self.typespec_json = Path(os.getenv('TYPESPEC_JSON'))
         self.language_name = "common"
@@ -238,7 +239,8 @@ class IssueProcess:
         # get default tag with readme_link
         self.get_default_readme_tag()
 
-        self.check_tag_consistency()
+        if "typespec" not in self.full_issue_title.lower():
+            self.check_tag_consistency()
 
         self.edit_issue_body()
 
