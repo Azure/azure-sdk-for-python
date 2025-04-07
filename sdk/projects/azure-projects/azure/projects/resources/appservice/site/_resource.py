@@ -39,6 +39,7 @@ from ...._resource import (
     _load_dev_environment,
 )
 from .._resource import AppServicePlan
+from ._config import SiteConfig
 
 if TYPE_CHECKING:
     from .types import AppSiteResource
@@ -180,7 +181,7 @@ AppSiteResourceType = TypeVar(
 _DEFAULT_APP_SITE: "AppSiteResource" = {
     "name": GLOBAL_PARAMS["defaultName"],
     "location": GLOBAL_PARAMS["location"],
-    "tags": {'azd-service-name': GLOBAL_PARAMS["environmentName"].format("AzProj_{}")},
+    "tags": {'azd-service-name': GLOBAL_PARAMS["environmentName"]},
     "kind": "app,linux",
     "properties": {
         'httpsOnly': True,
@@ -205,13 +206,15 @@ class AppSite(Resource, Generic[AppSiteResourceType]):
     DEFAULTS: "AppSiteResource" = _DEFAULT_APP_SITE  # type: ignore[assignment]
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_APP_SITE_EXTENSIONS
     properties: AppSiteResourceType
-    parent: AppServicePlan  # type: ignore[reportIncompatibleVariableOverride]
+    parent: None  # type: ignore[reportIncompatibleVariableOverride]
 
     def __init__(
         self,
         properties: Optional["AppSiteResource"] = None,
         /,
         name: Optional[Union[str, Parameter]] = None,
+        plan: Optional[Union[str, Parameter, AppServicePlan]] = None,
+        app_settings: Optional[Dict[str, str]] = None,
         **kwargs: Unpack[AppSiteKwargs],
     ) -> None:
         existing = kwargs.pop("existing", False)  # type: ignore[typeddict-item]
@@ -221,6 +224,11 @@ class AppSite(Resource, Generic[AppSiteResourceType]):
         if "user_roles" in kwargs:
             extensions["user_roles"] = kwargs.pop("user_roles")
         # TODO: Finish populating kwarg properties
+        if isinstance(plan, AppServicePlan):
+            self._plan = plan
+        else:
+            # 'parent' is passed by the reference classmethod.
+            self._plan = kwargs.pop("parent", AppServicePlan(name=plan))  # type: ignore[typeddict-item]
         if not existing:
             properties = properties or {}
             if "properties" not in properties:
@@ -231,6 +239,7 @@ class AppSite(Resource, Generic[AppSiteResourceType]):
                 properties["location"] = kwargs.pop("location")
             if "tags" in kwargs:
                 properties["tags"] = kwargs.pop("tags")
+        self._app_settings = app_settings or {}
         super().__init__(
             properties,
             extensions=extensions,
@@ -270,6 +279,68 @@ class AppSite(Resource, Generic[AppSiteResourceType]):
         from .types import VERSION
 
         return VERSION
+
+    def _merge_properties(  # type: ignore[override]  # Parameter superset
+        self,
+        # We override the type-hints here to be resource-specific to make writing and validating the merge easier.
+        current_properties: "AppSiteResource",  # type: ignore[arg-type]
+        new_properties: "AppSiteResource",  # type: ignore[arg-type]
+        *,
+        parameters: Dict[str, Parameter],
+        symbol: ResourceSymbol,
+        fields: FieldsType,
+        resource_group: ResourceSymbol,
+        **kwargs,
+    ) -> Dict[str, Any]:
+        output_config = super()._merge_properties(
+            cast(Dict[str, Any], current_properties),
+            cast(Dict[str, Any], new_properties),
+            symbol=symbol,
+            fields=fields,
+            resource_group=resource_group,
+            parameters=parameters,
+            **kwargs,
+        )
+        if "properties" in current_properties:
+            # TODO: Fix this recursive call problem....
+            # We only want to run this on the first call, not subsequent ones.
+            if not current_properties["properties"].get("serverFarmId"):
+                symbols = self._plan.__bicep__(fields, parameters=parameters)
+                current_properties["properties"]["serverFarmId"] = symbols[0].id
+            app_settings = {
+                'SCM_DO_BUILD_DURING_DEPLOYMENT': 'true',
+                'ENABLE_ORYX_BUILD': 'true',
+                'PYTHON_ENABLE_GUNICORN_MULTIWORKERS': 'true',
+                'AZURE_CLIENT_ID': parameters["managedIdentityClientId"]
+            }
+            app_config = self._find_last_resource_match(fields, resource=ResourceIdentifiers.config_store)
+            if app_config:
+                app_settings["AZURE_APPCONFIG_ENDPOINT"] = app_config.outputs["endpoint"]
+            app_settings.update(self._app_settings)
+            site_settings = SiteConfig(
+                {"parent": symbol},
+                name="appsettings",
+                settings=app_settings,
+                parent=self
+            )
+            site_settings.__bicep__(fields, parameters=parameters)
+            app_logs = SiteConfig(
+                {"parent": symbol},
+                name="logs",
+                settings={
+                    'applicationLogs': {
+                        'fileSystem': {'level': 'Verbose'}
+                    },
+                    'detailedErrorMessages': {'enabled': True},
+                    'failedRequestsTracing': {'enabled': True},
+                    'httpLogs': {
+                        'fileSystem': {'enabled':True, 'retentionInDays': 1, 'retentionInMb': 35}
+                    }
+                },
+                parent=self
+            )
+            app_logs.__bicep__(fields, parameters=parameters)
+        return output_config
 
     def _outputs(self, **kwargs) -> Dict[str, Output]:
         return {}

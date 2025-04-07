@@ -708,6 +708,7 @@ class _ClientResource(Resource):
         **client_options,
     ):
         if config_store is None:
+            # TODO: replace with simple dotenv load?
             config_store = _load_dev_environment()
 
         endpoint = self._settings["endpoint"](config_store=config_store)

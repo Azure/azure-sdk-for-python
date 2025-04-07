@@ -71,11 +71,12 @@ setup(
         "azure.projects": ["py.typed"],
     },
     install_requires=[
-        "python-dotenv>=1.0.0",
-        "azure-identity>=1.20",
-        "azure-core>=1.31.0",
         "typing-extensions>=4.5",
-        "azure-appconfiguration-provider>=2.0.0",  # TODO: This needs to be removed.
+        "python-dotenv>=1.0.0",
+        "pyyaml>=6.0.2",
+        "azure-core>=1.31.0",
+        "azure-identity>=1.20",
+        "azure-appconfiguration-provider>=2.0.0",  # TODO: This needs to be removed before GA.
     ],
     python_requires=">=3.8",
     entry_points={

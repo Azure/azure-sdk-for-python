@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 import asyncio
+import inspect
 import sys
 import keyword
 import types
@@ -33,6 +34,7 @@ from .resources import RESOURCE_FROM_CLIENT_ANNOTATION
 from .resources.resourcegroup import ResourceGroup
 from .resources.managedidentity import UserAssignedIdentity
 from .resources.appconfig import ConfigStore
+from .resources.appservice.site import AppSite
 
 
 # Raised when an attempt is made to modify a frozen class.
@@ -266,6 +268,7 @@ class AzureInfrastructure(metaclass=AzureInfraComponent):
     resource_group: ResourceGroup = field(default=ResourceGroup(), repr=False)
     identity: Optional[UserAssignedIdentity] = field(default=UserAssignedIdentity(), repr=False)
     config_store: Optional[ConfigStore[Any]] = field(default=ConfigStore(), repr=False)
+    host: Optional[AppSite] = field(default=None, repr=False)
 
     def __init__(self, **kwargs):
         for key, value in kwargs.items():
@@ -475,115 +478,80 @@ class AzureApp(Generic[InfrastructureType], metaclass=AzureAppComponent):
             raise ValueError("AzureApp has no associated Infrastructure object.")
         return self._infra
 
-    @overload
     @classmethod
     def load(
         cls,
-        *,
-        config_store: Optional[Mapping[str, Any]] = None,
-    ) -> Self: ...
-    @overload
-    @classmethod
-    def load(
-        cls,
-        infra: InfrastructureType,
         attr_map: Optional[Mapping[str, str]] = None,
-        *,
-        config_store: Optional[Mapping[str, Any]] = None,
-    ) -> Self: ...
-    @classmethod
-    def load(cls, infra=None, attr_map=None, *, config_store=None, **kwargs):
-        if attr_map and not infra:
-            raise ValueError("Cannot specify attr_map without providing infrastructure object.")
+        **kwargs
+    ) -> Self:
         attr_map = attr_map or {}
-        config_store = config_store or {}
         dev_env = kwargs.pop("__dev_env", None)
         # We only want to do this once per instance, so we'll pass it through to the metaclass.
         mro_annotations = kwargs.pop("__mro_annotations", None) or get_mro_annotations(cls, AzureApp)
-        if not infra:
-            fields = []
-            for attr, (annotation, _) in mro_annotations.items():
-                annotation = get_optional_annotation(annotation)
-                if annotation and annotation.__name__ in RESOURCE_FROM_CLIENT_ANNOTATION:
-                    resource_cls = RESOURCE_FROM_CLIENT_ANNOTATION[annotation.__name__].resource()
-                    attr_map[attr] = attr
-                    fields.append((attr, resource_cls, field(default=resource_cls())))
-                elif attr == "config_store" and not config_store:
-                    # We special case this one.
-                    attr_map[attr] = attr
-            infra = make_infra(cls.__name__, fields)()
+        fields = []
+        for attr, (annotation, _) in mro_annotations.items():
+            annotation = get_optional_annotation(annotation)
+            if annotation and annotation.__name__ in RESOURCE_FROM_CLIENT_ANNOTATION:
+                resource_cls = RESOURCE_FROM_CLIENT_ANNOTATION[annotation.__name__].resource()
+                attr_map[attr] = attr
+                fields.append((attr, resource_cls, field(default=resource_cls())))
+            elif attr == "config_store":
+                # We special case this one.
+                attr_map[attr] = attr
+        infra = make_infra(cls.__name__, fields)()  # TODO: Remove
         if attr_map:
             kwargs = {app_attr: getattr(infra, infra_attr) for app_attr, infra_attr in attr_map.items()}
-        else:
-            infra_resources = {r.identifier: r for r in infra.__dict__.values() if isinstance(r, Resource)}
-            print("INFRA", infra_resources)
-            kwargs = {}
-            for attr, (annotation, _) in mro_annotations.items():
-                print("ATTR", attr, annotation, _)
-                annotation = get_optional_annotation(annotation)
-                # TODO: This doesn't support alias
-                if (
-                    annotation and annotation.__name__ in RESOURCE_FROM_CLIENT_ANNOTATION
-                    and RESOURCE_FROM_CLIENT_ANNOTATION[annotation.__name__] in infra_resources
-                ):
-                    kwargs[attr] = infra_resources[RESOURCE_FROM_CLIENT_ANNOTATION[annotation.__name__]]
+        # else:
+        #     infra_resources = {r.identifier: r for r in infra.__dict__.values() if isinstance(r, Resource)}
+        #     kwargs = {}
+        #     for attr, (annotation, _) in mro_annotations.items():
+        #         annotation = get_optional_annotation(annotation)
+        #         # TODO: This doesn't support alias
+        #         if (
+        #             annotation and annotation.__name__ in RESOURCE_FROM_CLIENT_ANNOTATION
+        #             and RESOURCE_FROM_CLIENT_ANNOTATION[annotation.__name__] in infra_resources
+        #         ):
+        #             kwargs[attr] = infra_resources[RESOURCE_FROM_CLIENT_ANNOTATION[annotation.__name__]]
         if dev_env is None:
             # We use a ChainMap here so that it can be added to the Infra ConfigStore resource in the
             # constructor purely during the client construction. This wont be persisted to the
-            # app.config_store attribute.
+            # app.config_store attribute. TODO: Should we? Probably no need as the dev env wont be present in
+            # the deployment.
             # If there's a config_store in the infra, then that will ultimately be placed first in the chain.
-            dev_env = ChainMap(_load_dev_environment(infra.__class__.__name__))
-        if config_store or "config_store" not in kwargs:
-            # If specified, overwrite. Otherwise add if not present.
-            kwargs["config_store"] = config_store
+            from ._provision import get_settings
+            dev_env = ChainMap(get_settings())
         return cls(infra=infra, __dev_env=dev_env, __mro_annotations=mro_annotations, **kwargs)
 
-    @overload
     @classmethod
     def provision(
         cls,
-        *,
-        parameters: Optional[Mapping[str, Any]] = None,
-        **kwargs,
-    ) -> Self: ...
-    @overload
-    @classmethod
-    def provision(
-        cls,
-        infra: InfrastructureType,
+        infra: Optional[InfrastructureType] = None,
         *,
         attr_map: Optional[Mapping[str, str]] = None,
         parameters: Optional[Mapping[str, Any]] = None,
         **kwargs,
-    ) -> Self: ...
-    @classmethod
-    def provision(
-        cls,
-        infra=None,
-        *,
-        attr_map=None,
-        parameters=None,
-        **kwargs,
-    ):
-        if attr_map and not infra:
-            raise ValueError("Cannot specify attr_map without providing infrastructure object.")
+    ) -> Self:
         mro_annotations = get_mro_annotations(cls, AzureApp)
         from ._provision import provision
 
         if not infra:
-            attr_map = {}
-            fields = []
-            for attr, (annotation, _) in mro_annotations.items():
-                annotation = get_optional_annotation(annotation)
-                if annotation and annotation.__name__ in RESOURCE_FROM_CLIENT_ANNOTATION:
-                    resource_cls = RESOURCE_FROM_CLIENT_ANNOTATION[annotation.__name__].resource()
-                    attr_map[attr] = attr
-                    fields.append((attr, resource_cls, field(default=resource_cls())))
-                elif attr == "config_store":
-                    # We special case this one.
-                    attr_map[attr] = attr
-            infra = make_infra(cls.__name__, fields)()
-        dev_env = provision(infra, config_store=parameters, **kwargs)
+            try:
+                from infra import build_infra  # type: ignore[import]
+                infra = build_infra()
+            except ImportError:
+                attr_map = {}
+                fields = []
+                for attr, (annotation, _) in mro_annotations.items():
+                    annotation = get_optional_annotation(annotation)
+                    if annotation and annotation.__name__ in RESOURCE_FROM_CLIENT_ANNOTATION:
+                        resource_cls = RESOURCE_FROM_CLIENT_ANNOTATION[annotation.__name__].resource()
+                        attr_map[attr] = attr
+                        fields.append((attr, resource_cls, field(default=resource_cls())))
+                    elif attr == "config_store":
+                        # We special case this one.
+                        attr_map[attr] = attr
+                infra = make_infra(cls.__name__, fields)()
+        dev_env = provision(infra, parameters=parameters, **kwargs)
         # The dev env returned here is a ChainMap of the deployed settings along with the user
         # provided config. If there's a config_store provided with the infra deployment, this
         # will be added to the front of the chain.

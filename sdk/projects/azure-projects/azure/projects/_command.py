@@ -15,7 +15,7 @@ from collections.abc import AsyncIterator
 from makefun import create_function
 
 from ._utils import import_from_path
-from ._component import AzureApp, get_mro_annotations
+from ._component import AzureApp, AzureInfrastructure, get_mro_annotations
 from .resources import RESOURCE_FROM_CLIENT_ANNOTATION
 
 
@@ -24,38 +24,15 @@ async def list_tools(filename):
     from mcp.client.stdio import StdioServerParameters, stdio_client
 
     async with stdio_client(
-        StdioServerParameters(command="azproj", args=[filename, "mcp", "stdio"])
+        StdioServerParameters(command="azproj", args=[filename, "mcp", "--stdio"])
     ) as (read, write):
-        print("client")
         async with ClientSession(read, write) as session:
-            print("session")
             await session.initialize()
-            print("listing")
             # List available tools
             tools = await session.list_tools()
-            print("done")
             for t in tools.tools:
                 print(f"- {t.name}")
                 print(f"  {t.description}")
-                print("\n")
-
-
-async def list_resources(filename):
-    from mcp.client.session import ClientSession
-    from mcp.client.stdio import StdioServerParameters, stdio_client
-
-    async with stdio_client(
-        StdioServerParameters(command="azproj", args=[filename, "mcp", "stdio"])
-    ) as (read, write):
-        async with ClientSession(read, write) as session:
-            await session.initialize()
-
-            # List available tools
-            resources = await session.list_resources()
-            for r in resources.resources:
-                print(f"- {r.name}")
-                print(f"  {r.uri}")
-                print(f"  {r.description}")
                 print("\n")
 
 
@@ -64,7 +41,7 @@ async def call_tool(filename, tool_name):
     from mcp.client.stdio import StdioServerParameters, stdio_client
 
     async with stdio_client(
-        StdioServerParameters(command="azproj", args=[filename, "mcp", "stdio"])
+        StdioServerParameters(command="azproj", args=[filename, "mcp", "--stdio"])
     ) as (read, write):
         async with ClientSession(read, write) as session:
             await session.initialize()
@@ -75,31 +52,6 @@ async def call_tool(filename, tool_name):
             except json.JSONDecodeError:
                 pprint.pp([c.text for c in result.content])
 
-
-async def get_resource(filename, resource_name):
-    from mcp.client.session import ClientSession
-    from mcp.client.stdio import StdioServerParameters, stdio_client
-
-    async with stdio_client(
-        StdioServerParameters(command="azproj", args=[filename, "mcp", "stdio"])
-    ) as (read, write):
-        async with ClientSession(read, write) as session:
-            await session.initialize()
-
-            if "://" in resource_name:
-                result = await session.read_resource(resource_name)
-                print(result)
-            else:
-                resources = await session.list_resources()
-                for r in resources.resources:
-                    if r.name == resource_name:
-                        result = await session.read_resource(r.uri)
-                        print(result)
-                        break
-            # try:
-            #     pprint.pp([json.loads(c.text) for c in result.content])
-            # except json.JSONDecodeError:
-            #     pprint.pp([c.text for c in result.content])
 
 
 async def main(app_class):
@@ -181,27 +133,89 @@ async def main(app_class):
                         func_name = f"{app_class.__name__.lower()}_{attr}_{name}"
                         wrapped = create_function(new_sig, functools.partial(get_func, attr, name), func_name=func_name, qualname=func_name)
                         mcp_server.add_tool(wrapped, name=f"{app_class.__name__}_{attr}_{name}", description=value.__doc__.split("\n\n")[0])
-    
-
     return mcp_server
 
+
 def command():
-    # TODO: Configure full arg parser
-    args = sys.argv[1:]
-    print(args)
-    if not args:
-        # TODO: Print help
-        print("...Nothing to see here...")
-        return
-    input_file = args[0]
+    parser = ArgumentParser(
+        prog="azproj",
+        usage="azproj <filename> <command> [options]",
+        description="Azure Projects CLI"
+    )
+    parser.add_argument('filename')
+    subparsers = parser.add_subparsers(dest='command', required=True)
+    provision = subparsers.add_parser('provision')
+    provision.add_argument("-p", "--parameters", type=str, help="JSON file with parameters for the provision command.")
+    deploy = subparsers.add_parser('deploy')
+    down = subparsers.add_parser('down')
+    down.add_argument("--purge", action="store_true", help="Purge the resources instead of deleting them.")
+    mcp = subparsers.add_parser('mcp')
+    mcp.add_argument("--port", type=int, default=8000, help="Port to run the MCP server on.")
+    mcp.add_argument("--stdio", action="store_true", help="Run the MCP server with stdio transport.")
+    mcp_subparsers = mcp.add_subparsers(dest='mcpcommand')
+    run = mcp_subparsers.add_parser('run')
+    run.add_argument('tool', help="The name of the tool to run.")
+    list_tools = mcp_subparsers.add_parser('list_tools')
+    args = parser.parse_args()
 
-    if args[1].lower() == "mcp":
-        module = import_from_path(input_file)
+    if args.command == "provision":
+        module = import_from_path(args.filename)
+        if args.parameters:
+            with open(args.parameters, "r") as f:
+                try:
+                    # Support .env files as well as JSON files.
+                    provision_params = json.load(f)
+                except json.JSONDecodeError:
+                    print("Invalid JSON in parameters file.")
+                    return
+        else:
+            provision_params = None
         try:
-            subcommand = args[2]
-        except IndexError:
-            subcommand = None
+            builder = getattr(module, "build_infra")
+            from ._provision import provision
+            provision(builder(), parameters=provision_params)
+            return
+        except AttributeError:
+            for name, value in inspect.getmembers(module):
+                # If we found no infra definitions to deploy, we'll look for AzureApp classes.
+                if inspect.isclass(value) and issubclass(value, AzureApp) and value is not AzureApp:
+                    value.provision(parameters=provision_params)
+                    return
 
+    if args.command == "deploy":
+        module = import_from_path(args.filename)
+        try:
+            # TODO: We shouldn't need to rebuild the infra here.
+            builder = getattr(module, "build_infra")
+            from ._provision import deploy
+            deploy(builder())
+            return
+        except AttributeError:
+            for name, value in inspect.getmembers(module):
+                # If we found no infra definitions to deploy, we'll look for AzureApp classes.
+                if inspect.isclass(value) and issubclass(value, AzureApp) and value is not AzureApp:
+                    value.provision(parameters=provision_params)
+                    return
+
+    if args.command == "down":
+        module = import_from_path(args.filename)
+        app_class = None
+        module_contents = inspect.getmembers(module)
+        for name, value in module_contents:
+            # We'll start by looking for instances of AzureInfrastructure.
+            if isinstance(value, AzureInfrastructure):
+                from ._provision import deprovision
+                deprovision(value, purge=args.purge)
+                return
+        for name, value in module_contents:
+            # If we found no infra definitions to deploy, we'll look for AzureApp classes.
+            if inspect.isclass(value) and issubclass(value, AzureApp) and value is not AzureApp:
+                from ._provision import deprovision
+                deprovision(value.__name__, purge=args.purge)
+                return
+
+    if args.command == "mcp":
+        module = import_from_path(args.filename)
         app_class = None
         for name, value in inspect.getmembers(module):
             if inspect.isclass(value) and issubclass(value, AzureApp) and value is not AzureApp:
@@ -211,10 +225,17 @@ def command():
         if app_class is None:
             print("No AzureApp found in the module.")
             return
-        
-        server = asyncio.run(main(value))
-        if subcommand in [None, "stdio", "sse"]:
-            io = subcommand or "sse"
+
+        if args.mcpcommand == "list_tools":
+            asyncio.run(list_tools(args.filename))
+            return
+        if args.mcpcommand == "run":
+            tool_name = args.tool
+            asyncio.run(call_tool(args.filename, tool_name))
+            return
+        if not args.mcpcommand:
+            server = asyncio.run(main(value))
+            io = "stdio" if args.stdio else "sse"
             try:
                 if io == "sse":
                     print(f"Starting MCP server for {name} at http://0.0.0.0:8000/sse")
@@ -225,23 +246,3 @@ def command():
             except (KeyboardInterrupt, asyncio.exceptions.CancelledError):
                 print("Server stopped.")
             return
-        elif subcommand == "list_tools":
-            print("LISTING TOOLS")
-            asyncio.run(list_tools(input_file))
-            return
-        elif subcommand == "run":
-            tool = args[3]
-            asyncio.run(call_tool(input_file, tool))
-            return
-        elif subcommand == "list_resources":
-            asyncio.run(list_resources(input_file))
-            return
-        elif subcommand == "get":
-            resource = args[3]
-            asyncio.run(get_resource(input_file, resource))
-            return
-
-
-
-        # print(module)
-

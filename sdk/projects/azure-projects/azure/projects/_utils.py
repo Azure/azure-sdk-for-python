@@ -17,14 +17,16 @@ import os
 def import_from_path(file_path):
     full_path = os.path.abspath(file_path)
     module_name = os.path.basename(full_path)
+    dirname = os.path.dirname(full_path)
     if os.path.isdir(full_path):
         full_path = os.path.join(full_path, "__init__.py")
     elif os.path.isfile(full_path):
         module_name = os.path.splitext(module_name)[0]
     else:
         raise ImportError(f"Module {module_name} not found at {file_path}")
-    spec = importlib.util.spec_from_file_location(module_name, file_path)
+    spec = importlib.util.spec_from_file_location(module_name, full_path)
     module = importlib.util.module_from_spec(spec)
+    sys.path.insert(0, dirname)
     sys.modules[module_name] = module
     spec.loader.exec_module(module)
     return module

@@ -15,13 +15,13 @@ VERSION = "2024-04-01"
 
 
 class SkuDescription(TypedDict, total=False):
-    capabilities: Union[List["Capability", Parameter], Parameter]  # type: ignore[name-defined]  # TODO
+    capabilities: Union[List[Union["Capability", Parameter]], Parameter]  # type: ignore[name-defined]  # TODO
     """Capabilities of the SKU, e.g., is traffic manager enabled?"""
     capacity: Union[int, Parameter]
     """Current number of instances assigned to the resource."""
     family: Union[str, Parameter]
     """Family code of the resource SKU."""
-    locations: Union[List[str, Parameter], Parameter]
+    locations: Union[List[Union[str, Parameter]], Parameter]
     """Locations of the SKU."""
     name: Union[str, Parameter]
     """Name of the resource SKU."""

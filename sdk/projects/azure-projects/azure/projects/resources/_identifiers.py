@@ -45,6 +45,7 @@ class ResourceIdentifiers(Enum):
     config_setting = "appconfig.setting"
     app_service_plan = "appservice:plan"
     app_service_site = "appservice:site"
+    app_service_site_config = "appservice:site:config"
 
     def resource(  # pylint: disable=too-many-branches,too-many-statements,too-many-return-statements
         self,
@@ -82,7 +83,9 @@ class ResourceIdentifiers(Enum):
 
             return TableStorage
         if self == self.table:
-            raise NotImplementedError()
+            from .storage.tables.table._resource import Table
+
+            return Table
         if self == self.queue_storage:
             raise NotImplementedError()
         if self == self.queue:
@@ -155,6 +158,14 @@ class ResourceIdentifiers(Enum):
             from .appservice._resource import AppServicePlan
 
             return AppServicePlan
+        if self == self.app_service_site:
+            from .appservice.site._resource import AppSite
+
+            return AppSite
+        if self == self.app_service_site_config:
+            from .appservice.site._config import SiteConfig
+
+            return SiteConfig
         raise TypeError(f"Unknown resource identifier: {self}")
 
 
@@ -164,6 +175,7 @@ RESOURCE_FROM_CLIENT_ANNOTATION: Dict[str, ResourceIdentifiers] = {
     "ContainerClient": ResourceIdentifiers.blob_container,
     "FileSystemClient": ResourceIdentifiers.blob_container,
     "TableServiceClient": ResourceIdentifiers.table_storage,
+    "TableClient": ResourceIdentifiers.table,
     "ShareServiceClient": ResourceIdentifiers.file_share,
     "ShareClient": ResourceIdentifiers.file_share,
     "QueueServiceClient": ResourceIdentifiers.queue_storage,

@@ -17,7 +17,11 @@ from typing import (
 )
 import os
 import json
+from io import StringIO
 import subprocess
+
+import yaml
+from dotenv import dotenv_values
 
 from ._version import VERSION
 from ._component import AzureInfrastructure
@@ -28,12 +32,33 @@ from ._resource import FieldType, Resource, FieldsType, _load_dev_environment
 from .resources._extension import add_extensions
 from .resources import ResourceIdentifiers
 from .resources.appconfig.setting import ConfigSetting
+from .resources.appservice.site import AppSite
 
 
 _BICEP_PARAMS = {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
 }
+
+def get_settings() -> Dict[str, Any]:
+    args = ["azd", "env", "get-values"]
+    try:
+        output = subprocess.run(args, check=False, capture_output=True, text=True)
+        if output.returncode == 0:
+            config = StringIO(output.stdout)
+            return dotenv_values(stream=config)
+    except Exception as e:
+        pass
+    return {}
+
+
+def _deploy_project(name: str, label: Optional[str] = None) -> int:
+    project_name = name + (f"-{label}" if label else "")
+    args = ["azd", "deploy", project_name, "-e", project_name]
+    print("Running: ", args)
+    output = subprocess.run(args, check=False)
+    print(output)
+    return output.returncode
 
 
 def _deprovision_project(name: str, label: Optional[str] = None, purge: bool = False) -> int:
@@ -64,29 +89,45 @@ def _init_project(
     main_bicep: str,
     location: Optional[str] = None,
     label: Optional[str] = None,
-    metadata: Optional[Dict[str, str]] = None,
+    host: Optional[AppSite] = None,
 ) -> int:
     azure_dir = os.path.join(root_path, ".azure")
     azure_yaml = os.path.join(root_path, "azure.yaml")
     project_name = name + (f"-{label}" if label else "")
     project_dir = os.path.join(azure_dir, project_name)
-    # TODO proper yaml parsing
-    # Needs to properly set code root
-    # Shouldn't overwrite on every run
-    if not os.path.isfile(azure_yaml):
-        with open(azure_yaml, "w", encoding="utf-8") as config:
-            config.write(
-                "# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json\n\n"  # pylint: disable=line-too-long
-            )
-            config.write(f"name: {project_name}\n")
-            config.write("metadata:\n")
-            config.write(f"  azprojects: {VERSION}\n")
-            if metadata:
-                for key, value in metadata.items():
-                    config.write(f"  {key}: {value}\n")
-            config.write("infra:\n")
-            config.write(f"  path: {infra_dir}\n")
-            config.write(f"  module: {main_bicep}\n")
+
+    # TODO: Needs to properly set code root
+    if os.path.isfile(azure_yaml):
+        with open(azure_yaml, "r", encoding="utf-8") as config:
+            yaml_doc = yaml.load(config, yaml.Loader)
+    else:
+        yaml_doc = {}
+
+    yaml_doc["name"] = project_name
+    yaml_doc["metadata"] = {
+        "azprojects": VERSION,
+    }
+    yaml_doc["infra"] = {
+        "path": infra_dir,
+        "module": main_bicep,
+    }
+    if host:
+        if label:
+            service_name = f"{project_name}-{label}"
+        else:
+            service_name = project_name
+        if "services" not in yaml_doc:
+            yaml_doc["services"] = {}
+        yaml_doc["services"][service_name] = {
+            "project": ".",
+            "language": "py",
+            "host": "appservice", 
+        }
+    with open(azure_yaml, "w", encoding="utf-8") as config:
+        config.write(
+            "# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json\n\n"  # pylint: disable=line-too-long
+        )
+        config.write(yaml.dump(yaml_doc, indent=2, sort_keys=False))
 
     returncode = 0
     if not os.path.isdir(azure_dir) or not os.path.isdir(project_dir):
@@ -106,8 +147,18 @@ def _get_component_resources(component: AzureInfrastructure) -> Dict[str, Union[
     return {k: v for k, v in component.__dict__.items() if isinstance(v, (Resource, AzureInfrastructure))}
 
 
-def deprovision(deployment: AzureInfrastructure, /, *, purge: bool = False) -> None:
-    returncode = _deprovision_project(deployment.__class__.__name__, purge=purge)
+def deploy(deployment: AzureInfrastructure) -> None:
+    returncode = _deploy_project(deployment.__class__.__name__)
+    if returncode != 0:
+        raise RuntimeError()
+
+
+def deprovision(deployment: Union[str, AzureInfrastructure], /, *, purge: bool = False) -> None:
+    if isinstance(deployment, str):
+        deployment_name = deployment
+    else:
+        deployment_name = deployment.__class__.__name__
+    returncode = _deprovision_project(deployment_name, purge=purge)
     if returncode != 0:
         raise RuntimeError()
 
@@ -120,10 +171,10 @@ def provision(
     output_dir: str = ".",
     user_access: bool = True,
     location: Optional[str] = None,
-    config_store: Optional[Mapping[str, Any]] = None,
+    parameters: Optional[Mapping[str, Any]] = None,
 ) -> Mapping[str, Any]:
     deployment_name = deployment.__class__.__name__
-    config_store = config_store or {}
+    parameters = parameters or {}
     working_dir = os.path.abspath(output_dir)
     export(
         deployment,
@@ -132,10 +183,15 @@ def provision(
         output_dir=output_dir,
         user_access=user_access,
         location=location,
-        config_store=config_store,
+        parameters=parameters,
     )
     returncode = _init_project(
-        root_path=working_dir, name=deployment_name, infra_dir=infra_dir, main_bicep=main_bicep, location=location
+        root_path=working_dir,
+        name=deployment_name,
+        infra_dir=infra_dir,
+        main_bicep=main_bicep,
+        location=location,
+        host=deployment.host,
     )
     if returncode != 0:
         raise RuntimeError()
@@ -154,10 +210,10 @@ def export(
     output_dir: str = ".",
     user_access: bool = True,
     location: Optional[str] = None,
-    config_store: Optional[Mapping[str, Any]] = None,
+    parameters: Optional[Mapping[str, Any]] = None,
 ) -> None:
     deployment_name = deployment.__class__.__name__
-    config_store = config_store or {}
+    parameter_values = parameters or {}
     # TODO: Replace print statements with logging
     print("Building bicep...")
     working_dir = os.path.abspath(output_dir)
@@ -193,7 +249,7 @@ def export(
         for parameter in parameters.values():
             # TODO: Maybe add a "public: bool" attribute to Outputs and Placeholders?
             if parameter.name and not isinstance(parameter, (Output, PlaceholderParameter)):
-                main.write(parameter.__bicep__(config_store.get(parameter.name, MISSING)))
+                main.write(parameter.__bicep__(parameter_values.get(parameter.name, MISSING)))
         _write_resources(
             bicep=main,
             fields=list(fields.values()),
