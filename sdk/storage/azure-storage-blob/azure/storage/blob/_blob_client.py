@@ -21,6 +21,7 @@ from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
 from ._blob_client_helpers import (
     _abort_copy_options,
+    _acquire_lease_options,
     _append_block_from_url_options,
     _append_block_options,
     _clear_page_options,
@@ -2300,7 +2301,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 :caption: Acquiring a lease on a blob.
         """
         lease = BlobLeaseClient(self, lease_id=lease_id)
-        lease.acquire(
+        options = _acquire_lease_options(
             lease_duration=lease_duration,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
@@ -2310,6 +2311,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             timeout=timeout,
             **kwargs
         )
+        lease.acquire(**options)
         return lease
 
     @distributed_trace
@@ -2383,6 +2385,13 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         self, block_id: str,
         data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
         length: Optional[int] = None,
+        *,
+        validate_content: Optional[bool] = None,
+        lease: Optional[Union[BlobLeaseClient, str]] = None,
+        encoding: Optional[str] = None,
+        cpk: Optional["CustomerProvidedEncryptionKey"] = None,
+        encryption_scope: Optional[str] = None,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Creates a new block to be committed as part of a blob.
@@ -2432,13 +2441,20 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         """
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
-        if kwargs.get('cpk') and self.scheme.lower() != 'https':
+        if cpk and self.scheme.lower() != 'https':
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
         options = _stage_block_options(
             block_id=block_id,
             data=data,
             length=length,
-            **kwargs)
+            validate_content=validate_content,
+            lease=lease,
+            encoding=encoding,
+            cpk=cpk,
+            encryption_scope=encryption_scope,
+            timeout=timeout,
+            **kwargs
+        )
         try:
             return cast(Dict[str, Any], self._client.block_blob.stage_block(**options))
         except HttpResponseError as error:

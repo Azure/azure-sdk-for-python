@@ -114,7 +114,7 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
     client: "AzureBlobStorage",
     **kwargs: Any
 ) -> Dict[str, Any]:
-    encoding = kwargs.pop('encoding', 'UTF-8')
+    encoding = kwargs.pop('encoding') or 'UTF-8'
     if isinstance(data, str):
         data = data.encode(encoding)
     if length is None:
@@ -134,15 +134,18 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
     else:
         raise TypeError(f"Unsupported data type: {type(data)}")
 
-    validate_content = kwargs.pop('validate_content', False)
-    content_settings = kwargs.pop('content_settings', None)
-    overwrite = kwargs.pop('overwrite', False)
-    max_concurrency = kwargs.pop('max_concurrency', 1)
-    cpk = kwargs.pop('cpk', None)
+    validate_content = kwargs.pop('validate_content') or False
+    content_settings = kwargs.pop('content_settings') or None
+    overwrite = kwargs.pop('overwrite') or False
+    max_concurrency = kwargs.pop('max_concurrency') or 1
+    cpk = kwargs.pop('cpk') or None
     cpk_info = None
     if cpk:
-        cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                            encryption_algorithm=cpk.algorithm)
+        cpk_info = CpkInfo(
+            encryption_key=cpk.key_value,
+            encryption_key_sha256=cpk.key_hash,
+            encryption_algorithm=cpk.algorithm
+        )
     kwargs['cpk_info'] = cpk_info
 
     headers = kwargs.pop('headers', {})
@@ -730,7 +733,7 @@ def _stage_block_options(
 ) -> Dict[str, Any]:
     block_id = encode_base64(str(block_id))
     if isinstance(data, str):
-        data = data.encode(kwargs.pop('encoding', 'UTF-8'))  # type: ignore
+        data = data.encode(kwargs.pop('encoding') or 'UTF-8')  # type: ignore
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     if length is None:
         length = get_length(data)
@@ -739,13 +742,16 @@ def _stage_block_options(
     if isinstance(data, bytes):
         data = data[:length]
 
-    validate_content = kwargs.pop('validate_content', False)
+    validate_content = kwargs.pop('validate_content') or False
     cpk_scope_info = get_cpk_scope_info(kwargs)
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
-        cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                            encryption_algorithm=cpk.algorithm)
+        cpk_info = CpkInfo(
+            encryption_key=cpk.key_value,
+            encryption_key_sha256=cpk.key_hash,
+            encryption_algorithm=cpk.algorithm
+        )
 
     options = {
         'block_id': block_id,
@@ -759,7 +765,7 @@ def _stage_block_options(
         'cpk_info': cpk_info,
         'cls': return_response_headers,
     }
-    options.update(kwargs)
+    options.update({k: v for k, v in kwargs.items() if v is not None})
     return options
 
 
@@ -1326,7 +1332,11 @@ def _get_blob_properties_options(version_id: Optional[str], snapshot: Optional[s
     return options
 
 
-def _set_standard_blob_tier_options(version_id: Optional[str], snapshot: Optional[str], **kwargs):
+def _set_standard_blob_tier_options(
+    version_id: Optional[str],
+    snapshot: Optional[str],
+    **kwargs: Any
+) -> Dict[str, Any]:
     access_conditions = get_access_conditions(kwargs.pop("lease", None))
     mod_conditions = get_modify_conditions(kwargs)
     standard_blob_tier = kwargs.pop("standard_blob_tier", None)
@@ -1344,3 +1354,7 @@ def _set_standard_blob_tier_options(version_id: Optional[str], snapshot: Optiona
     }
     options.update({k: v for k, v in kwargs.items() if v is not None})
     return options
+
+
+def _acquire_lease_options(**kwargs: Any):
+    return {k: v for k, v in kwargs.items() if v is not None}
