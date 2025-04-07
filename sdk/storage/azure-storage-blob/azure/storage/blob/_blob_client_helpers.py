@@ -226,7 +226,7 @@ def _upload_blob_from_url_options(source_url: str, **kwargs: Any) -> Dict[str, A
     options = {
         'copy_source_authorization': source_authorization,
         'content_length': 0,
-        'copy_source_blob_properties': kwargs.pop('include_source_blob_properties', True),
+        'copy_source_blob_properties': kwargs.pop('include_source_blob_properties') or True,
         'source_content_md5': kwargs.pop('source_content_md5', None),
         'copy_source': source_url,
         'modified_access_conditions': get_modify_conditions(kwargs),
@@ -288,7 +288,7 @@ def _download_blob_options(
             raise ValueError("Offset must be provided if length is provided.")
         length = offset + length - 1  # Service actually uses an end-range inclusive index
 
-    validate_content = kwargs.pop('validate_content', False)
+    validate_content = kwargs.pop('validate_content') or False
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     mod_conditions = get_modify_conditions(kwargs)
 
@@ -325,7 +325,7 @@ def _download_blob_options(
         'modified_access_conditions': mod_conditions,
         'cpk_info': cpk_info,
         'download_cls': kwargs.pop('cls', None) or deserialize_blob_stream,
-        'max_concurrency': kwargs.pop('max_concurrency', 1),
+        'max_concurrency': kwargs.pop('max_concurrency') or 1,
         'encoding': encoding,
         'timeout': kwargs.pop('timeout', None),
         'name': blob_name,
@@ -854,7 +854,7 @@ def _commit_block_list_options(
             blob_content_disposition=content_settings.content_disposition
         )
 
-    validate_content = kwargs.pop('validate_content', False)
+    validate_content = kwargs.pop('validate_content') or False
     cpk_scope_info = get_cpk_scope_info(kwargs)
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
@@ -1004,13 +1004,13 @@ def _upload_page_options(
     **kwargs: Any
 ) -> Dict[str, Any]:
     if isinstance(page, str):
-        page = page.encode(kwargs.pop('encoding', 'UTF-8'))
+        page = page.encode(kwargs.pop('encoding') or 'UTF-8')
     if offset is None or offset % 512 != 0:
         raise ValueError("offset must be an integer that aligns with 512 page size")
     if length is None or length % 512 != 0:
         raise ValueError("length must be an integer that aligns with 512 page size")
     end_range = offset + length - 1  # Reformat to an inclusive range index
-    content_range = f'bytes={offset}-{end_range}' # type: ignore
+    content_range = f'bytes={offset}-{end_range}'  # type: ignore
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     seq_conditions = SequenceNumberAccessConditions(
         if_sequence_number_less_than_or_equal_to=kwargs.pop('if_sequence_number_lte', None),
@@ -1019,7 +1019,7 @@ def _upload_page_options(
     )
     mod_conditions = get_modify_conditions(kwargs)
     cpk_scope_info = get_cpk_scope_info(kwargs)
-    validate_content = kwargs.pop('validate_content', False)
+    validate_content = kwargs.pop('validate_content') or False
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
@@ -1143,7 +1143,7 @@ def _append_block_options(
     **kwargs: Any
 ) -> Dict[str, Any]:
     if isinstance(data, str):
-        data = data.encode(kwargs.pop('encoding', 'UTF-8'))
+        data = data.encode(kwargs.pop('encoding') or 'UTF-8')
     if length is None:
         length = get_length(data)
         if length is None:
@@ -1155,7 +1155,7 @@ def _append_block_options(
 
     appendpos_condition = kwargs.pop('appendpos_condition', None)
     maxsize_condition = kwargs.pop('maxsize_condition', None)
-    validate_content = kwargs.pop('validate_content', False)
+    validate_content = kwargs.pop('validate_content') or False
     append_conditions = None
     if maxsize_condition or appendpos_condition is not None:
         append_conditions = AppendPositionAccessConditions(
