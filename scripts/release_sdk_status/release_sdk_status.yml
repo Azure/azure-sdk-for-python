@@ -29,7 +29,7 @@ variables:
 
 jobs:
 - job: ReleaseSdkStatus
-  displayName: ReleaseSdkStatus Python 3.8
+  displayName: ReleaseSdkStatus Python $(PYVERSION_N4)
   timeoutInMinutes: 300
   strategy:
     maxParallel: 1
@@ -39,7 +39,7 @@ jobs:
   steps:
     - task: UsePythonVersion@0
       inputs:
-        versionSpec: '3.8'
+        versionSpec: '$(PYVERSION_N4)'
         addToPath: true
         architecture: 'x64'
     - bash: |

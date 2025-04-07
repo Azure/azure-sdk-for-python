@@ -30,7 +30,7 @@ variables:
 
 jobs:
 - job: ReleaseHelper
-  displayName: ReleaseHelper Python 3.8
+  displayName: ReleaseHelper Python $(PYVERSION_N4)
   timeoutInMinutes: 30
   strategy:
     maxParallel: 1
@@ -42,7 +42,7 @@ jobs:
   steps:
     - task: UsePythonVersion@0
       inputs:
-        versionSpec: '3.8'
+        versionSpec: '$(PYVERSION_N4)'
         addToPath: true
         architecture: 'x64'
     - bash: |
@@ -54,7 +54,7 @@ jobs:
         # clone(REPO: https://github.com/Azure/azure-sdk-for-python.git, USR_NAME: Azure, USR_TOKEN: xxxxxxxxxxxxx)
         mkdir file-storage
         git clone ${FILE_REPO:0:8}$(USR_NAME):$(Yuchao-GitToken)@${FILE_REPO:8} $(pwd)/file-storage
-        
+
         mkdir azure-rest-api-specs
         git clone -b $(SPEC_BRANCH) https://github.com/Azure/azure-rest-api-specs.git $(pwd)/azure-rest-api-specs
 

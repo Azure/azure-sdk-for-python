@@ -41,7 +41,7 @@ jobs:
       condition: and(succeeded(), eq(dependencies.smoke_test_eligibility.outputs['output_eligibility.RunSmokeTests'], true))
     strategy:
       matrix:
-        Python_Trailing+1_Linux (AzureCloud):
+        Python_TrailingPlusOne_Linux (AzureCloud):
           PythonVersion: '$(PYVERSION_N3)'
           Pool: azsdk-pool
           OSVmImage: $(LINUXVMIMAGE)
@@ -79,14 +79,14 @@ jobs:
         condition: and(succeeded(), eq(dependencies.smoke_test_eligibility.outputs['output_eligibility.RunSmokeTests'], true))
       strategy:
         matrix:
-            Python_37_Windows (AzureCloud):
-              PythonVersion: '3.7'
-              Pool: azsdk-pool-mms-win-2022-general
-              OSVmImage: azsdk-pool-mms-win-2022-1espt
-            Python_38_Windows (AzureCloud):
-              PythonVersion: '3.8'
-              Pool: azsdk-pool-mms-win-2022-general
-              OSVmImage: azsdk-pool-mms-win-2022-1espt
+            Python_TrailingPlusOne_Windows (AzureCloud):
+              PythonVersion: '$(PYVERSION_N3)'
+              Pool: $(WINDOWSPOOL)
+              OSVmImage: $(WINDOWSVMIMAGE)
+            Python_Trailing_Windows (AzureCloud):
+              PythonVersion: '$(PYVERSION_N4)'
+              Pool: $(WINDOWSPOOL)
+              OSVmImage: $(WINDOWSVMIMAGE)
 
       pool:
         name: $(Pool)
@@ -113,14 +113,14 @@ jobs:
         condition: and(succeeded(), eq(dependencies.smoke_test_eligibility.outputs['output_eligibility.RunSmokeTests'], true))
       strategy:
         matrix:
-            Python_37_Mac (AzureCloud):
-              PythonVersion: '3.7'
-              Pool: Azure Pipelines
-              OSVmImage: macos-latest
-            Python_38_Mac (AzureCloud):
-              PythonVersion: '3.8'
-              Pool: Azure Pipelines
-              OSVmImage: macos-latest
+            Python_TrailingPlusOne_Mac (AzureCloud):
+              PythonVersion: '$(PYVERSION_N3)'
+              Pool: $(MACPOOL)
+              OSVmImage: $(MACVMIMAGE)
+            Python_Trailing_Mac (AzureCloud):
+              PythonVersion: '$(PYVERSION_N4)'
+              Pool: $(MACPOOL)
+              OSVmImage: $(MACVMIMAGE)
 
       pool:
         name: $(Pool)

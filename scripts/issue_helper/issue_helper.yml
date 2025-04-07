@@ -26,17 +26,17 @@ variables:
 
 jobs:
 - job: IssueHelper
-  displayName: IssueHelper Python 3.8
+  displayName: IssueHelper Python $(PYVERSION_N4)
   timeoutInMinutes: 30
   strategy:
     maxParallel: 3
   pool:
-    name: azsdk-pool-mms-ubuntu-2004-general
+    name: azsdk-pool
     vmImage: 'ubuntu-20.04'
   steps:
     - task: UsePythonVersion@0
       inputs:
-        versionSpec: '3.8'
+        versionSpec: $(PYVERSION_N4)
         addToPath: true
         architecture: 'x64'
     - bash: |
