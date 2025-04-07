@@ -47,7 +47,7 @@ if TYPE_CHECKING:
 
 
 _COMMON_OPTIONS = {
-    'initial_headers': 'initialHeaders',
+    # 'initial_headers': 'initialHeaders',
     'pre_trigger_include': 'preTriggerInclude',
     'post_trigger_include': 'postTriggerInclude',
     'access_condition': 'accessCondition',
