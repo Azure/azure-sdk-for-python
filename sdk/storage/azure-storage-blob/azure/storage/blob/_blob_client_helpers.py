@@ -605,8 +605,11 @@ def _create_snapshot_options(metadata: Optional[Dict[str, str]] = None, **kwargs
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
-        cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                            encryption_algorithm=cpk.algorithm)
+        cpk_info = CpkInfo(
+            encryption_key=cpk.key_value,
+            encryption_key_sha256=cpk.key_hash,
+            encryption_algorithm=cpk.algorithm
+        )
 
     options = {
         'timeout': kwargs.pop('timeout', None),
@@ -615,8 +618,9 @@ def _create_snapshot_options(metadata: Optional[Dict[str, str]] = None, **kwargs
         'cpk_scope_info': cpk_scope_info,
         'cpk_info': cpk_info,
         'cls': return_response_headers,
-        'headers': headers}
-    options.update(kwargs)
+        'headers': headers
+    }
+    options.update({k: v for k, v in kwargs.items() if v is not None})
     return options
 
 
