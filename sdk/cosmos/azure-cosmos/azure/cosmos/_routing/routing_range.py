@@ -250,4 +250,3 @@ class PartitionKeyRangeWrapper(object):
 
     def __hash__(self):
         return hash((self.partition_key_range, self.collection_rid))
-

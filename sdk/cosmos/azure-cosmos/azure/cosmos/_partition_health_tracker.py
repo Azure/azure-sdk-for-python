@@ -22,10 +22,10 @@
 """Internal class for partition health tracker for circuit breaker.
 """
 import os
-from typing import Dict, Set, Any, Optional
-from ._constants import _Constants as Constants
+from typing import Dict, Set, Any
+from azure.cosmos._routing.routing_range import PartitionKeyRangeWrapper
 from azure.cosmos._location_cache import current_time_millis, EndpointOperationType
-from azure.cosmos._routing.routing_range import PartitionKeyRangeWrapper, Range
+from ._constants import _Constants as Constants
 
 
 MINIMUM_REQUESTS_FOR_FAILURE_RATE = 100
@@ -113,9 +113,10 @@ class PartitionHealthTracker(object):
             if location in region_to_partition_health:
                 # healthy tentative -> unhealthy
                 # if the operation type is not empty, we are in the healthy tentative state
-                self.pkrange_wrapper_to_health_info[pkrange_wrapper][location].unavailability_info[HEALTH_STATUS] = UNHEALTHY
+                region_to_partition_health[location].unavailability_info[HEALTH_STATUS] = UNHEALTHY
                 # reset the last unavailability check time stamp
-                self.pkrange_wrapper_to_health_info[pkrange_wrapper][location].unavailability_info[LAST_UNAVAILABILITY_CHECK_TIME_STAMP] = UNHEALTHY
+                region_to_partition_health[location].unavailability_info[LAST_UNAVAILABILITY_CHECK_TIME_STAMP] \
+                    = UNHEALTHY
             else:
                 # healthy -> unhealthy tentative
                 # if the operation type is empty, we are in the unhealthy tentative state
@@ -135,21 +136,22 @@ class PartitionHealthTracker(object):
             # healthy tentative -> healthy
             self.pkrange_wrapper_to_health_info[pkrange_wrapper].pop(location, None)
 
-    def _check_stale_partition_info(self, pkrange_wrapper: PartitionKeyRangeWrapper) -> None:
+    def _check_stale_partition_info(self, pk_range_wrapper: PartitionKeyRangeWrapper) -> None:
         current_time = current_time_millis()
 
-        stale_partition_unavailability_check = int(os.getenv(Constants.STALE_PARTITION_UNAVAILABILITY_CHECK,
+        stale_partition_unavailability_check = int(os.environ.get(Constants.STALE_PARTITION_UNAVAILABILITY_CHECK,
                                                          Constants.STALE_PARTITION_UNAVAILABILITY_CHECK_DEFAULT)) * 1000
-        if pkrange_wrapper in self.pkrange_wrapper_to_health_info:
-            for location, partition_health_info in self.pkrange_wrapper_to_health_info[pkrange_wrapper].items():
-                elapsed_time = current_time - partition_health_info.unavailability_info[LAST_UNAVAILABILITY_CHECK_TIME_STAMP]
+        if pk_range_wrapper in self.pkrange_wrapper_to_health_info:
+            for _, partition_health_info in self.pkrange_wrapper_to_health_info[pk_range_wrapper].items():
+                elapsed_time = (current_time -
+                                partition_health_info.unavailability_info[LAST_UNAVAILABILITY_CHECK_TIME_STAMP])
                 current_health_status = partition_health_info.unavailability_info[HEALTH_STATUS]
                 # check if the partition key range is still unavailable
                 if ((current_health_status == UNHEALTHY and elapsed_time > stale_partition_unavailability_check)
                         or (current_health_status == UNHEALTHY_TENTATIVE
                             and  elapsed_time > INITIAL_UNAVAILABLE_TIME)):
                     # unhealthy or unhealthy tentative -> healthy tentative
-                    self.pkrange_wrapper_to_health_info[pkrange_wrapper][location].unavailability_info[HEALTH_STATUS] = HEALTHY_TENTATIVE
+                    partition_health_info.unavailability_info[HEALTH_STATUS] = HEALTHY_TENTATIVE
 
         if current_time - self.last_refresh < REFRESH_INTERVAL:
             # all partition stats reset every minute
@@ -160,8 +162,7 @@ class PartitionHealthTracker(object):
         self._check_stale_partition_info(pkrange_wrapper)
         if pkrange_wrapper in self.pkrange_wrapper_to_health_info:
             return set(self.pkrange_wrapper_to_health_info[pkrange_wrapper].keys())
-        else:
-            return set()
+        return set()
 
 
     def add_failure(
@@ -171,7 +172,7 @@ class PartitionHealthTracker(object):
             location: str
     ) -> None:
         # Retrieve the failure rate threshold from the environment.
-        failure_rate_threshold = int(os.getenv(Constants.FAILURE_PERCENTAGE_TOLERATED,
+        failure_rate_threshold = int(os.environ.get(Constants.FAILURE_PERCENTAGE_TOLERATED,
                                                Constants.FAILURE_PERCENTAGE_TOLERATED_DEFAULT))
 
         # Ensure that the health info dictionary is properly initialized.
@@ -201,7 +202,7 @@ class PartitionHealthTracker(object):
         setattr(health_info, consecutive_attr, getattr(health_info, consecutive_attr) + 1)
 
         # Retrieve the consecutive failure threshold from the environment.
-        consecutive_failure_threshold = int(os.getenv(env_key, default_consec_threshold))
+        consecutive_failure_threshold = int(os.environ.get(env_key, default_consec_threshold))
 
         # Call the threshold checker with the current stats.
         self._check_thresholds(
@@ -256,6 +257,6 @@ class PartitionHealthTracker(object):
 
 
     def _reset_partition_health_tracker_stats(self) -> None:
-        for pkrange_wrapper in self.pkrange_wrapper_to_health_info:
-            for location in self.pkrange_wrapper_to_health_info[pkrange_wrapper]:
-                self.pkrange_wrapper_to_health_info[pkrange_wrapper][location].reset_health_stats()
+        for locations in self.pkrange_wrapper_to_health_info.values():
+            for health_info in locations.values():
+                health_info.reset_health_stats()

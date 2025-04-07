@@ -48,13 +48,14 @@ from azure.core.pipeline.policies import (
     DistributedTracingPolicy,
     ProxyPolicy)
 from azure.core.utils import CaseInsensitiveDict
+from azure.cosmos.aio._global_partition_endpoint_manager_circuit_breaker_async import (
+    _GlobalPartitionEndpointManagerForCircuitBreakerAsync)
 
 from .. import _base as base
 from .._base import _set_properties_cache
 from .. import documents
 from .._change_feed.aio.change_feed_iterable import ChangeFeedIterable
 from .._change_feed.change_feed_state import ChangeFeedState
-from azure.cosmos.aio._global_partition_endpoint_manager_circuit_breaker_async import _GlobalPartitionEndpointManagerForCircuitBreakerAsync
 from .._routing import routing_range
 from ..documents import ConnectionPolicy, DatabaseAccount
 from .._constants import _Constants as Constants

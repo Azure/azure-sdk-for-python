@@ -24,7 +24,7 @@
 from typing import Optional, Mapping, Any, Dict, Set, List
 
 
-class RequestObject(object):
+class RequestObject(object): # pylint: disable=too-many-instance-attributes
     def __init__(
             self,
             resource_type: str,
@@ -84,5 +84,5 @@ class RequestObject(object):
         if self._can_set_excluded_location(options):
             self.excluded_locations = options['excludedLocations']
 
-    def set_excluded_locations_from_circuit_breaker(self, excluded_locations: Set[str]) -> None:
+    def set_excluded_locations_from_circuit_breaker(self, excluded_locations: Set[str]) -> None: # pylint: disable=name-too-long
         self.excluded_locations_circuit_breaker = excluded_locations

@@ -30,6 +30,8 @@ from azure.core.exceptions import AzureError
 
 from . import _constants as constants
 from . import exceptions
+from ._request_object import RequestObject
+from ._routing.routing_range import PartitionKeyRangeWrapper
 from .documents import DatabaseAccount
 from ._location_cache import LocationCache, current_time_millis
 
@@ -67,7 +69,11 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
     def get_read_endpoint(self):
         return self.location_cache.get_read_regional_routing_context()
 
-    def resolve_service_endpoint(self, request):
+    def resolve_service_endpoint(
+            self,
+            request: RequestObject,
+            pk_range_wrapper: PartitionKeyRangeWrapper # pylint: disable=unused-argument
+    ) -> str:
         return self.location_cache.resolve_service_endpoint(request)
 
     def mark_endpoint_unavailable_for_read(self, endpoint, refresh_cache):
