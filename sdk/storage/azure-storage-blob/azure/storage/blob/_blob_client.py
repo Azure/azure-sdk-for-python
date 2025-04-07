@@ -2234,6 +2234,13 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
     def acquire_lease(
         self, lease_duration: int = -1,
         lease_id: Optional[str] = None,
+        *,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional["MatchConditions"] = None,
+        if_tags_match_condition: Optional[str] = None,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> BlobLeaseClient:
         """Requests a new lease.
@@ -2292,7 +2299,16 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 :caption: Acquiring a lease on a blob.
         """
         lease = BlobLeaseClient(self, lease_id=lease_id)
-        lease.acquire(lease_duration=lease_duration, **kwargs)
+        lease.acquire(
+            lease_duration=lease_duration,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_condition=match_condition,
+            if_tags_match_condition=if_tags_match_condition,
+            timeout=timeout,
+            **kwargs
+        )
         return lease
 
     @distributed_trace
