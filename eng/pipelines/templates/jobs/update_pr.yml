@@ -17,8 +17,7 @@ steps:
 - task: UsePythonVersion@0
   displayName: 'Use Python $(PYVERSION_N4)'
   inputs:
-    versionSpec: $(PYVERSION_N4)
-
+    versionSpec: '$(PYVERSION_N4)'
 - script: |
     python3 -m pip install -e $(Build.SourcesDirectory)/tools/azure-sdk-tools[ghtools]
   displayName: 'Install Azure SDK tools'
