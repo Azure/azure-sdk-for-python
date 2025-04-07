@@ -8,7 +8,7 @@ from typing import Dict, List, Optional
 from azure.core.credentials import TokenCredential
 from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.ai.evaluation.simulator._model_tools import ManagedIdentityAPITokenManager
-from azure.ai.evaluation.autogen.raiclient import MachineLearningServicesClient
+from azure.ai.evaluation._common.raiclient import MachineLearningServicesClient
 import jwt
 import time
 import ast

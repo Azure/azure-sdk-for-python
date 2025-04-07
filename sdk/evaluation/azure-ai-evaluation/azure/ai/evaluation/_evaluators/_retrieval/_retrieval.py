@@ -68,7 +68,7 @@ class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, threshold: float=3):  # pylint: disable=super-init-not-called
+    def __init__(self, model_config, *, threshold: float=3):  # pylint: disable=super-init-not-called
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self._threshold = threshold

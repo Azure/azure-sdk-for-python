@@ -15,7 +15,7 @@ except ImportError:
 if has_pyrit:   
     from pyrit.common import initialize_pyrit, IN_MEMORY
 
-    from azure.ai.evaluation.red_team.callback_chat_target import CallbackChatTarget
+    from azure.ai.evaluation.red_team._callback_chat_target import _CallbackChatTarget
 
     initialize_pyrit(memory_db_type=IN_MEMORY)
 
@@ -37,8 +37,8 @@ def mock_callback():
 
 @pytest.fixture(scope="function")
 def chat_target(mock_callback):
-    """Create a CallbackChatTarget instance for tests."""
-    return CallbackChatTarget(callback=mock_callback)
+    """Create a _CallbackChatTarget instance for tests."""
+    return _CallbackChatTarget(callback=mock_callback)
 
 
 @pytest.fixture(scope="function")
@@ -56,7 +56,7 @@ def mock_request():
     request.request_pieces = [request_piece]
     request.response_pieces = []
     
-    # Mock the constructor pattern used by CallbackChatTarget
+    # Mock the constructor pattern used by _CallbackChatTarget
     response_piece = MagicMock()
     request.from_response = MagicMock(return_value=request)
     return request
@@ -65,30 +65,30 @@ def mock_request():
 @pytest.mark.unittest
 @pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestCallbackChatTargetInitialization:
-    """Test the initialization of CallbackChatTarget."""
+    """Test the initialization of _CallbackChatTarget."""
 
     def test_init(self, mock_callback):
-        """Test the initialization of CallbackChatTarget."""
-        target = CallbackChatTarget(callback=mock_callback)
+        """Test the initialization of _CallbackChatTarget."""
+        target = _CallbackChatTarget(callback=mock_callback)
         
         assert target._callback == mock_callback
         assert target._stream is False
         
         # Test with stream=True
-        target_with_stream = CallbackChatTarget(callback=mock_callback, stream=True)
+        target_with_stream = _CallbackChatTarget(callback=mock_callback, stream=True)
         assert target_with_stream._stream is True
 
 
 @pytest.mark.unittest
 @pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestCallbackChatTargetPrompts:
-    """Test CallbackChatTarget prompt handling."""
+    """Test _CallbackChatTarget prompt handling."""
     
     @pytest.mark.asyncio
     async def test_send_prompt_async(self, chat_target, mock_request, mock_callback):
         """Test send_prompt_async method."""
         with patch.object(chat_target, "_memory") as mock_memory, \
-            patch("azure.ai.evaluation.red_team.callback_chat_target.construct_response_from_request") as mock_construct:
+            patch("azure.ai.evaluation.red_team._callback_chat_target.construct_response_from_request") as mock_construct:
             # Setup memory mock
             mock_memory.get_chat_messages_with_conversation_id.return_value = []
             
@@ -136,7 +136,7 @@ class TestCallbackChatTargetPrompts:
 @pytest.mark.unittest
 @pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
 class TestCallbackChatTargetFeatures:
-    """Test CallbackChatTarget feature support."""
+    """Test _CallbackChatTarget feature support."""
 
     def test_is_json_response_supported(self, chat_target):
         """Test is_json_response_supported method."""
