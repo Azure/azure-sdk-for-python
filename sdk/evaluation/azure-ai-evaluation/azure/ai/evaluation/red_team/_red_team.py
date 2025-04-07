@@ -667,6 +667,15 @@ class RedTeam():
             # Use a batched approach for send_prompts_async to prevent overwhelming
             # the model with too many concurrent requests
             batch_size = min(len(all_prompts), 3)  # Process 3 prompts at a time max
+
+            # Initialize output path for memory labelling
+            base_path = str(uuid.uuid4())
+            
+            # If scan output directory exists, place the file there
+            if hasattr(self, 'scan_output_dir') and self.scan_output_dir:
+                output_path = os.path.join(self.scan_output_dir, base_path)
+            else:
+                output_path = base_path
             
             # Process prompts concurrently within each batch
             if len(all_prompts) > batch_size:
@@ -675,6 +684,9 @@ class RedTeam():
                 
                 for batch_idx, batch in enumerate(batches):
                     self.logger.debug(f"Processing batch {batch_idx+1}/{len(batches)} with {len(batch)} prompts for {strategy_name}/{risk_category}")
+
+                    batch_memory_label = f"{output_path}_{batch_idx+1}"
+                    batch_memory_value = str(uuid.uuid4())
                     
                     batch_start_time = datetime.now()
                     # Send prompts in the batch concurrently with a timeout
@@ -682,7 +694,8 @@ class RedTeam():
                         # Use wait_for to implement a timeout
                         await asyncio.wait_for(
                             orchestrator.send_prompts_async(prompt_list=batch),
-                            timeout=timeout  # Use provided timeout
+                            timeout=timeout,  # Use provided timeout
+                            memory_labels = {batch_memory_label: batch_memory_value}
                         )
                         batch_duration = (datetime.now() - batch_start_time).total_seconds()
                         self.logger.debug(f"Successfully processed batch {batch_idx+1} for {strategy_name}/{risk_category} in {batch_duration:.2f} seconds")
@@ -699,12 +712,14 @@ class RedTeam():
                         batch_task_key = f"{strategy_name}_{risk_category}_batch_{batch_idx+1}"
                         self.task_statuses[batch_task_key] = TASK_STATUS["TIMEOUT"]
                         self.red_team_info[strategy_name][risk_category]["status"] = TASK_STATUS["INCOMPLETE"]
+                        self._write_pyrit_outputs_to_file(orchestrator, batch_memory_label)
                         # Continue with partial results rather than failing completely
                         continue
                     except Exception as e:
                         log_error(self.logger, f"Error processing batch {batch_idx+1}", e, f"{strategy_name}/{risk_category}")
                         self.logger.debug(f"ERROR: Strategy {strategy_name}, Risk {risk_category}, Batch {batch_idx+1}: {str(e)}")
                         self.red_team_info[strategy_name][risk_category]["status"] = TASK_STATUS["INCOMPLETE"]
+                        self._write_pyrit_outputs_to_file(orchestrator, batch_memory_label)
                         # Continue with other batches even if one fails
                         continue
             else:
@@ -739,7 +754,7 @@ class RedTeam():
             self.task_statuses[task_key] = TASK_STATUS["FAILED"]
             raise
 
-    def _write_pyrit_outputs_to_file(self, orchestrator: Orchestrator) -> str:
+    def _write_pyrit_outputs_to_file(self, orchestrator: Orchestrator, memory_label: str) -> str:
         """Write PyRIT outputs to a file with a name based on orchestrator, converter, and risk category.
         
         :param orchestrator: The orchestrator that generated the outputs
@@ -747,17 +762,33 @@ class RedTeam():
         :return: Path to the output file
         :rtype: Union[str, os.PathLike]
         """
-        base_path = str(uuid.uuid4())
-        
-        # If scan output directory exists, place the file there
-        if hasattr(self, 'scan_output_dir') and self.scan_output_dir:
-            output_path = os.path.join(self.scan_output_dir, f"{base_path}{DATA_EXT}")
-        else:
-            output_path = f"{base_path}{DATA_EXT}"
+        # Use the orchestrator's memory label path to determine the output file name
+        temp_memory_label_path = memory_label.split("_")  # Remove the last part of the label path which is the batch index
+        temp_memory_label_path.pop(-1) # Remove the last part of the label path which is the batch index
+        output_path = "_".join(temp_memory_label_path) + DATA_EXT
             
         self.logger.debug(f"Writing PyRIT outputs to file: {output_path}")
 
         memory = orchestrator.get_memory()
+
+        prompts = memory.get_prompt_request_pieces(labels=memory_label)
+        
+        # Check if we should overwrite existing file with more conversations
+        if os.path.exists(output_path):
+            existing_line_count = 0
+            try:
+                with open(output_path, 'r') as existing_file:
+                    existing_line_count = sum(1 for _ in existing_file)
+                
+                # Use the number of prompts to determine if we have more conversations
+                # This is more accurate than using the memory which might have incomplete conversations
+                if len(prompts) > existing_line_count:
+                    self.logger.debug(f"Found more prompts ({len(prompts)}) than existing file lines ({existing_line_count}). Replacing content.")
+                else:
+                    self.logger.debug(f"Existing file has {existing_line_count} lines, new data has {len(prompts)} prompts. Keeping existing file.")
+                    return output_path
+            except Exception as e:
+                self.logger.warning(f"Failed to read existing file {output_path}: {str(e)}")
 
         # Get conversations as a List[List[ChatMessage]]
         conversations = [[item.to_chat_message() for item in group] for conv_id, group in itertools.groupby(memory, key=lambda x: x.conversation_id)]
