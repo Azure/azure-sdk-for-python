@@ -65,7 +65,7 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
 
     def _can_set_excluded_location(self, options: Mapping[str, Any]) -> bool:
         # If resource types for requests are not one of the followings, excluded locations cannot be set
-        if self.resource_type.lower() not in ['docs', 'documents', 'partitionkey']:
+        if self.resource_type.lower() not in ['docs', 'documents', 'partitionkey', 'colls']:
             return False
 
         # If 'excludedLocations' wasn't in the options, excluded locations cannot be set
