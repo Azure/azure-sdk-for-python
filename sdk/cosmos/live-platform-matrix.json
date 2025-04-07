@@ -91,6 +91,22 @@
     },
     {
       "WindowsConfig": {
+        "Windows2022_38": {
+          "OSVmImage": "env:WINDOWSVMIMAGE",
+          "Pool": "env:WINDOWSPOOL",
+          "PythonVersion": "3.8",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false",
+          "TestMarkArgument": "cosmosMultiRegion"
+        },
+        "Windows2022_310": {
+          "OSVmImage": "env:WINDOWSVMIMAGE",
+          "Pool": "env:WINDOWSPOOL",
+          "PythonVersion": "3.10",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false",
+          "TestMarkArgument": "cosmosMultiRegion"
+        },
         "Windows2022_312": {
           "OSVmImage": "env:WINDOWSVMIMAGE",
           "Pool": "env:WINDOWSPOOL",
