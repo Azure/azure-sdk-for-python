@@ -65,7 +65,6 @@ with project_client:
             "detail": "high"
         }
     })
-
     message = project_client.agents.create_message(thread_id=thread.id, role="user", content=content)
     # [END create_message]
     print(f"Created message, message ID: {message.id}")

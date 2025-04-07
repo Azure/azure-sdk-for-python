@@ -82,7 +82,6 @@ with project_client:
         "type": "image_url",
         "image_url": {"url": img_str, "detail": "high"}
     })
-
     message = project_client.agents.create_message(thread_id=thread.id, role="user", content=content)
     # [END create_message]
     print(f"Created message, message ID: {message.id}")
