@@ -567,8 +567,11 @@ def _create_append_blob_options(
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
-        cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                            encryption_algorithm=cpk.algorithm)
+        cpk_info = CpkInfo(
+            encryption_key=cpk.key_value,
+            encryption_key_sha256=cpk.key_hash,
+            encryption_algorithm=cpk.algorithm
+        )
 
     immutability_policy = kwargs.pop('immutability_policy', None)
     if immutability_policy:
@@ -587,8 +590,9 @@ def _create_append_blob_options(
         'cpk_info': cpk_info,
         'blob_tags_string': blob_tags_string,
         'cls': return_response_headers,
-        'headers': headers}
-    options.update(kwargs)
+        'headers': headers
+    }
+    options.update({k: v for k, v in kwargs.items() if v is not None})
     return options
 
 
