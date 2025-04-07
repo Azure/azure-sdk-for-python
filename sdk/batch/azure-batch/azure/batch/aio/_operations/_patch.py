@@ -65,10 +65,10 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :type job_id: str
         :param task_collection: The Tasks to be added. Required.
         :type task_collection: ~azure.batch.models.BatchTaskAddCollectionResult
-        :param concurrency: number of coroutines to use in parallel when adding tasks. If specified
+        :param concurrencies: number of coroutines to use in parallel when adding tasks. If specified
         and greater than 0, will start additional coroutines to submit requests and wait for them to finish.
         Otherwise will submit create_task_collection requests sequentially on main thread
-        :type concurrency: int
+        :type concurrencies: int
         :keyword timeout: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype timeout: int
@@ -76,11 +76,6 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocpdate: ~datetime.datetime
-        :keyword content_type: Type of content. Default value is "application/json;
-         odata=minimalmetadata".
-        :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: BatchTaskAddCollectionResult. The BatchTaskAddCollectionResult is compatible with MutableMapping
         :rtype: ~azure.batch.models.BatchTaskAddCollectionResult
         :raises ~azure.batch.custom.CreateTasksError
@@ -111,9 +106,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
                 task_workflow_manager.failure_tasks,
                 task_workflow_manager.errors,
             )
-        else:
-            submitted_tasks = _handle_output(results_queue)
-            return _models.BatchTaskAddCollectionResult(value=submitted_tasks)
+        submitted_tasks = _handle_output(results_queue)
+        return _models.BatchTaskAddCollectionResult(value=submitted_tasks)
 
     @distributed_trace
     async def get_node_file(
@@ -231,15 +225,15 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             # content_type=headers["Content-Type"], # need to add to typespec
             file_mode=headers["ocp-batch-file-mode"],
             )
-    
+
         get_response: _models.BatchFileProperties = super()._get_node_file_properties_internal( # type: ignore
-            pool_id, 
-            node_id, 
-            file_path, 
-            timeout=timeout, 
-            ocpdate=ocpdate, 
-            if_modified_since=if_modified_since, 
-            if_unmodified_since=if_unmodified_since, 
+            pool_id,
+            node_id,
+            file_path,
+            timeout=timeout,
+            ocpdate=ocpdate,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             cls=cls,
             **kwargs)
 
@@ -299,15 +293,15 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             # content_type=headers["Content-Type"], # need to add to typespec
             file_mode=headers["ocp-batch-file-mode"],
             )
-    
+
         get_response: _models.BatchFileProperties = super()._get_task_file_properties_internal( # type: ignore
-            job_id, 
-            task_id, 
-            file_path, 
-            timeout=timeout, 
-            ocpdate=ocpdate, 
-            if_modified_since=if_modified_since, 
-            if_unmodified_since=if_unmodified_since, 
+            job_id,
+            task_id,
+            file_path,
+            timeout=timeout,
+            ocpdate=ocpdate,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             cls=cls,
             **kwargs)
 
