@@ -40,7 +40,7 @@ from types import TracebackType
 from collections.abc import AsyncIterator
 
 import logging
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 import codecs
 import aiohttp
 import aiohttp.client_exceptions

@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import collections.abc
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 from itertools import groupby
 from typing import Iterator, cast
 from multidict import CIMultiDict
