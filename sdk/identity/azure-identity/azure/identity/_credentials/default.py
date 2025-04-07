@@ -212,6 +212,11 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 broker_credential_args["client_id"] = interactive_browser_client_id
 
             credentials.append(broker_credential_class(**broker_credential_args))
+        else:
+            _LOGGER.info(
+                "InteractiveBrowserBrokerCredential unavailable. Brokered authentication in DefaultAzureCredential is "
+                "only available on Windows and requires the 'azure-identity-broker' package to be installed."
+            )
 
         within_dac.set(False)
         super(DefaultAzureCredential, self).__init__(*credentials)

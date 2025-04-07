@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
+import sys
 
 from azure.core.credentials import AccessToken, AccessTokenInfo
 from azure.identity import (
@@ -432,3 +433,22 @@ def test_validate_cloud_shell_credential_in_dac():
         DefaultAzureCredential(identity_config={"client_id": "foo"})
         DefaultAzureCredential(identity_config={"object_id": "foo"})
         DefaultAzureCredential(identity_config={"resource_id": "foo"})
+
+
+@pytest.mark.skipif(not sys.platform.startswith("win"), reason="tests Windows-specific behavior")
+def test_broker_credential():
+    """Test that DefaultAzureCredential uses the broker credential when available"""
+    with patch("azure.identity.broker.InteractiveBrowserBrokerCredential") as mock_credential:
+        DefaultAzureCredential()
+    assert mock_credential.call_count == 1, "InteractiveBrowserBrokerCredential should be instantiated once"
+
+
+@pytest.mark.skipif(not sys.platform.startswith("win"), reason="tests Windows-specific behavior")
+def test_broker_credential_requirements_not_installed():
+    """Test that DefaultAzureCredential does not use the broker credential when requirements are not installed"""
+
+    with patch.dict("sys.modules", {"azure.identity.broker": None}):
+        with patch("azure.identity.broker.InteractiveBrowserBrokerCredential") as mock_credential:
+            DefaultAzureCredential()
+
+    assert mock_credential.call_count == 0, "InteractiveBrowserBrokerCredential should not be instantiated"
