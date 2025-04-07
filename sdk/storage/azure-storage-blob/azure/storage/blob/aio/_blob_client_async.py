@@ -235,8 +235,17 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
         *,
+        api_version: Optional[str] = None,
+        secondary_hostname: Optional[str] = None,
         version_id: Optional[str] = None,
         audience: Optional[str] = None,
+        max_block_size: int = 4 * 1024 * 1024,
+        max_page_size: int = 4 * 1024 * 1024,
+        max_chunk_get_size: int = 4 * 1024 * 1024,
+        max_single_put_size: int = 64 * 1024 * 1024,
+        max_single_get_size: int = 32 * 1024 * 1024,
+        min_large_block_upload_threshold: int = 4 * 1024 * 1024 + 1,
+        use_byte_buffer: Optional[bool] = None,
         **kwargs: Any
     ) -> Self:
         """Create BlobClient from a blob url. This doesn't support customized blob url with '/' in blob name.
@@ -277,6 +286,15 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             credential=credential,
             version_id=version_id,
             audience=audience,
+            api_version=api_version,
+            secondary_hostname=secondary_hostname,
+            max_block_size=max_block_size,
+            max_page_size=max_page_size,
+            max_chunk_get_size=max_chunk_get_size,
+            max_single_put_size=max_single_put_size,
+            max_single_get_size=max_single_get_size,
+            min_large_block_upload_threshold=min_large_block_upload_threshold,
+            use_byte_buffer=use_byte_buffer,
             **kwargs
         )
 
@@ -288,8 +306,17 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
         credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
         *,
+        api_version: Optional[str] = None,
+        secondary_hostname: Optional[str] = None,
         version_id: Optional[str] = None,
         audience: Optional[str] = None,
+        max_block_size: int = 4 * 1024 * 1024,
+        max_page_size: int = 4 * 1024 * 1024,
+        max_chunk_get_size: int = 4 * 1024 * 1024,
+        max_single_put_size: int = 64 * 1024 * 1024,
+        max_single_get_size: int = 32 * 1024 * 1024,
+        min_large_block_upload_threshold: int = 4 * 1024 * 1024 + 1,
+        use_byte_buffer: Optional[bool] = None,
         **kwargs: Any
     ) -> Self:
         """Create BlobClient from a Connection String.
@@ -341,6 +368,15 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             credential=credential,
             version_id=version_id,
             audience=audience,
+            api_version=api_version,
+            secondary_hostname=secondary_hostname,
+            max_block_size=max_block_size,
+            max_page_size=max_page_size,
+            max_chunk_get_size=max_chunk_get_size,
+            max_single_put_size=max_single_put_size,
+            max_single_get_size=max_single_get_size,
+            min_large_block_upload_threshold=min_large_block_upload_threshold,
+            use_byte_buffer=use_byte_buffer,
             **kwargs
         )
 
