@@ -7,15 +7,13 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from ._client import BatchClient as GenerateBatchClient
-from .._patch import BatchSharedKeyAuthPolicy
+from typing import Union
+
 from azure.core.credentials import TokenCredential
-
-
 from azure.core.credentials import AzureNamedKeyCredential
 
-
-from typing import Union
+from ._client import BatchClient as GenerateBatchClient
+from .._patch import BatchSharedKeyAuthPolicy
 
 __all__ = [
     "BatchClient",
