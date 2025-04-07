@@ -26,7 +26,7 @@ variables:
 
 jobs:
 - job: IssueHelper
-  displayName: IssueHelper Python 3.8
+  displayName: IssueHelper Python
   timeoutInMinutes: 30
   strategy:
     maxParallel: 3
@@ -36,7 +36,7 @@ jobs:
   steps:
     - task: UsePythonVersion@0
       inputs:
-        versionSpec: '3.8'
+        versionSpec: '3.10'
         addToPath: true
         architecture: 'x64'
     - bash: |
