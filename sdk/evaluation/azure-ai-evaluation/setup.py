@@ -82,7 +82,9 @@ setup(
         "msrest>=0.6.21",
     ],
     extras_require={
-        "redteam": ["pyrit>=0.8.0"]
+        "redteam": [
+            "pyrit==0.8.1"
+        ]
     },
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",

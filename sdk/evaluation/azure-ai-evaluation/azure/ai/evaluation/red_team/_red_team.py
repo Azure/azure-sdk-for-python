@@ -43,7 +43,7 @@ from azure.ai.evaluation import evaluate
 from azure.core.credentials import TokenCredential
 
 # Red Teaming imports
-from ._red_team_result import _RedTeamResult, _RedTeamingScorecard, _RedTeamingParameters, RedTeamOutput
+from ._red_team_result import RedTeamResult, RedTeamingScorecard, RedTeamingParameters, ScanResult
 from ._attack_strategy import AttackStrategy
 from ._attack_objective_generator import RiskCategory, _AttackObjectiveGenerator
 
@@ -90,14 +90,17 @@ class RedTeam():
     :param max_parallel_tasks: Maximum number of parallel tasks to run when scanning (default: 5)
     :type max_parallel_tasks: int
     """
-    def __init__(self, 
-        azure_ai_project, 
-        credential,
-        risk_categories: Optional[List[RiskCategory]] = None,
-        num_objectives: int = 10,
-        application_scenario: Optional[str] = None,
-        custom_attack_seed_prompts: Optional[str] = None,
-        output_dir=None):
+    def __init__(
+            self,
+            azure_ai_project,
+            credential,
+            *,
+            risk_categories: Optional[List[RiskCategory]] = None,
+            num_objectives: int = 10,
+            application_scenario: Optional[str] = None,
+            custom_attack_seed_prompts: Optional[str] = None,
+            output_dir=None
+        ):
 
         self.azure_ai_project = validate_azure_ai_project(azure_ai_project)
         self.credential = credential
@@ -201,7 +204,7 @@ class RedTeam():
 
     async def _log_redteam_results_to_mlflow(
         self,
-        redteam_output: RedTeamOutput,
+        redteam_output: RedTeamResult,
         eval_run: EvalRun,
         data_only: bool = False,
     ) -> Optional[str]:
@@ -227,15 +230,28 @@ class RedTeam():
             with open(artifact_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
                 if data_only:
                     # In data_only mode, we write the conversations in conversation/messages format
-                    f.write(json.dumps({"conversations": redteam_output.redteaming_data or []}))
-                elif redteam_output.red_team_result:
-                    json.dump(redteam_output.red_team_result, f)
+                    f.write(json.dumps({"conversations": redteam_output.attack_details or []}))
+                elif redteam_output.scan_result:
+                    json.dump(redteam_output.scan_result, f)
+
+            eval_info_name = "redteam_info.json"
+            eval_info_path = os.path.join(self.scan_output_dir, eval_info_name)
+            self.logger.debug(f"Saving evaluation info to scan output directory: {eval_info_path}")
+            with open (eval_info_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
+                # Remove evaluation_result from red_team_info before logging
+                red_team_info_logged = {}
+                for strategy, harms_dict in self.red_team_info.items():
+                    red_team_info_logged[strategy] = {}
+                    for harm, info_dict in harms_dict.items():
+                        info_dict.pop("evaluation_result", None)
+                        red_team_info_logged[strategy][harm] = info_dict
+                f.write(json.dumps(red_team_info_logged))
             
             # Also save a human-readable scorecard if available
-            if not data_only and redteam_output.red_team_result:
+            if not data_only and redteam_output.scan_result:
                 scorecard_path = os.path.join(self.scan_output_dir, "scorecard.txt")
                 with open(scorecard_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
-                    f.write(self._to_scorecard(redteam_output.red_team_result))
+                    f.write(self._to_scorecard(redteam_output.scan_result))
                 self.logger.debug(f"Saved scorecard to: {scorecard_path}")
                 
             # Create a dedicated artifacts directory with proper structure for MLFlow
@@ -246,9 +262,13 @@ class RedTeam():
                 # First, create the main artifact file that MLFlow expects
                 with open(os.path.join(tmpdir, artifact_name), "w", encoding=DefaultOpenEncoding.WRITE) as f:
                     if data_only:
-                        f.write(json.dumps({"conversations": redteam_output.redteaming_data or []}))
-                    elif redteam_output.red_team_result:
-                        json.dump(redteam_output.red_team_result, f)
+                        f.write(json.dumps({"conversations": redteam_output.attack_details or []}))
+                    elif redteam_output.scan_result:
+                        redteam_output.scan_result["redteaming_scorecard"] = redteam_output.scan_result.get("scorecard", None)
+                        redteam_output.scan_result["redteaming_parameters"] = redteam_output.scan_result.get("parameters", None)
+                        redteam_output.scan_result["redteaming_data"] = redteam_output.scan_result.get("attack_details", None)
+
+                        json.dump(redteam_output.scan_result, f)
                 
                 # Copy all relevant files to the temp directory
                 import shutil
@@ -260,6 +280,8 @@ class RedTeam():
                         continue
                     if file.endswith('.log') and not os.environ.get('DEBUG'):
                         continue
+                    if file == artifact_name or file == eval_info_name:
+                        continue
                     
                     try:
                         shutil.copy(file_path, os.path.join(tmpdir, file))
@@ -270,6 +292,7 @@ class RedTeam():
                 # Log the entire directory to MLFlow
                 try:
                     eval_run.log_artifact(tmpdir, artifact_name)
+                    eval_run.log_artifact(tmpdir, eval_info_name)
                     self.logger.debug(f"Successfully logged artifacts directory to MLFlow")
                 except Exception as e:
                     self.logger.warning(f"Failed to log artifacts to MLFlow: {str(e)}")
@@ -286,9 +309,9 @@ class RedTeam():
                 artifact_file = Path(tmpdir) / artifact_name
                 with open(artifact_file, "w", encoding=DefaultOpenEncoding.WRITE) as f:
                     if data_only:
-                        f.write(json.dumps({"conversations": redteam_output.redteaming_data or []}))
-                    elif redteam_output.red_team_result:
-                        json.dump(redteam_output.red_team_result, f)
+                        f.write(json.dumps({"conversations": redteam_output.attack_details or []}))
+                    elif redteam_output.scan_result:
+                        json.dump(redteam_output.scan_result, f)
                 eval_run.log_artifact(tmpdir, artifact_name)
                 self.logger.debug(f"Logged artifact: {artifact_name}")
 
@@ -299,8 +322,8 @@ class RedTeam():
             "_azureml.evaluate_artifacts": json.dumps([{"path": artifact_name, "type": "table"}]),
         })
 
-        if redteam_output.red_team_result:
-            scorecard = redteam_output.red_team_result["redteaming_scorecard"]
+        if redteam_output.scan_result:
+            scorecard = redteam_output.scan_result["scorecard"]
             joint_attack_summary = scorecard["joint_risk_attack_summary"]
             
             if joint_attack_summary:
@@ -441,11 +464,11 @@ class RedTeam():
                 self.logger.debug(f"API call: get_attack_objectives({risk_cat_value}, app: {application_scenario}, strategy: {strategy})")
                 # strategy param specifies whether to get a strategy-specific dataset from the RAI service
                 # right now, only tense requires strategy-specific dataset
-                if strategy == "tense":
+                if "tense" in strategy:
                     objectives_response = await self.generated_rai_client.get_attack_objectives(
                         risk_category=risk_cat_value,
                         application_scenario=application_scenario or "",
-                        strategy=strategy
+                        strategy="tense"
                     )
                 else: 
                     objectives_response = await self.generated_rai_client.get_attack_objectives(
@@ -675,11 +698,13 @@ class RedTeam():
                         # Set task status to TIMEOUT
                         batch_task_key = f"{strategy_name}_{risk_category}_batch_{batch_idx+1}"
                         self.task_statuses[batch_task_key] = TASK_STATUS["TIMEOUT"]
+                        self.red_team_info[strategy_name][risk_category]["status"] = TASK_STATUS["INCOMPLETE"]
                         # Continue with partial results rather than failing completely
                         continue
                     except Exception as e:
                         log_error(self.logger, f"Error processing batch {batch_idx+1}", e, f"{strategy_name}/{risk_category}")
-                        print(f"❌ ERROR: Strategy {strategy_name}, Risk {risk_category}, Batch {batch_idx+1}: {str(e)}")
+                        self.logger.debug(f"ERROR: Strategy {strategy_name}, Risk {risk_category}, Batch {batch_idx+1}: {str(e)}")
+                        self.red_team_info[strategy_name][risk_category]["status"] = TASK_STATUS["INCOMPLETE"]
                         # Continue with other batches even if one fails
                         continue
             else:
@@ -699,16 +724,18 @@ class RedTeam():
                     # Set task status to TIMEOUT
                     single_batch_task_key = f"{strategy_name}_{risk_category}_single_batch"
                     self.task_statuses[single_batch_task_key] = TASK_STATUS["TIMEOUT"]
+                    self.red_team_info[strategy_name][risk_category]["status"] = TASK_STATUS["INCOMPLETE"]
                 except Exception as e:
                     log_error(self.logger, "Error processing prompts", e, f"{strategy_name}/{risk_category}")
-                    print(f"❌ ERROR: Strategy {strategy_name}, Risk {risk_category}: {str(e)}")
+                    self.logger.debug(f"ERROR: Strategy {strategy_name}, Risk {risk_category}: {str(e)}")
+                    self.red_team_info[strategy_name][risk_category]["status"] = TASK_STATUS["INCOMPLETE"]
             
             self.task_statuses[task_key] = TASK_STATUS["COMPLETED"]
             return orchestrator
             
         except Exception as e:
             log_error(self.logger, "Failed to initialize orchestrator", e, f"{strategy_name}/{risk_category}")
-            print(f"❌ CRITICAL: Failed to create orchestrator for {strategy_name}/{risk_category}: {str(e)}")
+            self.logger.debug(f"CRITICAL: Failed to create orchestrator for {strategy_name}/{risk_category}: {str(e)}")
             self.task_statuses[task_key] = TASK_STATUS["FAILED"]
             raise
 
@@ -772,13 +799,13 @@ class RedTeam():
         from ._utils.formatting_utils import get_attack_success
         return get_attack_success(result)
 
-    def _to_red_team_result(self) -> _RedTeamResult:
-        """Convert tracking data from red_team_info to the _RedTeamResult format.
+    def _to_red_team_result(self) -> RedTeamResult:
+        """Convert tracking data from red_team_info to the RedTeamResult format.
         
-        Uses only the red_team_info tracking dictionary to build the _RedTeamResult.
+        Uses only the red_team_info tracking dictionary to build the RedTeamResult.
         
         :return: Structured red team agent results
-        :rtype: _RedTeamResult
+        :rtype: RedTeamResult
         """
         converters = []
         complexity_levels = []
@@ -791,7 +818,7 @@ class RedTeam():
             summary_file = os.path.join(self.scan_output_dir, "attack_summary.csv")
             self.logger.debug(f"Creating attack summary CSV file: {summary_file}")
         
-        self.logger.info(f"Building _RedTeamResult from red_team_info with {len(self.red_team_info)} strategies")
+        self.logger.info(f"Building RedTeamResult from red_team_info with {len(self.red_team_info)} strategies")
         
         # Process each strategy and risk category from red_team_info
         for strategy_name, risk_data in self.red_team_info.items():
@@ -1134,20 +1161,20 @@ class RedTeam():
                     complexity_converters = complexity_df["converter"].unique().tolist()
                     redteaming_parameters["techniques_used"][complexity] = complexity_converters
         
-        self.logger.info("_RedTeamResult creation completed")
+        self.logger.info("RedTeamResult creation completed")
         
         # Create the final result
-        red_team_result = _RedTeamResult(
-            redteaming_scorecard=cast(_RedTeamingScorecard, scorecard),
-            redteaming_parameters=cast(_RedTeamingParameters, redteaming_parameters),
-            redteaming_data=conversations,
+        red_team_result = ScanResult(
+            scorecard=cast(RedTeamingScorecard, scorecard),
+            parameters=cast(RedTeamingParameters, redteaming_parameters),
+            attack_details=conversations,
             studio_url=self.ai_studio_url or None
         )
         
         return red_team_result
 
     # Replace with utility function
-    def _to_scorecard(self, redteam_result: _RedTeamResult) -> str:
+    def _to_scorecard(self, redteam_result: RedTeamResult) -> str:
         from ._utils.formatting_utils import format_scorecard
         return format_scorecard(redteam_result)
     
@@ -1266,7 +1293,6 @@ class RedTeam():
                 output_path=result_path,
             )
             eval_logger.debug(f"Completed evaluation for {risk_category.value}/{strategy_name}")
-            
         finally:
             # Restore original stdout and stderr
             sys.stdout = original_stdout
@@ -1299,6 +1325,7 @@ class RedTeam():
                 self.logger.warning(f"Failed to clean up logger: {str(e)}")
         self.red_team_info[self._get_strategy_name(strategy)][risk_category.value]["evaluation_result_file"] = str(result_path)
         self.red_team_info[self._get_strategy_name(strategy)][risk_category.value]["evaluation_result"] = evaluate_outputs
+        self.red_team_info[self._get_strategy_name(strategy)][risk_category.value]["status"] = TASK_STATUS["COMPLETED"]
         self.logger.debug(f"Evaluation complete for {strategy_name}/{risk_category.value}, results stored in red_team_info")
 
     async def _process_attack(
@@ -1344,7 +1371,7 @@ class RedTeam():
                 orchestrator = await call_orchestrator(self.chat_target, all_prompts, converter, strategy_name, risk_category.value, timeout)
             except PyritException as e:
                 log_error(self.logger, f"Error calling orchestrator for {strategy_name} strategy", e)
-                print(f"❌ Orchestrator error for {strategy_name}/{risk_category.value}: {str(e)}")
+                self.logger.debug(f"Orchestrator error for {strategy_name}/{risk_category.value}: {str(e)}")
                 self.task_statuses[task_key] = TASK_STATUS["FAILED"]
                 self.failed_tasks += 1
                 
@@ -1370,6 +1397,7 @@ class RedTeam():
             except Exception as e:
                 log_error(self.logger, f"Error during evaluation for {strategy_name}/{risk_category.value}", e)
                 print(f"⚠️ Evaluation error for {strategy_name}/{risk_category.value}: {str(e)}")
+                self.red_team_info[strategy_name][risk_category.value]["status"] = TASK_STATUS["FAILED"]
                 # Continue processing even if evaluation fails
             
             async with progress_bar_lock:
@@ -1399,7 +1427,7 @@ class RedTeam():
             
         except Exception as e:
             log_error(self.logger, f"Unexpected error processing {strategy_name} strategy for {risk_category.value}", e)
-            print(f"❌ Critical error in task {strategy_name}/{risk_category.value}: {str(e)}")
+            self.logger.debug(f"Critical error in task {strategy_name}/{risk_category.value}: {str(e)}")
             self.task_statuses[task_key] = TASK_STATUS["FAILED"]
             self.failed_tasks += 1
             
@@ -1409,8 +1437,9 @@ class RedTeam():
         return None
 
     async def scan(
-            self,             
+            self,
             target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration, PromptChatTarget],
+            *,
             scan_name: Optional[str] = None,
             num_turns : int = 1,
             attack_strategies: List[Union[AttackStrategy, List[AttackStrategy]]] = [],
@@ -1419,8 +1448,8 @@ class RedTeam():
             application_scenario: Optional[str] = None,
             parallel_execution: bool = True,
             max_parallel_tasks: int = 5,
-            debug_mode: bool = False,
-            timeout: int = 120) -> RedTeamOutput:
+            timeout: int = 120
+        ) -> RedTeamResult:
         """Run a red team scan against the target using the specified strategies.
         
         :param target: The target model or function to scan
@@ -1441,8 +1470,6 @@ class RedTeam():
         :type parallel_execution: bool
         :param max_parallel_tasks: Maximum number of parallel orchestrator tasks to run (default: 5)
         :type max_parallel_tasks: int
-        :param debug_mode: Whether to run in debug mode (more verbose output)
-        :type debug_mode: bool
         :param timeout: The timeout in seconds for API calls (default: 120)
         :type timeout: int
         :return: The output from the red team scan
@@ -1522,7 +1549,7 @@ class RedTeam():
         if not self.attack_objective_generator:
             error_msg = "Attack objective generator is required for red team agent."
             log_error(self.logger, error_msg)
-            print(f"❌ {error_msg}")
+            self.logger.debug(f"{error_msg}")
             raise EvaluationException(
                 message=error_msg,
                 internal_message="Attack objective generator is not provided.",
@@ -1676,7 +1703,6 @@ class RedTeam():
                 for risk_category in self.risk_categories:
                     progress_bar.set_postfix({"current": f"fetching {strategy_name}/{risk_category.value}"})
                     self.logger.debug(f"Fetching objectives for {strategy_name} strategy and {risk_category.value} risk category")
-                    
                     objectives = await self._get_attack_objectives(
                         risk_category=risk_category,
                         application_scenario=application_scenario,
@@ -1684,9 +1710,6 @@ class RedTeam():
                     )
                     all_objectives[strategy_name][risk_category.value] = objectives
                     
-                    # Print status about objective count for this strategy/risk
-                    if debug_mode:
-                        print(f"  - {risk_category.value}: {len(objectives)} objectives")
             
             self.logger.info("Completed fetching all attack objectives")
             
@@ -1754,7 +1777,7 @@ class RedTeam():
                         continue
                     except Exception as e:
                         log_error(self.logger, f"Error processing batch {i//max_parallel_tasks+1}", e)
-                        print(f"❌ Error in batch {i//max_parallel_tasks+1}: {str(e)}")
+                        self.logger.debug(f"Error in batch {i//max_parallel_tasks+1}: {str(e)}")
                         continue
             else:
                 # Sequential execution 
@@ -1776,7 +1799,7 @@ class RedTeam():
                         continue
                     except Exception as e:
                         log_error(self.logger, f"Error processing task {i+1}/{len(orchestrator_tasks)}", e)
-                        print(f"❌ Error in task {i+1}: {str(e)}")
+                        self.logger.debug(f"Error in task {i+1}: {str(e)}")
                         continue
             
             progress_bar.close()
@@ -1793,17 +1816,23 @@ class RedTeam():
             # Process results
             log_section_header(self.logger, "Processing results")
             
-            # Convert results to _RedTeamResult using only red_team_info
+            # Convert results to RedTeamResult using only red_team_info
             red_team_result = self._to_red_team_result()
+            scan_result = ScanResult(
+                scorecard=red_team_result["scorecard"],
+                parameters=red_team_result["parameters"],
+                attack_details=red_team_result["attack_details"],
+                studio_url=red_team_result["studio_url"],
+            )
             
             # Create output with either full results or just conversations
             if data_only:
                 self.logger.info("Data-only mode, creating output with just conversations")
-                output = RedTeamOutput(redteaming_data=red_team_result["redteaming_data"])
+                output = RedTeamResult(scan_result=scan_result, attack_details=red_team_result["attack_details"])
             else:
-                output = RedTeamOutput(
-                    red_team_result=red_team_result, 
-                    redteaming_data=red_team_result["redteaming_data"]
+                output = RedTeamResult(
+                    scan_result=red_team_result, 
+                    attack_details=red_team_result["attack_details"]
                 )
             
             # Log results to MLFlow
@@ -1818,26 +1847,26 @@ class RedTeam():
             self.logger.info("Data-only mode, returning results without evaluation")
             return output
         
-        if output_path and output.red_team_result:
+        if output_path and output.scan_result:
             # Ensure output_path is an absolute path
             abs_output_path = output_path if os.path.isabs(output_path) else os.path.abspath(output_path)
             self.logger.info(f"Writing output to {abs_output_path}")
-            _write_output(abs_output_path, output.red_team_result)
+            _write_output(abs_output_path, output.scan_result)
             
             # Also save a copy to the scan output directory if available
             if hasattr(self, 'scan_output_dir') and self.scan_output_dir:
                 final_output = os.path.join(self.scan_output_dir, "final_results.json")
-                _write_output(final_output, output.red_team_result)
+                _write_output(final_output, output.scan_result)
                 self.logger.info(f"Also saved a copy to {final_output}")
-        elif output.red_team_result and hasattr(self, 'scan_output_dir') and self.scan_output_dir:
+        elif output.scan_result and hasattr(self, 'scan_output_dir') and self.scan_output_dir:
             # If no output_path was specified but we have scan_output_dir, save there
             final_output = os.path.join(self.scan_output_dir, "final_results.json")
-            _write_output(final_output, output.red_team_result)
+            _write_output(final_output, output.scan_result)
             self.logger.info(f"Saved results to {final_output}")
         
-        if output.red_team_result:
+        if output.scan_result:
             self.logger.debug("Generating scorecard")
-            scorecard = self._to_scorecard(output.red_team_result)
+            scorecard = self._to_scorecard(output.scan_result)
             # Store scorecard in a variable for accessing later if needed
             self.scorecard = scorecard
             
@@ -1845,7 +1874,7 @@ class RedTeam():
             print(scorecard)
             
             # Print URL for detailed results (once only)
-            studio_url = output.red_team_result.get("studio_url", "")
+            studio_url = output.scan_result.get("studio_url", "")
             if studio_url:
                 print(f"\nDetailed results available at:\n{studio_url}")
             
