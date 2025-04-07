@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=too-many-lines, docstring-keyword-should-match-keyword-only, too-many-locals
+# pylint: disable=too-many-lines, too-many-locals
 
 import warnings
 from datetime import datetime
