@@ -9,14 +9,13 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import base64
 import hmac
 import hashlib
-import importlib
 from datetime import datetime
-from typing import TYPE_CHECKING, TypeVar, Any, Union
+from typing import TYPE_CHECKING, Any, Callable, Dict, Optional, TypeVar, Union
 
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.credentials import AzureNamedKeyCredential, TokenCredential
 from azure.core.pipeline import PipelineResponse, PipelineRequest
-from azure.core.pipeline.transport import HttpResponse
+from azure.core.pipeline.transport import HttpResponse # pylint: disable=C4756
 from azure.core.rest import HttpRequest
 
 from ._client import BatchClient as GenerateBatchClient
@@ -34,12 +33,6 @@ __all__ = [
 ]  # Add all objects you want publicly available to users at this package level
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Optional, TypeVar, Union
-
-    from azure.core.credentials import TokenCredential
-    from azure.core.pipeline import PipelineRequest
-
     ClientType = TypeVar("ClientType", bound="BatchClient")
     T = TypeVar("T")
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -119,8 +112,8 @@ class BatchSharedKeyAuthPolicy(SansIOHTTPPolicy):
 
         try:
             key = base64.b64decode(_key)
-        except TypeError:
-            raise ValueError("Invalid key value: {}".format(self._key))
+        except TypeError as exc:
+            raise ValueError("Invalid key value: {}".format(self._key)) from exc
         signed_hmac_sha256 = hmac.HMAC(key, string_to_sign, hashlib.sha256)
         digest = signed_hmac_sha256.digest()
 
@@ -148,12 +141,12 @@ class BatchClient(GenerateBatchClient):
             endpoint=endpoint,
             credential=credential, # type: ignore
             authentication_policy=kwargs.pop(
-                "authentication_policy", self._format_shared_key_credential("", credential)
+                "authentication_policy", self._format_shared_key_credential(credential)
             ),
             **kwargs
         )
 
-    def _format_shared_key_credential(self, account_name, credential):
+    def _format_shared_key_credential(self, credential):
         if isinstance(credential, AzureNamedKeyCredential):
             return BatchSharedKeyAuthPolicy(credential)
         return None
