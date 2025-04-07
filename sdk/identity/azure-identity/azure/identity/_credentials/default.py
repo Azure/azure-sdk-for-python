@@ -5,7 +5,7 @@
 import logging
 import os
 import sys
-from typing import List, Any, Optional, cast, TYPE_CHECKING
+from typing import List, Any, Optional, cast, TYPE_CHECKING, Type
 
 import msal
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions, SupportsTokenInfo, TokenCredential
@@ -284,7 +284,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         return token_info
 
 
-def _get_broker_credential() -> Optional["InteractiveBrowserBrokerCredential"]:
+def _get_broker_credential() -> Optional[Type["InteractiveBrowserBrokerCredential"]]:
     # Get the broker credential if available
     try:
         from azure.identity.broker import InteractiveBrowserBrokerCredential

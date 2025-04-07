@@ -1,8 +1,10 @@
 # Release History
 
-## 1.21.1 (Unreleased)
+## 1.22.0b1 (Unreleased)
 
 ### Features Added
+
+- `DefaultAzureCredential` now supports authentication with the currently signed-in Windows account through `InteractiveBrowserCredential`, provided the `azure-identity-broker` package is installed. This is added at the end of the `DefaultAzureCredential` credential chain.  ([#40335](https://github.com/Azure/azure-sdk-for-python/pull/40335))
 
 ### Breaking Changes
 
