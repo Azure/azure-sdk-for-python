@@ -9,6 +9,7 @@ from typing import Dict, Any
 import pytest
 import pytest_asyncio
 from azure.core.pipeline.transport._aiohttp import AioHttpTransport
+from azure.core.exceptions import ServiceResponseError
 
 from azure.cosmos import PartitionKey
 from azure.cosmos._partition_health_tracker import HEALTH_STATUS, UNHEALTHY, UNHEALTHY_TENTATIVE
@@ -18,19 +19,16 @@ from tests import test_config
 from tests._fault_injection_transport_async import FaultInjectionTransportAsync
 
 COLLECTION = "created_collection"
-@pytest_asyncio.fixture(scope='class')
+@pytest_asyncio.fixture()
 async def setup():
-    if (TestPPCBSmMrrAsync.master_key == '[YOUR_KEY_HERE]' or
-            TestPPCBSmMrrAsync.host == '[YOUR_ENDPOINT_HERE]'):
-        raise Exception(
-            "You must specify your Azure Cosmos account values for "
-            "'masterKey' and 'host' at the top of this class to run the "
-            "tests.")
     os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "True"
     client = CosmosClient(TestPPCBSmMrrAsync.host, TestPPCBSmMrrAsync.master_key, consistency_level="Session")
     created_database = client.get_database_client(TestPPCBSmMrrAsync.TEST_DATABASE_ID)
+    # print(TestPPCBSmMrrAsync.TEST_DATABASE_ID)
+    await client.create_database_if_not_exists(TestPPCBSmMrrAsync.TEST_DATABASE_ID)
     created_collection = await created_database.create_container(TestPPCBSmMrrAsync.TEST_CONTAINER_SINGLE_PARTITION_ID,
-                                                                 partition_key=PartitionKey("/pk"), throughput=10000)
+                                                                 partition_key=PartitionKey("/pk"),
+                                                                 offer_throughput=10000)
     yield {
         COLLECTION: created_collection
     }
@@ -39,13 +37,15 @@ async def setup():
     await client.close()
     os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "False"
 
-
-
-
-def error_codes():
-
-    return [408, 500, 502, 503]
-
+def errors():
+    errors_list = []
+    error_codes = [408, 500, 502, 503]
+    for error_code in error_codes:
+        errors_list.append(CosmosHttpResponseError(
+            status_code=error_code,
+            message="Some injected fault."))
+    errors_list.append(ServiceResponseError(message="Injected Service Response Error."))
+    return errors_list
 
 @pytest.mark.cosmosEmulator
 @pytest.mark.asyncio
@@ -59,6 +59,7 @@ class TestPPCBSmMrrAsync:
 
     async def setup_method_with_custom_transport(self, custom_transport: AioHttpTransport, default_endpoint=host, **kwargs):
         client = CosmosClient(default_endpoint, self.master_key, consistency_level="Session",
+                              preferred_locations=["Write Region", "Read Region"],
                               transport=custom_transport, **kwargs)
         db = client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(self.TEST_CONTAINER_SINGLE_PARTITION_ID)
@@ -92,45 +93,48 @@ class TestPPCBSmMrrAsync:
             emulator_as_multi_region_sm_account_transformation)
         return custom_transport
 
-
-
-    @pytest.mark.parametrize("error_code", error_codes())
-    async def test_consecutive_failure_threshold_async(self, setup, error_code):
+    @pytest.mark.parametrize("error", errors())
+    async def test_consecutive_failure_threshold_async(self, setup, error):
+        expected_read_region_uri = self.host
+        expected_write_region_uri = expected_read_region_uri.replace("localhost", "127.0.0.1")
         custom_transport = await self.create_custom_transport_sm_mrr()
         id_value = 'failoverDoc-' + str(uuid.uuid4())
         document_definition = {'id': id_value,
                                'pk': 'pk1',
                                'name': 'sample document',
                                'key': 'value'}
-        predicate = lambda r: FaultInjectionTransportAsync.predicate_req_for_document_with_id(r, id_value)
-        custom_transport.add_fault(predicate, lambda r: asyncio.create_task(CosmosHttpResponseError(
-            status_code=error_code,
-            message="Some injected fault.")))
+        predicate = lambda r: (FaultInjectionTransportAsync.predicate_req_for_document_with_id(r, id_value) and
+                               FaultInjectionTransportAsync.predicate_targets_region(r, expected_write_region_uri))
+        custom_transport.add_fault(predicate, lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
+            0,
+            error
+        )))
 
         custom_setup = await self.setup_method_with_custom_transport(custom_transport, default_endpoint=self.host)
         container = custom_setup['col']
 
         # writes should fail in sm mrr with circuit breaker and should not mark unavailable a partition
         for i in range(6):
-            with pytest.raises(CosmosHttpResponseError):
+            with pytest.raises(CosmosHttpResponseError or ServiceResponseError):
                 await container.create_item(body=document_definition)
 
         TestPPCBSmMrrAsync.validate_unhealthy_partitions(container.client_connection._global_endpoint_manager, 0)
 
-
-
         # create item with client without fault injection
         await setup[COLLECTION].create_item(body=document_definition)
 
-        # reads should failover and only the relevant partition should be marked as unavailable
+        # reads should fail over and only the relevant partition should be marked as unavailable
         await container.read_item(item=document_definition['id'], partition_key=document_definition['pk'])
         # partition should not have been marked unavailable after one error
         TestPPCBSmMrrAsync.validate_unhealthy_partitions(container.client_connection._global_endpoint_manager, 0)
 
-        for i in range(10):
-            await container.read_item(item=document_definition['id'], partition_key=document_definition['pk'])
+        for i in range(11):
+            read_resp = await container.read_item(item=document_definition['id'], partition_key=document_definition['pk'])
+            request = read_resp.get_response_headers()["_request"]
+            # Validate the response comes from "Read Region" (the most preferred read-only region)
+            assert request.url.startswith(expected_read_region_uri)
 
-       # the partition should have been marked as unavailable
+       # the partition should have been marked as unavailable after breaking read threshold
         TestPPCBSmMrrAsync.validate_unhealthy_partitions(container.client_connection._global_endpoint_manager, 1)
 
 
@@ -139,19 +143,15 @@ class TestPPCBSmMrrAsync:
         health_info_map = global_endpoint_manager.global_partition_endpoint_manager_core.partition_health_tracker.pkrange_wrapper_to_health_info
         unhealthy_partitions = 0
         for pk_range_wrapper, location_to_health_info in health_info_map.items():
-            for location, health_info in location_to_health_info:
-                if health_info[HEALTH_STATUS] == UNHEALTHY_TENTATIVE or health_info[HEALTH_STATUS] == UNHEALTHY:
+            for location, health_info in location_to_health_info.items():
+                health_status = health_info.unavailability_info.get(HEALTH_STATUS)
+                if health_status == UNHEALTHY_TENTATIVE or health_status == UNHEALTHY:
                     unhealthy_partitions += 1
-        assert len(health_info_map) == expected_unhealthy_partitions
         assert unhealthy_partitions == expected_unhealthy_partitions
 
 
-
-
-
-
-    # test_failure_rate_threshold
-
+    # test_failure_rate_threshold - add service response error
+    # test service request marks only a partition unavailable not an entire region
 
 if __name__ == '__main__':
     unittest.main()

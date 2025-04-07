@@ -201,8 +201,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         return self.read_regional_routing_contexts
 
     def get_location_from_endpoint(self, endpoint: str) -> str:
-        regional_routing_context = RegionalRoutingContext(endpoint, endpoint)
-        return self.account_locations_by_read_regional_endpoints[regional_routing_context]
+        return self.account_locations_by_read_regional_routing_context[endpoint]
 
     def get_write_regional_routing_context(self):
         return self.get_write_regional_routing_contexts()[0].get_primary()

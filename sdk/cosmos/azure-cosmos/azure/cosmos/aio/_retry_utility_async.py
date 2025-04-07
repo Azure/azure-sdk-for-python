@@ -103,9 +103,9 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
         try:
             if args:
                 result = await ExecuteFunctionAsync(function, global_endpoint_manager, *args, **kwargs)
+                global_endpoint_manager.record_success(args[0])
             else:
                 result = await ExecuteFunctionAsync(function, *args, **kwargs)
-            global_endpoint_manager.record_success(request)
             if not client.last_response_headers:
                 client.last_response_headers = {}
 
@@ -200,7 +200,7 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
             if client_timeout:
                 kwargs['timeout'] = client_timeout - (time.time() - start_time)
                 if kwargs['timeout'] <= 0:
-                    global_endpoint_manager.record_failure(request)
+                    global_endpoint_manager.record_failure(args[0])
                     raise exceptions.CosmosClientTimeoutError()
 
         except ServiceRequestError as e:
@@ -258,8 +258,8 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
         """
         absolute_timeout = request.context.options.pop('timeout', None)
         per_request_timeout = request.context.options.pop('connection_timeout', 0)
-        request_params = request.context.options.get('request_params', None)
-        global_endpoint_manager = request.context.options.get('global_endpoint_manager', None)
+        request_params = request.context.options.pop('request_params', None)
+        global_endpoint_manager = request.context.options.pop('global_endpoint_manager', None)
         retry_error = None
         retry_active = True
         response = None

@@ -67,12 +67,12 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerCore(object):
         if request.resource_type != ResourceType.Document:
             return False
 
-        if request.operation_type != documents._OperationType.QueryPlan:
+        if request.operation_type == documents._OperationType.QueryPlan:
             return False
 
         return True
 
-    def _create_pkrange_wrapper(self, request: RequestObject) -> PartitionKeyRangeWrapper:
+    def _create_pk_range_wrapper(self, request: RequestObject) -> PartitionKeyRangeWrapper:
         """
         Create a PartitionKeyRangeWrapper object.
         """
@@ -80,14 +80,14 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerCore(object):
         partition_key = request.headers[HttpHeaders.PartitionKey]
         # get the partition key range for the given partition key
         target_container_link = None
-        for container_link, properties in self.client._container_properties_cache:
+        for container_link, properties in self.client._container_properties_cache.items():
             if properties["_rid"] == container_rid:
                 target_container_link = container_link
-        if target_container_link:
+        if not target_container_link:
             raise RuntimeError("Illegal state: the container cache is not properly initialized.")
         # TODO: @tvaron3 check different clients and create them in different ways
-        pkrange = self.client._routing_map_provider.get_overlapping_range(target_container_link, partition_key)
-        return PartitionKeyRangeWrapper(pkrange, container_rid)
+        pk_range = await self.client._routing_map_provider.get_overlapping_ranges(target_container_link, partition_key)
+        return PartitionKeyRangeWrapper(pk_range, container_rid)
 
     def record_failure(
             self,
@@ -98,7 +98,7 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerCore(object):
             endpoint_operation_type = EndpointOperationType.WriteType if (
                 documents._OperationType.IsWriteOperation(request.operation_type)) else EndpointOperationType.ReadType
             location = self.location_cache.get_location_from_endpoint(str(request.location_endpoint_to_route))
-            pkrange_wrapper = self._create_pkrange_wrapper(request)
+            pkrange_wrapper = self._create_pk_range_wrapper(request)
             self.partition_health_tracker.add_failure(pkrange_wrapper, endpoint_operation_type, str(location))
 
     # TODO: @tvaron3 lower request timeout to 5.5 seconds for recovering
@@ -107,7 +107,7 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerCore(object):
 
     def add_excluded_locations_to_request(self, request: RequestObject) -> RequestObject:
         if self.is_circuit_breaker_applicable(request):
-            pkrange_wrapper = self._create_pkrange_wrapper(request)
+            pkrange_wrapper = self._create_pk_range_wrapper(request)
             request.set_excluded_locations_from_circuit_breaker(
                 self.partition_health_tracker.get_excluded_locations(pkrange_wrapper)
             )
@@ -118,7 +118,7 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerCore(object):
         Mark the partition unavailable from the given request.
         """
         location = self.location_cache.get_location_from_endpoint(str(request.location_endpoint_to_route))
-        pkrange_wrapper = self._create_pkrange_wrapper(request)
+        pkrange_wrapper = self._create_pk_range_wrapper(request)
         self.partition_health_tracker.mark_partition_unavailable(pkrange_wrapper, location)
 
     def record_success(
@@ -130,7 +130,7 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerCore(object):
             endpoint_operation_type = EndpointOperationType.WriteType if (
                 documents._OperationType.IsWriteOperation(request.operation_type)) else EndpointOperationType.ReadType
             location = self.location_cache.get_location_from_endpoint(str(request.location_endpoint_to_route))
-            pkrange_wrapper = self._create_pkrange_wrapper(request)
+            pkrange_wrapper = self._create_pk_range_wrapper(request)
             self.partition_health_tracker.add_success(pkrange_wrapper, endpoint_operation_type, location)
 
 # TODO: @tvaron3 there should be no in region retries when trying on healthy tentative -----------------------

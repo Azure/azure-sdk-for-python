@@ -248,3 +248,6 @@ class PartitionKeyRangeWrapper(object):
             return False
         return self.partition_key_range == other.partition_key_range and self.collection_rid == other.collection_rid
 
+    def __hash__(self):
+        return hash((self.partition_key_range, self.collection_rid))
+
