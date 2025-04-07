@@ -80,7 +80,7 @@ class TestSession(unittest.TestCase):
             self.created_collection.read_item(item=created_document['id'], partition_key='mypk')
         except exceptions.CosmosHttpResponseError as e:
             self.assertEqual(self.client.client_connection.session.get_session_token(
-                'dbs/' + self.created_db.id + '/colls/' + self.created_collection.id), "")
+                'dbs/' + self.created_db.id + '/colls/' + self.created_collection.id, "Read"), "")
             self.assertEqual(e.status_code, StatusCodes.NOT_FOUND)
             self.assertEqual(e.sub_status, SubStatusCodes.READ_SESSION_NOTAVAILABLE)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
