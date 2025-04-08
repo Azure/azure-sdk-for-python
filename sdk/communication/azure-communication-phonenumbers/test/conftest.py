@@ -37,21 +37,17 @@ def add_sanitizers(test_proxy):
     add_general_string_sanitizer(target=dynamic_endpoint, value="sanitized.communication.azure.com")
     add_general_string_sanitizer(target=dynamic_access_key, value="fake==")
 
-    add_body_key_sanitizer(json_path="id", value="sanitized")
+    # Only sanitize ID if it is a phone number; otherwise, keep it as is.
+    add_body_key_sanitizer(json_path="id", value="sanitized", regex=r"\d{10,15}")
     add_body_key_sanitizer(json_path="phoneNumber", value="sanitized")
     add_body_key_sanitizer(json_path="phoneNumbers[*].id", value="sanitized")
     add_body_key_sanitizer(json_path="phoneNumbers[*].phoneNumber", value="sanitized")
 
     add_general_regex_sanitizer(regex=r"-[0-9a-fA-F]{32}\.[0-9a-zA-Z\.]*(\.com|\.net|\.test)", value=".sanitized.com")
 
-    add_general_regex_sanitizer(regex=r"(?:(?:%2B)|\+)\d{10,15}", value="sanitized")
+    add_general_regex_sanitizer(regex=r"(?:(?:%2B)|\+)?\d{10,15}", value="sanitized")
 
     add_general_regex_sanitizer(regex=r"phoneNumbers/[%2B\d]{10,15}", value="phoneNumbers/sanitized")
-
-    add_general_regex_sanitizer(
-        regex=r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}",
-        value=STATIC_RESERVATION_ID
-    )
 
     add_header_regex_sanitizer(key="P3P", value="sanitized")
     add_header_regex_sanitizer(key="Set-Cookie", value="sanitized")
@@ -70,4 +66,7 @@ def add_sanitizers(test_proxy):
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
     #  - AZSDK3493: $..name
     #  - AZSDK2003: Location
-    remove_batch_sanitizers(["AZSDK3493", "AZSDK2003"])
+    #  - AZSDK4001: Host - We are sanitizing the endpoint above, so this is not needed.
+    #  - AZSDK3430: ..id - For phone number IDs, we are already sanitizing them above. 
+    #                      For reservation IDs, we are sanitizing them to a static ID since they are needed in tests.
+    remove_batch_sanitizers(["AZSDK3493", "AZSDK2003", "AZSDK4001", "AZSDK3430"])
