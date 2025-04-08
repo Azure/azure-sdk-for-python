@@ -15,6 +15,7 @@ from azure.ai.evaluation._model_configurations import Conversation, Message
 from azure.ai.evaluation._common._experimental import experimental
 
 
+@experimental
 class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
     Evaluates the extent to which a given response contains all necessary and relevant information with respect to the

@@ -1,11 +1,10 @@
 # Release History
 
-## 9.2.0b3 (2025-03-24)
+## 9.2.0b3 (2025-04-02)
 
 ### Features Added
 
   - Client `SearchManagementClient` added operation group `offerings`
-  - Client `SearchManagementClient` added operation group `service`
   - Model `SearchService` added property `system_data`
   - Model `SearchService` added property `endpoint`
   - Model `SearchService` added property `compute_type`
@@ -25,8 +24,8 @@
   - Added model `SkuOffering`
   - Added model `SkuOfferingLimits`
   - Added model `SystemData`
+  - Operation group `ServicesOperations` added method `begin_upgrade`
   - Added operation group `OfferingsOperations`
-  - Added operation group `ServiceOperations`
 
 ## 9.2.0b2 (2024-07-18)
 
