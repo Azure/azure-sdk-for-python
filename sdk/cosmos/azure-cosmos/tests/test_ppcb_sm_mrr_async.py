@@ -236,7 +236,8 @@ class TestPerPartitionCircuitBreakerSmMrrAsync:
 
         assert unhealthy_partitions == expected_unhealthy_partitions
 
-    # test_failure_rate_threshold - add service response error - across operation types
+    # test_failure_rate_threshold - add service response error - across operation types - test recovering the partition again
+    #
     # test service request marks only a partition unavailable not an entire region - across operation types
     # test cosmos client timeout
 

@@ -36,8 +36,8 @@ if TYPE_CHECKING:
     from azure.cosmos.aio._cosmos_client_connection_async import CosmosClientConnection
 
 
-
-class _GlobalPartitionEndpointManagerForCircuitBreakerAsync(_GlobalEndpointManager): # pylint: disable=protected-access
+# pylint: disable=protected-access
+class _GlobalPartitionEndpointManagerForCircuitBreakerAsync(_GlobalEndpointManager):
     """
     This internal class implements the logic for partition endpoint management for
     geo-replicated database accounts.

@@ -108,7 +108,8 @@ class _PartitionHealthTracker(object):
             pk_range_wrapper: PartitionKeyRangeWrapper,
             location: str
     ) -> None:
-        logger.warning("%s has been marked as unavailable.", pk_range_wrapper)        current_time = current_time_millis()
+        logger.warning("%s has been marked as unavailable.", pk_range_wrapper)
+        current_time = current_time_millis()
         if pk_range_wrapper not in self.pk_range_wrapper_to_health_info:
             # healthy -> unhealthy tentative
             partition_health_info = _PartitionHealthInfo()
