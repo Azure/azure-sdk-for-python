@@ -5,6 +5,11 @@
 ### Bugs Fixed
  - Fix for compute Instance, disableLocalAuth property should be depend on ssh public access enabled.
  - Removing Git-related properties from job properties if a PAT token is detected in the repository URL.
+
+## 1.26.2 (2025-04-08)
+
+### Bugs Fixed
+ - Made AI Search connections property optional while creating capability host.
   
 ## 1.26.1 (2025-03-27)
 
