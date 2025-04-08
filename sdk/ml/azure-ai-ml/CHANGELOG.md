@@ -1,4 +1,10 @@
 # Release History
+
+## 1.26.2 (2025-04-08)
+
+### Bugs Fixed
+ - Made AI Search connections property optional while creating capability host.
+
 ## 1.26.1 (2025-03-27)
 
 ### Bugs Fixed
