@@ -48,13 +48,13 @@ output AZURE_APPCONFIG_ID string = test_module.outputs.AZURE_APPCONFIG_ID
 output AZURE_APPCONFIG_NAME string = test_module.outputs.AZURE_APPCONFIG_NAME
 output AZURE_APPCONFIG_RESOURCE_GROUP string = test_module.outputs.AZURE_APPCONFIG_RESOURCE_GROUP
 output AZURE_APPCONFIG_ENDPOINT string = test_module.outputs.AZURE_APPCONFIG_ENDPOINT
-output AZURE_SEARCH_ID string = test_module.outputs.AZURE_SEARCH_ID
-output AZURE_SEARCH_NAME string = test_module.outputs.AZURE_SEARCH_NAME
-output AZURE_SEARCH_RESOURCE_GROUP string = test_module.outputs.AZURE_SEARCH_RESOURCE_GROUP
-output AZURE_SEARCH_ENDPOINT string = test_module.outputs.AZURE_SEARCH_ENDPOINT
-output AZURE_SEARCH_ID_FOO string = test_module.outputs.AZURE_SEARCH_ID_FOO
-output AZURE_SEARCH_NAME_FOO string = test_module.outputs.AZURE_SEARCH_NAME_FOO
-output AZURE_SEARCH_RESOURCE_GROUP_FOO string = test_module.outputs.AZURE_SEARCH_RESOURCE_GROUP_FOO
-output AZURE_SEARCH_ENDPOINT_FOO string = test_module.outputs.AZURE_SEARCH_ENDPOINT_FOO
+output AZURE_SEARCH_ID_R1 string = test_module.outputs.AZURE_SEARCH_ID_R1
+output AZURE_SEARCH_NAME_R1 string = test_module.outputs.AZURE_SEARCH_NAME_R1
+output AZURE_SEARCH_RESOURCE_GROUP_R1 string = test_module.outputs.AZURE_SEARCH_RESOURCE_GROUP_R1
+output AZURE_SEARCH_ENDPOINT_R1 string = test_module.outputs.AZURE_SEARCH_ENDPOINT_R1
+output AZURE_SEARCH_ID_R2 string = test_module.outputs.AZURE_SEARCH_ID_R2
+output AZURE_SEARCH_NAME_R2 string = test_module.outputs.AZURE_SEARCH_NAME_R2
+output AZURE_SEARCH_RESOURCE_GROUP_R2 string = test_module.outputs.AZURE_SEARCH_RESOURCE_GROUP_R2
+output AZURE_SEARCH_ENDPOINT_R2 string = test_module.outputs.AZURE_SEARCH_ENDPOINT_R2
 
 

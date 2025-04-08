@@ -65,9 +65,9 @@ resource storageaccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   }
 }
 
-output AZURE_STORAGE_ID string = storageaccount.id
-output AZURE_STORAGE_NAME string = storageaccount.name
-output AZURE_STORAGE_RESOURCE_GROUP string = resourceGroup().name
+output AZURE_STORAGE_ID_R string = storageaccount.id
+output AZURE_STORAGE_NAME_R string = storageaccount.name
+output AZURE_STORAGE_RESOURCE_GROUP_R string = resourceGroup().name
 
 
 resource blobservice 'Microsoft.Storage/storageAccounts/blobServices@2024-01-01' = {
@@ -76,19 +76,19 @@ resource blobservice 'Microsoft.Storage/storageAccounts/blobServices@2024-01-01'
   name: 'default'
 }
 
-output AZURE_BLOBS_ENDPOINT string = storageaccount.properties.primaryEndpoints.blob
+output AZURE_BLOBS_ENDPOINT_R string = storageaccount.properties.primaryEndpoints.blob
 
 
-resource container 'Microsoft.Storage/storageAccounts/blobServices/containers@2022-09-01' = {
+resource container_foo 'Microsoft.Storage/storageAccounts/blobServices/containers@2022-09-01' = {
   parent: blobservice
   properties: {}
   name: 'foo'
 }
 
-output AZURE_BLOB_CONTAINER_ID string = container.id
-output AZURE_BLOB_CONTAINER_NAME string = container.name
-output AZURE_BLOB_CONTAINER_RESOURCE_GROUP string = resourceGroup().name
-output AZURE_BLOB_CONTAINER_ENDPOINT string = '${storageaccount.properties.primaryEndpoints.blob}${container.name}'
+output AZURE_BLOB_CONTAINER_ID_R string = container_foo.id
+output AZURE_BLOB_CONTAINER_NAME_R string = container_foo.name
+output AZURE_BLOB_CONTAINER_RESOURCE_GROUP_R string = resourceGroup().name
+output AZURE_BLOB_CONTAINER_ENDPOINT_R string = '${storageaccount.properties.primaryEndpoints.blob}${container_foo.name}'
 
 
 resource keyvalue_azureappconfigid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
@@ -131,9 +131,9 @@ resource keyvalue_azureappconfigendpoint 'Microsoft.AppConfiguration/configurati
 
 
 
-resource keyvalue_azurestorageid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azurestorageidr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_STORAGE_ID'
+  name: 'AZURE_STORAGE_ID_R'
   properties: {
     value: storageaccount.id
   }
@@ -141,9 +141,9 @@ resource keyvalue_azurestorageid 'Microsoft.AppConfiguration/configurationStores
 
 
 
-resource keyvalue_azurestoragename 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azurestoragenamer 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_STORAGE_NAME'
+  name: 'AZURE_STORAGE_NAME_R'
   properties: {
     value: storageaccount.name
   }
@@ -151,9 +151,9 @@ resource keyvalue_azurestoragename 'Microsoft.AppConfiguration/configurationStor
 
 
 
-resource keyvalue_azurestorageresourcegroup 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azurestorageresourcegroupr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_STORAGE_RESOURCE_GROUP'
+  name: 'AZURE_STORAGE_RESOURCE_GROUP_R'
   properties: {
     value: resourceGroup().name
   }
@@ -161,9 +161,9 @@ resource keyvalue_azurestorageresourcegroup 'Microsoft.AppConfiguration/configur
 
 
 
-resource keyvalue_azureblobsendpoint 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureblobsendpointr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_BLOBS_ENDPOINT'
+  name: 'AZURE_BLOBS_ENDPOINT_R'
   properties: {
     value: storageaccount.properties.primaryEndpoints.blob
   }
@@ -171,29 +171,29 @@ resource keyvalue_azureblobsendpoint 'Microsoft.AppConfiguration/configurationSt
 
 
 
-resource keyvalue_azureblobcontainerid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureblobcontaineridr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_BLOB_CONTAINER_ID'
+  name: 'AZURE_BLOB_CONTAINER_ID_R'
   properties: {
-    value: container.id
+    value: container_foo.id
   }
 }
 
 
 
-resource keyvalue_azureblobcontainername 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureblobcontainernamer 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_BLOB_CONTAINER_NAME'
+  name: 'AZURE_BLOB_CONTAINER_NAME_R'
   properties: {
-    value: container.name
+    value: container_foo.name
   }
 }
 
 
 
-resource keyvalue_azureblobcontainerresourcegroup 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureblobcontainerresourcegroupr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_BLOB_CONTAINER_RESOURCE_GROUP'
+  name: 'AZURE_BLOB_CONTAINER_RESOURCE_GROUP_R'
   properties: {
     value: resourceGroup().name
   }
@@ -201,11 +201,11 @@ resource keyvalue_azureblobcontainerresourcegroup 'Microsoft.AppConfiguration/co
 
 
 
-resource keyvalue_azureblobcontainerendpoint 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureblobcontainerendpointr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_BLOB_CONTAINER_ENDPOINT'
+  name: 'AZURE_BLOB_CONTAINER_ENDPOINT_R'
   properties: {
-    value: '${storageaccount.properties.primaryEndpoints.blob}${container.name}'
+    value: '${storageaccount.properties.primaryEndpoints.blob}${container_foo.name}'
   }
 }
 
@@ -286,7 +286,7 @@ resource roleassignment_wqdxfpwezxqulysiwphb 'Microsoft.Authorization/roleAssign
     )
 
   }
-  scope: container
+  scope: container_foo
 }
 
 
@@ -302,7 +302,7 @@ resource roleassignment_szxwzcgjyrxpsqmpdewp 'Microsoft.Authorization/roleAssign
     )
 
   }
-  scope: container
+  scope: container_foo
 }
 
 

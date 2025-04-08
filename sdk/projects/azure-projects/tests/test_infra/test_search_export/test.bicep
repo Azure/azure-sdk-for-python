@@ -62,10 +62,10 @@ resource searchservice 'Microsoft.Search/searchServices@2024-06-01-Preview' = {
   }
 }
 
-output AZURE_SEARCH_ID string = searchservice.id
-output AZURE_SEARCH_NAME string = searchservice.name
-output AZURE_SEARCH_RESOURCE_GROUP string = resourceGroup().name
-output AZURE_SEARCH_ENDPOINT string = 'https://${searchservice.name}.search.windows.net/'
+output AZURE_SEARCH_ID_R string = searchservice.id
+output AZURE_SEARCH_NAME_R string = searchservice.name
+output AZURE_SEARCH_RESOURCE_GROUP_R string = resourceGroup().name
+output AZURE_SEARCH_ENDPOINT_R string = 'https://${searchservice.name}.search.windows.net/'
 
 
 resource keyvalue_azureappconfigid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
@@ -108,9 +108,9 @@ resource keyvalue_azureappconfigendpoint 'Microsoft.AppConfiguration/configurati
 
 
 
-resource keyvalue_azuresearchid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azuresearchidr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_SEARCH_ID'
+  name: 'AZURE_SEARCH_ID_R'
   properties: {
     value: searchservice.id
   }
@@ -118,9 +118,9 @@ resource keyvalue_azuresearchid 'Microsoft.AppConfiguration/configurationStores/
 
 
 
-resource keyvalue_azuresearchname 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azuresearchnamer 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_SEARCH_NAME'
+  name: 'AZURE_SEARCH_NAME_R'
   properties: {
     value: searchservice.name
   }
@@ -128,9 +128,9 @@ resource keyvalue_azuresearchname 'Microsoft.AppConfiguration/configurationStore
 
 
 
-resource keyvalue_azuresearchresourcegroup 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azuresearchresourcegroupr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_SEARCH_RESOURCE_GROUP'
+  name: 'AZURE_SEARCH_RESOURCE_GROUP_R'
   properties: {
     value: resourceGroup().name
   }
@@ -138,9 +138,9 @@ resource keyvalue_azuresearchresourcegroup 'Microsoft.AppConfiguration/configura
 
 
 
-resource keyvalue_azuresearchendpoint 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azuresearchendpointr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_SEARCH_ENDPOINT'
+  name: 'AZURE_SEARCH_ENDPOINT_R'
   properties: {
     value: 'https://${searchservice.name}.search.windows.net/'
   }

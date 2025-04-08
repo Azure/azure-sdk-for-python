@@ -22,12 +22,6 @@ resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024
   }
   location: location
   tags: azdTags
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${managedIdentityId}': {}
-    }
-  }
 }
 
 output AZURE_APPCONFIG_ID string = configurationstore.id
@@ -40,10 +34,10 @@ resource searchservice_test 'Microsoft.Search/searchServices@2024-06-01-Preview'
   name: 'test'
 }
 
-output AZURE_SEARCH_ID_TEST string = searchservice_test.id
-output AZURE_SEARCH_NAME_TEST string = searchservice_test.name
-output AZURE_SEARCH_RESOURCE_GROUP_TEST string = resourceGroup().name
-output AZURE_SEARCH_ENDPOINT_TEST string = 'https://${searchservice_test.name}.search.windows.net/'
+output AZURE_SEARCH_ID_R string = searchservice_test.id
+output AZURE_SEARCH_NAME_R string = searchservice_test.name
+output AZURE_SEARCH_RESOURCE_GROUP_R string = resourceGroup().name
+output AZURE_SEARCH_ENDPOINT_R string = 'https://${searchservice_test.name}.search.windows.net/'
 
 
 resource keyvalue_azureappconfigid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
@@ -86,9 +80,9 @@ resource keyvalue_azureappconfigendpoint 'Microsoft.AppConfiguration/configurati
 
 
 
-resource keyvalue_azuresearchidtest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azuresearchidr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_SEARCH_ID_TEST'
+  name: 'AZURE_SEARCH_ID_R'
   properties: {
     value: searchservice_test.id
   }
@@ -96,9 +90,9 @@ resource keyvalue_azuresearchidtest 'Microsoft.AppConfiguration/configurationSto
 
 
 
-resource keyvalue_azuresearchnametest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azuresearchnamer 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_SEARCH_NAME_TEST'
+  name: 'AZURE_SEARCH_NAME_R'
   properties: {
     value: searchservice_test.name
   }
@@ -106,9 +100,9 @@ resource keyvalue_azuresearchnametest 'Microsoft.AppConfiguration/configurationS
 
 
 
-resource keyvalue_azuresearchresourcegrouptest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azuresearchresourcegroupr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_SEARCH_RESOURCE_GROUP_TEST'
+  name: 'AZURE_SEARCH_RESOURCE_GROUP_R'
   properties: {
     value: resourceGroup().name
   }
@@ -116,9 +110,9 @@ resource keyvalue_azuresearchresourcegrouptest 'Microsoft.AppConfiguration/confi
 
 
 
-resource keyvalue_azuresearchendpointtest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azuresearchendpointr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_SEARCH_ENDPOINT_TEST'
+  name: 'AZURE_SEARCH_ENDPOINT_R'
   properties: {
     value: 'https://${searchservice_test.name}.search.windows.net/'
   }
@@ -153,7 +147,7 @@ resource roleassignment_kvjoxlocbytxyhtrwdln 'Microsoft.Authorization/roleAssign
     )
 
   }
-  scope: resourceGroup('test')
+  scope: resourceGroup()
 }
 
 
