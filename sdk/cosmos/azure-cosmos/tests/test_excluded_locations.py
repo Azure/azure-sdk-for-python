@@ -168,6 +168,12 @@ def patch_item_test_data():
     all_test_data = [input_data + [output_data] for input_data, output_data in zip(ALL_INPUT_TEST_DATA, all_output_test_data)]
     return all_test_data
 
+def _create_item_with_excluded_locations(container, body, excluded_locations):
+    if excluded_locations is None:
+        container.create_item(body=body)
+    else:
+        container.create_item(body=body, excluded_locations=excluded_locations)
+
 @pytest.fixture(scope="class", autouse=True)
 def setup_and_teardown():
     print("Setup: This runs before any tests")
@@ -344,10 +350,7 @@ class TestExcludedLocations:
 
             # API call: create_item
             body = {'pk': 'pk', 'id': f'doc2-{str(uuid.uuid4())}'}
-            if request_excluded_locations is None:
-                container.create_item(body=body)
-            else:
-                container.create_item(body=body, excluded_locations=request_excluded_locations)
+            _create_item_with_excluded_locations(container, body, request_excluded_locations)
 
             # get location from mock_handler
             if multiple_write_locations:
@@ -421,12 +424,13 @@ class TestExcludedLocations:
             # Client setup
             client, db, container = self._init_container(preferred_locations, client_excluded_locations, multiple_write_locations)
 
-            #create before delete
+            # create before delete
             item_id = f'doc2-{str(uuid.uuid4())}'
-            container.create_item(body={PARTITION_KEY: ITEM_PK_VALUE, 'id': item_id})
+            body = {PARTITION_KEY: ITEM_PK_VALUE, 'id': item_id}
+            _create_item_with_excluded_locations(container, body, request_excluded_locations)
             MOCK_HANDLER.reset()
 
-            # API call: read_item
+            # API call: delete_item
             if request_excluded_locations is None:
                 container.delete_item(item_id, ITEM_PK_VALUE)
             else:

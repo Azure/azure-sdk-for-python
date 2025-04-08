@@ -80,20 +80,20 @@ ALL_INPUT_TEST_DATA = CLIENT_ONLY_TEST_DATA + CLIENT_AND_REQUEST_TEST_DATA
 
 def read_item_test_data():
     client_only_output_data = [
-        [L1],  # 0
-        [L2],  # 1
-        [L1],  # 2
-        [L1]   # 3
+        [L1, L1],  # 0
+        [L2, L2],  # 1
+        [L1, L1],  # 2
+        [L1, L1],  # 3
     ]
     client_and_request_output_data = [
-        [L2],  # 0
-        [L2],  # 1
-        [L2],  # 2
-        [L1],  # 3
-        [L1],  # 4
-        [L1],  # 5
-        [L1],  # 6
-        [L1],  # 7
+        [L2, L2],  # 0
+        [L2, L2],  # 1
+        [L2, L2],  # 2
+        [L1, L1],  # 3
+        [L1, L1],  # 4
+        [L1, L1],  # 5
+        [L1, L1],  # 6
+        [L1, L1],  # 7
     ]
     all_output_test_data = client_only_output_data + client_and_request_output_data
 
@@ -102,20 +102,20 @@ def read_item_test_data():
 
 def query_items_change_feed_test_data():
     client_only_output_data = [
-        [L1, L1, L1],   #0
-        [L2, L2, L2],   #1
-        [L1, L1, L1],   #2
-        [L1, L1, L1]    #3
+        [L1, L1, L1, L1],   #0
+        [L2, L2, L2, L2],   #1
+        [L1, L1, L1, L1],   #2
+        [L1, L1, L1, L1]    #3
     ]
     client_and_request_output_data = [
-        [L1, L2, L2],   #0
-        [L2, L2, L2],   #1
-        [L1, L2, L2],   #2
-        [L2, L1, L1],   #3
-        [L1, L1, L1],   #4
-        [L2, L1, L1],   #5
-        [L1, L1, L1],   #6
-        [L1, L1, L1],   #7
+        [L1, L2, L2, L2],   #0
+        [L2, L2, L2, L2],   #1
+        [L1, L2, L2, L2],   #2
+        [L2, L1, L1, L1],   #3
+        [L1, L1, L1, L1],   #4
+        [L2, L1, L1, L1],   #5
+        [L1, L1, L1, L1],   #6
+        [L1, L1, L1, L1],   #7
     ]
     all_output_test_data = client_only_output_data + client_and_request_output_data
 
@@ -165,6 +165,12 @@ def patch_item_test_data():
 
     all_test_data = [input_data + [output_data] for input_data, output_data in zip(ALL_INPUT_TEST_DATA, all_output_test_data)]
     return all_test_data
+
+async def _create_item_with_excluded_locations(container, body, excluded_locations):
+    if excluded_locations is None:
+        await container.create_item(body=body)
+    else:
+        await container.create_item(body=body, excluded_locations=excluded_locations)
 
 @pytest_asyncio.fixture(scope="class", autouse=True)
 async def setup_and_teardown():
@@ -344,10 +350,7 @@ class TestExcludedLocations:
 
             # API call: create_item
             body = {'pk': 'pk', 'id': f'doc2-{str(uuid.uuid4())}'}
-            if request_excluded_locations is None:
-                await container.create_item(body=body)
-            else:
-                await container.create_item(body=body, excluded_locations=request_excluded_locations)
+            await _create_item_with_excluded_locations(container, body, request_excluded_locations)
 
             # get location from mock_handler
             if multiple_write_locations:
@@ -421,12 +424,13 @@ class TestExcludedLocations:
             # Client setup
             client, db, container = await self._init_container(preferred_locations, client_excluded_locations, multiple_write_locations)
 
-            #create before delete
+            # create before delete
             item_id = f'doc2-{str(uuid.uuid4())}'
-            await container.create_item(body={PARTITION_KEY: ITEM_PK_VALUE, 'id': item_id})
+            body = {PARTITION_KEY: ITEM_PK_VALUE, 'id': item_id}
+            await _create_item_with_excluded_locations(container, body, request_excluded_locations)
             MOCK_HANDLER.reset()
 
-            # API call: read_item
+            # API call: delete_item
             if request_excluded_locations is None:
                 await container.delete_item(item_id, ITEM_PK_VALUE)
             else:
