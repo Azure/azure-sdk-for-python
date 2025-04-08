@@ -95,11 +95,14 @@ class PhoneNumbersClient:
         return cls(endpoint, access_key, **kwargs)
 
     @distributed_trace
-    def begin_purchase_phone_numbers(self, search_id: str, **kwargs: Any) -> LROPoller[None]:
+    def begin_purchase_phone_numbers(self, search_id: str, *, agree_to_not_resell: bool = False, **kwargs: Any) -> LROPoller[None]:
         """Purchases phone numbers.
 
         :param search_id: The search id.
         :type search_id: str
+        :keyword agree_to_not_resell: The agreement to not resell the phone numbers. Defaults to False if
+            not provided.
+        :paramtype agree_to_not_resell: bool
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
             False for no polling, or your own initialized polling object for a personal polling strategy.
@@ -109,7 +112,7 @@ class PhoneNumbersClient:
         :returns: A poller to wait on the completion of the purchase.
         :rtype: ~azure.core.polling.LROPoller[None]
         """
-        purchase_request = PhoneNumberPurchaseRequest(search_id=search_id)
+        purchase_request = PhoneNumberPurchaseRequest(search_id=search_id, agree_to_not_resell=agree_to_not_resell)
 
         polling_interval = kwargs.pop("polling_interval", _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
         return self._phone_number_client.phone_numbers.begin_purchase_phone_numbers(
@@ -487,6 +490,7 @@ class PhoneNumbersClient:
     def begin_purchase_reservation(
         self,
         reservation_id: str,
+        *,
         agree_to_not_resell: bool = False,
         **kwargs: Any,
     ) -> LROPoller[None]:
@@ -499,9 +503,9 @@ class PhoneNumbersClient:
 
         :param reservation_id: The id of the reservation. Required.
         :type reservation_id: str
-        :param agree_to_not_resell: The agreement to not resell the phone numbers. Defaults to false if
+        :keyword agree_to_not_resell: The agreement to not resell the phone numbers. Defaults to False if
      not provided.
-        :type agree_to_not_resell: bool
+        :paramtype agree_to_not_resell: bool
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         """

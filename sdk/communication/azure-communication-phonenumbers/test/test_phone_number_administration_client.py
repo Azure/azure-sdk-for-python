@@ -224,6 +224,27 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
         assert release_poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
 
     @recorded_by_proxy
+    def test_purchase_phone_numbers_without_agreement_to_not_resell(self,):
+        capabilities = PhoneNumberCapabilities(
+            calling=PhoneNumberCapabilityType.OUTBOUND, sms=PhoneNumberCapabilityType.NONE
+        )
+        # France doesn't allow reselling of phone numbers, so purchases without agreement to not resell should fail
+        search_poller = self.phone_number_client.begin_search_available_phone_numbers(
+            "FR",
+            PhoneNumberType.TOLL_FREE,
+            PhoneNumberAssignmentType.APPLICATION,
+            capabilities,
+            polling=True,
+        )
+        phone_number_to_buy = search_poller.result()
+        with pytest.raises(Exception) as ex:
+            self.phone_number_client.begin_purchase_phone_numbers(
+                phone_number_to_buy.search_id, agree_to_not_resell=False, polling=True
+            )
+        assert is_client_error_status_code(ex.value.status_code) is True
+        assert ex.value.message is not None
+
+    @recorded_by_proxy
     def test_get_purchased_phone_number_with_invalid_phone_number(self, **kwargs):
         if self.is_playback():
             phone_number = "sanitized"
@@ -511,7 +532,6 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
             self.phone_number_client.get_phone_numbers_reservation(reservation_id)
         assert ex.value.status_code == 404
 
-    # @pytest.mark.skipif(SKIP_PURCHASE_PHONE_NUMBER_TESTS, reason=PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON)
     @recorded_by_proxy
     def test_purchase_reservation_without_agreement_to_not_resell(self):
         add_general_regex_sanitizer(
