@@ -674,6 +674,14 @@ class RedTeam():
                 batches = [all_prompts[i:i + batch_size] for i in range(0, len(all_prompts), batch_size)]
                 
                 for batch_idx, batch in enumerate(batches):
+                    """
+                    # TODO: Store the results from orchestrator for each batch
+                    # fetch the results even on errors/exceptions
+                    # use the batch's memory label to extract data batch_memory_label(type = dict)
+                    # ensure each batch has a unique memory label
+                    # ensure all the batches have something common in the memory label (like the file name where its stored in _write_pyrit_outputs_to_file method)
+
+                    """
                     self.logger.debug(f"Processing batch {batch_idx+1}/{len(batches)} with {len(batch)} prompts for {strategy_name}/{risk_category}")
                     
                     batch_start_time = datetime.now()
@@ -681,7 +689,11 @@ class RedTeam():
                     try:
                         # Use wait_for to implement a timeout
                         await asyncio.wait_for(
-                            orchestrator.send_prompts_async(prompt_list=batch),
+                            orchestrator.send_prompts_async(
+                                prompt_list=batch,
+                                # memory_labels # TODO: identify the right memory label and create them for each batch before sending, ensure this has uuid. 
+                                # 
+                            ),
                             timeout=timeout  # Use provided timeout
                         )
                         batch_duration = (datetime.now() - batch_start_time).total_seconds()
@@ -700,12 +712,14 @@ class RedTeam():
                         self.task_statuses[batch_task_key] = TASK_STATUS["TIMEOUT"]
                         self.red_team_info[strategy_name][risk_category]["status"] = TASK_STATUS["INCOMPLETE"]
                         # Continue with partial results rather than failing completely
+                        # TODO: ensure the output is written to the file
                         continue
                     except Exception as e:
                         log_error(self.logger, f"Error processing batch {batch_idx+1}", e, f"{strategy_name}/{risk_category}")
                         self.logger.debug(f"ERROR: Strategy {strategy_name}, Risk {risk_category}, Batch {batch_idx+1}: {str(e)}")
                         self.red_team_info[strategy_name][risk_category]["status"] = TASK_STATUS["INCOMPLETE"]
                         # Continue with other batches even if one fails
+                        # TODO: ensure the output is written to the file
                         continue
             else:
                 # Small number of prompts, process all at once with a timeout
@@ -746,6 +760,12 @@ class RedTeam():
         :type orchestrator: Orchestrator
         :return: Path to the output file
         :rtype: Union[str, os.PathLike]
+        """
+        """
+        #TODO: This path needs to be generated earlier, when the batches are identified Lets call them 
+        # use the batch's memory label to extract data by orchestrator.get_memory().get_prompt_request_pieces(labels=batch_memory_label)
+            if len(conversations) > number of lines found in jsonfile/base_path (as we know the name generated before batches are created.)
+                replace the file contents with the new conversations
         """
         base_path = str(uuid.uuid4())
         
