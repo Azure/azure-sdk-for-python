@@ -164,7 +164,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         }
 
         throughput_bucket = kwargs.pop('throughput_bucket', None)
-        if throughput_bucket is not None:
+        if throughput_bucket:
             self.default_headers[http_constants.HttpHeaders.ThroughputBucket] = throughput_bucket
 
         if consistency_level is not None:
