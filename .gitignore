@@ -146,6 +146,8 @@ sdk/cosmos/azure-cosmos/test/test_config.py
 # env vars
 .env
 
+# local SSL certificate folder
+.certificate
 
 # ignore pre-commit config to avoid adding hooks in this repo as
 # package specific hooks will bring delay and in some cases errors to all developers
@@ -161,10 +163,3 @@ TempTypeSpecFiles/
 **/.project
 **/.pydevproject
 **/.settings
-
-# ignore hidden folders with some exceptions
-/.*/
-!/.config/
-!/.devcontainer/
-!/.github/
-!/.vscode/cspell.json
