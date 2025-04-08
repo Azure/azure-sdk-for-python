@@ -6,12 +6,13 @@
 
 
 from ._sip_routing_client import SipRoutingClient
-from ._models import SipTrunk, SipTrunkRoute
+from ._models import SipTrunk, SipTrunkRoute, SipDomain
 from ._generated.models._enums import IpAddressVersion, PrivacyHeader, ExpandEnum
 
 __all__ = [
     "SipRoutingClient",
     "SipTrunk",
+    "SipDomain",
     "SipTrunkRoute",
     "IpAddressVersion",
     "PrivacyHeader",
