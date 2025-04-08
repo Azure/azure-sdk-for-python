@@ -100,6 +100,28 @@ def read_item_test_data():
     all_test_data = [input_data + [output_data] for input_data, output_data in zip(ALL_INPUT_TEST_DATA, all_output_test_data)]
     return all_test_data
 
+def read_all_item_test_data():
+    client_only_output_data = [
+        [L1, L1],  # 0
+        [L2, L2],  # 1
+        [L1, L1],  # 2
+        [L1, L1],  # 3
+    ]
+    client_and_request_output_data = [
+        [L2, L2],  # 0
+        [L2, L2],  # 1
+        [L2, L2],  # 2
+        [L1, L1],  # 3
+        [L1, L1],  # 4
+        [L1, L1],  # 5
+        [L1, L1],  # 6
+        [L1, L1],  # 7
+    ]
+    all_output_test_data = client_only_output_data + client_and_request_output_data
+
+    all_test_data = [input_data + [output_data] for input_data, output_data in zip(ALL_INPUT_TEST_DATA, all_output_test_data)]
+    return all_test_data
+
 def query_items_change_feed_test_data():
     client_only_output_data = [
         [L1, L1, L1, L1],   #0
@@ -243,7 +265,7 @@ class TestExcludedLocations:
         # Verify endpoint locations
         await self._verify_endpoint(client, expected_locations)
 
-    @pytest.mark.parametrize('test_data', read_item_test_data())
+    @pytest.mark.parametrize('test_data', read_all_item_test_data())
     async def test_read_all_items(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
@@ -260,7 +282,7 @@ class TestExcludedLocations:
         # Verify endpoint locations
         await self._verify_endpoint(client, expected_locations)
 
-    @pytest.mark.parametrize('test_data', read_item_test_data())
+    @pytest.mark.parametrize('test_data', read_all_item_test_data())
     async def test_query_items(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
