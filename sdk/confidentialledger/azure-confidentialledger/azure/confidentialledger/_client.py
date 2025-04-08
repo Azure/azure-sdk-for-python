@@ -26,7 +26,7 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientOperationsMixin):
     :param endpoint: The Confidential Ledger URL, for example
      https://contoso.confidentialledger.azure.com. Required.
     :type endpoint: str
-    :keyword api_version: Api Version. Default value is "2024-08-22-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2024-12-09-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """

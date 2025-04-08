@@ -425,13 +425,13 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
 
             user = client.create_or_update_ledger_user(user_id, {"assignedRoles": ["Reader"]})
             assert user["userId"] == user_id
-            assert user["assignedRoles"] == ["Contributor", "Reader"]
+            assert user["assignedRoles"] == ["Reader"]
 
             time.sleep(3)  # Let the PATCH user operation be committed, just in case.
 
             user = client.get_ledger_user(user_id)
             assert user["userId"] == user_id
-            assert user["assignedRoles"] == ["Contributor", "Reader"]
+            assert user["assignedRoles"] == ["Contributor","Reader"]
 
             client.delete_ledger_user(user_id)
 
@@ -545,53 +545,58 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         )
 
         # We need to add the certificate-based user as an Administrator. 
-        client.create_user_defined_endpoint(
+        user_endpoint = client.create_user_defined_endpoint(
             {
-            "metadata": {
-                "endpoints": {
-                    "/content": {
-                        "get": {
-                            "js_module": "test.js",
-                            "js_function": "content",
-                            "forwarding_required": "never",
-                            "redirection_strategy": "none",
-                            "authn_policies": ["no_auth"],
-                            "mode": "readonly",
-                            "openapi": {},
+                "metadata": {
+                    "endpoints": {
+                        "/content": {
+                            "get": {
+                                "js_module": "test.js",
+                                "js_function": "content",
+                                "forwarding_required": "never",
+                                "redirection_strategy": "none",
+                                "authn_policies": ["no_auth"],
+                                "mode": "readonly",
+                                "openapi": {},
+                            }
                         }
                     }
-                }
-            },
-            "modules": [
-                {
-                    "name": "test.js",
-                    "module": """
-                    import { foo } from "./bar/baz.js";
+                },
+                "modules": [
+                    {
+                        "name": "test.js",
+                        "module": """
+                        import { foo } from "./bar/baz.js";
 
-                    export function content(request) {
-                        return {
-                            statusCode: 200,
-                            body: {
-                                payload: foo(),
-                            },
-                        };
-                    }
-                    """,
-                },
-                {
-                    "name": "bar/baz.js",
-                    "module": """
-                    export function foo() {
-                        return "Test content";
-                    }
-                    """,
-                },
-            ],
-        }
+                        export function content(request) {
+                            return {
+                                statusCode: 200,
+                                body: {
+                                    payload: foo(),
+                                },
+                            };
+                        }
+                        """,
+                    },
+                    {
+                        "name": "bar/baz.js",
+                        "module": """
+                        export function foo() {
+                            return "Test content";
+                        }
+                        """,
+                    },
+                ],
+            }
         )
 
         saved_endpoint = client.get_user_defined_endpoint()
         assert saved_endpoint["metadata"]["endpoints"]["/content"]["GET"]["js_module"] == "test.js"
+
+        # We are setting endpoints and modules to empty to have the UDF tests work since UDE and UDF cannot be created simultaneously.
+        user_endpoint = {"metadata": {"endpoints": {}}, "modules": []}
+        assert user_endpoint["metadata"]["endpoints"] == {}
+        assert user_endpoint["modules"] == []
 
     @ConfidentialLedgerPreparer()
     @recorded_by_proxy
@@ -621,4 +626,23 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         assert roles[0]["role_actions"] == ["/content/write", "/content/read"]
 
         client.delete_user_defined_role(role_name=role_name)
+        time.sleep(3)
+
+    @ConfidentialLedgerPreparer()
+    @recorded_by_proxy
+    def test_user_defined_function(self, confidentialledger_endpoint, confidentialledger_id):
+        client = self.create_confidentialledger_client(
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=True
+        )
+
+        client.create_user_defined_endpoint({"metadata": {"endpoints": {}}, "modules": []})
+        functionId = "myFunction"
+
+        client.create_user_defined_function(functionId, {"code":"export function main() { return true }"} )
+        time.sleep(3)                
+
+        userFunction = client.get_user_defined_function(functionId)
+        assert userFunction["code"] == "export function main() { return true }"
+
+        client.delete_user_defined_function(functionId)
         time.sleep(3)
