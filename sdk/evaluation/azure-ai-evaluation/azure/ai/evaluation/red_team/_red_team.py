@@ -711,14 +711,14 @@ class RedTeam():
                         batch_task_key = f"{strategy_name}_{risk_category}_batch_{batch_idx+1}"
                         self.task_statuses[batch_task_key] = TASK_STATUS["TIMEOUT"]
                         self.red_team_info[strategy_name][risk_category]["status"] = TASK_STATUS["INCOMPLETE"]
-                        self._write_pyrit_outputs_to_file(orchestrator, strategy_name, risk_category, batch_idx+1)
+                        self._write_pyrit_outputs_to_file(orchestrator=orchestrator, strategy_name=strategy_name, risk_category=risk_category, batch_idx=batch_idx+1)
                         # Continue with partial results rather than failing completely
                         continue
                     except Exception as e:
                         log_error(self.logger, f"Error processing batch {batch_idx+1}", e, f"{strategy_name}/{risk_category}")
                         self.logger.debug(f"ERROR: Strategy {strategy_name}, Risk {risk_category}, Batch {batch_idx+1}: {str(e)}")
                         self.red_team_info[strategy_name][risk_category]["status"] = TASK_STATUS["INCOMPLETE"]
-                        self._write_pyrit_outputs_to_file(orchestrator, strategy_name, risk_category, batch_idx+1)
+                        self._write_pyrit_outputs_to_file(orchestrator=orchestrator, strategy_name=strategy_name, risk_category=risk_category, batch_idx=batch_idx+1)
                         # Continue with other batches even if one fails
                         continue
             else:
@@ -753,7 +753,7 @@ class RedTeam():
             self.task_statuses[task_key] = TASK_STATUS["FAILED"]
             raise
 
-    def _write_pyrit_outputs_to_file(self, orchestrator: Orchestrator, strategy_name: str, risk_category: str, batch_idx: Optional[int] = None) -> str:
+    def _write_pyrit_outputs_to_file(self,*, orchestrator: Orchestrator, strategy_name: str, risk_category: str, batch_idx: Optional[int] = None) -> str:
         """Write PyRIT outputs to a file with a name based on orchestrator, converter, and risk category.
         
         :param orchestrator: The orchestrator that generated the outputs
@@ -1409,7 +1409,7 @@ class RedTeam():
                     progress_bar.update(1)
                 return None
             
-            data_path = self._write_pyrit_outputs_to_file(orchestrator, strategy_name, risk_category.value)
+            data_path = self._write_pyrit_outputs_to_file(orchestrator=orchestrator, strategy_name=strategy_name, risk_category=risk_category.value)
             orchestrator.dispose_db_engine()
             
             # Store data file in our tracking dictionary
