@@ -729,7 +729,9 @@ class TestRedTeamOrchestrator:
         
         with patch.object(red_team, "task_statuses", {}), \
              patch("azure.ai.evaluation.red_team._red_team.PromptSendingOrchestrator") as mock_orch_class, \
-             patch("azure.ai.evaluation.red_team._red_team.log_strategy_start") as mock_log_start:
+             patch("azure.ai.evaluation.red_team._red_team.log_strategy_start") as mock_log_start, \
+             patch.object(red_team, "red_team_info", {"test_strategy": {"test_risk": {}}}), \
+             patch("uuid.uuid4", return_value="test-uuid"):
             
             mock_orchestrator = MagicMock()
             mock_orchestrator.send_prompts_async = AsyncMock()
@@ -748,7 +750,7 @@ class TestRedTeamOrchestrator:
                 objective_target=mock_chat_target,
                 prompt_converters=[mock_converter]
             )
-            mock_orchestrator.send_prompts_async.assert_called_once_with(prompt_list=mock_prompts)
+            mock_orchestrator.send_prompts_async.assert_called_once_with(prompt_list=mock_prompts, memory_labels={'risk_strategy_path': 'test-uuid.jsonl', 'batch': 1})
             assert result == mock_orchestrator
 
     @pytest.mark.asyncio
@@ -761,7 +763,8 @@ class TestRedTeamOrchestrator:
         with patch.object(red_team, "task_statuses", {}), \
              patch("azure.ai.evaluation.red_team._red_team.PromptSendingOrchestrator") as mock_orch_class, \
              patch("azure.ai.evaluation.red_team._red_team.log_strategy_start") as mock_log_start, \
-             patch("azure.ai.evaluation.red_team._red_team.asyncio.wait_for", side_effect=asyncio.TimeoutError()):
+             patch("azure.ai.evaluation.red_team._red_team.asyncio.wait_for", side_effect=asyncio.TimeoutError()), \
+             patch.object(red_team, "red_team_info", {"test_strategy": {"test_risk": {}}}):
             
             mock_orchestrator = MagicMock()
             mock_orchestrator.send_prompts_async = AsyncMock()
@@ -807,13 +810,12 @@ class TestRedTeamProcessing:
         
         with patch("uuid.uuid4", return_value="test-uuid"), \
              patch("pathlib.Path.open", mock_open()), \
-             patch.object(red_team, "_message_to_dict", message_to_dict_mock):
+             patch.object(red_team, "_message_to_dict", message_to_dict_mock), \
+             patch.object(red_team, "red_team_info", {"test_strategy": {"test_risk": { "data_file": "test-uuid.jsonl"}}}):
             
-            output_path = red_team._write_pyrit_outputs_to_file(mock_orchestrator)
+            output_path = red_team._write_pyrit_outputs_to_file(orchestrator=mock_orchestrator, strategy_name="test_strategy", risk_category="test_risk")
             
             assert output_path == "test-uuid.jsonl"
-            mock_orchestrator.get_memory.assert_called_once()
-            mock_orchestrator.dispose_db_engine.assert_called_once()
 
     @pytest.mark.asyncio
     @patch("azure.ai.evaluation.red_team._red_team.RISK_CATEGORY_EVALUATOR_MAP")
@@ -920,7 +922,7 @@ class TestRedTeamProcessing:
                 120
             )
             
-            red_team._write_pyrit_outputs_to_file.assert_called_once_with(mock_orchestrator)
+            red_team._write_pyrit_outputs_to_file.assert_called_once_with(orchestrator=mock_orchestrator, strategy_name="base64", risk_category="violence")
             
             # Check evaluate was called (no await)
             mock_evaluate.assert_called_once()
