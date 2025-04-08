@@ -9,7 +9,7 @@ from typing import Any, List, Literal, Mapping, Type, TypeVar, Tuple, Union, cas
 
 import nltk
 from typing_extensions import NotRequired, Required, TypeGuard
-from promptflow.core._errors import MissingRequiredPackage
+from azure.ai.evaluation._legacy._adapters._errors import MissingRequiredPackage
 from azure.ai.evaluation._constants import AZURE_OPENAI_TYPE, OPENAI_TYPE
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._model_configurations import (

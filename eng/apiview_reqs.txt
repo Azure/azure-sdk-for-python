@@ -14,4 +14,4 @@ tomli==2.2.1
 tomlkit==0.13.2
 typing_extensions==4.12.2
 wrapt==1.17.2
-apiview-stub-generator==0.3.17
+apiview-stub-generator==0.3.18
