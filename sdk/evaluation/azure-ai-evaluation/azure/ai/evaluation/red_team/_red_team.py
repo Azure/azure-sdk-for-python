@@ -727,7 +727,7 @@ class RedTeam():
                 batch_start_time = datetime.now()
                 try:
                     await asyncio.wait_for(
-                        orchestrator.send_prompts_async(prompt_list=all_prompts),
+                        orchestrator.send_prompts_async(prompt_list=all_prompts, memory_labels = {"risk_strategy_path": output_path, "batch": 1}),
                         timeout=timeout  # Use provided timeout
                     )
                     batch_duration = (datetime.now() - batch_start_time).total_seconds()
@@ -739,10 +739,12 @@ class RedTeam():
                     single_batch_task_key = f"{strategy_name}_{risk_category}_single_batch"
                     self.task_statuses[single_batch_task_key] = TASK_STATUS["TIMEOUT"]
                     self.red_team_info[strategy_name][risk_category]["status"] = TASK_STATUS["INCOMPLETE"]
+                    self._write_pyrit_outputs_to_file(orchestrator=orchestrator, strategy_name=strategy_name, risk_category=risk_category, batch_idx=batch_idx+1)
                 except Exception as e:
                     log_error(self.logger, "Error processing prompts", e, f"{strategy_name}/{risk_category}")
                     self.logger.debug(f"ERROR: Strategy {strategy_name}, Risk {risk_category}: {str(e)}")
                     self.red_team_info[strategy_name][risk_category]["status"] = TASK_STATUS["INCOMPLETE"]
+                    self._write_pyrit_outputs_to_file(orchestrator=orchestrator, strategy_name=strategy_name, risk_category=risk_category, batch_idx=batch_idx+1)
             
             self.task_statuses[task_key] = TASK_STATUS["COMPLETED"]
             return orchestrator
