@@ -784,6 +784,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         *,
         session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         no_response: Optional[bool] = None,
         response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
@@ -800,6 +802,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :param str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
+            has changed, and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
@@ -814,18 +819,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: A CosmosDict representing the upserted item. The dict will be empty if `no_response` is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
-        etag = kwargs.get('etag')
-        if etag is not None:
-            warnings.warn(
-                "The 'etag' flag does not apply to this method and is always ignored even if passed."
-                " It will now be removed in the future.",
-                DeprecationWarning)
-        match_condition = kwargs.get('match_condition')
-        if match_condition is not None:
-            warnings.warn(
-                "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
-                " It will now be removed in the future.",
-                DeprecationWarning)
         if pre_trigger_include is not None:
             kwargs['pre_trigger_include'] = pre_trigger_include
         if post_trigger_include is not None:
@@ -836,6 +829,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['initial_headers'] = initial_headers
         if priority is not None:
             kwargs['priority'] = priority
+        if etag is not None:
+            kwargs['etag'] = etag
+        if match_condition is not None:
+            kwargs['match_condition'] = match_condition
         if no_response is not None:
             kwargs['no_response'] = no_response
         if response_hook is not None:

@@ -3193,7 +3193,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                     documents._QueryFeature.NonStreamingOrderBy + "," +
                                     documents._QueryFeature.HybridSearch + "," +
                                     documents._QueryFeature.CountIf)
-        if os.environ.get('AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY', False):
+        if os.environ.get(Constants.NON_STREAMING_ORDER_BY_DISABLED_CONFIG,
+                          Constants.NON_STREAMING_ORDER_BY_DISABLED_CONFIG_DEFAULT) == "True":
             supported_query_features = (documents._QueryFeature.Aggregate + "," +
                                         documents._QueryFeature.CompositeAggregate + "," +
                                         documents._QueryFeature.Distinct + "," +
