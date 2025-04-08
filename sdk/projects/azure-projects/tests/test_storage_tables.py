@@ -17,14 +17,13 @@ IDENTITY = {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["ma
 
 def _get_outputs(suffix="", rg=None):
     return {
-        # 'resource_id': Output(f"AZURE_TABLES_ID{suffix.upper()}", "id", ResourceSymbol(f"tableservice{suffix}")),
-        # 'name': Output(f"AZURE_TABLES_NAME{suffix.upper()}", "name", ResourceSymbol(f"tableservice{suffix}")),
-        # 'resource_group': Output(f"AZURE_TABLES_RESOURCE_GROUP{suffix.upper()}", rg if rg else DefaultResourceGroup().name),
-        "endpoint": Output(
-            f"AZURE_TABLES_ENDPOINT{suffix.upper()}",
-            "properties.primaryEndpoints.table",
-            ResourceSymbol(f"storageaccount{suffix}"),
-        )
+        "endpoint": [
+            Output(
+                f"AZURE_TABLES_ENDPOINT",
+                "properties.primaryEndpoints.table",
+                ResourceSymbol(f"storageaccount{suffix}"),
+            )
+        ]
     }
 
 

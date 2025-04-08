@@ -20,14 +20,10 @@ RG = ResourceSymbol("resourcegroup")
 
 def _get_outputs(suffix="", rg=None):
     return {
-        "resource_id": Output(f"AZURE_KEYVAULT_ID{suffix.upper()}", "id", ResourceSymbol(f"vault{suffix}")),
-        "name": Output(f"AZURE_KEYVAULT_NAME{suffix.upper()}", "name", ResourceSymbol(f"vault{suffix}")),
-        "resource_group": Output(
-            f"AZURE_KEYVAULT_RESOURCE_GROUP{suffix.upper()}", rg if rg else DefaultResourceGroup().name
-        ),
-        "endpoint": Output(
-            f"AZURE_KEYVAULT_ENDPOINT{suffix.upper()}", "properties.vaultUri", ResourceSymbol(f"vault{suffix}")
-        ),
+        "resource_id": [Output(f"AZURE_KEYVAULT_ID", "id", ResourceSymbol(f"vault{suffix}"))],
+        "name": [Output(f"AZURE_KEYVAULT_NAME", "name", ResourceSymbol(f"vault{suffix}"))],
+        "resource_group": [Output(f"AZURE_KEYVAULT_RESOURCE_GROUP", rg if rg else DefaultResourceGroup().name)],
+        "endpoint": [Output(f"AZURE_KEYVAULT_ENDPOINT", "properties.vaultUri", ResourceSymbol(f"vault{suffix}"))],
     }
 
 
@@ -384,15 +380,11 @@ def test_keyvault_app():
     assert app.client.vault_url == "https://different.vault.azure.net"
     assert app.client.api_version == "v3.0"
 
-    class TestInfra(AzureInfrastructure):
-        kv: KeyVault = KeyVault()
-
     class TestApp(AzureApp):
         client_a: KeyClient = field(api_version="v1.5")
         client_b: SecretClient = field(api_version="v2.5")
 
-    infra = TestInfra(kv=r)
-    app = TestApp.load(infra)
+    app = TestApp.load(config_store={"AZURE_KEYVAULT_ENDPOINT": "https://test.vault.azure.net"})
     assert isinstance(app.client_a, KeyClient)
     assert app.client_a.vault_url == "https://test.vault.azure.net"
     assert app.client_a.api_version == "v1.5"

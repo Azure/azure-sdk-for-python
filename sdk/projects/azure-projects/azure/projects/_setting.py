@@ -89,17 +89,31 @@ class StoredPrioritizedSetting(PrioritizedSetting[ValidInputType, ValueType]):
 
         # 3. check a config store
         if config_store:
-            for env_var in self._env_vars:
-                if env_var + self.suffix in config_store:
-                    return config_store[env_var + self.suffix]
+            if self.suffix:
+                for env_var in self._env_vars:
+                    if env_var + self.suffix in config_store:
+                        return config_store[env_var + self.suffix]
+            else:
+                for env_var in self._env_vars:
+                    for config_setting in config_store:
+                        if config_setting.startswith(env_var):
+                            return config_store[config_setting]
             if self._env_var and self._env_var in config_store:
-                return config_store[self._env_var + self.suffix]
+                return config_store[self._env_var]
 
         # 2. environment variable
-        for env_var in self._env_vars:
-            if env_var + self.suffix in os.environ:
-                # All settings with env vars are currently strings, so this should be fine.
-                return os.environ[env_var + self.suffix]  # type: ignore[return-value]
+        if self.suffix:
+            for env_var in self._env_vars:
+                if env_var + self.suffix in os.environ:
+                    # All settings with env vars are currently strings, so this should be fine.
+                    return os.environ[env_var + self.suffix]  # type: ignore[return-value]
+        else:
+            # TODO: This will be very slow for a large number of env vars. However it will only
+            # happen during the first loading of the AzureApp. Regardless, would be nice to find a better way.
+            for env_var in self._env_vars:
+                for env_setting in os.environ:
+                    if env_setting.startswith(env_var):
+                        return os.environ[env_setting]
         if self._env_var and self._env_var in os.environ:
             return os.environ[self._env_var]  # type: ignore[return-value]
 

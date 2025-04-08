@@ -1,6 +1,5 @@
-from uuid import uuid4
-
 import pytest
+
 from azure.projects.resources.storage import StorageAccount
 from azure.projects.resources.storage.blobs import BlobStorage
 from azure.projects.resources.storage.blobs.container import BlobContainer
@@ -18,19 +17,19 @@ IDENTITY = {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["ma
 
 def _get_outputs(suffix="", parent="", rg=None):
     outputs = {
-        "resource_id": Output(f"AZURE_BLOB_CONTAINER_ID{suffix.upper()}", "id", ResourceSymbol(f"container{suffix}")),
-        "name": Output(f"AZURE_BLOB_CONTAINER_NAME{suffix.upper()}", "name", ResourceSymbol(f"container{suffix}")),
-        "resource_group": Output(
-            f"AZURE_BLOB_CONTAINER_RESOURCE_GROUP{suffix.upper()}", rg if rg else DefaultResourceGroup().name
-        ),
+        "resource_id": [Output(f"AZURE_BLOB_CONTAINER_ID", "id", ResourceSymbol(f"container{suffix}"))],
+        "name": [Output(f"AZURE_BLOB_CONTAINER_NAME", "name", ResourceSymbol(f"container{suffix}"))],
+        "resource_group": [Output(f"AZURE_BLOB_CONTAINER_RESOURCE_GROUP", rg if rg else DefaultResourceGroup().name)],
     }
     outputs.update(
         {
-            "endpoint": Output(
-                f"AZURE_BLOB_CONTAINER_ENDPOINT{suffix.upper()}",
-                Output("", "properties.primaryEndpoints.blob", ResourceSymbol(f"storageaccount{parent}")).format()
-                + outputs["name"].format(),
-            )
+            "endpoint": [
+                Output(
+                    f"AZURE_BLOB_CONTAINER_ENDPOINT",
+                    Output("", "properties.primaryEndpoints.blob", ResourceSymbol(f"storageaccount{parent}")).format()
+                    + outputs["name"][0].format(),
+                )
+            ]
         }
     )
     return outputs
@@ -411,9 +410,52 @@ def test_storage_blobs_container_app():
     assert isinstance(app.sclient, ContainerClient)
     assert isinstance(app.aclient, AsyncContainerClient)
 
-    class TestInfra(AzureInfrastructure):
-        data: BlobContainer = field(default=r)
-
-    app = TestApp.load(TestInfra())
+    app = TestApp.load(
+        config_store={
+            "AZURE_BLOB_CONTAINER_ENDPOINT": "https://test.blob.core.windows.net/test",
+        }
+    )
     assert isinstance(app.sclient, ContainerClient)
     assert isinstance(app.aclient, AsyncContainerClient)
+
+    app = TestApp.load(
+        config_store={
+            "AZURE_BLOB_CONTAINER_ENDPOINT_FOO": "https://test.blob.core.windows.net/test",
+        }
+    )
+    assert isinstance(app.sclient, ContainerClient)
+    assert isinstance(app.aclient, AsyncContainerClient)
+
+    app = TestApp.load(
+        config_store={
+            "AZURE_BLOB_CONTAINER_ENDPOINT_FOO": "https://test.blob.core.windows.net/test",
+        },
+        attr_map={
+            "sclient": "foo",
+            "aclient": "foo",
+        },
+    )
+    assert isinstance(app.sclient, ContainerClient)
+    assert isinstance(app.aclient, AsyncContainerClient)
+
+    with pytest.raises(RuntimeError):
+        app = TestApp.load(
+            config_store={
+                "AZURE_BLOB_CONTAINER_ENDPOINT_FOO": "https://test.blob.core.windows.net/test",
+            },
+            attr_map={
+                "sclient": "foo",
+                "aclient": "bar",
+            },
+        )
+
+    app = TestApp.load(
+        config_store={
+            "AZURE_BLOB_CONTAINER_ENDPOINT_FOO": "https://test.blob.core.windows.net/test",
+            "AZURE_BLOB_CONTAINER_ENDPOINT_BAR": "https://test.blob.core.windows.net/second",
+        },
+        attr_map={
+            "sclient": "foo",
+            "aclient": "bar",
+        },
+    )

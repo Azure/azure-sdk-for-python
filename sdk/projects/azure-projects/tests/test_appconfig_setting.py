@@ -14,7 +14,7 @@ from azure.projects import Parameter, AzureInfrastructure, export, field, AzureA
 
 TEST_SUB = "6e441d6a-23ce-4450-a4a6-78f8d4f45ce9"
 RG = ResourceSymbol("resourcegroup")
-IDENTITY = {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["managedIdentityId"]: {}}}
+IDENTITY = {"type": "UserAssigned", "userAssignedIdentities": {"identity": {}}}
 
 
 def test_appconfig_setting_properties():
@@ -367,9 +367,4 @@ def test_appconfig_setting_app():
     with pytest.raises(TypeError):
         app = TestApp(client=r)
 
-    class TestInfra(AzureInfrastructure):
-        config_store: Optional[ConfigStore] = None
-        data: ConfigSetting = field(default=r)
-
-    with pytest.raises(TypeError):
-        app = TestApp.load(TestInfra())
+    app = TestApp.load(config_store={"AZURE_APPCONFIG_ENDPOINT": "test"})

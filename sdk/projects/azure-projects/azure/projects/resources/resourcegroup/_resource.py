@@ -109,7 +109,7 @@ class ResourceGroup(Resource, Generic[ResourceGroupResourceType]):
             ref_properties = {"name": properties["name"]}
             if properties.get("subscription"):
                 ref_properties["scope"] = Subscription(properties["subscription"])
-            symbol = self._build_symbol()
+            symbol = self._build_symbol(ref_properties["name"])
             field = FieldType(
                 resource=self.resource,
                 identifier=self.identifier,
@@ -132,7 +132,7 @@ class ResourceGroup(Resource, Generic[ResourceGroupResourceType]):
             symbol = field_match.symbol
         else:
             params = {}
-            symbol = self._build_symbol()
+            symbol = self._build_symbol(properties.get("name"))
             field = FieldType(
                 resource=self.resource,
                 identifier=self.identifier,

@@ -16,6 +16,7 @@ from azure.projects.resources.storage import StorageAccount
 from azure.projects.resources.storage.blobs import BlobStorage
 from azure.projects.resources.storage.blobs.container import BlobContainer
 from azure.projects.resources.storage.tables import TableStorage
+from azure.projects.resources.storage.tables.table import Table
 
 
 def test_identifiers():
@@ -32,8 +33,7 @@ def test_identifiers():
     with pytest.raises(NotImplementedError):
         assert ResourceIdentifiers.file_system.resource()
     assert ResourceIdentifiers.table_storage.resource() is TableStorage
-    with pytest.raises(NotImplementedError):
-        assert ResourceIdentifiers.table.resource()
+    assert ResourceIdentifiers.table.resource() is Table
     with pytest.raises(NotImplementedError):
         assert ResourceIdentifiers.queue_storage.resource()
     with pytest.raises(NotImplementedError):

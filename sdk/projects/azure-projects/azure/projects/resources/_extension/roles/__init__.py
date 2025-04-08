@@ -4,13 +4,13 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Any, Dict, Generic, Literal, Mapping, Union, Optional
+from typing import TYPE_CHECKING, Any, Dict, Generic, List, Literal, Mapping, Union, Optional
 from typing_extensions import TypeVar, Self
 
 from ..._identifiers import ResourceIdentifiers
 from ...._resource import Resource, ResourceReference
 from ...._bicep.utils import generate_name
-from ...._bicep.expressions import Output, RoleDefinition, Parameter
+from ...._bicep.expressions import Output, ResourceSymbol, RoleDefinition, Parameter
 from ....resources.resourcegroup import ResourceGroup
 
 if TYPE_CHECKING:
@@ -52,15 +52,12 @@ class RoleAssignment(Resource, Generic[RoleAssignmentResourceType]):
     ) -> Self:
         raise TypeError("Referenced Role Assignments not supported.")
 
-    def _outputs(self, **kwargs) -> Dict[str, Output]:
+    def _outputs(self, **kwargs) -> Dict[str, List[Output]]:
         return {}
 
-    def _build_suffix(self, value: Optional[Union[str, Parameter]]) -> str:
-        if isinstance(value, Parameter):
-            return "_" + generate_name(value.value)
-        if value:
-            return "_" + generate_name(value)
-        return ""
+    def _build_symbol(self, suffix: Optional[Union[str, Parameter]]) -> ResourceSymbol:
+        resource_ref = f"roleassignment_{generate_name(suffix)}"
+        return ResourceSymbol(resource_ref)
 
 
 BUILT_IN_ROLES: Dict[str, RoleDefinition] = {

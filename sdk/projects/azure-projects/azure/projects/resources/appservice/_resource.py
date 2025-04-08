@@ -43,7 +43,6 @@ if TYPE_CHECKING:
     from .types import AppServicePlanResource
 
 
-
 class AppServicePlanKwargs(TypedDict, total=False):
     reserved: bool
     """Defaults to false when creating Windows/app App Service Plan. Required if creating a Linux App Service Plan and must be set to true."""
@@ -53,7 +52,7 @@ class AppServicePlanKwargs(TypedDict, total=False):
     # """The diagnostic settings of the service."""
     elastic_scale_enabled: bool
     """Enable/Disable ElasticScaleEnabled App Service Plan."""
-    kind: Literal['App', 'Elastic', 'FunctionApp', 'Linux', 'Windows']
+    kind: Literal["App", "Elastic", "FunctionApp", "Linux", "Windows"]
     """Kind of server OS."""
     location: str
     """Location for all resources."""
@@ -70,14 +69,13 @@ class AppServicePlanKwargs(TypedDict, total=False):
                 Parameter,
                 "RoleAssignment",
                 Literal[
-                    'Web Plan Contributor',
-                    'Website Contributor',
-                    'Contributor',
-                    'Owner',
-                    'Reader',
-                    'Role Based Access Control Administrator',
-                    'User Access Administrator',
-
+                    "Web Plan Contributor",
+                    "Website Contributor",
+                    "Contributor",
+                    "Owner",
+                    "Reader",
+                    "Role Based Access Control Administrator",
+                    "User Access Administrator",
                 ],
             ]
         ],
@@ -90,13 +88,13 @@ class AppServicePlanKwargs(TypedDict, total=False):
                 Parameter,
                 "RoleAssignment",
                 Literal[
-                    'Web Plan Contributor',
-                    'Website Contributor',
-                    'Contributor',
-                    'Owner',
-                    'Reader',
-                    'Role Based Access Control Administrator',
-                    'User Access Administrator',
+                    "Web Plan Contributor",
+                    "Website Contributor",
+                    "Contributor",
+                    "Owner",
+                    "Reader",
+                    "Role Based Access Control Administrator",
+                    "User Access Administrator",
                 ],
             ]
         ],
@@ -132,7 +130,7 @@ _DEFAULT_APP_SERVICE_PLAN: "AppServicePlanResource" = {
     "sku": {
         "name": "P1v3",
         "capacity": 3,
-    }
+    },
 }
 _DEFAULT_APP_SERVICE_PLAN_EXTENSIONS: ExtensionResources = {"managed_identity_roles": [], "user_roles": []}
 
@@ -212,5 +210,5 @@ class AppServicePlan(Resource, Generic[AppServicePlanResourceType]):
 
         return VERSION
 
-    def _outputs(self, **kwargs) -> Dict[str, Output]:
+    def _outputs(self, **kwargs) -> Dict[str, List[Output]]:
         return {}

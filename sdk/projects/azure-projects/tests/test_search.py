@@ -17,23 +17,25 @@ from azure.search.documents.indexes.aio import SearchIndexClient as AsyncSearchI
 
 TEST_SUB = str(uuid4())
 RG = ResourceSymbol("resourcegroup")
-IDENTITY = {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["managedIdentityId"]: {}}}
+IDENTITY = {"type": "UserAssigned", "userAssignedIdentities": {"identity": {}}}
 
 
 def _get_outputs(suffix="", rg=None):
     outputs = {
-        "resource_id": Output(f"AZURE_SEARCH_ID{suffix.upper()}", "id", ResourceSymbol(f"searchservice{suffix}")),
-        "name": Output(f"AZURE_SEARCH_NAME{suffix.upper()}", "name", ResourceSymbol(f"searchservice{suffix}")),
-        "resource_group": Output(
-            f"AZURE_SEARCH_RESOURCE_GROUP{suffix.upper()}", rg if rg else DefaultResourceGroup().name
-        ),
+        "resource_id": [Output(f"AZURE_SEARCH_ID", "id", ResourceSymbol(f"searchservice{suffix}"))],
+        "name": [Output(f"AZURE_SEARCH_NAME", "name", ResourceSymbol(f"searchservice{suffix}"))],
+        "resource_group": [Output(f"AZURE_SEARCH_RESOURCE_GROUP", rg if rg else DefaultResourceGroup().name)],
     }
     outputs.update(
         {
-            "endpoint": Output(
-                f"AZURE_SEARCH_ENDPOINT{suffix.upper()}",
-                Output("", "name", ResourceSymbol(f"searchservice{suffix}")).format("https://{}.search.windows.net/"),
-            ),
+            "endpoint": [
+                Output(
+                    f"AZURE_SEARCH_ENDPOINT",
+                    Output("", "name", ResourceSymbol(f"searchservice{suffix}")).format(
+                        "https://{}.search.windows.net/"
+                    ),
+                )
+            ],
         }
     )
     return outputs
@@ -190,9 +192,11 @@ def test_search_defaults():
     sku_param = Parameter("AISku", default="standard")
     r = SearchService(location="westus", sku=sku_param, public_network_access="Disabled")
     fields = {}
-    r.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
+    params = dict(GLOBAL_PARAMS)
+    params["managedIdentityId"] = "identity"
+    r.__bicep__(fields, parameters=params)
     field = fields.popitem()[1]
-    r._add_defaults(field, parameters=dict(GLOBAL_PARAMS))
+    r._add_defaults(field, parameters=params)
     assert field.properties == {
         "name": GLOBAL_PARAMS["defaultName"],
         "location": "westus",
@@ -401,15 +405,11 @@ def test_search_app():
     assert app.client._client._config.endpoint == "https://different.search.windows.net/"
     assert app.client._client._config.api_version == "v3.0"
 
-    class TestInfra(AzureInfrastructure):
-        kv: SearchService = SearchService()
-
     class TestApp(AzureApp):
         client_a: SearchIndexClient = field(api_version="v1.5")
         client_b: SearchClient = field(index_name="foo", api_version="v2.5")
 
-    infra = TestInfra(kv=r)
-    app = TestApp.load(infra)
+    app = TestApp.load(config_store={"AZURE_SEARCH_ENDPOINT": "https://test.search.windows.net/"})
     assert isinstance(app.client_a, SearchIndexClient)
     assert app.client_a._client._config.endpoint == "https://test.search.windows.net/"
     assert app.client_a._client._config.api_version == "v1.5"

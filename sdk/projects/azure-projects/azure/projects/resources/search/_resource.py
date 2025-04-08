@@ -241,12 +241,14 @@ class SearchService(_ClientResource, Generic[SearchServiceResourceType]):
         return f"https://{self._settings['name'](config_store=config_store)}.search.windows.net/"
 
     def _outputs(  # type: ignore[override]
-        self, *, symbol: ResourceSymbol, suffix: Optional[str] = None, **kwargs
-    ) -> Dict[str, Output]:
+        self, *, symbol: ResourceSymbol, suffix: str, **kwargs
+    ) -> Dict[str, List[Output]]:
         outputs = super()._outputs(symbol=symbol, suffix=suffix, **kwargs)
-        outputs["endpoint"] = Output(
-            f"AZURE_SEARCH_ENDPOINT{suffix or self._suffix}",
-            Output("", "name", symbol).format("https://{}.search.windows.net/"),
+        outputs["endpoint"].append(
+            Output(
+                f"AZURE_SEARCH_ENDPOINT{suffix}",
+                Output("", "name", symbol).format("https://{}.search.windows.net/"),
+            )
         )
         return outputs
 

@@ -225,7 +225,7 @@ def test_resourcegroup_export_with_config(export_dir):
         test(identity=None),
         output_dir=export_dir[0],
         infra_dir=export_dir[2],
-        config_store={"resourceGroupName": "bar"},
+        parameters={"resourceGroupName": "bar"},
     )
 
 

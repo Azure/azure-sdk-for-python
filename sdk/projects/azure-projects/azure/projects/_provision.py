@@ -40,6 +40,7 @@ _BICEP_PARAMS = {
     "contentVersion": "1.0.0.0",
 }
 
+
 def get_settings() -> Dict[str, Any]:
     args = ["azd", "env", "get-values"]
     try:
@@ -121,7 +122,7 @@ def _init_project(
         yaml_doc["services"][service_name] = {
             "project": ".",
             "language": "py",
-            "host": "appservice", 
+            "host": "appservice",
         }
     with open(azure_yaml, "w", encoding="utf-8") as config:
         config.write(
@@ -277,9 +278,14 @@ def _parse_module(
     component_resources: Dict[str, Union[Resource, AzureInfrastructure]],
     component_fields: FieldsType,
 ) -> None:
-    for resource in component_resources.values():
+    for attr, resource in component_resources.items():
         if isinstance(resource, Resource):
-            resource.__bicep__(component_fields, parameters=parameters, infra_component=component)
+            resource.__bicep__(
+                component_fields,
+                parameters=parameters,
+                infra_component=component,
+                attrname=attr[8:] if attr.startswith("_field__") else attr,
+            )
         else:
             _parse_module(
                 parameters=parameters,
@@ -290,13 +296,14 @@ def _parse_module(
             )
     if component.config_store:
         outputs = [o for f in component_fields.values() for o in f.outputs.values()]
-        for output in outputs:
-            new_setting = ConfigSetting(
-                name=output.name,  # f"{output.name}$azprojects",
-                value=output,
-                store=component.config_store,
-            )
-            new_setting.__bicep__(component_fields, parameters=parameters, infra_component=component)
+        for output_type in outputs:
+            for output in output_type:
+                new_setting = ConfigSetting(
+                    name=output.name,  # f"{output.name}$azprojects",
+                    value=output,
+                    store=component.config_store,
+                )
+                new_setting.__bicep__(component_fields, parameters=parameters, infra_component=component)
 
 
 def _write_resources(  # pylint: disable=too-many-statements
@@ -373,8 +380,10 @@ def _write_resources(  # pylint: disable=too-many-statements
             bicep.write(serialize_dict(field.properties, "  "))
             bicep.write("}\n")
         bicep.write("\n")
-        for output in field.outputs.values():
-            all_outputs.append((output.name, output.type))
-            bicep.write(output.__bicep__())
+        # TODO: Only output the values for config store, then everything can be retrieved from there.
+        for output_type in field.outputs.values():
+            for output in output_type:
+                all_outputs.append((output.name, output.type))
+                bicep.write(output.__bicep__())
         bicep.write("\n\n")
     return all_outputs

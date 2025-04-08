@@ -80,7 +80,7 @@ setup(
     ],
     python_requires=">=3.8",
     entry_points={
-        'console_scripts': ['azproj=azure.projects._command:command'],
+        "console_scripts": ["azproj=azure.projects._command:command"],
     },
     extras_require={
         "mcp": [

@@ -18,31 +18,33 @@ RG = ResourceSymbol("resourcegroup")
 
 def _get_outputs(suffix="", parent="", rg=None):
     outputs = {
-        "resource_id": Output(f"AZURE_AI_CHAT_ID{suffix.upper()}", "id", ResourceSymbol(f"chat_deployment{suffix}")),
-        "name": Output(f"AZURE_AI_CHAT_NAME{suffix.upper()}", "name", ResourceSymbol(f"chat_deployment{suffix}")),
-        "resource_group": Output(
-            f"AZURE_AI_CHAT_RESOURCE_GROUP{suffix.upper()}", rg if rg else DefaultResourceGroup().name
-        ),
+        "resource_id": [Output(f"AZURE_AI_CHAT_ID", "id", ResourceSymbol(f"chat_deployment{suffix}"))],
+        "name": [Output(f"AZURE_AI_CHAT_NAME", "name", ResourceSymbol(f"chat_deployment{suffix}"))],
+        "resource_group": [Output(f"AZURE_AI_CHAT_RESOURCE_GROUP", rg if rg else DefaultResourceGroup().name)],
     }
     outputs.update(
         {
-            "endpoint": Output(
-                f"AZURE_AI_CHAT_ENDPOINT{suffix.upper()}",
-                Output("", "properties.endpoint", ResourceSymbol(f"aiservices_account{parent}")).format(
-                    "{}openai/deployments/"
+            "model_name": [
+                Output(
+                    f"AZURE_AI_CHAT_MODEL_NAME",
+                    "properties.model.name",
+                    ResourceSymbol(f"chat_deployment{suffix}"),
                 )
-                + outputs["name"].format(),  # + "/chat/completions"
-            ),
-            "model_name": Output(
-                f"AZURE_AI_CHAT_MODEL_NAME{suffix.upper()}",
-                "properties.model.name",
-                ResourceSymbol(f"chat_deployment{suffix}"),
-            ),
-            "model_version": Output(
-                f"AZURE_AI_CHAT_MODEL_VERSION{suffix.upper()}",
-                "properties.model.version",
-                ResourceSymbol(f"chat_deployment{suffix}"),
-            ),
+            ],
+            "model_format": [
+                Output(
+                    f"AZURE_AI_CHAT_MODEL_FORMAT",
+                    "properties.model.format",
+                    ResourceSymbol(f"chat_deployment{suffix}"),
+                )
+            ],
+            "model_version": [
+                Output(
+                    f"AZURE_AI_CHAT_MODEL_VERSION",
+                    "properties.model.version",
+                    ResourceSymbol(f"chat_deployment{suffix}"),
+                )
+            ],
         }
     )
     return outputs
@@ -92,6 +94,9 @@ def test_aiservices_chat_properties():
         "sku": {"capacity": 10},
         "properties": {"model": {"name": "gpt-4o"}},
         "parent": ResourceSymbol("aiservices_account"),
+        "dependsOn": [
+            ResourceSymbol("chat_deployment"),
+        ],
     }
     assert fields["aiservices_account.chat_deployment_gpt4o"].outputs == _get_outputs("_gpt4o")
     assert fields["aiservices_account.chat_deployment_gpt4o"].extensions == {}
@@ -255,16 +260,16 @@ def test_aiservices_chat_defaults():
     field = fields.popitem()[1]
     field.add_defaults(field, parameters=dict(GLOBAL_PARAMS))
     assert field.properties == {
-        "name": GLOBAL_PARAMS["defaultName"].format("{}-chat-deployment"),
+        "name": Parameter("aiChatModel", default="o1-mini"),
         "sku": {
-            "name": Parameter("aiChatModelSku", default="Standard"),
-            "capacity": Parameter("aiChatModelCapacity", default=30),
+            "name": Parameter("aiChatModelSku", default="GlobalStandard"),
+            "capacity": Parameter("aiChatModelCapacity", default=1),
         },
         "properties": {
             "model": {
-                "name": Parameter("aiChatModel", default="gpt-4o-mini"),
+                "name": Parameter("aiChatModel", default="o1-mini"),
                 "format": Parameter("aiChatModelFormat", default="OpenAI"),
-                "version": Parameter("aiChatModelVersion", default="2024-07-18"),
+                "version": Parameter("aiChatModelVersion", default="2024-09-12"),
             }
         },
         "parent": ResourceSymbol("aiservices_account"),
@@ -302,6 +307,8 @@ def test_aiservices_chat_export_multiple_deployments(export_dir):
 
 def test_aiservices_chat_client():
     r = AIChat.reference(name="gpt-4o", account="test")
+    r.model_format = "OpenAI"
+    r.model_name = "gpt-4o"
     assert r._settings["name"]() == "gpt-4o"
     client = r.get_client()
     assert isinstance(client, ChatCompletionsClient)
@@ -340,6 +347,8 @@ def test_aiservices_chat_infra():
 
 def test_aiservices_chat_app():
     r = AIChat.reference(name="test", account="test")
+    r.model_format = "OpenAI"
+    r.model_name = "gpt-4o"
 
     class TestApp(AzureApp):
         client: ChatCompletionsClient
@@ -366,24 +375,21 @@ def test_aiservices_chat_app():
     # app = TestApp(client="override_client")
     # assert app.client == "override_client"
 
-    class TestInfra(AzureInfrastructure):
-        ai: AIChat = AIChat()
-
     class TestApp(AzureApp):
         client: ChatCompletionsClient
 
-    infra = TestInfra(ai=r)
-    app = TestApp.load(infra)
+    app = TestApp.load(
+        config_store={
+            "AZURE_AI_AISERVICES_NAME": "test",
+            "AZURE_AI_CHAT_NAME": "gpt-4o",
+            "AZURE_AI_CHAT_MODEL_FORMAT": "OpenAI",
+            "AZURE_AI_CHAT_MODEL_NAME": "gpt-4o",
+        }
+    )
     assert isinstance(app.client, ChatCompletionsClient)
 
     class TestApp(AzureApp):
-        client: ChatCompletionsClient = field(default=TestInfra.ai)
-
-    with pytest.raises(RuntimeError):
-        app = TestApp()
-
-    class TestApp(AzureApp):
-        client: ChatCompletionsClient = field(default=infra.ai)
+        client: ChatCompletionsClient = field(default=r)
 
     app = TestApp()
     assert isinstance(app.client, ChatCompletionsClient)

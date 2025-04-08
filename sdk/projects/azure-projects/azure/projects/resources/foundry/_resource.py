@@ -248,8 +248,8 @@ class MLWorkspace(Resource, Generic[MachineLearningWorkspaceResourceType]):
 
         return VERSION
 
-    def _build_symbol(self) -> ResourceSymbol:
-        symbol = super()._build_symbol()
+    def _build_symbol(self, suffix: Optional[Union[str, Parameter]]) -> ResourceSymbol:
+        symbol = super()._build_symbol(suffix)
         symbol._value = f"{self._kind.lower()}_" + symbol.value  # pylint: disable=protected-access
         return symbol
 
@@ -472,7 +472,7 @@ class AIProject(MLWorkspace[MachineLearningWorkspaceResourceType]):
             **kwargs,
         )
         self._settings["endpoint"] = StoredPrioritizedSetting(
-            name="endpoint", env_vars=_build_envs(self._prefixes, ["ENDPOINT"]), suffix=self._suffix
+            name="endpoint", env_vars=_build_envs(self._prefixes, ["ENDPOINT"]), suffix=self._env_suffix
         )
 
     @classmethod
@@ -488,11 +488,11 @@ class AIProject(MLWorkspace[MachineLearningWorkspaceResourceType]):
         )
         return cast(AIProject[ResourceReference], existing)
 
-    def _outputs(self, *, symbol: ResourceSymbol, suffix: Optional[str] = None, **kwargs) -> Dict[str, Output]:
+    def _outputs(self, *, symbol: ResourceSymbol, suffix: str, **kwargs) -> Dict[str, List[Output]]:
         outputs = super()._outputs(symbol=symbol, suffix=suffix, **kwargs)
 
-        outputs["endpoint"] = Output(
-            f"AZURE_AIFOUNDRY_PROJECT_ENDPOINT{suffix or self._suffix}", "properties.discoveryUrl", symbol
+        outputs["endpoint"].append(
+            Output(f"AZURE_AIFOUNDRY_PROJECT_ENDPOINT{suffix}", "properties.discoveryUrl", symbol)
         )
         return outputs
 

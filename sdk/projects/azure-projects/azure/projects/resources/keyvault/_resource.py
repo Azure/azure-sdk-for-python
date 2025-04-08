@@ -212,7 +212,7 @@ class KeyVault(_ClientResource, Generic[KeyVaultResourceType]):
     def _build_endpoint(self, *, config_store: Optional[Mapping[str, Any]]) -> str:
         return f"https://{self._settings['name'](config_store=config_store)}.vault.azure.net/"
 
-    def _outputs(self, *, symbol: ResourceSymbol, suffix: Optional[str] = None, **kwargs) -> Dict[str, Output]:
+    def _outputs(self, *, symbol: ResourceSymbol, suffix: str, **kwargs) -> Dict[str, List[Output]]:
         outputs = super()._outputs(symbol=symbol, suffix=suffix, **kwargs)
-        outputs["endpoint"] = Output(f"AZURE_KEYVAULT_ENDPOINT{suffix or self._suffix}", "properties.vaultUri", symbol)
+        outputs["endpoint"].append(Output(f"AZURE_KEYVAULT_ENDPOINT{suffix}", "properties.vaultUri", symbol))
         return outputs

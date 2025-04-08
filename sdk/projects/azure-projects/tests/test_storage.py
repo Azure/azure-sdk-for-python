@@ -11,16 +11,14 @@ from azure.projects import Parameter, AzureInfrastructure, export, field, AzureA
 
 TEST_SUB = "6e441d6a-23ce-4450-a4a6-78f8d4f45ce9"
 RG = ResourceSymbol("resourcegroup")
-IDENTITY = {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["managedIdentityId"]: {}}}
+IDENTITY = {"type": "UserAssigned", "userAssignedIdentities": {"identity": {}}}
 
 
 def _get_outputs(suffix="", rg=None):
     return {
-        "resource_id": Output(f"AZURE_STORAGE_ID{suffix.upper()}", "id", ResourceSymbol(f"storageaccount{suffix}")),
-        "name": Output(f"AZURE_STORAGE_NAME{suffix.upper()}", "name", ResourceSymbol(f"storageaccount{suffix}")),
-        "resource_group": Output(
-            f"AZURE_STORAGE_RESOURCE_GROUP{suffix.upper()}", rg if rg else DefaultResourceGroup().name
-        ),
+        "resource_id": [Output(f"AZURE_STORAGE_ID", "id", ResourceSymbol(f"storageaccount{suffix}"))],
+        "name": [Output(f"AZURE_STORAGE_NAME", "name", ResourceSymbol(f"storageaccount{suffix}"))],
+        "resource_group": [Output(f"AZURE_STORAGE_RESOURCE_GROUP", rg if rg else DefaultResourceGroup().name)],
     }
 
 
@@ -176,9 +174,11 @@ def test_storage_defaults():
     access_tier = Parameter("myAccessTier", default="Premium")
     r = StorageAccount(location="westus", sku="Premium_ZRS", access_tier=access_tier)
     fields = {}
-    r.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
+    params = dict(GLOBAL_PARAMS)
+    params["managedIdentityId"] = "identity"
+    r.__bicep__(fields, parameters=params)
     field = fields.popitem()[1]
-    r._add_defaults(field, parameters=dict(GLOBAL_PARAMS))
+    r._add_defaults(field, parameters=params)
     assert field.properties == {
         "name": GLOBAL_PARAMS["defaultName"],
         "location": "westus",

@@ -18,36 +18,43 @@ RG = ResourceSymbol("resourcegroup")
 
 def _get_outputs(suffix="", parent="", rg=None):
     outputs = {
-        "resource_id": Output(
-            f"AZURE_AI_EMBEDDINGS_ID{suffix.upper()}", "id", ResourceSymbol(f"embeddings_deployment{suffix}")
-        ),
-        "name": Output(
-            f"AZURE_AI_EMBEDDINGS_NAME{suffix.upper()}", "name", ResourceSymbol(f"embeddings_deployment{suffix}")
-        ),
-        "resource_group": Output(
-            f"AZURE_AI_EMBEDDINGS_RESOURCE_GROUP{suffix.upper()}", rg if rg else DefaultResourceGroup().name
-        ),
+        "resource_id": [Output(f"AZURE_AI_EMBEDDINGS_ID", "id", ResourceSymbol(f"embeddings_deployment{suffix}"))],
+        "name": [Output(f"AZURE_AI_EMBEDDINGS_NAME", "name", ResourceSymbol(f"embeddings_deployment{suffix}"))],
+        "resource_group": [Output(f"AZURE_AI_EMBEDDINGS_RESOURCE_GROUP", rg if rg else DefaultResourceGroup().name)],
     }
     outputs.update(
         {
-            "endpoint": Output(
-                f"AZURE_AI_EMBEDDINGS_ENDPOINT{suffix.upper()}",
-                Output("", "properties.endpoint", ResourceSymbol(f"aiservices_account{parent}")).format(
-                    "{}openai/deployments/"
+            "endpoint": [
+                Output(
+                    f"AZURE_AI_EMBEDDINGS_ENDPOINT",
+                    Output("", "properties.endpoint", ResourceSymbol(f"aiservices_account{parent}")).format(
+                        "{}openai/deployments/"
+                    )
+                    + outputs["name"][0].format(),
+                    # + "/embeddings",
                 )
-                + outputs["name"].format(),
-                # + "/embeddings",
-            ),
-            "model_name": Output(
-                f"AZURE_AI_EMBEDDINGS_MODEL_NAME{suffix.upper()}",
-                "properties.model.name",
-                ResourceSymbol(f"embeddings_deployment{suffix}"),
-            ),
-            "model_version": Output(
-                f"AZURE_AI_EMBEDDINGS_MODEL_VERSION{suffix.upper()}",
-                "properties.model.version",
-                ResourceSymbol(f"embeddings_deployment{suffix}"),
-            ),
+            ],
+            "model_name": [
+                Output(
+                    f"AZURE_AI_EMBEDDINGS_MODEL_NAME",
+                    "properties.model.name",
+                    ResourceSymbol(f"embeddings_deployment{suffix}"),
+                )
+            ],
+            "model_format": [
+                Output(
+                    f"AZURE_AI_EMBEDDINGS_MODEL_FORMAT",
+                    "properties.model.format",
+                    ResourceSymbol(f"embeddings_deployment{suffix}"),
+                )
+            ],
+            "model_version": [
+                Output(
+                    f"AZURE_AI_EMBEDDINGS_MODEL_VERSION",
+                    "properties.model.version",
+                    ResourceSymbol(f"embeddings_deployment{suffix}"),
+                )
+            ],
         }
     )
     return outputs
@@ -100,6 +107,9 @@ def test_aiservices_embeddings_properties():
         "sku": {"capacity": 10},
         "properties": {"model": {"name": "gpt-4o"}},
         "parent": ResourceSymbol("aiservices_account"),
+        "dependsOn": [
+            ResourceSymbol("embeddings_deployment"),
+        ],
     }
     assert fields["aiservices_account.embeddings_deployment_gpt4o"].outputs == _get_outputs("_gpt4o")
     assert fields["aiservices_account.embeddings_deployment_gpt4o"].extensions == {}
@@ -315,6 +325,8 @@ def test_aiservices_embeddings_export_multiple_deployments(export_dir):
 
 def test_aiservices_embeddings_client():
     r = AIEmbeddings.reference(name="gpt-4o", account="test")
+    r.model_format = "OpenAI"
+    r.model_name = "gpt-4o"
     assert r._settings["name"]() == "gpt-4o"
     client = r.get_client()
     assert isinstance(client, EmbeddingsClient)
@@ -360,7 +372,9 @@ def test_aiservices_embeddings_app():
     with pytest.raises(TypeError):
         app = TestApp()
 
-    app = TestApp(client=r)
+    app = TestApp(
+        client=r, config_store={"AZURE_AI_EMBEDDINGS_ENDPOINT": "https://test.openai.azure.com/openai/deployments/test"}
+    )
     assert isinstance(app.client, EmbeddingsClient)
     assert app.client._config.endpoint == "https://test.openai.azure.com/openai/deployments/test"  # /embeddings"
     assert app.client._config.credential
@@ -379,24 +393,18 @@ def test_aiservices_embeddings_app():
     # app = TestApp(client="override_client")
     # assert app.client == "override_client"
 
-    class TestInfra(AzureInfrastructure):
-        ai: AIEmbeddings = AIEmbeddings()
-
     class TestApp(AzureApp):
         client: EmbeddingsClient
 
-    infra = TestInfra(ai=r)
-    app = TestApp.load(infra)
+    app = TestApp.load(
+        config_store={"AZURE_AI_EMBEDDINGS_ENDPOINT_FOO": "https://test.openai.azure.com/openai/deployments/test"}
+    )
     assert isinstance(app.client, EmbeddingsClient)
 
     class TestApp(AzureApp):
-        client: EmbeddingsClient = field(default=TestInfra.ai)
+        client: EmbeddingsClient = field(default=r)
 
-    with pytest.raises(RuntimeError):
-        app = TestApp()
-
-    class TestApp(AzureApp):
-        client: EmbeddingsClient = field(default=infra.ai)
-
-    app = TestApp()
+    app = TestApp(
+        config_store={"AZURE_AI_EMBEDDINGS_ENDPOINT_FOO": "https://test.openai.azure.com/openai/deployments/test"}
+    )
     assert isinstance(app.client, EmbeddingsClient)

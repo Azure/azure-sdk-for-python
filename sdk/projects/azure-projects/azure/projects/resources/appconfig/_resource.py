@@ -229,9 +229,12 @@ class ConfigStore(_ClientResource, Generic[ConfigStoreResourceType]):
     def _build_endpoint(self, *, config_store: Optional[Mapping[str, Any]]) -> str:
         return f"https://{self._settings['name'](config_store=config_store)}.azconfig.io"
 
-    def _outputs(self, *, symbol: ResourceSymbol, suffix: Optional[str] = None, **kwargs) -> Dict[str, Output]:
+    def _outputs(self, *, symbol: ResourceSymbol, suffix: str, **kwargs) -> Dict[str, List[Output]]:
+        if suffix == "_CONFIG_STORE":
+            # This is the default config store attrname - let's just ignore it.
+            suffix = ""
         outputs = super()._outputs(symbol=symbol, suffix=suffix, **kwargs)
-        outputs["endpoint"] = Output(f"AZURE_APPCONFIG_ENDPOINT{suffix or self._suffix}", "properties.endpoint", symbol)
+        outputs["endpoint"].append(Output(f"AZURE_APPCONFIG_ENDPOINT{suffix}", "properties.endpoint", symbol))
         return outputs
 
     @overload

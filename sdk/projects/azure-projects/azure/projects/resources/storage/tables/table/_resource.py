@@ -27,6 +27,7 @@ from typing_extensions import TypeVar, Unpack, TypedDict
 from ....._parameters import GLOBAL_PARAMS
 from ...._identifiers import ResourceIdentifiers
 from ....._bicep.expressions import Output, Parameter, ResourceSymbol
+from ....._bicep.utils import clean_name
 from ....._resource import _ClientResource, ExtensionResources, ResourceReference
 from .. import TableStorage
 
@@ -50,17 +51,17 @@ class TableKwargs(TypedDict, total=False):
                 Parameter,
                 "RoleAssignment",
                 Literal[
-                    'Contributor',
-                    'Owner',
-                    'Reader',
-                    'Reader and Data Access',
-                    'Role Based Access Control Administrator',
-                    'Storage Account Backup Contributor',
-                    'Storage Account Contributor',
-                    'Storage Account Key Operator Service Role',
-                    'Storage Table Data Contributor',
-                    'Storage Table Data Reader',
-                    'User Access Administrator',
+                    "Contributor",
+                    "Owner",
+                    "Reader",
+                    "Reader and Data Access",
+                    "Role Based Access Control Administrator",
+                    "Storage Account Backup Contributor",
+                    "Storage Account Contributor",
+                    "Storage Account Key Operator Service Role",
+                    "Storage Table Data Contributor",
+                    "Storage Table Data Reader",
+                    "User Access Administrator",
                 ],
             ]
         ],
@@ -73,17 +74,17 @@ class TableKwargs(TypedDict, total=False):
                 Parameter,
                 "RoleAssignment",
                 Literal[
-                    'Contributor',
-                    'Owner',
-                    'Reader',
-                    'Reader and Data Access',
-                    'Role Based Access Control Administrator',
-                    'Storage Account Backup Contributor',
-                    'Storage Account Contributor',
-                    'Storage Account Key Operator Service Role',
-                    'Storage Table Data Contributor',
-                    'Storage Table Data Reader',
-                    'User Access Administrator',
+                    "Contributor",
+                    "Owner",
+                    "Reader",
+                    "Reader and Data Access",
+                    "Role Based Access Control Administrator",
+                    "Storage Account Backup Contributor",
+                    "Storage Account Contributor",
+                    "Storage Account Key Operator Service Role",
+                    "Storage Table Data Contributor",
+                    "Storage Table Data Reader",
+                    "User Access Administrator",
                 ],
             ]
         ],
@@ -173,6 +174,15 @@ class Table(_ClientResource, Generic[TableResourceType]):
         existing = super().reference(name=name, parent=parent)
         return cast(Table[ResourceReference], existing)
 
+    def _build_symbol(self, suffix: Optional[Union[str, Parameter]]) -> ResourceSymbol:
+        suffix_str = ""
+        account_name = self.parent.parent.properties.get("name")
+        if account_name:
+            suffix_str += f"_{clean_name(account_name).lower()}"
+        if suffix:
+            suffix_str += f"_{clean_name(suffix).lower()}"
+        return ResourceSymbol(f"table{suffix_str}")
+
     def _build_endpoint(self, *, config_store: Optional[Mapping[str, Any]]) -> str:
         name = self.parent.parent._settings["name"]  # pylint: disable=protected-access
         return (
@@ -184,14 +194,16 @@ class Table(_ClientResource, Generic[TableResourceType]):
         self,
         *,
         symbol: ResourceSymbol,
-        suffix: Optional[str] = None,
+        suffix: str,
         parents: Tuple[ResourceSymbol, ...],
         **kwargs,
-    ) -> Dict[str, Output]:
+    ) -> Dict[str, List[Output]]:
         outputs = super()._outputs(symbol=symbol, suffix=suffix, **kwargs)
-        outputs["endpoint"] = Output(
-            f"AZURE_TABLE_ENDPOINT{suffix or self._suffix}",
-            Output("", "properties.primaryEndpoints.table", parents[-1]).format() + outputs["name"].format(),
+        outputs["endpoint"].append(
+            Output(
+                f"AZURE_TABLE_ENDPOINT{suffix}",
+                Output("", "properties.primaryEndpoints.table", parents[-1]).format() + outputs["name"][0].format(),
+            )
         )
         return outputs
 

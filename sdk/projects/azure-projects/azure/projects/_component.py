@@ -416,7 +416,7 @@ class AzureAppComponent(type):
                     # which case we don't want to try and extract a client.
                     # TODO: This wont work for string annotations or Optional/Union.
                     # Because of how we merge annotations in get_mro_annotations, config_store and closeables should
-                    # already be processed by the time we get to any resources defined the app.
+                    # already be processed by the time we get to any resources defined by the app.
                     client, credential = value.get_client(
                         annotation,
                         # We check both the local dev_env provided from load/provision and the provided
@@ -463,7 +463,6 @@ InfrastructureType = TypeVar("InfrastructureType", bound=AzureInfrastructure, de
 class AzureApp(Generic[InfrastructureType], metaclass=AzureAppComponent):
     # TODO: As these will have classattribute defaults, need to test behaviour
     # Might need to build a specifier object or use field
-    _infra: Optional[InfrastructureType] = field(alias="infra", default=None, repr=False)
     _closeables: List[Union[SyncClient, AsyncClient]] = field(default_factory=list, init=False, repr=False)
     _repr_str: str = field(default="", init=False, repr=False)
     config_store: Mapping[str, Any] = field(default_factory=dict, repr=False)
@@ -472,46 +471,29 @@ class AzureApp(Generic[InfrastructureType], metaclass=AzureAppComponent):
         for key, value in kwargs.items():
             object.__setattr__(self, key, value)
 
-    @property
-    def infra(self) -> InfrastructureType:
-        if self._infra is None:
-            raise ValueError("AzureApp has no associated Infrastructure object.")
-        return self._infra
-
     @classmethod
     def load(
-        cls,
-        attr_map: Optional[Mapping[str, str]] = None,
-        **kwargs
+        cls, attr_map: Optional[Mapping[str, str]] = None, *, config_store: Optional[Mapping[str, Any]] = None, **kwargs
     ) -> Self:
         attr_map = attr_map or {}
         dev_env = kwargs.pop("__dev_env", None)
         # We only want to do this once per instance, so we'll pass it through to the metaclass.
         mro_annotations = kwargs.pop("__mro_annotations", None) or get_mro_annotations(cls, AzureApp)
-        fields = []
+        new_kwargs = {}
         for attr, (annotation, _) in mro_annotations.items():
             annotation = get_optional_annotation(annotation)
             if annotation and annotation.__name__ in RESOURCE_FROM_CLIENT_ANNOTATION:
                 resource_cls = RESOURCE_FROM_CLIENT_ANNOTATION[annotation.__name__].resource()
-                attr_map[attr] = attr
-                fields.append((attr, resource_cls, field(default=resource_cls())))
+                new_kwargs[attr] = resource_cls(env_suffix=attr_map.get(attr))
             elif attr == "config_store":
                 # We special case this one.
-                attr_map[attr] = attr
-        infra = make_infra(cls.__name__, fields)()  # TODO: Remove
-        if attr_map:
-            kwargs = {app_attr: getattr(infra, infra_attr) for app_attr, infra_attr in attr_map.items()}
-        # else:
-        #     infra_resources = {r.identifier: r for r in infra.__dict__.values() if isinstance(r, Resource)}
-        #     kwargs = {}
-        #     for attr, (annotation, _) in mro_annotations.items():
-        #         annotation = get_optional_annotation(annotation)
-        #         # TODO: This doesn't support alias
-        #         if (
-        #             annotation and annotation.__name__ in RESOURCE_FROM_CLIENT_ANNOTATION
-        #             and RESOURCE_FROM_CLIENT_ANNOTATION[annotation.__name__] in infra_resources
-        #         ):
-        #             kwargs[attr] = infra_resources[RESOURCE_FROM_CLIENT_ANNOTATION[annotation.__name__]]
+                # TODO: This is currently replacing any remote config store. Instead we should still
+                # probably look for a remote store and combine them.
+                if config_store:
+                    new_kwargs[attr] = config_store
+                else:
+                    new_kwargs[attr] = ConfigStore()
+
         if dev_env is None:
             # We use a ChainMap here so that it can be added to the Infra ConfigStore resource in the
             # constructor purely during the client construction. This wont be persisted to the
@@ -519,8 +501,9 @@ class AzureApp(Generic[InfrastructureType], metaclass=AzureAppComponent):
             # the deployment.
             # If there's a config_store in the infra, then that will ultimately be placed first in the chain.
             from ._provision import get_settings
+
             dev_env = ChainMap(get_settings())
-        return cls(infra=infra, __dev_env=dev_env, __mro_annotations=mro_annotations, **kwargs)
+        return cls(__dev_env=dev_env, __mro_annotations=mro_annotations, **new_kwargs)
 
     @classmethod
     def provision(
@@ -537,6 +520,7 @@ class AzureApp(Generic[InfrastructureType], metaclass=AzureAppComponent):
         if not infra:
             try:
                 from infra import build_infra  # type: ignore[import]
+
                 infra = build_infra()
             except ImportError:
                 attr_map = {}
@@ -549,13 +533,14 @@ class AzureApp(Generic[InfrastructureType], metaclass=AzureAppComponent):
                         fields.append((attr, resource_cls, field(default=resource_cls())))
                     elif attr == "config_store":
                         # We special case this one.
-                        attr_map[attr] = attr
+                        # TODO: Pretty sure this shouldn't be in the attr_map
+                        pass
                 infra = make_infra(cls.__name__, fields)()
         dev_env = provision(infra, parameters=parameters, **kwargs)
         # The dev env returned here is a ChainMap of the deployed settings along with the user
-        # provided config. If there's a config_store provided with the infra deployment, this
+        # provided parameters. If there's a config_store provided with the infra deployment, this
         # will be added to the front of the chain.
-        return cls.load(infra, attr_map=attr_map, __dev_env=dev_env, __mro_annotations=mro_annotations)
+        return cls.load(attr_map=attr_map, __dev_env=dev_env, __mro_annotations=mro_annotations)
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self._repr_str})"

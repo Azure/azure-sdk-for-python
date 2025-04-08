@@ -1,4 +1,3 @@
-
 import asyncio
 import json
 import sys
@@ -23,9 +22,10 @@ async def list_tools(filename):
     from mcp.client.session import ClientSession
     from mcp.client.stdio import StdioServerParameters, stdio_client
 
-    async with stdio_client(
-        StdioServerParameters(command="azproj", args=[filename, "mcp", "--stdio"])
-    ) as (read, write):
+    async with stdio_client(StdioServerParameters(command="azproj", args=[filename, "mcp", "--stdio"])) as (
+        read,
+        write,
+    ):
         async with ClientSession(read, write) as session:
             await session.initialize()
             # List available tools
@@ -40,9 +40,10 @@ async def call_tool(filename, tool_name):
     from mcp.client.session import ClientSession
     from mcp.client.stdio import StdioServerParameters, stdio_client
 
-    async with stdio_client(
-        StdioServerParameters(command="azproj", args=[filename, "mcp", "--stdio"])
-    ) as (read, write):
+    async with stdio_client(StdioServerParameters(command="azproj", args=[filename, "mcp", "--stdio"])) as (
+        read,
+        write,
+    ):
         async with ClientSession(read, write) as session:
             await session.initialize()
 
@@ -51,7 +52,6 @@ async def call_tool(filename, tool_name):
                 pprint.pp([json.loads(c.text) for c in result.content])
             except json.JSONDecodeError:
                 pprint.pp([c.text for c in result.content])
-
 
 
 async def main(app_class):
@@ -71,17 +71,18 @@ async def main(app_class):
     mcp_server = FastMCP(app_class.__name__, lifespan=app_lifespan)
     for attr, (annotation, _) in get_mro_annotations(app_class, AzureApp).items():
         if attr == "config_store":
+
             def get_config(ctx: Context):
                 config = getattr(ctx.request_context.lifespan_context, "config_store")
                 return dict(config)
 
-            description=f"Get the configuration settings for endpoints and resources for {app_class.__name__}."
+            description = f"Get the configuration settings for endpoints and resources for {app_class.__name__}."
             mcp_server.add_tool(get_config, name=f"{app_class.__name__}_get_config", description=description)
             continue
         if annotation.__name__ in RESOURCE_FROM_CLIENT_ANNOTATION:
             for name, value in getmembers(annotation):
                 if inspect.isfunction(value):
-                    
+
                     if name.startswith("get_") and not name.endswith("_client"):
                         sig = inspect.signature(value)
                         parameters = [p for p in sig.parameters.values() if p.name not in ["self", "kwargs"]]
@@ -98,10 +99,14 @@ async def main(app_class):
                                 return result
 
                         func_name = f"{app_class.__name__.lower()}_{attr}_{name}"
-                        wrapped = create_function(new_sig, functools.partial(get_func, attr, name), func_name=func_name, qualname=func_name)
+                        wrapped = create_function(
+                            new_sig, functools.partial(get_func, attr, name), func_name=func_name, qualname=func_name
+                        )
                         description = value.__doc__.split("\n\n")[0] + f" Operation for {app_class.__name__}.{attr}."
-                        mcp_server.add_tool(wrapped, name=f"{app_class.__name__}_{attr}_{name}", description=description)
-                    
+                        mcp_server.add_tool(
+                            wrapped, name=f"{app_class.__name__}_{attr}_{name}", description=description
+                        )
+
                     elif name.startswith("list_"):
                         sig = inspect.signature(value)
                         parameters = [p for p in sig.parameters.values() if p.name not in ["self", "kwargs"]]
@@ -113,11 +118,17 @@ async def main(app_class):
                             client_method = getattr(client, method_name)
                             paged = client_method(*args, **kwargs)
                             return list(paged)
-                            
+
                         func_name = f"{app_class.__name__.lower()}_{attr}_{name}"
-                        wrapped = create_function(new_sig, functools.partial(get_func, attr, name), func_name=func_name, qualname=func_name)
-                        mcp_server.add_tool(wrapped, name=f"{app_class.__name__}_{attr}_{name}", description=value.__doc__.split("\n\n")[0])
-    
+                        wrapped = create_function(
+                            new_sig, functools.partial(get_func, attr, name), func_name=func_name, qualname=func_name
+                        )
+                        mcp_server.add_tool(
+                            wrapped,
+                            name=f"{app_class.__name__}_{attr}_{name}",
+                            description=value.__doc__.split("\n\n")[0],
+                        )
+
                     elif name.startswith("download_"):
                         sig = inspect.signature(value)
                         parameters = [p for p in sig.parameters.values() if p.name not in ["self", "kwargs"]]
@@ -129,33 +140,37 @@ async def main(app_class):
                             client_method = getattr(client, method_name)
                             download = client_method(*args, **kwargs)
                             return b"".join([chunk for chunk in download])
-                            
+
                         func_name = f"{app_class.__name__.lower()}_{attr}_{name}"
-                        wrapped = create_function(new_sig, functools.partial(get_func, attr, name), func_name=func_name, qualname=func_name)
-                        mcp_server.add_tool(wrapped, name=f"{app_class.__name__}_{attr}_{name}", description=value.__doc__.split("\n\n")[0])
+                        wrapped = create_function(
+                            new_sig, functools.partial(get_func, attr, name), func_name=func_name, qualname=func_name
+                        )
+                        mcp_server.add_tool(
+                            wrapped,
+                            name=f"{app_class.__name__}_{attr}_{name}",
+                            description=value.__doc__.split("\n\n")[0],
+                        )
     return mcp_server
 
 
 def command():
     parser = ArgumentParser(
-        prog="azproj",
-        usage="azproj <filename> <command> [options]",
-        description="Azure Projects CLI"
+        prog="azproj", usage="azproj <filename> <command> [options]", description="Azure Projects CLI"
     )
-    parser.add_argument('filename')
-    subparsers = parser.add_subparsers(dest='command', required=True)
-    provision = subparsers.add_parser('provision')
+    parser.add_argument("filename")
+    subparsers = parser.add_subparsers(dest="command", required=True)
+    provision = subparsers.add_parser("provision")
     provision.add_argument("-p", "--parameters", type=str, help="JSON file with parameters for the provision command.")
-    deploy = subparsers.add_parser('deploy')
-    down = subparsers.add_parser('down')
+    deploy = subparsers.add_parser("deploy")
+    down = subparsers.add_parser("down")
     down.add_argument("--purge", action="store_true", help="Purge the resources instead of deleting them.")
-    mcp = subparsers.add_parser('mcp')
+    mcp = subparsers.add_parser("mcp")
     mcp.add_argument("--port", type=int, default=8000, help="Port to run the MCP server on.")
     mcp.add_argument("--stdio", action="store_true", help="Run the MCP server with stdio transport.")
-    mcp_subparsers = mcp.add_subparsers(dest='mcpcommand')
-    run = mcp_subparsers.add_parser('run')
-    run.add_argument('tool', help="The name of the tool to run.")
-    list_tools = mcp_subparsers.add_parser('list_tools')
+    mcp_subparsers = mcp.add_subparsers(dest="mcpcommand")
+    run = mcp_subparsers.add_parser("run")
+    run.add_argument("tool", help="The name of the tool to run.")
+    list_tools = mcp_subparsers.add_parser("list_tools")
     args = parser.parse_args()
 
     if args.command == "provision":
@@ -173,6 +188,7 @@ def command():
         try:
             builder = getattr(module, "build_infra")
             from ._provision import provision
+
             provision(builder(), parameters=provision_params)
             return
         except AttributeError:
@@ -188,6 +204,7 @@ def command():
             # TODO: We shouldn't need to rebuild the infra here.
             builder = getattr(module, "build_infra")
             from ._provision import deploy
+
             deploy(builder())
             return
         except AttributeError:
@@ -205,12 +222,14 @@ def command():
             # We'll start by looking for instances of AzureInfrastructure.
             if isinstance(value, AzureInfrastructure):
                 from ._provision import deprovision
+
                 deprovision(value, purge=args.purge)
                 return
         for name, value in module_contents:
             # If we found no infra definitions to deploy, we'll look for AzureApp classes.
             if inspect.isclass(value) and issubclass(value, AzureApp) and value is not AzureApp:
                 from ._provision import deprovision
+
                 deprovision(value.__name__, purge=args.purge)
                 return
 
@@ -221,7 +240,7 @@ def command():
             if inspect.isclass(value) and issubclass(value, AzureApp) and value is not AzureApp:
                 app_class = value
                 break
-        
+
         if app_class is None:
             print("No AzureApp found in the module.")
             return

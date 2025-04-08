@@ -6,7 +6,7 @@
 # pylint: disable=arguments-differ
 
 from collections import defaultdict
-from typing import TYPE_CHECKING, Any, Generic, Literal, Mapping, Union, Optional, Dict, cast
+from typing import TYPE_CHECKING, Any, Generic, List, Literal, Mapping, Union, Optional, Dict, cast
 from typing_extensions import TypeVar, Unpack, TypedDict
 
 from .._identifiers import ResourceIdentifiers
@@ -90,11 +90,11 @@ class UserAssignedIdentity(Resource, Generic[UserAssignedIdentityResourceType]):
         existing = super().reference(name=name, resource_group=resource_group)
         return cast(UserAssignedIdentity[ResourceReference], existing)
 
-    def _build_symbol(self):
-        symbol = super()._build_symbol()
+    def _build_symbol(self, suffix: Optional[Union[str, Parameter]]):
+        symbol = super()._build_symbol(suffix)
         return ResourceSymbol(symbol._value, principal_id=True)  # pylint: disable=protected-access
 
-    def _outputs(self, **kwargs) -> Dict[str, Output]:
+    def _outputs(self, **kwargs) -> Dict[str, List[Output]]:
         # TODO: This results in duplicate outputs if there's multiple identities.
         # Not sure if it's really needed as most people wont be using managedidentitycredential locally.
         # return {'client_id': Output("AZURE_CLIENT_ID", "properties.clientId", symbol)}

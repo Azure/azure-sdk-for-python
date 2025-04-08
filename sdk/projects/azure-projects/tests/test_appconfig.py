@@ -15,23 +15,21 @@ from azure.appconfiguration.aio import AzureAppConfigurationClient as AsyncAzure
 
 TEST_SUB = str(uuid4())
 RG = ResourceSymbol("resourcegroup")
-IDENTITY = {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["managedIdentityId"]: {}}}
+IDENTITY = {"type": "UserAssigned", "userAssignedIdentities": {"identity": {}}}
 
 
 def _get_outputs(suffix="", rg=None):
     outputs = {
-        "resource_id": Output(
-            f"AZURE_APPCONFIG_ID{suffix.upper()}", "id", ResourceSymbol(f"configurationstore{suffix}")
-        ),
-        "name": Output(f"AZURE_APPCONFIG_NAME{suffix.upper()}", "name", ResourceSymbol(f"configurationstore{suffix}")),
-        "resource_group": Output(
-            f"AZURE_APPCONFIG_RESOURCE_GROUP{suffix.upper()}", rg if rg else DefaultResourceGroup().name
-        ),
-        "endpoint": Output(
-            f"AZURE_APPCONFIG_ENDPOINT{suffix.upper()}",
-            "properties.endpoint",
-            ResourceSymbol(f"configurationstore{suffix}"),
-        ),
+        "resource_id": [Output(f"AZURE_APPCONFIG_ID", "id", ResourceSymbol(f"configurationstore{suffix}"))],
+        "name": [Output(f"AZURE_APPCONFIG_NAME", "name", ResourceSymbol(f"configurationstore{suffix}"))],
+        "resource_group": [Output(f"AZURE_APPCONFIG_RESOURCE_GROUP", rg if rg else DefaultResourceGroup().name)],
+        "endpoint": [
+            Output(
+                f"AZURE_APPCONFIG_ENDPOINT",
+                "properties.endpoint",
+                ResourceSymbol(f"configurationstore{suffix}"),
+            )
+        ],
     }
     return outputs
 
@@ -191,9 +189,11 @@ def test_appconfig_defaults():
     sku_param = Parameter("ConfigSku", default="Standard")
     r = ConfigStore(location="westus", sku=sku_param, public_network_access="Disabled")
     fields = {}
-    r.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
+    params = dict(GLOBAL_PARAMS)
+    params["managedIdentityId"] = "identity"
+    r.__bicep__(fields, parameters=params)
     field = fields.popitem()[1]
-    r._add_defaults(field, parameters=dict(GLOBAL_PARAMS))
+    r._add_defaults(field, parameters=params)
     assert field.properties == {
         "name": GLOBAL_PARAMS["defaultName"],
         "location": "westus",
@@ -385,14 +385,10 @@ def test_appconfig_app():
     assert app.client._impl._config.endpoint == "https://different.azconfig.io"
     assert app.client._impl._config.api_version == "v3.0"
 
-    class TestInfra(AzureInfrastructure):
-        kv: ConfigStore = ConfigStore()
-
     class TestApp(AzureApp):
         client: AzureAppConfigurationClient = field(api_version="v1.5")
 
-    infra = TestInfra(kv=r)
-    app = TestApp.load(infra)
+    app = TestApp.load(config_store={"AZURE_APPCONFIG_ENDPOINT": "https://test.azconfig.io"})
     assert isinstance(app.client, AzureAppConfigurationClient)
     assert app.client._impl._config.endpoint == "https://test.azconfig.io"
     assert app.client._impl._config.api_version == "v1.5"

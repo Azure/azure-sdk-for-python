@@ -9,6 +9,7 @@ from typing import (
     TYPE_CHECKING,
     Dict,
     Generic,
+    List,
     Literal,
     Mapping,
     Union,
@@ -19,7 +20,8 @@ from typing import (
 from typing_extensions import TypeVar, Unpack, TypedDict
 
 from ..._identifiers import ResourceIdentifiers
-from ...._bicep.expressions import Output, Parameter
+from ...._bicep.expressions import Output, Parameter, ResourceSymbol
+from ...._bicep.utils import clean_name
 from ...._resource import Resource, ExtensionResources, ResourceReference
 from .. import ConfigStore
 
@@ -124,5 +126,14 @@ class ConfigSetting(Resource, Generic[ConfigSettingResourceType]):
         existing = super().reference(name=name, parent=parent)
         return cast(ConfigSetting[ResourceReference], existing)
 
-    def _outputs(self, **kwargs) -> Dict[str, Output]:
+    def _build_symbol(self, suffix: Optional[Union[str, Parameter]]) -> ResourceSymbol:
+        suffix_str = ""
+        account_name = self.parent.properties.get("name")
+        if account_name:
+            suffix_str += f"_{clean_name(account_name).lower()}"
+        if suffix:
+            suffix_str += f"_{clean_name(suffix).lower()}"
+        return ResourceSymbol(f"keyvalue{suffix_str}")
+
+    def _outputs(self, **kwargs) -> Dict[str, List[Output]]:
         return {}

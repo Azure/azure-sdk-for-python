@@ -204,11 +204,6 @@ def add_extensions(fields: "FieldsType", parameters: Dict[str, Parameter]):
             for f in fields.values()
             if f.identifier == ResourceIdentifiers.config_setting and f.properties["parent"] == store.symbol
         ]
-        rg = [f for f in fields.values() if f.symbol == store.resource_group]
-        if not rg or not rg[0].existing:
-            symbol = ResourceGroup()
-        else:
-            symbol = ResourceGroup(rg[0].properties["name"])
         if keyvalues:
             _build_role_assignment(
                 clean_name("Microsoft.Resources/resourceGroups"),
@@ -217,7 +212,7 @@ def add_extensions(fields: "FieldsType", parameters: Dict[str, Parameter]):
                 name=store.properties["name"],
                 parent=None,
                 parameters=parameters,
-                symbol=symbol,
+                symbol=ResourceGroup(),
                 principal_id=GLOBAL_PARAMS["principalId"],
                 principal_type="User",
             )

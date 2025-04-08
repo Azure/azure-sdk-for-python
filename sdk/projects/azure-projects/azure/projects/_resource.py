@@ -40,7 +40,14 @@ from azure.core.settings import _unset
 from .resources._identifiers import ResourceIdentifiers
 from ._utils import run_coroutine_sync
 from ._setting import StoredPrioritizedSetting
-from ._bicep.expressions import Output, Expression, Parameter, ResourceSymbol, ResourceGroup as RGSymbol
+from ._bicep.expressions import (
+    Output,
+    Expression,
+    Parameter,
+    PlaceholderParameter,
+    ResourceSymbol,
+    ResourceGroup as RGSymbol,
+)
 from ._bicep.utils import clean_name
 
 if TYPE_CHECKING:
@@ -93,7 +100,7 @@ class FieldType(NamedTuple):
     version: str
     properties: Dict[str, Any]
     symbol: ResourceSymbol
-    outputs: Dict[str, Output]
+    outputs: Dict[str, List[Output]]
     resource_group: Optional[ResourceSymbol]
     extensions: "ExtensionResources"
     existing: bool
@@ -152,7 +159,9 @@ class Resource:  # pylint: disable=too-many-instance-attributes
         # The prefix identifies the service/resource and the suffix is unique to this
         # specific resource (using either the name or name parameter if present).
         self._prefixes: List[str] = kwargs.pop("service_prefix", [])
-        self._suffix = self._build_suffix(self.properties.get("name"))
+        self._env_suffix = kwargs.pop("env_suffix", None)
+        if self._env_suffix:
+            self._env_suffix = f"_{self._env_suffix.upper()}"
 
         # These determine how resource properties are handled when building up the bicep
         # definitions for the same resource declared in multiple places. Anything in the
@@ -165,13 +174,13 @@ class Resource:  # pylint: disable=too-many-instance-attributes
                 "name",
                 env_vars=_build_envs(self._prefixes, ["NAME"]),
                 hook=self._get_default_name,
-                suffix=self._suffix,
+                suffix=self._env_suffix,
             ),
             "resource_id": StoredPrioritizedSetting(
                 name="resource_id",
                 env_vars=_build_envs(self._prefixes, ["ID", "RESOURCE_ID"]),
                 hook=self._build_resource_id,
-                suffix=self._suffix,
+                suffix=self._env_suffix,
             ),
         }
         if self.parent:
@@ -184,12 +193,12 @@ class Resource:  # pylint: disable=too-many-instance-attributes
             self._settings["resource_group"] = StoredPrioritizedSetting(
                 name="resource_group",
                 env_vars=_build_envs(self._prefixes, ["RESOURCE_GROUP"]),
-                suffix=self._suffix,
+                suffix=self._env_suffix,
             )
             self._settings["subscription"] = StoredPrioritizedSetting(
                 name="subscription",
                 env_var="AZURE_SUBSCRIPTION_ID",
-                suffix=self._suffix,
+                suffix=self._env_suffix,
                 default=self.properties.get("subscription", _unset),
             )
         if kwargs:
@@ -247,29 +256,16 @@ class Resource:  # pylint: disable=too-many-instance-attributes
             properties["subscription"] = subscription
         return cls(properties, parent=parent, existing=True)
 
-    def _build_suffix(self, value: Optional[Union[str, Parameter]]) -> str:
-        # pylint: disable=protected-access
-        if value:
-            # TODO: ComponentFields will have no suffix - this could lead to naming conflicts
-            if isinstance(value, str):
-                if self.parent:
-                    return self.parent._suffix + "_" + clean_name(value).upper()
-                return "_" + clean_name(value).upper()
-            if value.value:
-                if self.parent:
-                    return self.parent._suffix + "_" + clean_name(value.value).upper()
-                return "_" + clean_name(value.value).upper()
-        if self.parent:
-            return self.parent._suffix
-        return ""
-
-    def _build_symbol(self) -> ResourceSymbol:
+    def _build_symbol(self, suffix: Optional[Union[str, Parameter]]) -> ResourceSymbol:
+        suffix_str = ""
+        if suffix:
+            suffix_str = "_" + clean_name(suffix).lower()
         resource_ref = self.resource.split("/")[-1].lower()
         if resource_ref.endswith("ies"):
             resource_ref = resource_ref.rstrip("ies") + "y"
         else:
             resource_ref = resource_ref.rstrip("s")
-        symbol = f"{resource_ref}{self._suffix.lower()}" if self._suffix else resource_ref
+        symbol = f"{resource_ref}{suffix_str}"
         principal_id = self.properties.get("identity", {}).get("type", "").startswith("SystemAssigned")
         return ResourceSymbol(symbol, principal_id=principal_id)
 
@@ -289,27 +285,26 @@ class Resource:  # pylint: disable=too-many-instance-attributes
             return self.properties["name"]
         except KeyError:
             pass
-        try:
-            # TODO: How to access stored defaults?
-            return self.DEFAULTS["name"]
-        except KeyError:
-            pass
+        # try:
+        #     # TODO: How to access stored defaults?
+        #     return self.DEFAULTS["name"]
+        # except KeyError:
+        #     pass
         raise RuntimeError("Resource name not known.")
 
     def _outputs(
-        self, *, symbol: ResourceSymbol, suffix: Optional[str] = None, **kwargs  # pylint: disable=unused-argument
-    ) -> Dict[str, Output]:
-        suffix = suffix or self._suffix
-        outputs = {
-            "resource_id": Output(f"AZURE_{self._prefixes[0].upper()}_ID{suffix}", "id", symbol),
-            "name": Output(f"AZURE_{self._prefixes[0].upper()}_NAME{suffix}", "name", symbol),
-        }
+        self, *, symbol: ResourceSymbol, suffix: str, **kwargs  # pylint: disable=unused-argument
+    ) -> Dict[str, List[Output]]:
+        outputs = defaultdict(list)
+        outputs["resource_id"] = [Output(f"AZURE_{self._prefixes[0].upper()}_ID{suffix}", "id", symbol)]
+        outputs["name"] = [Output(f"AZURE_{self._prefixes[0].upper()}_NAME{suffix}", "name", symbol)]
+
         rg_output = f"AZURE_{self._prefixes[0].upper()}_RESOURCE_GROUP{suffix}"
-        outputs["resource_group"] = Output(rg_output, RGSymbol().name)
+        outputs["resource_group"] = [Output(rg_output, RGSymbol().name)]
         if self._existing:
             try:
                 rg_name = self._settings["resource_group"]()  # TODO: Is it a problem that there's no config?
-                outputs["resource_group"] = Output(rg_output, rg_name)
+                outputs["resource_group"] = [Output(rg_output, rg_name)]
             except RuntimeError:
                 pass
         return outputs
@@ -368,8 +363,12 @@ class Resource:  # pylint: disable=too-many-instance-attributes
         name: Optional[Union[str, Expression]] = None,
         parent: Optional[ResourceSymbol] = None,
     ) -> Optional[FieldType]:
+        if resource:
+            resource_types = [resource]
+        else:
+            resource_types = [self.identifier]
         matches = self._find_all_resource_match(
-            fields, resource_types=[resource], resource_group=resource_group, name=name, parent=parent
+            fields, resource_types=resource_types, resource_group=resource_group, name=name, parent=parent
         )
         try:
             return next(matches)
@@ -460,6 +459,9 @@ class Resource:  # pylint: disable=too-many-instance-attributes
     def _add_defaults(self, field: FieldType, parameters: Dict[str, Parameter]):
         # TODO: Move this method out to standalone function that also loads defaults from store.
         for key, value in self.DEFAULTS.items():
+            if key == "identity" and isinstance(parameters["managedIdentityId"], PlaceholderParameter):
+                # This indicates that no managed identity is being deployed, so skip it.
+                continue
             if field.properties.get(key):
                 if key in self._properties_to_merge:
                     try:
@@ -488,7 +490,9 @@ class Resource:  # pylint: disable=too-many-instance-attributes
         parameters: Dict[str, Parameter],
         infra_component: Optional[AzureInfrastructure] = None,
         depends_on: Optional[List[ResourceSymbol]] = None,
+        attrname: Optional[str] = None,
     ) -> Tuple[ResourceSymbol, ...]:
+        suffix = f"_{attrname.upper()}" if attrname else ""
         properties = self._resolve_resource(parameters, infra_component)
         extensions: ExtensionResources = defaultdict(list)  # type: ignore[assignment]  # Doesn't like defaultdict
         extensions.update(self.extensions)
@@ -498,9 +502,7 @@ class Resource:  # pylint: disable=too-many-instance-attributes
                 parents = (properties["parent"],)
             else:
                 parents = self.parent.__bicep__(
-                    fields,
-                    parameters=parameters,
-                    infra_component=infra_component,
+                    fields, parameters=parameters, infra_component=infra_component, attrname=attrname
                 )
 
         if self._existing:
@@ -517,9 +519,10 @@ class Resource:  # pylint: disable=too-many-instance-attributes
                     infra_component=infra_component,
                 )[0]
                 ref_properties["scope"] = rg
-            symbol = self._build_symbol()
+            symbol = self._build_symbol(ref_properties["name"])
             outputs = self._outputs(
                 symbol=symbol,
+                suffix=suffix,
                 resource_group=rg,
                 parents=parents,
             )
@@ -571,8 +574,9 @@ class Resource:  # pylint: disable=too-many-instance-attributes
                 params["dependsOn"] = depends_on
             if self.parent:
                 params["parent"] = parents[0]
+
             outputs = {}
-            symbol = self._build_symbol()
+            symbol = self._build_symbol(properties.get("name"))
             field = FieldType(
                 resource=self.resource,
                 identifier=self.identifier,
@@ -587,7 +591,6 @@ class Resource:  # pylint: disable=too-many-instance-attributes
                 add_defaults=self._add_defaults,
             )
             fields[self._get_field_id(symbol, parents)] = field
-
         output_config = self._merge_properties(
             params,
             properties,
@@ -596,8 +599,15 @@ class Resource:  # pylint: disable=too-many-instance-attributes
             symbol=symbol,
             resource_group=rg,
         )
-        resource_outputs = self._outputs(symbol=symbol, resource_group=rg, parents=parents, **output_config)
-        outputs.update(resource_outputs)
+        if attrname or not field_match:
+            # TODO: Figure out correct behaviour for parent outputs here.
+            # attrname will be None in the case of resolving a parent bicep, which is fine?
+            resource_outputs = self._outputs(
+                symbol=symbol, suffix=suffix, resource_group=rg, parents=parents, **output_config
+            )
+            for key, value in resource_outputs.items():
+                outputs[key] = list(set(outputs.get(key, []) + value))
+
         return (symbol, *parents)
 
     def get_client(self, cls: Type[ClientType], /, **kwargs) -> ClientType:
@@ -613,19 +623,37 @@ class _ClientResource(Resource):
             self._settings.update(
                 {
                     "audience": StoredPrioritizedSetting(
-                        name="audience", env_vars=_build_envs(self._prefixes, ["AUDIENCE"]), suffix=self._suffix
+                        name="audience", env_vars=_build_envs(self._prefixes, ["AUDIENCE"]), suffix=self._env_suffix
                     ),
                     "endpoint": StoredPrioritizedSetting(
                         name="endpoint",
                         env_vars=_build_envs(self._prefixes, ["ENDPOINT"]),
                         hook=self._build_endpoint,
-                        suffix=self._suffix,
+                        suffix=self._env_suffix,
                     ),
                     "api_version": StoredPrioritizedSetting(
-                        name="api_version", env_vars=_build_envs(self._prefixes, ["API_VERSION"]), suffix=self._suffix
+                        name="api_version",
+                        env_vars=_build_envs(self._prefixes, ["API_VERSION"]),
+                        suffix=self._env_suffix,
                     ),
                 }
             )
+
+    @property
+    def audience(self) -> str:
+        return self._settings["audience"]()
+
+    @audience.setter
+    def audience(self, value: str) -> None:
+        self._settings["audience"].set_value(value)
+
+    @property
+    def api_version(self) -> str:
+        return self._settings["api_version"]()
+
+    @api_version.setter
+    def api_version(self, value: str) -> None:
+        self._settings["api_version"].set_value(value)
 
     def _build_endpoint(self, *, config_store: Optional[Mapping[str, Any]]) -> str:
         raise NotImplementedError("This must be implemented by child resources.")

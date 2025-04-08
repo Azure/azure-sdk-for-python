@@ -20,7 +20,7 @@ from typing_extensions import TypeVar
 
 from ...._identifiers import ResourceIdentifiers
 from ....._bicep.utils import generate_name
-from ....._bicep.expressions import Output, Parameter, Expression
+from ....._bicep.expressions import Output, Parameter, Expression, ResourceSymbol
 from ....._resource import Resource
 
 if TYPE_CHECKING:
@@ -71,12 +71,9 @@ class SiteConfig(Resource, Generic[SiteConfigResourceType]):
 
         return VERSION
 
-    def _build_suffix(self, value: Optional[Union[str, Parameter]]) -> str:
-        if not value:
-            return ""
-        if isinstance(value, Parameter):
-            return "_" + generate_name(value.value)
-        return "_" + generate_name(value)
+    def _build_symbol(self, suffix: Optional[Union[str, Parameter]]) -> ResourceSymbol:
+        resource_ref = f"siteconfig_{generate_name(suffix)}"
+        return ResourceSymbol(resource_ref)
 
-    def _outputs(self, **kwargs) -> Dict[str, Output]:
+    def _outputs(self, **kwargs) -> Dict[str, List[Output]]:
         return {}

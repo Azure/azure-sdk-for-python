@@ -45,9 +45,21 @@ if TYPE_CHECKING:
     from .types import AppSiteResource
 
 
-
 class AppSiteKwargs(TypedDict, total=False):
-    kind: Literal['api', 'app', 'app,container,windows', 'app,linux', 'app,linux,container', 'functionapp', 'functionapp,linux', 'functionapp,linux,container', 'functionapp,linux,container,azurecontainerapps', 'functionapp,workflowapp', 'functionapp,workflowapp,linux', 'linux,api']
+    kind: Literal[
+        "api",
+        "app",
+        "app,container,windows",
+        "app,linux",
+        "app,linux,container",
+        "functionapp",
+        "functionapp,linux",
+        "functionapp,linux,container",
+        "functionapp,linux,container,azurecontainerapps",
+        "functionapp,workflowapp",
+        "functionapp,workflowapp,linux",
+        "linux,api",
+    ]
     """Type of site to deploy."""
     app_service_plan: Union[str, Parameter]
     """The resource ID of the app service plan to use for the site."""
@@ -69,7 +81,7 @@ class AppSiteKwargs(TypedDict, total=False):
     """To enable client certificate authentication (TLS mutual authentication)."""
     client_cert_exclusion_paths: str
     """Client certificate authentication comma-separated exclusion paths."""
-    client_cert_mode: Literal['Optional', 'OptionalInteractiveUser', 'Required']
+    client_cert_mode: Literal["Optional", "OptionalInteractiveUser", "Required"]
     """This composes with ClientCertEnabled setting."""
     cloning_info: Dict[str, object]
     """If specified during app creation, the app is cloned from a source app."""
@@ -101,15 +113,15 @@ class AppSiteKwargs(TypedDict, total=False):
     # """The logs settings configuration."""
     # managedEnvironmentId: str
     # """Azure Resource Manager ID of the customers selected Managed Environment on which to host this app."""
-    managed_identities: 'ManagedIdentity'
+    managed_identities: "ManagedIdentity"
     """The managed identity definition for this resource."""
     # msDeployConfiguration: Dict[str, object]
     # """The extension MSDeployment configuration."""
     # privateEndpoints: List['PrivateEndpoint']
     # """Configuration details for private endpoints. For security reasons, it is recommended to use private endpoints whenever possible."""
-    public_network_access: Literal['Disabled', 'Enabled']
+    public_network_access: Literal["Disabled", "Enabled"]
     """Whether or not public network access is allowed for this resource. For security reasons it should be disabled. If not specified, it will be disabled by default if private endpoints are set."""
-    redundancy_mode: Literal['ActiveActive', 'Failover', 'GeoRedundant', 'Manual', 'None']
+    redundancy_mode: Literal["ActiveActive", "Failover", "GeoRedundant", "Manual", "None"]
     """Site redundancy mode."""
     roles: Union[
         Parameter,
@@ -118,14 +130,14 @@ class AppSiteKwargs(TypedDict, total=False):
                 Parameter,
                 "RoleAssignment",
                 Literal[
-                    'Web Plan Contributor',
-                    'Website Contributor',
-                    'App Compliance Automation Administrator',
-                    'Contributor',
-                    'Owner',
-                    'Reader',
-                    'Role Based Access Control Administrator',
-                    'User Access Administrator',
+                    "Web Plan Contributor",
+                    "Website Contributor",
+                    "App Compliance Automation Administrator",
+                    "Contributor",
+                    "Owner",
+                    "Reader",
+                    "Role Based Access Control Administrator",
+                    "User Access Administrator",
                 ],
             ]
         ],
@@ -138,14 +150,14 @@ class AppSiteKwargs(TypedDict, total=False):
                 Parameter,
                 "RoleAssignment",
                 Literal[
-                    'Web Plan Contributor',
-                    'Website Contributor',
-                    'App Compliance Automation Administrator',
-                    'Contributor',
-                    'Owner',
-                    'Reader',
-                    'Role Based Access Control Administrator',
-                    'User Access Administrator',
+                    "Web Plan Contributor",
+                    "Website Contributor",
+                    "App Compliance Automation Administrator",
+                    "Contributor",
+                    "Owner",
+                    "Reader",
+                    "Role Based Access Control Administrator",
+                    "User Access Administrator",
                 ],
             ]
         ],
@@ -175,27 +187,23 @@ class AppSiteKwargs(TypedDict, total=False):
     # """Virtual Network Route All enabled. This causes all outbound traffic to have Virtual Network Security Groups and User Defined Routes applied."""
 
 
-AppSiteResourceType = TypeVar(
-    "AppSiteResourceType", bound=Mapping[str, Any], default="AppSiteResource"
-)
+AppSiteResourceType = TypeVar("AppSiteResourceType", bound=Mapping[str, Any], default="AppSiteResource")
 _DEFAULT_APP_SITE: "AppSiteResource" = {
     "name": GLOBAL_PARAMS["defaultName"],
     "location": GLOBAL_PARAMS["location"],
-    "tags": {'azd-service-name': GLOBAL_PARAMS["environmentName"]},
+    "tags": {"azd-service-name": GLOBAL_PARAMS["environmentName"]},
     "kind": "app,linux",
     "properties": {
-        'httpsOnly': True,
-        'clientAffinityEnabled': False,
-        'siteConfig': {
-            'minTlsVersion': '1.2',
-            'use32BitWorkerProcess': False,
-            'alwaysOn': True,
-            'ftpsState': 'FtpsOnly',
-            'linuxFxVersion': 'python|3.12',
-            'cors': {
-                'allowedOrigins': ['https://portal.azure.com', 'https://ms.portal.azure.com']
-            }
-        }
+        "httpsOnly": True,
+        "clientAffinityEnabled": False,
+        "siteConfig": {
+            "minTlsVersion": "1.2",
+            "use32BitWorkerProcess": False,
+            "alwaysOn": True,
+            "ftpsState": "FtpsOnly",
+            "linuxFxVersion": "python|3.12",
+            "cors": {"allowedOrigins": ["https://portal.azure.com", "https://ms.portal.azure.com"]},
+        },
     },
     "identity": {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["managedIdentityId"]: {}}},
 }
@@ -264,10 +272,7 @@ class AppSite(Resource, Generic[AppSiteResourceType]):
             )
         else:
             parent = plan
-        existing = super().reference(
-            name=name,
-            parent=parent
-        )
+        existing = super().reference(name=name, parent=parent)
         return cast(AppSite[ResourceReference], existing)
 
     @property
@@ -308,39 +313,30 @@ class AppSite(Resource, Generic[AppSiteResourceType]):
                 symbols = self._plan.__bicep__(fields, parameters=parameters)
                 current_properties["properties"]["serverFarmId"] = symbols[0].id
             app_settings = {
-                'SCM_DO_BUILD_DURING_DEPLOYMENT': 'true',
-                'ENABLE_ORYX_BUILD': 'true',
-                'PYTHON_ENABLE_GUNICORN_MULTIWORKERS': 'true',
-                'AZURE_CLIENT_ID': parameters["managedIdentityClientId"]
+                "SCM_DO_BUILD_DURING_DEPLOYMENT": "true",
+                "ENABLE_ORYX_BUILD": "true",
+                "PYTHON_ENABLE_GUNICORN_MULTIWORKERS": "true",
+                "AZURE_CLIENT_ID": parameters["managedIdentityClientId"],
             }
             app_config = self._find_last_resource_match(fields, resource=ResourceIdentifiers.config_store)
             if app_config:
                 app_settings["AZURE_APPCONFIG_ENDPOINT"] = app_config.outputs["endpoint"]
             app_settings.update(self._app_settings)
-            site_settings = SiteConfig(
-                {"parent": symbol},
-                name="appsettings",
-                settings=app_settings,
-                parent=self
-            )
+            site_settings = SiteConfig({"parent": symbol}, name="appsettings", settings=app_settings, parent=self)
             site_settings.__bicep__(fields, parameters=parameters)
             app_logs = SiteConfig(
                 {"parent": symbol},
                 name="logs",
                 settings={
-                    'applicationLogs': {
-                        'fileSystem': {'level': 'Verbose'}
-                    },
-                    'detailedErrorMessages': {'enabled': True},
-                    'failedRequestsTracing': {'enabled': True},
-                    'httpLogs': {
-                        'fileSystem': {'enabled':True, 'retentionInDays': 1, 'retentionInMb': 35}
-                    }
+                    "applicationLogs": {"fileSystem": {"level": "Verbose"}},
+                    "detailedErrorMessages": {"enabled": True},
+                    "failedRequestsTracing": {"enabled": True},
+                    "httpLogs": {"fileSystem": {"enabled": True, "retentionInDays": 1, "retentionInMb": 35}},
                 },
-                parent=self
+                parent=self,
             )
             app_logs.__bicep__(fields, parameters=parameters)
         return output_config
 
-    def _outputs(self, **kwargs) -> Dict[str, Output]:
+    def _outputs(self, **kwargs) -> Dict[str, List[Output]]:
         return {}

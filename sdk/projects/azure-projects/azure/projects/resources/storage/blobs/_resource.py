@@ -225,18 +225,26 @@ class BlobStorage(_ClientResource, Generic[BlobServiceResourceType]):
         name = f'\'{self.parent.properties["name"]}\'' if "name" in self.parent.properties else "<default>"
         return f"{self.__class__.__name__}({name})"
 
+    def _build_symbol(self, suffix: Optional[Union[str, Parameter]]) -> ResourceSymbol:
+        return super()._build_symbol(self.parent.properties.get("name"))
+
+    def _get_default_name(self, *, config_store: Optional[Mapping[str, Any]]) -> str:  # pylint: disable=unused-argument
+        return "default"
+
     def _build_endpoint(self, *, config_store: Optional[Mapping[str, Any]]) -> str:
         return f"https://{self.parent._settings['name'](config_store=config_store)}.blob.core.windows.net/"  # pylint: disable=protected-access
 
     def _outputs(  # type: ignore[override]  # Parameter subset
-        self, *, parents: Tuple[ResourceSymbol, ...], **kwargs
-    ) -> Dict[str, Output]:
+        self, *, parents: Tuple[ResourceSymbol, ...], suffix: str, **kwargs
+    ) -> Dict[str, List[Output]]:
         return {
-            "endpoint": Output(
-                f"AZURE_BLOBS_ENDPOINT{self.parent._suffix}",  # pylint: disable=protected-access
-                "properties.primaryEndpoints.blob",
-                parents[0],
-            )
+            "endpoint": [
+                Output(
+                    f"AZURE_BLOBS_ENDPOINT{suffix}",
+                    "properties.primaryEndpoints.blob",
+                    parents[0],
+                )
+            ]
         }
 
     @overload

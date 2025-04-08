@@ -4,10 +4,13 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import List, Dict, Any, cast
+from typing import List, Dict, Any, Union, cast, TYPE_CHECKING
 import json
 import random
 import string
+
+if TYPE_CHECKING:
+    from .expressions import Parameter
 
 
 def resolve_value(value: Any) -> str:
@@ -30,8 +33,10 @@ def resolve_key(key: Any) -> str:
     raise TypeError(f"Unexpected key type: {key}")
 
 
-def clean_name(name: str) -> str:
-    return "".join(c for c in name if c.isalnum())
+def clean_name(name: Union[str, "Parameter"]) -> str:
+    if isinstance(name, str):
+        return "".join(c for c in name if c.isalnum())
+    return "".join(c for c in name.value if c.isalnum())
 
 
 def generate_suffix(length: int = 5, /) -> str:

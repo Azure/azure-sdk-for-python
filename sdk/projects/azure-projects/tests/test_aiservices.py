@@ -11,7 +11,7 @@ from azure.projects import Parameter, field, AzureInfrastructure, export, AzureA
 
 TEST_SUB = str(uuid4())
 RG = ResourceSymbol("resourcegroup")
-IDENTITY = {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["managedIdentityId"]: {}}}
+IDENTITY = {"type": "UserAssigned", "userAssignedIdentities": {"identity": {}}}
 RESOURCE_FROM_CLIENT_ANNOTATION["EmptyClient"] = ResourceIdentifiers.ai_services
 
 
@@ -26,20 +26,16 @@ class EmptyClient:
 
 def _get_outputs(suffix="", rg=None):
     return {
-        "resource_id": Output(
-            f"AZURE_AI_AISERVICES_ID{suffix.upper()}", "id", ResourceSymbol(f"aiservices_account{suffix}")
-        ),
-        "name": Output(
-            f"AZURE_AI_AISERVICES_NAME{suffix.upper()}", "name", ResourceSymbol(f"aiservices_account{suffix}")
-        ),
-        "resource_group": Output(
-            f"AZURE_AI_AISERVICES_RESOURCE_GROUP{suffix.upper()}", rg if rg else DefaultResourceGroup().name
-        ),
-        "endpoint": Output(
-            f"AZURE_AI_AISERVICES_ENDPOINT{suffix.upper()}",
-            "properties.endpoint",
-            ResourceSymbol(f"aiservices_account{suffix}"),
-        ),
+        "resource_id": [Output(f"AZURE_AI_AISERVICES_ID", "id", ResourceSymbol(f"aiservices_account{suffix}"))],
+        "name": [Output(f"AZURE_AI_AISERVICES_NAME", "name", ResourceSymbol(f"aiservices_account{suffix}"))],
+        "resource_group": [Output(f"AZURE_AI_AISERVICES_RESOURCE_GROUP", rg if rg else DefaultResourceGroup().name)],
+        "endpoint": [
+            Output(
+                f"AZURE_AI_AISERVICES_ENDPOINT",
+                "properties.endpoint",
+                ResourceSymbol(f"aiservices_account{suffix}"),
+            )
+        ],
     }
 
 
@@ -207,9 +203,11 @@ def test_aiservices_defaults():
     sku_param = Parameter("AISku", default="S0")
     r = AIServices(location="westus", sku=sku_param, public_network_access="Disabled")
     fields = {}
-    r.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
+    params = dict(GLOBAL_PARAMS)
+    params["managedIdentityId"] = "identity"
+    r.__bicep__(fields, parameters=params)
     field = fields.popitem()[1]
-    r._add_defaults(field, parameters=dict(GLOBAL_PARAMS))
+    r._add_defaults(field, parameters=params)
     assert field.properties == {
         "name": GLOBAL_PARAMS["defaultName"].format("{}-aiservices"),
         "location": "westus",
@@ -219,8 +217,6 @@ def test_aiservices_defaults():
             "customSubDomainName": "${defaultName}-aiservices",
             "networkAcls": {
                 "defaultAction": "Allow",
-                "ipRules": [],
-                "virtualNetworkRules": [],
             },
             "publicNetworkAccess": "Disabled",
             "disableLocalAuth": True,
@@ -312,7 +308,7 @@ def test_aiservices_client():
     r._settings["api_version"].set_value("v1.0")
     r._settings["audience"].set_value("nobody")
     client = r.get_client(EmptyClient, test_attr="test", foo="bar")
-    assert client.endpoint == "https://test.openai.azure.com/"
+    assert client.endpoint == "https://test.services.ai.azure.com/models"
     assert client.credential
     assert client.test_attr == "test"
     assert client.api_version == "v1.0"
@@ -347,7 +343,7 @@ def test_aiservices_app():
 
     app = TestApp(client=r)
     assert isinstance(app.client, EmptyClient)
-    assert app.client.endpoint == "https://test.openai.azure.com/"
+    assert app.client.endpoint == "https://test.services.ai.azure.com/models"
     assert app.client.credential
 
     override_client = EmptyClient("foobar", test_one="one", api_version="v2.0")
@@ -361,7 +357,7 @@ def test_aiservices_app():
 
     app = TestApp()
     assert isinstance(app.client, EmptyClient)
-    assert app.client.endpoint == "https://test.openai.azure.com/"
+    assert app.client.endpoint == "https://test.services.ai.azure.com/models"
     assert app.client.credential
     assert app.client.api_version == "v1.0"
 
@@ -380,7 +376,7 @@ def test_aiservices_app():
 
     app = TestApp(client=r)
     assert isinstance(app.client, EmptyClient)
-    assert app.client.endpoint == "https://test.openai.azure.com/"
+    assert app.client.endpoint == "https://test.services.ai.azure.com/models"
     assert app.client.credential
     assert app.client.api_version == "v1.0"
 
@@ -394,15 +390,11 @@ def test_aiservices_app():
     assert app.client.endpoint == "fake-endpoint"
     assert app.client.test_attr == "foobar"
 
-    class TestInfra(AzureInfrastructure):
-        ai: AIServices = AIServices()
-
     class TestApp(AzureApp):
         client: EmptyClient = field(api_version="v1.0")
 
-    infra = TestInfra(ai=r)
-    app = TestApp.load(infra)
+    app = TestApp.load(config_store={"AZURE_AI_AISERVICES_ENDPOINT": "https://test.services.ai.azure.com/models"})
     assert isinstance(app.client, EmptyClient)
-    assert app.client.endpoint == "https://test.openai.azure.com/"
+    assert app.client.endpoint == "https://test.services.ai.azure.com/models"
     assert app.client.credential
     assert app.client.api_version == "v1.0"

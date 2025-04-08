@@ -204,7 +204,7 @@ def test_identity_export_with_parameter(export_dir):
     class test(AzureInfrastructure):
         identity: UserAssignedIdentity = field(default=UserAssignedIdentity(location=param))
 
-    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2], config_store={"testLocation": "eastus"})
+    export(test(), output_dir=export_dir[0], infra_dir=export_dir[2], parameters={"testLocation": "eastus"})
 
 
 def test_identity_export_existing(export_dir):

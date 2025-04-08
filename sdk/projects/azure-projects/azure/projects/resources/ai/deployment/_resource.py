@@ -11,6 +11,7 @@ from typing import (
     TYPE_CHECKING,
     Dict,
     Generic,
+    List,
     Literal,
     Mapping,
     Tuple,
@@ -27,6 +28,7 @@ from ..._identifiers import ResourceIdentifiers
 from ...resourcegroup import ResourceGroup
 from ...._parameters import GLOBAL_PARAMS
 from ...._bicep.expressions import Output, Parameter, ResourceSymbol
+from ...._bicep.utils import clean_name
 from ...._setting import StoredPrioritizedSetting
 from ...._resource import (
     ExtensionResources,
@@ -152,14 +154,38 @@ class AIDeployment(_ClientResource, Generic[AIDeploymentResourceType]):
         )
         self._properties_to_merge.append("sku")
         self._settings["model_name"] = StoredPrioritizedSetting(
-            name="model_name", env_vars=_build_envs(self._prefixes, ["MODEL_NAME"]), suffix=self._suffix
+            name="model_name", env_vars=_build_envs(self._prefixes, ["MODEL_NAME"]), suffix=self._env_suffix
         )
         self._settings["model_version"] = StoredPrioritizedSetting(
-            name="model_version", env_vars=_build_envs(self._prefixes, ["MODEL_VERSION"]), suffix=self._suffix
+            name="model_version", env_vars=_build_envs(self._prefixes, ["MODEL_VERSION"]), suffix=self._env_suffix
         )
         self._settings["model_format"] = StoredPrioritizedSetting(
-            name="model_format", env_vars=_build_envs(self._prefixes, ["MODEL_FORMAT"]), suffix=self._suffix
+            name="model_format", env_vars=_build_envs(self._prefixes, ["MODEL_FORMAT"]), suffix=self._env_suffix
         )
+
+    @property
+    def model_name(self) -> str:
+        return self._settings["model_name"]()
+
+    @model_name.setter
+    def model_name(self, value: str) -> None:
+        self._settings["model_name"].set_value(value)
+
+    @property
+    def model_version(self) -> str:
+        return self._settings["model_version"]()
+
+    @model_version.setter
+    def model_version(self, value: str) -> None:
+        self._settings["model_version"].set_value(value)
+
+    @property
+    def model_format(self) -> str:
+        return self._settings["model_format"]()
+
+    @model_format.setter
+    def model_format(self, value: str) -> None:
+        self._settings["model_format"].set_value(value)
 
     @property
     def resource(self) -> Literal["Microsoft.CognitiveServices/accounts/deployments"]:
@@ -189,6 +215,15 @@ class AIDeployment(_ClientResource, Generic[AIDeploymentResourceType]):
         existing = super().reference(name=name, parent=parent)
         return cast(AIDeployment[ResourceReference], existing)
 
+    def _build_symbol(self, suffix: Optional[Union[str, Parameter]]) -> ResourceSymbol:
+        suffix_str = ""
+        account_name = self.parent.properties.get("name")
+        if account_name:
+            suffix_str += f"_{clean_name(account_name).lower()}"
+        if suffix:
+            suffix_str += f"_{clean_name(suffix).lower()}"
+        return ResourceSymbol(f"deployment{suffix_str}")
+
     def _build_endpoint(self, *, config_store: Optional[Mapping[str, Any]]) -> str:
         format = self._settings["model_format"](config_store=config_store)
         if format == "OpenAI":
@@ -203,16 +238,17 @@ class AIDeployment(_ClientResource, Generic[AIDeploymentResourceType]):
         self,
         *,
         symbol: ResourceSymbol,
-        resource_group: Union[str, ResourceSymbol],
-        parents: Tuple[ResourceSymbol, ...],
+        suffix: str,
         **kwargs,
-    ) -> Dict[str, Output]:
-        outputs = super()._outputs(symbol=symbol, resource_group=resource_group, **kwargs)
-        outputs["model_name"] = Output(f"AZURE_AI_DEPLOYMENT_MODEL_NAME{self._suffix}", "properties.model.name", symbol)
-        outputs["model_version"] = Output(
-            f"AZURE_AI_DEPLOYMENT_MODEL_VERSION{self._suffix}", "properties.model.version", symbol
+    ) -> Dict[str, List[Output]]:
+        outputs = super()._outputs(symbol=symbol, suffix=suffix, **kwargs)
+        outputs["model_name"].append(Output(f"AZURE_AI_DEPLOYMENT_MODEL_NAME{suffix}", "properties.model.name", symbol))
+        outputs["model_version"].append(
+            Output(f"AZURE_AI_DEPLOYMENT_MODEL_VERSION{suffix}", "properties.model.version", symbol)
         )
-        outputs["model_format"] = Output(f"AZURE_AI_DEPLOYMENT_MODEL_FORMAT{self._suffix}", "properties.model.format", symbol)
+        outputs["model_format"].append(
+            Output(f"AZURE_AI_DEPLOYMENT_MODEL_FORMAT{suffix}", "properties.model.format", symbol)
+        )
         return outputs
 
     def _merge_properties(  # type: ignore[override]  # Parameter superset
@@ -236,19 +272,22 @@ class AIDeployment(_ClientResource, Generic[AIDeploymentResourceType]):
             parameters=parameters,
             **kwargs,
         )
-        # We need to do this because multiple models cannot be deployed in parallel without
-        # creating conflict errors for the parent AIServices account.
-        for field in self._find_all_resource_match(
-            fields, resource_types=[
-                ResourceIdentifiers.ai_deployment,
-                ResourceIdentifiers.ai_chat_deployment,
-                ResourceIdentifiers.ai_embeddings_deployment
-            ]
-        ):
-            if field.name != current_properties.get("name"):
-                current_properties["dependsOn"] = [field.symbol]
-                break
-            continue
+        if "properties" in current_properties:
+            # We need to do this because multiple models cannot be deployed in parallel without
+            # creating conflict errors for the parent AIServices account.
+            for field in self._find_all_resource_match(
+                fields,
+                parent=current_properties["parent"],
+                resource_types=[
+                    ResourceIdentifiers.ai_deployment,
+                    ResourceIdentifiers.ai_chat_deployment,
+                    ResourceIdentifiers.ai_embeddings_deployment,
+                ],
+            ):
+                if field.name != current_properties.get("name"):
+                    current_properties["dependsOn"] = [field.symbol]
+                    break
+                continue
         return output_config
 
 
@@ -304,8 +343,8 @@ class AIChat(AIDeployment[AIDeploymentResourceType]):
         existing = super().reference(name=name, account=account, resource_group=resource_group)
         return cast(AIChat[ResourceReference], existing)
 
-    def _build_symbol(self) -> ResourceSymbol:
-        symbol = super()._build_symbol()
+    def _build_symbol(self, suffix: Optional[Union[str, Parameter]]) -> ResourceSymbol:
+        symbol = super()._build_symbol(suffix)
         symbol._value = "chat_" + symbol.value  # pylint: disable=protected-access
         return symbol
 
@@ -313,16 +352,13 @@ class AIChat(AIDeployment[AIDeploymentResourceType]):
         self,
         *,
         symbol: ResourceSymbol,
-        resource_group: Union[str, ResourceSymbol],
-        parents: Tuple[ResourceSymbol, ...],
+        suffix: str,
         **kwargs,
-    ) -> Dict[str, Output]:
-        outputs = super()._outputs(symbol=symbol, resource_group=resource_group, parents=parents, **kwargs)
-        outputs["model_name"] = Output(f"AZURE_AI_CHAT_MODEL_NAME{self._suffix}", "properties.model.name", symbol)
-        outputs["model_version"] = Output(
-            f"AZURE_AI_CHAT_MODEL_VERSION{self._suffix}", "properties.model.version", symbol
-        )
-        outputs["model_format"] = Output(f"AZURE_AI_CHAT_MODEL_FORMAT{self._suffix}", "properties.model.format", symbol)
+    ) -> Dict[str, List[Output]]:
+        outputs = super()._outputs(symbol=symbol, suffix=suffix, **kwargs)
+        outputs["model_name"] = [Output(f"AZURE_AI_CHAT_MODEL_NAME{suffix}", "properties.model.name", symbol)]
+        outputs["model_version"] = [Output(f"AZURE_AI_CHAT_MODEL_VERSION{suffix}", "properties.model.version", symbol)]
+        outputs["model_format"] = [Output(f"AZURE_AI_CHAT_MODEL_FORMAT{suffix}", "properties.model.format", symbol)]
         return outputs
 
     @overload
@@ -532,8 +568,8 @@ class AIEmbeddings(AIDeployment[AIDeploymentResourceType]):
         existing = super().reference(name=name, account=account, resource_group=resource_group)
         return cast(AIEmbeddings[ResourceReference], existing)
 
-    def _build_symbol(self) -> ResourceSymbol:
-        symbol = super()._build_symbol()
+    def _build_symbol(self, suffix: Optional[Union[str, Parameter]]) -> ResourceSymbol:
+        symbol = super()._build_symbol(suffix)
         symbol._value = "embeddings_" + symbol.value  # pylint: disable=protected-access
         return symbol
 
@@ -541,20 +577,26 @@ class AIEmbeddings(AIDeployment[AIDeploymentResourceType]):
         self,
         *,
         symbol: ResourceSymbol,
-        resource_group: Union[str, ResourceSymbol],
+        suffix: str,
         parents: Tuple[ResourceSymbol, ...],
         **kwargs,
-    ) -> Dict[str, Output]:
-        outputs = super()._outputs(symbol=symbol, resource_group=resource_group, parents=parents, **kwargs)
-        outputs["model_name"] = Output(f"AZURE_AI_EMBEDDINGS_MODEL_NAME{self._suffix}", "properties.model.name", symbol)
-        outputs["model_version"] = Output(
-            f"AZURE_AI_EMBEDDINGS_MODEL_VERSION{self._suffix}", "properties.model.version", symbol
-        )
-        outputs["endpoint"] = Output(
-            f"AZURE_AI_EMBEDDINGS_ENDPOINT{self._suffix}",
-            Output("", "properties.endpoint", parents[0]).format("{}openai/deployments/") + outputs["name"].format(),
-            # + "/embeddings",
-        )
+    ) -> Dict[str, List[Output]]:
+        outputs = super()._outputs(symbol=symbol, suffix=suffix, parents=parents, **kwargs)
+        outputs["model_name"] = [Output(f"AZURE_AI_EMBEDDINGS_MODEL_NAME{suffix}", "properties.model.name", symbol)]
+        outputs["model_version"] = [
+            Output(f"AZURE_AI_EMBEDDINGS_MODEL_VERSION{suffix}", "properties.model.version", symbol)
+        ]
+        outputs["endpoint"] = [
+            Output(
+                f"AZURE_AI_EMBEDDINGS_ENDPOINT{suffix}",
+                Output("", "properties.endpoint", parents[0]).format("{}openai/deployments/")
+                + outputs["name"][0].format(),
+                # + "/embeddings",
+            )
+        ]
+        outputs["model_format"] = [
+            Output(f"AZURE_AI_EMBEDDINGS_MODEL_FORMAT{suffix}", "properties.model.format", symbol)
+        ]
         return outputs
 
     @overload

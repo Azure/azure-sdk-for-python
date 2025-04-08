@@ -289,15 +289,15 @@ class CognitiveServicesAccount(_ClientResource, Generic[CognitiveServicesAccount
     def _build_endpoint(self, *, config_store: Optional[Mapping[str, Any]]) -> str:  # pylint: disable=unused-argument
         raise RuntimeError("No deterministic endpoint.")
 
-    def _build_symbol(self) -> ResourceSymbol:
-        symbol = super()._build_symbol()
+    def _build_symbol(self, suffix: Optional[Union[str, Parameter]]) -> ResourceSymbol:
+        symbol = super()._build_symbol(suffix)
         symbol._value = f"{self.properties['kind'].lower()}_" + symbol.value  # pylint: disable=protected-access
         return symbol
 
-    def _outputs(self, *, symbol: ResourceSymbol, suffix: Optional[str] = None, **kwargs) -> Dict[str, Output]:
+    def _outputs(self, *, symbol: ResourceSymbol, suffix: str, **kwargs) -> Dict[str, List[Output]]:
         outputs = super()._outputs(symbol=symbol, suffix=suffix, **kwargs)
-        outputs["endpoint"] = Output(
-            f"AZURE_{self._prefixes[0].upper()}_ENDPOINT{suffix or self._suffix}", "properties.endpoint", symbol
+        outputs["endpoint"].append(
+            Output(f"AZURE_{self._prefixes[0].upper()}_ENDPOINT{suffix}", "properties.endpoint", symbol)
         )
         return outputs
 

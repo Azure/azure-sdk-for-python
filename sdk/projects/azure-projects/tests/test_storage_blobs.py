@@ -17,14 +17,13 @@ IDENTITY = {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["ma
 
 def _get_outputs(suffix="", rg=None):
     return {
-        # 'resource_id': Output(f"AZURE_BLOBS_ID{suffix.upper()}", "id", ResourceSymbol(f"blobservice{suffix}")),
-        # 'name': Output(f"AZURE_BLOBS_NAME{suffix.upper()}", "name", ResourceSymbol(f"blobservice{suffix}")),
-        # 'resource_group': Output(f"AZURE_BLOBS_RESOURCE_GROUP{suffix.upper()}", rg if rg else DefaultResourceGroup().name),
-        "endpoint": Output(
-            f"AZURE_BLOBS_ENDPOINT{suffix.upper()}",
-            "properties.primaryEndpoints.blob",
-            ResourceSymbol(f"storageaccount{suffix}"),
-        )
+        "endpoint": [
+            Output(
+                f"AZURE_BLOBS_ENDPOINT",
+                "properties.primaryEndpoints.blob",
+                ResourceSymbol(f"storageaccount{suffix}"),
+            )
+        ]
     }
 
 

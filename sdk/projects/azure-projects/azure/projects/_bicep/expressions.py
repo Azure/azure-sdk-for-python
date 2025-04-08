@@ -291,6 +291,18 @@ class Output(Parameter):
     def __repr__(self) -> str:
         return f"output({self.value})"
 
+    def __eq__(self, value: Any) -> bool:
+        try:
+            return self.value == value.value and self.name == value.name
+        except AttributeError:
+            return False
+
+    def __ne__(self, value: Any) -> bool:
+        return not self.__eq__(value)
+
+    def __hash__(self):
+        return hash(self.value + self.name)
+
     @property
     def value(self) -> str:
         if self.symbol:
