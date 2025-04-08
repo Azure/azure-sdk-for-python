@@ -80,20 +80,20 @@ ALL_INPUT_TEST_DATA = CLIENT_ONLY_TEST_DATA + CLIENT_AND_REQUEST_TEST_DATA
 
 def read_item_test_data():
     client_only_output_data = [
-        [L1, L1],  # 0
-        [L2, L2],  # 1
-        [L1, L1],  # 2
-        [L1, L1],  # 3
+        [L1],  # 0
+        [L2],  # 1
+        [L1],  # 2
+        [L1],  # 3
     ]
     client_and_request_output_data = [
-        [L2, L2],  # 0
-        [L2, L2],  # 1
-        [L2, L2],  # 2
-        [L1, L1],  # 3
-        [L1, L1],  # 4
-        [L1, L1],  # 5
-        [L1, L1],  # 6
-        [L1, L1],  # 7
+        [L2],  # 0
+        [L2],  # 1
+        [L2],  # 2
+        [L1],  # 3
+        [L1],  # 4
+        [L1],  # 5
+        [L1],  # 6
+        [L1],  # 7
     ]
     all_output_test_data = client_only_output_data + client_and_request_output_data
 
