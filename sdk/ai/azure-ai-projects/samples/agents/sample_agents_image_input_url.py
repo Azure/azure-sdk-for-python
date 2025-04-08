@@ -27,7 +27,13 @@ import os, time
 from typing import List
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models import MessageTextContent, MessageContentBlockInput, MessageImageUrlParam, MessageTextBlockInput, MessageImageUrlBlockInput
+from azure.ai.projects.models import (
+    MessageTextContent,
+    MessageInputContentBlock,
+    MessageImageUrlParam,
+    MessageInputTextBlock,
+    MessageInputImageUrlBlock,
+)
 
 
 project_client = AIProjectClient.from_connection_string(
@@ -50,13 +56,11 @@ with project_client:
     image_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
     input_message = "Hello, what is in the image ?"
     url_param = MessageImageUrlParam(url=image_url, detail="high")
-    content_blocks: List[MessageContentBlockInput] = [
-        MessageTextBlockInput(text=input_message), 
-        MessageImageUrlBlockInput(image_url=url_param)
+    content_blocks: List[MessageInputContentBlock] = [
+        MessageInputTextBlock(text=input_message),
+        MessageInputImageUrlBlock(image_url=url_param),
     ]
-    message = project_client.agents.create_message(
-        thread_id=thread.id, role="user", content=content_blocks
-    )
+    message = project_client.agents.create_message(thread_id=thread.id, role="user", content=content_blocks)
     print(f"Created message, message ID: {message.id}")
 
     run = project_client.agents.create_run(thread_id=thread.id, agent_id=agent.id)

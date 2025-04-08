@@ -1347,7 +1347,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         thread_id: str,
         *,
         role: Union[str, _models.MessageRole],
-        content: "_types.CreateMessageContent",
+        content: "_types.MessageInputContent",
         content_type: str = "application/json",
         attachments: Optional[List[_models.MessageAttachment]] = None,
         metadata: Optional[Dict[str, str]] = None,
@@ -1369,8 +1369,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
          * A basic string, if you only need text, or
          * An array of typed content blocks (text, image_file, image_url, etc.). Is either a str type
-         or a [MessageContentBlockInput] type. Required.
-        :paramtype content: str or list[~azure.ai.projects.models.MessageContentBlockInput]
+         or a [MessageInputContentBlock] type. Required.
+        :paramtype content: str or list[~azure.ai.projects.models.MessageInputContentBlock]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1430,7 +1430,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         role: Union[str, _models.MessageRole] = _Unset,
-        content: "_types.CreateMessageContent" = _Unset,
+        content: "_types.MessageInputContent" = _Unset,
         attachments: Optional[List[_models.MessageAttachment]] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
@@ -1453,8 +1453,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
          * A basic string, if you only need text, or
          * An array of typed content blocks (text, image_file, image_url, etc.). Is either a str type
-         or a [MessageContentBlockInput] type. Required.
-        :paramtype content: str or list[~azure.ai.projects.models.MessageContentBlockInput]
+         or a [MessageInputContentBlock] type. Required.
+        :paramtype content: str or list[~azure.ai.projects.models.MessageInputContentBlock]
         :keyword attachments: A list of files attached to the message, and the tools they should be
          added to. Default value is None.
         :paramtype attachments: list[~azure.ai.projects.models.MessageAttachment]

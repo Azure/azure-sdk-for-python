@@ -26,7 +26,13 @@ import os, time, base64
 from typing import List
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models import MessageTextContent, MessageContentBlockInput, MessageImageUrlParam, MessageTextBlockInput, MessageImageUrlBlockInput
+from azure.ai.projects.models import (
+    MessageTextContent,
+    MessageInputContentBlock,
+    MessageImageUrlParam,
+    MessageInputTextBlock,
+    MessageInputImageUrlBlock,
+)
 
 
 def image_to_base64(image_path: str) -> str:
@@ -70,13 +76,11 @@ with project_client:
     image_base64 = image_to_base64("image_file.png")
     img_url = f"data:image/png;base64,{image_base64}"
     url_param = MessageImageUrlParam(url=img_url, detail="high")
-    content_blocks: List[MessageContentBlockInput] = [
-        MessageTextBlockInput(text=input_message), 
-        MessageImageUrlBlockInput(image_url=url_param)
+    content_blocks: List[MessageInputContentBlock] = [
+        MessageInputTextBlock(text=input_message),
+        MessageInputImageUrlBlock(image_url=url_param),
     ]
-    message = project_client.agents.create_message(
-        thread_id=thread.id, role="user", content=content_blocks
-    )
+    message = project_client.agents.create_message(thread_id=thread.id, role="user", content=content_blocks)
     print(f"Created message, message ID: {message.id}")
 
     run = project_client.agents.create_run(thread_id=thread.id, agent_id=agent.id)

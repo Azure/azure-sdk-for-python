@@ -2306,41 +2306,6 @@ class MessageContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MessageContentBlockInput(_model_base.Model):
-    """Defines a single content block when creating a message. The 'type' field determines whether it
-    is text, an image file, or an external image URL, etc.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    MessageImageFileBlockInput, MessageImageUrlBlockInput, MessageTextBlockInput
-
-    :ivar type: Specifies which kind of content block this is (text, image_file, image_url, etc.).
-     Required. Known values are: "text", "image_file", and "image_url".
-    :vartype type: str or ~azure.ai.projects.models.MessageBlockType
-    """
-
-    __mapping__: Dict[str, _model_base.Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """Specifies which kind of content block this is (text, image_file, image_url, etc.). Required.
-     Known values are: \"text\", \"image_file\", and \"image_url\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class MessageDelta(_model_base.Model):
     """Represents the typed 'delta' payload within a streaming message delta chunk.
 
@@ -2885,42 +2850,6 @@ class MessageDeltaTextUrlCitationDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MessageImageFileBlockInput(MessageContentBlockInput, discriminator="image_file"):
-    """An image-file block in a new message, referencing an internally uploaded image by file ID.
-
-    :ivar type: Must be 'image_file' for an internally uploaded image block. Required. Indicates a
-     block referencing an internally uploaded image file.
-    :vartype type: str or ~azure.ai.projects.models.IMAGE_FILE
-    :ivar image_file: Information about the referenced image file, including file ID and optional
-     detail level. Required.
-    :vartype image_file: ~azure.ai.projects.models.MessageImageFileParam
-    """
-
-    type: Literal[MessageBlockType.IMAGE_FILE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Must be 'image_file' for an internally uploaded image block. Required. Indicates a block
-     referencing an internally uploaded image file."""
-    image_file: "_models.MessageImageFileParam" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Information about the referenced image file, including file ID and optional detail level.
-     Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        image_file: "_models.MessageImageFileParam",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=MessageBlockType.IMAGE_FILE, **kwargs)
-
-
 class MessageImageFileContent(MessageContent, discriminator="image_file"):
     """A representation of image file content in a thread message.
 
@@ -2994,7 +2923,7 @@ class MessageImageFileParam(_model_base.Model):
     :vartype detail: str or ~azure.ai.projects.models.ImageDetailLevel
     """
 
-    file_id: str = rest_field(name="fileId", visibility=["read", "create", "update", "delete", "query"])
+    file_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the previously uploaded image file. Required."""
     detail: Optional[Union[str, "_models.ImageDetailLevel"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -3019,42 +2948,6 @@ class MessageImageFileParam(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class MessageImageUrlBlockInput(MessageContentBlockInput, discriminator="image_url"):
-    """An image-URL block in a new message, referencing an external image by URL.
-
-    :ivar type: Must be 'image_url' for an externally hosted image block. Required. Indicates a
-     block referencing an external image URL.
-    :vartype type: str or ~azure.ai.projects.models.IMAGE_URL
-    :ivar image_url: Information about the external image URL, including the URL and optional
-     detail level. Required.
-    :vartype image_url: ~azure.ai.projects.models.MessageImageUrlParam
-    """
-
-    type: Literal[MessageBlockType.IMAGE_URL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Must be 'image_url' for an externally hosted image block. Required. Indicates a block
-     referencing an external image URL."""
-    image_url: "_models.MessageImageUrlParam" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Information about the external image URL, including the URL and optional detail level.
-     Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        image_url: "_models.MessageImageUrlParam",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=MessageBlockType.IMAGE_URL, **kwargs)
 
 
 class MessageImageUrlParam(_model_base.Model):
@@ -3128,6 +3021,146 @@ class MessageIncompleteDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class MessageInputContentBlock(_model_base.Model):
+    """Defines a single content block when creating a message. The 'type' field determines whether it
+    is text, an image file, or an external image URL, etc.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    MessageInputImageFileBlock, MessageInputImageUrlBlock, MessageInputTextBlock
+
+    :ivar type: Specifies which kind of content block this is (text, image_file, image_url, etc.).
+     Required. Known values are: "text", "image_file", and "image_url".
+    :vartype type: str or ~azure.ai.projects.models.MessageBlockType
+    """
+
+    __mapping__: Dict[str, _model_base.Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """Specifies which kind of content block this is (text, image_file, image_url, etc.). Required.
+     Known values are: \"text\", \"image_file\", and \"image_url\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MessageInputImageFileBlock(MessageInputContentBlock, discriminator="image_file"):
+    """An image-file block in a new message, referencing an internally uploaded image by file ID.
+
+    :ivar type: Must be 'image_file' for an internally uploaded image block. Required. Indicates a
+     block referencing an internally uploaded image file.
+    :vartype type: str or ~azure.ai.projects.models.IMAGE_FILE
+    :ivar image_file: Information about the referenced image file, including file ID and optional
+     detail level. Required.
+    :vartype image_file: ~azure.ai.projects.models.MessageImageFileParam
+    """
+
+    type: Literal[MessageBlockType.IMAGE_FILE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Must be 'image_file' for an internally uploaded image block. Required. Indicates a block
+     referencing an internally uploaded image file."""
+    image_file: "_models.MessageImageFileParam" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Information about the referenced image file, including file ID and optional detail level.
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        image_file: "_models.MessageImageFileParam",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type=MessageBlockType.IMAGE_FILE, **kwargs)
+
+
+class MessageInputImageUrlBlock(MessageInputContentBlock, discriminator="image_url"):
+    """An image-URL block in a new message, referencing an external image by URL.
+
+    :ivar type: Must be 'image_url' for an externally hosted image block. Required. Indicates a
+     block referencing an external image URL.
+    :vartype type: str or ~azure.ai.projects.models.IMAGE_URL
+    :ivar image_url: Information about the external image URL, including the URL and optional
+     detail level. Required.
+    :vartype image_url: ~azure.ai.projects.models.MessageImageUrlParam
+    """
+
+    type: Literal[MessageBlockType.IMAGE_URL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Must be 'image_url' for an externally hosted image block. Required. Indicates a block
+     referencing an external image URL."""
+    image_url: "_models.MessageImageUrlParam" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Information about the external image URL, including the URL and optional detail level.
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        image_url: "_models.MessageImageUrlParam",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type=MessageBlockType.IMAGE_URL, **kwargs)
+
+
+class MessageInputTextBlock(MessageInputContentBlock, discriminator="text"):
+    """A text block in a new message, containing plain text content.
+
+    :ivar type: Must be 'text' for a text block. Required. Indicates a block containing text
+     content.
+    :vartype type: str or ~azure.ai.projects.models.TEXT
+    :ivar text: The plain text content for this block. Required.
+    :vartype text: str
+    """
+
+    type: Literal[MessageBlockType.TEXT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Must be 'text' for a text block. Required. Indicates a block containing text content."""
+    text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The plain text content for this block. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        text: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type=MessageBlockType.TEXT, **kwargs)
+
+
 class MessageTextAnnotation(_model_base.Model):
     """An abstract representation of an annotation to text thread message content.
 
@@ -3164,39 +3197,6 @@ class MessageTextAnnotation(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class MessageTextBlockInput(MessageContentBlockInput, discriminator="text"):
-    """A text block in a new message, containing plain text content.
-
-    :ivar type: Must be 'text' for a text block. Required. Indicates a block containing text
-     content.
-    :vartype type: str or ~azure.ai.projects.models.TEXT
-    :ivar text: The plain text content for this block. Required.
-    :vartype text: str
-    """
-
-    type: Literal[MessageBlockType.TEXT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Must be 'text' for a text block. Required. Indicates a block containing text content."""
-    text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The plain text content for this block. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        text: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=MessageBlockType.TEXT, **kwargs)
 
 
 class MessageTextContent(MessageContent, discriminator="text"):
@@ -6585,8 +6585,8 @@ class ThreadMessageOptions(_model_base.Model):
 
      * A basic string, if you only need text, or
      * An array of typed content blocks (text, image_file, image_url, etc.). Required. Is either a
-     str type or a [MessageContentBlockInput] type.
-    :vartype content: str or list[~azure.ai.projects.models.MessageContentBlockInput]
+     str type or a [MessageInputContentBlock] type.
+    :vartype content: str or list[~azure.ai.projects.models.MessageInputContentBlock]
     :ivar attachments: A list of files attached to the message, and the tools they should be added
      to.
     :vartype attachments: list[~azure.ai.projects.models.MessageAttachment]
@@ -6604,12 +6604,12 @@ class ThreadMessageOptions(_model_base.Model):
      * `assistant`: Indicates the message is generated by the agent. Use this value to insert
      messages from the agent into the
      conversation. Required. Known values are: \"user\" and \"assistant\"."""
-    content: "_types.CreateMessageContent" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    content: "_types.MessageInputContent" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The content of the initial message. This may be:
      
      * A basic string, if you only need text, or
      * An array of typed content blocks (text, image_file, image_url, etc.). Required. Is either a
-     str type or a [MessageContentBlockInput] type."""
+     str type or a [MessageInputContentBlock] type."""
     attachments: Optional[List["_models.MessageAttachment"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6624,7 +6624,7 @@ class ThreadMessageOptions(_model_base.Model):
         self,
         *,
         role: Union[str, "_models.MessageRole"],
-        content: "_types.CreateMessageContent",
+        content: "_types.MessageInputContent",
         attachments: Optional[List["_models.MessageAttachment"]] = None,
         metadata: Optional[Dict[str, str]] = None,
     ) -> None: ...

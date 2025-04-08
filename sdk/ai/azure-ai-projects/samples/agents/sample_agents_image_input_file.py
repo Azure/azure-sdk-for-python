@@ -26,7 +26,13 @@ import os, time
 from typing import List
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models import MessageTextContent, MessageContentBlockInput, MessageImageFileParam, MessageTextBlockInput, MessageImageFileBlockInput
+from azure.ai.projects.models import (
+    MessageTextContent,
+    MessageInputContentBlock,
+    MessageImageFileParam,
+    MessageInputTextBlock,
+    MessageInputImageFileBlock,
+)
 
 
 project_client = AIProjectClient.from_connection_string(
@@ -51,13 +57,11 @@ with project_client:
 
     input_message = "Hello, what is in the image ?"
     file_param = MessageImageFileParam(file_id=image_file.id, detail="high")
-    content_blocks: List[MessageContentBlockInput] = [
-        MessageTextBlockInput(text=input_message), 
-        MessageImageFileBlockInput(image_file=file_param)
+    content_blocks: List[MessageInputContentBlock] = [
+        MessageInputTextBlock(text=input_message),
+        MessageInputImageFileBlock(image_file=file_param),
     ]
-    message = project_client.agents.create_message(
-        thread_id=thread.id, role="user", content=content_blocks
-    )
+    message = project_client.agents.create_message(thread_id=thread.id, role="user", content=content_blocks)
     print(f"Created message, message ID: {message.id}")
 
     run = project_client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
