@@ -89,14 +89,15 @@ class DeleteRecoverPollingMethod(PollingMethod):
     :param bool finished: Whether or not the polling operation is completed.
     :param int interval: The polling interval, in seconds.
     """
+
     def __init__(
-            self,
-            pipeline_response: PipelineResponse,
-            command: Callable,
-            final_resource: Any,
-            finished: bool,
-            interval: int = 2
-        ) -> None:
+        self,
+        pipeline_response: PipelineResponse,
+        command: Callable,
+        final_resource: Any,
+        finished: bool,
+        interval: int = 2,
+    ) -> None:
         self._pipeline_response = pipeline_response
         self._command = command
         self._resource = final_resource

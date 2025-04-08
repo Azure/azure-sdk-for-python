@@ -20,7 +20,7 @@ class TestDeploymentScriptsDeploymentScriptsOperations(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create(self, resource_group):
+    def test_deployment_scripts_begin_create(self, resource_group):
         response = self.client.deployment_scripts.begin_create(
             resource_group_name=resource_group.name,
             script_name="str",
@@ -81,7 +81,7 @@ class TestDeploymentScriptsDeploymentScriptsOperations(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update(self, resource_group):
+    def test_deployment_scripts_update(self, resource_group):
         response = self.client.deployment_scripts.update(
             resource_group_name=resource_group.name,
             script_name="str",
@@ -93,7 +93,7 @@ class TestDeploymentScriptsDeploymentScriptsOperations(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_deployment_scripts_get(self, resource_group):
         response = self.client.deployment_scripts.get(
             resource_group_name=resource_group.name,
             script_name="str",
@@ -105,7 +105,7 @@ class TestDeploymentScriptsDeploymentScriptsOperations(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_deployment_scripts_delete(self, resource_group):
         response = self.client.deployment_scripts.delete(
             resource_group_name=resource_group.name,
             script_name="str",
@@ -117,7 +117,7 @@ class TestDeploymentScriptsDeploymentScriptsOperations(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_subscription(self, resource_group):
+    def test_deployment_scripts_list_by_subscription(self, resource_group):
         response = self.client.deployment_scripts.list_by_subscription(
             api_version="2020-10-01",
         )
@@ -127,7 +127,7 @@ class TestDeploymentScriptsDeploymentScriptsOperations(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_logs(self, resource_group):
+    def test_deployment_scripts_get_logs(self, resource_group):
         response = self.client.deployment_scripts.get_logs(
             resource_group_name=resource_group.name,
             script_name="str",
@@ -139,7 +139,7 @@ class TestDeploymentScriptsDeploymentScriptsOperations(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_logs_default(self, resource_group):
+    def test_deployment_scripts_get_logs_default(self, resource_group):
         response = self.client.deployment_scripts.get_logs_default(
             resource_group_name=resource_group.name,
             script_name="str",
@@ -151,7 +151,7 @@ class TestDeploymentScriptsDeploymentScriptsOperations(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
+    def test_deployment_scripts_list_by_resource_group(self, resource_group):
         response = self.client.deployment_scripts.list_by_resource_group(
             resource_group_name=resource_group.name,
             api_version="2020-10-01",

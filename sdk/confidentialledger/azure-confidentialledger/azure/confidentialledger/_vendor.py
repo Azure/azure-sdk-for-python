@@ -11,24 +11,12 @@ from typing import TYPE_CHECKING
 from ._configuration import ConfidentialLedgerClientConfiguration
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core import PipelineClient
 
     from ._serialization import Deserializer, Serializer
 
 
-def _format_url_section(template, **kwargs):  # pylint: disable=inconsistent-return-statements
-    components = template.split("/")
-    while components:
-        try:
-            return template.format(**kwargs)
-        except KeyError as key:
-            formatted_components = template.split("/")
-            components = [c for c in formatted_components if "{}".format(key.args[0]) not in c]
-            template = "/".join(components)
-
-
-class MixinABC(ABC):
+class ConfidentialLedgerClientMixinABC(ABC):
     """DO NOT use this class. It is for internal typing use only."""
 
     _client: "PipelineClient"

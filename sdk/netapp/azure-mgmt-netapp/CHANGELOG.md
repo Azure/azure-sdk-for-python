@@ -1,5 +1,21 @@
 # Release History
 
+## 13.4.0 (2025-02-26)
+
+### Features Added
+
+  - Model `Volume` added property `cool_access_tiering_policy`
+  - Model `VolumeGroupVolumeProperties` added property `cool_access_tiering_policy`
+  - Model `VolumePatch` added property `cool_access_tiering_policy`
+  - Added model `ChangeKeyVault`
+  - Added enum `CoolAccessTieringPolicy`
+  - Added model `EncryptionTransitionRequest`
+  - Added model `GetKeyVaultStatusResponse`
+  - Added model `KeyVaultPrivateEndpoint`
+  - Operation group `AccountsOperations` added method `begin_change_key_vault`
+  - Operation group `AccountsOperations` added method `begin_get_change_key_vault_information`
+  - Operation group `AccountsOperations` added method `begin_transition_to_cmk`
+
 ## 13.4.0b1 (2024-11-18)
 
 ### Features Added

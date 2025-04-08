@@ -10,7 +10,6 @@ parameters:
     default: 'Test'
 
 stages:
-- ${{ if contains(variables['Build.DefinitionName'], 'tests-weekly')  }}:
   - stage:
     displayName: 'Analyze_${{ parameters.JobName }}'
     variables:
@@ -89,6 +88,23 @@ stages:
                 --disablecov
             env:
               GH_TOKEN: $(azuresdk-github-pat)
+
+          - script: |
+              python -m pip install PyGithub>=1.59.0
+              python -m pip install requests>=2.0
+            displayName: 'Prep Environment'
+          - task: PythonScript@0
+            displayName: 'Update vNext Issues with build errors'
+            continueOnError: true
+            inputs:
+              scriptPath: 'tools/azure-sdk-tools/gh_tools/update_issue.py'
+              arguments: >-
+                ${{ parameters.BuildTargetingString }}
+                --service="${{ parameters.ServiceDirectory }}"
+                --disablecov
+            env:
+              GH_TOKEN: $(azuresdk-github-pat)
+              SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 
           - task: UsePythonVersion@0
             displayName: 'Use Python 3.13 for docs generation'

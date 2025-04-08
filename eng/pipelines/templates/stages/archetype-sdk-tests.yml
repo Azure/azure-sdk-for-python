@@ -162,9 +162,10 @@ extends:
                       ServiceConnection: ${{ coalesce(cloud.value.ServiceConnection, lower(format('azure-sdk-tests-{0}', cloud.key))) }}
                       SubscriptionConfigurationFilePaths: ${{ cloud.value.SubscriptionConfigurationFilePaths }}
 
-      - template: /eng/pipelines/templates/stages/python-analyze-weekly.yml
-        parameters:
-          BuildTargetingString: ${{ parameters.BuildTargetingString }}
-          ServiceDirectory: ${{ parameters.ServiceDirectory }}
-          JobName: ${{ parameters.JobName }}
+      - ${{ if contains(variables['Build.DefinitionName'], 'tests-weekly')  }}:
+        - template: /eng/pipelines/templates/stages/python-analyze-weekly.yml
+          parameters:
+            BuildTargetingString: ${{ parameters.BuildTargetingString }}
+            ServiceDirectory: ${{ parameters.ServiceDirectory }}
+            JobName: ${{ parameters.JobName }}
 

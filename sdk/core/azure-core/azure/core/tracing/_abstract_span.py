@@ -4,12 +4,10 @@
 # ------------------------------------
 """Protocol that defines what functions wrappers of tracing libraries should implement."""
 from __future__ import annotations
-from enum import Enum
 from urllib.parse import urlparse
 
 from typing import (
     Any,
-    Sequence,
     Optional,
     Union,
     Callable,
@@ -26,31 +24,14 @@ from azure.core.rest import (
     AsyncHttpResponse as AsyncRestHttpResponse,
     HttpRequest as RestHttpRequest,
 )
+from ._models import AttributeValue, SpanKind
+
 
 HttpResponseType = Union[HttpResponse, AsyncHttpResponse, RestHttpResponse, AsyncRestHttpResponse]
 HttpRequestType = Union[HttpRequest, RestHttpRequest]
 
-AttributeValue = Union[
-    str,
-    bool,
-    int,
-    float,
-    Sequence[str],
-    Sequence[bool],
-    Sequence[int],
-    Sequence[float],
-]
 Attributes = Dict[str, AttributeValue]
 SpanType = TypeVar("SpanType")
-
-
-class SpanKind(Enum):
-    UNSPECIFIED = 1
-    SERVER = 2
-    CLIENT = 3
-    PRODUCER = 4
-    CONSUMER = 5
-    INTERNAL = 6
 
 
 @runtime_checkable
@@ -305,18 +286,3 @@ class HttpSpanMixin:
         else:
             self.add_attribute(HttpSpanMixin._HTTP_STATUS_CODE, 504)
             self.add_attribute(HttpSpanMixin._ERROR_TYPE, "504")
-
-
-class Link:
-    """
-    This is a wrapper class to link the context to the current tracer.
-
-    :param headers: A dictionary of the request header as key value pairs.
-    :type headers: dict
-    :param attributes: Any additional attributes that should be added to link
-    :type attributes: dict
-    """
-
-    def __init__(self, headers: Dict[str, str], attributes: Optional[Attributes] = None) -> None:
-        self.headers = headers
-        self.attributes = attributes
