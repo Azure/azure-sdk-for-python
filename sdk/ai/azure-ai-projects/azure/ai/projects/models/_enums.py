@@ -39,8 +39,8 @@ class AgentsNamedToolChoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tool type ``file_search``"""
     BING_GROUNDING = "bing_grounding"
     """Tool type ``bing_grounding``"""
-    MICROSOFT_FABRIC = "fabric_aiskill"
-    """Tool type ``fabric_aiskill``"""
+    MICROSOFT_FABRIC = "fabric_dataagent"
+    """Tool type ``fabric_dataagent``"""
     SHAREPOINT = "sharepoint_grounding"
     """Tool type ``sharepoint_grounding``"""
     AZURE_AI_SEARCH = "azure_ai_search"
@@ -50,6 +50,8 @@ class AgentsNamedToolChoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class AgentStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Each event in a server-sent events stream has an ``event`` and ``data`` property:
 
+
+
     .. code-block::
 
        event: thread.created
@@ -58,7 +60,7 @@ class AgentStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     We emit events whenever a new object is created, transitions to a new state, or is being
     streamed in parts (deltas). For example, we emit ``thread.run.created`` when a new run
     is created, ``thread.run.completed`` when a run completes, and so on. When an Agent chooses
-    to create a message during a run, we emit a ``thread.message.created event``\\ , a
+    to create a message during a run, we emit a ``thread.message.created event``, a
     ``thread.message.in_progress`` event, many ``thread.message.delta`` events, and finally a
     ``thread.message.completed`` event.
 
@@ -134,8 +136,25 @@ class AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Entra ID authentication (formerly known as AAD)"""
     SAS = "SAS"
     """Shared Access Signature (SAS) authentication"""
+    CUSTOM = "CustomKeys"
+    """Custom authentication"""
     NONE = "None"
     """No authentication"""
+
+
+class AzureAISearchQueryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Available query types for Azure AI Search tool."""
+
+    SIMPLE = "simple"
+    """Query type ``simple``"""
+    SEMANTIC = "semantic"
+    """Query type ``semantic``"""
+    VECTOR = "vector"
+    """Query type ``vector``"""
+    VECTOR_SIMPLE_HYBRID = "vector_simple_hybrid"
+    """Query type ``vector_simple_hybrid``"""
+    VECTOR_SEMANTIC_HYBRID = "vector_semantic_hybrid"
+    """Query type ``vector_semantic_hybrid``"""
 
 
 class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -153,6 +172,10 @@ class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Azure AI Search"""
     API_KEY = "ApiKey"
     """Generic connection that uses API Key authentication"""
+    CUSTOM = "CustomKeys"
+    """Generic connection that uses Custom authentication"""
+    COGNITIVE_SERVICE = "CognitiveService"
+    """Cognitive Service"""
 
 
 class DoneEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -300,7 +323,6 @@ class MessageStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class OpenApiAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Authentication type for OpenApi endpoint. Allowed types are:
-
 
     * Anonymous (no authentication required)
     * Connection (requires connection_id to endpoint, as setup in AI Foundry)

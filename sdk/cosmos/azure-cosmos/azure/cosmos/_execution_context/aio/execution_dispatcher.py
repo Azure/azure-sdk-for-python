@@ -34,6 +34,7 @@ from azure.cosmos._execution_context.query_execution_info import _PartitionedQue
 from azure.cosmos.documents import _DistinctType
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.http_constants import StatusCodes
+from ..._constants import _Constants as Constants
 
 # pylint: disable=protected-access
 
@@ -117,8 +118,9 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                 raise ValueError("Executing a vector search query without TOP or LIMIT can consume many" +
                                  " RUs very fast and have long runtimes. Please ensure you are using one" +
                                  " of the two filters with your vector search query.")
-            if total_item_buffer > os.environ.get('AZURE_COSMOS_MAX_ITEM_BUFFER_VECTOR_SEARCH', 50000):
-                raise ValueError("Executing a vector search query with more items than the max is not allowed." +
+            if total_item_buffer > int(os.environ.get(Constants.MAX_ITEM_BUFFER_VS_CONFIG,
+                                                      Constants.MAX_ITEM_BUFFER_VS_CONFIG_DEFAULT)):
+                raise ValueError("Executing a vector search query with more items than the max is not allowed. " +
                                  "Please ensure you are using a limit smaller than the max, or change the max.")
             execution_context_aggregator =\
                 non_streaming_order_by_aggregator._NonStreamingOrderByContextAggregator(self._client,

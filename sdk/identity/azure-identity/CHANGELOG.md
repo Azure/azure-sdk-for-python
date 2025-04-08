@@ -6,6 +6,8 @@
 
 ### Breaking Changes
 
+- Previously, if a `client_id` or `identity_config` was specified in `ManagedIdentityCredential` for Service Fabric managed identity, which is not supported, the `client_id` (or `resource_id`/`object_id` specified `identity_config`) would be silently ignored. Now, an exception will be raised during a token request if a `client_id` or `identity_config` is specified for Service Fabric managed identity.
+
 ### Bugs Fixed
 
 ### Other Changes

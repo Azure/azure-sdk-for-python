@@ -57,7 +57,7 @@ class ProxyClient:  # pylint: disable=client-accepts-api-version-keyword
         name: str = kwargs.pop("name", "")
         if not name:
             name = f"azure_ai_evaluation_evaluators_{evaluator_name}_{datetime.now().strftime('%Y%m%d_%H%M%S_%f')}"
-        
+
         # Pass the correct previous run to the evaluator
         run: Optional[BatchClientRun] = kwargs.pop("run", None)
         if run:
