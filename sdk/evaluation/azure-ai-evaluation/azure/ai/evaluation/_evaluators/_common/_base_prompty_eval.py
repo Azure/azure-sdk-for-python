@@ -4,6 +4,7 @@
 
 import math
 import re
+import os
 from typing import Dict, TypeVar, Union
 
 from azure.ai.evaluation._legacy.prompty import AsyncPrompty
@@ -62,6 +63,11 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
         )
 
         self._flow = AsyncPrompty.load(source=prompty_file, model=prompty_model_config)
+
+        # delete the temporary prompty file
+        if self.is_reasoning_model is True:
+            if os.path.exists(self._prompty_file):
+                os.remove(self._prompty_file)
 
     # __call__ not overridden here because child classes have such varied signatures that there's no point
     # defining a default here.
