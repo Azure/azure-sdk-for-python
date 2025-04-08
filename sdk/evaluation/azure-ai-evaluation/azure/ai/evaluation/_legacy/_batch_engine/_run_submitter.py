@@ -246,9 +246,9 @@ class RunSubmitter:
                 print_red_error(error_message)
 
     @staticmethod
-    def _print_run_summary(run: Run, txtout: Union[TextIO, Any]) -> None:
+    def _print_run_summary(run: Run, text_out: Union[TextIO, Any]) -> None:
         duration = str(run.duration)
-        txtout.write(
+        text_out.write(
             "======= Run Summary =======\n\n"
             f'Run name: "{run.name}"\n'
             f'Run status: "{run.status.value}"\n'

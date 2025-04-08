@@ -44,7 +44,6 @@ class TargetRunContext:
             ported_inject_openai_api()
             # For addressing the issue of asyncio event loop closed on Windows
             set_event_loop_policy()
-        
 
     def __exit__(
         self,

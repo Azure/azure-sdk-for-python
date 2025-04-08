@@ -78,7 +78,7 @@ class RunSubmitterClient:
         data: Dict[str, List[Any]] = defaultdict(list)
         stop_at: Final[int] = self._config.default_num_results if not all_results else sys.maxsize
 
-        def _update(prefix: str, items: Sequence[Mapping[str, Any]], add_line_num: bool = False) -> None:
+        def _update(prefix: str, items: Sequence[Mapping[str, Any]]) -> None:
             for i, line in enumerate(items):
                 if i >= stop_at:
                     break
@@ -88,7 +88,7 @@ class RunSubmitterClient:
 
         # Go from a list of dictionaries (i.e. a row view of the data) to a dictionary of lists
         # (i.e. a column view of the data)
-        _update("inputs", run.inputs, True)
+        _update("inputs", run.inputs)
         _update("inputs", [{ LINE_NUMBER: i } for i in range(len(run.inputs)) ])
         _update("outputs", run.outputs)
 
