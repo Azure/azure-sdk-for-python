@@ -1185,7 +1185,8 @@ class RedTeam():
         strategy: Union[AttackStrategy, List[AttackStrategy]],
         scan_name: Optional[str] = None,
         data_only: bool = False,
-        output_path: Optional[Union[str, os.PathLike]] = None
+        output_path: Optional[Union[str, os.PathLike]] = None,
+        attack_success_threshold: int = 3,
     ) -> None:
         """Call the evaluate method if not data_only.
 
@@ -1215,7 +1216,7 @@ class RedTeam():
             result_path = f"{str(uuid.uuid4())}{RESULTS_EXT}"
             
         evaluators_dict = {
-            risk_category.value: RISK_CATEGORY_EVALUATOR_MAP[risk_category](azure_ai_project=self.azure_ai_project, credential=self.credential)
+            risk_category.value: RISK_CATEGORY_EVALUATOR_MAP[risk_category](azure_ai_project=self.azure_ai_project, credential=self.credential, threshold=attack_success_threshold)
         }
         
         # Completely suppress all output during evaluation call 
@@ -1341,6 +1342,7 @@ class RedTeam():
             data_only: bool = False, 
             output_path: Optional[Union[str, os.PathLike]] = None,
             timeout: int = 120,
+            attack_success_threshold: int = 3,
         ) -> Optional[EvaluationResult]:
         """Process a red team scan with the given orchestrator, converter, and prompts.
         
@@ -1393,6 +1395,7 @@ class RedTeam():
                     data_only=data_only,
                     data_path=data_path,
                     output_path=output_path,
+                    attack_success_threshold=attack_success_threshold,
                 )
             except Exception as e:
                 log_error(self.logger, f"Error during evaluation for {strategy_name}/{risk_category.value}", e)
@@ -1448,7 +1451,8 @@ class RedTeam():
             application_scenario: Optional[str] = None,
             parallel_execution: bool = True,
             max_parallel_tasks: int = 5,
-            timeout: int = 120
+            timeout: int = 120,
+            attack_success_threshold: int = 3,
         ) -> RedTeamResult:
         """Run a red team scan against the target using the specified strategies.
         
@@ -1746,7 +1750,8 @@ class RedTeam():
                         data_only=data_only,
                         output_path=output_path,
                         risk_category=risk_category,
-                        timeout=timeout
+                        timeout=timeout,
+                        attack_success_threshold=attack_success_threshold,
                     )
                 )
                 
