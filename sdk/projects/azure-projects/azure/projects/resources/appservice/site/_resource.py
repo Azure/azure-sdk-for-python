@@ -6,7 +6,6 @@
 # pylint: disable=arguments-differ
 
 from collections import defaultdict
-import inspect
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -15,28 +14,22 @@ from typing import (
     List,
     Literal,
     Mapping,
-    Tuple,
-    Type,
     Union,
     Optional,
     cast,
-    overload,
 )
 from typing_extensions import TypeVar, Unpack, TypedDict
 
 from ...resourcegroup import ResourceGroup
 from ..._identifiers import ResourceIdentifiers
-from ..._extension import ManagedIdentity, convert_managed_identities, RoleAssignment
+from ..._extension import ManagedIdentity, RoleAssignment
 from ...._parameters import GLOBAL_PARAMS
-from ...._setting import StoredPrioritizedSetting
-from ...._bicep.expressions import Guid, ResourceSymbol, Parameter, ResourceGroup as RGSymbol, Output
+from ...._bicep.expressions import ResourceSymbol, Parameter, Output
 from ...._resource import (
     Resource,
     FieldsType,
     ResourceReference,
     ExtensionResources,
-    _build_envs,
-    _load_dev_environment,
 )
 from .._resource import AppServicePlan
 from ._config import SiteConfig
@@ -70,7 +63,9 @@ class AppSiteKwargs(TypedDict, total=False):
     # app_service_environment: str
     # """The resource ID of the app service environment to use for this resource."""
     app_settings: Dict[str, str]
-    """The app settings-value pairs except for AzureWebJobsStorage, AzureWebJobsDashboard, APPINSIGHTS_INSTRUMENTATIONKEY and APPLICATIONINSIGHTS_CONNECTION_STRING."""
+    """The app settings-value pairs except for AzureWebJobsStorage, AzureWebJobsDashboard,
+    APPINSIGHTS_INSTRUMENTATIONKEY and APPLICATIONINSIGHTS_CONNECTION_STRING.
+    """
     # authSettingV2Configuration: Dict[str, object]
     # """The auth settings V2 configuration."""
     # basicPublishingCredentialsPolicies: List['BasicPublishingCredentialsPolicy']
@@ -118,9 +113,13 @@ class AppSiteKwargs(TypedDict, total=False):
     # msDeployConfiguration: Dict[str, object]
     # """The extension MSDeployment configuration."""
     # privateEndpoints: List['PrivateEndpoint']
-    # """Configuration details for private endpoints. For security reasons, it is recommended to use private endpoints whenever possible."""
+    # """Configuration details for private endpoints. For security reasons, it is recommended to use private
+    # endpoints whenever possible.
+    # """
     public_network_access: Literal["Disabled", "Enabled"]
-    """Whether or not public network access is allowed for this resource. For security reasons it should be disabled. If not specified, it will be disabled by default if private endpoints are set."""
+    """Whether or not public network access is allowed for this resource. For security reasons it should be disabled.
+    If not specified, it will be disabled by default if private endpoints are set.
+    """
     redundancy_mode: Literal["ActiveActive", "Failover", "GeoRedundant", "Manual", "None"]
     """Site redundancy mode."""
     roles: Union[
@@ -166,25 +165,34 @@ class AppSiteKwargs(TypedDict, total=False):
     scm_site_also_stopped: bool
     """Stop SCM (KUDU) site when the app is stopped."""
     site_config: Dict[str, object]
-    """The site config object. The defaults are set to the following values: alwaysOn: true, minTlsVersion: '1.2', ftpsState: 'FtpsOnly'."""
+    """The site config object. The defaults are set to the following values: alwaysOn: true,
+    minTlsVersion: '1.2', ftpsState: 'FtpsOnly'.
+    """
     # slots: List['Slot']
     # """Configuration for deployment slots for an app."""
     storage_account_required: bool
     """Checks if Customer provided storage account is required."""
     storage_account: Union[str, Parameter]
-    """Required if app of kind functionapp. Resource ID of the storage account to manage triggers and logging function executions."""
+    """Required if app of kind functionapp. Resource ID of the storage account to manage triggers and logging
+    function executions.
+    """
     storage_account_use_tdentity_authentication: bool
-    """If the provided storage account requires Identity based authentication ('allowSharedKeyAccess' is set to false). When set to true, the minimum role assignment required for the App Service Managed Identity to the storage account is 'Storage Blob Data Owner'."""
-    tags: Dict[str, str]
+    """If the provided storage account requires Identity based authentication ('allowSharedKeyAccess' is set to false).
+    When set to true, the minimum role assignment required for the App Service Managed Identity to the storage account
+    is 'Storage Blob Data Owner'.
+    """
+    tags: Union[Dict[str, Union[str, Parameter]], Parameter]
     """Tags of the resource."""
     # virtualNetworkSubnetId: str
-    # """Azure Resource Manager ID of the Virtual network and subnet to be joined by Regional VNET Integration. This must be of the form /subscriptions/{subscriptionName}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}."""
+    # """Azure Resource Manager ID of the Virtual network and subnet to be joined by Regional VNET Integration."""
     # vnetContentShareEnabled: bool
     # """To enable accessing content over virtual network."""
     # vnetImagePullEnabled: bool
     # """To enable pulling image over Virtual Network."""
     # vnetRouteAllEnabled: bool
-    # """Virtual Network Route All enabled. This causes all outbound traffic to have Virtual Network Security Groups and User Defined Routes applied."""
+    # """Virtual Network Route All enabled. This causes all outbound traffic to have Virtual Network Security Groups
+    # and User Defined Routes applied.
+    # """
 
 
 AppSiteResourceType = TypeVar("AppSiteResourceType", bound=Mapping[str, Any], default="AppSiteResource")
@@ -222,7 +230,6 @@ class AppSite(Resource, Generic[AppSiteResourceType]):
         /,
         name: Optional[Union[str, Parameter]] = None,
         plan: Optional[Union[str, Parameter, AppServicePlan]] = None,
-        app_settings: Optional[Dict[str, str]] = None,
         **kwargs: Unpack[AppSiteKwargs],
     ) -> None:
         existing = kwargs.pop("existing", False)  # type: ignore[typeddict-item]
@@ -247,11 +254,11 @@ class AppSite(Resource, Generic[AppSiteResourceType]):
                 properties["location"] = kwargs.pop("location")
             if "tags" in kwargs:
                 properties["tags"] = kwargs.pop("tags")
-        self._app_settings = app_settings or {}
+        self._app_settings = kwargs.pop("app_settings", {})
         super().__init__(
             properties,
             extensions=extensions,
-            service_prefix=[f"app_site"],
+            service_prefix=["app_site"],
             existing=existing,
             identifier=ResourceIdentifiers.app_service_site,
             **kwargs,

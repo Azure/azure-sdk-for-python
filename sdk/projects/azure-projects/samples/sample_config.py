@@ -31,6 +31,8 @@ import asyncio
 import time
 import logging
 
+from azure.projects import deprovision
+
 unique_suffix = int(time.time())
 
 
@@ -79,7 +81,7 @@ async def main():
         for key, value in app.config_store.items():
             print(f"{key}={value}")
 
-        app.infra.down(purge=True)
+        deprovision(app, purge=True)
 
     # If you wish to update the default deployment for the ConfigStore, or add additional settings,
     # this can be done by specifying an AzureInfrastructure definition.
@@ -117,7 +119,7 @@ async def main():
         logger = logging.getLogger()
         logger.setLevel(app.config_store["LOGGING_LEVEL"])
 
-        app.infra.down(purge=True)
+        deprovision(app, purge=True)
 
     # If you wish to disable to default Configuration Store resource, this can be done by specifying
     # an AzureInfrastructure defintion, and either overwriting the default field for config_store, or
@@ -132,7 +134,7 @@ async def main():
         for key, value in app.config_store.items():
             print(f"{key}={value}")
 
-        app.infra.down(purge=True)
+        deprovision(app, purge=True)
 
 
 if __name__ == "__main__":

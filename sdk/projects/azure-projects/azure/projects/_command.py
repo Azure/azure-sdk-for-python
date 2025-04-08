@@ -1,21 +1,43 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+# pylint: disable=import-error
+
 import asyncio
 import json
-import sys
 import inspect
 from argparse import ArgumentParser
 import pprint
-from typing import get_type_hints
-import inspect
 import functools
-from inspect import getmembers, ismethod, iscoroutine
 from contextlib import asynccontextmanager
-from collections.abc import AsyncIterator
-
-from makefun import create_function
 
 from ._utils import import_from_path
 from ._component import AzureApp, AzureInfrastructure, get_mro_annotations
 from .resources import RESOURCE_FROM_CLIENT_ANNOTATION
+
+
+def _get_args():
+    # TODO: Populate descriptions and help text for each argument.
+    parser = ArgumentParser(
+        prog="azproj", usage="azproj <filename> <command> [options]", description="Azure Projects CLI"
+    )
+    parser.add_argument("filename")
+    subparsers = parser.add_subparsers(dest="command", required=True)
+    provision = subparsers.add_parser("provision")
+    provision.add_argument("-p", "--parameters", type=str, help="JSON file with parameters for the provision command.")
+    subparsers.add_parser("deploy")
+    down = subparsers.add_parser("down")
+    down.add_argument("--purge", action="store_true", help="Purge the resources instead of deleting them.")
+    mcp = subparsers.add_parser("mcp")
+    mcp.add_argument("--port", type=int, default=8000, help="Port to run the MCP server on.")
+    mcp.add_argument("--stdio", action="store_true", help="Run the MCP server with stdio transport.")
+    mcp_subparsers = mcp.add_subparsers(dest="mcpcommand")
+    run = mcp_subparsers.add_parser("run")
+    run.add_argument("tool", help="The name of the tool to run.")
+    mcp_subparsers.add_parser("list_tools")
+    return parser.parse_args()
 
 
 async def list_tools(filename):
@@ -54,12 +76,12 @@ async def call_tool(filename, tool_name):
                 pprint.pp([c.text for c in result.content])
 
 
-async def main(app_class):
+async def build_mcp_server(app_class):  # pylint: disable=too-many-statements
     from mcp.server.fastmcp import FastMCP, Context
-    from mcp.server.fastmcp.resources import FunctionResource
+    from makefun import create_function
 
     @asynccontextmanager
-    async def app_lifespan(server):
+    async def app_lifespan(server):  # pylint: disable=unused-argument
         # Initialize on startup
         app = app_class.load()
         try:
@@ -80,7 +102,7 @@ async def main(app_class):
             mcp_server.add_tool(get_config, name=f"{app_class.__name__}_get_config", description=description)
             continue
         if annotation.__name__ in RESOURCE_FROM_CLIENT_ANNOTATION:
-            for name, value in getmembers(annotation):
+            for name, value in inspect.getmembers(annotation):
                 if inspect.isfunction(value):
 
                     if name.startswith("get_") and not name.endswith("_client"):
@@ -139,7 +161,7 @@ async def main(app_class):
                             client = getattr(ctx.request_context.lifespan_context, attr_name)
                             client_method = getattr(client, method_name)
                             download = client_method(*args, **kwargs)
-                            return b"".join([chunk for chunk in download])
+                            return b"".join(list(download))
 
                         func_name = f"{app_class.__name__.lower()}_{attr}_{name}"
                         wrapped = create_function(
@@ -153,30 +175,12 @@ async def main(app_class):
     return mcp_server
 
 
-def command():
-    parser = ArgumentParser(
-        prog="azproj", usage="azproj <filename> <command> [options]", description="Azure Projects CLI"
-    )
-    parser.add_argument("filename")
-    subparsers = parser.add_subparsers(dest="command", required=True)
-    provision = subparsers.add_parser("provision")
-    provision.add_argument("-p", "--parameters", type=str, help="JSON file with parameters for the provision command.")
-    deploy = subparsers.add_parser("deploy")
-    down = subparsers.add_parser("down")
-    down.add_argument("--purge", action="store_true", help="Purge the resources instead of deleting them.")
-    mcp = subparsers.add_parser("mcp")
-    mcp.add_argument("--port", type=int, default=8000, help="Port to run the MCP server on.")
-    mcp.add_argument("--stdio", action="store_true", help="Run the MCP server with stdio transport.")
-    mcp_subparsers = mcp.add_subparsers(dest="mcpcommand")
-    run = mcp_subparsers.add_parser("run")
-    run.add_argument("tool", help="The name of the tool to run.")
-    list_tools = mcp_subparsers.add_parser("list_tools")
-    args = parser.parse_args()
-
+def command():  # pylint: disable=too-many-branches, too-many-return-statements, too-many-statements
+    args = _get_args()
     if args.command == "provision":
         module = import_from_path(args.filename)
         if args.parameters:
-            with open(args.parameters, "r") as f:
+            with open(args.parameters, "r", encoding="utf-8") as f:
                 try:
                     # Support .env files as well as JSON files.
                     provision_params = json.load(f)
@@ -253,7 +257,7 @@ def command():
             asyncio.run(call_tool(args.filename, tool_name))
             return
         if not args.mcpcommand:
-            server = asyncio.run(main(value))
+            server = asyncio.run(build_mcp_server(value))
             io = "stdio" if args.stdio else "sse"
             try:
                 if io == "sse":

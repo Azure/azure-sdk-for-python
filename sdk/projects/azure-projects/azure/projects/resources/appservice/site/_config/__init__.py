@@ -40,8 +40,8 @@ class SiteConfig(Resource, Generic[SiteConfigResourceType]):
         properties: Optional["SiteConfigResource"] = None,
         *,
         name: Optional[Union[str, Expression]],
-        parent: "AppSite",
-        settings: Optional[Mapping[str, str]] = None,
+        parent: "AppSite[Any]",
+        settings: Optional[Dict[str, Any]] = None,
         **kwargs,
     ) -> None:
         properties = properties or {}
@@ -72,7 +72,10 @@ class SiteConfig(Resource, Generic[SiteConfigResourceType]):
         return VERSION
 
     def _build_symbol(self, suffix: Optional[Union[str, Parameter]]) -> ResourceSymbol:
-        resource_ref = f"siteconfig_{generate_name(suffix)}"
+        if suffix:
+            resource_ref = f"siteconfig_{generate_name(suffix)}"
+        else:
+            resource_ref = "siteconfig"
         return ResourceSymbol(resource_ref)
 
     def _outputs(self, **kwargs) -> Dict[str, List[Output]]:

@@ -5,10 +5,10 @@
 # --------------------------------------------------------------------------
 # pylint: disable=line-too-long
 
-from typing import Literal, Dict, Union
+from typing import List, Literal, Dict, Union
 from typing_extensions import TypedDict
 
-from ...._bicep.expressions import Parameter
+from ...._bicep.expressions import Parameter, ResourceSymbol
 
 
 VERSION = "2024-10-01"
@@ -88,3 +88,5 @@ class DeploymentResource(TypedDict, total=False):
     """The resource model definition representing SKU"""
     tags: Union[Dict[str, Union[str, Parameter]], Parameter]
     """Dictionary of tag names and values. See Tags in templates"""
+    parent: ResourceSymbol
+    dependsOn: List[ResourceSymbol]

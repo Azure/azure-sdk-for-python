@@ -7,11 +7,11 @@
 from concurrent.futures import ThreadPoolExecutor
 import asyncio
 import threading
-from typing import Coroutine, Any
-from typing_extensions import TypeVar
 import importlib.util
 import sys
 import os
+from typing import Coroutine, Any
+from typing_extensions import TypeVar
 
 
 def import_from_path(file_path):

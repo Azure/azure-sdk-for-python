@@ -6,7 +6,6 @@
 # pylint: disable=arguments-differ
 
 from collections import defaultdict
-import inspect
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -15,28 +14,21 @@ from typing import (
     List,
     Literal,
     Mapping,
-    Tuple,
-    Type,
     Union,
     Optional,
     cast,
-    overload,
 )
 from typing_extensions import TypeVar, Unpack, TypedDict
 
 from ..resourcegroup import ResourceGroup
 from .._identifiers import ResourceIdentifiers
-from .._extension import ManagedIdentity, convert_managed_identities, RoleAssignment
+from .._extension import RoleAssignment
 from ..._parameters import GLOBAL_PARAMS
-from ..._setting import StoredPrioritizedSetting
-from ..._bicep.expressions import Guid, ResourceSymbol, Parameter, ResourceGroup as RGSymbol, Output
+from ..._bicep.expressions import Parameter, Output
 from ..._resource import (
     Resource,
-    FieldsType,
     ResourceReference,
     ExtensionResources,
-    _build_envs,
-    _load_dev_environment,
 )
 
 if TYPE_CHECKING:
@@ -45,7 +37,9 @@ if TYPE_CHECKING:
 
 class AppServicePlanKwargs(TypedDict, total=False):
     reserved: bool
-    """Defaults to false when creating Windows/app App Service Plan. Required if creating a Linux App Service Plan and must be set to true."""
+    """Defaults to false when creating Windows/app App Service Plan. Required if creating a Linux App Service Plan
+    and must be set to true.
+    """
     app_service_environment: str
     """The Resource ID of the App Service Environment to use for the App Service Plan."""
     # diagnosticSettings: List['DiagnosticSetting']
@@ -61,7 +55,9 @@ class AppServicePlanKwargs(TypedDict, total=False):
     maximum_elastic_worker_count: int
     """Maximum number of total workers allowed for this ElasticScaleEnabled App Service Plan."""
     per_site_scaling: bool
-    """If true, apps assigned to this App Service plan can be scaled independently. If false, apps assigned to this App Service plan will scale to all instances of the plan."""
+    """If true, apps assigned to this App Service plan can be scaled independently. If false, apps assigned to this App
+    Service plan will scale to all instances of the plan.
+    """
     roles: Union[
         Parameter,
         List[
@@ -103,7 +99,9 @@ class AppServicePlanKwargs(TypedDict, total=False):
     capacity: int
     """Number of workers associated with the App Service Plan. This defaults to 3, to leverage availability zones."""
     sku: str
-    """The name of the SKU will Determine the tier, size, family of the App Service Plan. This defaults to P1v3 to leverage availability zones."""
+    """The name of the SKU will Determine the tier, size, family of the App Service Plan. This defaults to P1v3 to
+    leverage availability zones.
+    """
     tags: Union[Dict[str, Union[str, Parameter]], Parameter]
     """Tags of the resource."""
     target_worker_count: int
@@ -113,7 +111,9 @@ class AppServicePlanKwargs(TypedDict, total=False):
     worker_rier_name: str
     """Target worker tier assigned to the App Service plan."""
     zone_redundant: bool
-    """Zone Redundant server farms can only be used on Premium or ElasticPremium SKU tiers within ZRS Supported regions (https://learn.microsoft.com/azure/storage/common/redundancy-regions-zrs)."""
+    """Zone Redundant server farms can only be used on Premium or ElasticPremium SKU tiers within ZRS Supported
+    regions (https://learn.microsoft.com/azure/storage/common/redundancy-regions-zrs).
+    """
 
 
 AppServicePlanResourceType = TypeVar(
@@ -166,22 +166,21 @@ class AppServicePlan(Resource, Generic[AppServicePlanResourceType]):
             if "sku" in kwargs:
                 sku = kwargs.pop("sku")
                 properties["sku"] = {"name": sku}
-                properties["sku"] = properties.get("sku", {})
             if "capacity" in kwargs:
                 capacity = kwargs.pop("capacity")
-                sku = properties.pop("sku", {})
+                existing_sku = properties.pop("sku", {})
                 try:
-                    sku["capacity"] = capacity
-                    properties["sku"] = sku
-                except TypeError:
+                    existing_sku["capacity"] = capacity  # type: ignore[index]
+                    properties["sku"] = existing_sku
+                except TypeError as e:
                     # This would mean that 'sku' is already using a parameter
-                    raise ValueError(f"Cannot set property 'capacity' to {sku}.")
+                    raise ValueError(f"Cannot set property 'capacity' to {existing_sku}.") from e
             if "tags" in kwargs:
                 properties["tags"] = kwargs.pop("tags")
         super().__init__(
             properties,
             extensions=extensions,
-            service_prefix=[f"app_service_plan"],
+            service_prefix=["app_service_plan"],
             existing=existing,
             identifier=ResourceIdentifiers.app_service_plan,
             **kwargs,

@@ -92,7 +92,7 @@ class UserAssignedIdentity(Resource, Generic[UserAssignedIdentityResourceType]):
 
     def _build_symbol(self, suffix: Optional[Union[str, Parameter]]):
         symbol = super()._build_symbol(suffix)
-        return ResourceSymbol(symbol._value, principal_id=True)  # pylint: disable=protected-access
+        return ResourceSymbol(cast(str, symbol._value), principal_id=True)  # pylint: disable=protected-access
 
     def _outputs(self, **kwargs) -> Dict[str, List[Output]]:
         # TODO: This results in duplicate outputs if there's multiple identities.

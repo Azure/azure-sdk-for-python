@@ -43,7 +43,7 @@ def generate_suffix(length: int = 5, /) -> str:
     return "".join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(length)).lower()
 
 
-def generate_name(seed: str, max_length: int = 20) -> str:
+def generate_name(seed: Union[str, "Parameter"], max_length: int = 20) -> str:
     random_gen = random.Random(resolve_value(seed))
     return "".join([random_gen.choice(string.ascii_lowercase) for _ in range(max_length)])
 

@@ -290,7 +290,7 @@ class MLWorkspace(Resource, Generic[MachineLearningWorkspaceResourceType]):
                     },
                     parent=cast(Union[AIHub, AIProject], self),  # We already filtered for 'kind' above.
                     category="CognitiveSearch",
-                    target=searchservices.outputs["endpoint"],
+                    target=searchservices.outputs["endpoint"][0],
                     name=Guid(
                         searchservices.properties.get("name", parameters["defaultName"]),
                         "connection",
@@ -312,7 +312,7 @@ class MLWorkspace(Resource, Generic[MachineLearningWorkspaceResourceType]):
                     {"parent": symbol},
                     parent=cast(Union[AIHub, AIProject], self),  # We already filtered for 'kind' above.
                     category="AIServices",
-                    target=aiservices.outputs["endpoint"],
+                    target=aiservices.outputs["endpoint"][0],
                     name=Guid(
                         aiservices.properties.get("name", parameters["defaultName"]),
                         "connection",

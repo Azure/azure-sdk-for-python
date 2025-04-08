@@ -72,7 +72,7 @@ class StoredPrioritizedSetting(PrioritizedSetting[ValidInputType, ValueType]):
             return value.default
         raise RuntimeError(f"No value for parameter {value.name} found in config store.")
 
-    def _raw_value(  # pylint: disable=too-many-return-statements
+    def _raw_value(  # pylint: disable=too-many-return-statements, too-many-branches
         self, value: Optional[ValidInputType] = None, *, config_store: Optional[Mapping[str, Any]]
     ) -> ValidInputType:
         # 5. immediate values
@@ -113,7 +113,7 @@ class StoredPrioritizedSetting(PrioritizedSetting[ValidInputType, ValueType]):
             for env_var in self._env_vars:
                 for env_setting in os.environ:
                     if env_setting.startswith(env_var):
-                        return os.environ[env_setting]
+                        return os.environ[env_setting]  # type: ignore[return-value]
         if self._env_var and self._env_var in os.environ:
             return os.environ[self._env_var]  # type: ignore[return-value]
 

@@ -5,12 +5,12 @@
 # --------------------------------------------------------------------------
 
 import asyncio
-import inspect
 import sys
 import keyword
 import types
 from collections import ChainMap
 from typing import (
+    Dict,
     Generic,
     Mapping,
     Protocol,
@@ -22,14 +22,13 @@ from typing import (
     List,
     Type,
     get_args,
-    overload,
     get_origin,
 )
 from typing_extensions import Self, TypeVar, dataclass_transform
 
 from ._bicep.expressions import Parameter, MISSING, Default
 from ._utils import run_coroutine_sync
-from ._resource import Resource, _load_dev_environment, SyncClient, AsyncClient
+from ._resource import Resource, SyncClient, AsyncClient
 from .resources import RESOURCE_FROM_CLIENT_ANNOTATION
 from .resources.resourcegroup import ResourceGroup
 from .resources.managedidentity import UserAssignedIdentity
@@ -479,7 +478,7 @@ class AzureApp(Generic[InfrastructureType], metaclass=AzureAppComponent):
         dev_env = kwargs.pop("__dev_env", None)
         # We only want to do this once per instance, so we'll pass it through to the metaclass.
         mro_annotations = kwargs.pop("__mro_annotations", None) or get_mro_annotations(cls, AzureApp)
-        new_kwargs = {}
+        new_kwargs: Dict[str, Any] = {}
         for attr, (annotation, _) in mro_annotations.items():
             annotation = get_optional_annotation(annotation)
             if annotation and annotation.__name__ in RESOURCE_FROM_CLIENT_ANNOTATION:
@@ -535,8 +534,9 @@ class AzureApp(Generic[InfrastructureType], metaclass=AzureAppComponent):
                         # We special case this one.
                         # TODO: Pretty sure this shouldn't be in the attr_map
                         pass
-                infra = make_infra(cls.__name__, fields)()
-        dev_env = provision(infra, parameters=parameters, **kwargs)
+                dev_env = provision(make_infra(cls.__name__, fields)(), parameters=parameters, **kwargs)
+        else:
+            dev_env = provision(infra, parameters=parameters, **kwargs)
         # The dev env returned here is a ChainMap of the deployed settings along with the user
         # provided parameters. If there's a config_store provided with the infra deployment, this
         # will be added to the front of the chain.

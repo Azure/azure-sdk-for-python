@@ -231,8 +231,7 @@ class AIDeployment(_ClientResource, Generic[AIDeploymentResourceType]):
                 f"https://{self.parent._settings['name'](config_store=config_store)}.openai.azure.com/openai/"  # pylint: disable=protected-access
                 + f"deployments/{self._settings['name'](config_store=config_store)}"
             )
-        else:
-            return f"https://{self.parent._settings['name'](config_store=config_store)}.services.ai.azure.com/models"  # pylint: disable=protected-access
+        return f"https://{self.parent._settings['name'](config_store=config_store)}.services.ai.azure.com/models"  # pylint: disable=protected-access
 
     def _outputs(  # type: ignore[override]  # Parameter subset
         self,

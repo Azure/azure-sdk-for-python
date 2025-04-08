@@ -20,11 +20,11 @@ import json
 from io import StringIO
 import subprocess
 
-import yaml
+import yaml  # type: ignore[import-untyped]
 from dotenv import dotenv_values
 
 from ._version import VERSION
-from ._component import AzureInfrastructure
+from ._component import AzureApp, AzureInfrastructure
 from ._parameters import GLOBAL_PARAMS
 from ._bicep.utils import resolve_value, serialize_dict
 from ._bicep.expressions import MISSING, Output, Parameter, PlaceholderParameter, ResourceSymbol
@@ -48,7 +48,7 @@ def get_settings() -> Dict[str, Any]:
         if output.returncode == 0:
             config = StringIO(output.stdout)
             return dotenv_values(stream=config)
-    except Exception as e:
+    except Exception:  # pylint: disable=broad-except
         pass
     return {}
 
@@ -154,7 +154,7 @@ def deploy(deployment: AzureInfrastructure) -> None:
         raise RuntimeError()
 
 
-def deprovision(deployment: Union[str, AzureInfrastructure], /, *, purge: bool = False) -> None:
+def deprovision(deployment: Union[str, AzureInfrastructure, AzureApp], /, *, purge: bool = False) -> None:
     if isinstance(deployment, str):
         deployment_name = deployment
     else:
@@ -220,16 +220,16 @@ def export(
     working_dir = os.path.abspath(output_dir)
     infra_dir = os.path.join(working_dir, infra_dir)
     # Not sure why a TypedDict is incompatible with SupportsKeysAndGetItem
-    parameters: Dict[str, Parameter] = dict(GLOBAL_PARAMS)  # type: ignore[arg-type]
+    export_parameters: Dict[str, Parameter] = dict(GLOBAL_PARAMS)  # type: ignore[arg-type]
     if not user_access:
         # If we don't want any local access, simply remove the parameter.
-        parameters.pop("principalId")
+        export_parameters.pop("principalId")
     if location:
-        parameters["location"].default = location
+        export_parameters["location"].default = location
 
     fields: FieldsType = {}
     _parse_module(
-        parameters=parameters,
+        parameters=export_parameters,
         parent_component=deployment,
         component=deployment,
         component_resources=_get_component_resources(deployment),
@@ -237,8 +237,8 @@ def export(
     )
     for field in fields.values():
         if field.add_defaults:
-            field.add_defaults(field, parameters)
-    add_extensions(fields, parameters)
+            field.add_defaults(field, export_parameters)
+    add_extensions(fields, export_parameters)
 
     try:
         os.makedirs(infra_dir)
@@ -247,14 +247,14 @@ def export(
     bicep_main = os.path.join(infra_dir, f"{main_bicep}.bicep")
     with open(bicep_main, "w", encoding="utf-8") as main:
         main.write("targetScope = 'subscription'\n\n")
-        for parameter in parameters.values():
+        for parameter in export_parameters.values():
             # TODO: Maybe add a "public: bool" attribute to Outputs and Placeholders?
             if parameter.name and not isinstance(parameter, (Output, PlaceholderParameter)):
                 main.write(parameter.__bicep__(parameter_values.get(parameter.name, MISSING)))
         _write_resources(
             bicep=main,
             fields=list(fields.values()),
-            parameters=parameters,
+            parameters=export_parameters,
             deployment_name=deployment_name,
             infra_dir=infra_dir,
         )
@@ -263,7 +263,7 @@ def export(
     main_parameters = os.path.join(infra_dir, f"{main_bicep}.parameters.json")
     params_content: Dict[str, Any] = dict(_BICEP_PARAMS)
     params_content["parameters"] = {}
-    for parameter in parameters.values():
+    for parameter in export_parameters.values():
         if parameter.name and parameter.env_var:
             params_content["parameters"].update(parameter.__obj__())
     with open(main_parameters, "w", encoding="utf-8") as params_json:

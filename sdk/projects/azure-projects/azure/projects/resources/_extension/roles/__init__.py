@@ -56,7 +56,10 @@ class RoleAssignment(Resource, Generic[RoleAssignmentResourceType]):
         return {}
 
     def _build_symbol(self, suffix: Optional[Union[str, Parameter]]) -> ResourceSymbol:
-        resource_ref = f"roleassignment_{generate_name(suffix)}"
+        if suffix:
+            resource_ref = f"roleassignment_{generate_name(suffix)}"
+        else:
+            resource_ref = "roleassignment"
         return ResourceSymbol(resource_ref)
 
 

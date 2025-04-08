@@ -30,6 +30,8 @@ USAGE:
 import asyncio
 import time
 
+from azure.projects import deprovision
+
 unique_suffix = int(time.time())
 
 
@@ -47,14 +49,10 @@ async def main():
     # with the correct user access roles.
     # The resources will be provisioned by AZD in a new environment named with the app class name.
     # When first provisioning, AZD will prompt you to select a subscription and default deploy location.
+    # Provisioning an app will automatically create the underlying infrastructure derived from the type hints.
     with MyFirstApp.provision() as first_app:
         new_container = first_app.data.create_container("samplecontainer")
         new_container.upload_blob("sampleblob.txt", b"Hello World", overwrite=True)
-
-        # Provisioning an app will automatically create the underlying infrastructure derived
-        # from the type hints. To see what resources have been detected, you can inspect the 'infra'
-        # attribute.
-        print(f"Deployed infrastructure: {first_app.infra}")
 
     # Onces the resources have been provisioned, we can reload the same environment:
     with MyFirstApp.load() as first_app:
@@ -62,7 +60,7 @@ async def main():
             first_app.data.delete_container(container)
 
         # If no longer needed, the infrastructure can be deprovisioned.
-        first_app.infra.down(purge=True)
+        deprovision(first_app, purge=True)
 
     # An AzureApp class functions similar to a Python dataclass, so defaults or factories can be provided.
     # Unlike dataclasses, additional keyword-arguments can be provided to the field specifier which
@@ -116,7 +114,7 @@ async def main():
         all_images = [image async for image in app.images.list_blobs()]
         print(f"Container holds {len(all_images)} image files.")
 
-        app.infra.down(purge=True)
+        deprovision(app, purge=True)
 
 
 if __name__ == "__main__":

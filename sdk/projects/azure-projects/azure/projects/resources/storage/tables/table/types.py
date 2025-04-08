@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=line-too-long
 
-from typing import Literal, Dict, Union, List
+from typing import Union, List
 from typing_extensions import TypedDict, Required
 
 from ....._bicep.expressions import Parameter

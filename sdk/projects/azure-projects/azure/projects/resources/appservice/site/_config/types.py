@@ -5,17 +5,17 @@
 # --------------------------------------------------------------------------
 # pylint: disable=line-too-long
 
-from typing import Dict, Any
+from typing import Dict, Any, Union
 from typing_extensions import TypedDict
 
-from ....._bicep.expressions import ResourceSymbol
+from ....._bicep.expressions import ResourceSymbol, Expression
 
 
 VERSION = "2024-04-01"
 
 
 class SiteConfigResource(TypedDict, total=False):
-    name: str
+    name: Union[str, Expression]
     """The resource name."""
     properties: Dict[str, Any]
     """Properties of Connection."""

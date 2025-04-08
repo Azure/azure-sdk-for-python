@@ -33,6 +33,8 @@ USAGE:
 import asyncio
 import time
 
+from azure.projects import deprovision
+
 unique_suffix = int(time.time())
 
 
@@ -47,14 +49,13 @@ async def main():
 
     with ChatApp.provision() as app:
         response = app.chat.complete(
-            messages=[
+            messages=[  # type: ignore[arg-type]
                 UserMessage("How many feet are in a mile?"),
             ],
         )
 
         print(response.choices[0].message.content)
         print(f"\nToken usage: {response.usage}")
-
 
     # The Chat model resource is already parameterized with the following parameters that you
     # can use to modify the deployment:
@@ -70,14 +71,13 @@ async def main():
     }
     with ChatApp.provision(parameters=parameters) as app:
         response = app.chat.complete(
-            messages=[
+            messages=[  # type: ignore[arg-type]
                 UserMessage("How many feet are in a mile?"),
             ]
         )
 
         print(response.choices[0].message.content)
         print(f"\nToken usage: {response.usage}")
-
 
     # If you want to change the default model deployment, including defining your own parameters,
     # you can update the AIChat resource
@@ -92,17 +92,14 @@ async def main():
                 "version": Parameter("Phi4Version"),
                 "format": "Microsoft",
             },
-            "raiPolicyName": "Microsoft.DefaultV2"
+            "raiPolicyName": "Microsoft.DefaultV2",
         },
-        "sku": {
-            "name": "GlobalStandard",
-            "capacity": 1
-        },
+        "sku": {"name": "GlobalStandard", "capacity": 1},
     }
 
     with ChatApp.provision(parameters={"Phi4Version": "7"}) as app:
         response = app.chat.complete(
-            messages=[
+            messages=[  # type: ignore[arg-type]
                 UserMessage("How many feet are in a mile?"),
             ]
         )
@@ -110,8 +107,7 @@ async def main():
         print(response.choices[0].message.content)
         print(f"\nToken usage: {response.usage}")
 
-        app.infra.down(purge=True)
-
+        deprovision(app, purge=True)
 
     # If we want to have more control over the deployed resources, including adding other resources or
     # multiple models, we can create an AzureInfrastructure definition.
@@ -126,43 +122,41 @@ async def main():
 
     infra = ChatInfra()
 
-
     from openai import AzureOpenAI
     from azure.storage.blob import ContainerClient
 
-    class ChatApp(AzureApp):
+    class MultiChatApp(AzureApp):
         chat_a: AzureOpenAI  # We can also use the OpenAI SDK
         chat_b: ChatCompletionsClient
         outputs: ContainerClient
 
     # Our custom infra definition has multiple chat models defined, so we will need to provide
     # a mapping to specify which resources should be used with which clients.
-    resource_map = {"chat_a":"open_ai", "chat_b": "phi_4", "outputs": "data"}
+    resource_map = {"chat_a": "open_ai", "chat_b": "phi_4"}
 
-    with ChatApp.provision(infra, attr_map=resource_map) as app:
+    with MultiChatApp.provision(infra, attr_map=resource_map) as multi_chat_app:
         question = "How many feet are in a mile?"
         print(f"Question: {question}")
-        openai_response = app.chat_a.chat.completions.create(
+        openai_response = multi_chat_app.chat_a.chat.completions.create(
             messages=[
                 {
                     "role": "user",
                     "content": question,
                 },
             ],
-            model="o1-mini"
+            model="o1-mini",
         )
         print(f"OpenAI says: {openai_response.choices[0].message.content}")
-        phi_response = app.chat_b.complete(
-            messages = [
+        phi_response = multi_chat_app.chat_b.complete(
+            messages=[
                 UserMessage(question),
                 AssistantMessage(openai_response.choices[0].message.content),
-                UserMessage("Do you agree?")
+                UserMessage("Do you agree?"),
             ]
         )
         print(f"Phi says: {phi_response.choices[0].message.content}")
 
-        app.infra.down(purge=True)
-
+        deprovision(multi_chat_app, purge=True)
 
     # You can also provision models as part of complete Azure Foundry deployment, which could
     # use a combination of new or existing resources
@@ -186,15 +180,15 @@ async def main():
 
     my_foundry = FoundryInfra()
 
-
     class AIProjectApp(AzureApp):
         admin: AIProjectClient
 
-    with AIProjectApp.provision(my_foundry) as app:
-        for connection in app.admin.connections.list():
+    with AIProjectApp.provision(my_foundry) as foundry_app:
+        for connection in foundry_app.admin.connections.list():
             print(f"Connection: {connection.name}, {connection.connection_type}, {connection.authentication_type}")
 
-        app.infra.down(purge=True)
+        deprovision(foundry_app, purge=True)
+
 
 if __name__ == "__main__":
     asyncio.run(main())

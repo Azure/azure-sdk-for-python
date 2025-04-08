@@ -198,7 +198,10 @@ class AIConnection(Resource, Generic[ConnectionResourceType]):
         return VERSION
 
     def _build_symbol(self, suffix: Optional[Union[str, Parameter]]) -> ResourceSymbol:
-        resource_ref = f"connection_{generate_name(suffix)}"
+        if suffix:
+            resource_ref = f"connection_{generate_name(suffix)}"
+        else:
+            resource_ref = "connection"
         return ResourceSymbol(resource_ref)
 
     def _outputs(self, **kwargs) -> Dict[str, List[Output]]:
