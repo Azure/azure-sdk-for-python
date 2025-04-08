@@ -20,7 +20,7 @@ if has_pyrit:
         RedTeam, RiskCategory, AttackStrategy
     )
     from azure.ai.evaluation.red_team._red_team_result import (
-        _RedTeamResult, RedTeamOutput, _RedTeamingScorecard, _RedTeamingParameters, _Conversation
+        ScanResult, RedTeamResult
     )
     from azure.ai.evaluation.red_team._attack_objective_generator import _AttackObjectiveGenerator
     from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
@@ -239,9 +239,9 @@ class TestRedTeamMlflowIntegration:
         red_team.logger = mock_logger
         
         # Test with data_only=True
-        mock_redteam_output = MagicMock()
-        mock_redteam_output.redteaming_data = [{"conversation": {"messages": [{"role": "user", "content": "test"}]}}]
-        mock_redteam_output.red_team_result = None
+        mock_redteam_result = MagicMock()
+        mock_redteam_result.attack_details = [{"conversation": {"messages": [{"role": "user", "content": "test"}]}}]
+        mock_redteam_result.scan_result = None
         
         mock_eval_run = MagicMock()
         mock_eval_run.log_artifact = MagicMock()
@@ -262,7 +262,7 @@ class TestRedTeamMlflowIntegration:
              patch.object(red_team, "scan_output_dir", None):
              
             # Mock the implementation to avoid tempfile dependency
-            async def mock_impl(redteam_output, eval_run, data_only=False):
+            async def mock_impl(redteam_result, eval_run, data_only=False):
                 eval_run.log_artifact("/tmp/mockdir", "instance_results.json")
                 eval_run.write_properties_to_run_history({
                     "run_type": "eval_run",
@@ -274,7 +274,7 @@ class TestRedTeamMlflowIntegration:
             red_team._log_redteam_results_to_mlflow = AsyncMock(side_effect=mock_impl)
             
             result = await red_team._log_redteam_results_to_mlflow(
-                redteam_output=mock_redteam_output,
+                redteam_result=mock_redteam_result,
                 eval_run=mock_eval_run,
                 data_only=True
             )
@@ -307,9 +307,9 @@ class TestRedTeamMlflowIntegration:
         red_team.logger = mock_logger
         
         # Test with actual result data
-        mock_redteam_output = MagicMock()
-        mock_redteam_output.red_team_result = {
-            "redteaming_scorecard": {
+        mock_redteam_result= MagicMock()
+        mock_redteam_result.scan_result = {
+            "scorecard": {
                 "joint_risk_attack_summary": [
                     {
                         "risk_category": "violence",
@@ -342,8 +342,8 @@ class TestRedTeamMlflowIntegration:
             # Mock the implementation to avoid tempfile dependency but still log metrics
             async def mock_impl(redteam_output, eval_run, data_only=False):
                 # Call log_metric with the expected values
-                if redteam_output.red_team_result:
-                    scorecard = redteam_output.red_team_result["redteaming_scorecard"]
+                if redteam_output.scan_result:
+                    scorecard = redteam_output.scan_result["scorecard"]
                     joint_attack_summary = scorecard["joint_risk_attack_summary"]
                     
                     if joint_attack_summary:
@@ -365,7 +365,7 @@ class TestRedTeamMlflowIntegration:
             red_team._log_redteam_results_to_mlflow = AsyncMock(side_effect=mock_impl)
             
             result = await red_team._log_redteam_results_to_mlflow(
-                redteam_output=mock_redteam_output,
+                redteam_output=mock_redteam_result,
                 eval_run=mock_eval_run,
                 data_only=False
             )
@@ -977,24 +977,24 @@ class TestRedTeamProcessing:
 
 @pytest.mark.unittest
 @pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
-class TestRedTeamOutputCreation:
-    """Test RedTeamResult and RedTeamOutput creation."""
+class TestRedTeamResultCreation:
+    """Test ScanResult and RedTeamResult creation."""
 
     def test_to_red_team_result(self):
-        """Test creating a RedTeamResult."""
-        # Since RedTeamResult is a TypedDict, we're just testing its dictionary-like behavior
+        """Test creating a ScanResult."""
+        # Since ScanResult is a TypedDict, we're just testing its dictionary-like behavior
         # without using isinstance checks or mocking
-        result = _RedTeamResult(
-            redteaming_scorecard={},
-            redteaming_parameters={},
-            redteaming_data=[],
+        result = ScanResult(
+            scorecard={},
+            parameters={},
+            attack_details=[],
             studio_url="https://test-studio.com"
         )
         
         # Verify the dictionary structure
-        assert "redteaming_scorecard" in result
-        assert "redteaming_parameters" in result
-        assert "redteaming_data" in result
+        assert "scorecard" in result
+        assert "parameters" in result
+        assert "attack_details" in result
         assert "studio_url" in result
         assert result["studio_url"] == "https://test-studio.com"
 
@@ -1002,20 +1002,20 @@ class TestRedTeamOutputCreation:
         """Test creating a RedTeamResult with minimal data."""
         # Since RedTeamResult is a TypedDict, we're just testing its dictionary-like behavior
         # with minimal data
-        result = _RedTeamResult(
-            redteaming_scorecard={"risk_category_summary": [{"overall_asr": 0.0}]},
-            redteaming_parameters={},
-            redteaming_data=[],
+        result = ScanResult(
+            scorecard={"risk_category_summary": [{"overall_asr": 0.0}]},
+            parameters={},
+            attack_details=[],
             studio_url=None
         )
         
         # Verify the dictionary structure with minimal data
-        assert "redteaming_scorecard" in result
-        assert "risk_category_summary" in result["redteaming_scorecard"]
-        assert result["redteaming_scorecard"]["risk_category_summary"][0]["overall_asr"] == 0.0
-        assert "redteaming_parameters" in result
-        assert "redteaming_data" in result
-        assert len(result["redteaming_data"]) == 0
+        assert "scorecard" in result
+        assert "risk_category_summary" in result["scorecard"]
+        assert result["scorecard"]["risk_category_summary"][0]["overall_asr"] == 0.0
+        assert "parameters" in result
+        assert "attack_details" in result
+        assert len(result["attack_details"]) == 0
         assert "studio_url" in result
         assert result["studio_url"] is None
 
@@ -1043,15 +1043,15 @@ class TestRedTeamOutputCreation:
         # Rather than trying to fix this complex test with so many layers of mocking,
         # we'll just mock the scan method entirely to return a simple result
         
-        # Create a mock RedTeamOutput
-        mock_result = RedTeamOutput(
-            red_team_result=_RedTeamResult(
-                redteaming_scorecard={"risk_category_summary": []},
-                redteaming_parameters={},
-                redteaming_data=[],
+        # Create a mock RedTeamResult
+        mock_result = RedTeamResult(
+            scan_result=ScanResult(
+                scorecard={"risk_category_summary": []},
+                parameters={},
+                attack_details=[],
                 studio_url="https://test-studio.com"
             ),
-            redteaming_data=[]
+            attack_details=[]
         )
         
         # Mock the scan method to directly return our mock result
@@ -1071,7 +1071,7 @@ class TestRedTeamOutputCreation:
             
             # Verify we got the expected result
             assert result == mock_result
-            assert isinstance(result, RedTeamOutput)
+            assert isinstance(result, RedTeamResult)
             mock_scan.assert_called_once_with(
                 target=mock_scan.call_args[1]["target"],
                 attack_objective_generator=mock_attack_objective_generator,
@@ -1083,41 +1083,41 @@ class TestRedTeamOutputCreation:
 
 @pytest.mark.unittest
 @pytest.mark.skipif(not has_pyrit, reason="redteam extra is not installed")
-class TestRedTeamOutput:
-    """Test RedTeamOutput functionality."""
+class TestRedTeamResult:
+    """Test RedTeamResult functionality."""
 
-    def test_red_team_output_initialization(self):
-        """Test RedTeamOutput initialization."""
-        result = RedTeamOutput()
-        assert result.red_team_result is None
-        assert result.redteaming_data is None
+    def test_red_team_result_initialization(self):
+        """Test RedTeamResult initialization."""
+        result = RedTeamResult()
+        assert result.scan_result is None
+        assert result.attack_details is None
         
-        mock_result = {"redteaming_scorecard": {}}
+        mock_result = {"scorecard": {}}
         mock_data = [{"conversation": []}]
         
-        result_with_data = RedTeamOutput(red_team_result=mock_result, redteaming_data=mock_data)
-        assert result_with_data.red_team_result == mock_result
-        assert result_with_data.redteaming_data == mock_data
+        result_with_data = RedTeamResult(scan_result=mock_result, attack_details=mock_data)
+        assert result_with_data.scan_result == mock_result
+        assert result_with_data.attack_details == mock_data
 
-    def test_red_team_output_to_json(self):
-        """Test RedTeamOutput to_json method."""
-        mock_result = {"redteaming_scorecard": {"risk_category_summary": []}}
-        result = RedTeamOutput(red_team_result=mock_result)
+    def test_red_team_result_to_json(self):
+        """Test RedTeamResult to_json method."""
+        mock_result = {"scorecard": {"risk_category_summary": []}}
+        result = RedTeamResult(scan_result=mock_result)
         
         json_str = result.to_json()
-        assert "redteaming_scorecard" in json_str
+        assert "scorecard" in json_str
 
-    def test_red_team_output_to_scorecard(self):
-        """Test RedTeamOutput to_scorecard method."""
+    def test_red_team_result_to_scorecard(self):
+        """Test RedTeamResult to_scorecard method."""
         mock_scorecard = {"risk_category_summary": []}
-        mock_result = {"redteaming_scorecard": mock_scorecard}
-        result = RedTeamOutput(red_team_result=mock_result)
+        mock_result = {"scorecard": mock_scorecard}
+        result = RedTeamResult(scan_result=mock_result)
         
         scorecard = result.to_scorecard()
         assert scorecard == mock_scorecard
 
-    def test_red_team_output_to_eval_qr_json_lines(self):
-        """Test RedTeamOutput to_eval_qr_json_lines method."""
+    def test_red_team_result_to_eval_qr_json_lines(self):
+        """Test RedTeamResult to_eval_qr_json_lines method."""
         mock_conversation = {
             "attack_success": True,
             "attack_technique": "base64",
@@ -1135,7 +1135,7 @@ class TestRedTeamOutput:
             }
         }
         
-        result = RedTeamOutput(redteaming_data=[mock_conversation])
+        result = RedTeamResult(attack_details=[mock_conversation])
         
         json_lines = result.to_eval_qr_json_lines()[0]
         
@@ -1147,8 +1147,8 @@ class TestRedTeamOutput:
         assert "base64" in json_lines
         assert "easy" in json_lines
 
-    def test_red_team_output_attack_simulation(self):
-        """Test RedTeamOutput attack_simulation method."""
+    def test_red_team_result_attack_simulation(self):
+        """Test RedTeamResult attack_simulation method."""
         mock_conversation = {
             "attack_success": True,
             "attack_technique": "base64",
@@ -1166,7 +1166,7 @@ class TestRedTeamOutput:
             }
         }
         
-        result = RedTeamOutput(redteaming_data=[mock_conversation])
+        result = RedTeamResult(attack_details=[mock_conversation])
         
         simulation_text = result.attack_simulation()
         
