@@ -20,12 +20,12 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_abort_latest_operation(self, resource_group):
+    def test_agent_pools_begin_abort_latest_operation(self, resource_group):
         response = self.client.agent_pools.begin_abort_latest_operation(
             resource_group_name=resource_group.name,
             resource_name="str",
             agent_pool_name="str",
-            api_version="2024-09-01",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -33,11 +33,11 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_agent_pools_list(self, resource_group):
         response = self.client.agent_pools.list(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2024-09-01",
+            api_version="2025-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -45,12 +45,12 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_agent_pools_get(self, resource_group):
         response = self.client.agent_pools.get(
             resource_group_name=resource_group.name,
             resource_name="str",
             agent_pool_name="str",
-            api_version="2024-09-01",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -58,7 +58,7 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_agent_pools_begin_create_or_update(self, resource_group):
         response = self.client.agent_pools.begin_create_or_update(
             resource_group_name=resource_group.name,
             resource_name="str",
@@ -76,6 +76,7 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
                 "enableNodePublicIP": bool,
                 "enableUltraSSD": bool,
                 "gpuInstanceProfile": "str",
+                "gpuProfile": {"driver": "str"},
                 "hostGroupID": "str",
                 "id": "str",
                 "kubeletConfig": {
@@ -129,6 +130,7 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
                 },
                 "maxCount": 0,
                 "maxPods": 0,
+                "messageOfTheDay": "str",
                 "minCount": 0,
                 "mode": "str",
                 "name": "str",
@@ -163,7 +165,7 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
                 "windowsProfile": {"disableOutboundNat": bool},
                 "workloadRuntime": "str",
             },
-            api_version="2024-09-01",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -171,12 +173,12 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_agent_pools_begin_delete(self, resource_group):
         response = self.client.agent_pools.begin_delete(
             resource_group_name=resource_group.name,
             resource_name="str",
             agent_pool_name="str",
-            api_version="2024-09-01",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -184,12 +186,12 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_upgrade_profile(self, resource_group):
+    def test_agent_pools_get_upgrade_profile(self, resource_group):
         response = self.client.agent_pools.get_upgrade_profile(
             resource_group_name=resource_group.name,
             resource_name="str",
             agent_pool_name="str",
-            api_version="2024-09-01",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -197,13 +199,13 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete_machines(self, resource_group):
+    def test_agent_pools_begin_delete_machines(self, resource_group):
         response = self.client.agent_pools.begin_delete_machines(
             resource_group_name=resource_group.name,
             resource_name="str",
             agent_pool_name="str",
             machines={"machineNames": ["str"]},
-            api_version="2024-09-01",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -211,11 +213,11 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_available_agent_pool_versions(self, resource_group):
+    def test_agent_pools_get_available_agent_pool_versions(self, resource_group):
         response = self.client.agent_pools.get_available_agent_pool_versions(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2024-09-01",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -223,12 +225,12 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_upgrade_node_image_version(self, resource_group):
+    def test_agent_pools_begin_upgrade_node_image_version(self, resource_group):
         response = self.client.agent_pools.begin_upgrade_node_image_version(
             resource_group_name=resource_group.name,
             resource_name="str",
             agent_pool_name="str",
-            api_version="2024-09-01",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

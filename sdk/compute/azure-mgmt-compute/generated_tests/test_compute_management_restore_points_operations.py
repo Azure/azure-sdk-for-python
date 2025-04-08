@@ -20,7 +20,7 @@ class TestComputeManagementRestorePointsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create(self, resource_group):
+    def test_restore_points_begin_create(self, resource_group):
         response = self.client.restore_points.begin_create(
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
@@ -118,7 +118,13 @@ class TestComputeManagementRestorePointsOperations(AzureMgmtRecordedTestCase):
                     "securityProfile": {
                         "encryptionAtHost": bool,
                         "encryptionIdentity": {"userAssignedIdentityResourceId": "str"},
-                        "proxyAgentSettings": {"enabled": bool, "keyIncarnationId": 0, "mode": "str"},
+                        "proxyAgentSettings": {
+                            "enabled": bool,
+                            "imds": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
+                            "keyIncarnationId": 0,
+                            "mode": "str",
+                            "wireServer": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
+                        },
                         "securityType": "str",
                         "uefiSettings": {"secureBootEnabled": bool, "vTpmEnabled": bool},
                     },
@@ -181,7 +187,7 @@ class TestComputeManagementRestorePointsOperations(AzureMgmtRecordedTestCase):
                 "timeCreated": "2020-02-20 00:00:00",
                 "type": "str",
             },
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -189,12 +195,12 @@ class TestComputeManagementRestorePointsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_restore_points_begin_delete(self, resource_group):
         response = self.client.restore_points.begin_delete(
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
             restore_point_name="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -202,12 +208,12 @@ class TestComputeManagementRestorePointsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_restore_points_get(self, resource_group):
         response = self.client.restore_points.get(
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
             restore_point_name="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself

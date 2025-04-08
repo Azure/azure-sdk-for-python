@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, Type, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -84,7 +84,7 @@ from ...operations._sql_resources_operations import (
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -131,7 +131,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.SqlDatabaseListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -211,7 +211,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.cosmosdb.models.SqlDatabaseGetResults
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -262,7 +262,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         create_update_sql_database_parameters: Union[_models.SqlDatabaseCreateUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -472,7 +472,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
     async def _delete_sql_database_initial(
         self, resource_group_name: str, account_name: str, database_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -603,7 +603,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -654,7 +654,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         update_throughput_parameters: Union[_models.ThroughputSettingsUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -868,7 +868,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
     async def _migrate_sql_database_to_autoscale_initial(  # pylint: disable=name-too-long
         self, resource_group_name: str, account_name: str, database_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -990,7 +990,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
     async def _migrate_sql_database_to_manual_throughput_initial(  # pylint: disable=name-too-long
         self, resource_group_name: str, account_name: str, database_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1134,7 +1134,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ClientEncryptionKeysListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1221,7 +1221,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.cosmosdb.models.ClientEncryptionKeyGetResults
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1276,7 +1276,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1530,7 +1530,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.SqlContainerListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1612,7 +1612,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.cosmosdb.models.SqlContainerGetResults
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1665,7 +1665,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         create_update_sql_container_parameters: Union[_models.SqlContainerCreateUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1886,7 +1886,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
     async def _delete_sql_container_initial(
         self, resource_group_name: str, account_name: str, database_name: str, container_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2011,7 +2011,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         merge_parameters: Union[_models.MergeParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2228,7 +2228,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         merge_parameters: Union[_models.MergeParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2467,7 +2467,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2520,7 +2520,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         update_throughput_parameters: Union[_models.ThroughputSettingsUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2745,7 +2745,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
     async def _migrate_sql_container_to_autoscale_initial(  # pylint: disable=name-too-long
         self, resource_group_name: str, account_name: str, database_name: str, container_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2871,7 +2871,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
     async def _migrate_sql_container_to_manual_throughput_initial(  # pylint: disable=name-too-long
         self, resource_group_name: str, account_name: str, database_name: str, container_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3002,7 +3002,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         retrieve_throughput_parameters: Union[_models.RetrieveThroughputParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3222,7 +3222,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         redistribute_throughput_parameters: Union[_models.RedistributeThroughputParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3444,7 +3444,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         retrieve_throughput_parameters: Union[_models.RetrieveThroughputParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3676,7 +3676,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         redistribute_throughput_parameters: Union[_models.RedistributeThroughputParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3927,7 +3927,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.SqlStoredProcedureListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4018,7 +4018,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.cosmosdb.models.SqlStoredProcedureGetResults
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4075,7 +4075,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4321,7 +4321,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         stored_procedure_name: str,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4475,7 +4475,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.SqlUserDefinedFunctionListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4566,7 +4566,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.cosmosdb.models.SqlUserDefinedFunctionGetResults
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4623,7 +4623,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4869,7 +4869,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         user_defined_function_name: str,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5023,7 +5023,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.SqlTriggerListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5114,7 +5114,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.cosmosdb.models.SqlTriggerGetResults
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5169,7 +5169,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         create_update_sql_trigger_parameters: Union[_models.SqlTriggerCreateUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5407,7 +5407,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         trigger_name: str,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5551,7 +5551,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.cosmosdb.models.SqlRoleDefinitionGetResults
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5602,7 +5602,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         create_update_sql_role_definition_parameters: Union[_models.SqlRoleDefinitionCreateUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5811,7 +5811,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
     async def _delete_sql_role_definition_initial(
         self, role_definition_id: str, resource_group_name: str, account_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5940,7 +5940,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.SqlRoleDefinitionListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6019,7 +6019,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.cosmosdb.models.SqlRoleAssignmentGetResults
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6070,7 +6070,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         create_update_sql_role_assignment_parameters: Union[_models.SqlRoleAssignmentCreateUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6279,7 +6279,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
     async def _delete_sql_role_assignment_initial(
         self, role_assignment_id: str, resource_group_name: str, account_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6408,7 +6408,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.SqlRoleAssignmentListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6479,7 +6479,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         location: Union[_models.ContinuousBackupRestoreLocation, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

@@ -123,7 +123,7 @@ class Compute(Resource, RestTranslatableMixin):
 
         class_type = cast(
             Optional[Union[AmlCompute, ComputeInstance, VirtualMachineCompute, KubernetesCompute, SynapseSparkCompute]],
-            mapping.get(compute_type, None),
+            mapping.get(compute_type, None),  # type: ignore
         )
         if class_type:
             return class_type._load_from_rest(obj)
@@ -154,7 +154,6 @@ class Compute(Resource, RestTranslatableMixin):
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
     def _to_dict(self) -> Dict:
-        # pylint: disable=no-member
         res: dict = ComputeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
         return res
 
@@ -181,7 +180,7 @@ class Compute(Resource, RestTranslatableMixin):
         )
 
         type_in_override = find_type_in_override(params_override) if params_override else None
-        compute_type = type_in_override or data.get(CommonYamlFields.TYPE, None)  # override takes the priority
+        compute_type = type_in_override or data.get(CommonYamlFields.TYPE, None)  # override takes the priority.
         if compute_type:
             if compute_type.lower() == ComputeType.VIRTUALMACHINE:
                 _vm_load_from_dict: Compute = VirtualMachineCompute._load_from_dict(data, context, **kwargs)

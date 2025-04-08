@@ -20,7 +20,7 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperations(AzureMg
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_virtual_machine_scale_set_vm_run_commands_begin_create_or_update(self, resource_group):
         response = self.client.virtual_machine_scale_set_vm_run_commands.begin_create_or_update(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
@@ -69,7 +69,7 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperations(AzureMg
                 "treatFailureAsDeploymentFailure": False,
                 "type": "str",
             },
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -77,7 +77,7 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperations(AzureMg
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update(self, resource_group):
+    def test_virtual_machine_scale_set_vm_run_commands_begin_update(self, resource_group):
         response = self.client.virtual_machine_scale_set_vm_run_commands.begin_update(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
@@ -122,7 +122,7 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperations(AzureMg
                 "timeoutInSeconds": 0,
                 "treatFailureAsDeploymentFailure": False,
             },
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -130,13 +130,13 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperations(AzureMg
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_virtual_machine_scale_set_vm_run_commands_begin_delete(self, resource_group):
         response = self.client.virtual_machine_scale_set_vm_run_commands.begin_delete(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             instance_id="str",
             run_command_name="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -144,13 +144,13 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperations(AzureMg
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_virtual_machine_scale_set_vm_run_commands_get(self, resource_group):
         response = self.client.virtual_machine_scale_set_vm_run_commands.get(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             instance_id="str",
             run_command_name="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -158,12 +158,12 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperations(AzureMg
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_virtual_machine_scale_set_vm_run_commands_list(self, resource_group):
         response = self.client.virtual_machine_scale_set_vm_run_commands.list(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             instance_id="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

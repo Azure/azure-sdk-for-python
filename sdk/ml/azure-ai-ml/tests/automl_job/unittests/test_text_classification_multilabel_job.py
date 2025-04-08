@@ -1,5 +1,3 @@
-from lib2to3.pytree import convert
-
 import pytest
 
 from azure.ai.ml import UserIdentityConfiguration

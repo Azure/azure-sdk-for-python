@@ -5,6 +5,7 @@
 from concurrent.futures import ThreadPoolExecutor
 import logging
 import threading
+import warnings
 import time
 from typing import (
     Any,
@@ -122,6 +123,7 @@ class EventHubProducerClient(ClientBase):  # pylint: disable=client-accepts-api-
     :keyword custom_endpoint_address: The custom endpoint address to use for establishing a connection to
      the Event Hubs service, allowing network requests to be routed through any application gateways or
      other paths needed for the host environment. Default is None.
+     Unless specified otherwise, default transport type is TransportType.AmqpOverWebsockets.
      The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
      If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
     :paramtype custom_endpoint_address: Optional[str]
@@ -199,6 +201,16 @@ class EventHubProducerClient(ClientBase):  # pylint: disable=client-accepts-api-
             network_tracing=kwargs.get("logging_enable"),
             **kwargs,
         )
+        # Deprecation of uamqp transport
+        if kwargs.get("uamqp_transport"):
+            warnings.warn(
+                "uAMQP legacy support will be removed in the 5.16.0 minor release. "
+                "Please remove the use of `uamqp_transport` keyword argument from the client in order "
+                "to use the pure Python AMQP transport. "
+                "If you rely on this, please comment on [this issue]"
+                "(https://github.com/Azure/azure-sdk-for-python/issues/40347) ",
+                DeprecationWarning, stacklevel=2
+            )
         self._auth_uri = f"sb://{self._address.hostname}{self._address.path}"
         self._keep_alive = kwargs.get("keep_alive", None)
 
@@ -318,7 +330,7 @@ class EventHubProducerClient(ClientBase):  # pylint: disable=client-accepts-api-
         timeout: Optional[float] = None,
         partition_id: Optional[str] = None,
         partition_key: Optional[str] = None,
-        **kwargs: Any,  # pylint: disable=unused-argument
+        **kwargs: Any,
     ) -> None:
         set_event_partition_key(event, partition_key, self._amqp_transport)
         timeout_time = time.time() + timeout if timeout else None
@@ -504,6 +516,7 @@ class EventHubProducerClient(ClientBase):  # pylint: disable=client-accepts-api-
         :keyword custom_endpoint_address: The custom endpoint address to use for establishing a connection to
          the Event Hubs service, allowing network requests to be routed through any application gateways or
          other paths needed for the host environment. Default is None.
+         Unless specified otherwise, default transport type is TransportType.AmqpOverWebsockets.
          The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
          If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
         :paramtype custom_endpoint_address: Optional[str]
@@ -563,7 +576,7 @@ class EventHubProducerClient(ClientBase):  # pylint: disable=client-accepts-api-
         timeout: Optional[float] = None,
         partition_id: Optional[str] = None,
         partition_key: Optional[str] = None,
-        **kwargs: Any,  # pylint: disable=unused-argument
+        **kwargs: Any,
     ) -> None:
         """
         Sends an event data.

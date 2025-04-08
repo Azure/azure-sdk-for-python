@@ -27,7 +27,7 @@ def analyze_documents_output_in_markdown():
     # [START analyze_documents_output_in_markdown]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence import DocumentIntelligenceClient
-    from azure.ai.documentintelligence.models import AnalyzeDocumentRequest, ContentFormat, AnalyzeResult
+    from azure.ai.documentintelligence.models import AnalyzeDocumentRequest, DocumentContentFormat, AnalyzeResult
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
@@ -37,7 +37,7 @@ def analyze_documents_output_in_markdown():
     poller = document_intelligence_client.begin_analyze_document(
         "prebuilt-layout",
         AnalyzeDocumentRequest(url_source=url),
-        output_content_format=ContentFormat.MARKDOWN,
+        output_content_format=DocumentContentFormat.MARKDOWN,
     )
     result: AnalyzeResult = poller.result()
 

@@ -14,11 +14,10 @@ from azure.core.pipeline import policies
 from .._version import VERSION
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class NotificationMessagesClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+class NotificationMessagesClientConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for NotificationMessagesClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -27,19 +26,20 @@ class NotificationMessagesClientConfiguration:  # pylint: disable=too-many-insta
     :param endpoint: The communication resource, for example
      https://my-resource.communication.azure.com. Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Is either a
-     TokenCredential type or a AzureKeyCredential type. Required.
+    :param credential: Credential used to authenticate requests to the service. Is either a token
+     credential type or a AzureKeyCredential type. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential or
      ~azure.core.credentials.AzureKeyCredential
-    :keyword api_version: The API version to use for this operation. Default value is "2024-08-30".
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Default value is
+     "2025-01-15-preview". Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     """
 
     def __init__(
         self, endpoint: str, credential: Union["AsyncTokenCredential", AzureKeyCredential], **kwargs: Any
     ) -> None:
-        api_version: str = kwargs.pop("api_version", "2024-08-30")
+        api_version: str = kwargs.pop("api_version", "2025-01-15-preview")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
@@ -75,7 +75,7 @@ class NotificationMessagesClientConfiguration:  # pylint: disable=too-many-insta
             self.authentication_policy = self._infer_policy(**kwargs)
 
 
-class MessageTemplateClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+class MessageTemplateClientConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for MessageTemplateClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -84,19 +84,20 @@ class MessageTemplateClientConfiguration:  # pylint: disable=too-many-instance-a
     :param endpoint: The communication resource, for example
      https://my-resource.communication.azure.com. Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Is either a
-     TokenCredential type or a AzureKeyCredential type. Required.
+    :param credential: Credential used to authenticate requests to the service. Is either a token
+     credential type or a AzureKeyCredential type. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential or
      ~azure.core.credentials.AzureKeyCredential
-    :keyword api_version: The API version to use for this operation. Default value is "2024-08-30".
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Default value is
+     "2025-01-15-preview". Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     """
 
     def __init__(
         self, endpoint: str, credential: Union["AsyncTokenCredential", AzureKeyCredential], **kwargs: Any
     ) -> None:
-        api_version: str = kwargs.pop("api_version", "2024-08-30")
+        api_version: str = kwargs.pop("api_version", "2025-01-15-preview")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")

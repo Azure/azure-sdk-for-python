@@ -15,7 +15,6 @@ USAGE: python blob_samples_enumerate_blobs_async.py
     1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
-from __future__ import print_function
 import os
 import sys
 import asyncio

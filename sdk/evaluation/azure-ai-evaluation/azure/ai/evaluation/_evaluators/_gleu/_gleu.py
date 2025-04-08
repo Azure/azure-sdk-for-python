@@ -1,28 +1,17 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+from typing import Dict
 from nltk.translate.gleu_score import sentence_gleu
-from promptflow._utils.async_utils import async_run_allowing_running_loop
+from typing_extensions import overload, override
 
 from azure.ai.evaluation._common.utils import nltk_tokenize
 
-
-class _AsyncGleuScoreEvaluator:
-    def __init__(self):
-        pass
-
-    async def __call__(self, *, ground_truth: str, response: str, **kwargs):
-        reference_tokens = nltk_tokenize(ground_truth)
-        hypothesis_tokens = nltk_tokenize(response)
-
-        score = sentence_gleu([reference_tokens], hypothesis_tokens)
-
-        return {
-            "gleu_score": score,
-        }
+from azure.ai.evaluation._evaluators._common import EvaluatorBase
+from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 
 
-class GleuScoreEvaluator:
+class GleuScoreEvaluator(EvaluatorBase):
     """
     Calculates the GLEU (Google-BLEU) score between a response and the ground truth.
 
@@ -34,6 +23,9 @@ class GleuScoreEvaluator:
     GLEU scores range from 0 to 1, where a value of 1 represents perfect overlap between the response and
     the ground truth and a value of 0 indicates no overlap.
 
+    :param threshold: The threshold for the GLEU evaluator. Default is 0.5.
+    :type threshold: float
+
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/evaluation_samples_evaluate.py
@@ -42,15 +34,56 @@ class GleuScoreEvaluator:
             :language: python
             :dedent: 8
             :caption: Initialize and call a GleuScoreEvaluator.
+    
+    .. admonition:: Example with Threshold:
+
+        .. literalinclude:: ../samples/evaluation_samples_threshold.py
+            :start-after: [START threshold_gleu_score_evaluator]
+            :end-before: [END threshold_gleu_score_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize with threshold and call a GleuScoreEvaluator.
     """
 
     id = "azureml://registries/azureml/models/Gleu-Score-Evaluator/versions/3"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
-    def __init__(self):
-        self._async_evaluator = _AsyncGleuScoreEvaluator()
+    @override
+    def __init__(self, *, threshold=0.5):
+        self._threshold = threshold
+        self._higher_is_better = True
+        super().__init__(threshold=threshold, _higher_is_better=self._higher_is_better)
 
-    def __call__(self, *, ground_truth: str, response: str, **kwargs):
+    @override
+    async def _do_eval(self, eval_input: Dict) -> Dict[str, float]:
+        """Produce a glue score evaluation result.
+
+        :param eval_input: The input to the evaluation function.
+        :type eval_input: Dict
+        :return: The evaluation result.
+        :rtype: Dict
+        """
+        ground_truth = eval_input["ground_truth"]
+        response = eval_input["response"]
+        reference_tokens = nltk_tokenize(ground_truth)
+        hypothesis_tokens = nltk_tokenize(response)
+
+        score = sentence_gleu([reference_tokens], hypothesis_tokens)
+        binary_result = False
+        if self._higher_is_better:
+            if score >= self._threshold:
+                binary_result = True
+        else:
+            if score <= self._threshold:
+                binary_result = True
+        return {
+            "gleu_score": score,
+            "gleu_result": EVALUATION_PASS_FAIL_MAPPING[binary_result],
+            "gleu_threshold": self._threshold,
+        }
+
+    @overload  # type: ignore
+    def __call__(self, *, ground_truth: str, response: str):
         """
         Evaluate the GLEU score between the response and the ground truth.
 
@@ -61,9 +94,21 @@ class GleuScoreEvaluator:
         :return: The GLEU score.
         :rtype: Dict[str, float]
         """
-        return async_run_allowing_running_loop(
-            self._async_evaluator, ground_truth=ground_truth, response=response, **kwargs
-        )
 
-    def _to_async(self):
-        return self._async_evaluator
+    @override
+    def __call__(  # pylint: disable=docstring-missing-param
+        self,
+        *args,
+        **kwargs,
+    ):
+        """
+        Evaluate the GLEU score between the response and the ground truth.
+
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
+        :keyword ground_truth: The ground truth to be compared against.
+        :paramtype ground_truth: str
+        :return: The GLEU score.
+        :rtype: Dict[str, float]
+        """
+        return super().__call__(*args, **kwargs)

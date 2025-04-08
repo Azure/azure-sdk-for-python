@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from __future__ import unicode_literals, annotations
+from __future__ import annotations
 
 import json
 import warnings
@@ -55,11 +55,12 @@ from .amqp import (
 )
 from ._pyamqp._message_backcompat import LegacyMessage, LegacyBatchMessage
 from ._pyamqp.message import Message as pyamqp_Message
+from ._pyamqp._decode import decode_payload
 from ._transport._pyamqp_transport import PyamqpTransport
 
 if TYPE_CHECKING:
     try:
-        from uamqp import (  # pylint: disable=unused-import
+        from uamqp import (
             Message,  # not importing as uamqp_Message, b/c type is exposed to user
             BatchMessage,
         )
@@ -143,7 +144,6 @@ class EventData:
         self.correlation_id = None
 
     def __repr__(self) -> str:
-        # pylint: disable=bare-except
         try:
             body_str = self.body_as_str()
         except Exception as e:  # pylint: disable=broad-except
@@ -225,12 +225,20 @@ class EventData:
         return event_data
 
     @classmethod
+    def from_bytes(cls, message: bytes) -> "EventData":
+
+        amqp_message = decode_payload(memoryview(message))
+        event_data = cls(body="")
+        event_data._message = amqp_message
+        event_data._raw_amqp_message = AmqpAnnotatedMessage(message=amqp_message)
+        return event_data
+
+    @classmethod
     def _from_message(
         cls,
         message: Union["Message", pyamqp_Message],
         raw_amqp_message: Optional[AmqpAnnotatedMessage] = None,
     ) -> EventData:
-        # pylint:disable=protected-access
         """Internal use only.
 
         Creates an EventData object from a raw uamqp message and, if provided, AmqpAnnotatedMessage.
@@ -242,13 +250,11 @@ class EventData:
         :rtype: ~azure.eventhub.EventData
         """
         event_data = cls(body="")
-        # pylint: disable=protected-access
         event_data._message = message
         event_data._raw_amqp_message = raw_amqp_message if raw_amqp_message else AmqpAnnotatedMessage(message=message)
         return event_data
 
     def _decode_non_data_body_as_str(self, encoding: str = "UTF-8") -> str:
-        # pylint: disable=protected-access
         body = self.raw_amqp_message.body
         if self.body_type == AmqpMessageBodyType.VALUE:
             if not body:

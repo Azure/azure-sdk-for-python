@@ -52,6 +52,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2024-09-01-preview/examples/CosmosDBManagedCassandraClusterPatch.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2024-12-01-preview/examples/CosmosDBManagedCassandraClusterPatch.json
 if __name__ == "__main__":
     main()

@@ -31,12 +31,6 @@ extends:
   parameters:
     ServiceDirectory: keyvault
     TestProxy: true
-    # Override the base matrix due to https://github.com/Azure/azure-sdk-for-python/issues/17837
-    MatrixConfigs:
-      - Name: keyvault_ci_matrix
-        Path: eng/pipelines/templates/stages/platform-matrix.json
-        Selection: sparse
-        GenerateVMJobs: true
     Artifacts:
     - name: azure-keyvault-administration
       safename: azurekeyvaultadministration

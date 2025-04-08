@@ -76,7 +76,7 @@ async def sample_manage_models():
                     f"warning code: {warning.code}, message: {warning.message}, target of the error: {warning.target}"
                 )
 
-        account_details = await document_intelligence_admin_client.get_resource_info()
+        account_details = await document_intelligence_admin_client.get_resource_details()
         print(
             f"Our resource has {account_details.custom_document_models.count} custom models, "
             f"and we can have at most {account_details.custom_document_models.limit} custom models"

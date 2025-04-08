@@ -20,7 +20,7 @@ class TestCosmosDBManagementPartitionKeyRangeIdOperations(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_metrics(self, resource_group):
+    def test_partition_key_range_id_list_metrics(self, resource_group):
         response = self.client.partition_key_range_id.list_metrics(
             resource_group_name=resource_group.name,
             account_name="str",
@@ -28,7 +28,7 @@ class TestCosmosDBManagementPartitionKeyRangeIdOperations(AzureMgmtRecordedTestC
             collection_rid="str",
             partition_key_range_id="str",
             filter="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

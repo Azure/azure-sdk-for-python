@@ -2,8 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument
-
 from azure.ai.ml._schema._sweep.parameterized_sweep import ParameterizedSweepSchema
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
 from azure.ai.ml._schema.job import BaseJobSchema, ParameterizedCommandSchema

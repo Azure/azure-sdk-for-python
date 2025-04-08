@@ -61,4 +61,4 @@ If you encounter any bugs or have suggestions, please file an issue in the
 section of the project. 
 
 
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-mgmt-dynatrace%2FREADME.png)
+

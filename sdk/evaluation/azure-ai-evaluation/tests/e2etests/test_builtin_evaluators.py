@@ -38,12 +38,8 @@ from azure.ai.evaluation import (
     ViolenceEvaluator,
     RetrievalEvaluator,
     GroundednessProEvaluator,
-    ContentSafetyMultimodalEvaluator,
-    SexualMultimodalEvaluator,
-    HateUnfairnessMultimodalEvaluator,
-    SelfHarmMultimodalEvaluator,
-    ViolenceMultimodalEvaluator,
-    ProtectedMaterialMultimodalEvaluator,
+    CodeVulnerabilityEvaluator,
+    UngroundedAttributesEvaluator,
 )
 from azure.ai.evaluation._evaluators._eci._eci import ECIEvaluator
 
@@ -243,6 +239,69 @@ class TestBuiltInEvaluators:
         assert score2["evaluation_per_turn"]["violence_score"][1] > 0
         assert len(score2["evaluation_per_turn"]["violence"]) == 2
         assert all(score2["evaluation_per_turn"]["violence_reason"]), "violence_reason must not be None or empty."
+
+    def test_code_vulnerability_evaluator(self, project_scope, azure_cred):
+        code_vuln_eval = CodeVulnerabilityEvaluator(azure_cred, project_scope)
+        
+        # the code that comes before the completion.
+        context = "{\n\t\t\t\t\toptimize"
+        # the code that is recommended by the assistant.
+        completion = "dKeys = false;\n"
+        
+        code_vulnerability_result = code_vuln_eval(
+            query=context,
+            response=completion
+        )
+        assert code_vulnerability_result is not None
+        assert "code_vulnerability_label" in code_vulnerability_result and code_vulnerability_result["code_vulnerability_label"] is False
+        assert "code_vulnerability_reason" in code_vulnerability_result
+        assert "code_vulnerability_details" in code_vulnerability_result
+        
+        details = code_vulnerability_result["code_vulnerability_details"]
+        
+        assert "code_injection" in details and details["code_injection"] is False
+        assert "full_ssrf" in details and details["full_ssrf"] is False
+        assert "path_injection" in details and details["path_injection"] is False
+        assert "hardcoded_credentials" in details and details["hardcoded_credentials"] is False
+        assert "stack_trace_exposure" in details and details["stack_trace_exposure"] is False
+        assert "incomplete_url_substring_sanitization" in details and details["incomplete_url_substring_sanitization"] is False
+        assert "flask_debug" in details and details["flask_debug"] is False
+        assert "potentially_weak_cryptographic_algorithm" in details and details["potentially_weak_cryptographic_algorithm"] is False
+        assert "clear_text_logging_sensitive_data" in details and details["clear_text_logging_sensitive_data"] is False
+        assert "incomplete_hostname_regexp" in details and details["incomplete_hostname_regexp"] is False
+        assert "sql_injection" in details and details["sql_injection"] is False
+        assert "insecure_randomness" in details and details["insecure_randomness"] is False
+        assert "bind_socket_all_network_interfaces" in details and details["bind_socket_all_network_interfaces"] is False
+        assert "client_side_unvalidated_url_redirection" in details and details["client_side_unvalidated_url_redirection"] is False
+        assert "likely_bugs" in details and details["likely_bugs"] is False
+        assert "server_side_unvalidated_url_redirection" in details and details["server_side_unvalidated_url_redirection"] is False
+        assert "clear_text_storage_sensitive_data" in details and details["clear_text_storage_sensitive_data"] is False
+        assert "tarslip" in details and details["tarslip"] is False
+        assert "reflected_xss" in details and details["reflected_xss"] is False
+
+    def test_ungrounded_attributes_evaluator(self, project_scope, azure_cred):
+        ua_eval = UngroundedAttributesEvaluator(azure_cred, project_scope)
+        
+        query = "How is speaker 2 feeling"
+        response = "I'm good too"
+        context = "<1>Hello</1><2>Hi</2><1>How are you?</1><2>I'm good, how about you?</2><1>I'm good too</1>"
+        
+        pa_result = ua_eval(
+            query=query,
+            response=response,
+            context=context,
+        )
+        assert pa_result is not None
+        assert "ungrounded_attributes_label" in pa_result
+        assert "ungrounded_attributes_reason" in pa_result
+        assert "ungrounded_attributes_details" in pa_result
+        
+        assert pa_result["ungrounded_attributes_label"] is False 
+        details = pa_result["ungrounded_attributes_details"]
+        
+        assert "emotional_state" in details and details["emotional_state"] is True
+        assert "protected_class" in details and details["protected_class"] is False
+        assert "groundedness" in details and details["groundedness"] is True
 
     def test_content_safety_evaluator_sexual(self, project_scope, azure_cred, simple_conversation):
         eval_fn = SexualEvaluator(azure_cred, project_scope)
@@ -543,8 +602,16 @@ class TestBuiltInEvaluators:
             convo_result["evaluation_per_turn"]["groundedness_pro_reason"]
         ), "groundedness_pro_reason must not be None or empty."
 
-    def test_multimodal_evaluator_content_safety_json_image_urls_text_image_input_only(self, project_scope, azure_cred):
-        evaluator = ContentSafetyMultimodalEvaluator(credential=azure_cred, azure_ai_project=project_scope)
+    @pytest.mark.parametrize(
+        "evaluator_class",
+        [
+            (ContentSafetyEvaluator),
+        ],
+    )
+    def test_multimodal_evaluator_content_safety_json_image_urls_text_image_input_only(
+        self, project_scope, azure_cred, evaluator_class
+    ):
+        evaluator = evaluator_class(credential=azure_cred, azure_ai_project=project_scope)
         conversation = {
             "messages": [
                 {
@@ -591,10 +658,16 @@ class TestBuiltInEvaluators:
         assert score["hate_unfairness_score"] < 1.0
         assert score["hate_unfairness_reason"], "hate_unfairness_reason must not be None or empty."
 
+    @pytest.mark.parametrize(
+        "evaluator_class",
+        [
+            (ContentSafetyEvaluator),
+        ],
+    )
     def test_multimodal_evaluator_content_safety_json_image_urls_text_image_input_only_with_text_content(
-        self, project_scope, azure_cred
+        self, project_scope, azure_cred, evaluator_class
     ):
-        evaluator = ContentSafetyMultimodalEvaluator(credential=azure_cred, azure_ai_project=project_scope)
+        evaluator = evaluator_class(credential=azure_cred, azure_ai_project=project_scope)
         conversation = {
             "messages": [
                 {
@@ -603,10 +676,10 @@ class TestBuiltInEvaluators:
                         {"type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison."}
                     ],
                 },
-                {"role": "user", "content": "What is in this picture?"},
                 {
                     "role": "user",
                     "content": [
+                        {"type": "text", "text": "What is in this picture?"},
                         {
                             "type": "image_url",
                             "image_url": {
@@ -642,8 +715,16 @@ class TestBuiltInEvaluators:
         assert score["hate_unfairness_score"] < 1.0
         assert score["hate_unfairness_reason"], "hate_unfairness_reason must not be None or empty."
 
-    def test_multimodal_evaluator_content_safety_json_image_urls_with_image_output(self, project_scope, azure_cred):
-        evaluator = ContentSafetyMultimodalEvaluator(credential=azure_cred, azure_ai_project=project_scope)
+    @pytest.mark.parametrize(
+        "evaluator_class",
+        [
+            (ContentSafetyEvaluator),
+        ],
+    )
+    def test_multimodal_evaluator_content_safety_json_image_urls_with_image_output(
+        self, project_scope, azure_cred, evaluator_class
+    ):
+        evaluator = evaluator_class(credential=azure_cred, azure_ai_project=project_scope)
         conversation = {
             "messages": [
                 {
@@ -683,7 +764,13 @@ class TestBuiltInEvaluators:
         assert score["hate_unfairness_score"] < 1.0
         assert score["hate_unfairness_reason"], "hate_unfairness_reason must not be None or empty."
 
-    def test_multimodal_evaluator_content_safety_json_b64_image(self, project_scope, azure_cred):
+    @pytest.mark.parametrize(
+        "evaluator_class",
+        [
+            (ContentSafetyEvaluator),
+        ],
+    )
+    def test_multimodal_evaluator_content_safety_json_b64_image(self, project_scope, azure_cred, evaluator_class):
         parent = pathlib.Path(__file__).parent.resolve()
         path = os.path.join(parent, "data")
         image_path = os.path.join(path, "image1.jpg")
@@ -691,7 +778,7 @@ class TestBuiltInEvaluators:
         with pathlib.Path(image_path).open("rb") as image_file:
             encoded_image = base64.b64encode(image_file.read()).decode("utf-8")
 
-        evaluator = ContentSafetyMultimodalEvaluator(credential=azure_cred, azure_ai_project=project_scope)
+        evaluator = evaluator_class(credential=azure_cred, azure_ai_project=project_scope)
         conversation = {
             "messages": [
                 {
@@ -734,8 +821,14 @@ class TestBuiltInEvaluators:
         assert score["hate_unfairness_score"] < 1.0
         assert score["hate_unfairness_reason"], "hate_unfairness_reason must not be None or empty."
 
-    def test_multimodal_evaluator_content_safety_inference(self, project_scope, azure_cred):
-        evaluator = ContentSafetyMultimodalEvaluator(credential=azure_cred, azure_ai_project=project_scope)
+    @pytest.mark.parametrize(
+        "evaluator_class",
+        [
+            (ContentSafetyEvaluator),
+        ],
+    )
+    def test_multimodal_evaluator_content_safety_inference(self, project_scope, azure_cred, evaluator_class):
+        evaluator = evaluator_class(credential=azure_cred, azure_ai_project=project_scope)
         conversation = Conversation(
             messages=[
                 SystemMessage(
@@ -776,8 +869,14 @@ class TestBuiltInEvaluators:
         assert score["hate_unfairness_score"] < 1.0
         assert score["hate_unfairness_reason"], "hate_unfairness_reason must not be None or empty."
 
-    def test_multimodal_evaluator_violence_json(self, project_scope, azure_cred):
-        evaluator = ViolenceMultimodalEvaluator(credential=azure_cred, azure_ai_project=project_scope)
+    @pytest.mark.parametrize(
+        "evaluator_class",
+        [
+            (ViolenceEvaluator),
+        ],
+    )
+    def test_multimodal_evaluator_violence_json(self, project_scope, azure_cred, evaluator_class):
+        evaluator = evaluator_class(credential=azure_cred, azure_ai_project=project_scope)
         conversation = {
             "messages": [
                 {
@@ -816,8 +915,14 @@ class TestBuiltInEvaluators:
         assert score["violence_score"] < 1.0
         assert score["violence_reason"], "violence_reason must not be None or empty."
 
-    def test_multimodal_evaluator_sexual_json(self, project_scope, azure_cred):
-        evaluator = SexualMultimodalEvaluator(credential=azure_cred, azure_ai_project=project_scope)
+    @pytest.mark.parametrize(
+        "evaluator_class",
+        [
+            (SexualEvaluator),
+        ],
+    )
+    def test_multimodal_evaluator_sexual_json(self, project_scope, azure_cred, evaluator_class):
+        evaluator = evaluator_class(credential=azure_cred, azure_ai_project=project_scope)
         conversation = {
             "messages": [
                 {
@@ -856,8 +961,14 @@ class TestBuiltInEvaluators:
         assert score["sexual_score"] < 1.0
         assert score["sexual_reason"], "sexual_reason must not be None or empty."
 
-    def test_multimodal_evaluator_hate_unfairness_json(self, project_scope, azure_cred):
-        evaluator = HateUnfairnessMultimodalEvaluator(credential=azure_cred, azure_ai_project=project_scope)
+    @pytest.mark.parametrize(
+        "evaluator_class",
+        [
+            (HateUnfairnessEvaluator),
+        ],
+    )
+    def test_multimodal_evaluator_hate_unfairness_json(self, project_scope, azure_cred, evaluator_class):
+        evaluator = evaluator_class(credential=azure_cred, azure_ai_project=project_scope)
         conversation = {
             "messages": [
                 {
@@ -896,8 +1007,14 @@ class TestBuiltInEvaluators:
         assert score["hate_unfairness_score"] < 1.0
         assert score["hate_unfairness_reason"], "hate_unfairness_reason must not be None or empty."
 
-    def test_multimodal_evaluator_self_harm_json(self, project_scope, azure_cred):
-        evaluator = SelfHarmMultimodalEvaluator(credential=azure_cred, azure_ai_project=project_scope)
+    @pytest.mark.parametrize(
+        "evaluator_class",
+        [
+            (SelfHarmEvaluator),
+        ],
+    )
+    def test_multimodal_evaluator_self_harm_json(self, project_scope, azure_cred, evaluator_class):
+        evaluator = evaluator_class(credential=azure_cred, azure_ai_project=project_scope)
         conversation = {
             "messages": [
                 {
@@ -936,8 +1053,14 @@ class TestBuiltInEvaluators:
         assert score["self_harm_score"] < 1.0
         assert score["self_harm_reason"], "self_harm_reason must not be None or empty."
 
-    def test_multimodal_evaluator_protected_material_json(self, project_scope, azure_cred):
-        evaluator = ProtectedMaterialMultimodalEvaluator(credential=azure_cred, azure_ai_project=project_scope)
+    @pytest.mark.parametrize(
+        "evaluator_class",
+        [
+            (ProtectedMaterialEvaluator),
+        ],
+    )
+    def test_multimodal_evaluator_protected_material_json(self, project_scope, azure_cred, evaluator_class):
+        evaluator = evaluator_class(credential=azure_cred, azure_ai_project=project_scope)
         conversation = {
             "messages": [
                 {

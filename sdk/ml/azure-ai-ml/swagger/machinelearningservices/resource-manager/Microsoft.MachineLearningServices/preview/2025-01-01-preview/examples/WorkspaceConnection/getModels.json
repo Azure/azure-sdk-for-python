@@ -1,0 +1,123 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "test-rg",
+    "workspaceName": "aml-workspace-name",
+    "connectionName": "testConnection",
+    "api-version": "2025-01-01-preview"
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "value": [
+          {
+            "isDefaultVersion": false,
+            "skus": [
+              {
+                "name": "Standard",
+                "usageName": "OpenAI.Standard.ada",
+                "deprecationDate": "2024-03-01T00:00:00+00:00",
+                "capacity": {
+                  "maximum": 10000
+                },
+                "rateLimits": [
+                  {
+                    "count": 1.0,
+                    "renewalPeriod": 10.0,
+                    "rules": []
+                  },
+                  {
+                    "count": 1000.0,
+                    "renewalPeriod": 60.0,
+                    "rules": []
+                  }
+                ]
+              }
+            ],
+            "maxCapacity": 3,
+            "capabilities": {
+              "fineTune": "true",
+              "inference": "false",
+              "scaleType": "Manual",
+              "completion": "true",
+              "search": "true",
+              "FineTuneTokensMaxValue": "2000000000"
+            },
+            "finetuneCapabilities": {
+              "scaleType": "Manual,Standard",
+              "completion": "true",
+              "search": "true",
+              "FineTuneTokensMaxValue": "2000000000"
+            },
+            "deprecation": {
+              "fineTune": "2024-07-05T00:00:00+00:00",
+              "inference": "2024-07-05T00:00:00+00:00"
+            },
+            "systemData": {
+              "createdBy": "Microsoft",
+              "createdByType": null,
+              "lastModifiedBy": "Microsoft",
+              "lastModifiedByType": null
+            },
+            "format": "OpenAI",
+            "name": "ada",
+            "version": "1"
+          },
+          {
+            "isDefaultVersion": false,
+            "skus": [
+              {
+                "name": "Standard",
+                "usageName": "OpenAI.Standard.babbage",
+                "deprecationDate": "2024-03-01T00:00:00+00:00",
+                "capacity": {
+                  "maximum": 10000
+                },
+                "rateLimits": [
+                  {
+                    "count": 1.0,
+                    "renewalPeriod": 10.0,
+                    "rules": []
+                  },
+                  {
+                    "count": 1000.0,
+                    "renewalPeriod": 60.0,
+                    "rules": []
+                  }
+                ]
+              }
+            ],
+            "maxCapacity": 3,
+            "capabilities": {
+              "fineTune": "true",
+              "inference": "false",
+              "scaleType": "Manual",
+              "completion": "true",
+              "search": "true",
+              "FineTuneTokensMaxValue": "2000000000"
+            },
+            "finetuneCapabilities": {
+              "scaleType": "Manual,Standard",
+              "completion": "true",
+              "search": "true",
+              "FineTuneTokensMaxValue": "2000000000"
+            },
+            "deprecation": {
+              "fineTune": "2024-07-05T00:00:00+00:00",
+              "inference": "2024-07-05T00:00:00+00:00"
+            },
+            "systemData": {
+              "createdBy": "Microsoft",
+              "createdByType": null,
+              "lastModifiedBy": "Microsoft",
+              "lastModifiedByType": null
+            },
+            "format": "OpenAI",
+            "name": "babbage",
+            "version": "1"
+          }
+        ]
+      }
+    }
+  }
+}

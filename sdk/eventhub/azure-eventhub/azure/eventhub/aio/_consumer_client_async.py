@@ -7,6 +7,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import datetime
+import warnings
 from typing import (
     Any,
     Literal,
@@ -128,6 +129,7 @@ class EventHubConsumerClient(ClientBaseAsync):  # pylint: disable=client-accepts
     :keyword custom_endpoint_address: The custom endpoint address to use for establishing a connection to
      the Event Hubs service, allowing network requests to be routed through any application gateways or
      other paths needed for the host environment. Default is None.
+     Unless specified otherwise, default transport type is TransportType.AmqpOverWebsockets.
      The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
      If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
     :paramtype custom_endpoint_address: Optional[str]
@@ -165,6 +167,17 @@ class EventHubConsumerClient(ClientBaseAsync):  # pylint: disable=client-accepts
         credential: "CredentialTypes",
         **kwargs: Any,
     ) -> None:
+        # Deprecation of uamqp transport
+        if kwargs.get("uamqp_transport"):
+            warnings.warn(
+                "uAMQP legacy support will be removed in the 5.16.0 minor release. "
+                "Please remove the use of `uamqp_transport` keyword argument from the client in order "
+                "to use the pure Python AMQP transport. "
+                "If you rely on this, please comment on [this issue]"
+                "(https://github.com/Azure/azure-sdk-for-python/issues/40347) ",
+                DeprecationWarning, stacklevel=2
+            )
+
         self._checkpoint_store = kwargs.pop("checkpoint_store", None)
         self._load_balancing_interval = kwargs.pop("load_balancing_interval", None)
         if self._load_balancing_interval is None:
@@ -319,6 +332,7 @@ class EventHubConsumerClient(ClientBaseAsync):  # pylint: disable=client-accepts
         :keyword custom_endpoint_address: The custom endpoint address to use for establishing a connection to
          the Event Hubs service, allowing network requests to be routed through any application gateways or
          other paths needed for the host environment. Default is None.
+         Unless specified otherwise, default transport type is TransportType.AmqpOverWebsockets.
          The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
          If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
         :paramtype custom_endpoint_address: Optional[str]

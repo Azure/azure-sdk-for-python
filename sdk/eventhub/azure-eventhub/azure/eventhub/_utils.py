@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from __future__ import unicode_literals, annotations
+from __future__ import annotations
 
 import sys
 import platform
@@ -10,7 +10,7 @@ import datetime
 import calendar
 import logging
 from typing import TYPE_CHECKING, cast, Type, Optional, Dict, Union, Any, Iterable, Tuple, Mapping, Callable
-
+from datetime import timezone
 from .amqp import AmqpAnnotatedMessage, AmqpMessageHeader
 from ._version import VERSION
 from ._constants import (
@@ -22,9 +22,7 @@ from ._constants import (
     PROP_LAST_ENQUEUED_OFFSET,
 )
 
-
 if TYPE_CHECKING:
-    # pylint: disable=ungrouped-imports
     from ._transport._base import AmqpTransport
     from ._pyamqp.message import Message as pyamqp_Message
 
@@ -45,43 +43,24 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class UTC(datetime.tzinfo):
-    """Time Zone info for handling UTC"""
-
-    def utcoffset(self, dt):
-        """UTF offset for UTC is 0.
-        :param any dt: Ignored.
-        :return: Datetime offset.
-        :rtype: datetime.timedelta
-        """
-        return datetime.timedelta(0)
-
-    def tzname(self, dt):
-        """Timestamp representation.
-        :param any dt: Ignored.
-        :return: Timestamp representation.
-        :rtype: str
-        """
-        return "Z"
-
-    def dst(self, dt):
-        """No daylight saving for UTC.
-        :param any dt: Ignored.
-        :return: Offset for daylight savings time.
-        :rtype: datetime.timedelta
-        """
-        return datetime.timedelta(hours=1)
+TZ_UTC: timezone = timezone.utc
+# Number of seconds between the Unix epoch (1/1/1970) and year 1 CE.
+# This is the lowest value that can be represented by an AMQP timestamp.
+CE_ZERO_SECONDS: int = -62_135_596_800
 
 
-try:
-    from datetime import timezone  # pylint: disable=ungrouped-imports
-
-    TZ_UTC = timezone.utc  # type: ignore
-except ImportError:
-    TZ_UTC = UTC()  # type: ignore
-
-
-def utc_from_timestamp(timestamp):
+def utc_from_timestamp(timestamp: float) -> datetime.datetime:
+    """
+    :param float timestamp: Timestamp in seconds to be converted to datetime.
+    :rtype: datetime.datetime
+    :returns: A datetime object representing the timestamp in UTC.
+    """
+    # The AMQP timestamp is the number of seconds since the Unix epoch.
+    # AMQP brokers represent the lowest value as -62_135_596_800 (the
+    # number of seconds between the Unix epoch (1/1/1970) and year 1 CE) as
+    # a sentinel for a time which is not set.
+    if timestamp == CE_ZERO_SECONDS:
+        return datetime.datetime.min.replace(tzinfo=TZ_UTC)
     return datetime.datetime.fromtimestamp(timestamp, tz=TZ_UTC)
 
 
@@ -134,7 +113,7 @@ def set_event_partition_key(
     annotations = raw_message.annotations
     if annotations is None:
         annotations = {}
-    annotations[amqp_transport.PROP_PARTITION_KEY_AMQP_SYMBOL] = partition_key  # pylint:disable=protected-access
+    annotations[amqp_transport.PROP_PARTITION_KEY_AMQP_SYMBOL] = partition_key
     if not raw_message.header:
         raw_message.header = AmqpMessageHeader(header=True)
     else:
@@ -234,7 +213,6 @@ def transform_outbound_single_message(
 
 
 def decode_with_recurse(data: Any, encoding: str = "UTF-8") -> Any:
-    # pylint:disable=isinstance-second-argument-not-valid-type
     """
     If data is of a compatible type, iterates through nested structure and decodes all binary
         strings with provided encoding.
@@ -249,14 +227,14 @@ def decode_with_recurse(data: Any, encoding: str = "UTF-8") -> Any:
         return data
     if isinstance(data, bytes):
         return data.decode(encoding)
-    if isinstance(data, Mapping):  # pylint:disable=isinstance-second-argument-not-valid-type
+    if isinstance(data, Mapping):
         decoded_mapping = {}
         for k, v in data.items():
             decoded_key = decode_with_recurse(k, encoding)
             decoded_val = decode_with_recurse(v, encoding)
             decoded_mapping[decoded_key] = decoded_val
         return decoded_mapping
-    if isinstance(data, Iterable):  # pylint:disable=isinstance-second-argument-not-valid-type
+    if isinstance(data, Iterable):
         decoded_list = []
         for d in data:
             decoded_list.append(decode_with_recurse(d, encoding))

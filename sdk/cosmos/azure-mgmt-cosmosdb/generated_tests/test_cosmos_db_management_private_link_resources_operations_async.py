@@ -21,11 +21,11 @@ class TestCosmosDBManagementPrivateLinkResourcesOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_database_account(self, resource_group):
+    async def test_private_link_resources_list_by_database_account(self, resource_group):
         response = self.client.private_link_resources.list_by_database_account(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -33,12 +33,12 @@ class TestCosmosDBManagementPrivateLinkResourcesOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_private_link_resources_get(self, resource_group):
         response = await self.client.private_link_resources.get(
             resource_group_name=resource_group.name,
             account_name="str",
             group_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         )
 
         # please add some check logic here by yourself

@@ -20,7 +20,7 @@ class TestComputeManagementDedicatedHostsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_dedicated_hosts_begin_create_or_update(self, resource_group):
         response = self.client.dedicated_hosts.begin_create_or_update(
             resource_group_name=resource_group.name,
             host_group_name="str",
@@ -54,7 +54,7 @@ class TestComputeManagementDedicatedHostsOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "virtualMachines": [{"id": "str"}],
             },
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -62,7 +62,7 @@ class TestComputeManagementDedicatedHostsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update(self, resource_group):
+    def test_dedicated_hosts_begin_update(self, resource_group):
         response = self.client.dedicated_hosts.begin_update(
             resource_group_name=resource_group.name,
             host_group_name="str",
@@ -92,7 +92,7 @@ class TestComputeManagementDedicatedHostsOperations(AzureMgmtRecordedTestCase):
                 "timeCreated": "2020-02-20 00:00:00",
                 "virtualMachines": [{"id": "str"}],
             },
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -100,12 +100,12 @@ class TestComputeManagementDedicatedHostsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_dedicated_hosts_begin_delete(self, resource_group):
         response = self.client.dedicated_hosts.begin_delete(
             resource_group_name=resource_group.name,
             host_group_name="str",
             host_name="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -113,12 +113,12 @@ class TestComputeManagementDedicatedHostsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_dedicated_hosts_get(self, resource_group):
         response = self.client.dedicated_hosts.get(
             resource_group_name=resource_group.name,
             host_group_name="str",
             host_name="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -126,11 +126,11 @@ class TestComputeManagementDedicatedHostsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_host_group(self, resource_group):
+    def test_dedicated_hosts_list_by_host_group(self, resource_group):
         response = self.client.dedicated_hosts.list_by_host_group(
             resource_group_name=resource_group.name,
             host_group_name="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -138,12 +138,12 @@ class TestComputeManagementDedicatedHostsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_restart(self, resource_group):
+    def test_dedicated_hosts_begin_restart(self, resource_group):
         response = self.client.dedicated_hosts.begin_restart(
             resource_group_name=resource_group.name,
             host_group_name="str",
             host_name="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -151,12 +151,12 @@ class TestComputeManagementDedicatedHostsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_redeploy(self, resource_group):
+    def test_dedicated_hosts_begin_redeploy(self, resource_group):
         response = self.client.dedicated_hosts.begin_redeploy(
             resource_group_name=resource_group.name,
             host_group_name="str",
             host_name="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -164,12 +164,12 @@ class TestComputeManagementDedicatedHostsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_available_sizes(self, resource_group):
+    def test_dedicated_hosts_list_available_sizes(self, resource_group):
         response = self.client.dedicated_hosts.list_available_sizes(
             resource_group_name=resource_group.name,
             host_group_name="str",
             host_name="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

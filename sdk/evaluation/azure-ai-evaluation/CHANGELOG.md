@@ -1,8 +1,160 @@
 # Release History
 
-## 1.0.0b6 (Unreleased)
+## 1.6.0 (Unreleased)
 
 ### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.5.0 (2025-04-04)
+
+### Features Added
+
+- New `RedTeam` agent functionality to assess the safety and resilience of AI systems against adversarial prompt attacks
+
+## 1.4.0 (2025-03-27)
+
+### Features Added
+- Enhanced binary evaluation results with customizable thresholds
+  - Added threshold support for QA and ContentSafety evaluators
+  - Evaluation results now include both the score and threshold values
+  - Configurable threshold parameter allows custom binary classification boundaries
+  - Default thresholds provided for backward compatibility
+  - Quality evaluators use "higher is better" scoring (score ≥ threshold is positive)
+  - Content safety evaluators use "lower is better" scoring (score ≤ threshold is positive)
+- New Built-in evaluator called CodeVulnerabilityEvaluator is added. 
+  - It provides capabilities to identify the following code vulnerabilities.
+    - path-injection
+    - sql-injection
+    - code-injection
+    - stack-trace-exposure
+    - incomplete-url-substring-sanitization
+    - flask-debug
+    - clear-text-logging-sensitive-data
+    - incomplete-hostname-regexp
+    - server-side-unvalidated-url-redirection
+    - weak-cryptographic-algorithm
+    - full-ssrf
+    - bind-socket-all-network-interfaces
+    - client-side-unvalidated-url-redirection
+    - likely-bugs
+    - reflected-xss
+    - clear-text-storage-sensitive-data
+    - tarslip
+    - hardcoded-credentials
+    - insecure-randomness
+  - It also supports multiple coding languages such as (Python, Java, C++, C#, Go, Javascript, SQL)
+  
+- New Built-in evaluator called UngroundedAttributesEvaluator is added.
+  - It evaluates ungrounded inference of human attributes for a given query, response, and context for a single-turn evaluation only, 
+  - where query represents the user query and response represents the AI system response given the provided context. 
+ 
+  - Ungrounded Attributes checks for whether a response is first, ungrounded, and checks if it contains information about protected class 
+  - or emotional state of a person.
+  
+  - It identifies the following attributes:
+    
+    - emotional_state
+    - protected_class
+    - groundedness
+- New Built-in evaluators for Agent Evaluation (Preview)
+  - IntentResolutionEvaluator - Evaluates the intent resolution of an agent's response to a user query.
+  - ResponseCompletenessEvaluator - Evaluates the response completeness of an agent's response to a user query.
+  - TaskAdherenceEvaluator - Evaluates the task adherence of an agent's response to a user query.
+  - ToolCallAccuracyEvaluator - Evaluates the accuracy of tool calls made by an agent in response to a user query.
+
+### Bugs Fixed
+- Fixed error in `GroundednessProEvaluator` when handling non-numeric values like "n/a" returned from the service.
+- Uploading local evaluation results from `evaluate` with the same run name will no longer result in each online run sharing (and bashing) result files.
+
+## 1.3.0 (2025-02-28)
+
+### Breaking Changes
+- Multimodal specific evaluators `ContentSafetyMultimodalEvaluator`, `ViolenceMultimodalEvaluator`, `SexualMultimodalEvaluator`, `SelfHarmMultimodalEvaluator`, `HateUnfairnessMultimodalEvaluator` and `ProtectedMaterialMultimodalEvaluator` has been removed. Please use `ContentSafetyEvaluator`, `ViolenceEvaluator`, `SexualEvaluator`, `SelfHarmEvaluator`, `HateUnfairnessEvaluator` and `ProtectedMaterialEvaluator` instead.
+- Metric name in ProtectedMaterialEvaluator's output is changed from `protected_material.fictional_characters_label` to `protected_material.fictional_characters_defect_rate`. It's now consistent with other evaluator's metric names (ending with `_defect_rate`).
+
+## 1.2.0 (2025-01-27)
+
+### Features Added
+- CSV files are now supported as data file inputs with `evaluate()` API. The CSV file should have a header row with column names that match the `data` and `target` fields in the `evaluate()` method and the filename should be passed as the `data` parameter. Column name 'Conversation' in CSV file is not fully supported yet.  
+
+### Breaking Changes
+- `ViolenceMultimodalEvaluator`, `SexualMultimodalEvaluator`, `SelfHarmMultimodalEvaluator`, `HateUnfairnessMultimodalEvaluator` and `ProtectedMaterialMultimodalEvaluator` will be removed in next release. 
+
+### Bugs Fixed
+- Removed `[remote]` extra. This is no longer needed when tracking results in Azure AI Studio.
+- Fixed `AttributeError: 'NoneType' object has no attribute 'get'` while running simulator with 1000+ results
+- Fixed the non adversarial simulator to run in task-free mode
+- Content safety evaluators (violence, self harm, sexual, hate/unfairness) return the maximum result as the
+  main score when aggregating per-turn evaluations from a conversation into an overall
+  evaluation score. Other conversation-capable evaluators still default to a mean for aggregation.
+- Fixed bug in non adversarial simulator sample where `tasks` undefined
+
+### Other Changes
+- Changed minimum required python version to use this package from 3.8 to 3.9
+- Stop dependency on the local promptflow service. No promptflow service will automatically start when running evaluation.
+- Evaluators internally allow for custom aggregation. However, this causes serialization failures if evaluated while the
+  environment variable `AI_EVALS_BATCH_USE_ASYNC` is set to false.
+
+## 1.1.0 (2024-12-12)
+
+### Features Added
+- Added image support in `ContentSafetyEvaluator`, `ViolenceEvaluator`, `SexualEvaluator`, `SelfHarmEvaluator`, `HateUnfairnessEvaluator` and `ProtectedMaterialEvaluator`. Provide image URLs or base64 encoded images in `conversation` input for image evaluation. See below for an example:
+
+```python
+evaluator = ContentSafetyEvaluator(credential=azure_cred, azure_ai_project=project_scope)
+conversation = {
+    "messages": [
+        {
+            "role": "system",
+            "content": [
+                {"type": "text", "text": "You are an AI assistant that understands images."}
+            ],
+        },
+        {
+            "role": "user",
+            "content": [
+                {"type": "text", "text": "Can you describe this image?"},
+                {
+                    "type": "image_url",
+                    "image_url": {
+                        "url": "https://cdn.britannica.com/68/178268-050-5B4E7FB6/Tom-Cruise-2013.jpg"
+                    },
+                },
+            ],
+        },
+        {
+            "role": "assistant",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "The image shows a man with short brown hair smiling, wearing a dark-colored shirt.",
+                }
+            ],
+        },
+    ]
+}
+print("Calling Content Safety Evaluator for multi-modal")
+score = evaluator(conversation=conversation)
+```
+
+- Please switch to generic evaluators for image evaluations as mentioned above. `ContentSafetyMultimodalEvaluator`, `ContentSafetyMultimodalEvaluatorBase`, `ViolenceMultimodalEvaluator`, `SexualMultimodalEvaluator`, `SelfHarmMultimodalEvaluator`, `HateUnfairnessMultimodalEvaluator` and `ProtectedMaterialMultimodalEvaluator` will be deprecated in the next release.
+
+### Bugs Fixed
+- Removed `[remote]` extra. This is no longer needed when tracking results in Azure AI Foundry portal.
+- Fixed `AttributeError: 'NoneType' object has no attribute 'get'` while running simulator with 1000+ results
+
+## 1.0.1 (2024-11-15)
+
+### Bugs Fixed
+- Removing `azure-ai-inference` as dependency.
+- Fixed `AttributeError: 'NoneType' object has no attribute 'get'` while running simulator with 1000+ results
+
+## 1.0.0 (2024-11-13)
 
 ### Breaking Changes
 - The `parallel` parameter has been removed from composite evaluators: `QAEvaluator`, `ContentSafetyChatEvaluator`, and `ContentSafetyMultimodalEvaluator`. To control evaluator parallelism, you can now use the `_parallel` keyword argument, though please note that this private parameter may change in the future.

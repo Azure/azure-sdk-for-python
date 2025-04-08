@@ -1,14 +1,20 @@
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from typing import Optional, Dict
-from azure.ai.ml._restclient.v2024_01_01_preview.models import (
+from azure.ai.ml._restclient.v2024_10_01_preview.models import (
     UriFileJobInput,
     MLFlowModelJobInput,
 )
 from azure.ai.ml.constants._job.finetuning import FineTuningTaskTypes
-from azure.ai.ml.entities._job.finetuning.custom_model_finetuning_job import CustomModelFineTuningJob
-from azure.ai.ml.entities._job.finetuning.azure_openai_finetuning_job import AzureOpenAIFineTuningJob
-from azure.ai.ml.entities._job.finetuning.azure_openai_hyperparameters import AzureOpenAIHyperparameters
+from azure.ai.ml.entities._job.finetuning.custom_model_finetuning_job import (
+    CustomModelFineTuningJob,
+)
+from azure.ai.ml.entities._job.finetuning.azure_openai_finetuning_job import (
+    AzureOpenAIFineTuningJob,
+)
+from azure.ai.ml.entities._job.finetuning.azure_openai_hyperparameters import (
+    AzureOpenAIHyperparameters,
+)
 import pytest
 
 
@@ -40,7 +46,8 @@ class TestCustomModelFineTuningJob:
             validation_data=Input(type=AssetTypes.URI_FILE, path="https://foo/bar/test.csv"),
             hyperparameters={"foo": "bar"},
             model=Input(
-                type=AssetTypes.MLFLOW_MODEL, path="azureml://registries/azureml-meta/models/Llama-2-7b/versions/9"
+                type=AssetTypes.MLFLOW_MODEL,
+                path="azureml://registries/azureml-meta/models/Llama-2-7b/versions/9",
             ),
             name="llama-finetuning",
             experiment_name="foo_exp",
@@ -110,7 +117,8 @@ class TestCustomModelFineTuningJob:
             validation_data=Input(type=AssetTypes.URI_FILE, path="./samsum_dataset/small_validation.jsonl"),
             hyperparameters={"foo": "bar"},
             model=Input(
-                type=AssetTypes.MLFLOW_MODEL, path="azureml://registries/azureml-meta/models/Llama-2-7b/versions/9"
+                type=AssetTypes.MLFLOW_MODEL,
+                path="azureml://registries/azureml-meta/models/Llama-2-7b/versions/9",
             ),
             name="llama-finetuning",
             experiment_name="foo_exp",
@@ -164,7 +172,8 @@ class TestCustomModelFineTuningJob:
             validation_data=Input(type=AssetTypes.URI_FILE, path="https://foo/bar/test.csv"),
             hyperparameters=AzureOpenAIHyperparameters(batch_size=2, n_epochs=3, learning_rate_multiplier=0.5),
             model=Input(
-                type=AssetTypes.MLFLOW_MODEL, path="azureml://registries/azure-openai-v2/models/gpt-4/versions/1"
+                type=AssetTypes.MLFLOW_MODEL,
+                path="azureml://registries/azure-openai-v2/models/gpt-4/versions/1",
             ),
             name="gpt4-finetuning",
             experiment_name="foo_exp",

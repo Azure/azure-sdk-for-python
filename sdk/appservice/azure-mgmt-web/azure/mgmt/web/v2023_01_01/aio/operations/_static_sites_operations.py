@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, Type, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -109,12 +109,11 @@ from ...operations._static_sites_operations import (
     build_validate_backend_request,
     build_validate_custom_domain_can_be_added_to_static_site_request,
 )
-from .._vendor import WebSiteManagementClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -215,7 +214,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2023_01_01.models.StaticSitesWorkflowPreview
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -287,7 +286,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.StaticSiteCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -370,7 +369,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.StaticSiteCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -448,7 +447,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2023_01_01.models.StaticSiteARMResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -498,7 +497,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         static_site_envelope: Union[_models.StaticSiteARMResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -699,7 +698,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
     async def _delete_static_site_initial(
         self, resource_group_name: str, name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -888,7 +887,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2023_01_01.models.StaticSiteARMResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -969,7 +968,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.StaticSiteUserCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1034,7 +1033,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def delete_static_site_user(  # pylint: disable=inconsistent-return-statements
+    async def delete_static_site_user(
         self, resource_group_name: str, name: str, authprovider: str, userid: str, **kwargs: Any
     ) -> None:
         """Deletes the user entry from the static site.
@@ -1053,7 +1052,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1194,7 +1193,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2023_01_01.models.StaticSiteUserARMResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1275,7 +1274,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.StaticSiteBuildCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1356,7 +1355,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2023_01_01.models.StaticSiteBuildARMResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1403,7 +1402,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
     async def _delete_static_site_build_initial(
         self, resource_group_name: str, name: str, environment_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1601,7 +1600,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2023_01_01.models.StringDictionary
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1747,7 +1746,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2023_01_01.models.StringDictionary
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1828,7 +1827,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.DatabaseConnectionCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1912,7 +1911,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2023_01_01.models.DatabaseConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2058,7 +2057,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2023_01_01.models.DatabaseConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2116,7 +2115,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete_build_database_connection(  # pylint: disable=inconsistent-return-statements
+    async def delete_build_database_connection(
         self, resource_group_name: str, name: str, environment_name: str, database_connection_name: str, **kwargs: Any
     ) -> None:
         """Delete a database connection for a static site build.
@@ -2135,7 +2134,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2278,7 +2277,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2023_01_01.models.DatabaseConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2355,7 +2354,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2023_01_01.models.DatabaseConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2404,6 +2403,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
     def list_static_site_build_functions(
         self, resource_group_name: str, name: str, environment_name: str, **kwargs: Any
     ) -> AsyncIterable["_models.StaticSiteFunctionOverviewARMResource"]:
+        # pylint: disable=line-too-long
         """Gets the functions of a particular static site build.
 
         Description for Gets the functions of a particular static site build.
@@ -2426,7 +2426,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.StaticSiteFunctionOverviewCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2508,7 +2508,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2023_01_01.models.StringDictionary
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2570,7 +2570,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2023_01_01.models.StringDictionary
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2639,7 +2639,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.DatabaseConnectionCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2707,6 +2707,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
     def get_user_provided_function_apps_for_static_site_build(  # pylint: disable=name-too-long
         self, resource_group_name: str, name: str, environment_name: str, **kwargs: Any
     ) -> AsyncIterable["_models.StaticSiteUserProvidedFunctionAppARMResource"]:
+        # pylint: disable=line-too-long
         """Gets the details of the user provided function apps registered with a static site build.
 
         Description for Gets the details of the user provided function apps registered with a static
@@ -2730,7 +2731,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.StaticSiteUserProvidedFunctionAppsCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2816,7 +2817,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2023_01_01.models.StaticSiteUserProvidedFunctionAppARMResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2875,7 +2876,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         is_forced: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2953,6 +2954,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.StaticSiteUserProvidedFunctionAppARMResource]:
+        # pylint: disable=line-too-long
         """Register a user provided function app with a static site build.
 
         Description for Register a user provided function app with a static site build.
@@ -2997,6 +2999,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.StaticSiteUserProvidedFunctionAppARMResource]:
+        # pylint: disable=line-too-long
         """Register a user provided function app with a static site build.
 
         Description for Register a user provided function app with a static site build.
@@ -3040,6 +3043,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         is_forced: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.StaticSiteUserProvidedFunctionAppARMResource]:
+        # pylint: disable=line-too-long
         """Register a user provided function app with a static site build.
 
         Description for Register a user provided function app with a static site build.
@@ -3121,7 +3125,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         )
 
     @distributed_trace_async
-    async def detach_user_provided_function_app_from_static_site_build(  # pylint: disable=inconsistent-return-statements,name-too-long
+    async def detach_user_provided_function_app_from_static_site_build(  # pylint: disable=name-too-long
         self, resource_group_name: str, name: str, environment_name: str, function_app_name: str, **kwargs: Any
     ) -> None:
         """Detach the user provided function app from the static site build.
@@ -3141,7 +3145,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3190,7 +3194,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         static_site_zip_deployment_envelope: Union[_models.StaticSiteZipDeploymentARMResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3469,7 +3473,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2023_01_01.models.StringDictionary
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3528,6 +3532,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
     def list_basic_auth(
         self, resource_group_name: str, name: str, **kwargs: Any
     ) -> AsyncIterable["_models.StaticSiteBasicAuthPropertiesARMResource"]:
+        # pylint: disable=line-too-long
         """Gets the basic auth properties for a static site as a collection.
 
         Description for Gets the basic auth properties for a static site as a collection.
@@ -3548,7 +3553,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.StaticSiteBasicAuthPropertiesCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3629,7 +3634,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2023_01_01.models.StaticSiteBasicAuthPropertiesARMResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3763,7 +3768,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2023_01_01.models.StaticSiteBasicAuthPropertiesARMResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3900,7 +3905,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2023_01_01.models.StringDictionary
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4036,7 +4041,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2023_01_01.models.StaticSiteUserInvitationResponseResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4097,6 +4102,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
     def list_static_site_custom_domains(
         self, resource_group_name: str, name: str, **kwargs: Any
     ) -> AsyncIterable["_models.StaticSiteCustomDomainOverviewARMResource"]:
+        # pylint: disable=line-too-long
         """Gets all static site custom domains for a particular static site.
 
         Description for Gets all static site custom domains for a particular static site.
@@ -4117,7 +4123,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.StaticSiteCustomDomainOverviewCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4198,7 +4204,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2023_01_01.models.StaticSiteCustomDomainOverviewARMResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4252,7 +4258,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4327,6 +4333,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.StaticSiteCustomDomainOverviewARMResource]:
+        # pylint: disable=line-too-long
         """Creates a new static site custom domain in an existing resource group and static site.
 
         Description for Creates a new static site custom domain in an existing resource group and
@@ -4363,6 +4370,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.StaticSiteCustomDomainOverviewARMResource]:
+        # pylint: disable=line-too-long
         """Creates a new static site custom domain in an existing resource group and static site.
 
         Description for Creates a new static site custom domain in an existing resource group and
@@ -4398,6 +4406,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.StaticSiteCustomDomainOverviewARMResource]:
+        # pylint: disable=line-too-long
         """Creates a new static site custom domain in an existing resource group and static site.
 
         Description for Creates a new static site custom domain in an existing resource group and
@@ -4474,7 +4483,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
     async def _delete_static_site_custom_domain_initial(  # pylint: disable=name-too-long
         self, resource_group_name: str, name: str, domain_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4592,7 +4601,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4819,7 +4828,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.DatabaseConnectionCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4900,7 +4909,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2023_01_01.models.DatabaseConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5036,7 +5045,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2023_01_01.models.DatabaseConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5093,7 +5102,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete_database_connection(  # pylint: disable=inconsistent-return-statements
+    async def delete_database_connection(
         self, resource_group_name: str, name: str, database_connection_name: str, **kwargs: Any
     ) -> None:
         """Delete a database connection for a static site.
@@ -5110,7 +5119,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5243,7 +5252,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2023_01_01.models.DatabaseConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5317,7 +5326,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2023_01_01.models.DatabaseConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5364,7 +5373,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
     async def _detach_static_site_initial(
         self, resource_group_name: str, name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5472,6 +5481,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
     def list_static_site_functions(
         self, resource_group_name: str, name: str, **kwargs: Any
     ) -> AsyncIterable["_models.StaticSiteFunctionOverviewARMResource"]:
+        # pylint: disable=line-too-long
         """Gets the functions of a static site.
 
         Description for Gets the functions of a static site.
@@ -5492,7 +5502,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.StaticSiteFunctionOverviewCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5571,7 +5581,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2023_01_01.models.StringDictionary
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5630,7 +5640,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2023_01_01.models.StringList
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5689,7 +5699,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2023_01_01.models.StringDictionary
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5748,7 +5758,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2023_01_01.models.StringDictionary
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5795,6 +5805,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
     def get_private_endpoint_connection_list(
         self, resource_group_name: str, name: str, **kwargs: Any
     ) -> AsyncIterable["_models.RemotePrivateEndpointConnectionARMResource"]:
+        # pylint: disable=line-too-long
         """Gets the list of private endpoint connections associated with a static site.
 
         Description for Gets the list of private endpoint connections associated with a static site.
@@ -5815,7 +5826,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.PrivateEndpointConnectionCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5896,7 +5907,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2023_01_01.models.RemotePrivateEndpointConnectionARMResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5948,7 +5959,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         private_endpoint_wrapper: Union[_models.RemotePrivateEndpointConnectionARMResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6020,6 +6031,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.RemotePrivateEndpointConnectionARMResource]:
+        # pylint: disable=line-too-long
         """Approves or rejects a private endpoint connection.
 
         Description for Approves or rejects a private endpoint connection.
@@ -6054,6 +6066,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.RemotePrivateEndpointConnectionARMResource]:
+        # pylint: disable=line-too-long
         """Approves or rejects a private endpoint connection.
 
         Description for Approves or rejects a private endpoint connection.
@@ -6085,6 +6098,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         private_endpoint_wrapper: Union[_models.RemotePrivateEndpointConnectionARMResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.RemotePrivateEndpointConnectionARMResource]:
+        # pylint: disable=line-too-long
         """Approves or rejects a private endpoint connection.
 
         Description for Approves or rejects a private endpoint connection.
@@ -6158,7 +6172,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
     async def _delete_private_endpoint_connection_initial(  # pylint: disable=name-too-long
         self, resource_group_name: str, name: str, private_endpoint_connection_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6284,7 +6298,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2023_01_01.models.PrivateLinkResourcesWrapper
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6328,7 +6342,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    async def reset_static_site_api_key(  # pylint: disable=inconsistent-return-statements
+    async def reset_static_site_api_key(
         self,
         resource_group_name: str,
         name: str,
@@ -6357,7 +6371,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def reset_static_site_api_key(  # pylint: disable=inconsistent-return-statements
+    async def reset_static_site_api_key(
         self,
         resource_group_name: str,
         name: str,
@@ -6385,7 +6399,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
-    async def reset_static_site_api_key(  # pylint: disable=inconsistent-return-statements
+    async def reset_static_site_api_key(
         self,
         resource_group_name: str,
         name: str,
@@ -6408,7 +6422,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6482,7 +6496,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.DatabaseConnectionCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6549,6 +6563,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
     def get_user_provided_function_apps_for_static_site(  # pylint: disable=name-too-long
         self, resource_group_name: str, name: str, **kwargs: Any
     ) -> AsyncIterable["_models.StaticSiteUserProvidedFunctionAppARMResource"]:
+        # pylint: disable=line-too-long
         """Gets the details of the user provided function apps registered with a static site.
 
         Description for Gets the details of the user provided function apps registered with a static
@@ -6570,7 +6585,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.StaticSiteUserProvidedFunctionAppsCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6652,7 +6667,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2023_01_01.models.StaticSiteUserProvidedFunctionAppARMResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6709,7 +6724,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         is_forced: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6785,6 +6800,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.StaticSiteUserProvidedFunctionAppARMResource]:
+        # pylint: disable=line-too-long
         """Register a user provided function app with a static site.
 
         Description for Register a user provided function app with a static site.
@@ -6825,6 +6841,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.StaticSiteUserProvidedFunctionAppARMResource]:
+        # pylint: disable=line-too-long
         """Register a user provided function app with a static site.
 
         Description for Register a user provided function app with a static site.
@@ -6864,6 +6881,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         is_forced: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.StaticSiteUserProvidedFunctionAppARMResource]:
+        # pylint: disable=line-too-long
         """Register a user provided function app with a static site.
 
         Description for Register a user provided function app with a static site.
@@ -6941,7 +6959,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         )
 
     @distributed_trace_async
-    async def detach_user_provided_function_app_from_static_site(  # pylint: disable=inconsistent-return-statements,name-too-long
+    async def detach_user_provided_function_app_from_static_site(  # pylint: disable=name-too-long
         self, resource_group_name: str, name: str, function_app_name: str, **kwargs: Any
     ) -> None:
         """Detach the user provided function app from the static site.
@@ -6958,7 +6976,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -7005,7 +7023,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         static_site_zip_deployment_envelope: Union[_models.StaticSiteZipDeploymentARMResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -7200,7 +7218,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         static_site_linked_backend_envelope: Union[_models.StaticSiteLinkedBackendARMResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -7406,7 +7424,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         static_site_linked_backend_envelope: Union[_models.StaticSiteLinkedBackendARMResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -7638,7 +7656,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.StaticSiteLinkedBackendsCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -7727,7 +7745,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.StaticSiteLinkedBackendsCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -7809,7 +7827,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2023_01_01.models.StaticSiteLinkedBackendARMResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -7861,7 +7879,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         static_site_linked_backend_envelope: Union[_models.StaticSiteLinkedBackendARMResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -8069,7 +8087,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         )
 
     @distributed_trace_async
-    async def unlink_backend(  # pylint: disable=inconsistent-return-statements
+    async def unlink_backend(
         self,
         resource_group_name: str,
         name: str,
@@ -8094,7 +8112,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -8155,7 +8173,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2023_01_01.models.StaticSiteLinkedBackendARMResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -8209,7 +8227,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         static_site_linked_backend_envelope: Union[_models.StaticSiteLinkedBackendARMResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -8428,7 +8446,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         )
 
     @distributed_trace_async
-    async def unlink_backend_from_build(  # pylint: disable=inconsistent-return-statements
+    async def unlink_backend_from_build(
         self,
         resource_group_name: str,
         name: str,
@@ -8456,7 +8474,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

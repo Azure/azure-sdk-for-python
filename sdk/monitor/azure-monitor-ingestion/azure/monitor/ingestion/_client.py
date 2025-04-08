@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
+from typing_extensions import Self
 
 from azure.core import PipelineClient
 from azure.core.pipeline import policies
@@ -18,11 +19,10 @@ from ._operations import LogsIngestionClientOperationsMixin
 from ._serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class LogsIngestionClient(LogsIngestionClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+class LogsIngestionClient(LogsIngestionClientOperationsMixin):
     """Azure Monitor Data Collection Python Client.
 
     :param endpoint: The Data Collection Endpoint for the Data Collection Rule, for example
@@ -90,7 +90,7 @@ class LogsIngestionClient(LogsIngestionClientOperationsMixin):  # pylint: disabl
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "LogsIngestionClient":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 

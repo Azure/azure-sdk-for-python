@@ -57,7 +57,7 @@ class TestBuiltInEvaluators:
 
     def test_similarity_evaluator_keys(self, mock_model_config):
         similarity_eval = SimilarityEvaluator(model_config=mock_model_config)
-        similarity_eval._async_evaluator._flow = MagicMock(return_value=quality_no_response_async_mock())
+        similarity_eval._flow = MagicMock(return_value=quality_no_response_async_mock())
 
         result = similarity_eval(
             query="What is the capital of Japan?",
@@ -65,8 +65,10 @@ class TestBuiltInEvaluators:
             ground_truth="Tokyo is Japan's capital, known for its blend of traditional culture and technological advancements.",
         )
         assert result["similarity"] == result["gpt_similarity"] == 1
-        assert len(result) == 2
-        assert "similarity_reason" not in result
+        # Updated assertion to expect 4 keys instead of 2
+        assert len(result) == 4
+        # Verify all expected keys are present
+        assert set(result.keys()) == {"similarity", "gpt_similarity", "similarity_result", "similarity_threshold"}
 
     def test_retrieval_evaluator_keys(self, mock_model_config):
         retrieval_eval = RetrievalEvaluator(model_config=mock_model_config)

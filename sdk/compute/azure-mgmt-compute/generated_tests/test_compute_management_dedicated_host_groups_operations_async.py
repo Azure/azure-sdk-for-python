@@ -21,7 +21,7 @@ class TestComputeManagementDedicatedHostGroupsOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_dedicated_host_groups_create_or_update(self, resource_group):
         response = await self.client.dedicated_host_groups.create_or_update(
             resource_group_name=resource_group.name,
             host_group_name="str",
@@ -55,7 +55,7 @@ class TestComputeManagementDedicatedHostGroupsOperationsAsync(AzureMgmtRecordedT
                 "type": "str",
                 "zones": ["str"],
             },
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -63,7 +63,7 @@ class TestComputeManagementDedicatedHostGroupsOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update(self, resource_group):
+    async def test_dedicated_host_groups_update(self, resource_group):
         response = await self.client.dedicated_host_groups.update(
             resource_group_name=resource_group.name,
             host_group_name="str",
@@ -93,7 +93,7 @@ class TestComputeManagementDedicatedHostGroupsOperationsAsync(AzureMgmtRecordedT
                 "tags": {"str": "str"},
                 "zones": ["str"],
             },
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -101,11 +101,11 @@ class TestComputeManagementDedicatedHostGroupsOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_dedicated_host_groups_delete(self, resource_group):
         response = await self.client.dedicated_host_groups.delete(
             resource_group_name=resource_group.name,
             host_group_name="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -113,11 +113,11 @@ class TestComputeManagementDedicatedHostGroupsOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_dedicated_host_groups_get(self, resource_group):
         response = await self.client.dedicated_host_groups.get(
             resource_group_name=resource_group.name,
             host_group_name="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -125,10 +125,10 @@ class TestComputeManagementDedicatedHostGroupsOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
+    async def test_dedicated_host_groups_list_by_resource_group(self, resource_group):
         response = self.client.dedicated_host_groups.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -136,9 +136,9 @@ class TestComputeManagementDedicatedHostGroupsOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_subscription(self, resource_group):
+    async def test_dedicated_host_groups_list_by_subscription(self, resource_group):
         response = self.client.dedicated_host_groups.list_by_subscription(
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -13,7 +13,6 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 from .. import _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -64,7 +63,7 @@ class AccountEncryption(_serialization.Model):
         self.identity = identity
 
 
-class ActiveDirectory(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class ActiveDirectory(_serialization.Model):
     """Active Directory.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -141,7 +140,7 @@ class ActiveDirectory(_serialization.Model):  # pylint: disable=too-many-instanc
         "status": {"readonly": True},
         "status_details": {"readonly": True},
         "kdc_ip": {
-            "pattern": r"^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)((, ?)(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))*$"
+            "pattern": r"^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
         },
         "ad_name": {"max_length": 64, "min_length": 1},
         "server_root_ca_certificate": {"max_length": 10240, "min_length": 1},
@@ -369,7 +368,7 @@ class ProxyResource(Resource):
     """
 
 
-class Backup(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class Backup(ProxyResource):
     """Backup under a Backup Vault.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -579,7 +578,7 @@ class TrackedResource(Resource):
         self.location = location
 
 
-class BackupPolicy(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class BackupPolicy(TrackedResource):
     """Backup policy information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -689,7 +688,7 @@ class BackupPolicy(TrackedResource):  # pylint: disable=too-many-instance-attrib
         self.volume_backups = None
 
 
-class BackupPolicyPatch(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class BackupPolicyPatch(_serialization.Model):
     """Backup policy Details for create and update.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1124,7 +1123,7 @@ class BreakReplicationRequest(_serialization.Model):
         self.force_break_replication = force_break_replication
 
 
-class CapacityPool(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class CapacityPool(TrackedResource):
     """Capacity pool resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1359,6 +1358,68 @@ class CapacityPoolPatch(_serialization.Model):
         self.cool_access = cool_access
 
 
+class ChangeKeyVault(_serialization.Model):
+    """Change key vault request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar key_vault_uri: The URI of the key vault/managed HSM that should be used for encryption.
+     Required.
+    :vartype key_vault_uri: str
+    :ivar key_name: The name of the key that should be used for encryption. Required.
+    :vartype key_name: str
+    :ivar key_vault_resource_id: Azure resource ID of the key vault/managed HSM that should be used
+     for encryption.
+    :vartype key_vault_resource_id: str
+    :ivar key_vault_private_endpoints: Pairs of virtual network ID and private endpoint ID. Every
+     virtual network that has volumes encrypted with customer-managed keys needs its own key vault
+     private endpoint. Required.
+    :vartype key_vault_private_endpoints: list[~azure.mgmt.netapp.models.KeyVaultPrivateEndpoint]
+    """
+
+    _validation = {
+        "key_vault_uri": {"required": True},
+        "key_name": {"required": True},
+        "key_vault_private_endpoints": {"required": True},
+    }
+
+    _attribute_map = {
+        "key_vault_uri": {"key": "keyVaultUri", "type": "str"},
+        "key_name": {"key": "keyName", "type": "str"},
+        "key_vault_resource_id": {"key": "keyVaultResourceId", "type": "str"},
+        "key_vault_private_endpoints": {"key": "keyVaultPrivateEndpoints", "type": "[KeyVaultPrivateEndpoint]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        key_vault_uri: str,
+        key_name: str,
+        key_vault_private_endpoints: List["_models.KeyVaultPrivateEndpoint"],
+        key_vault_resource_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword key_vault_uri: The URI of the key vault/managed HSM that should be used for
+         encryption. Required.
+        :paramtype key_vault_uri: str
+        :keyword key_name: The name of the key that should be used for encryption. Required.
+        :paramtype key_name: str
+        :keyword key_vault_resource_id: Azure resource ID of the key vault/managed HSM that should be
+         used for encryption.
+        :paramtype key_vault_resource_id: str
+        :keyword key_vault_private_endpoints: Pairs of virtual network ID and private endpoint ID.
+         Every virtual network that has volumes encrypted with customer-managed keys needs its own key
+         vault private endpoint. Required.
+        :paramtype key_vault_private_endpoints: list[~azure.mgmt.netapp.models.KeyVaultPrivateEndpoint]
+        """
+        super().__init__(**kwargs)
+        self.key_vault_uri = key_vault_uri
+        self.key_name = key_name
+        self.key_vault_resource_id = key_vault_resource_id
+        self.key_vault_private_endpoints = key_vault_private_endpoints
+
+
 class CheckAvailabilityResponse(_serialization.Model):
     """Information regarding availability of a resource.
 
@@ -1571,6 +1632,41 @@ class EncryptionIdentity(_serialization.Model):
         self.user_assigned_identity = user_assigned_identity
 
 
+class EncryptionTransitionRequest(_serialization.Model):
+    """Encryption transition request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar virtual_network_id: Identifier for the virtual network. Required.
+    :vartype virtual_network_id: str
+    :ivar private_endpoint_id: Identifier of the private endpoint to reach the Azure Key Vault.
+     Required.
+    :vartype private_endpoint_id: str
+    """
+
+    _validation = {
+        "virtual_network_id": {"required": True},
+        "private_endpoint_id": {"required": True},
+    }
+
+    _attribute_map = {
+        "virtual_network_id": {"key": "virtualNetworkId", "type": "str"},
+        "private_endpoint_id": {"key": "privateEndpointId", "type": "str"},
+    }
+
+    def __init__(self, *, virtual_network_id: str, private_endpoint_id: str, **kwargs: Any) -> None:
+        """
+        :keyword virtual_network_id: Identifier for the virtual network. Required.
+        :paramtype virtual_network_id: str
+        :keyword private_endpoint_id: Identifier of the private endpoint to reach the Azure Key Vault.
+         Required.
+        :paramtype private_endpoint_id: str
+        """
+        super().__init__(**kwargs)
+        self.virtual_network_id = virtual_network_id
+        self.private_endpoint_id = private_endpoint_id
+
+
 class ErrorAdditionalInfo(_serialization.Model):
     """The resource management error additional info.
 
@@ -1663,7 +1759,7 @@ class ErrorResponse(_serialization.Model):
         self.error = error
 
 
-class ExportPolicyRule(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class ExportPolicyRule(_serialization.Model):
     """Volume Export Policy Rule.
 
     :ivar rule_index: Order index.
@@ -1896,6 +1992,63 @@ class GetGroupIdListForLDAPUserResponse(_serialization.Model):
         self.group_ids_for_ldap_user = group_ids_for_ldap_user
 
 
+class GetKeyVaultStatusResponse(_serialization.Model):
+    """Result of getKeyVaultStatus with information about how volumes under NetApp account are
+    encrypted.
+
+    :ivar key_vault_uri: The URI of the key vault/managed HSM that should be used for encryption.
+    :vartype key_vault_uri: str
+    :ivar key_name: The name of the key that should be used for encryption.
+    :vartype key_name: str
+    :ivar key_vault_resource_id: Azure resource ID of the key vault/managed HSM that should be used
+     for encryption.
+    :vartype key_vault_resource_id: str
+    :ivar key_vault_private_endpoints: Pairs of virtual network ID and private endpoint ID. Every
+     virtual network that has volumes encrypted with customer-managed keys needs its own key vault
+     private endpoint.
+    :vartype key_vault_private_endpoints: list[~azure.mgmt.netapp.models.KeyVaultPrivateEndpoint]
+    """
+
+    _attribute_map = {
+        "key_vault_uri": {"key": "properties.keyVaultUri", "type": "str"},
+        "key_name": {"key": "properties.keyName", "type": "str"},
+        "key_vault_resource_id": {"key": "properties.keyVaultResourceId", "type": "str"},
+        "key_vault_private_endpoints": {
+            "key": "properties.keyVaultPrivateEndpoints",
+            "type": "[KeyVaultPrivateEndpoint]",
+        },
+    }
+
+    def __init__(
+        self,
+        *,
+        key_vault_uri: Optional[str] = None,
+        key_name: Optional[str] = None,
+        key_vault_resource_id: Optional[str] = None,
+        key_vault_private_endpoints: Optional[List["_models.KeyVaultPrivateEndpoint"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword key_vault_uri: The URI of the key vault/managed HSM that should be used for
+         encryption.
+        :paramtype key_vault_uri: str
+        :keyword key_name: The name of the key that should be used for encryption.
+        :paramtype key_name: str
+        :keyword key_vault_resource_id: Azure resource ID of the key vault/managed HSM that should be
+         used for encryption.
+        :paramtype key_vault_resource_id: str
+        :keyword key_vault_private_endpoints: Pairs of virtual network ID and private endpoint ID.
+         Every virtual network that has volumes encrypted with customer-managed keys needs its own key
+         vault private endpoint.
+        :paramtype key_vault_private_endpoints: list[~azure.mgmt.netapp.models.KeyVaultPrivateEndpoint]
+        """
+        super().__init__(**kwargs)
+        self.key_vault_uri = key_vault_uri
+        self.key_name = key_name
+        self.key_vault_resource_id = key_vault_resource_id
+        self.key_vault_private_endpoints = key_vault_private_endpoints
+
+
 class HourlySchedule(_serialization.Model):
     """Hourly Schedule properties.
 
@@ -1933,6 +2086,35 @@ class HourlySchedule(_serialization.Model):
         self.snapshots_to_keep = snapshots_to_keep
         self.minute = minute
         self.used_bytes = used_bytes
+
+
+class KeyVaultPrivateEndpoint(_serialization.Model):
+    """Pairs of virtual network ID and private endpoint ID. Every virtual network that has volumes
+    encrypted with customer-managed keys needs its own key vault private endpoint.
+
+    :ivar virtual_network_id: Identifier for the virtual network id.
+    :vartype virtual_network_id: str
+    :ivar private_endpoint_id: Identifier of the private endpoint to reach the Azure Key Vault.
+    :vartype private_endpoint_id: str
+    """
+
+    _attribute_map = {
+        "virtual_network_id": {"key": "virtualNetworkId", "type": "str"},
+        "private_endpoint_id": {"key": "privateEndpointId", "type": "str"},
+    }
+
+    def __init__(
+        self, *, virtual_network_id: Optional[str] = None, private_endpoint_id: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword virtual_network_id: Identifier for the virtual network id.
+        :paramtype virtual_network_id: str
+        :keyword private_endpoint_id: Identifier of the private endpoint to reach the Azure Key Vault.
+        :paramtype private_endpoint_id: str
+        """
+        super().__init__(**kwargs)
+        self.virtual_network_id = virtual_network_id
+        self.private_endpoint_id = private_endpoint_id
 
 
 class KeyVaultProperties(_serialization.Model):
@@ -2149,7 +2331,7 @@ class ManagedServiceIdentity(_serialization.Model):
         self.user_assigned_identities = user_assigned_identities
 
 
-class MetricSpecification(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class MetricSpecification(_serialization.Model):
     """Metric specification of operation.
 
     :ivar name: Name of metric specification.
@@ -2481,7 +2663,7 @@ class MountTargetProperties(_serialization.Model):
         self.smb_server_fqdn = smb_server_fqdn
 
 
-class NetAppAccount(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class NetAppAccount(TrackedResource):
     """NetApp account resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3421,8 +3603,6 @@ class ReplicationObject(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
-
     :ivar replication_id: Id.
     :vartype replication_id: str
     :ivar endpoint_type: Indicates whether the local volume is the source or destination for the
@@ -3430,7 +3610,8 @@ class ReplicationObject(_serialization.Model):
     :vartype endpoint_type: str or ~azure.mgmt.netapp.models.EndpointType
     :ivar replication_schedule: Schedule. Known values are: "_10minutely", "hourly", and "daily".
     :vartype replication_schedule: str or ~azure.mgmt.netapp.models.ReplicationSchedule
-    :ivar remote_volume_resource_id: The resource ID of the remote volume. Required for cross region and cross zone replication.
+    :ivar remote_volume_resource_id: The resource ID of the remote volume. Required for cross
+     region and cross zone replication.
     :vartype remote_volume_resource_id: str
     :ivar remote_path: The full path to a volume that is to be migrated into ANF. Required for
      Migration volumes.
@@ -3455,9 +3636,9 @@ class ReplicationObject(_serialization.Model):
     def __init__(
         self,
         *,
-        remote_volume_resource_id: Optional[str] = None,
         endpoint_type: Optional[Union[str, "_models.EndpointType"]] = None,
         replication_schedule: Optional[Union[str, "_models.ReplicationSchedule"]] = None,
+        remote_volume_resource_id: Optional[str] = None,
         remote_path: Optional["_models.RemotePath"] = None,
         remote_volume_region: Optional[str] = None,
         **kwargs: Any
@@ -3469,7 +3650,8 @@ class ReplicationObject(_serialization.Model):
         :keyword replication_schedule: Schedule. Known values are: "_10minutely", "hourly", and
          "daily".
         :paramtype replication_schedule: str or ~azure.mgmt.netapp.models.ReplicationSchedule
-        :keyword remote_volume_resource_id: The resource ID of the remote volume. Required for cross region and cross zone replication.
+        :keyword remote_volume_resource_id: The resource ID of the remote volume. Required for cross
+         region and cross zone replication.
         :paramtype remote_volume_resource_id: str
         :keyword remote_path: The full path to a volume that is to be migrated into ANF. Required for
          Migration volumes.
@@ -3795,7 +3977,7 @@ class SnapshotPoliciesList(_serialization.Model):
         self.value = value
 
 
-class SnapshotPolicy(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class SnapshotPolicy(TrackedResource):
     """Snapshot policy information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3897,7 +4079,7 @@ class SnapshotPolicy(TrackedResource):  # pylint: disable=too-many-instance-attr
         self.provisioning_state = None
 
 
-class SnapshotPolicyDetails(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class SnapshotPolicyDetails(_serialization.Model):
     """Snapshot policy properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3989,7 +4171,7 @@ class SnapshotPolicyDetails(_serialization.Model):  # pylint: disable=too-many-i
         self.provisioning_state = None
 
 
-class SnapshotPolicyPatch(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class SnapshotPolicyPatch(_serialization.Model):
     """Snapshot policy Details for create and update.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4288,7 +4470,7 @@ class SubvolumeInfo(ProxyResource):
         self.provisioning_state = None
 
 
-class SubvolumeModel(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class SubvolumeModel(_serialization.Model):
     """Result of the post subvolume and action is to get metadata of the subvolume.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4638,7 +4820,7 @@ class UserAssignedIdentity(_serialization.Model):
         self.client_id = None
 
 
-class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class Volume(TrackedResource):
     """Volume resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4776,6 +4958,13 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
      "Default", "OnRead", and "Never".
     :vartype cool_access_retrieval_policy: str or
      ~azure.mgmt.netapp.models.CoolAccessRetrievalPolicy
+    :ivar cool_access_tiering_policy: coolAccessTieringPolicy determines which cold data blocks are
+     moved to cool tier. The possible values for this field are: Auto - Moves cold user data blocks
+     in both the Snapshot copies and the active file system to the cool tier tier. This policy is
+     the default. SnapshotOnly - Moves user data blocks of the Volume Snapshot copies that are not
+     associated with the active file system to the cool tier. Known values are: "Auto" and
+     "SnapshotOnly".
+    :vartype cool_access_tiering_policy: str or ~azure.mgmt.netapp.models.CoolAccessTieringPolicy
     :ivar unix_permissions: UNIX permissions for NFS volume accepted in octal 4 digit format. First
      digit selects the set user ID(4), set group ID (2) and sticky (1) attributes. Second digit
      selects permission for the owner of the file: read (4), write (2) and execute (1). Third
@@ -4930,6 +5119,7 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "cool_access": {"key": "properties.coolAccess", "type": "bool"},
         "coolness_period": {"key": "properties.coolnessPeriod", "type": "int"},
         "cool_access_retrieval_policy": {"key": "properties.coolAccessRetrievalPolicy", "type": "str"},
+        "cool_access_tiering_policy": {"key": "properties.coolAccessTieringPolicy", "type": "str"},
         "unix_permissions": {"key": "properties.unixPermissions", "type": "str"},
         "clone_progress": {"key": "properties.cloneProgress", "type": "int"},
         "file_access_logs": {"key": "properties.fileAccessLogs", "type": "str"},
@@ -4985,6 +5175,7 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
         cool_access: bool = False,
         coolness_period: Optional[int] = None,
         cool_access_retrieval_policy: Optional[Union[str, "_models.CoolAccessRetrievalPolicy"]] = None,
+        cool_access_tiering_policy: Optional[Union[str, "_models.CoolAccessTieringPolicy"]] = None,
         unix_permissions: Optional[str] = None,
         avs_data_store: Union[str, "_models.AvsDataStore"] = "Disabled",
         is_default_quota_enabled: bool = False,
@@ -5095,6 +5286,13 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
          "Default", "OnRead", and "Never".
         :paramtype cool_access_retrieval_policy: str or
          ~azure.mgmt.netapp.models.CoolAccessRetrievalPolicy
+        :keyword cool_access_tiering_policy: coolAccessTieringPolicy determines which cold data blocks
+         are moved to cool tier. The possible values for this field are: Auto - Moves cold user data
+         blocks in both the Snapshot copies and the active file system to the cool tier tier. This
+         policy is the default. SnapshotOnly - Moves user data blocks of the Volume Snapshot copies that
+         are not associated with the active file system to the cool tier. Known values are: "Auto" and
+         "SnapshotOnly".
+        :paramtype cool_access_tiering_policy: str or ~azure.mgmt.netapp.models.CoolAccessTieringPolicy
         :keyword unix_permissions: UNIX permissions for NFS volume accepted in octal 4 digit format.
          First digit selects the set user ID(4), set group ID (2) and sticky (1) attributes. Second
          digit selects permission for the owner of the file: read (4), write (2) and execute (1). Third
@@ -5167,6 +5365,7 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
         self.cool_access = cool_access
         self.coolness_period = coolness_period
         self.cool_access_retrieval_policy = cool_access_retrieval_policy
+        self.cool_access_tiering_policy = cool_access_tiering_policy
         self.unix_permissions = unix_permissions
         self.clone_progress = None
         self.file_access_logs = None
@@ -5471,7 +5670,7 @@ class VolumeGroupMetaData(_serialization.Model):
         self.volumes_count = None
 
 
-class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class VolumeGroupVolumeProperties(_serialization.Model):
     """Volume resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5600,6 +5799,13 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
      "Default", "OnRead", and "Never".
     :vartype cool_access_retrieval_policy: str or
      ~azure.mgmt.netapp.models.CoolAccessRetrievalPolicy
+    :ivar cool_access_tiering_policy: coolAccessTieringPolicy determines which cold data blocks are
+     moved to cool tier. The possible values for this field are: Auto - Moves cold user data blocks
+     in both the Snapshot copies and the active file system to the cool tier tier. This policy is
+     the default. SnapshotOnly - Moves user data blocks of the Volume Snapshot copies that are not
+     associated with the active file system to the cool tier. Known values are: "Auto" and
+     "SnapshotOnly".
+    :vartype cool_access_tiering_policy: str or ~azure.mgmt.netapp.models.CoolAccessTieringPolicy
     :ivar unix_permissions: UNIX permissions for NFS volume accepted in octal 4 digit format. First
      digit selects the set user ID(4), set group ID (2) and sticky (1) attributes. Second digit
      selects permission for the owner of the file: read (4), write (2) and execute (1). Third
@@ -5747,6 +5953,7 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
         "cool_access": {"key": "properties.coolAccess", "type": "bool"},
         "coolness_period": {"key": "properties.coolnessPeriod", "type": "int"},
         "cool_access_retrieval_policy": {"key": "properties.coolAccessRetrievalPolicy", "type": "str"},
+        "cool_access_tiering_policy": {"key": "properties.coolAccessTieringPolicy", "type": "str"},
         "unix_permissions": {"key": "properties.unixPermissions", "type": "str"},
         "clone_progress": {"key": "properties.cloneProgress", "type": "int"},
         "file_access_logs": {"key": "properties.fileAccessLogs", "type": "str"},
@@ -5802,6 +6009,7 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
         cool_access: bool = False,
         coolness_period: Optional[int] = None,
         cool_access_retrieval_policy: Optional[Union[str, "_models.CoolAccessRetrievalPolicy"]] = None,
+        cool_access_tiering_policy: Optional[Union[str, "_models.CoolAccessTieringPolicy"]] = None,
         unix_permissions: Optional[str] = None,
         avs_data_store: Union[str, "_models.AvsDataStore"] = "Disabled",
         is_default_quota_enabled: bool = False,
@@ -5912,6 +6120,13 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
          "Default", "OnRead", and "Never".
         :paramtype cool_access_retrieval_policy: str or
          ~azure.mgmt.netapp.models.CoolAccessRetrievalPolicy
+        :keyword cool_access_tiering_policy: coolAccessTieringPolicy determines which cold data blocks
+         are moved to cool tier. The possible values for this field are: Auto - Moves cold user data
+         blocks in both the Snapshot copies and the active file system to the cool tier tier. This
+         policy is the default. SnapshotOnly - Moves user data blocks of the Volume Snapshot copies that
+         are not associated with the active file system to the cool tier. Known values are: "Auto" and
+         "SnapshotOnly".
+        :paramtype cool_access_tiering_policy: str or ~azure.mgmt.netapp.models.CoolAccessTieringPolicy
         :keyword unix_permissions: UNIX permissions for NFS volume accepted in octal 4 digit format.
          First digit selects the set user ID(4), set group ID (2) and sticky (1) attributes. Second
          digit selects permission for the owner of the file: read (4), write (2) and execute (1). Third
@@ -5987,6 +6202,7 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
         self.cool_access = cool_access
         self.coolness_period = coolness_period
         self.cool_access_retrieval_policy = cool_access_retrieval_policy
+        self.cool_access_tiering_policy = cool_access_tiering_policy
         self.unix_permissions = unix_permissions
         self.clone_progress = None
         self.file_access_logs = None
@@ -6037,7 +6253,7 @@ class VolumeList(_serialization.Model):
         self.next_link = next_link
 
 
-class VolumePatch(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class VolumePatch(_serialization.Model):
     """Volume patch resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6101,6 +6317,13 @@ class VolumePatch(_serialization.Model):  # pylint: disable=too-many-instance-at
      "Default", "OnRead", and "Never".
     :vartype cool_access_retrieval_policy: str or
      ~azure.mgmt.netapp.models.CoolAccessRetrievalPolicy
+    :ivar cool_access_tiering_policy: coolAccessTieringPolicy determines which cold data blocks are
+     moved to cool tier. The possible values for this field are: Auto - Moves cold user data blocks
+     in both the Snapshot copies and the active file system to the cool tier tier. This policy is
+     the default. SnapshotOnly - Moves user data blocks of the Volume Snapshot copies that are not
+     associated with the active file system to the cool tier. Known values are: "Auto" and
+     "SnapshotOnly".
+    :vartype cool_access_tiering_policy: str or ~azure.mgmt.netapp.models.CoolAccessTieringPolicy
     :ivar snapshot_directory_visible: If enabled (true) the volume will contain a read-only
      snapshot directory which provides access to each of the volume's snapshots.
     :vartype snapshot_directory_visible: bool
@@ -6142,6 +6365,7 @@ class VolumePatch(_serialization.Model):  # pylint: disable=too-many-instance-at
         "cool_access": {"key": "properties.coolAccess", "type": "bool"},
         "coolness_period": {"key": "properties.coolnessPeriod", "type": "int"},
         "cool_access_retrieval_policy": {"key": "properties.coolAccessRetrievalPolicy", "type": "str"},
+        "cool_access_tiering_policy": {"key": "properties.coolAccessTieringPolicy", "type": "str"},
         "snapshot_directory_visible": {"key": "properties.snapshotDirectoryVisible", "type": "bool"},
         "smb_access_based_enumeration": {"key": "properties.smbAccessBasedEnumeration", "type": "str"},
         "smb_non_browsable": {"key": "properties.smbNonBrowsable", "type": "str"},
@@ -6165,6 +6389,7 @@ class VolumePatch(_serialization.Model):  # pylint: disable=too-many-instance-at
         cool_access: Optional[bool] = None,
         coolness_period: Optional[int] = None,
         cool_access_retrieval_policy: Optional[Union[str, "_models.CoolAccessRetrievalPolicy"]] = None,
+        cool_access_tiering_policy: Optional[Union[str, "_models.CoolAccessTieringPolicy"]] = None,
         snapshot_directory_visible: Optional[bool] = None,
         smb_access_based_enumeration: Optional[Union[str, "_models.SmbAccessBasedEnumeration"]] = None,
         smb_non_browsable: Optional[Union[str, "_models.SmbNonBrowsable"]] = None,
@@ -6224,6 +6449,13 @@ class VolumePatch(_serialization.Model):  # pylint: disable=too-many-instance-at
          "Default", "OnRead", and "Never".
         :paramtype cool_access_retrieval_policy: str or
          ~azure.mgmt.netapp.models.CoolAccessRetrievalPolicy
+        :keyword cool_access_tiering_policy: coolAccessTieringPolicy determines which cold data blocks
+         are moved to cool tier. The possible values for this field are: Auto - Moves cold user data
+         blocks in both the Snapshot copies and the active file system to the cool tier tier. This
+         policy is the default. SnapshotOnly - Moves user data blocks of the Volume Snapshot copies that
+         are not associated with the active file system to the cool tier. Known values are: "Auto" and
+         "SnapshotOnly".
+        :paramtype cool_access_tiering_policy: str or ~azure.mgmt.netapp.models.CoolAccessTieringPolicy
         :keyword snapshot_directory_visible: If enabled (true) the volume will contain a read-only
          snapshot directory which provides access to each of the volume's snapshots.
         :paramtype snapshot_directory_visible: bool
@@ -6255,6 +6487,7 @@ class VolumePatch(_serialization.Model):  # pylint: disable=too-many-instance-at
         self.cool_access = cool_access
         self.coolness_period = coolness_period
         self.cool_access_retrieval_policy = cool_access_retrieval_policy
+        self.cool_access_tiering_policy = cool_access_tiering_policy
         self.snapshot_directory_visible = snapshot_directory_visible
         self.smb_access_based_enumeration = smb_access_based_enumeration
         self.smb_non_browsable = smb_non_browsable

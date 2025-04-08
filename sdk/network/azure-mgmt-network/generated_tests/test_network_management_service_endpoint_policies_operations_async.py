@@ -21,12 +21,12 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_service_endpoint_policies_begin_delete(self, resource_group):
         response = await (
             await self.client.service_endpoint_policies.begin_delete(
                 resource_group_name=resource_group.name,
                 service_endpoint_policy_name="str",
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -35,11 +35,11 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_service_endpoint_policies_get(self, resource_group):
         response = await self.client.service_endpoint_policies.get(
             resource_group_name=resource_group.name,
             service_endpoint_policy_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -47,7 +47,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_service_endpoint_policies_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.service_endpoint_policies.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -171,6 +171,9 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                     "subnet": ...,
                                 }
                             ],
+                            "ipamPoolPrefixAllocations": [
+                                {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
+                            ],
                             "name": "str",
                             "natGateway": {"id": "str"},
                             "networkSecurityGroup": {
@@ -264,6 +267,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                     {
                                         "auxiliaryMode": "str",
                                         "auxiliarySku": "str",
+                                        "defaultOutboundConnectivityEnabled": bool,
                                         "disableTcpStateTracking": bool,
                                         "dnsSettings": {
                                             "appliedDnsServers": ["str"],
@@ -1204,6 +1208,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                         {
                                             "auxiliaryMode": "str",
                                             "auxiliarySku": "str",
+                                            "defaultOutboundConnectivityEnabled": bool,
                                             "disableTcpStateTracking": bool,
                                             "dnsSettings": {
                                                 "appliedDnsServers": ["str"],
@@ -2133,7 +2138,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -2142,12 +2147,12 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update_tags(self, resource_group):
+    async def test_service_endpoint_policies_update_tags(self, resource_group):
         response = await self.client.service_endpoint_policies.update_tags(
             resource_group_name=resource_group.name,
             service_endpoint_policy_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -2155,9 +2160,9 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_service_endpoint_policies_list(self, resource_group):
         response = self.client.service_endpoint_policies.list(
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -2165,10 +2170,10 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
+    async def test_service_endpoint_policies_list_by_resource_group(self, resource_group):
         response = self.client.service_endpoint_policies.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

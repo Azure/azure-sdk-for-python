@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access,no-value-for-parameter
+# pylint: disable=protected-access
 
 from contextlib import contextmanager
 from typing import Any, Generator, Iterable, Optional, Union, cast
@@ -26,7 +26,7 @@ from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
     _get_latest,
-    _get_next_version_from_container,
+    _get_next_latest_versions_from_container,
     _resolve_label_to_asset,
 )
 from azure.ai.ml._utils._experimental import experimental
@@ -39,7 +39,7 @@ from azure.ai.ml._utils._registry_utils import (
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, ASSET_ID_FORMAT, AzureMLResourceType
 from azure.ai.ml.entities._assets import Environment, WorkspaceAssetReference
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -75,7 +75,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         **kwargs: Any,
     ):
         super(EnvironmentOperations, self).__init__(operation_scope, operation_config)
-        ops_logger.update_info(kwargs)
+        ops_logger.update_filter()
         self._kwargs = kwargs
         self._containers_operations = service_client.environment_containers
         self._version_operations = service_client.environment_versions
@@ -110,7 +110,8 @@ class EnvironmentOperations(_ScopeDependentOperations):
         """
         try:
             if not environment.version and environment._auto_increment_version:
-                environment.version = _get_next_version_from_container(
+
+                next_version, latest_version = _get_next_latest_versions_from_container(
                     name=environment.name,
                     container_operation=self._containers_operations,
                     resource_group_name=self._operation_scope.resource_group_name,
@@ -118,6 +119,9 @@ class EnvironmentOperations(_ScopeDependentOperations):
                     registry_name=self._registry_name,
                     **self._kwargs,
                 )
+                # If user not passing the version, SDK will try to update the latest version
+                return self._try_update_latest_version(next_version, latest_version, environment)
+
             sas_uri = None
             if self._registry_name:
                 if isinstance(environment, WorkspaceAssetReference):
@@ -169,12 +173,15 @@ class EnvironmentOperations(_ScopeDependentOperations):
                     ),
                 )
 
-            environment = _check_and_upload_env_build_context(
-                environment=environment,
-                operations=self,
-                sas_uri=sas_uri,
-                show_progress=self._show_progress,
-            )
+            # upload only in case of when its not registry
+            # or successfully acquire sas_uri
+            if not self._registry_name or sas_uri:
+                environment = _check_and_upload_env_build_context(
+                    environment=environment,
+                    operations=self,
+                    sas_uri=sas_uri,
+                    show_progress=self._show_progress,
+                )
             env_version_resource = environment._to_rest_object()
             env_rest_obj = (
                 self._version_operations.begin_create_or_update(
@@ -203,6 +210,25 @@ class EnvironmentOperations(_ScopeDependentOperations):
                 log_and_raise_error(ex)
             else:
                 raise ex
+
+    def _try_update_latest_version(
+        self, next_version: str, latest_version: str, environment: Environment
+    ) -> Environment:
+        env = None
+        if self._registry_name:
+            environment.version = next_version
+            env = self.create_or_update(environment)
+        else:
+            environment.version = latest_version
+            try:  # Try to update the latest version
+                env = self.create_or_update(environment)
+            except Exception as ex:  # pylint: disable=W0718
+                if isinstance(ex, ResourceExistsError):
+                    environment.version = next_version
+                    env = self.create_or_update(environment)
+                else:
+                    raise ex
+        return env
 
     def _get(self, name: str, version: Optional[str] = None) -> EnvironmentVersion:
         if version:
@@ -522,7 +548,9 @@ class EnvironmentOperations(_ScopeDependentOperations):
         environment_versions_operation_ = self._version_operations
 
         try:
-            _client, _rg, _sub = get_registry_client(self._service_client._config.credential, registry_name)
+            _client, _rg, _sub, _model_client = get_registry_client(
+                self._service_client._config.credential, registry_name
+            )
             self._operation_scope.registry_name = registry_name
             self._operation_scope._resource_group_name = _rg
             self._operation_scope._subscription_id = _sub

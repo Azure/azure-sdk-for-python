@@ -21,7 +21,7 @@ class TestComputeManagementVirtualMachineExtensionsOperationsAsync(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_virtual_machine_extensions_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.virtual_machine_extensions.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -68,7 +68,7 @@ class TestComputeManagementVirtualMachineExtensionsOperationsAsync(AzureMgmtReco
                     "type": "str",
                     "typeHandlerVersion": "str",
                 },
-                api_version="2024-07-01",
+                api_version="2024-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -77,7 +77,7 @@ class TestComputeManagementVirtualMachineExtensionsOperationsAsync(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_virtual_machine_extensions_begin_update(self, resource_group):
         response = await (
             await self.client.virtual_machine_extensions.begin_update(
                 resource_group_name=resource_group.name,
@@ -96,7 +96,7 @@ class TestComputeManagementVirtualMachineExtensionsOperationsAsync(AzureMgmtReco
                     "type": "str",
                     "typeHandlerVersion": "str",
                 },
-                api_version="2024-07-01",
+                api_version="2024-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -105,13 +105,13 @@ class TestComputeManagementVirtualMachineExtensionsOperationsAsync(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_virtual_machine_extensions_begin_delete(self, resource_group):
         response = await (
             await self.client.virtual_machine_extensions.begin_delete(
                 resource_group_name=resource_group.name,
                 vm_name="str",
                 vm_extension_name="str",
-                api_version="2024-07-01",
+                api_version="2024-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -120,12 +120,12 @@ class TestComputeManagementVirtualMachineExtensionsOperationsAsync(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_virtual_machine_extensions_get(self, resource_group):
         response = await self.client.virtual_machine_extensions.get(
             resource_group_name=resource_group.name,
             vm_name="str",
             vm_extension_name="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -133,11 +133,11 @@ class TestComputeManagementVirtualMachineExtensionsOperationsAsync(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_virtual_machine_extensions_list(self, resource_group):
         response = await self.client.virtual_machine_extensions.list(
             resource_group_name=resource_group.name,
             vm_name="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself

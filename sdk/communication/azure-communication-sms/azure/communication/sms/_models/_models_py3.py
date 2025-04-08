@@ -30,17 +30,17 @@ class SmsSendResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'to': {'required': True},
-        'http_status_code': {'required': True},
-        'successful': {'required': True},
+        "to": {"required": True},
+        "http_status_code": {"required": True},
+        "successful": {"required": True},
     }
 
     _attribute_map = {
-        'to': {'key': 'to', 'type': 'str'},
-        'message_id': {'key': 'messageId', 'type': 'str'},
-        'http_status_code': {'key': 'httpStatusCode', 'type': 'int'},
-        'successful': {'key': 'successful', 'type': 'bool'},
-        'error_message': {'key': 'errorMessage', 'type': 'str'},
+        "to": {"key": "to", "type": "str"},
+        "message_id": {"key": "messageId", "type": "str"},
+        "http_status_code": {"key": "httpStatusCode", "type": "int"},
+        "successful": {"key": "successful", "type": "bool"},
+        "error_message": {"key": "errorMessage", "type": "str"},
     }
 
     def __init__(

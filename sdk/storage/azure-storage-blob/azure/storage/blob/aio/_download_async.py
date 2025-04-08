@@ -6,7 +6,7 @@
 # pylint: disable=invalid-overridden-method
 # mypy: disable-error-code=override
 
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 import codecs
 import sys
 import warnings
@@ -46,8 +46,8 @@ T = TypeVar('T', bytes, str)
 async def process_content(data: Any, start_offset: int, end_offset: int, encryption: Dict[str, Any]) -> bytes:
     if data is None:
         raise ValueError("Response cannot be None.")
-    await data.response.read()
-    content = cast(bytes, data.response.content)
+    await data.response.load_body()
+    content = cast(bytes, data.response.body())
     if encryption.get('key') is not None or encryption.get('resolver') is not None:
         try:
             return decrypt_blob(
@@ -558,7 +558,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         output_stream: Union[BytesIO, StringIO]
         if self._text_mode:
             output_stream = StringIO()
-            size = chars if chars else sys.maxsize
+            size = sys.maxsize if chars is None or chars <= 0 else chars
         else:
             output_stream = BytesIO()
             size = size if size > 0 else sys.maxsize

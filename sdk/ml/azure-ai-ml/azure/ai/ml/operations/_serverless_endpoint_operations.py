@@ -4,27 +4,36 @@
 
 # pylint: disable=protected-access
 
-from typing import Iterable
 import re
+from typing import Iterable
 
-from azure.ai.ml.exceptions import ValidationException, ErrorTarget, ErrorCategory, ValidationErrorType
-from azure.ai.ml.constants._common import AzureMLResourceType, REGISTRY_VERSION_PATTERN
-from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
-from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient202401Preview
-from azure.ai.ml._restclient.v2024_01_01_preview.models import RegenerateEndpointKeysRequest, KeyType
+from azure.ai.ml._restclient.v2024_01_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient202401Preview,
+)
+from azure.ai.ml._restclient.v2024_01_01_preview.models import (
+    KeyType,
+    RegenerateEndpointKeysRequest,
+)
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
     OperationScope,
     _ScopeDependentOperations,
 )
-from azure.core.polling import LROPoller
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._logger_utils import OpsLogger
+from azure.ai.ml.constants._common import REGISTRY_VERSION_PATTERN, AzureMLResourceType
+from azure.ai.ml.constants._endpoint import EndpointKeyType
 from azure.ai.ml.entities._autogen_entities.models import ServerlessEndpoint
 from azure.ai.ml.entities._endpoint.online_endpoint import EndpointAuthKeys
-from azure.ai.ml.constants._endpoint import EndpointKeyType
-
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
+from azure.core.polling import LROPoller
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -46,6 +55,7 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
         all_operations: OperationsContainer,
     ):
         super().__init__(operation_scope, operation_config)
+        ops_logger.update_filter()
         self._service_client = service_client.serverless_endpoints
         self._marketplace_subscriptions = service_client.marketplace_subscriptions
         self._all_operations = all_operations
@@ -86,7 +96,11 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
             self._workspace_name,
             endpoint.name,
             endpoint._to_rest_object(),  # type: ignore
-            cls=lambda response, deserialized, headers: ServerlessEndpoint._from_rest_object(deserialized),  # type: ignore # pylint: disable=line-too-long
+            cls=(
+                lambda response, deserialized, headers: ServerlessEndpoint._from_rest_object(  # type: ignore
+                    deserialized
+                )
+            ),
             **kwargs,
         )
 
@@ -104,7 +118,11 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
             self._resource_group_name,
             self._workspace_name,
             name,
-            cls=lambda response, deserialized, headers: ServerlessEndpoint._from_rest_object(deserialized),  # type: ignore # pylint: disable=line-too-long
+            cls=(
+                lambda response, deserialized, headers: ServerlessEndpoint._from_rest_object(  # type: ignore
+                    deserialized
+                )
+            ),
             **kwargs,
         )
 

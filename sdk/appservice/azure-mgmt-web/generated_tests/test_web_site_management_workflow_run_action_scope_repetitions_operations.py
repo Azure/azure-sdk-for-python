@@ -20,14 +20,14 @@ class TestWebSiteManagementWorkflowRunActionScopeRepetitionsOperations(AzureMgmt
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_workflow_run_action_scope_repetitions_list(self, resource_group):
         response = self.client.workflow_run_action_scope_repetitions.list(
             resource_group_name=resource_group.name,
             name="str",
             workflow_name="str",
             run_name="str",
             action_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -35,7 +35,7 @@ class TestWebSiteManagementWorkflowRunActionScopeRepetitionsOperations(AzureMgmt
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_workflow_run_action_scope_repetitions_get(self, resource_group):
         response = self.client.workflow_run_action_scope_repetitions.get(
             resource_group_name=resource_group.name,
             name="str",
@@ -43,7 +43,7 @@ class TestWebSiteManagementWorkflowRunActionScopeRepetitionsOperations(AzureMgmt
             run_name="str",
             action_name="str",
             repetition_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself

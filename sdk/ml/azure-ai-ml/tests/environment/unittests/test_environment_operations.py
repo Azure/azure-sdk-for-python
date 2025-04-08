@@ -1,5 +1,5 @@
 from typing import Iterable
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, call, patch
 
 import pytest
 
@@ -14,7 +14,7 @@ from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationSc
 from azure.ai.ml.constants._common import ARM_ID_PREFIX
 from azure.ai.ml.entities._assets import Environment
 from azure.ai.ml.operations import EnvironmentOperations
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 
 
 @pytest.fixture
@@ -93,8 +93,11 @@ class TestEnvironmentOperations:
 
     def test_create_or_update(self, mock_environment_operation: EnvironmentOperations) -> None:
         env = load_environment(source="./tests/test_configs/environment/environment_conda.yml")
-        with patch("azure.ai.ml.operations._environment_operations.Environment._from_rest_object", return_value=None):
+        with patch(
+            "azure.ai.ml.operations._environment_operations.Environment._from_rest_object", return_value=None
+        ), patch("azure.ai.ml.operations._environment_operations._check_and_upload_env_build_context") as check_upload:
             _ = mock_environment_operation.create_or_update(env)
+            check_upload.assert_called_once()
         mock_environment_operation._version_operations.create_or_update.assert_called_once()
 
     def test_create_autoincrement(
@@ -108,7 +111,8 @@ class TestEnvironmentOperations:
         with patch(
             "azure.ai.ml.operations._environment_operations.Environment._from_rest_object", return_value=None
         ), patch(
-            "azure.ai.ml.operations._environment_operations._get_next_version_from_container", return_value="version"
+            "azure.ai.ml.operations._environment_operations._get_next_latest_versions_from_container",
+            return_value=("version", "latest"),
         ) as mock_nextver:
             mock_environment_operation.create_or_update(env)
             mock_nextver.assert_called_once()
@@ -116,7 +120,97 @@ class TestEnvironmentOperations:
             mock_environment_operation._version_operations.create_or_update.assert_called_once_with(
                 body=env._to_rest_object(),
                 name=env.name,
-                version=mock_nextver.return_value,
+                version="latest",
+                resource_group_name=mock_workspace_scope.resource_group_name,
+                workspace_name=mock_workspace_scope.workspace_name,
+            )
+
+    def test_create_when_latest_fail_with_resource_exist(
+        self,
+        mock_environment_operation: EnvironmentOperations,
+        mock_workspace_scope: OperationScope,
+    ) -> None:
+        env = load_environment(source="./tests/test_configs/environment/environment_no_version.yml")
+        assert env._auto_increment_version
+        env.version = None
+        mock_environment_operation._version_operations.create_or_update(
+            body=env._to_rest_object(),
+            name=env.name,
+            version="latest_version",
+            resource_group_name=mock_workspace_scope.resource_group_name,
+            workspace_name=mock_workspace_scope.workspace_name,
+        ).side_effect = ResourceExistsError()
+        with patch(
+            "azure.ai.ml.operations._environment_operations.Environment._from_rest_object", return_value=None
+        ), patch(
+            "azure.ai.ml.operations._environment_operations._get_next_latest_versions_from_container",
+            return_value=("next_version", "latest_version"),
+        ) as mock_nextver:
+
+            def side_effect(name, version, body, resource_group_name, workspace_name):
+                if version == "latest_version":
+                    raise ResourceExistsError
+
+            mock_environment_operation._version_operations.create_or_update.side_effect = side_effect
+            mock_environment_operation.create_or_update(env)
+            mock_nextver.assert_called_once()
+
+            mock_environment_operation._version_operations.create_or_update.assert_has_calls(
+                [
+                    call(
+                        body=env._to_rest_object(),
+                        name=env.name,
+                        version="latest_version",
+                        resource_group_name=mock_workspace_scope.resource_group_name,
+                        workspace_name=mock_workspace_scope.workspace_name,
+                    ),
+                    call(
+                        body=env._to_rest_object(),
+                        name=env.name,
+                        version="next_version",
+                        resource_group_name=mock_workspace_scope.resource_group_name,
+                        workspace_name=mock_workspace_scope.workspace_name,
+                    ),
+                ]
+            )
+
+    def test_create_when_latest_fail_with_unknown(
+        self,
+        mock_environment_operation: EnvironmentOperations,
+        mock_workspace_scope: OperationScope,
+    ) -> None:
+        env = load_environment(source="./tests/test_configs/environment/environment_no_version.yml")
+        assert env._auto_increment_version
+        env.version = None
+        mock_environment_operation._version_operations.create_or_update(
+            body=env._to_rest_object(),
+            name=env.name,
+            version="latest_version",
+            resource_group_name=mock_workspace_scope.resource_group_name,
+            workspace_name=mock_workspace_scope.workspace_name,
+        ).side_effect = ResourceExistsError()
+        with patch(
+            "azure.ai.ml.operations._environment_operations.Environment._from_rest_object", return_value=None
+        ), patch(
+            "azure.ai.ml.operations._environment_operations._get_next_latest_versions_from_container",
+            return_value=("next_version", "latest_version"),
+        ) as mock_nextver:
+
+            def side_effect(name, version, body, resource_group_name, workspace_name):
+                if version == "latest_version":
+                    raise Exception("Unknowm Error")
+
+            mock_environment_operation._version_operations.create_or_update.side_effect = side_effect
+            try:
+                mock_environment_operation.create_or_update(env)
+            except Exception:
+                pass
+            mock_nextver.assert_called_once()
+
+            mock_environment_operation._version_operations.create_or_update.assert_called_with(
+                body=env._to_rest_object(),
+                name=env.name,
+                version="latest_version",
                 resource_group_name=mock_workspace_scope.resource_group_name,
                 workspace_name=mock_workspace_scope.workspace_name,
             )
@@ -176,6 +270,9 @@ class TestEnvironmentOperations:
             body=env_container,
             resource_group_name=mock_environment_operation._resource_group_name,
         )
+
+    def side_effect(self, args):
+        print(args)
 
     # #Mock(azure.ai.ml._restclient.v2021_10_01_dataplanepreview.operations._environment_versions_operations, "get")
     # def test_promote_environment_from_workspace(

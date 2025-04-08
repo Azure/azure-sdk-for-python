@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from __future__ import unicode_literals, annotations
+from __future__ import annotations
 
 import uuid
 import logging
@@ -29,7 +29,7 @@ from ._tracing import (
     is_tracing_enabled,
     TraceAttributes,
 )
-from ._constants import TIMEOUT_SYMBOL
+from ._constants import TIMEOUT_SYMBOL, GEOREPLICATION_SYMBOL
 from .amqp import AmqpAnnotatedMessage
 
 _LOGGER = logging.getLogger(__name__)
@@ -124,6 +124,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         super(EventHubProducer, self).__init__()
 
     def _create_handler(self, auth: Union[uamqp_JWTTokenAuth, JWTTokenAuth]) -> None:
+        desired_capabilities = [GEOREPLICATION_SYMBOL]
         self._handler = self._amqp_transport.create_send_client(
             config=self._client._config,  # pylint:disable=protected-access
             target=self._target,
@@ -134,6 +135,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             keep_alive_interval=self._keep_alive,
             client_name=self._name,
             link_properties=self._link_properties,  # type: ignore
+            desired_capabilities=desired_capabilities,
             properties=create_properties(
                 self._client._config.user_agent,  # pylint: disable=protected-access
                 amqp_transport=self._amqp_transport,
@@ -264,7 +266,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                     links = [link] if link else []
 
             self._unsent_events = [wrapper_event_data._message]  # pylint: disable=protected-access
-            with send_context_manager(self._client, links=links):  # pylint: disable=protected-access
+            with send_context_manager(self._client, links=links):
                 self._send_event_data_with_retry(timeout=timeout)
 
     def close(self) -> None:

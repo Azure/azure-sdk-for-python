@@ -1,4 +1,4 @@
-# -------------------------------------------------------------------------  # pylint: disable=file-needs-copyright-header
+# -------------------------------------------------------------------------  # pylint: disable=file-needs-copyright-header,useless-suppression
 # This is a fork of the transport.py which was originally written by Barry Pederson and
 # maintained by the Celery project: https://github.com/celery/py-amqp.
 #
@@ -217,7 +217,7 @@ class AsyncTransport(AsyncTransportMixin):  # pylint: disable=too-many-instance-
         socket_settings=None,
         raise_on_initial_eintr=True,
         use_tls: bool = True,
-        **kwargs,  # pylint: disable=unused-argument
+        **kwargs,
     ):
         self.connected = False
         self.sock = None
@@ -226,6 +226,8 @@ class AsyncTransport(AsyncTransportMixin):  # pylint: disable=too-many-instance-
         self.raise_on_initial_eintr = raise_on_initial_eintr
         self._read_buffer = BytesIO()
         self.host, self.port = to_host_port(host, port)
+        self.host = kwargs.get("custom_endpoint") or self.host
+        self.port = kwargs.get("custom_port") or self.port
         self.socket_settings = socket_settings
         self.socket_lock = asyncio.Lock()
         self.sslopts = ssl_opts
@@ -497,18 +499,23 @@ class WebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too-many-
         length += nbytes
         toread -= nbytes
         try:
-            while toread:
-                data = await self.sock.receive_bytes()
-                read_length = len(data)
-                if read_length <= toread:
-                    view[length : length + read_length] = data
-                    toread -= read_length
-                    length += read_length
-                else:
-                    view[length : length + toread] = data[0:toread]
-                    self._read_buffer = BytesIO(data[toread:])
-                    toread = 0
-            return view
+            try:
+                while toread:
+                    data = await self.sock.receive_bytes()
+                    read_length = len(data)
+                    if read_length <= toread:
+                        view[length : length + read_length] = data
+                        toread -= read_length
+                        length += read_length
+                    else:
+                        view[length : length + toread] = data[0:toread]
+                        self._read_buffer = BytesIO(data[toread:])
+                        toread = 0
+                return view
+            except TypeError as te:
+                # aiohttp websocket raises TypeError when a websocket disconnects, as it ends up
+                # reading None over the wire and cant convert to bytes.
+                raise ConnectionError("Websocket disconnected: %r" % te) from None
         except:
             self._read_buffer = BytesIO(view[:length])
             raise

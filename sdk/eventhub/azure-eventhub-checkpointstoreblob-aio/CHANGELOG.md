@@ -1,15 +1,24 @@
 # Release History
 
-## 1.2.0 (Unreleased)
+## 1.2.1 (Unreleased)
 
-This version and all future versions will require Python 3.7+. Python 2.7 and 3.6 are no longer supported.
+### Other Changes
 
-- `aiohttp` dependency upper bound raised to `<5.0` to account for the custom built `aiohttp` that supports python 3.12. This change may be reverted prior to release.
+- Updated type annotations in `BlobCheckpointStore`.
+
+## 1.2.0 (2025-02-13)
+
+This version and all future versions will require Python 3.8+. Python 2.7, 3.6, and 3.7 are no longer supported.
 
 ### Bugs Fixed
 
 - Fixed a bug with `BlobCheckpointStore.claim_ownership` mutating the `ownership_list` argument to no longer mutate the argument.
 - Updated `azure-core` dependecy to 1.20.1 to fix `cchardet` ImportError.
+
+### Other Changes
+
+- Updated vendor azure-storage-blob dependency to v12.24.0.
+  - Fixed typing/linting issues and other bugs. See azure-storage-blob CHANGELOG.md for more info.
 
 ## 1.1.4 (2021-04-07)
 
@@ -68,5 +77,3 @@ This release has trivial internal changes only. No feature changes.
 **New features**
 
 - `BlobPartitionManager` that uses Azure Blob Storage Block Blob to store EventProcessor checkpoint data
-
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python/sdk/eventhub/azure-eventhub-checkpointstoreblob-aio/HISTORY.png)

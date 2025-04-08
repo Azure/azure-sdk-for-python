@@ -24,16 +24,17 @@ from azure.communication.phonenumbers import PhoneNumbersClient
 from azure.communication.phonenumbers._shared.utils import parse_connection_str
 from azure.identity import DefaultAzureCredential
 
-connection_str = os.getenv('COMMUNICATION_SAMPLES_CONNECTION_STRING')
+connection_str = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
 endpoint, _ = parse_connection_str(connection_str)
 phone_numbers_client = PhoneNumbersClient(endpoint, DefaultAzureCredential())
 
+
 def list_purchased_phone_numbers_using_managed_identity():
     purchased_phone_numbers = phone_numbers_client.list_purchased_phone_numbers()
-    print('Purchased phone numbers:')
+    print("Purchased phone numbers:")
     for acquired_phone_number in purchased_phone_numbers:
         print(acquired_phone_number.phone_number)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     list_purchased_phone_numbers_using_managed_identity()

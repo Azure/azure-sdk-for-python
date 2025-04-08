@@ -26,7 +26,6 @@ class TestHybridComputeManagementLicensesOperations(AzureMgmtRecordedTestCase):
         )
         result = [r for r in response]
         assert result == []
-        
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
@@ -34,4 +33,3 @@ class TestHybridComputeManagementLicensesOperations(AzureMgmtRecordedTestCase):
         response = self.client.licenses.list_by_subscription()
         result = [r for r in response]
         assert response
-        

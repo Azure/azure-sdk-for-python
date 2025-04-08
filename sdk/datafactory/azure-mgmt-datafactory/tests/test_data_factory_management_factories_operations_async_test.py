@@ -28,4 +28,3 @@ class TestDataFactoryManagementFactoriesOperationsAsync(AzureMgmtRecordedTestCas
         )
         result = [r async for r in response]
         assert result == []
-        

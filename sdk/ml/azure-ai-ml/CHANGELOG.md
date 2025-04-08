@@ -1,9 +1,88 @@
 # Release History
-## 1.23.0 (unreleased)
+## 1.27.0 (unreleased)
+### Features Added
+
+### Bugs Fixed
+ - Fix for compute Instance, disableLocalAuth property should be depend on ssh public access enabled.
+ - Removing Git-related properties from job properties if a PAT token is detected in the repository URL.
+
+## 1.26.2 (2025-04-08)
+
+### Bugs Fixed
+ - Made AI Search connections property optional while creating capability host.
+  
+## 1.26.1 (2025-03-27)
+
+### Bugs Fixed
+ - Handle missing duration value in deployment poller result
+
+## 1.26.0 (2025-03-11)
+
+### Features Added
+  - Adding parent job support for command job.
+  - Adding multiple docker argument support for command job.
+
+### Bugs Fixed
+  - #37464 - Allowing to update a component in register with anonymousEnvironment environment.
+  - #39744 - Fixing a serialization issue in RecurrencePattern schedule.
+  - #39793 - Fixing bug in AML OBO to work with KV secret client.
+  - Fix environment archiving and restore
+
+### Other Changes
+  - Removing use of protected methods/classes imported from external libraries.
+
+## 1.25.0 (2025-02-11)
 
 ### Features Added
 
 ### Bugs Fixed
+  - #39187 - Submitting a Command job created using the __call__ method on another Command is missing outputs.
+  - #37738 - documentation fix for deployment entities.
+
+### Other Changes
+
+- Adding support for Python 3.13. Ensuring that azureml-dataprep-rslex is only installed for Python versions below 3.13. This change may break if `Annotated` used directly without parameters.
+
+## 1.24.0 (2025-01-07)
+
+### Bugs Fixed
+  - Fixed disableLocalAuthentication handling while creating amlCompute
+  - Fixed model download issue
+
+## 1.23.1 (2025-01-07)
+
+### Bugs Fixed
+  - Removed marshmallow _T reference
+
+## 1.23.0 (2024-12-05)
+
+### Features Added
+  - Added support for IP-based access control to default and hub workspaces. 
+  - Add support for additional include in spark component.
+  - Adding enterprise agent feature for AI Hub and AI Project. Adding Create, Delete and Get operations.
+  - Removing preview tag for following connections type
+    - Azure AI Search
+    - Azure AI Content Safety
+    - Azure AI Speech
+    - Azure Blob Storage
+    - Microsoft OneLake
+
+
+## 1.22.3 (2024-11-20)
+
+### Bugs Fixed
+  - Fix error message while resolving mlflow url in get workspace details
+
+## 1.22.2 (2024-11-18)
+
+### Bugs Fixed
+  - **#3620407** - Fix Datastore credentials show up as NoneCredentials
+
+## 1.22.1 (2024-11-13)
+
+
+### Bugs Fixed
+  - **#38493** - Fix error NoneType object is not subscriptable
 
 ## 1.22.0 (2024-11-11)
 

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -75,12 +75,11 @@ from ...operations._app_service_plans_operations import (
     build_update_vnet_gateway_request,
     build_update_vnet_route_request,
 )
-from .._vendor import WebSiteManagementClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -127,7 +126,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-09-01"))
         cls: ClsType[_models.AppServicePlanCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -210,7 +209,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-09-01"))
         cls: ClsType[_models.AppServicePlanCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -286,7 +285,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2022_09_01.models.AppServicePlan
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
@@ -339,7 +338,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         app_service_plan: Union[_models.AppServicePlan, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -529,9 +528,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         )
 
     @distributed_trace_async
-    async def delete(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, name: str, **kwargs: Any
-    ) -> None:
+    async def delete(self, resource_group_name: str, name: str, **kwargs: Any) -> None:
         """Delete an App Service plan.
 
         Description for Delete an App Service plan.
@@ -544,7 +541,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -663,7 +660,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2022_09_01.models.AppServicePlan
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -732,7 +729,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :rtype: list[~azure.mgmt.web.v2022_09_01.models.Capability]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -795,7 +792,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2022_09_01.models.HybridConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -841,7 +838,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete_hybrid_connection(  # pylint: disable=inconsistent-return-statements
+    async def delete_hybrid_connection(
         self, resource_group_name: str, name: str, namespace_name: str, relay_name: str, **kwargs: Any
     ) -> None:
         """Delete a Hybrid Connection in use in an App Service plan.
@@ -860,7 +857,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -921,7 +918,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2022_09_01.models.HybridConnectionKey
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -992,7 +989,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-09-01"))
         cls: ClsType[_models.ResourceCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1073,7 +1070,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2022_09_01.models.HybridConnectionLimits
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1139,7 +1136,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-09-01"))
         cls: ClsType[_models.HybridConnectionCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1203,7 +1200,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def restart_web_apps(  # pylint: disable=inconsistent-return-statements
+    async def restart_web_apps(
         self, resource_group_name: str, name: str, soft_restart: Optional[bool] = None, **kwargs: Any
     ) -> None:
         """Restart all apps in an App Service plan.
@@ -1223,7 +1220,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1301,7 +1298,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-09-01"))
         cls: ClsType[_models.WebAppCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1381,7 +1378,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1451,7 +1448,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-09-01"))
         cls: ClsType[_models.CsmUsageQuotaCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1529,7 +1526,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :rtype: list[~azure.mgmt.web.v2022_09_01.models.VnetInfoResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1590,7 +1587,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2022_09_01.models.VnetInfoResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
@@ -1657,7 +1654,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2022_09_01.models.VnetGateway
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1799,7 +1796,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2022_09_01.models.VnetGateway
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1875,7 +1872,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :rtype: list[~azure.mgmt.web.v2022_09_01.models.VnetRoute]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1939,7 +1936,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :rtype: list[~azure.mgmt.web.v2022_09_01.models.VnetRoute]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
@@ -2084,7 +2081,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2022_09_01.models.VnetRoute
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
@@ -2149,7 +2146,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete_vnet_route(  # pylint: disable=inconsistent-return-statements
+    async def delete_vnet_route(
         self, resource_group_name: str, name: str, vnet_name: str, route_name: str, **kwargs: Any
     ) -> None:
         """Delete a Virtual Network route in an App Service plan.
@@ -2168,7 +2165,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
@@ -2309,7 +2306,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.web.v2022_09_01.models.VnetRoute
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
@@ -2374,9 +2371,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def reboot_worker(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, name: str, worker_name: str, **kwargs: Any
-    ) -> None:
+    async def reboot_worker(self, resource_group_name: str, name: str, worker_name: str, **kwargs: Any) -> None:
         """Reboot a worker machine in an App Service plan.
 
         Description for Reboot a worker machine in an App Service plan.
@@ -2391,7 +2386,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

@@ -21,12 +21,12 @@ class TestNetworkManagementFirewallPolicyDeploymentsOperationsAsync(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_deploy(self, resource_group):
+    async def test_firewall_policy_deployments_begin_deploy(self, resource_group):
         response = await (
             await self.client.firewall_policy_deployments.begin_deploy(
                 resource_group_name=resource_group.name,
                 firewall_policy_name="str",
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

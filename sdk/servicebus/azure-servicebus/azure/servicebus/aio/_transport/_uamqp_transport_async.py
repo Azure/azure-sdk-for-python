@@ -65,7 +65,7 @@ try:
             await connection.destroy_async()
 
         @staticmethod
-        def create_send_client_async(config: "Configuration", **kwargs: Any) -> "SendClientAsync":
+        def create_send_client_async(config: "Configuration", **kwargs: Any) -> "SendClientAsync": # pylint:disable=docstring-keyword-should-match-keyword-only
             """
             Creates and returns the uamqp SendClient.
             :param Configuration config: The configuration.
@@ -122,7 +122,7 @@ try:
                 UamqpTransportAsync.set_msg_timeout(sender, logger, default_timeout, None)
 
         @staticmethod
-        def create_receive_client_async(receiver: "ServiceBusReceiver", **kwargs: Any) -> "ReceiveClientAsync":
+        def create_receive_client_async(receiver: "ServiceBusReceiver", **kwargs: Any) -> "ReceiveClientAsync": # pylint:disable=docstring-keyword-should-match-keyword-only
             """
             Creates and returns the receive client.
             :param ~auzre.servicebus.aio.ServiceBusReceiver receiver: The receiver.
@@ -154,7 +154,7 @@ try:
 
             return ReceiveClientAsync(
                 source,
-                debug=network_trace,  # pylint:disable=protected-access
+                debug=network_trace,
                 error_policy=retry_policy,
                 prefetch=link_credit,
                 auto_complete=False,
@@ -208,7 +208,7 @@ try:
         @staticmethod
         async def iter_next_async(
             receiver: "ServiceBusReceiver", wait_time: Optional[int] = None
-        ) -> "ServiceBusReceivedMessage":  # pylint: disable=unused-argument
+        ) -> "ServiceBusReceivedMessage":
             # pylint: disable=protected-access
             try:
                 receiver._receive_context.set()
@@ -255,7 +255,7 @@ try:
             settle_operation: str,
             dead_letter_reason: Optional[str] = None,
             dead_letter_error_description: Optional[str] = None,
-        ) -> None:  # pylint: disable=unused-argument
+        ) -> None:
             await get_running_loop().run_in_executor(
                 None,
                 UamqpTransportAsync.settle_message_via_receiver_link_impl(
@@ -264,7 +264,7 @@ try:
             )
 
         @staticmethod
-        async def create_token_auth_async(
+        async def create_token_auth_async( # pylint:disable=docstring-keyword-should-match-keyword-only
             auth_uri: str, get_token: Callable, token_type: bytes, config: "Configuration", **kwargs: Any
         ) -> "JWTTokenAuthAsync":
             """

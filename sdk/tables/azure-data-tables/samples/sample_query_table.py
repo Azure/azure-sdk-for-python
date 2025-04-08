@@ -103,6 +103,44 @@ class SampleTablesQuery(object):
                     print(entity_chosen)
             except HttpResponseError as e:
                 raise
+
+        # Flatten received entity's metadata
+        with TableClient.from_connection_string(
+            self.connection_string, self.table_name, flatten_result_entity=True
+        ) as table_client:
+            try:
+                print("Basic sample:")
+                print("Entities with name: marker")
+                parameters = {"name": "marker"}
+                name_filter = "Name eq @name"
+                queried_entities = table_client.query_entities(
+                    query_filter=name_filter, select=["Brand", "Color"], parameters=parameters
+                )
+
+                for entity_chosen in queried_entities:
+                    print(entity_chosen)
+
+                print("Sample for querying entities with multiple params:")
+                print("Entities with name: marker and brand: Crayola")
+                parameters = {"name": "marker", "brand": "Crayola"}
+                name_filter = "Name eq @name and Brand eq @brand"
+                queried_entities = table_client.query_entities(
+                    query_filter=name_filter, select=["Brand", "Color"], parameters=parameters
+                )
+                for entity_chosen in queried_entities:
+                    print(entity_chosen)
+
+                print("Sample for querying entities' values:")
+                print("Entities with 25 < Value < 50")
+                parameters = {"lower": 25, "upper": 50}
+                name_filter = "Value gt @lower and Value lt @upper"
+                queried_entities = table_client.query_entities(
+                    query_filter=name_filter, select=["Value"], parameters=parameters
+                )
+                for entity_chosen in queried_entities:
+                    print(entity_chosen)
+            except HttpResponseError as e:
+                raise
         # [END query_entities]
 
     def clean_up(self):

@@ -29,10 +29,10 @@ class AvailabilitySetSkuTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class CachingTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values are:
-    :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
-    :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
-    storage. ReadOnly for Premium storage**.
+    """Specifies the caching requirements. :code:`<br>`\\ :code:`<br>` Possible values are:
+    :code:`<br>`\\ :code:`<br>` **None** :code:`<br>`\\ :code:`<br>` **ReadOnly** :code:`<br>`\\
+    :code:`<br>` **ReadWrite** :code:`<br>`\\ :code:`<br>` Default: **None for Standard storage.
+    ReadOnly for Premium storage**.
     """
 
     NONE = "None"
@@ -42,9 +42,9 @@ class CachingTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class DedicatedHostLicenseTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the software license type that will be applied to the VMs deployed on the dedicated
-    host. :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **None**
-    :code:`<br>`:code:`<br>` **Windows_Server_Hybrid** :code:`<br>`:code:`<br>`
-    **Windows_Server_Perpetual** :code:`<br>`:code:`<br>` Default: **None**.
+    host. :code:`<br>`\\ :code:`<br>` Possible values are: :code:`<br>`\\ :code:`<br>` **None**
+    :code:`<br>`\\ :code:`<br>` **Windows_Server_Hybrid** :code:`<br>`\\ :code:`<br>`
+    **Windows_Server_Perpetual** :code:`<br>`\\ :code:`<br>` Default: **None**.
     """
 
     NONE = "None"
@@ -73,12 +73,13 @@ class DiffDiskPlacement(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class DiskCreateOptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies how the virtual machine should be created.:code:`<br>`:code:`<br>` Possible values
-    are::code:`<br>`:code:`<br>` **Attach** \\u2013 This value is used when you are using a
-    specialized disk to create the virtual machine.:code:`<br>`:code:`<br>` **FromImage** \\u2013
-    This value is used when you are using an image to create the virtual machine. If you are using
-    a platform image, you also use the imageReference element described above. If you are using a
-    marketplace image, you  also use the plan element previously described.
+    """Specifies how the virtual machine should be created.\\ :code:`<br>`\\ :code:`<br>` Possible
+    values are:\\ :code:`<br>`\\ :code:`<br>` **Attach** \\u2013 This value is used when you are
+    using a specialized disk to create the virtual machine.\\ :code:`<br>`\\ :code:`<br>`
+    **FromImage** \\u2013 This value is used when you are using an image to create the virtual
+    machine. If you are using a platform image, you also use the imageReference element described
+    above. If you are using a marketplace image, you  also use the plan element previously
+    described.
     """
 
     FROM_IMAGE = "FromImage"
@@ -225,8 +226,8 @@ class OrchestrationServiceStateAction(str, Enum, metaclass=CaseInsensitiveEnumMe
 
 
 class ProtocolTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the protocol of WinRM listener. :code:`<br>`:code:`<br>` Possible values are:
-    :code:`<br>`\\ **http** :code:`<br>`:code:`<br>` **https**.
+    """Specifies the protocol of WinRM listener. :code:`<br>`\\ :code:`<br>` Possible values are:
+    :code:`<br>`\\ **http** :code:`<br>`\\ :code:`<br>` **https**.
     """
 
     HTTP = "Http"
@@ -234,9 +235,9 @@ class ProtocolTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ProximityPlacementGroupType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the type of the proximity placement group. :code:`<br>`:code:`<br>` Possible values
-    are: :code:`<br>`:code:`<br>` **Standard** : Co-locate resources within an Azure region or
-    Availability Zone. :code:`<br>`:code:`<br>` **Ultra** : For future use.
+    """Specifies the type of the proximity placement group. :code:`<br>`\\ :code:`<br>` Possible
+    values are: :code:`<br>`\\ :code:`<br>` **Standard** : Co-locate resources within an Azure
+    region or Availability Zone. :code:`<br>`\\ :code:`<br>` **Ultra** : For future use.
     """
 
     STANDARD = "Standard"
@@ -330,11 +331,11 @@ class StorageAccountTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class UpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the mode of an upgrade to virtual machines in the scale set.:code:`<br />`:code:`<br
-    />` Possible values are::code:`<br />`:code:`<br />` **Manual** - You  control the application
-    of updates to virtual machines in the scale set. You do this by using the manualUpgrade
-    action.:code:`<br />`:code:`<br />` **Automatic** - All virtual machines in the scale set are
-    automatically updated at the same time.
+    """Specifies the mode of an upgrade to virtual machines in the scale set.\\ :code:`<br />`\\
+    :code:`<br />` Possible values are:\\ :code:`<br />`\\ :code:`<br />` **Manual** - You  control
+    the application of updates to virtual machines in the scale set. You do this by using the
+    manualUpgrade action.\\ :code:`<br />`\\ :code:`<br />` **Automatic** - All virtual machines in
+    the scale set are  automatically updated at the same time.
     """
 
     AUTOMATIC = "Automatic"
@@ -368,8 +369,8 @@ class VirtualMachineEvictionPolicyTypes(str, Enum, metaclass=CaseInsensitiveEnum
 
 class VirtualMachinePriorityTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the priority for a standalone virtual machine or the virtual machines in the scale
-    set. :code:`<br>`:code:`<br>` 'Low' enum will be deprecated in the future, please use 'Spot' as
-    the enum to deploy Azure Spot VM/VMSS.
+    set. :code:`<br>`\\ :code:`<br>` 'Low' enum will be deprecated in the future, please use 'Spot'
+    as the enum to deploy Azure Spot VM/VMSS.
     """
 
     REGULAR = "Regular"
@@ -396,13 +397,13 @@ class VirtualMachineSizeTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the size of the virtual machine. For more information about virtual machine sizes,
     see `Sizes for virtual machines
     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-sizes?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.
-    :code:`<br>`:code:`<br>` The available VM sizes depend on region and availability set. For a
-    list of available sizes use these APIs:  :code:`<br>`:code:`<br>` `List all available virtual
-    machine sizes in an availability set
+    :code:`<br>`\\ :code:`<br>` The available VM sizes depend on region and availability set. For a
+    list of available sizes use these APIs:  :code:`<br>`\\ :code:`<br>` `List all available
+    virtual machine sizes in an availability set
     <https://docs.microsoft.com/rest/api/compute/availabilitysets/listavailablesizes>`_
-    :code:`<br>`:code:`<br>` `List all available virtual machine sizes in a region
-    <https://docs.microsoft.com/rest/api/compute/virtualmachinesizes/list>`_
-    :code:`<br>`:code:`<br>` `List all available virtual machine sizes for resizing
+    :code:`<br>`\\ :code:`<br>` `List all available virtual machine sizes in a region
+    <https://docs.microsoft.com/rest/api/compute/virtualmachinesizes/list>`_ :code:`<br>`\\
+    :code:`<br>` `List all available virtual machine sizes for resizing
     <https://docs.microsoft.com/rest/api/compute/virtualmachines/listavailablesizes>`_.
     """
 

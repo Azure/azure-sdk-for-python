@@ -45,7 +45,7 @@ USAGE:
 
 This example uses ClientSecretCredential, which requests a token from Azure Active Directory.
 For more information on ClientSecretCredential, see:
-    https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity.aio.clientsecretcredential?view=azure-python
+    https://learn.microsoft.com/python/api/azure-identity/azure.identity.aio.clientsecretcredential?view=azure-python
 """
 import os
 import asyncio

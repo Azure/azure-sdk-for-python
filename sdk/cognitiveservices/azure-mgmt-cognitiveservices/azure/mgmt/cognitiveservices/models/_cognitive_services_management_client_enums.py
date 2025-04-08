@@ -23,6 +23,13 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INTERNAL = "Internal"
 
 
+class ByPassSelection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Setting for trusted services."""
+
+    NONE = "None"
+    AZURE_SERVICES = "AzureServices"
+
+
 class CommitmentPlanProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets the status of the resource at the time the operation was called."""
 
@@ -35,6 +42,14 @@ class CommitmentPlanProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMe
     CANCELED = "Canceled"
 
 
+class ContentLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Level at which content is filtered."""
+
+    LOW = "Low"
+    MEDIUM = "Medium"
+    HIGH = "High"
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource."""
 
@@ -42,6 +57,13 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
+
+
+class DefenderForAISettingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defender for AI state on the AI resource."""
+
+    DISABLED = "Disabled"
+    ENABLED = "Enabled"
 
 
 class DeploymentModelVersionUpgradeOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -72,6 +94,25 @@ class DeploymentScaleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MANUAL = "Manual"
 
 
+class EncryptionScopeProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets the status of the resource at the time the operation was called."""
+
+    ACCEPTED = "Accepted"
+    CREATING = "Creating"
+    DELETING = "Deleting"
+    MOVING = "Moving"
+    FAILED = "Failed"
+    SUCCEEDED = "Succeeded"
+    CANCELED = "Canceled"
+
+
+class EncryptionScopeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The encryptionScope state."""
+
+    DISABLED = "Disabled"
+    ENABLED = "Enabled"
+
+
 class HostingModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Account hosting model."""
 
@@ -98,8 +139,11 @@ class KeySource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class ModelLifecycleStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Model lifecycle status."""
 
-    GENERALLY_AVAILABLE = "GenerallyAvailable"
+    STABLE = "Stable"
     PREVIEW = "Preview"
+    GENERALLY_AVAILABLE = "GenerallyAvailable"
+    DEPRECATING = "Deprecating"
+    DEPRECATED = "Deprecated"
 
 
 class NetworkRuleAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -109,6 +153,13 @@ class NetworkRuleAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ALLOW = "Allow"
     DENY = "Deny"
+
+
+class NspAccessRuleDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Direction of Access Rule."""
+
+    INBOUND = "Inbound"
+    OUTBOUND = "Outbound"
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -164,6 +215,32 @@ class QuotaUsageStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BLOCKED = "Blocked"
     IN_OVERAGE = "InOverage"
     UNKNOWN = "Unknown"
+
+
+class RaiPolicyContentSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Content source to apply the Content Filters."""
+
+    PROMPT = "Prompt"
+    COMPLETION = "Completion"
+
+
+class RaiPolicyMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Rai policy mode. The enum value mapping is as below: Default = 0, Deferred=1, Blocking=2,
+    Asynchronous_filter =3. Please use 'Asynchronous_filter' after 2024-10-01. It is the same as
+    'Deferred' in previous version.
+    """
+
+    DEFAULT = "Default"
+    DEFERRED = "Deferred"
+    BLOCKING = "Blocking"
+    ASYNCHRONOUS_FILTER = "Asynchronous_filter"
+
+
+class RaiPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Content Filters policy type."""
+
+    USER_MANAGED = "UserManaged"
+    SYSTEM_MANAGED = "SystemManaged"
 
 
 class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

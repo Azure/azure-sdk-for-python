@@ -1,5 +1,16 @@
 # Release History
 
+## 1.2.0 (2025-03-13)
+
+### Features Added
+- General Availability version of participant Collaborator role.
+
+## 1.1.1 (2024-12-10)
+- Update azure-code dependency
+
+### Other Changes
+- Updated azure-code dependency to the latest version 1.32.0
+
 ## 1.1.0 (2024-04-15)
 - General Availability version of PSTN dial-out capability feature.
 

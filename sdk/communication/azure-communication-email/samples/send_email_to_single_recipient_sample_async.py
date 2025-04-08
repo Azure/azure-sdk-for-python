@@ -27,12 +27,13 @@ from azure.communication.email.aio import EmailClient
 
 sys.path.append("..")
 
+
 class EmailSingleRecipientSampleAsync(object):
 
     connection_string = os.getenv("COMMUNICATION_CONNECTION_STRING_EMAIL")
     sender_address = os.getenv("SENDER_ADDRESS")
     recipient_address = os.getenv("RECIPIENT_ADDRESS")
-    
+
     async def send_email_to_single_recipient_async(self):
         # creating the email client
         email_client = EmailClient.from_connection_string(self.connection_string)
@@ -42,17 +43,10 @@ class EmailSingleRecipientSampleAsync(object):
             "content": {
                 "subject": "This is the subject",
                 "plainText": "This is the body",
-                "html": "html><h1>This is the body</h1></html>"
+                "html": "html><h1>This is the body</h1></html>",
             },
-            "recipients": {
-                "to": [
-                    {
-                        "address": self.recipient_address,
-                        "displayName": "Customer Name"
-                    }
-                ]
-            },
-            "senderAddress": self.sender_address
+            "recipients": {"to": [{"address": self.recipient_address, "displayName": "Customer Name"}]},
+            "senderAddress": self.sender_address,
         }
 
         async with email_client:
@@ -60,11 +54,12 @@ class EmailSingleRecipientSampleAsync(object):
                 # sending the email message
                 poller = await email_client.begin_send(message)
                 response = await poller.result()
-                print("Operation ID: " + response['id'])
+                print("Operation ID: " + response["id"])
             except HttpResponseError as ex:
                 print(ex)
                 pass
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     sample = EmailSingleRecipientSampleAsync()
     asyncio.run(sample.send_email_to_single_recipient_async())

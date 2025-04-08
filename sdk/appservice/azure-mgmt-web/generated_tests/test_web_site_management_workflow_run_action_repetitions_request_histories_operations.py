@@ -20,7 +20,7 @@ class TestWebSiteManagementWorkflowRunActionRepetitionsRequestHistoriesOperation
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_workflow_run_action_repetitions_request_histories_list(self, resource_group):
         response = self.client.workflow_run_action_repetitions_request_histories.list(
             resource_group_name=resource_group.name,
             name="str",
@@ -28,7 +28,7 @@ class TestWebSiteManagementWorkflowRunActionRepetitionsRequestHistoriesOperation
             run_name="str",
             action_name="str",
             repetition_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -36,7 +36,7 @@ class TestWebSiteManagementWorkflowRunActionRepetitionsRequestHistoriesOperation
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_workflow_run_action_repetitions_request_histories_get(self, resource_group):
         response = self.client.workflow_run_action_repetitions_request_histories.get(
             resource_group_name=resource_group.name,
             name="str",
@@ -45,7 +45,7 @@ class TestWebSiteManagementWorkflowRunActionRepetitionsRequestHistoriesOperation
             action_name="str",
             repetition_name="str",
             request_history_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself

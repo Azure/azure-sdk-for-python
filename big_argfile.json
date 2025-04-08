@@ -1,0 +1,1149 @@
+[
+  {
+    "name": "azure-core",
+    "common_root": "azure",
+    "service": "core",
+    "in_batch": "True",
+    "checkout": [
+      {
+        "package": "azure-core",
+        "version": "1.32.0"
+      },
+      {
+        "package": "azure-mgmt-core",
+        "version": "1.5.0"
+      },
+      {
+        "package": "azure-common",
+        "version": "1.1.28"
+      }
+    ]
+  },
+  {
+    "name": "msrest",
+    "in_batch": true,
+    "checkout": [
+      {
+        "package": "msrest",
+        "download_uri": "https://files.pythonhosted.org/packages/68/77/8397c8fb8fc257d8ea0fa66f8068e073278c65f05acb17dcb22a02bfdc42/msrest-0.7.1.zip"
+      }
+    ]
+  },
+  {
+    "name": "msal",
+    "in_batch": true,
+    "checkout": [
+      {
+        "package": "msal",
+        "download_uri": "https://files.pythonhosted.org/packages/3f/f3/cdf2681e83a73c3355883c2884b6ff2f2d2aadfc399c28e9ac4edc3994fd/msal-1.31.1.tar.gz"
+      }
+    ]
+  },
+  {
+    "name": "msal-extensions",
+    "common_root": "msal",
+    "in_batch": true,
+    "checkout": [
+      {
+        "package": "msal-extensions",
+        "download_uri": "https://files.pythonhosted.org/packages/2d/38/ad49272d0a5af95f7a0cb64a79bbd75c9c187f3b789385a143d8d537a5eb/msal_extensions-1.2.0.tar.gz"
+      }
+    ]
+  },
+  {
+    "name": "azure-healthinsights",
+    "common_root": "azure/healthinsights",
+    "in_batch": "True",
+    "service": "healthinsights",
+    "checkout": [
+      {
+        "package": "azure-healthinsights-radiologyinsights",
+        "version": "1.0.0"
+      }
+    ]
+  },
+  {
+    "name": "azure-identity",
+    "service": "identity",
+    "in_batch": "True",
+    "checkout": [
+      {
+        "package": "azure-identity",
+        "version": "1.19.0"
+      }
+    ]
+  },
+  {
+    "name": "azure-storage",
+    "common_root": "azure/storage",
+    "in_batch": "True",
+    "service": "storage",
+    "checkout": [
+      {
+        "package": "azure-storage-blob",
+        "version": "12.24.0"
+      },
+      {
+        "package": "azure-storage-queue",
+        "version": "12.12.0"
+      },
+      {
+        "package": "azure-storage-file-share",
+        "version": "12.20.0"
+      },
+      {
+        "package": "azure-storage-file-datalake",
+        "version": "12.18.0"
+      }
+    ]
+  },
+  {
+    "name": "azure-ai-ml",
+    "service": "ml",
+    "in_batch": "True",
+    "channels": [
+      "conda-forge"
+    ],
+    "checkout": [
+      {
+        "package": "azure-ai-ml",
+        "version": "1.22.2"
+      }
+    ]
+  },
+  {
+    "name": "azure-ai-contentsafety",
+    "common_root": "azure",
+    "service": "contentsafety",
+    "in_batch": "True",
+    "checkout": [
+      {
+        "package": "azure-ai-contentsafety",
+        "version": "1.0.0"
+      }
+    ]
+  },
+  {
+    "name": "azure-ai-evaluation",
+    "common_root": "azure",
+    "service": "evaluation",
+    "in_batch": "True",
+    "checkout": [
+      {
+        "package": "azure-ai-evaluation",
+        "version": "1.0.1"
+      }
+    ]
+  },
+  {
+    "name": "azure-ai-formrecognizer",
+    "common_root": "azure",
+    "service": "formrecognizer",
+    "in_batch": "True",
+    "checkout": [
+      {
+        "package": "azure-ai-formrecognizer",
+        "version": "3.3.3"
+      }
+    ]
+  },
+  {
+    "name": "azure-ai-language-conversations",
+    "common_root": "azure",
+    "service": "cognitivelanguage",
+    "in_batch": "True",
+    "checkout": [
+      {
+        "package": "azure-ai-language-conversations",
+        "version": "1.1.0"
+      }
+    ]
+  },
+  {
+    "name": "azure-ai-language-questionanswering",
+    "service": "cognitivelanguage",
+    "in_batch": "True",
+    "checkout": [
+      {
+        "package": "azure-ai-language-questionanswering",
+        "version": "1.1.0"
+      }
+    ]
+  },
+  {
+    "name": "azure-ai-metricsadvisor",
+    "service": "cognitivelanguage",
+    "in_batch": "True",
+    "checkout": [
+      {
+        "package": "azure-ai-metricsadvisor",
+        "version": "1.0.0"
+      }
+    ]
+  },
+  {
+    "name": "azure-ai-textanalytics",
+    "service": "textanalytics",
+    "in_batch": "True",
+    "checkout": [
+      {
+        "package": "azure-ai-textanalytics",
+        "version": "5.3.0"
+      }
+    ]
+  },
+  {
+    "name": "azure-ai-translation-document",
+    "service": "translation",
+    "in_batch": "True",
+    "checkout": [
+      {
+        "package": "azure-ai-translation-document",
+        "version": "1.1.0"
+      }
+    ]
+  },
+  {
+    "name": "azure-ai-translation-text",
+    "service": "translation",
+    "in_batch": "True",
+    "checkout": [
+      {
+        "package": "azure-ai-translation-text",
+        "version": "1.0.1"
+      }
+    ]
+  },
+  {
+    "name": "azure-ai-vision",
+    "common_root": "azure/vision",
+    "in_batch": "True",
+    "service": "vision",
+    "checkout": [
+      {
+        "package": "azure-ai-vision-imageanalysis",
+        "version": "1.0.0"
+      }
+    ]
+  },
+  {
+    "name": "azure-appconfiguration",
+    "service": "appconfiguration",
+    "in_batch": "True",
+    "checkout": [
+      {
+        "package": "azure-appconfiguration",
+        "version": "1.7.1"
+      }
+    ]
+  },
+  {
+    "name": "azure-communication",
+    "service": "communication",
+    "common_root": "azure/communication",
+    "in_batch": "True",
+    "checkout": [
+      {
+        "package": "azure-communication-chat",
+        "version": "1.3.0"
+      },
+      {
+        "package": "azure-communication-email",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-communication-identity",
+        "version": "1.5.0"
+      },
+      {
+        "package": "azure-communication-phonenumbers",
+        "version": "1.1.0"
+      },
+      {
+        "package": "azure-communication-sms",
+        "version": "1.1.0"
+      },
+      {
+        "package": "azure-communication-rooms",
+        "version": "1.1.0"
+      },
+      {
+        "package": "azure-communication-jobrouter",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-communication-callautomation",
+        "version": "1.2.0"
+      },
+      {
+        "package": "azure-communication-messages",
+        "version": "1.1.0"
+      }
+    ]
+  },
+  {
+    "name": "azure-confidentialledger",
+    "service": "confidentialledger",
+    "in_batch": "True",
+    "checkout": [
+      {
+        "package": "azure-confidentialledger",
+        "version": "1.1.1"
+      }
+    ]
+  },
+  {
+    "name": "azure-containerregistry",
+    "service": "containerregistry",
+    "in_batch": "True",
+    "checkout": [
+      {
+        "package": "azure-containerregistry",
+        "version": "1.2.0"
+      }
+    ]
+  },
+  {
+    "name": "azure-cosmos",
+    "service": "cosmos",
+    "in_batch": "True",
+    "checkout": [
+      {
+        "package": "azure-cosmos",
+        "version": "4.9.0"
+      }
+    ]
+  },
+  {
+    "name": "azure-data-tables",
+    "service": "tables",
+    "in_batch": "True",
+    "checkout": [
+      {
+        "package": "azure-data-tables",
+        "version": "12.5.0"
+      }
+    ]
+  },
+  {
+    "name": "azure-developer-loadtesting",
+    "service": "loadtesting",
+    "in_batch": "True",
+    "checkout": [
+      {
+        "package": "azure-developer-loadtesting",
+        "version": "1.0.0"
+      }
+    ]
+  },
+  {
+    "name": "azure-digitaltwins-core",
+    "service": "digitaltwins",
+    "in_batch": "True",
+    "checkout": [
+      {
+        "package": "azure-digitaltwins-core",
+        "version": "1.2.0"
+      }
+    ]
+  },
+  {
+    "name": "azure-eventgrid",
+    "service": "eventgrid",
+    "in_batch": "True",
+    "checkout": [
+      {
+        "package": "azure-eventgrid",
+        "version": "4.21.0"
+      }
+    ]
+  },
+  {
+    "name": "azure-eventhub",
+    "service": "eventhub",
+    "common_root": "azure/eventhub",
+    "in_batch": "True",
+    "checkout": [
+      {
+        "package": "azure-eventhub-checkpointstoreblob",
+        "version": "1.1.4"
+      },
+      {
+        "package": "azure-eventhub-checkpointstoreblob-aio",
+        "version": "1.1.4"
+      },
+      {
+        "package": "azure-eventhub",
+        "version": "5.13.0"
+      }
+    ]
+  },
+  {
+    "name": "azure-iot-deviceupdate",
+    "service": "deviceupdate",
+    "in_batch": "True",
+    "checkout": [
+      {
+        "package": "azure-iot-deviceupdate",
+        "version": "1.0.0"
+      }
+    ]
+  },
+  {
+    "name": "azure-keyvault",
+    "service": "keyvault",
+    "common_root": "azure/keyvault",
+    "in_batch": "True",
+    "checkout": [
+      {
+        "package": "azure-keyvault-administration",
+        "version": "4.5.0"
+      },
+      {
+        "package": "azure-keyvault-certificates",
+        "version": "4.9.0"
+      },
+      {
+        "package": "azure-keyvault-keys",
+        "version": "4.10.0"
+      },
+      {
+        "package": "azure-keyvault-secrets",
+        "version": "4.9.0"
+      }
+    ]
+  },
+  {
+    "name": "azure-messaging-webpubsubservice",
+    "service": "webpubsub",
+    "in_batch": "True",
+    "checkout": [
+      {
+        "package": "azure-messaging-webpubsubservice",
+        "version": "1.2.1"
+      }
+    ]
+  },
+  {
+    "name": "azure-messaging-webpubsubclient",
+    "service": "webpubsub",
+    "in_batch": "True",
+    "checkout": [
+      {
+        "package": "azure-messaging-webpubsubclient",
+        "version": "1.1.0"
+      }
+    ]
+  },
+  {
+    "name": "azure-monitor-ingestion",
+    "service": "monitor",
+    "in_batch": "True",
+    "checkout": [
+      {
+        "package": "azure-monitor-ingestion",
+        "version": "1.0.4"
+      }
+    ]
+  },
+  {
+    "name": "azure-monitor-query",
+    "service": "monitor",
+    "in_batch": "True",
+    "checkout": [
+      {
+        "package": "azure-monitor-query",
+        "version": "1.4.0"
+      }
+    ]
+  },
+  {
+    "name": "azure-schemaregistry",
+    "service": "schemaregistry",
+    "common_root": "azure/schemaregistry",
+    "in_batch": "True",
+    "checkout": [
+      {
+        "package": "azure-schemaregistry",
+        "version": "1.3.0"
+      },
+      {
+        "package": "azure-schemaregistry-avroencoder",
+        "version": "1.0.0"
+      }
+    ]
+  },
+  {
+    "name": "azure-search-documents",
+    "service": "search",
+    "in_batch": "True",
+    "checkout": [
+      {
+        "package": "azure-search-documents",
+        "version": "11.5.2"
+      }
+    ]
+  },
+  {
+    "name": "azure-security-attestation",
+    "service": "attestation",
+    "in_batch": "True",
+    "checkout": [
+      {
+        "package": "azure-security-attestation",
+        "version": "1.0.0"
+      }
+    ]
+  },
+  {
+    "name": "azure-servicebus",
+    "service": "servicebus",
+    "in_batch": "True",
+    "checkout": [
+      {
+        "package": "azure-servicebus",
+        "version": "7.13.0"
+      }
+    ]
+  },
+  {
+    "name": "azure-mgmt",
+    "service": "mgmt",
+    "in_batch": "True",
+    "common_root": "azure/mgmt",
+    "checkout": [
+      {
+        "package": "azure-mgmt-advisor",
+        "version": "9.0.0"
+      },
+      {
+        "package": "azure-mgmt-alertsmanagement",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-apicenter",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-apimanagement",
+        "version": "4.0.1"
+      },
+      {
+        "package": "azure-mgmt-appcomplianceautomation",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-appconfiguration",
+        "version": "3.0.0"
+      },
+      {
+        "package": "azure-mgmt-appcontainers",
+        "version": "3.1.0"
+      },
+      {
+        "package": "azure-mgmt-applicationinsights",
+        "version": "4.0.0"
+      },
+      {
+        "package": "azure-mgmt-appplatform",
+        "version": "9.1.0"
+      },
+      {
+        "package": "azure-mgmt-attestation",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-authorization",
+        "version": "4.0.0"
+      },
+      {
+        "package": "azure-mgmt-automanage",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-automation",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-avs",
+        "version": "8.0.0"
+      },
+      {
+        "package": "azure-mgmt-azurearcdata",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-azurestack",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-azurestackhci",
+        "version": "7.0.0"
+      },
+      {
+        "package": "azure-mgmt-baremetalinfrastructure",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-batch",
+        "version": "17.3.0"
+      },
+      {
+        "package": "azure-mgmt-billing",
+        "version": "6.0.0"
+      },
+      {
+        "package": "azure-mgmt-botservice",
+        "version": "2.0.0"
+      },
+      {
+        "package": "azure-mgmt-cdn",
+        "version": "13.1.1"
+      },
+      {
+        "package": "azure-mgmt-changeanalysis",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-chaos",
+        "version": "1.1.0"
+      },
+      {
+        "package": "azure-mgmt-cognitiveservices",
+        "version": "13.5.0"
+      },
+      {
+        "package": "azure-mgmt-commerce",
+        "version": "6.0.0"
+      },
+      {
+        "package": "azure-mgmt-communication",
+        "version": "2.1.0"
+      },
+      {
+        "package": "azure-mgmt-compute",
+        "version": "32.0.0"
+      },
+      {
+        "package": "azure-mgmt-confidentialledger",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-confluent",
+        "version": "2.1.0"
+      },
+      {
+        "package": "azure-mgmt-connectedvmware",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-consumption",
+        "version": "10.0.0"
+      },
+      {
+        "package": "azure-mgmt-containerinstance",
+        "version": "10.1.0"
+      },
+      {
+        "package": "azure-mgmt-containerregistry",
+        "version": "10.3.0"
+      },
+      {
+        "package": "azure-mgmt-containerservice",
+        "version": "31.0.0"
+      },
+      {
+        "package": "azure-mgmt-containerservicefleet",
+        "version": "2.0.0"
+      },
+      {
+        "package": "azure-mgmt-cosmosdb",
+        "version": "9.5.1"
+      },
+      {
+        "package": "azure-mgmt-costmanagement",
+        "version": "4.0.1"
+      },
+      {
+        "package": "azure-mgmt-customproviders",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-dashboard",
+        "version": "1.1.0"
+      },
+      {
+        "package": "azure-mgmt-databox",
+        "version": "2.0.0"
+      },
+      {
+        "package": "azure-mgmt-databoxedge",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-databricks",
+        "version": "2.0.0"
+      },
+      {
+        "package": "azure-mgmt-datadog",
+        "version": "2.1.0"
+      },
+      {
+        "package": "azure-mgmt-datafactory",
+        "version": "8.0.0"
+      },
+      {
+        "package": "azure-mgmt-datamigration",
+        "version": "10.0.0"
+      },
+      {
+        "package": "azure-mgmt-dataprotection",
+        "version": "1.4.0"
+      },
+      {
+        "package": "azure-mgmt-datashare",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-deploymentmanager",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-desktopvirtualization",
+        "version": "1.1.0"
+      },
+      {
+        "package": "azure-mgmt-devcenter",
+        "version": "1.1.0"
+      },
+      {
+        "package": "azure-mgmt-deviceupdate",
+        "version": "1.1.0"
+      },
+      {
+        "package": "azure-mgmt-devtestlabs",
+        "version": "9.0.0"
+      },
+      {
+        "package": "azure-mgmt-digitaltwins",
+        "version": "6.4.0"
+      },
+      {
+        "package": "azure-mgmt-dns",
+        "version": "8.1.0"
+      },
+      {
+        "package": "azure-mgmt-dnsresolver",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-dynatrace",
+        "version": "2.0.0"
+      },
+      {
+        "package": "azure-mgmt-edgeorder",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-elastic",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-elasticsan",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-eventgrid",
+        "version": "10.2.0"
+      },
+      {
+        "package": "azure-mgmt-eventhub",
+        "version": "11.0.0"
+      },
+      {
+        "package": "azure-mgmt-extendedlocation",
+        "version": "1.1.0"
+      },
+      {
+        "package": "azure-mgmt-fluidrelay",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-frontdoor",
+        "version": "1.2.0"
+      },
+      {
+        "package": "azure-mgmt-graphservices",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-hanaonazure",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-hdinsight",
+        "version": "9.0.0"
+      },
+      {
+        "package": "azure-mgmt-healthcareapis",
+        "version": "2.1.0"
+      },
+      {
+        "package": "azure-mgmt-hybridcompute",
+        "version": "8.0.0"
+      },
+      {
+        "package": "azure-mgmt-hybridconnectivity",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-hybridcontainerservice",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-hybridkubernetes",
+        "version": "1.1.0"
+      },
+      {
+        "package": "azure-mgmt-hybridnetwork",
+        "version": "2.0.0"
+      },
+      {
+        "package": "azure-mgmt-imagebuilder",
+        "version": "1.4.0"
+      },
+      {
+        "package": "azure-mgmt-iothub",
+        "version": "3.0.0"
+      },
+      {
+        "package": "azure-mgmt-iothubprovisioningservices",
+        "version": "1.1.0"
+      },
+      {
+        "package": "azure-mgmt-keyvault",
+        "version": "10.3.1"
+      },
+      {
+        "package": "azure-mgmt-kubernetesconfiguration",
+        "version": "3.1.0"
+      },
+      {
+        "package": "azure-mgmt-kusto",
+        "version": "3.3.0"
+      },
+      {
+        "package": "azure-mgmt-labservices",
+        "version": "2.0.0"
+      },
+      {
+        "package": "azure-mgmt-loadtesting",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-loganalytics",
+        "version": "12.0.0"
+      },
+      {
+        "package": "azure-mgmt-logic",
+        "version": "10.0.0"
+      },
+      {
+        "package": "azure-mgmt-logz",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-machinelearningservices",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-maintenance",
+        "version": "2.1.0"
+      },
+      {
+        "package": "azure-mgmt-managednetworkfabric",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-managedservices",
+        "version": "6.0.0"
+      },
+      {
+        "package": "azure-mgmt-managementgroups",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-managementpartner",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-maps",
+        "version": "2.1.0"
+      },
+      {
+        "package": "azure-mgmt-marketplaceordering",
+        "version": "1.1.0"
+      },
+      {
+        "package": "azure-mgmt-media",
+        "version": "10.2.0"
+      },
+      {
+        "package": "azure-mgmt-mixedreality",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-mobilenetwork",
+        "version": "3.3.0"
+      },
+      {
+        "package": "azure-mgmt-monitor",
+        "version": "6.0.2"
+      },
+      {
+        "package": "azure-mgmt-msi",
+        "version": "7.0.0"
+      },
+      {
+        "package": "azure-mgmt-netapp",
+        "version": "13.1.0"
+      },
+      {
+        "package": "azure-mgmt-network",
+        "version": "26.0.0"
+      },
+      {
+        "package": "azure-mgmt-networkanalytics",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-networkcloud",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-newrelicobservability",
+        "version": "1.1.0"
+      },
+      {
+        "package": "azure-mgmt-nginx",
+        "version": "3.0.0"
+      },
+      {
+        "package": "azure-mgmt-notificationhubs",
+        "version": "8.0.0"
+      },
+      {
+        "package": "azure-mgmt-operationsmanagement",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-oracledatabase",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-orbital",
+        "version": "2.0.0"
+      },
+      {
+        "package": "azure-mgmt-paloaltonetworksngfw",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-peering",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-policyinsights",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-portal",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-powerbidedicated",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-privatedns",
+        "version": "1.1.0"
+      },
+      {
+        "package": "azure-mgmt-purview",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-qumulo",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-quota",
+        "version": "1.1.0"
+      },
+      {
+        "package": "azure-mgmt-rdbms",
+        "version": "10.1.0"
+      },
+      {
+        "package": "azure-mgmt-recoveryservices",
+        "version": "3.0.0"
+      },
+      {
+        "package": "azure-mgmt-recoveryservicesbackup",
+        "version": "9.1.0"
+      },
+      {
+        "package": "azure-mgmt-recoveryservicessiterecovery",
+        "version": "1.2.0"
+      },
+      {
+        "package": "azure-mgmt-redhatopenshift",
+        "version": "1.5.0"
+      },
+      {
+        "package": "azure-mgmt-redis",
+        "version": "14.4.0"
+      },
+      {
+        "package": "azure-mgmt-redisenterprise",
+        "version": "3.0.0"
+      },
+      {
+        "package": "azure-mgmt-relay",
+        "version": "1.1.0"
+      },
+      {
+        "package": "azure-mgmt-reservations",
+        "version": "2.3.0"
+      },
+      {
+        "package": "azure-mgmt-resource",
+        "version": "23.1.1"
+      },
+      {
+        "package": "azure-mgmt-resourceconnector",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-resourcemover",
+        "version": "1.1.0"
+      },
+      {
+        "package": "azure-mgmt-scvmm",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-search",
+        "version": "9.1.0"
+      },
+      {
+        "package": "azure-mgmt-security",
+        "version": "7.0.0"
+      },
+      {
+        "package": "azure-mgmt-securityinsight",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-selfhelp",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-serialconsole",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-servicebus",
+        "version": "8.2.0"
+      },
+      {
+        "package": "azure-mgmt-servicefabric",
+        "version": "2.1.0"
+      },
+      {
+        "package": "azure-mgmt-servicefabricmanagedclusters",
+        "version": "2.0.0"
+      },
+      {
+        "package": "azure-mgmt-servicelinker",
+        "version": "1.1.0"
+      },
+      {
+        "package": "azure-mgmt-servicenetworking",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-signalr",
+        "version": "1.2.0"
+      },
+      {
+        "package": "azure-mgmt-sphere",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-sql",
+        "version": "3.0.1"
+      },
+      {
+        "package": "azure-mgmt-storage",
+        "version": "21.2.1"
+      },
+      {
+        "package": "azure-mgmt-storagecache",
+        "version": "1.5.0"
+      },
+      {
+        "package": "azure-mgmt-storagemover",
+        "version": "2.1.0"
+      },
+      {
+        "package": "azure-mgmt-storagepool",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-storagesync",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-streamanalytics",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-subscription",
+        "version": "3.1.1"
+      },
+      {
+        "package": "azure-mgmt-support",
+        "version": "7.0.0"
+      },
+      {
+        "package": "azure-mgmt-synapse",
+        "version": "2.0.0"
+      },
+      {
+        "package": "azure-mgmt-timeseriesinsights",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-trafficmanager",
+        "version": "1.1.0"
+      },
+      {
+        "package": "azure-mgmt-voiceservices",
+        "version": "1.0.0"
+      },
+      {
+        "package": "azure-mgmt-web",
+        "version": "7.3.0"
+      },
+      {
+        "package": "azure-mgmt-webpubsub",
+        "version": "1.1.0"
+      },
+      {
+        "package": "azure-mgmt-workloads",
+        "version": "1.0.0"
+      }
+    ]
+  }
+]

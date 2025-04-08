@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,7 +9,7 @@
 import datetime
 from io import IOBase
 import sys
-from typing import Any, Callable, Dict, IO, Optional, Type, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -39,7 +39,7 @@ from ...operations._operations import (
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -66,7 +66,6 @@ class QueryOperations:
     async def get(
         self, workspace_id: str, *, query: str, timespan: Optional[datetime.timedelta] = None, **kwargs: Any
     ) -> JSON:
-        # pylint: disable=line-too-long
         """Execute an Analytics query.
 
         Executes an Analytics query for data.
@@ -95,48 +94,39 @@ class QueryOperations:
                         {
                             "columns": [
                                 {
-                                    "name": "str",  # The name of this column.
-                                      Required.
-                                    "type": "str"  # The data type of this
-                                      column. Required. Known values are: "bool", "datetime",
-                                      "dynamic", "int", "long", "real", "string", "guid", "decimal",
-                                      and "timespan".
+                                    "name": "str",
+                                    "type": "str"
                                 }
                             ],
-                            "name": "str",  # The name of the table. Required.
+                            "name": "str",
                             "rows": [
                                 [
-                                    {}  # The resulting rows from this query.
-                                      Required.
+                                    {}
                                 ]
                             ]
                         }
                     ],
                     "error": {
-                        "code": "str",  # A machine readable error code. Required.
-                        "message": "str",  # A human readable error message. Required.
+                        "code": "str",
+                        "message": "str",
                         "details": [
                             {
-                                "code": "str",  # The error's code. Required.
-                                "message": "str",  # A human readable error message.
-                                  Required.
+                                "code": "str",
+                                "message": "str",
                                 "resources": [
-                                    "str"  # Optional. Indicates resources which
-                                      were responsible for the error.
+                                    "str"
                                 ],
-                                "target": "str",  # Optional. Indicates which
-                                  property in the request is responsible for the error.
-                                "value": "str"  # Optional. Indicates which value in
-                                  'target' is responsible for the error.
+                                "target": "str",
+                                "value": "str"
                             }
                         ],
                         "innererror": ...
                     },
-                    "render": {},  # Optional. Visualization data in JSON format.
-                    "statistics": {}  # Optional. Statistics represented in JSON format.
+                    "render": {},
+                    "statistics": {}
                 }
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -166,8 +156,6 @@ class QueryOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -191,7 +179,6 @@ class QueryOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> JSON:
-        # pylint: disable=line-too-long
         """Execute an Analytics query.
 
         Executes an Analytics query for data. `Here
@@ -220,13 +207,10 @@ class QueryOperations:
 
                 # JSON input template you can fill out and use as your body input.
                 body = {
-                    "query": "str",  # The query to execute. Required.
-                    "timespan": "str",  # Optional. Optional. The timespan over which to query
-                      data. This is an ISO8601 time period value.  This timespan is applied in addition
-                      to any that are specified in the query expression.
+                    "query": "str",
+                    "timespan": "str",
                     "workspaces": [
-                        "str"  # Optional. A list of workspaces to query in addition to the
-                          primary workspace.
+                        "str"
                     ]
                 }
 
@@ -236,45 +220,36 @@ class QueryOperations:
                         {
                             "columns": [
                                 {
-                                    "name": "str",  # The name of this column.
-                                      Required.
-                                    "type": "str"  # The data type of this
-                                      column. Required. Known values are: "bool", "datetime",
-                                      "dynamic", "int", "long", "real", "string", "guid", "decimal",
-                                      and "timespan".
+                                    "name": "str",
+                                    "type": "str"
                                 }
                             ],
-                            "name": "str",  # The name of the table. Required.
+                            "name": "str",
                             "rows": [
                                 [
-                                    {}  # The resulting rows from this query.
-                                      Required.
+                                    {}
                                 ]
                             ]
                         }
                     ],
                     "error": {
-                        "code": "str",  # A machine readable error code. Required.
-                        "message": "str",  # A human readable error message. Required.
+                        "code": "str",
+                        "message": "str",
                         "details": [
                             {
-                                "code": "str",  # The error's code. Required.
-                                "message": "str",  # A human readable error message.
-                                  Required.
+                                "code": "str",
+                                "message": "str",
                                 "resources": [
-                                    "str"  # Optional. Indicates resources which
-                                      were responsible for the error.
+                                    "str"
                                 ],
-                                "target": "str",  # Optional. Indicates which
-                                  property in the request is responsible for the error.
-                                "value": "str"  # Optional. Indicates which value in
-                                  'target' is responsible for the error.
+                                "target": "str",
+                                "value": "str"
                             }
                         ],
                         "innererror": ...
                     },
-                    "render": {},  # Optional. Visualization data in JSON format.
-                    "statistics": {}  # Optional. Statistics represented in JSON format.
+                    "render": {},
+                    "statistics": {}
                 }
         """
 
@@ -288,7 +263,6 @@ class QueryOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> JSON:
-        # pylint: disable=line-too-long
         """Execute an Analytics query.
 
         Executes an Analytics query for data. `Here
@@ -321,45 +295,36 @@ class QueryOperations:
                         {
                             "columns": [
                                 {
-                                    "name": "str",  # The name of this column.
-                                      Required.
-                                    "type": "str"  # The data type of this
-                                      column. Required. Known values are: "bool", "datetime",
-                                      "dynamic", "int", "long", "real", "string", "guid", "decimal",
-                                      and "timespan".
+                                    "name": "str",
+                                    "type": "str"
                                 }
                             ],
-                            "name": "str",  # The name of the table. Required.
+                            "name": "str",
                             "rows": [
                                 [
-                                    {}  # The resulting rows from this query.
-                                      Required.
+                                    {}
                                 ]
                             ]
                         }
                     ],
                     "error": {
-                        "code": "str",  # A machine readable error code. Required.
-                        "message": "str",  # A human readable error message. Required.
+                        "code": "str",
+                        "message": "str",
                         "details": [
                             {
-                                "code": "str",  # The error's code. Required.
-                                "message": "str",  # A human readable error message.
-                                  Required.
+                                "code": "str",
+                                "message": "str",
                                 "resources": [
-                                    "str"  # Optional. Indicates resources which
-                                      were responsible for the error.
+                                    "str"
                                 ],
-                                "target": "str",  # Optional. Indicates which
-                                  property in the request is responsible for the error.
-                                "value": "str"  # Optional. Indicates which value in
-                                  'target' is responsible for the error.
+                                "target": "str",
+                                "value": "str"
                             }
                         ],
                         "innererror": ...
                     },
-                    "render": {},  # Optional. Visualization data in JSON format.
-                    "statistics": {}  # Optional. Statistics represented in JSON format.
+                    "render": {},
+                    "statistics": {}
                 }
         """
 
@@ -367,7 +332,6 @@ class QueryOperations:
     async def execute(
         self, workspace_id: str, body: Union[JSON, IO[bytes]], *, prefer: Optional[str] = None, **kwargs: Any
     ) -> JSON:
-        # pylint: disable=line-too-long
         """Execute an Analytics query.
 
         Executes an Analytics query for data. `Here
@@ -393,13 +357,10 @@ class QueryOperations:
 
                 # JSON input template you can fill out and use as your body input.
                 body = {
-                    "query": "str",  # The query to execute. Required.
-                    "timespan": "str",  # Optional. Optional. The timespan over which to query
-                      data. This is an ISO8601 time period value.  This timespan is applied in addition
-                      to any that are specified in the query expression.
+                    "query": "str",
+                    "timespan": "str",
                     "workspaces": [
-                        "str"  # Optional. A list of workspaces to query in addition to the
-                          primary workspace.
+                        "str"
                     ]
                 }
 
@@ -409,48 +370,39 @@ class QueryOperations:
                         {
                             "columns": [
                                 {
-                                    "name": "str",  # The name of this column.
-                                      Required.
-                                    "type": "str"  # The data type of this
-                                      column. Required. Known values are: "bool", "datetime",
-                                      "dynamic", "int", "long", "real", "string", "guid", "decimal",
-                                      and "timespan".
+                                    "name": "str",
+                                    "type": "str"
                                 }
                             ],
-                            "name": "str",  # The name of the table. Required.
+                            "name": "str",
                             "rows": [
                                 [
-                                    {}  # The resulting rows from this query.
-                                      Required.
+                                    {}
                                 ]
                             ]
                         }
                     ],
                     "error": {
-                        "code": "str",  # A machine readable error code. Required.
-                        "message": "str",  # A human readable error message. Required.
+                        "code": "str",
+                        "message": "str",
                         "details": [
                             {
-                                "code": "str",  # The error's code. Required.
-                                "message": "str",  # A human readable error message.
-                                  Required.
+                                "code": "str",
+                                "message": "str",
                                 "resources": [
-                                    "str"  # Optional. Indicates resources which
-                                      were responsible for the error.
+                                    "str"
                                 ],
-                                "target": "str",  # Optional. Indicates which
-                                  property in the request is responsible for the error.
-                                "value": "str"  # Optional. Indicates which value in
-                                  'target' is responsible for the error.
+                                "target": "str",
+                                "value": "str"
                             }
                         ],
                         "innererror": ...
                     },
-                    "render": {},  # Optional. Visualization data in JSON format.
-                    "statistics": {}  # Optional. Statistics represented in JSON format.
+                    "render": {},
+                    "statistics": {}
                 }
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -491,8 +443,6 @@ class QueryOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -510,7 +460,6 @@ class QueryOperations:
     async def resource_get(
         self, resource_id: str, *, query: str, timespan: Optional[datetime.timedelta] = None, **kwargs: Any
     ) -> JSON:
-        # pylint: disable=line-too-long
         """Execute an Analytics query using resource URI.
 
         Executes an Analytics query for data in the context of a resource. `Here
@@ -540,48 +489,39 @@ class QueryOperations:
                         {
                             "columns": [
                                 {
-                                    "name": "str",  # The name of this column.
-                                      Required.
-                                    "type": "str"  # The data type of this
-                                      column. Required. Known values are: "bool", "datetime",
-                                      "dynamic", "int", "long", "real", "string", "guid", "decimal",
-                                      and "timespan".
+                                    "name": "str",
+                                    "type": "str"
                                 }
                             ],
-                            "name": "str",  # The name of the table. Required.
+                            "name": "str",
                             "rows": [
                                 [
-                                    {}  # The resulting rows from this query.
-                                      Required.
+                                    {}
                                 ]
                             ]
                         }
                     ],
                     "error": {
-                        "code": "str",  # A machine readable error code. Required.
-                        "message": "str",  # A human readable error message. Required.
+                        "code": "str",
+                        "message": "str",
                         "details": [
                             {
-                                "code": "str",  # The error's code. Required.
-                                "message": "str",  # A human readable error message.
-                                  Required.
+                                "code": "str",
+                                "message": "str",
                                 "resources": [
-                                    "str"  # Optional. Indicates resources which
-                                      were responsible for the error.
+                                    "str"
                                 ],
-                                "target": "str",  # Optional. Indicates which
-                                  property in the request is responsible for the error.
-                                "value": "str"  # Optional. Indicates which value in
-                                  'target' is responsible for the error.
+                                "target": "str",
+                                "value": "str"
                             }
                         ],
                         "innererror": ...
                     },
-                    "render": {},  # Optional. Visualization data in JSON format.
-                    "statistics": {}  # Optional. Statistics represented in JSON format.
+                    "render": {},
+                    "statistics": {}
                 }
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -611,8 +551,6 @@ class QueryOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -636,7 +574,6 @@ class QueryOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> JSON:
-        # pylint: disable=line-too-long
         """Execute an Analytics query using resource ID.
 
         Executes an Analytics query for data in the context of a resource. `Here
@@ -664,13 +601,10 @@ class QueryOperations:
 
                 # JSON input template you can fill out and use as your body input.
                 body = {
-                    "query": "str",  # The query to execute. Required.
-                    "timespan": "str",  # Optional. Optional. The timespan over which to query
-                      data. This is an ISO8601 time period value.  This timespan is applied in addition
-                      to any that are specified in the query expression.
+                    "query": "str",
+                    "timespan": "str",
                     "workspaces": [
-                        "str"  # Optional. A list of workspaces to query in addition to the
-                          primary workspace.
+                        "str"
                     ]
                 }
 
@@ -680,45 +614,36 @@ class QueryOperations:
                         {
                             "columns": [
                                 {
-                                    "name": "str",  # The name of this column.
-                                      Required.
-                                    "type": "str"  # The data type of this
-                                      column. Required. Known values are: "bool", "datetime",
-                                      "dynamic", "int", "long", "real", "string", "guid", "decimal",
-                                      and "timespan".
+                                    "name": "str",
+                                    "type": "str"
                                 }
                             ],
-                            "name": "str",  # The name of the table. Required.
+                            "name": "str",
                             "rows": [
                                 [
-                                    {}  # The resulting rows from this query.
-                                      Required.
+                                    {}
                                 ]
                             ]
                         }
                     ],
                     "error": {
-                        "code": "str",  # A machine readable error code. Required.
-                        "message": "str",  # A human readable error message. Required.
+                        "code": "str",
+                        "message": "str",
                         "details": [
                             {
-                                "code": "str",  # The error's code. Required.
-                                "message": "str",  # A human readable error message.
-                                  Required.
+                                "code": "str",
+                                "message": "str",
                                 "resources": [
-                                    "str"  # Optional. Indicates resources which
-                                      were responsible for the error.
+                                    "str"
                                 ],
-                                "target": "str",  # Optional. Indicates which
-                                  property in the request is responsible for the error.
-                                "value": "str"  # Optional. Indicates which value in
-                                  'target' is responsible for the error.
+                                "target": "str",
+                                "value": "str"
                             }
                         ],
                         "innererror": ...
                     },
-                    "render": {},  # Optional. Visualization data in JSON format.
-                    "statistics": {}  # Optional. Statistics represented in JSON format.
+                    "render": {},
+                    "statistics": {}
                 }
         """
 
@@ -732,7 +657,6 @@ class QueryOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> JSON:
-        # pylint: disable=line-too-long
         """Execute an Analytics query using resource ID.
 
         Executes an Analytics query for data in the context of a resource. `Here
@@ -764,45 +688,36 @@ class QueryOperations:
                         {
                             "columns": [
                                 {
-                                    "name": "str",  # The name of this column.
-                                      Required.
-                                    "type": "str"  # The data type of this
-                                      column. Required. Known values are: "bool", "datetime",
-                                      "dynamic", "int", "long", "real", "string", "guid", "decimal",
-                                      and "timespan".
+                                    "name": "str",
+                                    "type": "str"
                                 }
                             ],
-                            "name": "str",  # The name of the table. Required.
+                            "name": "str",
                             "rows": [
                                 [
-                                    {}  # The resulting rows from this query.
-                                      Required.
+                                    {}
                                 ]
                             ]
                         }
                     ],
                     "error": {
-                        "code": "str",  # A machine readable error code. Required.
-                        "message": "str",  # A human readable error message. Required.
+                        "code": "str",
+                        "message": "str",
                         "details": [
                             {
-                                "code": "str",  # The error's code. Required.
-                                "message": "str",  # A human readable error message.
-                                  Required.
+                                "code": "str",
+                                "message": "str",
                                 "resources": [
-                                    "str"  # Optional. Indicates resources which
-                                      were responsible for the error.
+                                    "str"
                                 ],
-                                "target": "str",  # Optional. Indicates which
-                                  property in the request is responsible for the error.
-                                "value": "str"  # Optional. Indicates which value in
-                                  'target' is responsible for the error.
+                                "target": "str",
+                                "value": "str"
                             }
                         ],
                         "innererror": ...
                     },
-                    "render": {},  # Optional. Visualization data in JSON format.
-                    "statistics": {}  # Optional. Statistics represented in JSON format.
+                    "render": {},
+                    "statistics": {}
                 }
         """
 
@@ -810,7 +725,6 @@ class QueryOperations:
     async def resource_execute(
         self, resource_id: str, body: Union[JSON, IO[bytes]], *, prefer: Optional[str] = None, **kwargs: Any
     ) -> JSON:
-        # pylint: disable=line-too-long
         """Execute an Analytics query using resource ID.
 
         Executes an Analytics query for data in the context of a resource. `Here
@@ -835,13 +749,10 @@ class QueryOperations:
 
                 # JSON input template you can fill out and use as your body input.
                 body = {
-                    "query": "str",  # The query to execute. Required.
-                    "timespan": "str",  # Optional. Optional. The timespan over which to query
-                      data. This is an ISO8601 time period value.  This timespan is applied in addition
-                      to any that are specified in the query expression.
+                    "query": "str",
+                    "timespan": "str",
                     "workspaces": [
-                        "str"  # Optional. A list of workspaces to query in addition to the
-                          primary workspace.
+                        "str"
                     ]
                 }
 
@@ -851,48 +762,39 @@ class QueryOperations:
                         {
                             "columns": [
                                 {
-                                    "name": "str",  # The name of this column.
-                                      Required.
-                                    "type": "str"  # The data type of this
-                                      column. Required. Known values are: "bool", "datetime",
-                                      "dynamic", "int", "long", "real", "string", "guid", "decimal",
-                                      and "timespan".
+                                    "name": "str",
+                                    "type": "str"
                                 }
                             ],
-                            "name": "str",  # The name of the table. Required.
+                            "name": "str",
                             "rows": [
                                 [
-                                    {}  # The resulting rows from this query.
-                                      Required.
+                                    {}
                                 ]
                             ]
                         }
                     ],
                     "error": {
-                        "code": "str",  # A machine readable error code. Required.
-                        "message": "str",  # A human readable error message. Required.
+                        "code": "str",
+                        "message": "str",
                         "details": [
                             {
-                                "code": "str",  # The error's code. Required.
-                                "message": "str",  # A human readable error message.
-                                  Required.
+                                "code": "str",
+                                "message": "str",
                                 "resources": [
-                                    "str"  # Optional. Indicates resources which
-                                      were responsible for the error.
+                                    "str"
                                 ],
-                                "target": "str",  # Optional. Indicates which
-                                  property in the request is responsible for the error.
-                                "value": "str"  # Optional. Indicates which value in
-                                  'target' is responsible for the error.
+                                "target": "str",
+                                "value": "str"
                             }
                         ],
                         "innererror": ...
                     },
-                    "render": {},  # Optional. Visualization data in JSON format.
-                    "statistics": {}  # Optional. Statistics represented in JSON format.
+                    "render": {},
+                    "statistics": {}
                 }
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -933,8 +835,6 @@ class QueryOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -950,7 +850,6 @@ class QueryOperations:
 
     @overload
     async def batch(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
-        # pylint: disable=line-too-long
         """Execute a batch of Analytics queries.
 
         Executes a batch of Analytics queries for data. `Here
@@ -974,30 +873,19 @@ class QueryOperations:
                     "requests": [
                         {
                             "body": {
-                                "query": "str",  # The query to execute. Required.
-                                "timespan": "str",  # Optional. Optional. The
-                                  timespan over which to query data. This is an ISO8601 time period
-                                  value.  This timespan is applied in addition to any that are
-                                  specified in the query expression.
+                                "query": "str",
+                                "timespan": "str",
                                 "workspaces": [
-                                    "str"  # Optional. A list of workspaces to
-                                      query in addition to the primary workspace.
+                                    "str"
                                 ]
                             },
-                            "id": "str",  # Unique ID corresponding to each request in
-                              the batch. Required.
-                            "workspace": "str",  # Primary Workspace ID of the query.
-                              This is the Workspace ID from the Properties blade in the Azure portal.
-                              Required.
+                            "id": "str",
+                            "workspace": "str",
                             "headers": {
-                                "str": "str"  # Optional. Headers of the request. Can
-                                  use prefer header to set server timeout and to query statistics and
-                                  visualization information.
+                                "str": "str"
                             },
-                            "method": "POST",  # Optional. Default value is "POST". The
-                              method of a single request in a batch, defaults to POST.
-                            "path": "/query"  # Optional. Default value is "/query". The
-                              query path of a single request in a batch, defaults to /query.
+                            "method": "POST",
+                            "path": "/query"
                         }
                     ]
                 }
@@ -1008,66 +896,45 @@ class QueryOperations:
                         {
                             "body": {
                                 "error": {
-                                    "code": "str",  # A machine readable error
-                                      code. Required.
-                                    "message": "str",  # A human readable error
-                                      message. Required.
+                                    "code": "str",
+                                    "message": "str",
                                     "details": [
                                         {
-                                            "code": "str",  # The error's
-                                              code. Required.
-                                            "message": "str",  # A human
-                                              readable error message. Required.
+                                            "code": "str",
+                                            "message": "str",
                                             "resources": [
-                                                "str"  # Optional.
-                                                  Indicates resources which were responsible for the
-                                                  error.
+                                                "str"
                                             ],
-                                            "target": "str",  # Optional.
-                                              Indicates which property in the request is responsible
-                                              for the error.
-                                            "value": "str"  # Optional.
-                                              Indicates which value in 'target' is responsible for the
-                                              error.
+                                            "target": "str",
+                                            "value": "str"
                                         }
                                     ],
                                     "innererror": ...
                                 },
-                                "render": {},  # Optional. Visualization data in JSON
-                                  format.
-                                "statistics": {},  # Optional. Statistics represented
-                                  in JSON format.
+                                "render": {},
+                                "statistics": {},
                                 "tables": [
                                     {
                                         "columns": [
                                             {
-                                                "name": "str",  # The
-                                                  name of this column. Required.
-                                                "type": "str"  # The
-                                                  data type of this column. Required. Known values are:
-                                                  "bool", "datetime", "dynamic", "int", "long", "real",
-                                                  "string", "guid", "decimal", and "timespan".
+                                                "name": "str",
+                                                "type": "str"
                                             }
                                         ],
-                                        "name": "str",  # The name of the
-                                          table. Required.
+                                        "name": "str",
                                         "rows": [
                                             [
-                                                {}  # The resulting
-                                                  rows from this query. Required.
+                                                {}
                                             ]
                                         ]
                                     }
                                 ]
                             },
                             "headers": {
-                                "str": "str"  # Optional. Dictionary of
-                                  :code:`<string>`.
+                                "str": "str"
                             },
-                            "id": "str",  # Optional. An array of responses corresponding
-                              to each individual request in a batch.
-                            "status": 0  # Optional. An array of responses corresponding
-                              to each individual request in a batch.
+                            "id": "str",
+                            "status": 0
                         }
                     ]
                 }
@@ -1075,7 +942,6 @@ class QueryOperations:
 
     @overload
     async def batch(self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any) -> JSON:
-        # pylint: disable=line-too-long
         """Execute a batch of Analytics queries.
 
         Executes a batch of Analytics queries for data. `Here
@@ -1100,66 +966,45 @@ class QueryOperations:
                         {
                             "body": {
                                 "error": {
-                                    "code": "str",  # A machine readable error
-                                      code. Required.
-                                    "message": "str",  # A human readable error
-                                      message. Required.
+                                    "code": "str",
+                                    "message": "str",
                                     "details": [
                                         {
-                                            "code": "str",  # The error's
-                                              code. Required.
-                                            "message": "str",  # A human
-                                              readable error message. Required.
+                                            "code": "str",
+                                            "message": "str",
                                             "resources": [
-                                                "str"  # Optional.
-                                                  Indicates resources which were responsible for the
-                                                  error.
+                                                "str"
                                             ],
-                                            "target": "str",  # Optional.
-                                              Indicates which property in the request is responsible
-                                              for the error.
-                                            "value": "str"  # Optional.
-                                              Indicates which value in 'target' is responsible for the
-                                              error.
+                                            "target": "str",
+                                            "value": "str"
                                         }
                                     ],
                                     "innererror": ...
                                 },
-                                "render": {},  # Optional. Visualization data in JSON
-                                  format.
-                                "statistics": {},  # Optional. Statistics represented
-                                  in JSON format.
+                                "render": {},
+                                "statistics": {},
                                 "tables": [
                                     {
                                         "columns": [
                                             {
-                                                "name": "str",  # The
-                                                  name of this column. Required.
-                                                "type": "str"  # The
-                                                  data type of this column. Required. Known values are:
-                                                  "bool", "datetime", "dynamic", "int", "long", "real",
-                                                  "string", "guid", "decimal", and "timespan".
+                                                "name": "str",
+                                                "type": "str"
                                             }
                                         ],
-                                        "name": "str",  # The name of the
-                                          table. Required.
+                                        "name": "str",
                                         "rows": [
                                             [
-                                                {}  # The resulting
-                                                  rows from this query. Required.
+                                                {}
                                             ]
                                         ]
                                     }
                                 ]
                             },
                             "headers": {
-                                "str": "str"  # Optional. Dictionary of
-                                  :code:`<string>`.
+                                "str": "str"
                             },
-                            "id": "str",  # Optional. An array of responses corresponding
-                              to each individual request in a batch.
-                            "status": 0  # Optional. An array of responses corresponding
-                              to each individual request in a batch.
+                            "id": "str",
+                            "status": 0
                         }
                     ]
                 }
@@ -1167,7 +1012,6 @@ class QueryOperations:
 
     @distributed_trace_async
     async def batch(self, body: Union[JSON, IO[bytes]], **kwargs: Any) -> JSON:
-        # pylint: disable=line-too-long
         """Execute a batch of Analytics queries.
 
         Executes a batch of Analytics queries for data. `Here
@@ -1188,30 +1032,19 @@ class QueryOperations:
                     "requests": [
                         {
                             "body": {
-                                "query": "str",  # The query to execute. Required.
-                                "timespan": "str",  # Optional. Optional. The
-                                  timespan over which to query data. This is an ISO8601 time period
-                                  value.  This timespan is applied in addition to any that are
-                                  specified in the query expression.
+                                "query": "str",
+                                "timespan": "str",
                                 "workspaces": [
-                                    "str"  # Optional. A list of workspaces to
-                                      query in addition to the primary workspace.
+                                    "str"
                                 ]
                             },
-                            "id": "str",  # Unique ID corresponding to each request in
-                              the batch. Required.
-                            "workspace": "str",  # Primary Workspace ID of the query.
-                              This is the Workspace ID from the Properties blade in the Azure portal.
-                              Required.
+                            "id": "str",
+                            "workspace": "str",
                             "headers": {
-                                "str": "str"  # Optional. Headers of the request. Can
-                                  use prefer header to set server timeout and to query statistics and
-                                  visualization information.
+                                "str": "str"
                             },
-                            "method": "POST",  # Optional. Default value is "POST". The
-                              method of a single request in a batch, defaults to POST.
-                            "path": "/query"  # Optional. Default value is "/query". The
-                              query path of a single request in a batch, defaults to /query.
+                            "method": "POST",
+                            "path": "/query"
                         }
                     ]
                 }
@@ -1222,71 +1055,50 @@ class QueryOperations:
                         {
                             "body": {
                                 "error": {
-                                    "code": "str",  # A machine readable error
-                                      code. Required.
-                                    "message": "str",  # A human readable error
-                                      message. Required.
+                                    "code": "str",
+                                    "message": "str",
                                     "details": [
                                         {
-                                            "code": "str",  # The error's
-                                              code. Required.
-                                            "message": "str",  # A human
-                                              readable error message. Required.
+                                            "code": "str",
+                                            "message": "str",
                                             "resources": [
-                                                "str"  # Optional.
-                                                  Indicates resources which were responsible for the
-                                                  error.
+                                                "str"
                                             ],
-                                            "target": "str",  # Optional.
-                                              Indicates which property in the request is responsible
-                                              for the error.
-                                            "value": "str"  # Optional.
-                                              Indicates which value in 'target' is responsible for the
-                                              error.
+                                            "target": "str",
+                                            "value": "str"
                                         }
                                     ],
                                     "innererror": ...
                                 },
-                                "render": {},  # Optional. Visualization data in JSON
-                                  format.
-                                "statistics": {},  # Optional. Statistics represented
-                                  in JSON format.
+                                "render": {},
+                                "statistics": {},
                                 "tables": [
                                     {
                                         "columns": [
                                             {
-                                                "name": "str",  # The
-                                                  name of this column. Required.
-                                                "type": "str"  # The
-                                                  data type of this column. Required. Known values are:
-                                                  "bool", "datetime", "dynamic", "int", "long", "real",
-                                                  "string", "guid", "decimal", and "timespan".
+                                                "name": "str",
+                                                "type": "str"
                                             }
                                         ],
-                                        "name": "str",  # The name of the
-                                          table. Required.
+                                        "name": "str",
                                         "rows": [
                                             [
-                                                {}  # The resulting
-                                                  rows from this query. Required.
+                                                {}
                                             ]
                                         ]
                                     }
                                 ]
                             },
                             "headers": {
-                                "str": "str"  # Optional. Dictionary of
-                                  :code:`<string>`.
+                                "str": "str"
                             },
-                            "id": "str",  # Optional. An array of responses corresponding
-                              to each individual request in a batch.
-                            "status": 0  # Optional. An array of responses corresponding
-                              to each individual request in a batch.
+                            "id": "str",
+                            "status": 0
                         }
                     ]
                 }
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1325,8 +1137,6 @@ class QueryOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1344,7 +1154,6 @@ class QueryOperations:
     async def resource_get_xms(
         self, resource_id: str, *, query: str, timespan: Optional[datetime.timedelta] = None, **kwargs: Any
     ) -> JSON:
-        # pylint: disable=line-too-long
         """Execute an Analytics query using resource URI.
 
         Executes an Analytics query for data in the context of a resource. `Here
@@ -1374,48 +1183,39 @@ class QueryOperations:
                         {
                             "columns": [
                                 {
-                                    "name": "str",  # The name of this column.
-                                      Required.
-                                    "type": "str"  # The data type of this
-                                      column. Required. Known values are: "bool", "datetime",
-                                      "dynamic", "int", "long", "real", "string", "guid", "decimal",
-                                      and "timespan".
+                                    "name": "str",
+                                    "type": "str"
                                 }
                             ],
-                            "name": "str",  # The name of the table. Required.
+                            "name": "str",
                             "rows": [
                                 [
-                                    {}  # The resulting rows from this query.
-                                      Required.
+                                    {}
                                 ]
                             ]
                         }
                     ],
                     "error": {
-                        "code": "str",  # A machine readable error code. Required.
-                        "message": "str",  # A human readable error message. Required.
+                        "code": "str",
+                        "message": "str",
                         "details": [
                             {
-                                "code": "str",  # The error's code. Required.
-                                "message": "str",  # A human readable error message.
-                                  Required.
+                                "code": "str",
+                                "message": "str",
                                 "resources": [
-                                    "str"  # Optional. Indicates resources which
-                                      were responsible for the error.
+                                    "str"
                                 ],
-                                "target": "str",  # Optional. Indicates which
-                                  property in the request is responsible for the error.
-                                "value": "str"  # Optional. Indicates which value in
-                                  'target' is responsible for the error.
+                                "target": "str",
+                                "value": "str"
                             }
                         ],
                         "innererror": ...
                     },
-                    "render": {},  # Optional. Visualization data in JSON format.
-                    "statistics": {}  # Optional. Statistics represented in JSON format.
+                    "render": {},
+                    "statistics": {}
                 }
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1445,8 +1245,6 @@ class QueryOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1470,7 +1268,6 @@ class QueryOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> JSON:
-        # pylint: disable=line-too-long
         """Execute an Analytics query using resource ID.
 
         Executes an Analytics query for data in the context of a resource. `Here
@@ -1498,13 +1295,10 @@ class QueryOperations:
 
                 # JSON input template you can fill out and use as your body input.
                 body = {
-                    "query": "str",  # The query to execute. Required.
-                    "timespan": "str",  # Optional. Optional. The timespan over which to query
-                      data. This is an ISO8601 time period value.  This timespan is applied in addition
-                      to any that are specified in the query expression.
+                    "query": "str",
+                    "timespan": "str",
                     "workspaces": [
-                        "str"  # Optional. A list of workspaces to query in addition to the
-                          primary workspace.
+                        "str"
                     ]
                 }
 
@@ -1514,45 +1308,36 @@ class QueryOperations:
                         {
                             "columns": [
                                 {
-                                    "name": "str",  # The name of this column.
-                                      Required.
-                                    "type": "str"  # The data type of this
-                                      column. Required. Known values are: "bool", "datetime",
-                                      "dynamic", "int", "long", "real", "string", "guid", "decimal",
-                                      and "timespan".
+                                    "name": "str",
+                                    "type": "str"
                                 }
                             ],
-                            "name": "str",  # The name of the table. Required.
+                            "name": "str",
                             "rows": [
                                 [
-                                    {}  # The resulting rows from this query.
-                                      Required.
+                                    {}
                                 ]
                             ]
                         }
                     ],
                     "error": {
-                        "code": "str",  # A machine readable error code. Required.
-                        "message": "str",  # A human readable error message. Required.
+                        "code": "str",
+                        "message": "str",
                         "details": [
                             {
-                                "code": "str",  # The error's code. Required.
-                                "message": "str",  # A human readable error message.
-                                  Required.
+                                "code": "str",
+                                "message": "str",
                                 "resources": [
-                                    "str"  # Optional. Indicates resources which
-                                      were responsible for the error.
+                                    "str"
                                 ],
-                                "target": "str",  # Optional. Indicates which
-                                  property in the request is responsible for the error.
-                                "value": "str"  # Optional. Indicates which value in
-                                  'target' is responsible for the error.
+                                "target": "str",
+                                "value": "str"
                             }
                         ],
                         "innererror": ...
                     },
-                    "render": {},  # Optional. Visualization data in JSON format.
-                    "statistics": {}  # Optional. Statistics represented in JSON format.
+                    "render": {},
+                    "statistics": {}
                 }
         """
 
@@ -1566,7 +1351,6 @@ class QueryOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> JSON:
-        # pylint: disable=line-too-long
         """Execute an Analytics query using resource ID.
 
         Executes an Analytics query for data in the context of a resource. `Here
@@ -1598,45 +1382,36 @@ class QueryOperations:
                         {
                             "columns": [
                                 {
-                                    "name": "str",  # The name of this column.
-                                      Required.
-                                    "type": "str"  # The data type of this
-                                      column. Required. Known values are: "bool", "datetime",
-                                      "dynamic", "int", "long", "real", "string", "guid", "decimal",
-                                      and "timespan".
+                                    "name": "str",
+                                    "type": "str"
                                 }
                             ],
-                            "name": "str",  # The name of the table. Required.
+                            "name": "str",
                             "rows": [
                                 [
-                                    {}  # The resulting rows from this query.
-                                      Required.
+                                    {}
                                 ]
                             ]
                         }
                     ],
                     "error": {
-                        "code": "str",  # A machine readable error code. Required.
-                        "message": "str",  # A human readable error message. Required.
+                        "code": "str",
+                        "message": "str",
                         "details": [
                             {
-                                "code": "str",  # The error's code. Required.
-                                "message": "str",  # A human readable error message.
-                                  Required.
+                                "code": "str",
+                                "message": "str",
                                 "resources": [
-                                    "str"  # Optional. Indicates resources which
-                                      were responsible for the error.
+                                    "str"
                                 ],
-                                "target": "str",  # Optional. Indicates which
-                                  property in the request is responsible for the error.
-                                "value": "str"  # Optional. Indicates which value in
-                                  'target' is responsible for the error.
+                                "target": "str",
+                                "value": "str"
                             }
                         ],
                         "innererror": ...
                     },
-                    "render": {},  # Optional. Visualization data in JSON format.
-                    "statistics": {}  # Optional. Statistics represented in JSON format.
+                    "render": {},
+                    "statistics": {}
                 }
         """
 
@@ -1644,7 +1419,6 @@ class QueryOperations:
     async def resource_execute_xms(
         self, resource_id: str, body: Union[JSON, IO[bytes]], *, prefer: Optional[str] = None, **kwargs: Any
     ) -> JSON:
-        # pylint: disable=line-too-long
         """Execute an Analytics query using resource ID.
 
         Executes an Analytics query for data in the context of a resource. `Here
@@ -1669,13 +1443,10 @@ class QueryOperations:
 
                 # JSON input template you can fill out and use as your body input.
                 body = {
-                    "query": "str",  # The query to execute. Required.
-                    "timespan": "str",  # Optional. Optional. The timespan over which to query
-                      data. This is an ISO8601 time period value.  This timespan is applied in addition
-                      to any that are specified in the query expression.
+                    "query": "str",
+                    "timespan": "str",
                     "workspaces": [
-                        "str"  # Optional. A list of workspaces to query in addition to the
-                          primary workspace.
+                        "str"
                     ]
                 }
 
@@ -1685,48 +1456,39 @@ class QueryOperations:
                         {
                             "columns": [
                                 {
-                                    "name": "str",  # The name of this column.
-                                      Required.
-                                    "type": "str"  # The data type of this
-                                      column. Required. Known values are: "bool", "datetime",
-                                      "dynamic", "int", "long", "real", "string", "guid", "decimal",
-                                      and "timespan".
+                                    "name": "str",
+                                    "type": "str"
                                 }
                             ],
-                            "name": "str",  # The name of the table. Required.
+                            "name": "str",
                             "rows": [
                                 [
-                                    {}  # The resulting rows from this query.
-                                      Required.
+                                    {}
                                 ]
                             ]
                         }
                     ],
                     "error": {
-                        "code": "str",  # A machine readable error code. Required.
-                        "message": "str",  # A human readable error message. Required.
+                        "code": "str",
+                        "message": "str",
                         "details": [
                             {
-                                "code": "str",  # The error's code. Required.
-                                "message": "str",  # A human readable error message.
-                                  Required.
+                                "code": "str",
+                                "message": "str",
                                 "resources": [
-                                    "str"  # Optional. Indicates resources which
-                                      were responsible for the error.
+                                    "str"
                                 ],
-                                "target": "str",  # Optional. Indicates which
-                                  property in the request is responsible for the error.
-                                "value": "str"  # Optional. Indicates which value in
-                                  'target' is responsible for the error.
+                                "target": "str",
+                                "value": "str"
                             }
                         ],
                         "innererror": ...
                     },
-                    "render": {},  # Optional. Visualization data in JSON format.
-                    "statistics": {}  # Optional. Statistics represented in JSON format.
+                    "render": {},
+                    "statistics": {}
                 }
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1767,8 +1529,6 @@ class QueryOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1802,7 +1562,6 @@ class MetadataOperations:
 
     @distributed_trace_async
     async def get(self, workspace_id: str, **kwargs: Any) -> JSON:
-        # pylint: disable=line-too-long
         """Gets metadata information.
 
         Retrieve the metadata information for the workspace, including its schema, functions, workspace
@@ -1822,122 +1581,93 @@ class MetadataOperations:
                 response == {
                     "applications": [
                         {
-                            "id": "str",  # The ID of the Application Insights app.
-                              Required.
-                            "name": "str",  # The name of the Application Insights app.
-                              Required.
-                            "region": "str",  # The Azure region of the Application
-                              Insights app. Required.
-                            "resourceId": "str",  # The ARM resource ID of the
-                              Application Insights app. Required.
+                            "id": "str",
+                            "name": "str",
+                            "region": "str",
+                            "resourceId": "str",
                             "related": {
                                 "functions": [
-                                    "str"  # Optional. The related functions for
-                                      the Application Insights app.
+                                    "str"
                                 ],
                                 "tables": [
-                                    "str"  # Optional. The related tables for the
-                                      Application Insights app.
+                                    "str"
                                 ]
                             }
                         }
                     ],
                     "categories": [
                         {
-                            "displayName": "str",  # The display name of the category.
-                              Required.
-                            "id": "str",  # The ID of the category. Required.
-                            "description": "str",  # Optional. The description of the
-                              category.
+                            "displayName": "str",
+                            "id": "str",
+                            "description": "str",
                             "related": {
                                 "functions": [
-                                    "str"  # Optional. The functions related to
-                                      the category.
+                                    "str"
                                 ],
                                 "queries": [
-                                    "str"  # Optional. The saved queries related
-                                      to the category.
+                                    "str"
                                 ],
                                 "resourceTypes": [
-                                    "str"  # Optional. The resource types related
-                                      to the category.
+                                    "str"
                                 ],
                                 "solutions": [
-                                    "str"  # Optional. The Log Analytics
-                                      solutions related to the category.
+                                    "str"
                                 ],
                                 "tables": [
-                                    "str"  # Optional. The tables related to the
-                                      category.
+                                    "str"
                                 ]
                             }
                         }
                     ],
                     "functions": [
                         {
-                            "body": "str",  # The KQL body of the function. Required.
-                            "id": "str",  # The ID of the function. Required.
-                            "name": "str",  # The name of the function, to be used in
-                              queries. Required.
-                            "description": "str",  # Optional. The description of the
-                              function.
-                            "displayName": "str",  # Optional. The display name of the
-                              function.
-                            "parameters": "str",  # Optional. The parameters/arguments of
-                              the function, if any.
-                            "properties": {},  # Optional. The properties of the
-                              function.
+                            "body": "str",
+                            "id": "str",
+                            "name": "str",
+                            "description": "str",
+                            "displayName": "str",
+                            "parameters": "str",
+                            "properties": {},
                             "related": {
                                 "categories": [
-                                    "str"  # Optional. The related categories for
-                                      the function.
+                                    "str"
                                 ],
                                 "resourceTypes": [
-                                    "str"  # Optional. The related resource types
-                                      for the function.
+                                    "str"
                                 ],
                                 "solutions": [
-                                    "str"  # Optional. The related Log Analytics
-                                      solutions for the function.
+                                    "str"
                                 ],
                                 "tables": [
-                                    "str"  # Optional. The related tables for the
-                                      function.
+                                    "str"
                                 ],
                                 "workspaces": [
-                                    "str"  # Optional. The related workspaces for
-                                      the function.
+                                    "str"
                                 ]
                             },
-                            "tags": {}  # Optional. The tags associated with the
-                              function.
+                            "tags": {}
                         }
                     ],
                     "permissions": [
                         {
                             "workspaces": [
                                 {
-                                    "resourceId": "str",  # The resource ID on
-                                      the permission indication. Required.
+                                    "resourceId": "str",
                                     "denyTables": [
-                                        "str"  # Optional. The list of tables
-                                          that were denied access for the resource ID.
+                                        "str"
                                     ]
                                 }
                             ],
                             "applications": [
                                 {
-                                    "resourceId": "str"  # The resource ID on the
-                                      permission indication. Required.
+                                    "resourceId": "str"
                                 }
                             ],
                             "resources": [
                                 {
-                                    "resourceId": "str",  # The resource ID on
-                                      the permission indication. Required.
+                                    "resourceId": "str",
                                     "denyTables": [
-                                        "str"  # Optional. The list of tables
-                                          that were denied access for the resource ID.
+                                        "str"
                                     ]
                                 }
                             ]
@@ -1945,221 +1675,164 @@ class MetadataOperations:
                     ],
                     "queries": [
                         {
-                            "body": "str",  # The KQL body of the query. Required.
-                            "id": "str",  # The ID of the query. Required.
-                            "description": "str",  # Optional. The description of the
-                              query.
-                            "displayName": "str",  # Optional. The display name of the
-                              query.
+                            "body": "str",
+                            "id": "str",
+                            "description": "str",
+                            "displayName": "str",
                             "labels": [
-                                "str"  # Optional. The user defined labels associated
-                                  with the query.
+                                "str"
                             ],
-                            "properties": {},  # Optional. The properties of the query.
+                            "properties": {},
                             "related": {
                                 "categories": [
-                                    "str"  # Optional. The related categories for
-                                      the query.
+                                    "str"
                                 ],
                                 "resourceTypes": [
-                                    "str"  # Optional. The related resource types
-                                      for the query.
+                                    "str"
                                 ],
                                 "solutions": [
-                                    "str"  # Optional. The related Log Analytics
-                                      solutions for the query.
+                                    "str"
                                 ],
                                 "tables": [
-                                    "str"  # Optional. The related tables for the
-                                      query.
+                                    "str"
                                 ]
                             },
-                            "tags": {}  # Optional. The tags associated with the query.
+                            "tags": {}
                         }
                     ],
                     "resourceTypes": [
                         {
-                            "id": "str",  # The ID of the resource-type. Required.
-                            "type": "str",  # The type of the resource-type. Required.
-                            "description": "str",  # Optional. The description of the
-                              resource-type.
-                            "displayName": "str",  # Optional. The display name of the
-                              resource-type.
+                            "id": "str",
+                            "type": "str",
+                            "description": "str",
+                            "displayName": "str",
                             "labels": [
-                                "str"  # Optional. The user-defined labels of the
-                                  resource-type.
+                                "str"
                             ],
-                            "properties": {},  # Optional. The properties of the
-                              resource-type.
+                            "properties": {},
                             "related": {
                                 "categories": [
-                                    "str"  # Optional. The categories related to
-                                      the resource-type.
+                                    "str"
                                 ],
                                 "functions": [
-                                    "str"  # Optional. The functions related to
-                                      the resource-type.
+                                    "str"
                                 ],
                                 "queries": [
-                                    "str"  # Optional. The queries related to the
-                                      resource-type.
+                                    "str"
                                 ],
                                 "resources": [
-                                    "str"  # Optional. The Azure resources
-                                      related to the resource-type.
+                                    "str"
                                 ],
                                 "tables": [
-                                    "str"  # Optional. The tables related to the
-                                      resource-type.
+                                    "str"
                                 ],
                                 "workspaces": [
-                                    "str"  # Optional. The Log Analytics
-                                      workspaces related to the resource-type.
+                                    "str"
                                 ]
                             },
-                            "tags": {}  # Optional. The tags associated with the
-                              resource-type.
+                            "tags": {}
                         }
                     ],
                     "resources": [
-                        {}  # Optional. The list of Azure resources that were referenced in
-                          the metadata request.
+                        {}
                     ],
                     "solutions": [
                         {
-                            "id": "str",  # The ID of the Log Analytics solution.
-                              Required.
-                            "name": "str",  # The name of the Log Analytics solution.
-                              Required.
+                            "id": "str",
+                            "name": "str",
                             "related": {
                                 "tables": [
-                                    "str"  # The tables related to the Log
-                                      Analytics solution. Required.
+                                    "str"
                                 ],
                                 "categories": [
-                                    "str"  # Optional. The categories related to
-                                      the Log Analytics solution.
+                                    "str"
                                 ],
                                 "functions": [
-                                    "str"  # Optional. The functions related to
-                                      the Log Analytics solution.
+                                    "str"
                                 ],
                                 "queries": [
-                                    "str"  # Optional. The saved queries related
-                                      to the Log Analytics solution.
+                                    "str"
                                 ],
                                 "workspaces": [
-                                    "str"  # Optional. The Workspaces referenced
-                                      in the metadata request that are related to the Log Analytics
-                                      solution.
+                                    "str"
                                 ]
                             },
-                            "description": "str",  # Optional. The description of the Log
-                              Analytics solution.
-                            "displayName": "str",  # Optional. The display name of the
-                              Log Analytics solution.
-                            "properties": {},  # Optional. The properties of the Log
-                              Analytics solution.
-                            "tags": {}  # Optional. The tags that are associated with the
-                              Log Analytics solution.
+                            "description": "str",
+                            "displayName": "str",
+                            "properties": {},
+                            "tags": {}
                         }
                     ],
                     "tables": [
                         {
-                            "id": "str",  # The ID of the table. Required.
-                            "name": "str",  # The name of the table. Required.
+                            "id": "str",
+                            "name": "str",
                             "columns": [
                                 {
-                                    "name": "str",  # The name of the column.
-                                      Required.
-                                    "type": "str",  # The data type of the
-                                      column. Required. Known values are: "bool", "datetime",
-                                      "dynamic", "int", "long", "real", "string", "guid", "decimal",
-                                      and "timespan".
-                                    "description": "str",  # Optional. The
-                                      description of the column.
-                                    "isPreferredFacet": bool,  # Optional. A flag
-                                      indicating this column is a preferred facet.
-                                    "source": {}  # Optional. an indication of
-                                      the source of the column, used only when multiple workspaces have
-                                      conflicting definition for the column.
+                                    "name": "str",
+                                    "type": "str",
+                                    "description": "str",
+                                    "isPreferredFacet": bool,
+                                    "source": {}
                                 }
                             ],
-                            "description": "str",  # Optional. The description of the
-                              table.
+                            "description": "str",
                             "labels": [
-                                "str"  # Optional. The user defined labels of the
-                                  table.
+                                "str"
                             ],
-                            "properties": {},  # Optional. The properties of the table.
+                            "properties": {},
                             "related": {
                                 "categories": [
-                                    "str"  # Optional. The related categories for
-                                      the table.
+                                    "str"
                                 ],
                                 "functions": [
-                                    "str"  # Optional. The related functions for
-                                      the table.
+                                    "str"
                                 ],
                                 "queries": [
-                                    "str"  # Optional. The related saved queries
-                                      for the table.
+                                    "str"
                                 ],
                                 "resourceTypes": [
-                                    "str"  # Optional. The related resource types
-                                      for the table.
+                                    "str"
                                 ],
                                 "solutions": [
-                                    "str"  # Optional. The related Log Analytics
-                                      solutions for the table.
+                                    "str"
                                 ],
                                 "workspaces": [
-                                    "str"  # Optional. The related Log Analytics
-                                      workspaces for the table.
+                                    "str"
                                 ]
                             },
-                            "tags": {},  # Optional. The tags associated with the table.
-                            "timespanColumn": "str"  # Optional. The column associated
-                              with the timespan query parameter for the table.
+                            "tags": {},
+                            "timespanColumn": "str"
                         }
                     ],
                     "workspaces": [
                         {
-                            "id": "str",  # The ID of the Log Analytics workspace.
-                              Required.
-                            "name": "str",  # The name of the Log Analytics workspace.
-                              Required.
-                            "region": "str",  # The Azure region of the Log Analytics
-                              workspace. Required.
-                            "resourceId": "str",  # The ARM resource ID of the Log
-                              Analytics workspace. Required.
+                            "id": "str",
+                            "name": "str",
+                            "region": "str",
+                            "resourceId": "str",
                             "related": {
                                 "functions": [
-                                    "str"  # Optional. The related functions for
-                                      the Log Analytics workspace.
+                                    "str"
                                 ],
                                 "resourceTypes": [
-                                    "str"  # Optional. The related resource types
-                                      for the Log Analytics workspace.
+                                    "str"
                                 ],
                                 "resources": [
-                                    "str"  # Optional. The related Azure
-                                      resources for the Log Analytics workspace.
+                                    "str"
                                 ],
                                 "solutions": [
-                                    "str"  # Optional. The related Log Analytics
-                                      solutions for the Log Analytics workspace.
+                                    "str"
                                 ],
                                 "tables": [
-                                    "str"  # Optional. The related tables for the
-                                      Log Analytics workspace.
+                                    "str"
                                 ]
                             }
                         }
                     ]
                 }
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2187,8 +1860,6 @@ class MetadataOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -2204,7 +1875,6 @@ class MetadataOperations:
 
     @distributed_trace_async
     async def post(self, workspace_id: str, **kwargs: Any) -> JSON:
-        # pylint: disable=line-too-long
         """Gets metadata information.
 
         Retrieve the metadata information for the workspace, including its schema, functions, workspace
@@ -2224,122 +1894,93 @@ class MetadataOperations:
                 response == {
                     "applications": [
                         {
-                            "id": "str",  # The ID of the Application Insights app.
-                              Required.
-                            "name": "str",  # The name of the Application Insights app.
-                              Required.
-                            "region": "str",  # The Azure region of the Application
-                              Insights app. Required.
-                            "resourceId": "str",  # The ARM resource ID of the
-                              Application Insights app. Required.
+                            "id": "str",
+                            "name": "str",
+                            "region": "str",
+                            "resourceId": "str",
                             "related": {
                                 "functions": [
-                                    "str"  # Optional. The related functions for
-                                      the Application Insights app.
+                                    "str"
                                 ],
                                 "tables": [
-                                    "str"  # Optional. The related tables for the
-                                      Application Insights app.
+                                    "str"
                                 ]
                             }
                         }
                     ],
                     "categories": [
                         {
-                            "displayName": "str",  # The display name of the category.
-                              Required.
-                            "id": "str",  # The ID of the category. Required.
-                            "description": "str",  # Optional. The description of the
-                              category.
+                            "displayName": "str",
+                            "id": "str",
+                            "description": "str",
                             "related": {
                                 "functions": [
-                                    "str"  # Optional. The functions related to
-                                      the category.
+                                    "str"
                                 ],
                                 "queries": [
-                                    "str"  # Optional. The saved queries related
-                                      to the category.
+                                    "str"
                                 ],
                                 "resourceTypes": [
-                                    "str"  # Optional. The resource types related
-                                      to the category.
+                                    "str"
                                 ],
                                 "solutions": [
-                                    "str"  # Optional. The Log Analytics
-                                      solutions related to the category.
+                                    "str"
                                 ],
                                 "tables": [
-                                    "str"  # Optional. The tables related to the
-                                      category.
+                                    "str"
                                 ]
                             }
                         }
                     ],
                     "functions": [
                         {
-                            "body": "str",  # The KQL body of the function. Required.
-                            "id": "str",  # The ID of the function. Required.
-                            "name": "str",  # The name of the function, to be used in
-                              queries. Required.
-                            "description": "str",  # Optional. The description of the
-                              function.
-                            "displayName": "str",  # Optional. The display name of the
-                              function.
-                            "parameters": "str",  # Optional. The parameters/arguments of
-                              the function, if any.
-                            "properties": {},  # Optional. The properties of the
-                              function.
+                            "body": "str",
+                            "id": "str",
+                            "name": "str",
+                            "description": "str",
+                            "displayName": "str",
+                            "parameters": "str",
+                            "properties": {},
                             "related": {
                                 "categories": [
-                                    "str"  # Optional. The related categories for
-                                      the function.
+                                    "str"
                                 ],
                                 "resourceTypes": [
-                                    "str"  # Optional. The related resource types
-                                      for the function.
+                                    "str"
                                 ],
                                 "solutions": [
-                                    "str"  # Optional. The related Log Analytics
-                                      solutions for the function.
+                                    "str"
                                 ],
                                 "tables": [
-                                    "str"  # Optional. The related tables for the
-                                      function.
+                                    "str"
                                 ],
                                 "workspaces": [
-                                    "str"  # Optional. The related workspaces for
-                                      the function.
+                                    "str"
                                 ]
                             },
-                            "tags": {}  # Optional. The tags associated with the
-                              function.
+                            "tags": {}
                         }
                     ],
                     "permissions": [
                         {
                             "workspaces": [
                                 {
-                                    "resourceId": "str",  # The resource ID on
-                                      the permission indication. Required.
+                                    "resourceId": "str",
                                     "denyTables": [
-                                        "str"  # Optional. The list of tables
-                                          that were denied access for the resource ID.
+                                        "str"
                                     ]
                                 }
                             ],
                             "applications": [
                                 {
-                                    "resourceId": "str"  # The resource ID on the
-                                      permission indication. Required.
+                                    "resourceId": "str"
                                 }
                             ],
                             "resources": [
                                 {
-                                    "resourceId": "str",  # The resource ID on
-                                      the permission indication. Required.
+                                    "resourceId": "str",
                                     "denyTables": [
-                                        "str"  # Optional. The list of tables
-                                          that were denied access for the resource ID.
+                                        "str"
                                     ]
                                 }
                             ]
@@ -2347,221 +1988,164 @@ class MetadataOperations:
                     ],
                     "queries": [
                         {
-                            "body": "str",  # The KQL body of the query. Required.
-                            "id": "str",  # The ID of the query. Required.
-                            "description": "str",  # Optional. The description of the
-                              query.
-                            "displayName": "str",  # Optional. The display name of the
-                              query.
+                            "body": "str",
+                            "id": "str",
+                            "description": "str",
+                            "displayName": "str",
                             "labels": [
-                                "str"  # Optional. The user defined labels associated
-                                  with the query.
+                                "str"
                             ],
-                            "properties": {},  # Optional. The properties of the query.
+                            "properties": {},
                             "related": {
                                 "categories": [
-                                    "str"  # Optional. The related categories for
-                                      the query.
+                                    "str"
                                 ],
                                 "resourceTypes": [
-                                    "str"  # Optional. The related resource types
-                                      for the query.
+                                    "str"
                                 ],
                                 "solutions": [
-                                    "str"  # Optional. The related Log Analytics
-                                      solutions for the query.
+                                    "str"
                                 ],
                                 "tables": [
-                                    "str"  # Optional. The related tables for the
-                                      query.
+                                    "str"
                                 ]
                             },
-                            "tags": {}  # Optional. The tags associated with the query.
+                            "tags": {}
                         }
                     ],
                     "resourceTypes": [
                         {
-                            "id": "str",  # The ID of the resource-type. Required.
-                            "type": "str",  # The type of the resource-type. Required.
-                            "description": "str",  # Optional. The description of the
-                              resource-type.
-                            "displayName": "str",  # Optional. The display name of the
-                              resource-type.
+                            "id": "str",
+                            "type": "str",
+                            "description": "str",
+                            "displayName": "str",
                             "labels": [
-                                "str"  # Optional. The user-defined labels of the
-                                  resource-type.
+                                "str"
                             ],
-                            "properties": {},  # Optional. The properties of the
-                              resource-type.
+                            "properties": {},
                             "related": {
                                 "categories": [
-                                    "str"  # Optional. The categories related to
-                                      the resource-type.
+                                    "str"
                                 ],
                                 "functions": [
-                                    "str"  # Optional. The functions related to
-                                      the resource-type.
+                                    "str"
                                 ],
                                 "queries": [
-                                    "str"  # Optional. The queries related to the
-                                      resource-type.
+                                    "str"
                                 ],
                                 "resources": [
-                                    "str"  # Optional. The Azure resources
-                                      related to the resource-type.
+                                    "str"
                                 ],
                                 "tables": [
-                                    "str"  # Optional. The tables related to the
-                                      resource-type.
+                                    "str"
                                 ],
                                 "workspaces": [
-                                    "str"  # Optional. The Log Analytics
-                                      workspaces related to the resource-type.
+                                    "str"
                                 ]
                             },
-                            "tags": {}  # Optional. The tags associated with the
-                              resource-type.
+                            "tags": {}
                         }
                     ],
                     "resources": [
-                        {}  # Optional. The list of Azure resources that were referenced in
-                          the metadata request.
+                        {}
                     ],
                     "solutions": [
                         {
-                            "id": "str",  # The ID of the Log Analytics solution.
-                              Required.
-                            "name": "str",  # The name of the Log Analytics solution.
-                              Required.
+                            "id": "str",
+                            "name": "str",
                             "related": {
                                 "tables": [
-                                    "str"  # The tables related to the Log
-                                      Analytics solution. Required.
+                                    "str"
                                 ],
                                 "categories": [
-                                    "str"  # Optional. The categories related to
-                                      the Log Analytics solution.
+                                    "str"
                                 ],
                                 "functions": [
-                                    "str"  # Optional. The functions related to
-                                      the Log Analytics solution.
+                                    "str"
                                 ],
                                 "queries": [
-                                    "str"  # Optional. The saved queries related
-                                      to the Log Analytics solution.
+                                    "str"
                                 ],
                                 "workspaces": [
-                                    "str"  # Optional. The Workspaces referenced
-                                      in the metadata request that are related to the Log Analytics
-                                      solution.
+                                    "str"
                                 ]
                             },
-                            "description": "str",  # Optional. The description of the Log
-                              Analytics solution.
-                            "displayName": "str",  # Optional. The display name of the
-                              Log Analytics solution.
-                            "properties": {},  # Optional. The properties of the Log
-                              Analytics solution.
-                            "tags": {}  # Optional. The tags that are associated with the
-                              Log Analytics solution.
+                            "description": "str",
+                            "displayName": "str",
+                            "properties": {},
+                            "tags": {}
                         }
                     ],
                     "tables": [
                         {
-                            "id": "str",  # The ID of the table. Required.
-                            "name": "str",  # The name of the table. Required.
+                            "id": "str",
+                            "name": "str",
                             "columns": [
                                 {
-                                    "name": "str",  # The name of the column.
-                                      Required.
-                                    "type": "str",  # The data type of the
-                                      column. Required. Known values are: "bool", "datetime",
-                                      "dynamic", "int", "long", "real", "string", "guid", "decimal",
-                                      and "timespan".
-                                    "description": "str",  # Optional. The
-                                      description of the column.
-                                    "isPreferredFacet": bool,  # Optional. A flag
-                                      indicating this column is a preferred facet.
-                                    "source": {}  # Optional. an indication of
-                                      the source of the column, used only when multiple workspaces have
-                                      conflicting definition for the column.
+                                    "name": "str",
+                                    "type": "str",
+                                    "description": "str",
+                                    "isPreferredFacet": bool,
+                                    "source": {}
                                 }
                             ],
-                            "description": "str",  # Optional. The description of the
-                              table.
+                            "description": "str",
                             "labels": [
-                                "str"  # Optional. The user defined labels of the
-                                  table.
+                                "str"
                             ],
-                            "properties": {},  # Optional. The properties of the table.
+                            "properties": {},
                             "related": {
                                 "categories": [
-                                    "str"  # Optional. The related categories for
-                                      the table.
+                                    "str"
                                 ],
                                 "functions": [
-                                    "str"  # Optional. The related functions for
-                                      the table.
+                                    "str"
                                 ],
                                 "queries": [
-                                    "str"  # Optional. The related saved queries
-                                      for the table.
+                                    "str"
                                 ],
                                 "resourceTypes": [
-                                    "str"  # Optional. The related resource types
-                                      for the table.
+                                    "str"
                                 ],
                                 "solutions": [
-                                    "str"  # Optional. The related Log Analytics
-                                      solutions for the table.
+                                    "str"
                                 ],
                                 "workspaces": [
-                                    "str"  # Optional. The related Log Analytics
-                                      workspaces for the table.
+                                    "str"
                                 ]
                             },
-                            "tags": {},  # Optional. The tags associated with the table.
-                            "timespanColumn": "str"  # Optional. The column associated
-                              with the timespan query parameter for the table.
+                            "tags": {},
+                            "timespanColumn": "str"
                         }
                     ],
                     "workspaces": [
                         {
-                            "id": "str",  # The ID of the Log Analytics workspace.
-                              Required.
-                            "name": "str",  # The name of the Log Analytics workspace.
-                              Required.
-                            "region": "str",  # The Azure region of the Log Analytics
-                              workspace. Required.
-                            "resourceId": "str",  # The ARM resource ID of the Log
-                              Analytics workspace. Required.
+                            "id": "str",
+                            "name": "str",
+                            "region": "str",
+                            "resourceId": "str",
                             "related": {
                                 "functions": [
-                                    "str"  # Optional. The related functions for
-                                      the Log Analytics workspace.
+                                    "str"
                                 ],
                                 "resourceTypes": [
-                                    "str"  # Optional. The related resource types
-                                      for the Log Analytics workspace.
+                                    "str"
                                 ],
                                 "resources": [
-                                    "str"  # Optional. The related Azure
-                                      resources for the Log Analytics workspace.
+                                    "str"
                                 ],
                                 "solutions": [
-                                    "str"  # Optional. The related Log Analytics
-                                      solutions for the Log Analytics workspace.
+                                    "str"
                                 ],
                                 "tables": [
-                                    "str"  # Optional. The related tables for the
-                                      Log Analytics workspace.
+                                    "str"
                                 ]
                             }
                         }
                     ]
                 }
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2589,8 +2173,6 @@ class MetadataOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 

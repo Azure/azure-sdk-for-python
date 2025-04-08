@@ -37,7 +37,7 @@ async def sample_send_request():
         # The `send_request` method can send custom HTTP requests that share the client's existing pipeline,
         # Now let's use the `send_request` method to make a resource details fetching request.
         # The URL of the request should be absolute, and append the API version used for the request.
-        request = HttpRequest(method="GET", url=f"{endpoint}/documentintelligence/info?api-version=2024-07-31-preview")
+        request = HttpRequest(method="GET", url=f"{endpoint}/documentintelligence/info?api-version=2024-11-30")
         response = await client.send_request(request)
         response.raise_for_status()
         response_body = response.json()

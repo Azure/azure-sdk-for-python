@@ -6,7 +6,7 @@
 
 from datetime import date
 
-from .parser import _str, _to_utc_datetime
+from .parser import _to_utc_datetime
 from .constants import X_MS_VERSION
 from . import sign_string, url_quote
 
@@ -181,7 +181,7 @@ class _SharedAccessHelper(object):
 
     def _add_query(self, name, val):
         if val:
-            self.query_dict[name] = _str(val) if val is not None else None
+            self.query_dict[name] = str(val) if val is not None else None
 
     def add_base(self, permission, expiry, start, ip, protocol, x_ms_version):
         if isinstance(start, date):

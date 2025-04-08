@@ -27,6 +27,7 @@ from azure.communication.email import EmailClient
 
 sys.path.append("..")
 
+
 class EmailMultipleRecipientSample(object):
 
     connection_string = os.getenv("COMMUNICATION_CONNECTION_STRING_EMAIL")
@@ -43,34 +44,35 @@ class EmailMultipleRecipientSample(object):
             "content": {
                 "subject": "This is the subject",
                 "plainText": "This is the body",
-                "html": "html><h1>This is the body</h1></html>"
+                "html": "html><h1>This is the body</h1></html>",
             },
             "recipients": {
                 "to": [
                     {"address": self.recipient_address, "displayName": "Customer Name"},
-                    {"address": self.second_recipient_address, "displayName": "Customer Name 2"}
+                    {"address": self.second_recipient_address, "displayName": "Customer Name 2"},
                 ],
                 "cc": [
                     {"address": self.recipient_address, "displayName": "Customer Name"},
-                    {"address": self.second_recipient_address, "displayName": "Customer Name 2"}
+                    {"address": self.second_recipient_address, "displayName": "Customer Name 2"},
                 ],
                 "bcc": [
                     {"address": self.recipient_address, "displayName": "Customer Name"},
-                    {"address": self.second_recipient_address, "displayName": "Customer Name 2"}
-                ]
+                    {"address": self.second_recipient_address, "displayName": "Customer Name 2"},
+                ],
             },
-            "senderAddress": self.sender_address
+            "senderAddress": self.sender_address,
         }
 
         try:
             # sending the email message
             poller = email_client.begin_send(message)
             response = poller.result()
-            print("Operation ID: " + response['id'])
+            print("Operation ID: " + response["id"])
         except HttpResponseError as ex:
             print(ex)
             pass
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     sample = EmailMultipleRecipientSample()
     sample.send_email_to_multiple_recipients()

@@ -66,7 +66,7 @@ class ModelBatchDeployment(Deployment):
         scoring_script: Optional[
             Union[str, PathLike]
         ] = None,  # promoted property from code_configuration.scoring_script
-        **kwargs: Any,  # pylint: disable=unused-argument
+        **kwargs: Any,
     ):
         self._provisioning_state: Optional[str] = kwargs.pop("provisioning_state", None)
         super().__init__(
@@ -203,7 +203,5 @@ class ModelBatchDeployment(Deployment):
             )
 
     def _to_dict(self) -> Dict:
-        res: dict = ModelBatchDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(
-            self
-        )  # pylint: disable=no-member
+        res: dict = ModelBatchDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
         return res

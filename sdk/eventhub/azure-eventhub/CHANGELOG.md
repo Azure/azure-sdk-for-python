@@ -1,14 +1,62 @@
 # Release History
 
-## 5.13.1 (Unreleased)
+## 5.15.0 (2025-04-09)
 
 ### Features Added
 
-### Breaking Changes
+- Added support for geo-replication and disaster recovery-enabled Event Hubs. To learn more about geo-replication, refer to this [doc](https://learn.microsoft.com/azure/event-hubs/geo-replication). To enable geo-replication on your Dedicated Event Hubs namespace, refer to [this guide](https://learn.microsoft.com/azure/event-hubs/use-geo-replication).
+- Added a class method `from bytes` to `EventData` to create from a message payload of bytes. ([#39711](https://github.com/Azure/azure-sdk-for-python/issues/39711))
+
+### Other Changes
+- Deprecating `uamqp_transport` in favor of pyAMQP transport. The `uamqp_transport` will be removed in the next minor release.
+- Dropped support for Python 3.8
 
 ### Bugs Fixed
 
+- Fixed a bug where service errors were incorrectly required and expected to have info/description fields.
+
 ### Other Changes
+
+- The following change has been temporarily pulled out and will be added to a future release:
+  - Implemented a new websockets library so that using `AmqpOverWebsocket` no longer requires separate optional dependency installations.
+
+## 5.15.0b2 (2025-03-14)
+
+### Features Added
+
+- Implemented a new websockets library so that using `AmqpOverWebsocket` no longer requires separate optional dependency installations.
+
+## 5.15.0b1 (2025-02-13)
+
+### Features Added
+
+- Added support for geo-replication and disaster recovery-enabled Event Hubs. To learn more about geo-replication, refer to this [doc](https://learn.microsoft.com/azure/event-hubs/geo-replication). To enable geo-replication on your Dedicated Event Hubs namespace, refer to [this guide](https://learn.microsoft.com/azure/event-hubs/use-geo-replication).
+
+### Bugs Fixed
+
+- Fixed a bug where service errors were incorrectly required and expected to have info/description fields.
+- Fixed a bug where max number of messages was not being requested when receiving from the service due to an incorrect link credit calculation.
+- Fixed a bug where the lowest possible timestamp returned by the service to represent an unset time was not being parsed correctly.
+
+## 5.14.0 (2025-02-13)
+
+### Features Added
+
+- Add support for Decimal128 in pyAMQP ([#39511](https://github.com/Azure/azure-sdk-for-python/pull/39511))
+
+### Bugs Fixed
+
+- Fixed a bug where async websocket disconnects were not being retried properly.
+- Fixed a bug where pyAMQP was doubly retrying, causing latency on reconnect. ([#39037](https://github.com/Azure/azure-sdk-for-python/pull/39037))
+- Fixed a bug where handle partial frames being sent twice due to multiple threads trying to send from the same outgoing internal buffer for large messages. ([#38067](https://github.com/Azure/azure-sdk-for-python/pull/38067))
+- Missing await in sender async on pyAMQP. ([#39182](https://github.com/Azure/azure-sdk-for-python/pull/39182))
+- Fixed a bug where message IDs in management operation requests were not unique.
+
+### Other Changes
+
+- Updates to the Event Hubs Troubleshooting guidelines
+- Updates to mypy/pylint
+- Removed python 2.7 code ([#38735](https://github.com/Azure/azure-sdk-for-python/pull/38735))
 
 ## 5.13.0 (2024-11-12)
 
@@ -577,7 +625,7 @@ after which the underlying connection will close if there is no further activity
 **Breaking changes**
 
 - Removed support for IoT Hub direct connection.
-    - [EventHubs compatible connection string](https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messages-read-builtin) of an IotHub can be used to create `EventHubClient` and read properties or events from an IoT Hub.
+    - [EventHubs compatible connection string](https://learn.microsoft.com/azure/iot-hub/iot-hub-devguide-messages-read-builtin) of an IotHub can be used to create `EventHubClient` and read properties or events from an IoT Hub.
 - Removed support for sending EventData to IoT Hub.
 - Removed parameter `exception` in method `close()` of `EventHubConsumer` and `EventHubProcuer`.
 - Updated uAMQP dependency to 1.2.3.
@@ -616,7 +664,7 @@ after which the underlying connection will close if there is no further activity
     - `backoff_max`: The maximum delay time in total.
 - Added support for context manager on `EventHubClient`.
 - Added new error type `OperationTimeoutError` for send operation.
-- Introduced a new class `EventProcessor` which replaces the older concept of [Event Processor Host](https://docs.microsoft.com/azure/event-hubs/event-hubs-event-processor-host). This early preview is intended to allow users to test the new design using a single instance of `EventProcessor`. The ability to checkpoints to a durable store will be added in future updates.
+- Introduced a new class `EventProcessor` which replaces the older concept of [Event Processor Host](https://learn.microsoft.com/azure/event-hubs/event-hubs-event-processor-host). This early preview is intended to allow users to test the new design using a single instance of `EventProcessor`. The ability to checkpoints to a durable store will be added in future updates.
     - `EventProcessor`: EventProcessor creates and runs consumers for all partitions of the eventhub.
     - `PartitionManager`: PartitionManager defines the interface for getting/claiming ownerships of partitions and updating checkpoints.
     - `PartitionProcessor`: PartitionProcessor defines the interface for processing events.

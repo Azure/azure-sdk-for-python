@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from __future__ import unicode_literals, annotations
+from __future__ import annotations
 
 import time
 import uuid
@@ -17,6 +17,7 @@ from ._constants import (
     EPOCH_SYMBOL,
     TIMEOUT_SYMBOL,
     RECEIVER_RUNTIME_METRIC_SYMBOL,
+    GEOREPLICATION_SYMBOL,
 )
 
 if TYPE_CHECKING:
@@ -104,13 +105,14 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         link_properties: Dict[bytes, int] = {}
         self._error = None
         self._timeout = 0
-        self._idle_timeout = (idle_timeout * self._amqp_transport.TIMEOUT_FACTOR) if idle_timeout else None
+        self._idle_timeout: Optional[float] = \
+            (idle_timeout * self._amqp_transport.TIMEOUT_FACTOR) if idle_timeout else None
         self._partition = self._source.split("/")[-1]
         self._name = f"EHConsumer-{uuid.uuid4()}-partition{self._partition}"
         if owner_level is not None:
             link_properties[EPOCH_SYMBOL] = int(owner_level)
         link_property_timeout_ms = (
-            self._client._config.receive_timeout or self._timeout  # pylint:disable=protected-access
+            self._client._config.receive_timeout or self._timeout
         ) * self._amqp_transport.TIMEOUT_FACTOR
         link_properties[TIMEOUT_SYMBOL] = int(link_property_timeout_ms)
         self._link_properties: Union[Dict[uamqp_AMQPType, uamqp_AMQPType], Dict[types.AMQPTypes, types.AMQPTypes]] = (
@@ -130,7 +132,12 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             self._offset,
             event_position_selector(self._offset, self._offset_inclusive),
         )
-        desired_capabilities = [RECEIVER_RUNTIME_METRIC_SYMBOL] if self._track_last_enqueued_event_properties else None
+        desired_capabilities = (
+            [RECEIVER_RUNTIME_METRIC_SYMBOL,
+             GEOREPLICATION_SYMBOL]
+             if self._track_last_enqueued_event_properties
+             else [GEOREPLICATION_SYMBOL]
+        )
 
         self._handler = self._amqp_transport.create_receive_client(
             config=self._client._config,  # pylint:disable=protected-access
@@ -157,7 +164,6 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         self._do_retryable_operation(self._open, operation_need_param=False)
 
     def _message_received(self, message: Union[uamqp_Message, Message]) -> None:
-        # pylint:disable=protected-access
         self._message_buffer.append(message)
 
     def _next_message_in_buffer(self):
@@ -244,7 +250,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             if batch:
                 events_for_callback = []
                 for _ in range(min(max_batch_size, len(self._message_buffer))):
-                    events_for_callback.append(self._next_message_in_buffer())  # pylint: disable=protected-access
+                    events_for_callback.append(self._next_message_in_buffer())
                 self._on_event_received(events_for_callback)
             else:
                 self._on_event_received(self._next_message_in_buffer() if self._message_buffer else None)

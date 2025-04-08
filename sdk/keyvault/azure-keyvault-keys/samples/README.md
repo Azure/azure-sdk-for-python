@@ -12,7 +12,7 @@ urlFragment: keyvault-keys-samples
 
 ## Prerequisites
 
-You must have an [Azure subscription](https://azure.microsoft.com/free) and an [Azure Key Vault](https://docs.microsoft.com/azure/key-vault/general/overview) to run these samples. You can create a key vault with the [Azure CLI](https://docs.microsoft.com/azure/key-vault/general/quick-create-cli).
+You must have an [Azure subscription](https://azure.microsoft.com/free) and an [Azure Key Vault](https://learn.microsoft.com/azure/key-vault/general/overview) to run these samples. You can create a key vault with the [Azure CLI](https://learn.microsoft.com/azure/key-vault/general/quick-create-cli).
 
 You can also run these samples with a [Key Vault Managed HSM][managed_hsm]. If you need to create a Managed HSM, you can do so using the Azure CLI by following the steps in [this document][managed_hsm_cli].
 
@@ -51,8 +51,8 @@ pip install azure-keyvault-keys azure-identity
 [list_operations_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys/samples/list_operations.py
 [list_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys/samples/list_operations_async.py
 
-[managed_hsm]: https://docs.microsoft.com/azure/key-vault/managed-hsm/overview
-[managed_hsm_cli]: https://docs.microsoft.com/azure/key-vault/managed-hsm/quick-create-cli
+[managed_hsm]: https://learn.microsoft.com/azure/key-vault/managed-hsm/overview
+[managed_hsm_cli]: https://learn.microsoft.com/azure/key-vault/managed-hsm/quick-create-cli
 
 [recover_purge_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys/samples/recover_purge_operations.py
 [recover_purge_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys/samples/recover_purge_operations_async.py

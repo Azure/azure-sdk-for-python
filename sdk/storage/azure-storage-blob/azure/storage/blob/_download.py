@@ -116,7 +116,7 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
 
         # For a parallel download, the stream is always seekable, so we note down the current position
         # in order to seek to the right place when out-of-order chunks come in
-        self.stream_start = stream.tell() if parallel else None
+        self.stream_start = stream.tell() if parallel else 0
 
         # Download progress so far
         self.progress_total = current_progress
@@ -656,7 +656,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         output_stream: Union[BytesIO, StringIO]
         if self._text_mode:
             output_stream = StringIO()
-            size = chars if chars else sys.maxsize
+            size = sys.maxsize if chars is None or chars <= 0 else chars
         else:
             output_stream = BytesIO()
             size = size if size > 0 else sys.maxsize

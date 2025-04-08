@@ -24,7 +24,7 @@ Several Storage Blobs Python SDK samples are available to you in the SDK's GitHu
 ## Prerequisites
 * Python 3.6 or later is required to use this package
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
-[Azure storage account](https://docs.microsoft.com/azure/storage/common/storage-account-overview) to run these samples.
+[Azure storage account](https://learn.microsoft.com/azure/storage/common/storage-account-overview) to run these samples.
 
 ## Setup
 
@@ -45,5 +45,5 @@ pip install azure-storage-blob
 
 ## Next steps
 
-Check out the [API reference documentation](https://aka.ms/azsdk-python-storage-blob-changefeed-ref) to learn more about
+Check out the [API reference documentation](https://learn.microsoft.com/python/api/overview/azure/storage-blob-changefeed-readme?view=azure-python-preview) to learn more about
 what you can do with the Azure Storage Blob client library.

@@ -58,11 +58,11 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
         'Programming Language :: Python :: 3.12',
+        "Programming Language :: Python :: 3.13",
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
@@ -74,9 +74,10 @@ setup(
     python_requires=">=3.8",
     install_requires=[
         # dependencies for the vendored storage blob
-        "azure-core>=1.20.1",
-        "msrest>=0.6.18",
+        "azure-core>=1.30.0",
         "cryptography>=2.1.4",
+        "typing-extensions>=4.6.0",
+        "isodate>=0.6.1",
         # end of dependencies for the vendored storage blob
         'azure-eventhub>=5.0.0',
         'aiohttp>=3.8.3',

@@ -20,12 +20,12 @@ class TestEventHubManagementConfigurationOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_patch(self, resource_group):
+    def test_configuration_patch(self, resource_group):
         response = self.client.configuration.patch(
             resource_group_name=resource_group.name,
             cluster_name="str",
             parameters={"settings": {"str": "str"}},
-            api_version="2018-01-01-preview",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself
@@ -33,11 +33,11 @@ class TestEventHubManagementConfigurationOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_configuration_get(self, resource_group):
         response = self.client.configuration.get(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2018-01-01-preview",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself

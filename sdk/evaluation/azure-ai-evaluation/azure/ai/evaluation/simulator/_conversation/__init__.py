@@ -9,12 +9,12 @@ import time
 from dataclasses import dataclass
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union, cast
 
+import re
 import jinja2
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline
-
-from .._model_tools import LLMBase, OpenAIChatCompletionsModel
+from .._model_tools import LLMBase, OpenAIChatCompletionsModel, RAIClient
 from .._model_tools._template_handler import TemplateParameters
 from .constants import ConversationRole
 
@@ -136,7 +136,7 @@ class ConversationBot:
                         self.conversation_starter = jinja2.Template(
                             conversation_starter_content, undefined=jinja2.StrictUndefined
                         )
-                    except jinja2.exceptions.TemplateSyntaxError:  # noqa: F841
+                    except jinja2.exceptions.TemplateSyntaxError as e:  # noqa: F841
                         self.conversation_starter = conversation_starter_content
             else:
                 self.logger.info(
@@ -149,6 +149,7 @@ class ConversationBot:
         conversation_history: List[ConversationTurn],
         max_history: int,
         turn_number: int = 0,
+        session_state: Optional[Dict[str, Any]] = None,
     ) -> Tuple[dict, dict, float, dict]:
         """
         Prompt the ConversationBot for a response.
@@ -175,6 +176,9 @@ class ConversationBot:
                 samples = [self.conversation_starter.render(**self.persona_template_args)]
             else:
                 samples = [self.conversation_starter]
+            jailbreak_string = self.persona_template_args.get("jailbreak_string", None)
+            if jailbreak_string:
+                samples = [f"{jailbreak_string} {samples[0]}"]
             time_taken = 0
 
             finish_reason = ["stop"]
@@ -255,9 +259,108 @@ class CallbackConversationBot(ConversationBot):
         conversation_history: List[Any],
         max_history: int,
         turn_number: int = 0,
+        session_state: Optional[Dict[str, Any]] = None,
     ) -> Tuple[dict, dict, float, dict]:
         chat_protocol_message = self._to_chat_protocol(
             self.user_template, conversation_history, self.user_template_parameters
+        )
+        msg_copy = copy.deepcopy(chat_protocol_message)
+        result = {}
+        start_time = time.time()
+        result = await self.callback(msg_copy, session_state=session_state)
+        end_time = time.time()
+        if not result:
+            result = {
+                "messages": [{"content": "Callback did not return a response.", "role": "assistant"}],
+                "finish_reason": ["stop"],
+                "id": None,
+                "template_parameters": {},
+            }
+        time_taken = end_time - start_time
+        try:
+            response = {
+                "samples": [result["messages"][-1]["content"]],
+                "finish_reason": ["stop"],
+                "id": None,
+            }
+        except Exception as exc:
+            msg = "User provided callback does not conform to chat protocol standard."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.CALLBACK_CONVERSATION_BOT,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            ) from exc
+
+        return response, {}, time_taken, result
+
+    # Bug 3354264: template is unused in the method - is this intentional?
+    def _to_chat_protocol(self, template, conversation_history, template_parameters):  # pylint: disable=unused-argument
+        messages = []
+
+        for _, m in enumerate(conversation_history):
+            messages.append({"content": m.message, "role": m.role.value})
+
+        return {
+            "template_parameters": template_parameters,
+            "messages": messages,
+            "$schema": "http://azureml/sdk-2-0/ChatConversation.json",
+        }
+
+
+class MultiModalConversationBot(ConversationBot):
+    """MultiModal Conversation bot that uses a user provided callback to generate responses.
+
+    :param callback: The callback function to use to generate responses.
+    :type callback: Callable
+    :param user_template: The template to use for the request.
+    :type user_template: str
+    :param user_template_parameters: The template parameters to use for the request.
+    :type user_template_parameters: Dict
+    :param args: Optional arguments to pass to the parent class.
+    :type args: Any
+    :param kwargs: Optional keyword arguments to pass to the parent class.
+    :type kwargs: Any
+    """
+
+    def __init__(
+        self,
+        callback: Callable,
+        user_template: str,
+        user_template_parameters: TemplateParameters,
+        rai_client: RAIClient,
+        *args,
+        **kwargs,
+    ) -> None:
+        self.callback = callback
+        self.user_template = user_template
+        self.user_template_parameters = user_template_parameters
+        self.rai_client = rai_client
+
+        super().__init__(*args, **kwargs)
+
+    async def generate_response(
+        self,
+        session: AsyncHttpPipeline,
+        conversation_history: List[Any],
+        max_history: int,
+        turn_number: int = 0,
+        session_state: Optional[Dict[str, Any]] = None,
+    ) -> Tuple[dict, dict, float, dict]:
+        previous_prompt = conversation_history[-1]
+        chat_protocol_message = await self._to_chat_protocol(conversation_history, self.user_template_parameters)
+
+        # replace prompt with {image.jpg} tags with image content data.
+        conversation_history.pop()
+        conversation_history.append(
+            ConversationTurn(
+                role=previous_prompt.role,
+                name=previous_prompt.name,
+                message=chat_protocol_message["messages"][0]["content"],
+                full_response=previous_prompt.full_response,
+                request=chat_protocol_message,
+            )
         )
         msg_copy = copy.deepcopy(chat_protocol_message)
         result = {}
@@ -271,7 +374,6 @@ class CallbackConversationBot(ConversationBot):
                 "id": None,
                 "template_parameters": {},
             }
-        self.logger.info("Using user provided callback returning response.")
 
         time_taken = end_time - start_time
         try:
@@ -290,16 +392,17 @@ class CallbackConversationBot(ConversationBot):
                 blame=ErrorBlame.USER_ERROR,
             ) from exc
 
-        self.logger.info("Parsed callback response")
+        return response, chat_protocol_message, time_taken, result
 
-        return response, {}, time_taken, result
-
-    # Bug 3354264: template is unused in the method - is this intentional?
-    def _to_chat_protocol(self, template, conversation_history, template_parameters):  # pylint: disable=unused-argument
+    async def _to_chat_protocol(self, conversation_history, template_parameters):  # pylint: disable=unused-argument
         messages = []
 
         for _, m in enumerate(conversation_history):
-            messages.append({"content": m.message, "role": m.role.value})
+            if "image:" in m.message:
+                content = await self._to_multi_modal_content(m.message)
+                messages.append({"content": content, "role": m.role.value})
+            else:
+                messages.append({"content": m.message, "role": m.role.value})
 
         return {
             "template_parameters": template_parameters,
@@ -307,10 +410,27 @@ class CallbackConversationBot(ConversationBot):
             "$schema": "http://azureml/sdk-2-0/ChatConversation.json",
         }
 
+    async def _to_multi_modal_content(self, text: str) -> list:
+        split_text = re.findall(r"[^{}]+|\{[^{}]*\}", text)
+        messages = [
+            text.strip("{}").replace("image:", "").strip() if text.startswith("{") else text for text in split_text
+        ]
+        contents = []
+        for msg in messages:
+            if msg.startswith("image_understanding/"):
+                encoded_image = await self.rai_client.get_image_data(msg)
+                contents.append(
+                    {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{encoded_image}"}},
+                )
+            else:
+                contents.append({"type": "text", "text": msg})
+        return contents
+
 
 __all__ = [
     "ConversationRole",
     "ConversationBot",
     "CallbackConversationBot",
+    "MultiModalConversationBot",
     "ConversationTurn",
 ]

@@ -65,7 +65,7 @@ class TestHybridComputeManagementMachineExtensionsOperationsAsync(AzureMgmtRecor
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-07-10",
+                api_version="2024-07-31-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -91,7 +91,7 @@ class TestHybridComputeManagementMachineExtensionsOperationsAsync(AzureMgmtRecor
                     "type": "str",
                     "typeHandlerVersion": "str",
                 },
-                api_version="2024-07-10",
+                api_version="2024-07-31-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -106,7 +106,7 @@ class TestHybridComputeManagementMachineExtensionsOperationsAsync(AzureMgmtRecor
                 resource_group_name=resource_group.name,
                 machine_name="str",
                 extension_name="str",
-                api_version="2024-07-10",
+                api_version="2024-07-31-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -120,7 +120,7 @@ class TestHybridComputeManagementMachineExtensionsOperationsAsync(AzureMgmtRecor
             resource_group_name=resource_group.name,
             machine_name="str",
             extension_name="str",
-            api_version="2024-07-10",
+            api_version="2024-07-31-preview",
         )
 
         # please add some check logic here by yourself
@@ -132,7 +132,7 @@ class TestHybridComputeManagementMachineExtensionsOperationsAsync(AzureMgmtRecor
         response = self.client.machine_extensions.list(
             resource_group_name=resource_group.name,
             machine_name="str",
-            api_version="2024-07-10",
+            api_version="2024-07-31-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

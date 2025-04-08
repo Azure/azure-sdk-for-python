@@ -20,14 +20,14 @@ class TestCosmosDBManagementPercentileSourceTargetOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_metrics(self, resource_group):
+    def test_percentile_source_target_list_metrics(self, resource_group):
         response = self.client.percentile_source_target.list_metrics(
             resource_group_name=resource_group.name,
             account_name="str",
             source_region="str",
             target_region="str",
             filter="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

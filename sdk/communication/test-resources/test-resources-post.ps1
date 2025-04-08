@@ -10,8 +10,7 @@
 param (
   [hashtable] $DeploymentOutputs,
   [string] $TenantId,
-  [string] $TestApplicationId,
-  [string] $TestApplicationSecret
+  [string] $TestApplicationId
 )
 
 # By default stop for any error.

@@ -251,7 +251,7 @@ is this diagnosis conditional on a symptom?
 
 **Known Issues**
 
-- `begin_analyze_healthcare_entities` is currently in gated preview and can not be used with AAD credentials. For more information, see [the Text Analytics for Health documentation](https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-for-health?tabs=ner#request-access-to-the-public-preview).
+- `begin_analyze_healthcare_entities` is currently in gated preview and can not be used with AAD credentials. For more information, see [the Text Analytics for Health documentation](https://learn.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-for-health?tabs=ner#request-access-to-the-public-preview).
 - At time of this SDK release, the service is not respecting the value passed through `model_version` to `begin_analyze_healthcare_entities`, it only uses the latest model.
 
 ## 5.1.0b5 (2021-02-10)
@@ -289,7 +289,7 @@ the service client to the poller object returned from `begin_analyze_healthcare_
 
 **New Features**
 - We have added method `begin_analyze`, which supports long-running batch process of Named Entity Recognition, Personally identifiable Information, and Key Phrase Extraction. To use, you must specify `api_version=TextAnalyticsApiVersion.V3_1_PREVIEW_3` when creating your client.
-- We have added method `begin_analyze_healthcare`, which supports the service's Health API. Since the Health API is currently only available in a gated preview, you need to have your subscription on the service's allow list, and you must specify `api_version=TextAnalyticsApiVersion.V3_1_PREVIEW_3` when creating your client. Note that since this is a gated preview, AAD is not supported. More information [here](https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-for-health?tabs=ner#request-access-to-the-public-preview).
+- We have added method `begin_analyze_healthcare`, which supports the service's Health API. Since the Health API is currently only available in a gated preview, you need to have your subscription on the service's allow list, and you must specify `api_version=TextAnalyticsApiVersion.V3_1_PREVIEW_3` when creating your client. Note that since this is a gated preview, AAD is not supported. More information [here](https://learn.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-for-health?tabs=ner#request-access-to-the-public-preview).
 
 
 ## 5.1.0b2 (2020-10-06)

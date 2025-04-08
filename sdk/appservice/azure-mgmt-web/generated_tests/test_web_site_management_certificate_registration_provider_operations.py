@@ -20,9 +20,9 @@ class TestWebSiteManagementCertificateRegistrationProviderOperations(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_operations(self, resource_group):
+    def test_certificate_registration_provider_list_operations(self, resource_group):
         response = self.client.certificate_registration_provider.list_operations(
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

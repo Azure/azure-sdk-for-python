@@ -28,22 +28,20 @@ class AuthCodeRedirectHandler(BaseHTTPRequestHandler):
 
         self.wfile.write(b"Authentication complete. You can close this window.")
 
-    def log_message(self, format, *args):  # pylint: disable=redefined-builtin,unused-argument
+    def log_message(self, format, *args):  # pylint: disable=redefined-builtin
         pass  # this prevents server dumping messages to stdout
 
 
 class AuthCodeRedirectServer(HTTPServer):
     """HTTP server that listens for the redirect request following an authorization code authentication"""
 
-    query_params = {}  # type: Mapping[str, Any]
+    query_params: Mapping[str, Any] = {}
 
-    def __init__(self, hostname, port, timeout):
-        # type: (str, int, int) -> None
+    def __init__(self, hostname: str, port: int, timeout: int) -> None:
         HTTPServer.__init__(self, (hostname, port), AuthCodeRedirectHandler)
         self.timeout = timeout
 
-    def wait_for_redirect(self):
-        # type: () -> Mapping[str, Any]
+    def wait_for_redirect(self) -> Mapping[str, Any]:
         while not self.query_params:
             try:
                 self.handle_request()

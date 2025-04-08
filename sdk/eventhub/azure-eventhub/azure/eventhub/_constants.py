@@ -2,8 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from __future__ import unicode_literals
-
 from enum import Enum
 
 
@@ -33,6 +31,7 @@ PROP_REPLY_TO_GROUP_ID = b"reply-to-group-id"
 EPOCH_SYMBOL = b"com.microsoft:epoch"
 TIMEOUT_SYMBOL = b"com.microsoft:timeout"
 RECEIVER_RUNTIME_METRIC_SYMBOL = b"com.microsoft:enable-receiver-runtime-metric"
+GEOREPLICATION_SYMBOL = b"com.microsoft:georeplication"
 
 MAX_MESSAGE_LENGTH_BYTES = 1024 * 1024
 MAX_USER_AGENT_LENGTH = 512

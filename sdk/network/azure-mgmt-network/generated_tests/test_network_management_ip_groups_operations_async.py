@@ -21,11 +21,11 @@ class TestNetworkManagementIpGroupsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_ip_groups_get(self, resource_group):
         response = await self.client.ip_groups.get(
             resource_group_name=resource_group.name,
             ip_groups_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestNetworkManagementIpGroupsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_ip_groups_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.ip_groups.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -50,7 +50,7 @@ class TestNetworkManagementIpGroupsOperationsAsync(AzureMgmtRecordedTestCase):
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -59,12 +59,12 @@ class TestNetworkManagementIpGroupsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update_groups(self, resource_group):
+    async def test_ip_groups_update_groups(self, resource_group):
         response = await self.client.ip_groups.update_groups(
             resource_group_name=resource_group.name,
             ip_groups_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -72,12 +72,12 @@ class TestNetworkManagementIpGroupsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_ip_groups_begin_delete(self, resource_group):
         response = await (
             await self.client.ip_groups.begin_delete(
                 resource_group_name=resource_group.name,
                 ip_groups_name="str",
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -86,10 +86,10 @@ class TestNetworkManagementIpGroupsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
+    async def test_ip_groups_list_by_resource_group(self, resource_group):
         response = self.client.ip_groups.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -97,9 +97,9 @@ class TestNetworkManagementIpGroupsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_ip_groups_list(self, resource_group):
         response = self.client.ip_groups.list(
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

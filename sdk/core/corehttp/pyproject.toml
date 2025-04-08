@@ -1,3 +1,4 @@
 [tool.azure-sdk-build]
 pyright = false
 verify_keywords = false
+black = true

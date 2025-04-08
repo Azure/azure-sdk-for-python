@@ -11,7 +11,7 @@ import datetime
 from unittest.mock import patch
 from test_constants import FEATURE_MANAGEMENT_KEY
 
-from azure.appconfiguration.provider._azureappconfigurationprovider import _delay_failure
+from azure.appconfiguration.provider._azureappconfigurationproviderbase import delay_failure
 
 
 def sleep(seconds):
@@ -30,6 +30,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         )
         assert client["message"] == "hi"
         assert client["my_json"]["key"] == "value"
+        assert ".appconfig.featureflag/Alpha" not in client
         assert FEATURE_MANAGEMENT_KEY in client
         assert has_feature_flag(client, "Alpha")
 
@@ -116,16 +117,16 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         )
         assert client["secret"] == "Reslover Value"
 
-    # method: _delay_failure
+    # method: delay_failure
     @patch("time.sleep", side_effect=sleep)
     def test_delay_failure(self, mock_sleep, **kwargs):
         start_time = datetime.datetime.now()
-        _delay_failure(start_time)
+        delay_failure(start_time)
         assert mock_sleep.call_count == 1
 
         mock_sleep.reset_mock()
         start_time = datetime.datetime.now() - datetime.timedelta(seconds=10)
-        _delay_failure(start_time)
+        delay_failure(start_time)
         mock_sleep.assert_not_called()
 
 

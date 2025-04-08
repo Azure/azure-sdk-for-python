@@ -52,13 +52,10 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class WebSiteManagementClient(
-    WebSiteManagementClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class WebSiteManagementClient(WebSiteManagementClientOperationsMixin):  # pylint: disable=too-many-instance-attributes
     """WebSite Management Client.
 
     :ivar app_service_certificate_orders: AppServiceCertificateOrdersOperations operations

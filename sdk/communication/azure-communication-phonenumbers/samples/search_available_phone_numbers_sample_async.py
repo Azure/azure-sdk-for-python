@@ -24,32 +24,28 @@ from azure.communication.phonenumbers import (
     PhoneNumberType,
     PhoneNumberAssignmentType,
     PhoneNumberCapabilities,
-    PhoneNumberCapabilityType
+    PhoneNumberCapabilityType,
 )
 
-connection_str = os.getenv('COMMUNICATION_SAMPLES_CONNECTION_STRING')
+connection_str = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
 phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
+
 
 async def search_available_phone_numbers():
     async with phone_numbers_client:
         capabilities = PhoneNumberCapabilities(
-            calling = PhoneNumberCapabilityType.INBOUND,
-            sms = PhoneNumberCapabilityType.INBOUND_OUTBOUND
+            calling=PhoneNumberCapabilityType.INBOUND, sms=PhoneNumberCapabilityType.INBOUND_OUTBOUND
         )
         poller = await phone_numbers_client.begin_search_available_phone_numbers(
-            "US",
-            PhoneNumberType.TOLL_FREE,
-            PhoneNumberAssignmentType.APPLICATION,
-            capabilities,
-            polling = True
+            "US", PhoneNumberType.TOLL_FREE, PhoneNumberAssignmentType.APPLICATION, capabilities, polling=True
         )
         search_result = await poller.result()
-        print ('Search id: ' + search_result.search_id)
+        print("Search id: " + search_result.search_id)
         phone_number_list = search_result.phone_numbers
-        print('Reserved phone numbers:')
+        print("Reserved phone numbers:")
         for phone_number in phone_number_list:
             print(phone_number)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(search_available_phone_numbers())

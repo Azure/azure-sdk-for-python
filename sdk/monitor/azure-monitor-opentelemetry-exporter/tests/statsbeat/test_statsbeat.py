@@ -447,13 +447,32 @@ class TestStatsbeatMetrics(unittest.TestCase):
         os.environ,
         {
             "AKS_ARM_NAMESPACE_ID": "namespace_id",
+            "KUBERNETES_SERVICE_HOST": "TEST_KUBERNETES_SERVICE_HOST",
         },
     )
-    def test_get_attach_metric_aks(self):
+    def test_get_attach_metric_aks_attach(self):
         attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
         self.assertEqual(attributes["rp"], _RP_Names.UNKNOWN.value)
         attributes["rp"] = _RP_Names.AKS.value
         attributes["rpId"] = "namespace_id"
+        observations = self._metric._get_attach_metric(options=None)
+        for obs in observations:
+            self.assertEqual(obs.value, 1)
+            self.assertEqual(obs.attributes, attributes)
+        self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["rp"], _RP_Names.AKS.value)
+
+    # pylint: disable=protected-access
+    @mock.patch.dict(
+        os.environ,
+        {
+            "KUBERNETES_SERVICE_HOST": "TEST_KUBERNETES_SERVICE_HOST",
+        },
+    )
+    def test_get_attach_metric_aks_manual(self):
+        attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+        self.assertEqual(attributes["rp"], _RP_Names.UNKNOWN.value)
+        attributes["rp"] = _RP_Names.AKS.value
+        attributes["rpId"] = "TEST_KUBERNETES_SERVICE_HOST"
         observations = self._metric._get_attach_metric(options=None)
         for obs in observations:
             self.assertEqual(obs.value, 1)
@@ -734,6 +753,34 @@ class TestStatsbeatMetrics(unittest.TestCase):
             self.assertEqual(obs.attributes, attributes)
 
     # pylint: disable=protected-access
+    def test_get_feature_metric_custom_events_runtime(self):
+        mp = MeterProvider()
+        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+        _STATSBEAT_STATE["CUSTOM_EVENTS_FEATURE_SET"] = False
+        metric = _StatsbeatMetrics(
+            mp,
+            ikey,
+            endpoint,
+            True,
+            0,
+            False,
+        )
+        self.assertTrue((metric._feature >> 2) & 1 == 0)
+        attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+        attributes.update(_StatsbeatMetrics._FEATURE_ATTRIBUTES)
+        self.assertEqual(attributes["feature"], 0)
+        self.assertEqual(attributes["type"], _FEATURE_TYPES.FEATURE)
+        _STATSBEAT_STATE["CUSTOM_EVENTS_FEATURE_SET"] = True
+        observations = metric._get_feature_metric(options=None)
+        attributes["feature"] = _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"]
+        for obs in observations:
+            self.assertEqual(obs.value, 1)
+            self.assertEqual(obs.attributes, attributes)
+        self.assertTrue((_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] >> 2) & 1 == 1)
+        _STATSBEAT_STATE["CUSTOM_EVENTS_FEATURE_SET"] = False
+
+    # pylint: disable=protected-access
     @mock.patch(
         "azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics.get_statsbeat_live_metrics_feature_set"
     )
@@ -742,7 +789,6 @@ class TestStatsbeatMetrics(unittest.TestCase):
         mp = MeterProvider()
         ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
         endpoint = "https://westus-1.in.applicationinsights.azure.com/"
-        _STATSBEAT_STATE["LIVE_METRICS_FEATURE_SET"] = True
         metric = _StatsbeatMetrics(
             mp,
             ikey,
@@ -759,6 +805,33 @@ class TestStatsbeatMetrics(unittest.TestCase):
         for obs in observations:
             self.assertEqual(obs.value, 1)
             self.assertEqual(obs.attributes, attributes)
+
+    # pylint: disable=protected-access
+    def test_get_feature_metric_live_metrics_runtime(self):
+        mp = MeterProvider()
+        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+        _STATSBEAT_STATE["LIVE_METRICS_FEATURE_SET"] = False
+        metric = _StatsbeatMetrics(
+            mp,
+            ikey,
+            endpoint,
+            True,
+            0,
+            False,
+        )
+        self.assertTrue((metric._feature >> 4) & 1 == 0)
+        attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+        attributes.update(_StatsbeatMetrics._FEATURE_ATTRIBUTES)
+        self.assertEqual(attributes["feature"], 0)
+        self.assertEqual(attributes["type"], _FEATURE_TYPES.FEATURE)
+        _STATSBEAT_STATE["LIVE_METRICS_FEATURE_SET"] = True
+        observations = metric._get_feature_metric(options=None)
+        attributes["feature"] = _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"]
+        for obs in observations:
+            self.assertEqual(obs.value, 1)
+            self.assertEqual(obs.attributes, attributes)
+        self.assertTrue((_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] >> 4) & 1 == 1)
         _STATSBEAT_STATE["LIVE_METRICS_FEATURE_SET"] = False
 
     # pylint: disable=protected-access

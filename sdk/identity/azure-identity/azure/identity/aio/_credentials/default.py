@@ -89,7 +89,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
             :caption: Create a DefaultAzureCredential.
     """
 
-    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=too-many-statements, too-many-locals
+    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=too-many-statements
         if "tenant_id" in kwargs:
             raise TypeError("'tenant_id' is not supported in DefaultAzureCredential.")
 
@@ -221,7 +221,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         :keyword options: A dictionary of options for the token request. Unknown options will be ignored. Optional.
         :paramtype options: ~azure.core.credentials.TokenRequestOptions
 
-        :rtype: AccessTokenInfo
+        :rtype: ~azure.core.credentials.AccessTokenInfo
         :return: An AccessTokenInfo instance containing information about the token.
 
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The exception has a

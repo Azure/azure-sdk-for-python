@@ -54,8 +54,9 @@ class TestComputeEntity:
 
     def _test_loaded_compute(self, compute: AmlCompute):
         assert compute.name == "banchaml"
-        assert compute.ssh_settings.admin_username == "azureuser"
-        assert compute.identity.type == "user_assigned"
+        assert compute.type == "amlcompute"
+        assert compute.location == "eastus"
+        assert compute.description == "some_desc_aml"
 
     def test_compute_from_yaml(self):
         compute: AmlCompute = verify_entity_load_and_dump(
@@ -63,15 +64,19 @@ class TestComputeEntity:
             self._test_loaded_compute,
             "tests/test_configs/compute/compute-aml.yaml",
         )[0]
-        assert compute.location == "eastus"
+        assert compute.ssh_settings.admin_username == "azureuser"
+        assert compute.identity.type == "user_assigned"
 
         rest_intermediate = compute._to_rest_object()
         assert rest_intermediate.properties.compute_type == "AmlCompute"
         assert rest_intermediate.properties.properties.user_account_credentials.admin_user_name == "azureuser"
         assert rest_intermediate.properties.properties.enable_node_public_ip
+        assert rest_intermediate.properties.disable_local_auth is False
         assert rest_intermediate.location == compute.location
         assert rest_intermediate.tags is not None
         assert rest_intermediate.tags["test"] == "true"
+        assert rest_intermediate.properties.disable_local_auth is False
+        assert rest_intermediate.properties.properties.remote_login_port_public_access == "Enabled"
 
         serializer = Serializer({"ComputeResource": ComputeResource})
         body = serializer.body(rest_intermediate, "ComputeResource")
@@ -80,6 +85,50 @@ class TestComputeEntity:
             compute.identity.user_assigned_identities
         )
         assert body["location"] == compute.location
+
+    def test_aml_compute_from_yaml_with_disable_public_access(self):
+
+        compute: AmlCompute = verify_entity_load_and_dump(
+            load_compute,
+            self._test_loaded_compute,
+            "tests/test_configs/compute/compute-aml-disable-public-access.yaml",
+        )[0]
+
+        rest_intermediate = compute._to_rest_object()
+
+        assert rest_intermediate.properties.compute_type == "AmlCompute"
+        assert rest_intermediate.properties.properties.enable_node_public_ip
+        assert rest_intermediate.properties.disable_local_auth is True
+        assert rest_intermediate.location == compute.location
+        assert rest_intermediate.properties.properties.remote_login_port_public_access == "NotSpecified"
+
+    def test_aml_compute_from_yaml_with_creds_and_disable_public_access(self):
+        compute: AmlCompute = load_compute("tests/test_configs/compute/compute-aml-no-identity.yaml")
+        compute.ssh_public_access_enabled = False
+
+        rest_intermediate = compute._to_rest_object()
+
+        assert rest_intermediate.properties.compute_type == "AmlCompute"
+        assert rest_intermediate.properties.properties.enable_node_public_ip
+        assert rest_intermediate.properties.disable_local_auth is False
+        assert rest_intermediate.location == compute.location
+        assert rest_intermediate.properties.properties.remote_login_port_public_access == "Disabled"
+
+    def test_aml_compute_from_yaml_with_disable_public_access_when_no_sshSettings(self):
+
+        compute: AmlCompute = verify_entity_load_and_dump(
+            load_compute,
+            self._test_loaded_compute,
+            "tests/test_configs/compute/compute-aml-public-access-no-ssh.yaml",
+        )[0]
+
+        rest_intermediate = compute._to_rest_object()
+
+        assert rest_intermediate.properties.compute_type == "AmlCompute"
+        assert rest_intermediate.properties.properties.enable_node_public_ip
+        assert rest_intermediate.properties.disable_local_auth is True
+        assert rest_intermediate.properties.properties.remote_login_port_public_access == "Enabled"
+        assert rest_intermediate.location == compute.location
 
     def test_compute_vm_from_yaml(self):
         resource_id = "/subscriptions/13e50845-67bc-4ac5-94db-48d493a6d9e8/resourceGroups/myrg/providers/Microsoft.Compute/virtualMachines/myvm"
@@ -93,6 +142,7 @@ class TestComputeEntity:
         assert compute.ssh_settings.ssh_private_key_file == "tests/test_configs/compute/ssh_fake_key.txt"
 
         rest_intermediate = compute._to_rest_object()
+        assert rest_intermediate.properties.compute_type == "VirtualMachine"
         assert rest_intermediate.properties.resource_id == resource_id
         assert rest_intermediate.properties.properties.ssh_port == 8888
         assert rest_intermediate.properties.properties.administrator_account.password == "azureuserpassword"
@@ -150,6 +200,7 @@ class TestComputeEntity:
         compute_instance3: ComputeInstance = load_compute(
             source="tests/test_configs/compute/compute-ci-defaults-unit.yaml",
         )._to_rest_object()
+        assert compute_instance3.properties.compute_type == "ComputeInstance"
         assert compute_instance3.properties.properties.enable_sso is True
         assert compute_instance3.properties.properties.enable_root_access is True
         assert compute_instance3.properties.properties.enable_os_patching is False
@@ -258,14 +309,28 @@ class TestComputeEntity:
         )
         assert compute_from_rest.ssh_public_access_enabled == False
 
-    def test_compute_instance_sai_from_yaml(self):
+    def test_compute_instace_to_rest(self):
         compute: ComputeInstance = load_compute("tests/test_configs/compute/compute-ci.yaml")
+        compute.ssh_public_access_enabled = True
+
+        compute_rest = compute._to_rest_object()
+
+        assert compute_rest.location == compute.location
+        assert compute_rest.properties.properties.ssh_settings.ssh_public_access == "Enabled"
+        assert compute_rest.properties.properties.ssh_settings.admin_public_key == compute.ssh_settings.ssh_key_value
+        assert compute_rest.properties.description == compute.description
+        assert compute_rest.properties.compute_type == "ComputeInstance"
+        assert compute_rest.properties.disable_local_auth == False
+
+    def test_compute_instance_sai_from_yaml(self):
+        compute: ComputeInstance = load_compute("tests/test_configs/compute/compute-ci-id-sys-assigned.yaml")
         assert compute.name == "banchci"
         assert compute.type == "computeinstance"
         assert compute.identity.type == "system_assigned"
 
         compute_resource = compute._to_rest_object()
         assert compute_resource.identity.type == "SystemAssigned"
+        assert compute_resource.properties.disable_local_auth == True
 
         compute_from_rest = Compute._from_rest_object(compute_resource)
         assert compute_from_rest.type == "computeinstance"

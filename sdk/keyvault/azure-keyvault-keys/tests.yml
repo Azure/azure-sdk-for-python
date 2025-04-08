@@ -6,18 +6,10 @@ extends:
       ServiceDirectory: keyvault
       BuildTargetingString: "azure-keyvault-keys"
       JobName: azure_keyvault_keys
-      SupportedClouds: 'Public,UsGov,China'
       TestTimeoutInMinutes: 240
       CloudConfig:
         Public:
           Location: 'westus2'
-        UsGov:
-          MatrixFilters:
-            - ArmTemplateParameters=^(?!.*enableHsm.*true)
-        China:
-          Location: chinanorth3
-          MatrixFilters:
-            - ArmTemplateParameters=^(?!.*enableHsm.*true)
       # HSMs are expensive and restricted in number so we only test them on one platform.
       AdditionalMatrixConfigs:
         - Name: keyvault_hsm_matrix_addons

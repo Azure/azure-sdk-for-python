@@ -21,10 +21,10 @@ class TestWebSiteManagementGetUsagesInLocationOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_get_usages_in_location_list(self, resource_group):
         response = self.client.get_usages_in_location.list(
             location="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

@@ -20,7 +20,7 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_restore_point_collections_create_or_update(self, resource_group):
         response = self.client.restore_point_collections.create_or_update(
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
@@ -127,7 +127,13 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                             "securityProfile": {
                                 "encryptionAtHost": bool,
                                 "encryptionIdentity": {"userAssignedIdentityResourceId": "str"},
-                                "proxyAgentSettings": {"enabled": bool, "keyIncarnationId": 0, "mode": "str"},
+                                "proxyAgentSettings": {
+                                    "enabled": bool,
+                                    "imds": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
+                                    "keyIncarnationId": 0,
+                                    "mode": "str",
+                                    "wireServer": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
+                                },
                                 "securityType": "str",
                                 "uefiSettings": {"secureBootEnabled": bool, "vTpmEnabled": bool},
                             },
@@ -195,7 +201,7 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -203,7 +209,7 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update(self, resource_group):
+    def test_restore_point_collections_update(self, resource_group):
         response = self.client.restore_point_collections.update(
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
@@ -307,7 +313,13 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                             "securityProfile": {
                                 "encryptionAtHost": bool,
                                 "encryptionIdentity": {"userAssignedIdentityResourceId": "str"},
-                                "proxyAgentSettings": {"enabled": bool, "keyIncarnationId": 0, "mode": "str"},
+                                "proxyAgentSettings": {
+                                    "enabled": bool,
+                                    "imds": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
+                                    "keyIncarnationId": 0,
+                                    "mode": "str",
+                                    "wireServer": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
+                                },
                                 "securityType": "str",
                                 "uefiSettings": {"secureBootEnabled": bool, "vTpmEnabled": bool},
                             },
@@ -374,7 +386,7 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                 "source": {"id": "str", "location": "str"},
                 "tags": {"str": "str"},
             },
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -382,11 +394,11 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_restore_point_collections_begin_delete(self, resource_group):
         response = self.client.restore_point_collections.begin_delete(
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -394,11 +406,11 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_restore_point_collections_get(self, resource_group):
         response = self.client.restore_point_collections.get(
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -406,10 +418,10 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_restore_point_collections_list(self, resource_group):
         response = self.client.restore_point_collections.list(
             resource_group_name=resource_group.name,
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -417,9 +429,9 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_all(self, resource_group):
+    def test_restore_point_collections_list_all(self, resource_group):
         response = self.client.restore_point_collections.list_all(
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

@@ -88,7 +88,7 @@ class RenderOperations:
          uniform grid of square tiles at preset  zoom levels. Every tileset has a **tilesetId** to use
          when making requests. The **tilesetId** for tilesets created using `Azure Maps Creator
          <https://aka.ms/amcreator>`_ are generated through the  `Tileset Create API
-         <https://docs.microsoft.com/rest/api/maps-creator/tileset>`_. The ready-to-use tilesets
+         <https://learn.microsoft.com/rest/api/maps-creator/tileset>`_. The ready-to-use tilesets
          supplied  by Azure Maps are listed below. For example, microsoft.base. Known values are:
          "microsoft.base", "microsoft.base.labels", "microsoft.base.hybrid", "microsoft.terra.main",
          "microsoft.base.road", "microsoft.base.darkgrey", "microsoft.base.labels.road",
@@ -103,21 +103,21 @@ class RenderOperations:
         :keyword z: Zoom level for the desired tile.
 
          Please see `Zoom Levels and Tile Grid
-         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__ for
+         <https://learn.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__ for
          details. Required.
         :paramtype z: int
         :keyword x: X coordinate of the tile on zoom grid. Value must be in the range [0,
          2:code:`<sup>`zoom`</sup>` -1].
 
          Please see `Zoom Levels and Tile Grid
-         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__ for
+         <https://learn.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__ for
          details. Required.
         :paramtype x: int
         :keyword y: Y coordinate of the tile on zoom grid. Value must be in the range [0,
          2:code:`<sup>`zoom`</sup>` -1].
 
          Please see `Zoom Levels and Tile Grid
-         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__ for
+         <https://learn.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__ for
          details. Required.
         :paramtype y: int
         :keyword time_stamp: The desired date and time of the requested tile. This parameter must be
@@ -143,7 +143,7 @@ class RenderOperations:
          available for a specific field, default language is used.
 
          Please refer to `Supported Languages
-         <https://docs.microsoft.com/azure/azure-maps/supported-languages>`_ for details. Default value
+         <https://learn.microsoft.com/azure/azure-maps/supported-languages>`_ for details. Default value
          is None.
         :paramtype language: str
         :keyword localized_map_view: The View parameter (also called the "user region" parameter)
@@ -228,7 +228,7 @@ class RenderOperations:
          uniform grid of square tiles at preset  zoom levels. Every tileset has a **tilesetId** to use
          when making requests. The **tilesetId** for tilesets created using `Azure Maps Creator
          <https://aka.ms/amcreator>`_ are generated through the  `Tileset Create API
-         <https://docs.microsoft.com/rest/api/maps-creator/tileset>`_. The ready-to-use tilesets
+         <https://learn.microsoft.com/rest/api/maps-creator/tileset>`_. The ready-to-use tilesets
          supplied  by Azure Maps are listed below. For example, microsoft.base. Known values are:
          "microsoft.base", "microsoft.base.labels", "microsoft.base.hybrid", "microsoft.terra.main",
          "microsoft.base.road", "microsoft.base.darkgrey", "microsoft.base.labels.road",
@@ -330,7 +330,7 @@ class RenderOperations:
          uniform grid of square tiles at preset  zoom levels. Every tileset has a **tilesetId** to use
          when making requests. The **tilesetId** for tilesets created using `Azure Maps Creator
          <https://aka.ms/amcreator>`_ are generated through the  `Tileset Create API
-         <https://docs.microsoft.com/rest/api/maps-creator/tileset>`_. The ready-to-use tilesets
+         <https://learn.microsoft.com/rest/api/maps-creator/tileset>`_. The ready-to-use tilesets
          supplied  by Azure Maps are listed below. For example, microsoft.base. Known values are:
          "microsoft.base", "microsoft.base.labels", "microsoft.base.hybrid", "microsoft.terra.main",
          "microsoft.base.road", "microsoft.base.darkgrey", "microsoft.base.labels.road",
@@ -424,21 +424,21 @@ class RenderOperations:
         :keyword z: Zoom level for the desired tile.
 
          Please see `Zoom Levels and Tile Grid
-         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__ for
+         <https://learn.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__ for
          details. Required.
         :paramtype z: int
         :keyword x: X coordinate of the tile on zoom grid. Value must be in the range [0,
          2:code:`<sup>`zoom`</sup>` -1].
 
          Please see `Zoom Levels and Tile Grid
-         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__ for
+         <https://learn.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__ for
          details. Required.
         :paramtype x: int
         :keyword y: Y coordinate of the tile on zoom grid. Value must be in the range [0,
          2:code:`<sup>`zoom`</sup>` -1].
 
          Please see `Zoom Levels and Tile Grid
-         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__ for
+         <https://learn.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__ for
          details. Required.
         :paramtype y: int
         :keyword stateset_id: The stateset id. Required.
@@ -721,7 +721,7 @@ class RenderOperations:
         :keyword tileset_id: Map style to be returned. Possible values are microsoft.base.road,
          microsoft.base.darkgrey, and microsoft.imagery.  Default value is set to be
          microsoft.base.road. For more information, see `Render TilesetId
-         <https://learn.microsoft.com/en-us/rest/api/maps/render/get-map-tileset?view=rest-maps-2023-06-01&tabs=HTTP#tilesetid>`_.
+         <https://learn.microsoft.com/rest/api/maps/render/get-map-tileset?view=rest-maps-2023-06-01&tabs=HTTP#tilesetid>`_.
          Known values are: "microsoft.base", "microsoft.base.labels", "microsoft.base.hybrid",
          "microsoft.terra.main", "microsoft.base.road", "microsoft.base.darkgrey",
          "microsoft.base.labels.road", "microsoft.base.labels.darkgrey", "microsoft.base.hybrid.road",
@@ -736,14 +736,14 @@ class RenderOperations:
          result. Possible values are microsoft.traffic.relative.main and none. Default value is none,
          indicating no traffic flow returned. If traffic related tilesetId is provided, will return map
          image with corresponding traffic layer. For more information, see `Render TilesetId
-         <https://learn.microsoft.com/en-us/rest/api/maps/render/get-map-tileset?view=rest-maps-2023-06-01&tabs=HTTP#tilesetid>`_.
+         <https://learn.microsoft.com/rest/api/maps/render/get-map-tileset?view=rest-maps-2023-06-01&tabs=HTTP#tilesetid>`_.
          Known values are: "microsoft.traffic.relative.main" and "none". Default value is None.
         :paramtype traffic_layer: str
         :keyword zoom: Desired zoom level of the map. Support zoom value range from 0-20 (inclusive)
          for tilesetId being microsoft.base.road or microsoft.base.darkgrey. Support zoom value range
          from 0-19 (inclusive) for tilesetId being microsoft.imagery.
          For more information, see `Zoom Levels and Tile Grid
-         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__. Default
+         <https://learn.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__. Default
          value is None.
         :paramtype zoom: int
         :keyword center: Coordinates of the center point in double. Format: 'lon,lat'. Longitude range:
@@ -774,7 +774,7 @@ class RenderOperations:
          available for a specific field, default language is used.
 
          Please refer to `Supported Languages
-         <https://docs.microsoft.com/azure/azure-maps/supported-languages>`_ for details. Default value
+         <https://learn.microsoft.com/azure/azure-maps/supported-languages>`_ for details. Default value
          is None.
         :paramtype language: str
         :keyword localized_map_view: The View parameter (also called the "user region" parameter)
@@ -1257,21 +1257,21 @@ class RenderOperations:
         :keyword z: Zoom level for the desired tile.
 
          Please see `Zoom Levels and Tile Grid
-         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__ for
+         <https://learn.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__ for
          details. Required.
         :paramtype z: int
         :keyword x: X coordinate of the tile on zoom grid. Value must be in the range [0,
          2:code:`<sup>`zoom`</sup>` -1].
 
          Please see `Zoom Levels and Tile Grid
-         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__ for
+         <https://learn.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__ for
          details. Required.
         :paramtype x: int
         :keyword y: Y coordinate of the tile on zoom grid. Value must be in the range [0,
          2:code:`<sup>`zoom`</sup>` -1].
 
          Please see `Zoom Levels and Tile Grid
-         <https://docs.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__ for
+         <https://learn.microsoft.com/azure/location-based-services/zoom-levels-and-tile-grid>`__ for
          details. Required.
         :paramtype y: int
         :keyword include_text: Yes/no value to exclude textual data from response. Only images and

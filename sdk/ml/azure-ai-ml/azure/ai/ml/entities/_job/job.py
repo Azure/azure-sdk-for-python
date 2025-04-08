@@ -70,8 +70,6 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
     :type services: Optional[dict[str, ~azure.ai.ml.entities.JobService]]
     :param compute: Information about the compute resources associated with the job.
     :type compute: Optional[str]
-    :keyword kwargs: A dictionary of additional configuration parameters.
-    :paramtype kwargs: dict
     """
 
     def __init__(
@@ -191,7 +189,10 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         if self.studio_url:
             info.update(
                 [
-                    ("Details Page", make_link(self.studio_url, "Link to Azure Machine Learning studio")),
+                    (
+                        "Details Page",
+                        make_link(self.studio_url, "Link to Azure Machine Learning studio"),
+                    ),
                 ]
             )
         res: str = to_html(info)
@@ -286,7 +287,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
     @classmethod
     def _from_rest_object(  # pylint: disable=too-many-return-statements
         cls, obj: Union[JobBase, JobBase_2401, Run]
-    ) -> "Job":  # pylint: disable=too-many-return-statements
+    ) -> "Job":
         from azure.ai.ml.entities import PipelineJob
         from azure.ai.ml.entities._builders.command import Command
         from azure.ai.ml.entities._builders.spark import Spark
@@ -334,7 +335,10 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         except Exception as ex:
             error_message = json.dumps(obj.as_dict(), indent=2) if obj else None
             module_logger.info(
-                "Exception: %s.\n%s\nUnable to parse the job resource: %s.\n", ex, traceback.format_exc(), error_message
+                "Exception: %s.\n%s\nUnable to parse the job resource: %s.\n",
+                ex,
+                traceback.format_exc(),
+                error_message,
             )
             raise JobParsingError(
                 message=str(ex),

@@ -20,11 +20,11 @@ class TestNetworkManagementPublicIPPrefixesOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_public_ip_prefixes_begin_delete(self, resource_group):
         response = self.client.public_ip_prefixes.begin_delete(
             resource_group_name=resource_group.name,
             public_ip_prefix_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -32,11 +32,11 @@ class TestNetworkManagementPublicIPPrefixesOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_public_ip_prefixes_get(self, resource_group):
         response = self.client.public_ip_prefixes.get(
             resource_group_name=resource_group.name,
             public_ip_prefix_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -44,7 +44,7 @@ class TestNetworkManagementPublicIPPrefixesOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_public_ip_prefixes_begin_create_or_update(self, resource_group):
         response = self.client.public_ip_prefixes.begin_create_or_update(
             resource_group_name=resource_group.name,
             public_ip_prefix_name="str",
@@ -84,7 +84,7 @@ class TestNetworkManagementPublicIPPrefixesOperations(AzureMgmtRecordedTestCase)
                 "type": "str",
                 "zones": ["str"],
             },
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -92,12 +92,12 @@ class TestNetworkManagementPublicIPPrefixesOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update_tags(self, resource_group):
+    def test_public_ip_prefixes_update_tags(self, resource_group):
         response = self.client.public_ip_prefixes.update_tags(
             resource_group_name=resource_group.name,
             public_ip_prefix_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -105,9 +105,9 @@ class TestNetworkManagementPublicIPPrefixesOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_all(self, resource_group):
+    def test_public_ip_prefixes_list_all(self, resource_group):
         response = self.client.public_ip_prefixes.list_all(
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -115,10 +115,10 @@ class TestNetworkManagementPublicIPPrefixesOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_public_ip_prefixes_list(self, resource_group):
         response = self.client.public_ip_prefixes.list(
             resource_group_name=resource_group.name,
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

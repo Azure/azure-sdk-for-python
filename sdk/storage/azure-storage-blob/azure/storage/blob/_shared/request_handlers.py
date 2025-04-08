@@ -136,8 +136,7 @@ def validate_and_format_range_headers(
     return range_header, range_validation
 
 
-def add_metadata_headers(metadata=None):
-    # type: (Optional[Dict[str, str]]) -> Dict[str, str]
+def add_metadata_headers(metadata: Optional[Dict[str, str]] = None) -> Dict[str, str]:
     headers = {}
     if metadata:
         for key, value in metadata.items():
@@ -185,7 +184,7 @@ def serialize_batch_body(requests, batch_id):
     # final line of body MUST have \r\n at the end, or it will not be properly read by the service
     batch_body.append(newline_bytes)
 
-    return bytes().join(batch_body)
+    return b"".join(batch_body)
 
 
 def _get_batch_request_delimiter(batch_id, is_prepend_dashes=False, is_append_dashes=False):

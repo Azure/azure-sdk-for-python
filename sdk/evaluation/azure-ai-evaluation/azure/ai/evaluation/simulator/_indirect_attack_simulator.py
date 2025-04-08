@@ -189,6 +189,7 @@ class IndirectAttackSimulator(AdversarialSimulator):
                             api_call_delay_sec=api_call_delay_sec,
                             language=language,
                             semaphore=semaphore,
+                            scenario=scenario,
                         )
                     )
                 )

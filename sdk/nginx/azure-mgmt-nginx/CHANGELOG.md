@@ -1,5 +1,45 @@
 # Release History
 
+## 3.1.0b2 (2025-02-23)
+
+### Features Added
+
+  - Client `NginxManagementClient` added operation group `api_keys`
+  - Model `AnalysisResultData` added property `diagnostics`
+  - Model `NginxDeploymentProperties` added property `nginx_app_protect`
+  - Model `NginxDeploymentProperties` added property `dataplane_api_endpoint`
+  - Model `NginxDeploymentUpdateProperties` added property `network_profile`
+  - Model `NginxDeploymentUpdateProperties` added property `nginx_app_protect`
+  - Added enum `ActivationState`
+  - Added model `DiagnosticItem`
+  - Added model `ErrorResponse`
+  - Added enum `Level`
+  - Added model `NginxConfigurationProtectedFileRequest`
+  - Added model `NginxConfigurationProtectedFileResponse`
+  - Added model `NginxConfigurationRequest`
+  - Added model `NginxConfigurationRequestProperties`
+  - Added model `NginxConfigurationResponse`
+  - Added model `NginxConfigurationResponseProperties`
+  - Added model `NginxDeploymentApiKeyListResponse`
+  - Added model `NginxDeploymentApiKeyRequest`
+  - Added model `NginxDeploymentApiKeyRequestProperties`
+  - Added model `NginxDeploymentApiKeyResponse`
+  - Added model `NginxDeploymentApiKeyResponseProperties`
+  - Added model `NginxDeploymentPropertiesNginxAppProtect`
+  - Added model `NginxDeploymentUpdatePropertiesNginxAppProtect`
+  - Added model `WebApplicationFirewallComponentVersions`
+  - Added model `WebApplicationFirewallPackage`
+  - Added model `WebApplicationFirewallSettings`
+  - Added model `WebApplicationFirewallStatus`
+  - Added operation group `ApiKeysOperations`
+
+### Breaking Changes
+
+  - Model `NginxDeploymentProperties` deleted or renamed its instance variable `managed_resource_group`
+  - Deleted or renamed model `NginxConfiguration`
+  - Deleted or renamed model `NginxConfigurationProperties`
+  - Deleted or renamed model `ResourceProviderDefaultErrorResponse`
+
 ## 3.1.0b1 (2024-03-18)
 
 ### Features Added

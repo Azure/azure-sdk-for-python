@@ -20,11 +20,11 @@ class TestNetworkManagementVirtualRoutersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_virtual_routers_begin_delete(self, resource_group):
         response = self.client.virtual_routers.begin_delete(
             resource_group_name=resource_group.name,
             virtual_router_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -32,11 +32,11 @@ class TestNetworkManagementVirtualRoutersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_virtual_routers_get(self, resource_group):
         response = self.client.virtual_routers.get(
             resource_group_name=resource_group.name,
             virtual_router_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -44,7 +44,7 @@ class TestNetworkManagementVirtualRoutersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_virtual_routers_begin_create_or_update(self, resource_group):
         response = self.client.virtual_routers.begin_create_or_update(
             resource_group_name=resource_group.name,
             virtual_router_name="str",
@@ -62,7 +62,7 @@ class TestNetworkManagementVirtualRoutersOperations(AzureMgmtRecordedTestCase):
                 "virtualRouterAsn": 0,
                 "virtualRouterIps": ["str"],
             },
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -70,10 +70,10 @@ class TestNetworkManagementVirtualRoutersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
+    def test_virtual_routers_list_by_resource_group(self, resource_group):
         response = self.client.virtual_routers.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -81,9 +81,9 @@ class TestNetworkManagementVirtualRoutersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_virtual_routers_list(self, resource_group):
         response = self.client.virtual_routers.list(
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

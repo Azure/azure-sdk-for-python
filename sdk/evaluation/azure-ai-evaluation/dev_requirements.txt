@@ -6,4 +6,7 @@ pytest-asyncio
 pytest-cov
 pytest-mock
 pytest-xdist
--e ../azure-ai-evaluation[remote]
+azure-ai-inference>=1.0.0b4
+azure-ai-projects
+aiohttp
+-e ../azure-ai-evaluation

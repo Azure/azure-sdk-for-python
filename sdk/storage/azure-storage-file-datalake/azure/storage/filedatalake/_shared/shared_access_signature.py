@@ -7,7 +7,7 @@
 
 from datetime import date
 
-from .parser import _str, _to_utc_datetime
+from .parser import _to_utc_datetime
 from .constants import X_MS_VERSION
 from . import sign_string, url_quote
 
@@ -187,7 +187,7 @@ class _SharedAccessHelper(object):
 
     def _add_query(self, name, val):
         if val:
-            self.query_dict[name] = _str(val) if val is not None else None
+            self.query_dict[name] = str(val) if val is not None else None
 
     def add_encryption_scope(self, **kwargs):
         self._add_query(QueryStringConstants.SIGNED_ENCRYPTION_SCOPE, kwargs.pop('encryption_scope', None))

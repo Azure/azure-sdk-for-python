@@ -1,10 +1,9 @@
-# -------------------------------------------------------------------------  # pylint: disable=client-suffix-needed
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
 # TODO: Check types of kwargs (issue exists for this)
-# pylint: disable=too-many-lines
 import asyncio
 import logging
 import time
@@ -122,6 +121,7 @@ class AMQPClientAsync(AMQPClientSync):
     :keyword custom_endpoint_address: The custom endpoint address to use for establishing a connection to
      the Event Hubs service, allowing network requests to be routed through any application gateways or
      other paths needed for the host environment. Default is None.
+     Unless specified otherwise, default transport type is TransportType.AmqpOverWebsockets.
      If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
     :paramtype custom_endpoint_address: str
     :keyword connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
@@ -147,7 +147,7 @@ class AMQPClientAsync(AMQPClientSync):
                 elapsed_time = current_time - start_time
                 if elapsed_time >= self._keep_alive_interval:
                     await asyncio.shield(
-                        self._connection.listen(wait=self._socket_timeout, batch=self._link.total_link_credit)
+                        self._connection.listen(wait=self._socket_timeout, batch=self._link.current_link_credit)
                     )
                     start_time = current_time
                 await asyncio.sleep(1)
@@ -478,6 +478,7 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
     :keyword custom_endpoint_address: The custom endpoint address to use for establishing a connection to
      the Event Hubs service, allowing network requests to be routed through any application gateways or
      other paths needed for the host environment. Default is None.
+     Unless specified otherwise, default transport type is TransportType.AmqpOverWebsockets.
      If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
     :paramtype custom_endpoint_address: str
     :keyword connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
@@ -497,7 +498,6 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
         :return: Whether or not the client is ready to start sending messages.
         :rtype: bool
         """
-        # pylint: disable=protected-access
         if not self._link:
             self._link = self._session.create_sender_link(
                 target_address=self.target,
@@ -686,6 +686,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     :keyword custom_endpoint_address: The custom endpoint address to use for establishing a connection to
      the Event Hubs service, allowing network requests to be routed through any application gateways or
      other paths needed for the host environment. Default is None.
+     Unless specified otherwise, default transport type is TransportType.AmqpOverWebsockets.
      If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
     :paramtype custom_endpoint_address: str
     :keyword connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
@@ -705,7 +706,6 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         :return: Whether the client is ready to start receiving messages.
         :rtype: bool
         """
-        # pylint: disable=protected-access
         if not self._link:
             self._link = self._session.create_receiver_link(
                 source_address=self.source,
@@ -733,7 +733,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         :rtype: bool
         """
         try:
-            if self._link.total_link_credit <= 0:
+            if self._link.current_link_credit<= 0:
                 await self._link.flow(link_credit=self._link_credit)
             await self._connection.listen(wait=self._socket_timeout, **kwargs)
         except ValueError:

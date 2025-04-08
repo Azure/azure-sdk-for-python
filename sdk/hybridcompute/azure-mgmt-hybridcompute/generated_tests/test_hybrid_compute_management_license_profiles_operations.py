@@ -77,7 +77,7 @@ class TestHybridComputeManagementLicenseProfilesOperations(AzureMgmtRecordedTest
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-07-10",
+            api_version="2024-07-31-preview",
             license_profile_name="default",
         ).result()  # call '.result()' to poll until service return final result
 
@@ -98,7 +98,7 @@ class TestHybridComputeManagementLicenseProfilesOperations(AzureMgmtRecordedTest
                 "subscriptionStatus": "str",
                 "tags": {"str": "str"},
             },
-            api_version="2024-07-10",
+            api_version="2024-07-31-preview",
             license_profile_name="default",
         ).result()  # call '.result()' to poll until service return final result
 
@@ -111,7 +111,7 @@ class TestHybridComputeManagementLicenseProfilesOperations(AzureMgmtRecordedTest
         response = self.client.license_profiles.get(
             resource_group_name=resource_group.name,
             machine_name="str",
-            api_version="2024-07-10",
+            api_version="2024-07-31-preview",
             license_profile_name="default",
         )
 
@@ -124,7 +124,7 @@ class TestHybridComputeManagementLicenseProfilesOperations(AzureMgmtRecordedTest
         response = self.client.license_profiles.begin_delete(
             resource_group_name=resource_group.name,
             machine_name="str",
-            api_version="2024-07-10",
+            api_version="2024-07-31-preview",
             license_profile_name="default",
         ).result()  # call '.result()' to poll until service return final result
 
@@ -137,7 +137,7 @@ class TestHybridComputeManagementLicenseProfilesOperations(AzureMgmtRecordedTest
         response = self.client.license_profiles.list(
             resource_group_name=resource_group.name,
             machine_name="str",
-            api_version="2024-07-10",
+            api_version="2024-07-31-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

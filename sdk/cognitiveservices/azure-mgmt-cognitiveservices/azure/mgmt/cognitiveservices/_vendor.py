@@ -6,9 +6,7 @@
 # --------------------------------------------------------------------------
 
 from abc import ABC
-from typing import List, TYPE_CHECKING, cast
-
-from azure.core.pipeline.transport import HttpRequest
+from typing import TYPE_CHECKING
 
 from ._configuration import CognitiveServicesManagementClientConfiguration
 
@@ -19,27 +17,7 @@ if TYPE_CHECKING:
     from ._serialization import Deserializer, Serializer
 
 
-def _convert_request(request, files=None):
-    data = request.content if not files else None
-    request = HttpRequest(method=request.method, url=request.url, headers=request.headers, data=data)
-    if files:
-        request.set_formdata_body(files)
-    return request
-
-
-def _format_url_section(template, **kwargs):
-    components = template.split("/")
-    while components:
-        try:
-            return template.format(**kwargs)
-        except KeyError as key:
-            # Need the cast, as for some reasons "split" is typed as list[str | Any]
-            formatted_components = cast(List[str], template.split("/"))
-            components = [c for c in formatted_components if "{}".format(key.args[0]) not in c]
-            template = "/".join(components)
-
-
-class CognitiveServicesManagementClientMixinABC(ABC):
+class CognitiveServicesManagementClientMixinABC(ABC):  # pylint: disable=name-too-long
     """DO NOT use this class. It is for internal typing use only."""
 
     _client: "PipelineClient"

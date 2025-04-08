@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any, Awaitable, TYPE_CHECKING, Union
+from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
 from azure.core.credentials import AzureKeyCredential
@@ -19,13 +20,10 @@ from ._configuration import EventGridConsumerClientConfiguration, EventGridPubli
 from ._operations import EventGridConsumerClientOperationsMixin, EventGridPublisherClientOperationsMixin
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class EventGridPublisherClient(
-    EventGridPublisherClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword
+class EventGridPublisherClient(EventGridPublisherClientOperationsMixin):
     """EventGridPublisherClient.
 
     :param endpoint: The host name of the namespace, e.g.
@@ -99,7 +97,7 @@ class EventGridPublisherClient(
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "EventGridPublisherClient":
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 
@@ -107,9 +105,7 @@ class EventGridPublisherClient(
         await self._client.__aexit__(*exc_details)
 
 
-class EventGridConsumerClient(
-    EventGridConsumerClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword
+class EventGridConsumerClient(EventGridConsumerClientOperationsMixin):
     """EventGridConsumerClient.
 
     :param endpoint: The host name of the namespace, e.g.
@@ -183,7 +179,7 @@ class EventGridConsumerClient(
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "EventGridConsumerClient":
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 

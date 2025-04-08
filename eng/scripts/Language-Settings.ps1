@@ -40,35 +40,62 @@ function Get-python-AdditionalValidationPackagesFromPackageSet {
   # packages WITHIN that service. This is because the service level file changes are likely to
   # have an impact on the packages within that service.
   $changedServices = @()
-  foreach($file in $diffObj.ChangedFiles) {
-    $pathComponents = $file -split "/"
-    # handle changes only in sdk/<service>/<file>/<extension>
-    if ($pathComponents.Length -eq 3 -and $pathComponents[0] -eq "sdk") {
-      $changedServices += $pathComponents[1]
+  $targetedFiles = $diffObj.ChangedFiles
+  if ($diff.DeletedFiles) {
+    if (-not $targetedFiles) {
+      $targetedFiles = @()
     }
-
-    # handle any changes under sdk/<file>.<extension>
-    if ($pathComponents.Length -eq 2 -and $pathComponents[0] -eq "sdk") {
-      $changedServices += "template"
-    }
+    $targetedFiles += $diff.DeletedFiles
   }
-  foreach ($changedService in $changedServices) {
-    $additionalPackages = $AllPkgProps | Where-Object { $_.ServiceDirectory -eq $changedService }
 
-    foreach ($pkg in $additionalPackages) {
-      if ($uniqueResultSet -notcontains $pkg -and $LocatedPackages -notcontains $pkg) {
-        # notice the lack of setting IncludedForValidation to true. This is because these "changed services"
-        # are specifically where a file within the service, but not an individual package within that service has changed.
-        # we want this package to be fully validated
-        $uniqueResultSet += $pkg
+  # The targetedFiles needs to filter out anything in the ExcludePaths
+  # otherwise it'll end up processing things below that it shouldn't be.
+  foreach ($excludePath in $diffObj.ExcludePaths) {
+    $targetedFiles = $targetedFiles | Where-Object { -not $_.StartsWith($excludePath) }
+  }
+
+  if ($targetedFiles) {
+    foreach($file in $targetedFiles) {
+      $pathComponents = $file -split "/"
+      # handle changes only in sdk/<service>/<file>/<extension>
+      if ($pathComponents.Length -eq 3 -and $pathComponents[0] -eq "sdk") {
+        $changedServices += $pathComponents[1]
+      }
+
+      # handle any changes under sdk/<file>.<extension> as well as any
+      # changes to the root of the repository. Changes to the root of
+      # repository is the case where pathComponents.Lenght -eq 1
+      if (($pathComponents.Length -eq 2 -and $pathComponents[0] -eq "sdk") -or
+          ($pathComponents.Length -eq 1)) {
+        $changedServices += "template"
+      }
+    }
+
+    # dedupe the changed service list before processing
+    $changedServices = $changedServices | Get-Unique
+    foreach ($changedService in $changedServices) {
+      $additionalPackages = $AllPkgProps | Where-Object { $_.ServiceDirectory -eq $changedService }
+
+      foreach ($pkg in $additionalPackages) {
+        if ($uniqueResultSet -notcontains $pkg -and $LocatedPackages -notcontains $pkg) {
+          # notice the lack of setting IncludedForValidation to true. This is because these "changed services"
+          # are specifically where a file within the service, but not an individual package within that service has changed.
+          # we want this package to be fully validated
+          $uniqueResultSet += $pkg
+        }
       }
     }
   }
 
-  $toolChanged = $diffObj.ChangedFiles | Where-Object { $_.StartsWith("tool")}
-  $engChanged = $diffObj.ChangedFiles | Where-Object { $_.StartsWith("eng")}
-  $othersChanged = $diffObj.ChangedFiles | Where-Object { isOther($_) }
-  $changedServices = $changedServices | Get-Unique
+  $toolChanged = @()
+  $othersChanged = @()
+  $engChanged = @()
+
+  if ($targetedFiles) {
+    $toolChanged = $targetedFiles | Where-Object { $_.StartsWith("tool")}
+    $engChanged = $targetedFiles | Where-Object { $_.StartsWith("eng")}
+    $othersChanged = $targetedFiles | Where-Object { isOther($_) }
+  }
 
   if ($toolChanged) {
     $additionalPackages = @(

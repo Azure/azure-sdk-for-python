@@ -33,11 +33,12 @@ def main():
     response = client.group_quota_subscription_allocation_request.get(
         management_group_id="E7EC67B3-7657-4966-BFFC-41EFD36BAA09",
         group_quota_name="groupquota1",
+        resource_provider_name="Microsoft.Compute",
         allocation_id="AE000000-0000-0000-0000-00000000000A",
     )
     print(response)
 
 
-# x-ms-original-file: specification/quota/resource-manager/Microsoft.Quota/preview/2023-06-01-preview/examples/SubscriptionQuotaAllocationRequests/SubscriptionQuotaAllocationRequests_Get-Compute.json
+# x-ms-original-file: specification/quota/resource-manager/Microsoft.Quota/stable/2025-03-01/examples/SubscriptionQuotaAllocationRequests/SubscriptionQuotaAllocationRequests_Get-Compute.json
 if __name__ == "__main__":
     main()

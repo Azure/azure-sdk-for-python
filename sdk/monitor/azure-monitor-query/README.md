@@ -67,6 +67,12 @@ async_metrics_query_client = MetricsQueryClient(credential)
 async_metrics_client = MetricsClient("https://<regional endpoint>", credential)
 ```
 
+To use the asynchronous clients, you must also install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
+
+```sh
+pip install aiohttp
+```
+
 #### Configure client for Azure sovereign cloud
 
 By default, all clients are configured to use the Azure public cloud. To use a sovereign cloud, provide the correct `endpoint` argument when using `LogsQueryClient` or `MetricsQueryClient`. For `MetricsClient`, provide the correct `audience` argument instead. For example:

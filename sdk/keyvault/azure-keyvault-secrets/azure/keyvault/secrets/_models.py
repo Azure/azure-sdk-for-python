@@ -4,7 +4,7 @@
 # ------------------------------------
 from datetime import datetime
 
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Union
 
 from ._generated import models as _models
 from ._shared import parse_key_vault_id
@@ -26,7 +26,9 @@ class SecretProperties(object):
         return f"<SecretProperties [{self.id}]>"[:1024]
 
     @classmethod
-    def _from_secret_bundle(cls, secret_bundle: _models.SecretBundle) -> "SecretProperties":
+    def _from_secret_bundle(
+        cls, secret_bundle: Union[_models.DeletedSecretBundle, _models.SecretBundle]
+    ) -> "SecretProperties":
         return cls(
             secret_bundle.attributes,
             secret_bundle.id,
@@ -37,7 +39,7 @@ class SecretProperties(object):
         )
 
     @classmethod
-    def _from_secret_item(cls, secret_item: _models.SecretItem) -> "SecretProperties":
+    def _from_secret_item(cls, secret_item: Union[_models.DeletedSecretItem, _models.SecretItem]) -> "SecretProperties":
         return cls(
             secret_item.attributes,
             secret_item.id,

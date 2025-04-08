@@ -17,15 +17,14 @@ This guide walks you through how to investigate failures, common errors in the `
 ### Troubleshoot Remote Tracking Issues
 
 - Before running `evaluate()`, to ensure that you can enable logging and tracing to your Azure AI project, make sure you are first logged in by running `az login`.
-- Then install the following sub-package:
-
-    ```Shell
-    pip install azure-ai-evaluation[remote]
-    ```
 
 - Ensure that you assign the proper permissions to the storage account linked to your Azure AI Studio hub. This can be done with the following command. More information can be found [here](https://aka.ms/credentialleshub).
 
     ```Shell
+    # <mySubscriptionID>: Subscription ID of the Azure AI Studio hub's linked storage account (available in Azure AI hub resource view in Azure Portal).
+    # <myResourceGroupName>: Resource group of the Azure AI Studio hub's linked storage account.
+    # <user-id>: User object ID for role assignment (retrieve with "az ad user show" command).
+
     az role assignment create --role "Storage Blob Data Contributor" --scope /subscriptions/<mySubscriptionID>/resourceGroups/<myResourceGroupName> --assignee-principal-type User --assignee-object-id "<user-id>"
     ```
 
@@ -50,7 +49,7 @@ The Adversarial simulator does not support selecting individual harms, instead w
 ### Simulator is slow
 
 Identify the type of simulations being run (adversarial or non-adversarial).
-Adjust parameters such as `api_call_retry_sleep_sec`, `api_call_delay_sec`, and `concurrent_async_task`. Please note that rate limits to llm calls can be both tokens per minute and requests per minute. 
+Adjust parameters such as `api_call_retry_sleep_sec`, `api_call_delay_sec`, and `concurrent_async_task`. Please note that rate limits to llm calls can be both tokens per minute and requests per minute.
 
 ## Logging
 

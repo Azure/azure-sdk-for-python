@@ -26,12 +26,8 @@ class AzureCommunicationSMSService(object):
     :type endpoint: str
     """
 
-    def __init__(
-        self,
-        endpoint: str,
-        **kwargs: Any
-    ) -> None:
-        base_url = '{endpoint}'
+    def __init__(self, endpoint: str, **kwargs: Any) -> None:
+        base_url = "{endpoint}"
         self._config = AzureCommunicationSMSServiceConfiguration(endpoint, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
@@ -40,8 +36,7 @@ class AzureCommunicationSMSService(object):
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
-        self.sms = SmsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+        self.sms = SmsOperations(self._client, self._config, self._serialize, self._deserialize)
 
     async def _send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
         """Runs the network request through the client's chained policies.
@@ -53,7 +48,7 @@ class AzureCommunicationSMSService(object):
         :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
         """
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
         stream = kwargs.pop("stream", True)

@@ -58,8 +58,8 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
          default value may result in unsupported behavior.
         :paramtype api_version: str
         :keyword client_protocol: The type of client protocol. Case-insensitive. If not set, it's "Default". For Web
-         PubSub for Socket.IO, only the default value is supported. For Web PubSub, the valid values are
-         'Default' and 'MQTT'. Known values are: "Default" and "MQTT". Default value is "Default".
+         PubSub for Socket.IO, "SocketIO" type is supported. For Web PubSub, the valid values are
+         'Default', 'MQTT'. Known values are: "Default", "MQTT" and "SocketIO". Default value is "Default".
         :paramtype client_type: str
         :return: JSON object
         :rtype: JSON
@@ -87,7 +87,11 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
         client_endpoint = "ws" + endpoint[4:]
         hub = self._config.hub
-        path = "/clients/mqtt/hubs/" if client_protocol.lower() == "mqtt" else "/client/hubs/"
+        path = "/client/hubs/"
+        if client_protocol.lower() == "mqtt":
+            path = "/clients/mqtt/hubs/" 
+        elif client_protocol.lower() == "socketio":
+            path = "/clients/socketio/hubs/"
         client_url = client_endpoint + path + hub
         if isinstance(self._config.credential, AzureKeyCredential):
             token = get_token_by_key(

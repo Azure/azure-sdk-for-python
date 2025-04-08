@@ -188,7 +188,12 @@ def list_logs_in_datastore(
                 expiry=datetime.utcnow() + timedelta(minutes=30),
             )
 
-        log_dict[sub_name] = "{}/{}/{}?{}".format(ds_info["account_url"], ds_info["container_name"], item_name, token)
+        log_dict[sub_name] = "{}/{}/{}?{}".format(
+            ds_info["account_url"],
+            ds_info["container_name"],
+            item_name,
+            token,  # pylint: disable=possibly-used-before-assignment
+        )
     return log_dict
 
 

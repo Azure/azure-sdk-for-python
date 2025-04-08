@@ -1,9 +1,9 @@
 # Azure Maps Render Package client library for Python
 
 This package contains a Python SDK for Azure Maps Services for Render.
-Read more about Azure Maps Services [here](https://docs.microsoft.com/azure/azure-maps/)
+Read more about Azure Maps Services [here](https://learn.microsoft.com/azure/azure-maps/)
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/maps/azure-maps-render) | [API reference documentation](https://docs.microsoft.com/rest/api/maps/render) | [Product documentation](https://docs.microsoft.com/azure/azure-maps/)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/maps/azure-maps-render) | [API reference documentation](https://learn.microsoft.com/rest/api/maps/render) | [Product documentation](https://learn.microsoft.com/azure/azure-maps/)
 
 ## _Disclaimer_
 
@@ -14,10 +14,10 @@ _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For
 ### Prerequisites
 
 - Python 3.8 or later is required to use this package.
-- An [Azure subscription][azure_subscription] and an [Azure Maps account](https://docs.microsoft.com/azure/azure-maps/how-to-manage-account-keys).
+- An [Azure subscription][azure_subscription] and an [Azure Maps account](https://learn.microsoft.com/azure/azure-maps/how-to-manage-account-keys).
 - A deployed Maps Services resource. You can create the resource via [Azure Portal][azure_portal] or [Azure CLI][azure_cli].
 
-If you use Azure CLI, replace `<resource-group-name>` and `<account-name>` of your choice, and select a proper [pricing tier](https://docs.microsoft.com/azure/azure-maps/choose-pricing-tier) based on your needs via the `<sku-name>` parameter. Please refer to [this page](https://docs.microsoft.com/cli/azure/maps/account?view=azure-cli-latest#az_maps_account_create) for more details.
+If you use Azure CLI, replace `<resource-group-name>` and `<account-name>` of your choice, and select a proper [pricing tier](https://learn.microsoft.com/azure/azure-maps/choose-pricing-tier) based on your needs via the `<sku-name>` parameter. Please refer to [this page](https://learn.microsoft.com/cli/azure/maps/account?view=azure-cli-latest#az_maps_account_create) for more details.
 
 ```bash
 az maps account create --resource-group <resource-group-name> --account-name <account-name> --sku <sku-name>
@@ -33,7 +33,7 @@ pip install azure-maps-render
 
 ### Create and Authenticate the MapsRenderClient
 
-To create a client object to access the Azure Maps Render API, you will need a **credential** object. Azure Maps Render client also support two ways to authenticate.
+To create a client object to access the Azure Maps Render API, you will need a **credential** object. Azure Maps Render client also support three ways to authenticate.
 
 #### 1. Authenticate with a Subscription Key Credential
 
@@ -52,20 +52,84 @@ render_client = MapsRenderClient(
 )
 ```
 
-#### 2. Authenticate with an Azure Active Directory credential
+#### 2. Authenticate with a SAS Credential
 
-You can authenticate with [Azure Active Directory (AAD) token credential][maps_authentication_aad] using the [Azure Identity library][azure_identity].
-Authentication by using AAD requires some initial setup:
+Shared access signature (SAS) tokens are authentication tokens created using the JSON Web token (JWT) format and are cryptographically signed to prove authentication for an application to the Azure Maps REST API.
+
+To authenticate with a SAS token in Python, you'll need to generate one using the azure-mgmt-maps package. 
+
+We need to tell user to install `azure-mgmt-maps`: `pip install azure-mgmt-maps`
+
+Here's how you can generate the SAS token using the list_sas method from azure-mgmt-maps:
+
+```python
+from azure.identity import DefaultAzureCredential
+from azure.mgmt.maps import AzureMapsManagementClient
+
+"""
+# PREREQUISITES
+    pip install azure-identity
+    pip install azure-mgmt-maps
+# USAGE
+    python account_list_sas.py
+    Before run the sample, please set the values of the client ID, tenant ID and client secret
+    of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
+    AZURE_CLIENT_SECRET. For more info about how to get the value, please see:
+    https://learn.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal
+"""
+
+
+def main():
+    client = AzureMapsManagementClient(
+        credential=DefaultAzureCredential(),
+        subscription_id="your-subscription-id",
+    )
+
+    response = client.accounts.list_sas(
+        resource_group_name="myResourceGroup",
+        account_name="myMapsAccount",
+        maps_account_sas_parameters={
+            "expiry": "2017-05-24T11:42:03.1567373Z",
+            "maxRatePerSecond": 500,
+            "principalId": "your-principal-id",
+            "regions": ["eastus"],
+            "signingKey": "primaryKey",
+            "start": "2017-05-24T10:42:03.1567373Z",
+        },
+    )
+    print(response)
+```
+
+Once the SAS token is created, set the value of the token as environment variable: `AZURE_SAS_TOKEN`.
+Then pass an `AZURE_SAS_TOKEN` as the `credential` parameter into an instance of AzureSasCredential.
+
+```python
+import os
+
+from azure.core.credentials import AzureSASCredential
+from azure.maps.render import MapsRenderClient
+
+credential = AzureSASCredential(os.environ.get("AZURE_SAS_TOKEN"))
+
+render_client = MapsRenderClient(
+    credential=credential,
+)
+```
+
+#### 3. Authenticate with an Microsoft Entra ID credential
+
+You can authenticate with [Microsoft Entra ID token credential][maps_authentication_microsoft_entra_id] using the [Azure Identity library][azure_identity].
+Authentication by using Microsoft Entra ID requires some initial setup:
 
 - Install [azure-identity][azure-key-credential]
-- Register a [new AAD application][register_aad_app]
-- Grant access to Azure Maps by assigning the suitable role to your service principal. Please refer to the [Manage authentication page][manage_aad_auth_page].
+- Register a [new Microsoft Entra ID application][register_microsoft_entra_id_app]
+- Grant access to Azure Maps by assigning the suitable role to your service principal. Please refer to the [Manage authentication page][manage_microsoft_entra_id_auth_page].
 
 After setup, you can choose which type of [credential][azure-key-credential] from `azure.identity` to use.
 As an example, [DefaultAzureCredential][default_azure_credential]
 can be used to authenticate the client:
 
-Next, set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
+Next, set the values of the client ID, tenant ID, and client secret of the Microsoft Entra ID application as environment variables:
 `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`
 
 You will also need to specify the Azure Maps resource you intend to use by specifying the `clientId` in the client options. The Azure Maps resource client id can be found in the Authentication sections in the Azure Maps resource. Please refer to the [documentation][how_to_manage_authentication] on how to find it.
@@ -260,7 +324,7 @@ Further detail please refer to [Samples Introduction](https://github.com/Azure/a
 
 ### Additional documentation
 
-For more extensive documentation on Azure Maps Render, see the [Azure Maps Render documentation](https://docs.microsoft.com/rest/api/maps/render) on docs.microsoft.com.
+For more extensive documentation on Azure Maps Render, see the [Azure Maps Render documentation](https://learn.microsoft.com/rest/api/maps/render) on learn.microsoft.com.
 
 ## Contributing
 
@@ -274,11 +338,11 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 [azure_subscription]: https://azure.microsoft.com/free/
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity
 [azure_portal]: https://portal.azure.com
-[azure_cli]: https://docs.microsoft.com/cli/azure
+[azure_cli]: https://learn.microsoft.com/cli/azure
 [azure-key-credential]: https://aka.ms/azsdk/python/core/azurekeycredential
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
-[register_aad_app]: https://docs.microsoft.com/powershell/module/Az.Resources/New-AzADApplication?view=azps-8.0.0
-[maps_authentication_aad]: https://docs.microsoft.com/azure/azure-maps/how-to-manage-authentication
+[register_microsoft_entra_id_app]: https://learn.microsoft.com/powershell/module/Az.Resources/New-AzADApplication?view=azps-8.0.0
+[maps_authentication_microsoft_entra_id]: https://learn.microsoft.com/azure/azure-maps/how-to-manage-authentication
 [create_new_application_registration]: https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/applicationsListBlade/quickStartType/AspNetWebAppQuickstartPage/sourceType/docs
-[manage_aad_auth_page]: https://docs.microsoft.com/azure/azure-maps/how-to-manage-authentication
-[how_to_manage_authentication]: https://docs.microsoft.com/azure/azure-maps/how-to-manage-authentication#view-authentication-details
+[manage_microsoft_entra_id_auth_page]: https://learn.microsoft.com/azure/azure-maps/how-to-manage-authentication
+[how_to_manage_authentication]: https://learn.microsoft.com/azure/azure-maps/how-to-manage-authentication#view-authentication-details

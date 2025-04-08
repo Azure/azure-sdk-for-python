@@ -234,6 +234,7 @@ class UserAgentPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
 
     def add_user_agent(self, value: str) -> None:
         """Add value to current user agent with a space.
+
         :param str value: value to add to user agent.
         """
         self._user_agent = "{} {}".format(self._user_agent, value)
@@ -441,6 +442,7 @@ class HttpLoggingPolicy(
         self, request: PipelineRequest[HTTPRequestType]
     ) -> None:
         """Logs HTTP method, url and headers.
+
         :param request: The PipelineRequest object.
         :type request: ~azure.core.pipeline.PipelineRequest
         """

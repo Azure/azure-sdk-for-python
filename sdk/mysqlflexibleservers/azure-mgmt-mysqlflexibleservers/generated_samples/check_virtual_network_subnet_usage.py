@@ -39,6 +39,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/ServiceOperations/stable/2023-12-30/examples/CheckVirtualNetworkSubnetUsage.json
+# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/ServiceOperations/preview/2024-10-01-preview/examples/CheckVirtualNetworkSubnetUsage.json
 if __name__ == "__main__":
     main()

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, Callable, Dict, IO, Iterable, Iterator, Optional, Type, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterable, Iterator, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -36,7 +36,7 @@ from ..._serialization import Serializer
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -1280,7 +1280,7 @@ class DisksOperations:
     def _create_or_update_initial(
         self, resource_group_name: str, disk_name: str, disk: Union[_models.Disk, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1464,7 +1464,7 @@ class DisksOperations:
     def _update_initial(
         self, resource_group_name: str, disk_name: str, disk: Union[_models.DiskUpdate, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1659,7 +1659,7 @@ class DisksOperations:
         :rtype: ~azure.mgmt.compute.v2023_04_02.models.Disk
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1702,7 +1702,7 @@ class DisksOperations:
         return deserialized  # type: ignore
 
     def _delete_initial(self, resource_group_name: str, disk_name: str, **kwargs: Any) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1819,7 +1819,7 @@ class DisksOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-04-02"))
         cls: ClsType[_models.DiskList] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1894,7 +1894,7 @@ class DisksOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-04-02"))
         cls: ClsType[_models.DiskList] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1961,7 +1961,7 @@ class DisksOperations:
         grant_access_data: Union[_models.GrantAccessData, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2151,7 +2151,7 @@ class DisksOperations:
         )
 
     def _revoke_access_initial(self, resource_group_name: str, disk_name: str, **kwargs: Any) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2282,7 +2282,7 @@ class DiskAccessesOperations:
         disk_access: Union[_models.DiskAccess, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2476,7 +2476,7 @@ class DiskAccessesOperations:
         disk_access: Union[_models.DiskAccessUpdate, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2677,7 +2677,7 @@ class DiskAccessesOperations:
         :rtype: ~azure.mgmt.compute.v2023_04_02.models.DiskAccess
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2720,7 +2720,7 @@ class DiskAccessesOperations:
         return deserialized  # type: ignore
 
     def _delete_initial(self, resource_group_name: str, disk_access_name: str, **kwargs: Any) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2837,7 +2837,7 @@ class DiskAccessesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-04-02"))
         cls: ClsType[_models.DiskAccessList] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2912,7 +2912,7 @@ class DiskAccessesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-04-02"))
         cls: ClsType[_models.DiskAccessList] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2988,7 +2988,7 @@ class DiskAccessesOperations:
         :rtype: ~azure.mgmt.compute.v2023_04_02.models.PrivateLinkResourceListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3038,7 +3038,7 @@ class DiskAccessesOperations:
         private_endpoint_connection: Union[_models.PrivateEndpointConnection, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3266,7 +3266,7 @@ class DiskAccessesOperations:
         :rtype: ~azure.mgmt.compute.v2023_04_02.models.PrivateEndpointConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3312,7 +3312,7 @@ class DiskAccessesOperations:
     def _delete_a_private_endpoint_connection_initial(  # pylint: disable=name-too-long
         self, resource_group_name: str, disk_access_name: str, private_endpoint_connection_name: str, **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3443,7 +3443,7 @@ class DiskAccessesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-04-02"))
         cls: ClsType[_models.PrivateEndpointConnectionListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3533,7 +3533,7 @@ class DiskEncryptionSetsOperations:
         disk_encryption_set: Union[_models.DiskEncryptionSet, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3731,7 +3731,7 @@ class DiskEncryptionSetsOperations:
         disk_encryption_set: Union[_models.DiskEncryptionSetUpdate, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3937,7 +3937,7 @@ class DiskEncryptionSetsOperations:
         :rtype: ~azure.mgmt.compute.v2023_04_02.models.DiskEncryptionSet
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3982,7 +3982,7 @@ class DiskEncryptionSetsOperations:
     def _delete_initial(
         self, resource_group_name: str, disk_encryption_set_name: str, **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4099,7 +4099,7 @@ class DiskEncryptionSetsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-04-02"))
         cls: ClsType[_models.DiskEncryptionSetList] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4174,7 +4174,7 @@ class DiskEncryptionSetsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-04-02"))
         cls: ClsType[_models.DiskEncryptionSetList] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4256,7 +4256,7 @@ class DiskEncryptionSetsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-04-02"))
         cls: ClsType[_models.ResourceUriList] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4364,7 +4364,7 @@ class DiskRestorePointOperations:
         :rtype: ~azure.mgmt.compute.v2023_04_02.models.DiskRestorePoint
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4432,7 +4432,7 @@ class DiskRestorePointOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-04-02"))
         cls: ClsType[_models.DiskRestorePointList] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4504,7 +4504,7 @@ class DiskRestorePointOperations:
         grant_access_data: Union[_models.GrantAccessData, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4723,7 +4723,7 @@ class DiskRestorePointOperations:
         disk_restore_point_name: str,
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4865,7 +4865,7 @@ class SnapshotsOperations:
     def _create_or_update_initial(
         self, resource_group_name: str, snapshot_name: str, snapshot: Union[_models.Snapshot, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5053,7 +5053,7 @@ class SnapshotsOperations:
         snapshot: Union[_models.SnapshotUpdate, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5254,7 +5254,7 @@ class SnapshotsOperations:
         :rtype: ~azure.mgmt.compute.v2023_04_02.models.Snapshot
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5297,7 +5297,7 @@ class SnapshotsOperations:
         return deserialized  # type: ignore
 
     def _delete_initial(self, resource_group_name: str, snapshot_name: str, **kwargs: Any) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5414,7 +5414,7 @@ class SnapshotsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-04-02"))
         cls: ClsType[_models.SnapshotList] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5489,7 +5489,7 @@ class SnapshotsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-04-02"))
         cls: ClsType[_models.SnapshotList] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5556,7 +5556,7 @@ class SnapshotsOperations:
         grant_access_data: Union[_models.GrantAccessData, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5746,7 +5746,7 @@ class SnapshotsOperations:
         )
 
     def _revoke_access_initial(self, resource_group_name: str, snapshot_name: str, **kwargs: Any) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

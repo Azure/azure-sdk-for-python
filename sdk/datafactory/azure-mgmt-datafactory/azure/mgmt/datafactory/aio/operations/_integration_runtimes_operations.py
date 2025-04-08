@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, Type, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -55,7 +55,7 @@ from ...operations._integration_runtimes_operations import (
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -101,7 +101,7 @@ class IntegrationRuntimesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.IntegrationRuntimeListResponse] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -261,7 +261,7 @@ class IntegrationRuntimesOperations:
         :rtype: ~azure.mgmt.datafactory.models.IntegrationRuntimeResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -342,7 +342,7 @@ class IntegrationRuntimesOperations:
         :rtype: ~azure.mgmt.datafactory.models.IntegrationRuntimeResource or None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -474,7 +474,7 @@ class IntegrationRuntimesOperations:
         :rtype: ~azure.mgmt.datafactory.models.IntegrationRuntimeResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -530,7 +530,7 @@ class IntegrationRuntimesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete(  # pylint: disable=inconsistent-return-statements
+    async def delete(
         self, resource_group_name: str, factory_name: str, integration_runtime_name: str, **kwargs: Any
     ) -> None:
         """Deletes an integration runtime.
@@ -545,7 +545,7 @@ class IntegrationRuntimesOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -600,7 +600,7 @@ class IntegrationRuntimesOperations:
         :rtype: ~azure.mgmt.datafactory.models.IntegrationRuntimeStatusResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -661,7 +661,7 @@ class IntegrationRuntimesOperations:
          ~azure.mgmt.datafactory.models.IntegrationRuntimeOutboundNetworkDependenciesEndpointsResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -723,7 +723,7 @@ class IntegrationRuntimesOperations:
         :rtype: ~azure.mgmt.datafactory.models.IntegrationRuntimeConnectionInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -853,7 +853,7 @@ class IntegrationRuntimesOperations:
         :rtype: ~azure.mgmt.datafactory.models.IntegrationRuntimeAuthKeys
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -924,7 +924,7 @@ class IntegrationRuntimesOperations:
         :rtype: ~azure.mgmt.datafactory.models.IntegrationRuntimeAuthKeys
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -970,7 +970,7 @@ class IntegrationRuntimesOperations:
     async def _start_initial(
         self, resource_group_name: str, factory_name: str, integration_runtime_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1084,7 +1084,7 @@ class IntegrationRuntimesOperations:
     async def _stop_initial(
         self, resource_group_name: str, factory_name: str, integration_runtime_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1190,7 +1190,7 @@ class IntegrationRuntimesOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace_async
-    async def sync_credentials(  # pylint: disable=inconsistent-return-statements
+    async def sync_credentials(
         self, resource_group_name: str, factory_name: str, integration_runtime_name: str, **kwargs: Any
     ) -> None:
         """Force the integration runtime to synchronize credentials across integration runtime nodes, and
@@ -1208,7 +1208,7 @@ class IntegrationRuntimesOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1264,7 +1264,7 @@ class IntegrationRuntimesOperations:
         :rtype: ~azure.mgmt.datafactory.models.IntegrationRuntimeMonitoringData
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1308,7 +1308,7 @@ class IntegrationRuntimesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def upgrade(  # pylint: disable=inconsistent-return-statements
+    async def upgrade(
         self, resource_group_name: str, factory_name: str, integration_runtime_name: str, **kwargs: Any
     ) -> None:
         """Upgrade self-hosted integration runtime to latest version if availability.
@@ -1323,7 +1323,7 @@ class IntegrationRuntimesOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1363,7 +1363,7 @@ class IntegrationRuntimesOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def remove_links(  # pylint: disable=inconsistent-return-statements
+    async def remove_links(
         self,
         resource_group_name: str,
         factory_name: str,
@@ -1395,7 +1395,7 @@ class IntegrationRuntimesOperations:
         """
 
     @overload
-    async def remove_links(  # pylint: disable=inconsistent-return-statements
+    async def remove_links(
         self,
         resource_group_name: str,
         factory_name: str,
@@ -1426,7 +1426,7 @@ class IntegrationRuntimesOperations:
         """
 
     @distributed_trace_async
-    async def remove_links(  # pylint: disable=inconsistent-return-statements
+    async def remove_links(
         self,
         resource_group_name: str,
         factory_name: str,
@@ -1451,7 +1451,7 @@ class IntegrationRuntimesOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1588,7 +1588,7 @@ class IntegrationRuntimesOperations:
         :rtype: ~azure.mgmt.datafactory.models.IntegrationRuntimeStatusResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

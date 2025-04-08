@@ -473,12 +473,12 @@ class AdditionalIncludes:
                 )
             else:
                 raise ValueError(f"Unable to find additional include {additional_include_local_path}.")
+        try:
+            yield tmp_folder_path.absolute()
 
-        yield tmp_folder_path.absolute()
-
-        # clean up tmp folder as it can be very disk space consuming
-        shutil.rmtree(tmp_folder_path, ignore_errors=True)
-        return
+        finally:
+            # clean up tmp folder as it can be very disk space consuming
+            shutil.rmtree(tmp_folder_path, ignore_errors=True)
 
 
 class AdditionalIncludesMixin(ComponentCodeMixin):

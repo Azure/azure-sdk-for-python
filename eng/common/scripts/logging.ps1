@@ -10,12 +10,32 @@ function LogInfo {
   Write-Host "$args"
 }
 
+function LogNotice {
+  if (Test-SupportsGitHubLogging) {
+    Write-Host ("::notice::$args" -replace "`n", "%0D%0A")
+  }
+  else {
+    # No equivalent for DevOps
+    Write-Host "[Notice] $args"
+  }
+}
+
+function LogNoticeForFile($file, $noticeString) {
+  if (Test-SupportsGitHubLogging) {
+    Write-Host ("::notice file=$file,line=1,col=1::$noticeString" -replace "`n", "%0D%0A")
+  }
+  else {
+    # No equivalent for DevOps
+    Write-Host "[Notice in file $file] $noticeString"
+  }
+}
+
 function LogWarning {
   if (Test-SupportsDevOpsLogging) {
     Write-Host ("##vso[task.LogIssue type=warning;]$args" -replace "`n", "%0D%0A")
   }
   elseif (Test-SupportsGitHubLogging) {
-    Write-Warning ("::warning::$args" -replace "`n", "%0D%0A")
+    Write-Host ("::warning::$args" -replace "`n", "%0D%0A")
   }
   else {
     Write-Warning "$args"
@@ -36,7 +56,7 @@ function LogErrorForFile($file, $errorString)
     Write-Host ("##vso[task.logissue type=error;sourcepath=$file;linenumber=1;columnnumber=1;]$errorString" -replace "`n", "%0D%0A")
   }
   elseif (Test-SupportsGitHubLogging) {
-    Write-Error ("::error file=$file,line=1,col=1::$errorString" -replace "`n", "%0D%0A")
+    Write-Host ("::error file=$file,line=1,col=1::$errorString" -replace "`n", "%0D%0A")
   }
   else {
     Write-Error "[Error in file $file]$errorString"
@@ -48,7 +68,7 @@ function LogError {
     Write-Host ("##vso[task.LogIssue type=error;]$args" -replace "`n", "%0D%0A")
   }
   elseif (Test-SupportsGitHubLogging) {
-    Write-Error ("::error::$args" -replace "`n", "%0D%0A")
+    Write-Host ("::error::$args" -replace "`n", "%0D%0A")
   }
   else {
     Write-Error "$args"
@@ -60,7 +80,7 @@ function LogDebug {
     Write-Host "[debug]$args"
   }
   elseif (Test-SupportsGitHubLogging) {
-    Write-Debug "::debug::$args"
+    Write-Host "::debug::$args"
   }
   else {
     Write-Debug "$args"

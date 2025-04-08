@@ -21,7 +21,7 @@ class TestResourceManagementProvidersOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_unregister(self, resource_group):
+    async def test_providers_unregister(self, resource_group):
         response = await self.client.providers.unregister(
             resource_provider_namespace="str",
             api_version="2022-09-01",
@@ -32,7 +32,7 @@ class TestResourceManagementProvidersOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_register_at_management_group_scope(self, resource_group):
+    async def test_providers_register_at_management_group_scope(self, resource_group):
         response = await self.client.providers.register_at_management_group_scope(
             resource_provider_namespace="str",
             group_id="str",
@@ -44,7 +44,7 @@ class TestResourceManagementProvidersOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_provider_permissions(self, resource_group):
+    async def test_providers_provider_permissions(self, resource_group):
         response = await self.client.providers.provider_permissions(
             resource_provider_namespace="str",
             api_version="2022-09-01",
@@ -55,7 +55,7 @@ class TestResourceManagementProvidersOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_register(self, resource_group):
+    async def test_providers_register(self, resource_group):
         response = await self.client.providers.register(
             resource_provider_namespace="str",
             api_version="2022-09-01",
@@ -66,7 +66,7 @@ class TestResourceManagementProvidersOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_providers_list(self, resource_group):
         response = self.client.providers.list(
             api_version="2022-09-01",
         )
@@ -76,7 +76,7 @@ class TestResourceManagementProvidersOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_at_tenant_scope(self, resource_group):
+    async def test_providers_list_at_tenant_scope(self, resource_group):
         response = self.client.providers.list_at_tenant_scope(
             api_version="2022-09-01",
         )
@@ -86,7 +86,7 @@ class TestResourceManagementProvidersOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_providers_get(self, resource_group):
         response = await self.client.providers.get(
             resource_provider_namespace="str",
             api_version="2022-09-01",
@@ -97,7 +97,7 @@ class TestResourceManagementProvidersOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_at_tenant_scope(self, resource_group):
+    async def test_providers_get_at_tenant_scope(self, resource_group):
         response = await self.client.providers.get_at_tenant_scope(
             resource_provider_namespace="str",
             api_version="2022-09-01",

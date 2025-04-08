@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +7,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, Callable, Dict, IO, Iterable, Iterator, Optional, Type, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterable, Iterator, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -36,7 +35,7 @@ from .._serialization import Serializer
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -282,7 +281,7 @@ class DataFlowDebugSessionOperations:
         request: Union[_models.CreateDataFlowDebugSessionRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -492,7 +491,7 @@ class DataFlowDebugSessionOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.QueryDataFlowDebugSessionsResponse] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -627,7 +626,7 @@ class DataFlowDebugSessionOperations:
         :rtype: ~azure.mgmt.datafactory.models.AddDataFlowToDebugSessionResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -682,7 +681,7 @@ class DataFlowDebugSessionOperations:
         return deserialized  # type: ignore
 
     @overload
-    def delete(  # pylint: disable=inconsistent-return-statements
+    def delete(
         self,
         resource_group_name: str,
         factory_name: str,
@@ -708,7 +707,7 @@ class DataFlowDebugSessionOperations:
         """
 
     @overload
-    def delete(  # pylint: disable=inconsistent-return-statements
+    def delete(
         self,
         resource_group_name: str,
         factory_name: str,
@@ -754,7 +753,7 @@ class DataFlowDebugSessionOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -811,7 +810,7 @@ class DataFlowDebugSessionOperations:
         request: Union[_models.DataFlowDebugCommandRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

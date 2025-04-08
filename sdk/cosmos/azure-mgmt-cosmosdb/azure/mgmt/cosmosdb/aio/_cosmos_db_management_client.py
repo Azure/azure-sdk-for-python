@@ -67,13 +67,14 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class CosmosDBManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
-    """Azure Cosmos DB Database Service Resource Provider REST API.
+class CosmosDBManagementClient:  # pylint: disable=too-many-instance-attributes
+    """Azure Cosmos DB Chaos Fault REST API.
 
+    :ivar chaos_fault: ChaosFaultOperations operations
+    :vartype chaos_fault: azure.mgmt.cosmosdb.aio.operations.ChaosFaultOperations
     :ivar database_accounts: DatabaseAccountsOperations operations
     :vartype database_accounts: azure.mgmt.cosmosdb.aio.operations.DatabaseAccountsOperations
     :ivar operations: Operations operations
@@ -185,15 +186,13 @@ class CosmosDBManagementClient:  # pylint: disable=client-accepts-api-version-ke
     :ivar throughput_pool_account: ThroughputPoolAccountOperations operations
     :vartype throughput_pool_account:
      azure.mgmt.cosmosdb.aio.operations.ThroughputPoolAccountOperations
-    :ivar chaos_fault: ChaosFaultOperations operations
-    :vartype chaos_fault: azure.mgmt.cosmosdb.aio.operations.ChaosFaultOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The ID of the target subscription. Required.
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2024-09-01-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2024-12-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -234,6 +233,7 @@ class CosmosDBManagementClient:  # pylint: disable=client-accepts-api-version-ke
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
+        self.chaos_fault = ChaosFaultOperations(self._client, self._config, self._serialize, self._deserialize)
         self.database_accounts = DatabaseAccountsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -346,7 +346,6 @@ class CosmosDBManagementClient:  # pylint: disable=client-accepts-api-version-ke
         self.throughput_pool_account = ThroughputPoolAccountOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.chaos_fault = ChaosFaultOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

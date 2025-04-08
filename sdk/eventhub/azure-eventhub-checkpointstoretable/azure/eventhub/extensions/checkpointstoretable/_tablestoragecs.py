@@ -302,9 +302,9 @@ class TableCheckpointStore(CheckpointStore):
                 "fully_qualified_namespace": fully_qualified_namespace,
                 "eventhub_name": eventhub_name,
                 "consumer_group": consumer_group,
-                "partition_id": entity[u"RowKey"],
-                "sequence_number": int(entity[u"sequencenumber"]),
-                "offset": str(entity[u"offset"]),
+                "partition_id": entity["RowKey"],
+                "sequence_number": int(entity["sequencenumber"]),
+                "offset": str(entity["offset"]),
             }
             checkpoints_list.append(checkpoint)
         return checkpoints_list

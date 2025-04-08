@@ -1,5 +1,17 @@
 # Release History
 
+## 2.1.0b2 (2024-12-16)
+
+### Features Added
+
+  - Model `ManagedCluster` added property `allocated_outbound_ports`
+  - Operation group `NodeTypesOperations` added method `begin_update`
+
+### Breaking Changes
+
+  - Model `ManagedCluster` deleted or renamed its instance variable `custom_fqdn`
+  - Deleted or renamed method `NodeTypesOperations.update`
+
 ## 2.1.0b1 (2024-10-21)
 
 ### Features Added

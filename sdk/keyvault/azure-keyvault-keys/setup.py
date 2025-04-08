@@ -45,7 +45,7 @@ setup(
     url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys",
     keywords="azure, azure sdk",
     classifiers=[
-        "Development Status :: 5 - Production/Stable",
+        "Development Status :: 4 - Beta",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
@@ -71,6 +71,6 @@ setup(
         "azure-core>=1.31.0",
         "cryptography>=2.1.4",
         "isodate>=0.6.1",
-        "typing-extensions>=4.0.1",
+        "typing-extensions>=4.6.0",
     ],
 )

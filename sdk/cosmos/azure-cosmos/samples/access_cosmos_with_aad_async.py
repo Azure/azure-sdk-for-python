@@ -14,7 +14,7 @@ import asyncio
 # Prerequisites -
 #
 # 1. An Azure Cosmos account -
-#    https://docs.microsoft.com/azure/cosmos-db/create-sql-api-python#create-a-database-account
+#    https://learn.microsoft.com/azure/cosmos-db/create-sql-api-python#create-a-database-account
 #
 # 2. Microsoft Azure Cosmos
 #    pip install azure-cosmos>=4.3.0b4

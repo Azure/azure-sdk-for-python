@@ -7,14 +7,15 @@
 import pytest
 from azure.core.rest import HttpRequest
 from azure.communication.phonenumbers._generated.operations._operations import (
-build_phone_numbers_get_search_result_request,
-build_phone_numbers_purchase_phone_numbers_request,
-build_phone_numbers_get_operation_request,
-build_phone_numbers_cancel_operation_request,
-build_phone_numbers_operator_information_search_request,
+    build_phone_numbers_get_search_result_request,
+    build_phone_numbers_purchase_phone_numbers_request,
+    build_phone_numbers_get_operation_request,
+    build_phone_numbers_cancel_operation_request,
+    build_phone_numbers_operator_information_search_request,
 )
 
 test_id = "test_id"
+
 
 def test_build_phone_numbers_get_search_result_request():
     request = build_phone_numbers_get_search_result_request(test_id)
@@ -22,8 +23,9 @@ def test_build_phone_numbers_get_search_result_request():
     assert isinstance(request, HttpRequest)
     assert request.method == "GET"
     assert test_id in request.url
-    assert "api-version=2024-03-01-preview" in request.url
+    assert "api-version=2025-02-11" in request.url
     assert request.headers["Accept"] == "application/json"
+
 
 def test_build_phone_numbers_purchase_phone_numbers_request():
     request = build_phone_numbers_purchase_phone_numbers_request()
@@ -33,6 +35,7 @@ def test_build_phone_numbers_purchase_phone_numbers_request():
     assert "/availablePhoneNumbers/:purchase" in request.url
     assert request.headers["Accept"] == "application/json"
 
+
 def test_build_phone_numbers_get_operation_request():
     request = build_phone_numbers_get_operation_request(test_id)
 
@@ -40,6 +43,7 @@ def test_build_phone_numbers_get_operation_request():
     assert request.method == "GET"
     assert test_id in request.url
     assert request.headers["Accept"] == "application/json"
+
 
 def test_build_phone_numbers_cancel_operation_request():
     request = build_phone_numbers_cancel_operation_request(test_id)
@@ -49,11 +53,12 @@ def test_build_phone_numbers_cancel_operation_request():
     assert test_id in request.url
     assert request.headers["Accept"] == "application/json"
 
+
 def test_build_phone_numbers_operator_information_search_request():
     request = build_phone_numbers_operator_information_search_request()
 
     assert isinstance(request, HttpRequest)
     assert request.method == "POST"
-    assert "api-version=2024-03-01-preview" in request.url
+    assert "api-version=2025-02-11" in request.url
     assert "operatorInformation/:search" in request.url
     assert request.headers["Accept"] == "application/json"

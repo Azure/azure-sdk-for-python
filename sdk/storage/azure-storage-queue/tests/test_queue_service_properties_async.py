@@ -23,7 +23,7 @@ class TestAsyncQueueServiceProperties(AsyncStorageRecordedTestCase):
         self._assert_logging_equal(prop['analytics_logging'], QueueAnalyticsLogging())
         self._assert_metrics_equal(prop['hour_metrics'], Metrics())
         self._assert_metrics_equal(prop['minute_metrics'], Metrics())
-        self._assert_cors_equal(prop['cors'], list())
+        self._assert_cors_equal(prop['cors'], [])
 
     def _assert_logging_equal(self, log1, log2):
         if log1 is None or log2 is None:
@@ -106,7 +106,7 @@ class TestAsyncQueueServiceProperties(AsyncStorageRecordedTestCase):
             analytics_logging=QueueAnalyticsLogging(),
             hour_metrics=Metrics(),
             minute_metrics=Metrics(),
-            cors=list())
+            cors=[])
 
         # Assert
         assert resp is None

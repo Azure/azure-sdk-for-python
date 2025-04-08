@@ -21,7 +21,7 @@ class TestComputeManagementLogAnalyticsOperationsAsync(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_export_request_rate_by_interval(self, resource_group):
+    async def test_log_analytics_begin_export_request_rate_by_interval(self, resource_group):
         response = await (
             await self.client.log_analytics.begin_export_request_rate_by_interval(
                 location="str",
@@ -36,7 +36,7 @@ class TestComputeManagementLogAnalyticsOperationsAsync(AzureMgmtRecordedTestCase
                     "groupByThrottlePolicy": bool,
                     "groupByUserAgent": bool,
                 },
-                api_version="2024-07-01",
+                api_version="2024-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -45,7 +45,7 @@ class TestComputeManagementLogAnalyticsOperationsAsync(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_export_throttled_requests(self, resource_group):
+    async def test_log_analytics_begin_export_throttled_requests(self, resource_group):
         response = await (
             await self.client.log_analytics.begin_export_throttled_requests(
                 location="str",
@@ -59,7 +59,7 @@ class TestComputeManagementLogAnalyticsOperationsAsync(AzureMgmtRecordedTestCase
                     "groupByThrottlePolicy": bool,
                     "groupByUserAgent": bool,
                 },
-                api_version="2024-07-01",
+                api_version="2024-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

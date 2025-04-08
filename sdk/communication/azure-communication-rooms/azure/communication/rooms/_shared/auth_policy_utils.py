@@ -19,8 +19,7 @@ def get_authentication_policy(
     credential: Union[TokenCredential, AsyncTokenCredential, AzureKeyCredential, str],
     decode_url: bool = False,
     is_async: bool = False,
-):
-    # type: (...) -> Union[AsyncBearerTokenCredentialPolicy, BearerTokenCredentialPolicy, HMACCredentialsPolicy]
+) -> Union[AsyncBearerTokenCredentialPolicy, BearerTokenCredentialPolicy, HMACCredentialsPolicy]:
     """Returns the correct authentication policy based on which credential is being passed.
 
     :param endpoint: The endpoint to which we are authenticating to.
@@ -43,9 +42,7 @@ def get_authentication_policy(
             return AsyncBearerTokenCredentialPolicy(
                 credential, "https://communication.azure.com//.default"  # type: ignore
             )
-        return BearerTokenCredentialPolicy(
-            credential, "https://communication.azure.com//.default"  # type: ignore
-        )
+        return BearerTokenCredentialPolicy(credential, "https://communication.azure.com//.default")  # type: ignore
     if isinstance(credential, (AzureKeyCredential, str)):
         return HMACCredentialsPolicy(endpoint, credential, decode_url=decode_url)
 

@@ -1,10 +1,10 @@
 ﻿# coding: utf-8
 
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 import unittest
 import pytest
 
@@ -21,6 +21,7 @@ COMMUNICATION_SERVICE_DATA_LOCATION = "UnitedStates"
 DISABLE_MGMT_TESTS = True
 DISABLE_REASON = "Temporary issue causing the tests to fail"
 
+
 class MgmtCommunicationTest(AzureMgmtTestCase):
 
     def setUp(self):
@@ -36,13 +37,10 @@ class MgmtCommunicationTest(AzureMgmtTestCase):
         resource_name = self.get_resource_name("test-resource-crud")
 
         resource = CommunicationServiceResource(
-            location=COMMUNICATION_SERVICE_LOCATION,
-            data_location = COMMUNICATION_SERVICE_DATA_LOCATION
+            location=COMMUNICATION_SERVICE_LOCATION, data_location=COMMUNICATION_SERVICE_DATA_LOCATION
         )
         resource = self.communication_client.communication_service.begin_create_or_update(
-            GROUP_NAME,
-            resource_name,
-            resource
+            GROUP_NAME, resource_name, resource
         ).result()
 
         self.assertEqual(resource.name, resource_name)
@@ -53,10 +51,7 @@ class MgmtCommunicationTest(AzureMgmtTestCase):
         self.assertIsNone(resource.notification_hub_id)
         self.assertIsNone(resource.tags)
 
-        resource = self.communication_client.communication_service.get(
-            GROUP_NAME,
-            resource_name
-        )
+        resource = self.communication_client.communication_service.get(GROUP_NAME, resource_name)
         self.assertEqual(resource.name, resource_name)
         self.assertEqual(resource.provisioning_state, "Succeeded")
         self.assertIsNotNone(resource.immutable_resource_id)
@@ -65,11 +60,9 @@ class MgmtCommunicationTest(AzureMgmtTestCase):
         self.assertIsNone(resource.notification_hub_id)
         self.assertIsNone(resource.tags)
 
-        tags = {"tags": {"tag1": "tag1val", "tag2": "tag2val"} }
+        tags = {"tags": {"tag1": "tag1val", "tag2": "tag2val"}}
         resource = self.communication_client.communication_service.update(
-            GROUP_NAME,
-            resource_name,
-            TaggedResource(**tags)
+            GROUP_NAME, resource_name, TaggedResource(**tags)
         )
         self.assertEqual(resource.name, resource_name)
         self.assertEqual(resource.provisioning_state, "Succeeded")
@@ -89,29 +82,22 @@ class MgmtCommunicationTest(AzureMgmtTestCase):
 
         key_type = {"key_type": "Primary"}
         keys_regenerated_primary = self.communication_client.communication_service.regenerate_key(
-            GROUP_NAME,
-            resource_name,
-            RegenerateKeyParameters(**key_type)
+            GROUP_NAME, resource_name, RegenerateKeyParameters(**key_type)
         )
         self.assertNotEqual(keys.primary_key, keys_regenerated_primary.primary_key)
         self.assertNotEqual(keys.primary_connection_string, keys_regenerated_primary.primary_connection_string)
 
         key_type = {"key_type": "Secondary"}
         keys_regenerated_secondary = self.communication_client.communication_service.regenerate_key(
-            GROUP_NAME,
-            resource_name,
-            RegenerateKeyParameters(**key_type)
+            GROUP_NAME, resource_name, RegenerateKeyParameters(**key_type)
         )
         self.assertNotEqual(keys.secondary_key, keys_regenerated_secondary.secondary_key)
         self.assertNotEqual(keys.secondary_connection_string, keys_regenerated_secondary.secondary_connection_string)
 
         # Delete can take a long time to return when running live. Disable polling requirement until we can determine why.
-        self.communication_client.communication_service.begin_delete(
-            GROUP_NAME,
-            resource_name,
-            polling = False
-        )
+        self.communication_client.communication_service.begin_delete(GROUP_NAME, resource_name, polling=False)
 
-#------------------------------------------------------------------------------
-if __name__ == '__main__':
+
+# ------------------------------------------------------------------------------
+if __name__ == "__main__":
     unittest.main()

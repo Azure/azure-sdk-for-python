@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, Callable, Dict, Iterable, Iterator, Optional, Type, TypeVar, Union, cast
+from typing import Any, Callable, Dict, Iterable, Iterator, Optional, TypeVar, Union, cast
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -31,12 +30,11 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from ..._serialization import Serializer
-from .._vendor import WebSiteManagementClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -247,7 +245,7 @@ class WorkflowTriggerHistoriesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-09-01"))
         cls: ClsType[_models.WorkflowTriggerHistoryListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -341,7 +339,7 @@ class WorkflowTriggerHistoriesOperations:
         :rtype: ~azure.mgmt.web.v2022_09_01.models.WorkflowTriggerHistory
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -396,7 +394,7 @@ class WorkflowTriggerHistoriesOperations:
         history_name: str,
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

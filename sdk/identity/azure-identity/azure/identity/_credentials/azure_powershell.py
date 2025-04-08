@@ -146,7 +146,7 @@ class AzurePowerShellCredential:
         :keyword options: A dictionary of options for the token request. Unknown options will be ignored. Optional.
         :paramtype options: ~azure.core.credentials.TokenRequestOptions
 
-        :rtype: AccessTokenInfo
+        :rtype: ~azure.core.credentials.AccessTokenInfo
         :return: An AccessTokenInfo instance containing information about the token.
 
         :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke Azure PowerShell, or
@@ -192,7 +192,7 @@ def run_command_line(command_line: List[str], timeout: int) -> str:
             proc = start_process(command_line)
             stdout, stderr = proc.communicate(**kwargs)
 
-    except Exception as ex:  # pylint:disable=broad-except
+    except Exception as ex:
         # failed to execute "cmd" or "/bin/sh", or timed out; PowerShell and Az.Account may or may not be installed
         # (handling Exception here because subprocess.SubprocessError and .TimeoutExpired were added in 3.3)
         if proc and not proc.returncode:

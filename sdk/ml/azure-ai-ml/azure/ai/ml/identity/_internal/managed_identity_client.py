@@ -20,7 +20,6 @@ from .._internal.pipeline import build_pipeline
 ABC = abc.ABC
 
 if TYPE_CHECKING:
-    # pylint:disable=ungrouped-imports
 
     from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy
     from azure.core.pipeline.transport import HttpRequest
@@ -31,7 +30,6 @@ if TYPE_CHECKING:
 class ManagedIdentityClientBase(ABC):
     from azure.core.pipeline import PipelineResponse
 
-    # pylint:disable=missing-client-constructor-parameter-credential
     def __init__(self, request_factory: Callable, **kwargs: Any) -> None:
         self._cache = kwargs.pop("_cache", None) or TokenCache()
         self._content_callback = kwargs.pop("_content_callback", None)
@@ -121,6 +119,11 @@ class ManagedIdentityClient(ManagedIdentityClientBase):
         resource = _scopes_to_resource(*scopes)
         request = self._request_factory(resource)
         request_time = int(time.time())
+        # https://github.com/Azure/azure-sdk-for-python/issues/39793
+        # Remove unsupported parameters
+        kwargs.pop("claims", None)
+        kwargs.pop("tenant_id", None)
+        kwargs.pop("enable_cae", None)
         response = self._pipeline.run(request, retry_on_methods=[request.method], **kwargs)
         token = self._process_response(response=response, request_time=request_time, resource=resource)
         return token

@@ -376,11 +376,10 @@ class TestTableClientCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
     async def test_table_client_with_token_credential(
         self, tables_cosmos_account_name, tables_primary_cosmos_account_key
     ):
-        # DefaultAzureCredential doesn't work on Cosmos
         base_url = self.account_url(tables_cosmos_account_name, "cosmos")
         table_name = self.get_resource_name("mytable")
         default_azure_credential = self.get_token_credential()
-        sas_token = self.generate_sas(
+        self.sas_token = self.generate_sas(
             generate_account_sas,
             tables_primary_cosmos_account_key,
             resource_types=ResourceTypes.from_string("sco"),
@@ -389,43 +388,52 @@ class TestTableClientCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
         )
 
         async with TableClient(base_url, table_name, credential=default_azure_credential) as client:
-            with pytest.raises(HttpResponseError) as ex:
-                await client.create_table()
-            ex_msg = "Authorization header doesn't confirm to the required format. Please verify and try again."
-            assert ex_msg in str(ex.value)
+            table = await client.create_table()
+            assert table.name == table_name
 
         async with TableClient.from_table_url(
             f"{base_url}/{table_name}", credential=default_azure_credential
         ) as client:
-            with pytest.raises(HttpResponseError) as ex:
-                await client.create_table()
-            ex_msg = "Authorization header doesn't confirm to the required format. Please verify and try again."
-            assert ex_msg in str(ex.value)
+            entities = client.query_entities(
+                query_filter="PartitionKey eq @pk",
+                parameters={"pk": "dummy-pk"},
+            )
+            async for e in entities:
+                pass
 
-        async with TableClient(f"{base_url}/?{sas_token}", table_name, credential=default_azure_credential) as client:
-            with pytest.raises(HttpResponseError) as ex:
-                await client.create_table()
-            ex_msg = "Authorization header doesn't confirm to the required format. Please verify and try again."
-            assert ex_msg in str(ex.value)
+        async with TableClient(
+            f"{base_url}/?{self.sas_token}", table_name, credential=default_azure_credential
+        ) as client:
+            entities = client.query_entities(
+                query_filter="PartitionKey eq @pk",
+                parameters={"pk": "dummy-pk"},
+                raw_request_hook=self.check_request_auth,
+            )
+            async for e in entities:
+                pass
 
         async with TableClient.from_table_url(
-            f"{base_url}/{table_name}?{sas_token}", credential=default_azure_credential
+            f"{base_url}/{table_name}?{self.sas_token}", credential=default_azure_credential
         ) as client:
-            with pytest.raises(HttpResponseError) as ex:
-                await client.create_table()
-            ex_msg = "Authorization header doesn't confirm to the required format. Please verify and try again."
-            assert ex_msg in str(ex.value)
+            entities = client.query_entities(
+                query_filter="PartitionKey eq @pk",
+                parameters={"pk": "dummy-pk"},
+                raw_request_hook=self.check_request_auth,
+            )
+            async for e in entities:
+                pass
+            await client.delete_table()
 
     @cosmos_decorator_async
     @recorded_by_proxy_async
     async def test_table_service_client_with_token_credential(
         self, tables_cosmos_account_name, tables_primary_cosmos_account_key
     ):
-        # DefaultAzureCredential doesn't work on Cosmos
         base_url = self.account_url(tables_cosmos_account_name, "cosmos")
         table_name = self.get_resource_name("mytable")
         default_azure_credential = self.get_token_credential()
-        sas_token = self.generate_sas(
+        name_filter = "TableName eq '{}'".format(table_name)
+        self.sas_token = self.generate_sas(
             generate_account_sas,
             tables_primary_cosmos_account_key,
             resource_types=ResourceTypes.from_string("sco"),
@@ -434,16 +442,28 @@ class TestTableClientCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
         )
 
         async with TableServiceClient(base_url, credential=default_azure_credential) as client:
-            with pytest.raises(HttpResponseError) as ex:
-                await client.create_table(table_name)
-            ex_msg = "Authorization header doesn't confirm to the required format. Please verify and try again."
-            assert ex_msg in str(ex.value)
+            await client.create_table(table_name)
+            name_filter = "TableName eq '{}'".format(table_name)
+            count = 0
+            result = client.query_tables(name_filter)
+            async for table in result:
+                count += 1
+            assert count == 1
 
-        async with TableServiceClient(f"{base_url}/?{sas_token}", credential=default_azure_credential) as client:
-            with pytest.raises(HttpResponseError) as ex:
-                await client.create_table(table_name)
-            ex_msg = "Authorization header doesn't confirm to the required format. Please verify and try again."
-            assert ex_msg in str(ex.value)
+        # DefaultAzureCredential is actually in use
+        async with TableServiceClient(f"{base_url}/?{self.sas_token}", credential=default_azure_credential) as client:
+            entities = client.get_table_client(table_name).query_entities(
+                query_filter="PartitionKey eq @pk",
+                parameters={"pk": "dummy-pk"},
+                raw_request_hook=self.check_request_auth,
+            )
+            async for e in entities:
+                pass
+            client.delete_table(table_name)
+
+    def check_request_auth(self, pipeline_request):
+        assert self.sas_token not in pipeline_request.http_request.url
+        assert pipeline_request.http_request.headers.get("Authorization") is not None
 
     @cosmos_decorator_async
     @recorded_by_proxy_async

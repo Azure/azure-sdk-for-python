@@ -1,10 +1,49 @@
 # Release History
 
+## 3.1.0 (2025-03-18)
+
+### Features Added
+
+  - Model `CreateOrderLimitForSubscriptionValidationRequest` added property `model`
+  - Model `DataBoxScheduleAvailabilityRequest` added property `model`
+  - Enum `DataCenterCode` added member `AMS25`
+  - Enum `DataCenterCode` added member `BL24`
+  - Enum `DataCenterCode` added member `CPQ21`
+  - Enum `DataCenterCode` added member `DSM11`
+  - Enum `DataCenterCode` added member `DXB23`
+  - Enum `DataCenterCode` added member `IDC5`
+  - Enum `DataCenterCode` added member `NTG20`
+  - Enum `DataCenterCode` added member `OSA23`
+  - Enum `DataCenterCode` added member `TYO23`
+  - Model `DataTransferDetailsValidationRequest` added property `model`
+  - Model `DatacenterAddressRequest` added property `model`
+  - Model `DiskScheduleAvailabilityRequest` added property `model`
+  - Model `HeavyScheduleAvailabilityRequest` added property `model`
+  - Model `JobResource` added property `delayed_stage`
+  - Model `JobResource` added property `all_devices_lost`
+  - Model `JobStages` added property `delay_information`
+  - Model `PreferencesValidationRequest` added property `model`
+  - Model `RegionConfigurationRequest` added property `device_capability_request`
+  - Model `RegionConfigurationResponse` added property `device_capability_response`
+  - Model `ScheduleAvailabilityRequest` added property `model`
+  - Model `Sku` added property `model`
+  - Model `SkuAvailabilityValidationRequest` added property `model`
+  - Model `SkuCapacity` added property `individual_sku_usable`
+  - Model `TransportAvailabilityRequest` added property `model`
+  - Model `ValidateAddress` added property `model`
+  - Added enum `DelayNotificationStatus`
+  - Added model `DeviceCapabilityDetails`
+  - Added model `DeviceCapabilityRequest`
+  - Added model `DeviceCapabilityResponse`
+  - Added model `JobDelayDetails`
+  - Added enum `ModelName`
+  - Added enum `PortalDelayErrorCode`
+
 ## 3.0.0 (2024-10-30)
 
 ### Breaking Changes
 
-  - This package now only targets the latest Api-Version available on Azure and removes APIs of other Api-Version. After this change, the package can have much smaller size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ingore this change.
+  - This package now only targets the latest Api-Version available on Azure and removes APIs of other Api-Version. After this change, the package can have much smaller size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ignore this change.
 
 ## 2.0.0 (2023-05-22)
 

@@ -46,7 +46,7 @@ class TestHybridComputeManagementGatewaysOperationsAsync(AzureMgmtRecordedTestCa
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-05-20-preview",
+                api_version="2024-07-31-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -60,7 +60,7 @@ class TestHybridComputeManagementGatewaysOperationsAsync(AzureMgmtRecordedTestCa
             resource_group_name=resource_group.name,
             gateway_name="str",
             parameters={"allowedFeatures": ["str"], "tags": {"str": "str"}},
-            api_version="2024-05-20-preview",
+            api_version="2024-07-31-preview",
         )
 
         # please add some check logic here by yourself
@@ -72,7 +72,7 @@ class TestHybridComputeManagementGatewaysOperationsAsync(AzureMgmtRecordedTestCa
         response = await self.client.gateways.get(
             resource_group_name=resource_group.name,
             gateway_name="str",
-            api_version="2024-05-20-preview",
+            api_version="2024-07-31-preview",
         )
 
         # please add some check logic here by yourself
@@ -85,7 +85,7 @@ class TestHybridComputeManagementGatewaysOperationsAsync(AzureMgmtRecordedTestCa
             await self.client.gateways.begin_delete(
                 resource_group_name=resource_group.name,
                 gateway_name="str",
-                api_version="2024-05-20-preview",
+                api_version="2024-07-31-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -97,7 +97,7 @@ class TestHybridComputeManagementGatewaysOperationsAsync(AzureMgmtRecordedTestCa
     async def test_list_by_resource_group(self, resource_group):
         response = self.client.gateways.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-05-20-preview",
+            api_version="2024-07-31-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -107,7 +107,7 @@ class TestHybridComputeManagementGatewaysOperationsAsync(AzureMgmtRecordedTestCa
     @recorded_by_proxy_async
     async def test_list_by_subscription(self, resource_group):
         response = self.client.gateways.list_by_subscription(
-            api_version="2024-05-20-preview",
+            api_version="2024-07-31-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

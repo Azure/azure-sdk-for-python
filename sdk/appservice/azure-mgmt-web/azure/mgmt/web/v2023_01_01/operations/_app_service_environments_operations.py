@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, Callable, Dict, IO, Iterable, Iterator, List, Optional, Type, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterable, Iterator, List, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -32,12 +32,11 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from ..._serialization import Serializer
-from .._vendor import WebSiteManagementClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -1935,7 +1934,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.AppServiceEnvironmentCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2018,7 +2017,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.AppServiceEnvironmentCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2094,7 +2093,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :rtype: ~azure.mgmt.web.v2023_01_01.models.AppServiceEnvironmentResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2144,7 +2143,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         hosting_environment_envelope: Union[_models.AppServiceEnvironmentResource, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2347,7 +2346,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
     def _delete_initial(
         self, resource_group_name: str, name: str, force_delete: Optional[bool] = None, **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2540,7 +2539,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :rtype: ~azure.mgmt.web.v2023_01_01.models.AppServiceEnvironmentResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2615,7 +2614,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.StampCapacityCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2692,7 +2691,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :rtype: ~azure.mgmt.web.v2023_01_01.models.AddressResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2742,7 +2741,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         vnet_info: Union[_models.VirtualNetworkProfile, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2895,7 +2894,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.WebAppCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3025,7 +3024,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :rtype: ~azure.mgmt.web.v2023_01_01.models.CustomDnsSuffixConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3149,7 +3148,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :rtype: ~azure.mgmt.web.v2023_01_01.models.CustomDnsSuffixConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3220,7 +3219,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3279,7 +3278,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :rtype: ~azure.mgmt.web.v2023_01_01.models.AseV3NetworkingConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3403,7 +3402,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :rtype: ~azure.mgmt.web.v2023_01_01.models.AseV3NetworkingConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3474,7 +3473,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :rtype: list[~azure.mgmt.web.v2023_01_01.models.HostingEnvironmentDiagnostics]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3535,7 +3534,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :rtype: ~azure.mgmt.web.v2023_01_01.models.HostingEnvironmentDiagnostics
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3604,7 +3603,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.InboundEnvironmentEndpointCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3689,7 +3688,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.WorkerPoolCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3766,7 +3765,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :rtype: ~azure.mgmt.web.v2023_01_01.models.WorkerPoolResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3816,7 +3815,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         multi_role_pool_envelope: Union[_models.WorkerPoolResource, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4086,7 +4085,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :rtype: ~azure.mgmt.web.v2023_01_01.models.WorkerPoolResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4169,7 +4168,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.ResourceMetricDefinitionCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4257,7 +4256,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.ResourceMetricDefinitionCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4342,7 +4341,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.SkuInfoCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4421,7 +4420,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4461,7 +4460,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
             return cls(pipeline_response, None, {})  # type: ignore
 
     def _upgrade_initial(self, resource_group_name: str, name: str, **kwargs: Any) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4583,7 +4582,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.UsageCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4660,7 +4659,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :rtype: list[~azure.mgmt.web.v2023_01_01.models.Operation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4728,7 +4727,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.OutboundEnvironmentEndpointCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4815,7 +4814,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.PrivateEndpointConnectionCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4896,7 +4895,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :rtype: ~azure.mgmt.web.v2023_01_01.models.RemotePrivateEndpointConnectionARMResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4948,7 +4947,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         private_endpoint_wrapper: Union[_models.RemotePrivateEndpointConnectionARMResource, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5158,7 +5157,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
     def _delete_private_endpoint_connection_initial(  # pylint: disable=name-too-long
         self, resource_group_name: str, name: str, private_endpoint_connection_name: str, **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5284,7 +5283,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :rtype: ~azure.mgmt.web.v2023_01_01.models.PrivateLinkResourcesWrapper
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5343,7 +5342,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5383,7 +5382,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
             return cls(pipeline_response, None, {})  # type: ignore
 
     def _resume_initial(self, resource_group_name: str, name: str, **kwargs: Any) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5454,7 +5453,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.WebAppCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5578,7 +5577,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.AppServicePlanCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5666,7 +5665,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.WebAppCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5731,7 +5730,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         return ItemPaged(get_next, extract_data)
 
     def _suspend_initial(self, resource_group_name: str, name: str, **kwargs: Any) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5802,7 +5801,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.WebAppCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5931,7 +5930,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.CsmUsageQuotaCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6017,7 +6016,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.WorkerPoolCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6098,7 +6097,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :rtype: ~azure.mgmt.web.v2023_01_01.models.WorkerPoolResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6150,7 +6149,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         worker_pool_envelope: Union[_models.WorkerPoolResource, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6438,7 +6437,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         :rtype: ~azure.mgmt.web.v2023_01_01.models.WorkerPoolResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6523,7 +6522,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.ResourceMetricDefinitionCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6614,7 +6613,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.ResourceMetricDefinitionCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6702,7 +6701,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.SkuInfoCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6790,7 +6789,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.UsageCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

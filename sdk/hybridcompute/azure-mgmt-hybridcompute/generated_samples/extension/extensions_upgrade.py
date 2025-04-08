@@ -42,6 +42,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: specification/hybridcompute/resource-manager/Microsoft.HybridCompute/stable/2024-07-10/examples/extension/Extensions_Upgrade.json
+# x-ms-original-file: specification/hybridcompute/resource-manager/Microsoft.HybridCompute/preview/2024-07-31-preview/examples/extension/Extensions_Upgrade.json
 if __name__ == "__main__":
     main()

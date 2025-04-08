@@ -34,7 +34,7 @@ with open("CHANGELOG.md", encoding="utf-8") as f:
     changelog = f.read()
 
 exclude_packages = [
-    "test",
+    "tests",
     "samples",
     # Exclude packages that will be covered by PEP420 or nspkg
     "azure",
@@ -55,7 +55,7 @@ setup(
     url="https://github.com/Azure/azure-sdk-for-python",
     keywords="azure, azure sdk",
     classifiers=[
-        "Development Status :: 5 - Production/Stable",
+        "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "Natural Language :: English",
         "Operating System :: OS Independent",
@@ -75,6 +75,6 @@ setup(
     python_requires=">=3.8",
     install_requires=[
         "azure-core>=1.30.0",
-        "typing-extensions>=4.6.0",
+        "typing-extensions>=4.6.0"
     ],
 )

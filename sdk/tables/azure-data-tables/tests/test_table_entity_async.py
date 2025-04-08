@@ -34,7 +34,7 @@ from azure.data.tables import (
     EntityProperty,
     EdmType,
 )
-from azure.data.tables.aio import TableServiceClient
+from azure.data.tables.aio import TableServiceClient, TableClient
 
 from _shared.asynctestcase import AsyncTableTestCase
 from async_preparers import tables_decorator_async
@@ -2238,3 +2238,27 @@ class TestTableEntityAsync(AzureRecordedTestCase, AsyncTableTestCase):
         with pytest.raises(ClientAuthenticationError):
             async for _ in client.list_tables():
                 pass
+
+    @tables_decorator_async
+    @recorded_by_proxy_async
+    async def test_get_entity_with_flatten_metadata(
+        self, tables_storage_account_name, tables_primary_storage_account_key
+    ):
+        table_name = self._get_table_reference("table")
+        url = self.account_url(tables_storage_account_name, "table")
+        entity = {"PartitionKey": "pk", "RowKey": "rk", "Value": "foobar", "Answer": 42}
+
+        async with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
+            await client.create_table()
+            await client.create_entity(entity)
+            received_entity1 = await client.get_entity("pk", "rk")
+            assert received_entity1.metadata
+
+        async with TableClient(
+            url, table_name, credential=tables_primary_storage_account_key, flatten_result_entity=True
+        ) as client:
+            received_entity2 = await client.get_entity("pk", "rk")
+            assert received_entity2.metadata == received_entity1.metadata
+            for key, value in received_entity1.metadata.items():
+                assert received_entity2[key] == value
+            await client.delete_table()
