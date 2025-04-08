@@ -44,11 +44,13 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
     _LLM_CALL_TIMEOUT = 600
     _DEFAULT_OPEN_API_VERSION = "2024-02-15-preview"
 
-    def __init__(self, *, result_key: str, prompty_file: str, model_config: dict, eval_last_turn: bool = False, threshold: int = 3, _higher_is_better: bool = False):
+    def __init__(self, *, result_key: str, prompty_file: str, model_config: dict, eval_last_turn: bool = False,
+                 threshold: int = 3, _higher_is_better: bool = False, is_reasoning_model: bool = False) -> None:
         self._result_key = result_key
-        self._prompty_file = prompty_file
+        self._prompty_file = AsyncPrompty._update_prompty_file(prompty_file, is_reasoning_model)
         self._threshold = threshold
         self._higher_is_better = _higher_is_better
+        self.is_reasoning_model = is_reasoning_model
         super().__init__(eval_last_turn=eval_last_turn, threshold=threshold, _higher_is_better=_higher_is_better)
 
         subclass_name = self.__class__.__name__

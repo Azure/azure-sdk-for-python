@@ -1,6 +1,8 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+import os
+import tempfile
 
 from os import PathLike
 from typing import IO, Any, Dict, Optional, Union, cast
@@ -97,3 +99,37 @@ def load_yaml_string(yaml_string: str) -> Dict[str, Any]:
     yaml = YAML()
     yaml.preserve_quotes = True
     return yaml.load(yaml_string)
+
+
+def _save_prompty_file(file_path, prompt_content, yaml_data):
+    """
+    Save a Prompty file with the given YAML data and prompt content.
+
+    This function writes the YAML configuration and the prompt content to a file
+    in the Prompty file format. The YAML section is written first, followed by the
+    prompt content.
+
+    :param file_path: The path to the file where the Prompty content will be saved.
+    :type file_path: str
+    :param prompt_content: The textual content of the prompt to be saved in the file.
+    :type prompt_content: str
+    :param yaml_data: The YAML configuration data to be saved in the file.
+    :type yaml_data: dict
+    :return: The path to the saved file.
+    :rtype: str
+    """
+    yaml_parser = YAML()
+    yaml_parser.preserve_quotes = True
+
+    # Create a temp file in the same directory for safety
+    dir_name = os.path.dirname(file_path)
+    with tempfile.NamedTemporaryFile(mode='w', encoding=DefaultOpenEncoding.READ,
+                                     dir=dir_name, delete=False,
+                                     suffix='.prompty') as tmp_file:
+        tmp_file.write('---\n')
+        yaml_parser.dump(yaml_data, tmp_file)
+        tmp_file.write('---\n')
+        tmp_file.write(prompt_content)
+        temp_file_path = tmp_file.name
+
+    return temp_file_path

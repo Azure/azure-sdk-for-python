@@ -18,7 +18,7 @@ from azure.ai.evaluation._legacy.prompty._exceptions import (
     NotSupportedError,
 )
 from azure.ai.evaluation._legacy.prompty._connection import AzureOpenAIConnection, Connection, OpenAIConnection
-from azure.ai.evaluation._legacy.prompty._yaml_utils import load_yaml_string
+from azure.ai.evaluation._legacy.prompty._yaml_utils import load_yaml_string, _save_prompty_file
 from azure.ai.evaluation._legacy.prompty._utils import (
     dataclass_from_dict,
     PromptyModelConfiguration,
@@ -233,6 +233,47 @@ class AsyncPrompty:
             raise MissingRequiredInputError(f"Missing required inputs: {missing_inputs}")
 
         return resolved_inputs
+
+    @staticmethod
+    def _update_prompty_file(file_path: str, is_reasoning_model: bool = False):
+        """
+        Updates the YAML part of a Prompty file to support reasoning models.
+
+        if `is_reasoning_model` is set to True, this method modifies the YAML configuration of a
+        Prompty file by replacing specific parameters to align with reasoning model requirements. It updates
+        the `max_tokens` parameter to `max_completion_tokens` and removes other
+        parameters such as `temperature`, `top_p`, `presence_penalty`, and `frequency_penalty`
+
+        :param file_path: The path to the Prompty file to be updated.
+        :type file_path: str
+        :param is_reasoning_model: A flag indicating whether to update the file
+                                   for reasoning models. If True, specific
+                                   parameters are updated or removed.
+        :type is_reasoning_model: bool
+        :return: The path to the updated Prompty file.
+        :rtype: str
+        """
+        # Parse the Prompty file to extract YAML data and prompt content
+        yaml_data, prompt_content = AsyncPrompty._parse_prompty(file_path)
+
+        # Access the parameters section within the YAML configuration
+        parameters = yaml_data.get("model", {}).get("parameters", {})
+
+        # Update parameters if the reasoning model flag is enabled
+        if is_reasoning_model:
+            # Replace 'max_tokens' with 'max_completion_tokens'
+            if "max_tokens" in parameters:
+                parameters["max_completion_tokens"] = parameters.pop("max_tokens")
+            # Remove unsupported parameters for reasoning models
+            for key in ["temperature", "top_p", "presence_penalty", "frequency_penalty"]:
+                parameters.pop(key, None)
+
+            updated_file_path = _save_prompty_file(file_path, prompt_content, yaml_data)
+        else:
+            updated_file_path = file_path
+
+        return updated_file_path
+
 
     # TODO ralphe: error handling
     # @trace
