@@ -23,49 +23,43 @@ USAGE:
 """
 
 import os, time
-from typing import List, Dict, Any, cast
+from typing import List
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models import MessageTextContent, MessageContentBlockInput
+from azure.ai.projects.models import MessageTextContent, MessageContentBlockInput, MessageImageFileParam, MessageTextBlockInput, MessageImageFileBlockInput
 
 
-# [START create_project_client]
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(),
     conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
-# [END create_project_client]
 
 with project_client:
 
-    # [START create_agent]
     agent = project_client.agents.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-assistant",
         instructions="You are helpful assistant",
     )
-    # [END create_agent]
     print(f"Created agent, agent ID: {agent.id}")
 
-    # [START create_thread]
     thread = project_client.agents.create_thread()
-    # [END create_thread]
     print(f"Created thread, thread ID: {thread.id}")
 
-    # [START create_message]
     image_file = project_client.agents.upload_file_and_poll(file_path="image_file.png", purpose="assistants")
     print(f"Uploaded file, file ID: {image_file.id}")
+
     input_message = "Hello, what is in the image ?"
-    content: List[Dict[str, Any]] = []
-    content = [{"type": "text", "text": input_message}]
-    content.append({"type": "image_file", "image_file": {"file_id": image_file.id, "detail": "high"}})
+    file_param = MessageImageFileParam(file_id=image_file.id, detail="high")
+    content_blocks: List[MessageContentBlockInput] = [
+        MessageTextBlockInput(text=input_message), 
+        MessageImageFileBlockInput(image_file=file_param)
+    ]
     message = project_client.agents.create_message(
-        thread_id=thread.id, role="user", content=cast(List[MessageContentBlockInput], content)
+        thread_id=thread.id, role="user", content=content_blocks
     )
-    # [END create_message]
     print(f"Created message, message ID: {message.id}")
 
-    # [START create_run]
     run = project_client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
 
     # Poll the run as long as run status is queued or in progress
@@ -73,13 +67,11 @@ with project_client:
         # Wait for a second
         time.sleep(1)
         run = project_client.agents.get_run(thread_id=thread.id, run_id=run.id)
-        # [END create_run]
         print(f"Run status: {run.status}")
 
     project_client.agents.delete_agent(agent.id)
     print("Deleted agent")
 
-    # [START list_messages]
     messages = project_client.agents.list_messages(thread_id=thread.id)
 
     # The messages are following in the reverse order,
@@ -89,5 +81,4 @@ with project_client:
         if isinstance(last_message_content, MessageTextContent):
             print(f"{data_point.role}: {last_message_content.text.value}")
 
-    # [END list_messages]
     print(f"Messages: {messages}")
