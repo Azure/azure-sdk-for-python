@@ -2307,21 +2307,21 @@ class MessageContent(_model_base.Model):
 
 
 class MessageContentBlockInput(_model_base.Model):
-    """An abstract base for creation-time 'blocks' that can be text or images. We use
-    @discriminator('type') but make 'type' an open union.
+    """Defines a single content block when creating a message. The 'type' field determines whether it
+    is text, an image file, or an external image URL, etc.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     MessageImageFileBlockInput, MessageImageUrlBlockInput, MessageTextBlockInput
 
-    :ivar type: Must be one of 'text', 'image_file', or 'image_url' (or a fallback string).
+    :ivar type: Specifies which kind of content block this is (text, image_file, image_url, etc.).
      Required. Known values are: "text", "image_file", and "image_url".
     :vartype type: str or ~azure.ai.projects.models.MessageBlockType
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """Must be one of 'text', 'image_file', or 'image_url' (or a fallback string). Required. Known
-     values are: \"text\", \"image_file\", and \"image_url\"."""
+    """Specifies which kind of content block this is (text, image_file, image_url, etc.). Required.
+     Known values are: \"text\", \"image_file\", and \"image_url\"."""
 
     @overload
     def __init__(
@@ -2886,18 +2886,22 @@ class MessageDeltaTextUrlCitationDetails(_model_base.Model):
 
 
 class MessageImageFileBlockInput(MessageContentBlockInput, discriminator="image_file"):
-    """Creation-time image-file block.
+    """An image-file block in a new message, referencing an internally uploaded image by file ID.
 
-    :ivar type: Always 'image_file'. Required. An internally uploaded image file.
+    :ivar type: Must be 'image_file' for an internally uploaded image block. Required. Indicates a
+     block referencing an internally uploaded image file.
     :vartype type: str or ~azure.ai.projects.models.IMAGE_FILE
-    :ivar image_file: References an uploaded image by file ID. Required.
+    :ivar image_file: Information about the referenced image file, including file ID and optional
+     detail level. Required.
     :vartype image_file: ~azure.ai.projects.models.MessageImageFileParam
     """
 
     type: Literal[MessageBlockType.IMAGE_FILE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Always 'image_file'. Required. An internally uploaded image file."""
+    """Must be 'image_file' for an internally uploaded image block. Required. Indicates a block
+     referencing an internally uploaded image file."""
     image_file: "_models.MessageImageFileParam" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """References an uploaded image by file ID. Required."""
+    """Information about the referenced image file, including file ID and optional detail level.
+     Required."""
 
     @overload
     def __init__(
@@ -2981,22 +2985,22 @@ class MessageImageFileDetails(_model_base.Model):
 
 
 class MessageImageFileParam(_model_base.Model):
-    """Parameter for an image file (by ID) at creation time.
+    """Defines how an internally uploaded image file is referenced when creating an image-file block.
 
-    :ivar file_id: File ID for the uploaded image. Required.
+    :ivar file_id: The ID of the previously uploaded image file. Required.
     :vartype file_id: str
-    :ivar detail: Specifies the requested detail level for the image. Known values are: "auto",
-     "low", and "high".
+    :ivar detail: Optional detail level for the image (auto, low, or high). Known values are:
+     "auto", "low", and "high".
     :vartype detail: str or ~azure.ai.projects.models.ImageDetailLevel
     """
 
     file_id: str = rest_field(name="fileId", visibility=["read", "create", "update", "delete", "query"])
-    """File ID for the uploaded image. Required."""
+    """The ID of the previously uploaded image file. Required."""
     detail: Optional[Union[str, "_models.ImageDetailLevel"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the requested detail level for the image. Known values are: \"auto\", \"low\", and
-     \"high\"."""
+    """Optional detail level for the image (auto, low, or high). Known values are: \"auto\", \"low\",
+     and \"high\"."""
 
     @overload
     def __init__(
@@ -3018,18 +3022,22 @@ class MessageImageFileParam(_model_base.Model):
 
 
 class MessageImageUrlBlockInput(MessageContentBlockInput, discriminator="image_url"):
-    """Creation-time image-URL block.
+    """An image-URL block in a new message, referencing an external image by URL.
 
-    :ivar type: Always 'image_url'. Required. An externally hosted image URL.
+    :ivar type: Must be 'image_url' for an externally hosted image block. Required. Indicates a
+     block referencing an external image URL.
     :vartype type: str or ~azure.ai.projects.models.IMAGE_URL
-    :ivar image_url: References an external image by URL. Required.
+    :ivar image_url: Information about the external image URL, including the URL and optional
+     detail level. Required.
     :vartype image_url: ~azure.ai.projects.models.MessageImageUrlParam
     """
 
     type: Literal[MessageBlockType.IMAGE_URL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Always 'image_url'. Required. An externally hosted image URL."""
+    """Must be 'image_url' for an externally hosted image block. Required. Indicates a block
+     referencing an external image URL."""
     image_url: "_models.MessageImageUrlParam" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """References an external image by URL. Required."""
+    """Information about the external image URL, including the URL and optional detail level.
+     Required."""
 
     @overload
     def __init__(
@@ -3050,22 +3058,22 @@ class MessageImageUrlBlockInput(MessageContentBlockInput, discriminator="image_u
 
 
 class MessageImageUrlParam(_model_base.Model):
-    """Parameter for an external image URL at creation time.
+    """Defines how an external image URL is referenced when creating an image-URL block.
 
-    :ivar url: The externally accessible image URL. Required.
+    :ivar url: The publicly accessible URL of the external image. Required.
     :vartype url: str
-    :ivar detail: Specifies the requested detail level for the image. Default is 'auto'. Known
-     values are: "auto", "low", and "high".
+    :ivar detail: Optional detail level for the image (auto, low, or high). Defaults to 'auto' if
+     not specified. Known values are: "auto", "low", and "high".
     :vartype detail: str or ~azure.ai.projects.models.ImageDetailLevel
     """
 
     url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The externally accessible image URL. Required."""
+    """The publicly accessible URL of the external image. Required."""
     detail: Optional[Union[str, "_models.ImageDetailLevel"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the requested detail level for the image. Default is 'auto'. Known values are:
-     \"auto\", \"low\", and \"high\"."""
+    """Optional detail level for the image (auto, low, or high). Defaults to 'auto' if not specified.
+     Known values are: \"auto\", \"low\", and \"high\"."""
 
     @overload
     def __init__(
@@ -3159,18 +3167,19 @@ class MessageTextAnnotation(_model_base.Model):
 
 
 class MessageTextBlockInput(MessageContentBlockInput, discriminator="text"):
-    """Creation-time text block.
+    """A text block in a new message, containing plain text content.
 
-    :ivar type: Always 'text'. Required. A text content block.
+    :ivar type: Must be 'text' for a text block. Required. Indicates a block containing text
+     content.
     :vartype type: str or ~azure.ai.projects.models.TEXT
-    :ivar text: The text content. Required.
+    :ivar text: The plain text content for this block. Required.
     :vartype text: str
     """
 
     type: Literal[MessageBlockType.TEXT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Always 'text'. Required. A text content block."""
+    """Must be 'text' for a text block. Required. Indicates a block containing text content."""
     text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The text content. Required."""
+    """The plain text content for this block. Required."""
 
     @overload
     def __init__(

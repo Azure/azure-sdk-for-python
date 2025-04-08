@@ -252,16 +252,14 @@ class Frequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ImageDetailLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Represents an open union for the image detail level: 'auto', 'low', 'high', or an unknown
-    string.
-    """
+    """Specifies an image's detail level. Can be 'auto', 'low', 'high', or an unknown future value."""
 
     AUTO = "auto"
-    """Automatic or default level of detail."""
+    """Automatically select an appropriate detail level."""
     LOW = "low"
-    """Low detail: uses fewer tokens."""
+    """Use a lower detail level to reduce bandwidth or cost."""
     HIGH = "high"
-    """High detail: uses more tokens (including potentially more cost)."""
+    """Use a higher detail level—potentially more resource-intensive."""
 
 
 class IncompleteDetailsReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -285,16 +283,16 @@ class ListSortOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class MessageBlockType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """For the block's 'type' property, we define an open union with a fallback string to satisfy the
-    no-string-discriminator rule.
+    """Specifies the kind of content block within a message. Could be text, an image file, an external
+    image URL, or an unknown future type.
     """
 
     TEXT = "text"
-    """A text content block."""
+    """Indicates a block containing text content."""
     IMAGE_FILE = "image_file"
-    """An internally uploaded image file."""
+    """Indicates a block referencing an internally uploaded image file."""
     IMAGE_URL = "image_url"
-    """An externally hosted image URL."""
+    """Indicates a block referencing an external image URL."""
 
 
 class MessageIncompleteDetailsReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
