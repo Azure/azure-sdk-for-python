@@ -30,7 +30,7 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.service.begin_upgrade(
+    response = client.services.begin_upgrade(
         resource_group_name="rg1",
         search_service_name="mysearchservice",
     ).result()

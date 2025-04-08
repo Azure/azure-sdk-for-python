@@ -11,7 +11,7 @@ try:
 except ImportError:
     has_pyrit = False
 if has_pyrit:
-    from azure.ai.evaluation._red_team._red_team_result import (
+    from azure.ai.evaluation.red_team._red_team_result import (
         RedTeamOutput, _RedTeamResult, _RedTeamingScorecard, _RedTeamingParameters, _Conversation
     )
 

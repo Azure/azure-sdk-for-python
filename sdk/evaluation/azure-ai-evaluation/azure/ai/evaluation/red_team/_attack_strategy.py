@@ -3,7 +3,10 @@
 # ---------------------------------------------------------
 from enum import Enum
 from typing import List
+from azure.ai.evaluation._common._experimental import experimental
 
+
+@experimental
 class AttackStrategy(Enum):
     """Strategies for attacks."""
     EASY = "easy"
