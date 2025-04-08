@@ -175,7 +175,7 @@ async def setup_and_teardown():
 
     test_client = CosmosClient(HOST, KEY)
     container = test_client.get_database_client(DATABASE_ID).get_container_client(CONTAINER_ID)
-    await container.create_item(body=TEST_ITEM)
+    await container.upsert_item(body=TEST_ITEM)
 
     yield
     await test_client.close()

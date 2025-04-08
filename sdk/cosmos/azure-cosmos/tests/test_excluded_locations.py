@@ -176,7 +176,7 @@ def setup_and_teardown():
     logger.setLevel(logging.DEBUG)
 
     container = cosmos_client.CosmosClient(HOST, KEY).get_database_client(DATABASE_ID).get_container_client(CONTAINER_ID)
-    container.create_item(body=TEST_ITEM)
+    container.upsert_item(body=TEST_ITEM)
 
     yield
     # Code to run after tests
