@@ -1,14 +1,21 @@
 # Azure Load Testing client library for Python
+
 Azure Load Testing provides client library in python to the user by which they can interact natively with Azure Load Testing service. Azure Load Testing is a fully managed load-testing service that enables you to generate high-scale load. The service simulates traffic for your applications, regardless of where they're hosted. Developers, testers, and quality assurance (QA) engineers can use it to optimize application performance, scalability, or capacity.
 
 ## Documentation
+
 Various documentation is available to help you get started
 
-<!-- - [Source code][source_code] -->
 - [API reference documentation][api_reference_doc]
 - [Product Documentation][product_documentation]
 
 ## Getting started
+
+### Prequisites
+
+- Python 3.8 or later is required to use this package.
+- You need an [Azure subscription][azure_sub] to use this package.
+- An existing Azure LoadTesting resource.
 
 ### Installing the package
 
@@ -16,13 +23,7 @@ Various documentation is available to help you get started
 python -m pip install azure-developer-loadtesting
 ```
 
-#### Prequisites
-
-- Python 3.7 or later is required to use this package.
-- You need an [Azure subscription][azure_sub] to use this package.
-- An existing Azure Developer LoadTesting instance.
-
-#### Create with an Azure Active Directory Credential
+### Create with an Azure Active Directory Credential
 
 To use an [Azure Active Directory (AAD) token credential][authenticate_with_token],
 provide an instance of the desired credential type obtained from the
@@ -36,9 +37,9 @@ As an example, sign in via the Azure CLI `az login` command and [DefaultAzureCre
 
 Use the returned token credential to authenticate the client.
 
-#### Create the client
+### Create the client
 
-Azure Developer LoadTesting SDK has 2 sub-clients of the main client (`LoadTestingClient`) to interact with the service, 'administration' and 'test_run'.
+Azure Developer LoadTesting SDK has 2 sub-clients of the main client (`LoadTestingClient`) to interact with the service, 'LoadTestAdministrationClient' for administrative operations and 'LoadTestRunClient' to run tests/test-profiles.
 
 ```python
 from azure.developer.loadtesting import LoadTestAdministrationClient
@@ -53,6 +54,8 @@ client = LoadTestAdministrationClient(endpoint='<endpoint>', credential=DefaultA
 
 `<endpoint>` refers to the data-plane endpoint/URL of the resource.
 
+The data-plane endpoint is obtained from Control Plane APIs. To obtain the data-plane endpoint for your resource, follow [this documentation][obtaining_data_plane_uri].
+
 ## Key concepts
 
 The Azure Load Test client library for python allows you to interact with each of these components through the use of clients. There are two top-level clients which are the main entry points for the library
@@ -66,7 +69,7 @@ These two clients also have there asynchronous counterparts, which are
 
 ### Load Test Administration Client
 
-The `LoadTestAdministrationClient` is used to administer and configure the load tests, app components and metrics.
+The `LoadTestAdministrationClient` is used to administer and configure the load tests, test profiles, app components and metrics.
 
 #### Test
 
@@ -86,7 +89,7 @@ During a load test, Azure Load Testing collects metrics about the test execution
 
 ### Test Run Client
 
-The `LoadTestRunClient`  is used to start and stop test runs corresponding to a load test. A test run represents one execution of a load test. It collects the logs associated with running the Apache JMeter script, the load test YAML configuration, the list of app components to monitor, and the results of the test.
+The `LoadTestRunClient`  is used to start and stop test runs corresponding to a load test. It can also be used to start and stop test profile runs corresponding to a test profile. A test run represents one execution of a load test. It collects the logs associated with running the Apache JMeter or Locust script, the load test YAML configuration, the list of app components to monitor, and the results of the test.
 
 ### Data-Plane Endpoint
 
@@ -96,15 +99,16 @@ Data-plane of Azure Load Testing resources is addressable using the following UR
 
 The first GUID `00000000-0000-0000-0000-000000000000` is the unique identifier used for accessing the Azure Load Testing resource. This is followed by  `aaa` which is the Azure region of the resource.
 
-The data-plane endpoint is obtained from Control Plane APIs.
+The data-plane endpoint is obtained from Control Plane APIs. To obtain the data-plane endpoint for your resource, follow [this documentation][obtaining_data_plane_uri].
 
-**Example:** `1234abcd-12ab-12ab-12ab-123456abcdef.eus.cnt-prod.loadtesting.azure.com`
+**Example:** `1234abcd-12ab-12ab-12ab-123456abcdef.eastus.cnt-prod.loadtesting.azure.com`
 
-In the above example, `eus` represents the Azure region `East US`.
+In the above example, `eastus` represents the Azure region `East US`.
 
 ## Examples
 
 ### Creating a load test 
+
 ```python
 from azure.developer.loadtesting import LoadTestAdministrationClient
 from azure.identity import DefaultAzureCredential
@@ -125,7 +129,7 @@ try:
         {
             "description": "",
             "displayName": "My New Load Test",
-            "loadTestConfig": {
+            "loadTestConfiguration": {
                 "engineInstances": 1,
                 "splitAllCSVs": False,
             },
@@ -169,12 +173,14 @@ except HttpResponseError as e:
 
 ```
 
-### Uploading .jmx file to a Test
+### Uploading test script file to a Test
+
 ```python
 from azure.developer.loadtesting import LoadTestAdministrationClient
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
+# This sample uploads a JMX Test Script File
 TEST_ID = "some-test-id"  
 FILE_NAME = "some-file-name.jmx"  
 
@@ -194,6 +200,7 @@ except HttpResponseError as e:
 ```
 
 ### Running a Test
+
 ```python
 from azure.developer.loadtesting import LoadTestRunClient
 from azure.identity import DefaultAzureCredential
@@ -222,6 +229,41 @@ except HttpResponseError as e:
     print("Failed with error: {}".format(e.response.json()))
 ```
 
+## Troubleshooting
+
+### Logging
+
+This SDK uses Python standard [logging][python_logging] library for logging.
+Basic information about HTTP sessions (URLs, headers, etc.) is logged at INFO
+level.
+
+Detailed DEBUG level logging, including request/response bodies and unredacted
+headers, can be enabled on a client with the `logging_enable` keyword argument.
+Do note that DEBUG level logging can contain sensitive information:
+
+```python
+import sys
+import logging
+from azure.identity import DefaultAzureCredential
+
+# Create a logger for the 'azure' SDK
+logger = logging.getLogger('azure')
+logger.setLogLevel(logging.DEBUG)
+
+# Configure console output
+handler = logging.StreamHandler(stream=sys.stdout)
+logger.addHandler(handler)
+
+# Enable logging for a client
+client = LoadTestAdministrationClient(endpoint='<endpoint>', credential=DefaultAzureCredential(), logging_enable=True)
+```
+
+Similarly, `logging_enable` can enable detailed logging for a single call, even when it isn't enabled for the whole client
+
+```python
+client.create_or_update_test(..., logging_enable=True)
+```
+
 ## Next steps
 
 More samples can be found [here](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/loadtesting/azure-developer-loadtesting/samples).
@@ -243,9 +285,6 @@ This project has adopted the
 see the Code of Conduct FAQ or contact opencode@microsoft.com with any
 additional questions or comments.
 
-## Troubleshooting
-More about it is coming soon...
-
 <!-- LINKS -->
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [authenticate_with_token]: https://docs.microsoft.com/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-an-authentication-token
@@ -256,3 +295,5 @@ More about it is coming soon...
 [azure_sub]: https://azure.microsoft.com/free/
 [api_reference_doc]: https://docs.microsoft.com/rest/api/loadtesting/
 [product_documentation]: https://azure.microsoft.com/services/load-testing/
+[obtaining_data_plane_uri]: https://learn.microsoft.com/rest/api/loadtesting/data-plane-uri
+[python_logging]: https://docs.python.org/3/library/logging.html

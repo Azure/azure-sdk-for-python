@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import json
+import os
 import time
 import unittest
 import uuid
@@ -93,6 +94,20 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
             # TODO: Find why this behavior is inconsistent across runs - message should be the same
             assert ("One of the input values is invalid" in e.message or
                     "Specifying a sort order (ASC or DESC) in the ORDER BY RANK clause is not allowed." in e.message)
+
+    def test_hybrid_search_env_variables(self):
+        os.environ["AZURE_COSMOS_HYBRID_SEARCH_MAX_ITEMS"] = "0"
+        try:
+            query = "SELECT TOP 1 c.index, c.title FROM c WHERE FullTextContains(c.title, 'John') OR " \
+                    "FullTextContains(c.text, 'John') ORDER BY RANK FullTextScore(c.title, ['John'])"
+            results = self.test_container.query_items(query, enable_cross_partition_query=True)
+            [item for item in results]
+            pytest.fail("Config was not applied properly.")
+        except ValueError as e:
+            assert e.args[0] == ("Executing a hybrid search query with more items than the max is not allowed. "
+                                 "Please ensure you are using a limit smaller than the max, or change the max.")
+        finally:
+            os.environ["AZURE_COSMOS_HYBRID_SEARCH_MAX_ITEMS"] = "1000"
 
     def test_hybrid_search_queries(self):
         query = "SELECT TOP 10 c.index, c.title FROM c WHERE FullTextContains(c.title, 'John') OR " \

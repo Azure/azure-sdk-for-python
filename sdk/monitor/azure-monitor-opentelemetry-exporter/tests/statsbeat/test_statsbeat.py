@@ -447,13 +447,32 @@ class TestStatsbeatMetrics(unittest.TestCase):
         os.environ,
         {
             "AKS_ARM_NAMESPACE_ID": "namespace_id",
+            "KUBERNETES_SERVICE_HOST": "TEST_KUBERNETES_SERVICE_HOST",
         },
     )
-    def test_get_attach_metric_aks(self):
+    def test_get_attach_metric_aks_attach(self):
         attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
         self.assertEqual(attributes["rp"], _RP_Names.UNKNOWN.value)
         attributes["rp"] = _RP_Names.AKS.value
         attributes["rpId"] = "namespace_id"
+        observations = self._metric._get_attach_metric(options=None)
+        for obs in observations:
+            self.assertEqual(obs.value, 1)
+            self.assertEqual(obs.attributes, attributes)
+        self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["rp"], _RP_Names.AKS.value)
+
+    # pylint: disable=protected-access
+    @mock.patch.dict(
+        os.environ,
+        {
+            "KUBERNETES_SERVICE_HOST": "TEST_KUBERNETES_SERVICE_HOST",
+        },
+    )
+    def test_get_attach_metric_aks_manual(self):
+        attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+        self.assertEqual(attributes["rp"], _RP_Names.UNKNOWN.value)
+        attributes["rp"] = _RP_Names.AKS.value
+        attributes["rpId"] = "TEST_KUBERNETES_SERVICE_HOST"
         observations = self._metric._get_attach_metric(options=None)
         for obs in observations:
             self.assertEqual(obs.value, 1)

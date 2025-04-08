@@ -39,7 +39,7 @@ as "structured output". See new samples `sample_chat_completions_with_structured
 
 ### Breaking Changes
 
-* If you previously configured your `ChatCompletionClient.complete()` call to output JSON format without a scheme, you have this in your code: `response_format=ChatCompletionsResponseFormatJSON()`. To maintain the same functionality, replace this with `response_format="json-object"`. We however recommend that you now switch to output JSON format with a provided schema if your AI model supports it: `response_format=JsonSchemaFormat(...)`.
+* If you previously configured your `ChatCompletionClient.complete()` call to output JSON format without a scheme, you have this in your code: `response_format=ChatCompletionsResponseFormatJSON()`. To maintain the same functionality, replace this with `response_format="json_object"`. We however recommend that you now switch to output JSON format with a provided schema if your AI model supports it: `response_format=JsonSchemaFormat(...)`.
 
 ### Bugs Fixed
 
