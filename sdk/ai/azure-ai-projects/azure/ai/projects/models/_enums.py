@@ -251,6 +251,19 @@ class Frequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MINUTE = "Minute"
 
 
+class ImageDetailLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Represents an open union for the image detail level: 'auto', 'low', 'high', or an unknown
+    string.
+    """
+
+    AUTO = "auto"
+    """Automatic or default level of detail."""
+    LOW = "low"
+    """Low detail: uses fewer tokens."""
+    HIGH = "high"
+    """High detail: uses more tokens (including potentially more cost)."""
+
+
 class IncompleteDetailsReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The reason why the run is incomplete. This will point to which specific token limit was reached
     over the course of the run.
@@ -269,6 +282,19 @@ class ListSortOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies an ascending sort order."""
     DESCENDING = "desc"
     """Specifies a descending sort order."""
+
+
+class MessageBlockType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """For the block's 'type' property, we define an open union with a fallback string to satisfy the
+    no-string-discriminator rule.
+    """
+
+    TEXT = "text"
+    """A text content block."""
+    IMAGE_FILE = "image_file"
+    """An internally uploaded image file."""
+    IMAGE_URL = "image_url"
+    """An externally hosted image URL."""
 
 
 class MessageIncompleteDetailsReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):

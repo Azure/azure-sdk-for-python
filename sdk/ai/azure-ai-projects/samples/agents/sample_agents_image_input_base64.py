@@ -23,10 +23,10 @@ USAGE:
 """
 
 import os, time, base64
-from typing import List, Dict, Any
+from typing import List, Dict, Any, cast
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models import MessageTextContent
+from azure.ai.projects.models import MessageTextContent, MessageContentBlockInput
 
 
 def image_to_base64(image_path: str) -> str:
@@ -72,17 +72,16 @@ with project_client:
     # [END create_thread]
     print(f"Created thread, thread ID: {thread.id}")
 
-    # [START create_message]   
+    # [START create_message]
     image_base64 = image_to_base64("image_file.png")
     img_str = f"data:image/png;base64,{image_base64}"
     input_message = "Hello, what is in the image ?"
     content: List[Dict[str, Any]] = []
     content = [{"type": "text", "text": input_message}]
-    content.append({
-        "type": "image_url",
-        "image_url": {"url": img_str, "detail": "high"}
-    })
-    message = project_client.agents.create_message(thread_id=thread.id, role="user", content=content)
+    content.append({"type": "image_url", "image_url": {"url": img_str, "detail": "high"}})
+    message = project_client.agents.create_message(
+        thread_id=thread.id, role="user", content=cast(List[MessageContentBlockInput], content)
+    )
     # [END create_message]
     print(f"Created message, message ID: {message.id}")
 

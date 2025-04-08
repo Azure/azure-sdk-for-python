@@ -23,10 +23,10 @@ USAGE:
 """
 
 import os, time
-from typing import List, Dict, Any
+from typing import List, Dict, Any, cast
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models import MessageTextContent
+from azure.ai.projects.models import MessageTextContent, MessageContentBlockInput
 
 
 # [START create_project_client]
@@ -58,14 +58,10 @@ with project_client:
     input_message = "Hello, what is in the image ?"
     content: List[Dict[str, Any]] = []
     content = [{"type": "text", "text": input_message}]
-    content.append({
-        "type": "image_file",
-        "image_file": {
-            "file_id": image_file.id,
-            "detail": "high"
-        }
-    })
-    message = project_client.agents.create_message(thread_id=thread.id, role="user", content=content)
+    content.append({"type": "image_file", "image_file": {"file_id": image_file.id, "detail": "high"}})
+    message = project_client.agents.create_message(
+        thread_id=thread.id, role="user", content=cast(List[MessageContentBlockInput], content)
+    )
     # [END create_message]
     print(f"Created message, message ID: {message.id}")
 
