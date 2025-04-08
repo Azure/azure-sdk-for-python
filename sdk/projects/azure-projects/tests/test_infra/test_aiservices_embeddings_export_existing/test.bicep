@@ -22,12 +22,6 @@ resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024
   }
   location: location
   tags: azdTags
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${managedIdentityId}': {}
-    }
-  }
 }
 
 output AZURE_APPCONFIG_ID string = configurationstore.id
@@ -40,10 +34,10 @@ resource aiservices_account_aitest 'Microsoft.CognitiveServices/accounts@2024-10
   name: 'aitest'
 }
 
-output AZURE_AI_AISERVICES_ID_AITEST string = aiservices_account_aitest.id
-output AZURE_AI_AISERVICES_NAME_AITEST string = aiservices_account_aitest.name
-output AZURE_AI_AISERVICES_RESOURCE_GROUP_AITEST string = resourceGroup().name
-output AZURE_AI_AISERVICES_ENDPOINT_AITEST string = aiservices_account_aitest.properties.endpoint
+output AZURE_AI_AISERVICES_ID_R string = aiservices_account_aitest.id
+output AZURE_AI_AISERVICES_NAME_R string = aiservices_account_aitest.name
+output AZURE_AI_AISERVICES_RESOURCE_GROUP_R string = resourceGroup().name
+output AZURE_AI_AISERVICES_ENDPOINT_R string = aiservices_account_aitest.properties.endpoint
 
 
 resource embeddings_deployment_aitest_aitest 'Microsoft.CognitiveServices/accounts/deployments@2024-10-01' existing = {
@@ -51,12 +45,13 @@ resource embeddings_deployment_aitest_aitest 'Microsoft.CognitiveServices/accoun
   parent: aiservices_account_aitest
 }
 
-output AZURE_AI_EMBEDDINGS_ID_AITEST_AITEST string = embeddings_deployment_aitest_aitest.id
-output AZURE_AI_EMBEDDINGS_NAME_AITEST_AITEST string = embeddings_deployment_aitest_aitest.name
-output AZURE_AI_EMBEDDINGS_RESOURCE_GROUP_AITEST_AITEST string = resourceGroup().name
-output AZURE_AI_EMBEDDINGS_MODEL_NAME_AITEST_AITEST string = embeddings_deployment_aitest_aitest.properties.model.name
-output AZURE_AI_EMBEDDINGS_MODEL_VERSION_AITEST_AITEST string = embeddings_deployment_aitest_aitest.properties.model.version
-output AZURE_AI_EMBEDDINGS_ENDPOINT_AITEST_AITEST string = '${aiservices_account_aitest.properties.endpoint}openai/deployments/${embeddings_deployment_aitest_aitest.name}'
+output AZURE_AI_EMBEDDINGS_ID_R string = embeddings_deployment_aitest_aitest.id
+output AZURE_AI_EMBEDDINGS_NAME_R string = embeddings_deployment_aitest_aitest.name
+output AZURE_AI_EMBEDDINGS_RESOURCE_GROUP_R string = resourceGroup().name
+output AZURE_AI_EMBEDDINGS_MODEL_NAME_R string = embeddings_deployment_aitest_aitest.properties.model.name
+output AZURE_AI_EMBEDDINGS_MODEL_VERSION_R string = embeddings_deployment_aitest_aitest.properties.model.version
+output AZURE_AI_EMBEDDINGS_MODEL_FORMAT_R string = embeddings_deployment_aitest_aitest.properties.model.format
+output AZURE_AI_EMBEDDINGS_ENDPOINT_R string = '${aiservices_account_aitest.properties.endpoint}openai/deployments/${embeddings_deployment_aitest_aitest.name}'
 
 
 resource keyvalue_azureappconfigid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
@@ -99,9 +94,9 @@ resource keyvalue_azureappconfigendpoint 'Microsoft.AppConfiguration/configurati
 
 
 
-resource keyvalue_azureaiaiservicesidaitest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiaiservicesidr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_AISERVICES_ID_AITEST'
+  name: 'AZURE_AI_AISERVICES_ID_R'
   properties: {
     value: aiservices_account_aitest.id
   }
@@ -109,9 +104,9 @@ resource keyvalue_azureaiaiservicesidaitest 'Microsoft.AppConfiguration/configur
 
 
 
-resource keyvalue_azureaiaiservicesnameaitest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiaiservicesnamer 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_AISERVICES_NAME_AITEST'
+  name: 'AZURE_AI_AISERVICES_NAME_R'
   properties: {
     value: aiservices_account_aitest.name
   }
@@ -119,9 +114,9 @@ resource keyvalue_azureaiaiservicesnameaitest 'Microsoft.AppConfiguration/config
 
 
 
-resource keyvalue_azureaiaiservicesresourcegroupaitest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiaiservicesresourcegroupr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_AISERVICES_RESOURCE_GROUP_AITEST'
+  name: 'AZURE_AI_AISERVICES_RESOURCE_GROUP_R'
   properties: {
     value: resourceGroup().name
   }
@@ -129,9 +124,9 @@ resource keyvalue_azureaiaiservicesresourcegroupaitest 'Microsoft.AppConfigurati
 
 
 
-resource keyvalue_azureaiaiservicesendpointaitest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiaiservicesendpointr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_AISERVICES_ENDPOINT_AITEST'
+  name: 'AZURE_AI_AISERVICES_ENDPOINT_R'
   properties: {
     value: aiservices_account_aitest.properties.endpoint
   }
@@ -139,9 +134,9 @@ resource keyvalue_azureaiaiservicesendpointaitest 'Microsoft.AppConfiguration/co
 
 
 
-resource keyvalue_azureaiembeddingsidaitestaitest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiembeddingsidr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_EMBEDDINGS_ID_AITEST_AITEST'
+  name: 'AZURE_AI_EMBEDDINGS_ID_R'
   properties: {
     value: embeddings_deployment_aitest_aitest.id
   }
@@ -149,9 +144,9 @@ resource keyvalue_azureaiembeddingsidaitestaitest 'Microsoft.AppConfiguration/co
 
 
 
-resource keyvalue_azureaiembeddingsnameaitestaitest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiembeddingsnamer 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_EMBEDDINGS_NAME_AITEST_AITEST'
+  name: 'AZURE_AI_EMBEDDINGS_NAME_R'
   properties: {
     value: embeddings_deployment_aitest_aitest.name
   }
@@ -159,9 +154,9 @@ resource keyvalue_azureaiembeddingsnameaitestaitest 'Microsoft.AppConfiguration/
 
 
 
-resource keyvalue_azureaiembeddingsresourcegroupaitestaitest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiembeddingsresourcegroupr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_EMBEDDINGS_RESOURCE_GROUP_AITEST_AITEST'
+  name: 'AZURE_AI_EMBEDDINGS_RESOURCE_GROUP_R'
   properties: {
     value: resourceGroup().name
   }
@@ -169,9 +164,9 @@ resource keyvalue_azureaiembeddingsresourcegroupaitestaitest 'Microsoft.AppConfi
 
 
 
-resource keyvalue_azureaiembeddingsmodelnameaitestaitest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiembeddingsmodelnamer 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_EMBEDDINGS_MODEL_NAME_AITEST_AITEST'
+  name: 'AZURE_AI_EMBEDDINGS_MODEL_NAME_R'
   properties: {
     value: embeddings_deployment_aitest_aitest.properties.model.name
   }
@@ -179,9 +174,9 @@ resource keyvalue_azureaiembeddingsmodelnameaitestaitest 'Microsoft.AppConfigura
 
 
 
-resource keyvalue_azureaiembeddingsmodelversionaitestaitest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiembeddingsmodelversionr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_EMBEDDINGS_MODEL_VERSION_AITEST_AITEST'
+  name: 'AZURE_AI_EMBEDDINGS_MODEL_VERSION_R'
   properties: {
     value: embeddings_deployment_aitest_aitest.properties.model.version
   }
@@ -189,9 +184,19 @@ resource keyvalue_azureaiembeddingsmodelversionaitestaitest 'Microsoft.AppConfig
 
 
 
-resource keyvalue_azureaiembeddingsendpointaitestaitest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiembeddingsmodelformatr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_EMBEDDINGS_ENDPOINT_AITEST_AITEST'
+  name: 'AZURE_AI_EMBEDDINGS_MODEL_FORMAT_R'
+  properties: {
+    value: embeddings_deployment_aitest_aitest.properties.model.format
+  }
+}
+
+
+
+resource keyvalue_azureaiembeddingsendpointr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_AI_EMBEDDINGS_ENDPOINT_R'
   properties: {
     value: '${aiservices_account_aitest.properties.endpoint}openai/deployments/${embeddings_deployment_aitest_aitest.name}'
   }

@@ -48,9 +48,9 @@ output AZURE_APPCONFIG_ID string = test_module.outputs.AZURE_APPCONFIG_ID
 output AZURE_APPCONFIG_NAME string = test_module.outputs.AZURE_APPCONFIG_NAME
 output AZURE_APPCONFIG_RESOURCE_GROUP string = test_module.outputs.AZURE_APPCONFIG_RESOURCE_GROUP
 output AZURE_APPCONFIG_ENDPOINT string = test_module.outputs.AZURE_APPCONFIG_ENDPOINT
-output AZURE_AI_AISERVICES_ID string = test_module.outputs.AZURE_AI_AISERVICES_ID
-output AZURE_AI_AISERVICES_NAME string = test_module.outputs.AZURE_AI_AISERVICES_NAME
-output AZURE_AI_AISERVICES_RESOURCE_GROUP string = test_module.outputs.AZURE_AI_AISERVICES_RESOURCE_GROUP
-output AZURE_AI_AISERVICES_ENDPOINT string = test_module.outputs.AZURE_AI_AISERVICES_ENDPOINT
+output AZURE_AI_AISERVICES_ID_R string = test_module.outputs.AZURE_AI_AISERVICES_ID_R
+output AZURE_AI_AISERVICES_NAME_R string = test_module.outputs.AZURE_AI_AISERVICES_NAME_R
+output AZURE_AI_AISERVICES_RESOURCE_GROUP_R string = test_module.outputs.AZURE_AI_AISERVICES_RESOURCE_GROUP_R
+output AZURE_AI_AISERVICES_ENDPOINT_R string = test_module.outputs.AZURE_AI_AISERVICES_ENDPOINT_R
 
 

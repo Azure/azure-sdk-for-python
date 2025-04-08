@@ -52,8 +52,6 @@ resource aiservices_account 'Microsoft.CognitiveServices/accounts@2024-10-01' = 
     customSubDomainName: '${defaultName}-aiservices'
     networkAcls: {
       defaultAction: 'Allow'
-      virtualNetworkRules: []
-      ipRules: []
     }
   }
   name: '${defaultName}-aiservices'
@@ -70,10 +68,10 @@ resource aiservices_account 'Microsoft.CognitiveServices/accounts@2024-10-01' = 
   }
 }
 
-output AZURE_AI_AISERVICES_ID string = aiservices_account.id
-output AZURE_AI_AISERVICES_NAME string = aiservices_account.name
-output AZURE_AI_AISERVICES_RESOURCE_GROUP string = resourceGroup().name
-output AZURE_AI_AISERVICES_ENDPOINT string = aiservices_account.properties.endpoint
+output AZURE_AI_AISERVICES_ID_AI string = aiservices_account.id
+output AZURE_AI_AISERVICES_NAME_AI string = aiservices_account.name
+output AZURE_AI_AISERVICES_RESOURCE_GROUP_AI string = resourceGroup().name
+output AZURE_AI_AISERVICES_ENDPOINT_AI string = aiservices_account.properties.endpoint
 
 
 resource searchservice 'Microsoft.Search/searchServices@2024-06-01-Preview' = {
@@ -94,10 +92,10 @@ resource searchservice 'Microsoft.Search/searchServices@2024-06-01-Preview' = {
   }
 }
 
-output AZURE_SEARCH_ID string = searchservice.id
-output AZURE_SEARCH_NAME string = searchservice.name
-output AZURE_SEARCH_RESOURCE_GROUP string = resourceGroup().name
-output AZURE_SEARCH_ENDPOINT string = 'https://${searchservice.name}.search.windows.net/'
+output AZURE_SEARCH_ID_SEARCH string = searchservice.id
+output AZURE_SEARCH_NAME_SEARCH string = searchservice.name
+output AZURE_SEARCH_RESOURCE_GROUP_SEARCH string = resourceGroup().name
+output AZURE_SEARCH_ENDPOINT_SEARCH string = 'https://${searchservice.name}.search.windows.net/'
 
 
 resource storageaccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
@@ -121,9 +119,9 @@ resource storageaccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   }
 }
 
-output AZURE_STORAGE_ID string = storageaccount.id
-output AZURE_STORAGE_NAME string = storageaccount.name
-output AZURE_STORAGE_RESOURCE_GROUP string = resourceGroup().name
+output AZURE_STORAGE_ID_STORAGE string = storageaccount.id
+output AZURE_STORAGE_NAME_STORAGE string = storageaccount.name
+output AZURE_STORAGE_RESOURCE_GROUP_STORAGE string = resourceGroup().name
 
 
 resource blobservice 'Microsoft.Storage/storageAccounts/blobServices@2024-01-01' = {
@@ -132,7 +130,7 @@ resource blobservice 'Microsoft.Storage/storageAccounts/blobServices@2024-01-01'
   name: 'default'
 }
 
-output AZURE_BLOBS_ENDPOINT string = storageaccount.properties.primaryEndpoints.blob
+output AZURE_BLOBS_ENDPOINT_STORAGE string = storageaccount.properties.primaryEndpoints.blob
 
 
 resource vault 'Microsoft.KeyVault/vaults@2024-12-01-preview' = {
@@ -151,10 +149,10 @@ resource vault 'Microsoft.KeyVault/vaults@2024-12-01-preview' = {
   tags: azdTags
 }
 
-output AZURE_KEYVAULT_ID string = vault.id
-output AZURE_KEYVAULT_NAME string = vault.name
-output AZURE_KEYVAULT_RESOURCE_GROUP string = resourceGroup().name
-output AZURE_KEYVAULT_ENDPOINT string = vault.properties.vaultUri
+output AZURE_KEYVAULT_ID_VAULT string = vault.id
+output AZURE_KEYVAULT_NAME_VAULT string = vault.name
+output AZURE_KEYVAULT_RESOURCE_GROUP_VAULT string = resourceGroup().name
+output AZURE_KEYVAULT_ENDPOINT_VAULT string = vault.properties.vaultUri
 
 
 resource hub_workspace 'Microsoft.MachineLearningServices/workspaces@2024-04-01-preview' = {
@@ -189,9 +187,9 @@ resource hub_workspace 'Microsoft.MachineLearningServices/workspaces@2024-04-01-
   }
 }
 
-output AZURE_AIFOUNDRY_HUB_ID string = hub_workspace.id
-output AZURE_AIFOUNDRY_HUB_NAME string = hub_workspace.name
-output AZURE_AIFOUNDRY_HUB_RESOURCE_GROUP string = resourceGroup().name
+output AZURE_AIFOUNDRY_HUB_ID_HUB string = hub_workspace.id
+output AZURE_AIFOUNDRY_HUB_NAME_HUB string = hub_workspace.name
+output AZURE_AIFOUNDRY_HUB_RESOURCE_GROUP_HUB string = resourceGroup().name
 
 
 resource connection_buifsaivbkhdryzkibjl 'Microsoft.MachineLearningServices/workspaces/connections@2025-01-01-preview' = {
@@ -260,10 +258,10 @@ resource project_workspace 'Microsoft.MachineLearningServices/workspaces@2024-04
   }
 }
 
-output AZURE_AIFOUNDRY_PROJECT_ID string = project_workspace.id
-output AZURE_AIFOUNDRY_PROJECT_NAME string = project_workspace.name
-output AZURE_AIFOUNDRY_PROJECT_RESOURCE_GROUP string = resourceGroup().name
-output AZURE_AIFOUNDRY_PROJECT_ENDPOINT string = project_workspace.properties.discoveryUrl
+output AZURE_AIFOUNDRY_PROJECT_ID_PROJECT string = project_workspace.id
+output AZURE_AIFOUNDRY_PROJECT_NAME_PROJECT string = project_workspace.name
+output AZURE_AIFOUNDRY_PROJECT_RESOURCE_GROUP_PROJECT string = resourceGroup().name
+output AZURE_AIFOUNDRY_PROJECT_ENDPOINT_PROJECT string = project_workspace.properties.discoveryUrl
 
 
 resource connection_qazdrbswuvwkfewfrwcp 'Microsoft.MachineLearningServices/workspaces/connections@2025-01-01-preview' = {
@@ -344,9 +342,9 @@ resource keyvalue_azureappconfigendpoint 'Microsoft.AppConfiguration/configurati
 
 
 
-resource keyvalue_azureaiaiservicesid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiaiservicesidai 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_AISERVICES_ID'
+  name: 'AZURE_AI_AISERVICES_ID_AI'
   properties: {
     value: aiservices_account.id
   }
@@ -354,9 +352,9 @@ resource keyvalue_azureaiaiservicesid 'Microsoft.AppConfiguration/configurationS
 
 
 
-resource keyvalue_azureaiaiservicesname 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiaiservicesnameai 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_AISERVICES_NAME'
+  name: 'AZURE_AI_AISERVICES_NAME_AI'
   properties: {
     value: aiservices_account.name
   }
@@ -364,9 +362,9 @@ resource keyvalue_azureaiaiservicesname 'Microsoft.AppConfiguration/configuratio
 
 
 
-resource keyvalue_azureaiaiservicesresourcegroup 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiaiservicesresourcegroupai 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_AISERVICES_RESOURCE_GROUP'
+  name: 'AZURE_AI_AISERVICES_RESOURCE_GROUP_AI'
   properties: {
     value: resourceGroup().name
   }
@@ -374,9 +372,9 @@ resource keyvalue_azureaiaiservicesresourcegroup 'Microsoft.AppConfiguration/con
 
 
 
-resource keyvalue_azureaiaiservicesendpoint 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiaiservicesendpointai 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_AISERVICES_ENDPOINT'
+  name: 'AZURE_AI_AISERVICES_ENDPOINT_AI'
   properties: {
     value: aiservices_account.properties.endpoint
   }
@@ -384,9 +382,9 @@ resource keyvalue_azureaiaiservicesendpoint 'Microsoft.AppConfiguration/configur
 
 
 
-resource keyvalue_azuresearchid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azuresearchidsearch 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_SEARCH_ID'
+  name: 'AZURE_SEARCH_ID_SEARCH'
   properties: {
     value: searchservice.id
   }
@@ -394,9 +392,9 @@ resource keyvalue_azuresearchid 'Microsoft.AppConfiguration/configurationStores/
 
 
 
-resource keyvalue_azuresearchname 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azuresearchnamesearch 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_SEARCH_NAME'
+  name: 'AZURE_SEARCH_NAME_SEARCH'
   properties: {
     value: searchservice.name
   }
@@ -404,9 +402,9 @@ resource keyvalue_azuresearchname 'Microsoft.AppConfiguration/configurationStore
 
 
 
-resource keyvalue_azuresearchresourcegroup 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azuresearchresourcegroupsearch 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_SEARCH_RESOURCE_GROUP'
+  name: 'AZURE_SEARCH_RESOURCE_GROUP_SEARCH'
   properties: {
     value: resourceGroup().name
   }
@@ -414,9 +412,9 @@ resource keyvalue_azuresearchresourcegroup 'Microsoft.AppConfiguration/configura
 
 
 
-resource keyvalue_azuresearchendpoint 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azuresearchendpointsearch 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_SEARCH_ENDPOINT'
+  name: 'AZURE_SEARCH_ENDPOINT_SEARCH'
   properties: {
     value: 'https://${searchservice.name}.search.windows.net/'
   }
@@ -424,9 +422,9 @@ resource keyvalue_azuresearchendpoint 'Microsoft.AppConfiguration/configurationS
 
 
 
-resource keyvalue_azurestorageid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azurestorageidstorage 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_STORAGE_ID'
+  name: 'AZURE_STORAGE_ID_STORAGE'
   properties: {
     value: storageaccount.id
   }
@@ -434,9 +432,9 @@ resource keyvalue_azurestorageid 'Microsoft.AppConfiguration/configurationStores
 
 
 
-resource keyvalue_azurestoragename 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azurestoragenamestorage 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_STORAGE_NAME'
+  name: 'AZURE_STORAGE_NAME_STORAGE'
   properties: {
     value: storageaccount.name
   }
@@ -444,9 +442,9 @@ resource keyvalue_azurestoragename 'Microsoft.AppConfiguration/configurationStor
 
 
 
-resource keyvalue_azurestorageresourcegroup 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azurestorageresourcegroupstorage 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_STORAGE_RESOURCE_GROUP'
+  name: 'AZURE_STORAGE_RESOURCE_GROUP_STORAGE'
   properties: {
     value: resourceGroup().name
   }
@@ -454,9 +452,9 @@ resource keyvalue_azurestorageresourcegroup 'Microsoft.AppConfiguration/configur
 
 
 
-resource keyvalue_azureblobsendpoint 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureblobsendpointstorage 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_BLOBS_ENDPOINT'
+  name: 'AZURE_BLOBS_ENDPOINT_STORAGE'
   properties: {
     value: storageaccount.properties.primaryEndpoints.blob
   }
@@ -464,9 +462,9 @@ resource keyvalue_azureblobsendpoint 'Microsoft.AppConfiguration/configurationSt
 
 
 
-resource keyvalue_azurekeyvaultid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azurekeyvaultidvault 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_KEYVAULT_ID'
+  name: 'AZURE_KEYVAULT_ID_VAULT'
   properties: {
     value: vault.id
   }
@@ -474,9 +472,9 @@ resource keyvalue_azurekeyvaultid 'Microsoft.AppConfiguration/configurationStore
 
 
 
-resource keyvalue_azurekeyvaultname 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azurekeyvaultnamevault 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_KEYVAULT_NAME'
+  name: 'AZURE_KEYVAULT_NAME_VAULT'
   properties: {
     value: vault.name
   }
@@ -484,9 +482,9 @@ resource keyvalue_azurekeyvaultname 'Microsoft.AppConfiguration/configurationSto
 
 
 
-resource keyvalue_azurekeyvaultresourcegroup 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azurekeyvaultresourcegroupvault 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_KEYVAULT_RESOURCE_GROUP'
+  name: 'AZURE_KEYVAULT_RESOURCE_GROUP_VAULT'
   properties: {
     value: resourceGroup().name
   }
@@ -494,9 +492,9 @@ resource keyvalue_azurekeyvaultresourcegroup 'Microsoft.AppConfiguration/configu
 
 
 
-resource keyvalue_azurekeyvaultendpoint 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azurekeyvaultendpointvault 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_KEYVAULT_ENDPOINT'
+  name: 'AZURE_KEYVAULT_ENDPOINT_VAULT'
   properties: {
     value: vault.properties.vaultUri
   }
@@ -504,9 +502,9 @@ resource keyvalue_azurekeyvaultendpoint 'Microsoft.AppConfiguration/configuratio
 
 
 
-resource keyvalue_azureaifoundryhubid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaifoundryhubidhub 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AIFOUNDRY_HUB_ID'
+  name: 'AZURE_AIFOUNDRY_HUB_ID_HUB'
   properties: {
     value: hub_workspace.id
   }
@@ -514,9 +512,9 @@ resource keyvalue_azureaifoundryhubid 'Microsoft.AppConfiguration/configurationS
 
 
 
-resource keyvalue_azureaifoundryhubname 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaifoundryhubnamehub 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AIFOUNDRY_HUB_NAME'
+  name: 'AZURE_AIFOUNDRY_HUB_NAME_HUB'
   properties: {
     value: hub_workspace.name
   }
@@ -524,9 +522,9 @@ resource keyvalue_azureaifoundryhubname 'Microsoft.AppConfiguration/configuratio
 
 
 
-resource keyvalue_azureaifoundryhubresourcegroup 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaifoundryhubresourcegrouphub 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AIFOUNDRY_HUB_RESOURCE_GROUP'
+  name: 'AZURE_AIFOUNDRY_HUB_RESOURCE_GROUP_HUB'
   properties: {
     value: resourceGroup().name
   }
@@ -534,9 +532,9 @@ resource keyvalue_azureaifoundryhubresourcegroup 'Microsoft.AppConfiguration/con
 
 
 
-resource keyvalue_azureaifoundryprojectid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaifoundryprojectidproject 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AIFOUNDRY_PROJECT_ID'
+  name: 'AZURE_AIFOUNDRY_PROJECT_ID_PROJECT'
   properties: {
     value: project_workspace.id
   }
@@ -544,9 +542,9 @@ resource keyvalue_azureaifoundryprojectid 'Microsoft.AppConfiguration/configurat
 
 
 
-resource keyvalue_azureaifoundryprojectname 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaifoundryprojectnameproject 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AIFOUNDRY_PROJECT_NAME'
+  name: 'AZURE_AIFOUNDRY_PROJECT_NAME_PROJECT'
   properties: {
     value: project_workspace.name
   }
@@ -554,9 +552,9 @@ resource keyvalue_azureaifoundryprojectname 'Microsoft.AppConfiguration/configur
 
 
 
-resource keyvalue_azureaifoundryprojectresourcegroup 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaifoundryprojectresourcegroupproject 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AIFOUNDRY_PROJECT_RESOURCE_GROUP'
+  name: 'AZURE_AIFOUNDRY_PROJECT_RESOURCE_GROUP_PROJECT'
   properties: {
     value: resourceGroup().name
   }
@@ -564,9 +562,9 @@ resource keyvalue_azureaifoundryprojectresourcegroup 'Microsoft.AppConfiguration
 
 
 
-resource keyvalue_azureaifoundryprojectendpoint 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaifoundryprojectendpointproject 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AIFOUNDRY_PROJECT_ENDPOINT'
+  name: 'AZURE_AIFOUNDRY_PROJECT_ENDPOINT_PROJECT'
   properties: {
     value: project_workspace.properties.discoveryUrl
   }

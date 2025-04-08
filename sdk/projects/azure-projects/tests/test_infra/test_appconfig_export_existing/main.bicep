@@ -46,9 +46,9 @@ output AZURE_APPCONFIG_ID string = test_module.outputs.AZURE_APPCONFIG_ID
 output AZURE_APPCONFIG_NAME string = test_module.outputs.AZURE_APPCONFIG_NAME
 output AZURE_APPCONFIG_RESOURCE_GROUP string = test_module.outputs.AZURE_APPCONFIG_RESOURCE_GROUP
 output AZURE_APPCONFIG_ENDPOINT string = test_module.outputs.AZURE_APPCONFIG_ENDPOINT
-output AZURE_APPCONFIG_ID_TEST string = test_module.outputs.AZURE_APPCONFIG_ID_TEST
-output AZURE_APPCONFIG_NAME_TEST string = test_module.outputs.AZURE_APPCONFIG_NAME_TEST
-output AZURE_APPCONFIG_RESOURCE_GROUP_TEST string = test_module.outputs.AZURE_APPCONFIG_RESOURCE_GROUP_TEST
-output AZURE_APPCONFIG_ENDPOINT_TEST string = test_module.outputs.AZURE_APPCONFIG_ENDPOINT_TEST
+output AZURE_APPCONFIG_ID_R string = test_module.outputs.AZURE_APPCONFIG_ID_R
+output AZURE_APPCONFIG_NAME_R string = test_module.outputs.AZURE_APPCONFIG_NAME_R
+output AZURE_APPCONFIG_RESOURCE_GROUP_R string = test_module.outputs.AZURE_APPCONFIG_RESOURCE_GROUP_R
+output AZURE_APPCONFIG_ENDPOINT_R string = test_module.outputs.AZURE_APPCONFIG_ENDPOINT_R
 
 

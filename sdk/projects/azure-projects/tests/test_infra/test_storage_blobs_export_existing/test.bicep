@@ -22,12 +22,6 @@ resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024
   }
   location: location
   tags: azdTags
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${managedIdentityId}': {}
-    }
-  }
 }
 
 output AZURE_APPCONFIG_ID string = configurationstore.id
@@ -40,9 +34,9 @@ resource storageaccount_storagetest 'Microsoft.Storage/storageAccounts@2023-05-0
   name: 'storagetest'
 }
 
-output AZURE_STORAGE_ID_STORAGETEST string = storageaccount_storagetest.id
-output AZURE_STORAGE_NAME_STORAGETEST string = storageaccount_storagetest.name
-output AZURE_STORAGE_RESOURCE_GROUP_STORAGETEST string = resourceGroup().name
+output AZURE_STORAGE_ID_R string = storageaccount_storagetest.id
+output AZURE_STORAGE_NAME_R string = storageaccount_storagetest.name
+output AZURE_STORAGE_RESOURCE_GROUP_R string = resourceGroup().name
 
 
 resource blobservice_storagetest 'Microsoft.Storage/storageAccounts/blobServices@2024-01-01' existing = {
@@ -50,7 +44,7 @@ resource blobservice_storagetest 'Microsoft.Storage/storageAccounts/blobServices
   parent: storageaccount_storagetest
 }
 
-output AZURE_BLOBS_ENDPOINT_STORAGETEST string = storageaccount_storagetest.properties.primaryEndpoints.blob
+output AZURE_BLOBS_ENDPOINT_R string = storageaccount_storagetest.properties.primaryEndpoints.blob
 
 
 resource keyvalue_azureappconfigid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
@@ -93,9 +87,9 @@ resource keyvalue_azureappconfigendpoint 'Microsoft.AppConfiguration/configurati
 
 
 
-resource keyvalue_azurestorageidstoragetest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azurestorageidr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_STORAGE_ID_STORAGETEST'
+  name: 'AZURE_STORAGE_ID_R'
   properties: {
     value: storageaccount_storagetest.id
   }
@@ -103,9 +97,9 @@ resource keyvalue_azurestorageidstoragetest 'Microsoft.AppConfiguration/configur
 
 
 
-resource keyvalue_azurestoragenamestoragetest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azurestoragenamer 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_STORAGE_NAME_STORAGETEST'
+  name: 'AZURE_STORAGE_NAME_R'
   properties: {
     value: storageaccount_storagetest.name
   }
@@ -113,9 +107,9 @@ resource keyvalue_azurestoragenamestoragetest 'Microsoft.AppConfiguration/config
 
 
 
-resource keyvalue_azurestorageresourcegroupstoragetest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azurestorageresourcegroupr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_STORAGE_RESOURCE_GROUP_STORAGETEST'
+  name: 'AZURE_STORAGE_RESOURCE_GROUP_R'
   properties: {
     value: resourceGroup().name
   }
@@ -123,9 +117,9 @@ resource keyvalue_azurestorageresourcegroupstoragetest 'Microsoft.AppConfigurati
 
 
 
-resource keyvalue_azureblobsendpointstoragetest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureblobsendpointr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_BLOBS_ENDPOINT_STORAGETEST'
+  name: 'AZURE_BLOBS_ENDPOINT_R'
   properties: {
     value: storageaccount_storagetest.properties.primaryEndpoints.blob
   }
@@ -160,7 +154,7 @@ resource roleassignment_kvjoxlocbytxyhtrwdln 'Microsoft.Authorization/roleAssign
     )
 
   }
-  scope: resourceGroup('rgtest')
+  scope: resourceGroup()
 }
 
 

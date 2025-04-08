@@ -22,12 +22,6 @@ resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024
   }
   location: location
   tags: azdTags
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${managedIdentityId}': {}
-    }
-  }
 }
 
 output AZURE_APPCONFIG_ID string = configurationstore.id
@@ -40,10 +34,10 @@ resource aiservices_account_aitest 'Microsoft.CognitiveServices/accounts@2024-10
   name: 'aitest'
 }
 
-output AZURE_AI_AISERVICES_ID_AITEST string = aiservices_account_aitest.id
-output AZURE_AI_AISERVICES_NAME_AITEST string = aiservices_account_aitest.name
-output AZURE_AI_AISERVICES_RESOURCE_GROUP_AITEST string = resourceGroup().name
-output AZURE_AI_AISERVICES_ENDPOINT_AITEST string = aiservices_account_aitest.properties.endpoint
+output AZURE_AI_AISERVICES_ID_R string = aiservices_account_aitest.id
+output AZURE_AI_AISERVICES_NAME_R string = aiservices_account_aitest.name
+output AZURE_AI_AISERVICES_RESOURCE_GROUP_R string = resourceGroup().name
+output AZURE_AI_AISERVICES_ENDPOINT_R string = aiservices_account_aitest.properties.endpoint
 
 
 resource chat_deployment_aitest_aitest 'Microsoft.CognitiveServices/accounts/deployments@2024-10-01' existing = {
@@ -51,12 +45,12 @@ resource chat_deployment_aitest_aitest 'Microsoft.CognitiveServices/accounts/dep
   parent: aiservices_account_aitest
 }
 
-output AZURE_AI_CHAT_ID_AITEST_AITEST string = chat_deployment_aitest_aitest.id
-output AZURE_AI_CHAT_NAME_AITEST_AITEST string = chat_deployment_aitest_aitest.name
-output AZURE_AI_CHAT_RESOURCE_GROUP_AITEST_AITEST string = resourceGroup().name
-output AZURE_AI_CHAT_MODEL_NAME_AITEST_AITEST string = chat_deployment_aitest_aitest.properties.model.name
-output AZURE_AI_CHAT_MODEL_VERSION_AITEST_AITEST string = chat_deployment_aitest_aitest.properties.model.version
-output AZURE_AI_CHAT_ENDPOINT_AITEST_AITEST string = '${aiservices_account_aitest.properties.endpoint}openai/deployments/${chat_deployment_aitest_aitest.name}'
+output AZURE_AI_CHAT_ID_R string = chat_deployment_aitest_aitest.id
+output AZURE_AI_CHAT_NAME_R string = chat_deployment_aitest_aitest.name
+output AZURE_AI_CHAT_RESOURCE_GROUP_R string = resourceGroup().name
+output AZURE_AI_CHAT_MODEL_NAME_R string = chat_deployment_aitest_aitest.properties.model.name
+output AZURE_AI_CHAT_MODEL_VERSION_R string = chat_deployment_aitest_aitest.properties.model.version
+output AZURE_AI_CHAT_MODEL_FORMAT_R string = chat_deployment_aitest_aitest.properties.model.format
 
 
 resource keyvalue_azureappconfigid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
@@ -99,9 +93,9 @@ resource keyvalue_azureappconfigendpoint 'Microsoft.AppConfiguration/configurati
 
 
 
-resource keyvalue_azureaiaiservicesidaitest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiaiservicesidr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_AISERVICES_ID_AITEST'
+  name: 'AZURE_AI_AISERVICES_ID_R'
   properties: {
     value: aiservices_account_aitest.id
   }
@@ -109,9 +103,9 @@ resource keyvalue_azureaiaiservicesidaitest 'Microsoft.AppConfiguration/configur
 
 
 
-resource keyvalue_azureaiaiservicesnameaitest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiaiservicesnamer 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_AISERVICES_NAME_AITEST'
+  name: 'AZURE_AI_AISERVICES_NAME_R'
   properties: {
     value: aiservices_account_aitest.name
   }
@@ -119,9 +113,9 @@ resource keyvalue_azureaiaiservicesnameaitest 'Microsoft.AppConfiguration/config
 
 
 
-resource keyvalue_azureaiaiservicesresourcegroupaitest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiaiservicesresourcegroupr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_AISERVICES_RESOURCE_GROUP_AITEST'
+  name: 'AZURE_AI_AISERVICES_RESOURCE_GROUP_R'
   properties: {
     value: resourceGroup().name
   }
@@ -129,9 +123,9 @@ resource keyvalue_azureaiaiservicesresourcegroupaitest 'Microsoft.AppConfigurati
 
 
 
-resource keyvalue_azureaiaiservicesendpointaitest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiaiservicesendpointr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_AISERVICES_ENDPOINT_AITEST'
+  name: 'AZURE_AI_AISERVICES_ENDPOINT_R'
   properties: {
     value: aiservices_account_aitest.properties.endpoint
   }
@@ -139,9 +133,9 @@ resource keyvalue_azureaiaiservicesendpointaitest 'Microsoft.AppConfiguration/co
 
 
 
-resource keyvalue_azureaichatidaitestaitest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaichatidr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_CHAT_ID_AITEST_AITEST'
+  name: 'AZURE_AI_CHAT_ID_R'
   properties: {
     value: chat_deployment_aitest_aitest.id
   }
@@ -149,9 +143,9 @@ resource keyvalue_azureaichatidaitestaitest 'Microsoft.AppConfiguration/configur
 
 
 
-resource keyvalue_azureaichatnameaitestaitest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaichatnamer 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_CHAT_NAME_AITEST_AITEST'
+  name: 'AZURE_AI_CHAT_NAME_R'
   properties: {
     value: chat_deployment_aitest_aitest.name
   }
@@ -159,9 +153,9 @@ resource keyvalue_azureaichatnameaitestaitest 'Microsoft.AppConfiguration/config
 
 
 
-resource keyvalue_azureaichatresourcegroupaitestaitest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaichatresourcegroupr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_CHAT_RESOURCE_GROUP_AITEST_AITEST'
+  name: 'AZURE_AI_CHAT_RESOURCE_GROUP_R'
   properties: {
     value: resourceGroup().name
   }
@@ -169,9 +163,9 @@ resource keyvalue_azureaichatresourcegroupaitestaitest 'Microsoft.AppConfigurati
 
 
 
-resource keyvalue_azureaichatmodelnameaitestaitest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaichatmodelnamer 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_CHAT_MODEL_NAME_AITEST_AITEST'
+  name: 'AZURE_AI_CHAT_MODEL_NAME_R'
   properties: {
     value: chat_deployment_aitest_aitest.properties.model.name
   }
@@ -179,9 +173,9 @@ resource keyvalue_azureaichatmodelnameaitestaitest 'Microsoft.AppConfiguration/c
 
 
 
-resource keyvalue_azureaichatmodelversionaitestaitest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaichatmodelversionr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_CHAT_MODEL_VERSION_AITEST_AITEST'
+  name: 'AZURE_AI_CHAT_MODEL_VERSION_R'
   properties: {
     value: chat_deployment_aitest_aitest.properties.model.version
   }
@@ -189,11 +183,11 @@ resource keyvalue_azureaichatmodelversionaitestaitest 'Microsoft.AppConfiguratio
 
 
 
-resource keyvalue_azureaichatendpointaitestaitest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaichatmodelformatr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_CHAT_ENDPOINT_AITEST_AITEST'
+  name: 'AZURE_AI_CHAT_MODEL_FORMAT_R'
   properties: {
-    value: '${aiservices_account_aitest.properties.endpoint}openai/deployments/${chat_deployment_aitest_aitest.name}'
+    value: chat_deployment_aitest_aitest.properties.model.format
   }
 }
 

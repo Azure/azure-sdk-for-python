@@ -42,10 +42,24 @@ resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024
   name: defaultName
 }
 
+output AZURE_APPCONFIG_ID_R string = configurationstore.id
 output AZURE_APPCONFIG_ID string = configurationstore.id
 output AZURE_APPCONFIG_NAME string = configurationstore.name
+output AZURE_APPCONFIG_NAME_R string = configurationstore.name
+output AZURE_APPCONFIG_RESOURCE_GROUP_R string = resourceGroup().name
 output AZURE_APPCONFIG_RESOURCE_GROUP string = resourceGroup().name
+output AZURE_APPCONFIG_ENDPOINT_R string = configurationstore.properties.endpoint
 output AZURE_APPCONFIG_ENDPOINT string = configurationstore.properties.endpoint
+
+
+resource keyvalue_azureappconfigidr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_APPCONFIG_ID_R'
+  properties: {
+    value: configurationstore.id
+  }
+}
+
 
 
 resource keyvalue_azureappconfigid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
@@ -68,11 +82,41 @@ resource keyvalue_azureappconfigname 'Microsoft.AppConfiguration/configurationSt
 
 
 
+resource keyvalue_azureappconfignamer 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_APPCONFIG_NAME_R'
+  properties: {
+    value: configurationstore.name
+  }
+}
+
+
+
+resource keyvalue_azureappconfigresourcegroupr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_APPCONFIG_RESOURCE_GROUP_R'
+  properties: {
+    value: resourceGroup().name
+  }
+}
+
+
+
 resource keyvalue_azureappconfigresourcegroup 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
   name: 'AZURE_APPCONFIG_RESOURCE_GROUP'
   properties: {
     value: resourceGroup().name
+  }
+}
+
+
+
+resource keyvalue_azureappconfigendpointr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_APPCONFIG_ENDPOINT_R'
+  properties: {
+    value: configurationstore.properties.endpoint
   }
 }
 

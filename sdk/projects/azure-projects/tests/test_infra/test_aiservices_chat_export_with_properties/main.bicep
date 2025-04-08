@@ -25,6 +25,8 @@ var azdTags = {
   'azd-env-name': environmentName
 }
 
+param aiChatModel string = 'o1-mini'
+
 resource resourcegroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   name: defaultName
   location: location
@@ -42,21 +44,22 @@ module test_module 'test.bicep' = {
     principalId: principalId
     tenantId: tenantId
     azdTags: azdTags
+    aiChatModel: aiChatModel
   }
 }
 output AZURE_APPCONFIG_ID string = test_module.outputs.AZURE_APPCONFIG_ID
 output AZURE_APPCONFIG_NAME string = test_module.outputs.AZURE_APPCONFIG_NAME
 output AZURE_APPCONFIG_RESOURCE_GROUP string = test_module.outputs.AZURE_APPCONFIG_RESOURCE_GROUP
 output AZURE_APPCONFIG_ENDPOINT string = test_module.outputs.AZURE_APPCONFIG_ENDPOINT
-output AZURE_AI_AISERVICES_ID string = test_module.outputs.AZURE_AI_AISERVICES_ID
-output AZURE_AI_AISERVICES_NAME string = test_module.outputs.AZURE_AI_AISERVICES_NAME
-output AZURE_AI_AISERVICES_RESOURCE_GROUP string = test_module.outputs.AZURE_AI_AISERVICES_RESOURCE_GROUP
-output AZURE_AI_AISERVICES_ENDPOINT string = test_module.outputs.AZURE_AI_AISERVICES_ENDPOINT
-output AZURE_AI_CHAT_ID string = test_module.outputs.AZURE_AI_CHAT_ID
-output AZURE_AI_CHAT_NAME string = test_module.outputs.AZURE_AI_CHAT_NAME
-output AZURE_AI_CHAT_RESOURCE_GROUP string = test_module.outputs.AZURE_AI_CHAT_RESOURCE_GROUP
-output AZURE_AI_CHAT_MODEL_NAME string = test_module.outputs.AZURE_AI_CHAT_MODEL_NAME
-output AZURE_AI_CHAT_MODEL_VERSION string = test_module.outputs.AZURE_AI_CHAT_MODEL_VERSION
-output AZURE_AI_CHAT_ENDPOINT string = test_module.outputs.AZURE_AI_CHAT_ENDPOINT
+output AZURE_AI_AISERVICES_ID_R string = test_module.outputs.AZURE_AI_AISERVICES_ID_R
+output AZURE_AI_AISERVICES_NAME_R string = test_module.outputs.AZURE_AI_AISERVICES_NAME_R
+output AZURE_AI_AISERVICES_RESOURCE_GROUP_R string = test_module.outputs.AZURE_AI_AISERVICES_RESOURCE_GROUP_R
+output AZURE_AI_AISERVICES_ENDPOINT_R string = test_module.outputs.AZURE_AI_AISERVICES_ENDPOINT_R
+output AZURE_AI_CHAT_ID_R string = test_module.outputs.AZURE_AI_CHAT_ID_R
+output AZURE_AI_CHAT_NAME_R string = test_module.outputs.AZURE_AI_CHAT_NAME_R
+output AZURE_AI_CHAT_RESOURCE_GROUP_R string = test_module.outputs.AZURE_AI_CHAT_RESOURCE_GROUP_R
+output AZURE_AI_CHAT_MODEL_NAME_R string = test_module.outputs.AZURE_AI_CHAT_MODEL_NAME_R
+output AZURE_AI_CHAT_MODEL_VERSION_R string = test_module.outputs.AZURE_AI_CHAT_MODEL_VERSION_R
+output AZURE_AI_CHAT_MODEL_FORMAT_R string = test_module.outputs.AZURE_AI_CHAT_MODEL_FORMAT_R
 
 

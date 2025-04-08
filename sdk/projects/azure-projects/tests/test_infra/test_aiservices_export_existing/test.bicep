@@ -22,12 +22,6 @@ resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024
   }
   location: location
   tags: azdTags
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${managedIdentityId}': {}
-    }
-  }
 }
 
 output AZURE_APPCONFIG_ID string = configurationstore.id
@@ -40,10 +34,10 @@ resource aiservices_account_aitest 'Microsoft.CognitiveServices/accounts@2024-10
   name: 'aitest'
 }
 
-output AZURE_AI_AISERVICES_ID_AITEST string = aiservices_account_aitest.id
-output AZURE_AI_AISERVICES_NAME_AITEST string = aiservices_account_aitest.name
-output AZURE_AI_AISERVICES_RESOURCE_GROUP_AITEST string = resourceGroup().name
-output AZURE_AI_AISERVICES_ENDPOINT_AITEST string = aiservices_account_aitest.properties.endpoint
+output AZURE_AI_AISERVICES_ID_R string = aiservices_account_aitest.id
+output AZURE_AI_AISERVICES_NAME_R string = aiservices_account_aitest.name
+output AZURE_AI_AISERVICES_RESOURCE_GROUP_R string = resourceGroup().name
+output AZURE_AI_AISERVICES_ENDPOINT_R string = aiservices_account_aitest.properties.endpoint
 
 
 resource keyvalue_azureappconfigid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
@@ -86,9 +80,9 @@ resource keyvalue_azureappconfigendpoint 'Microsoft.AppConfiguration/configurati
 
 
 
-resource keyvalue_azureaiaiservicesidaitest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiaiservicesidr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_AISERVICES_ID_AITEST'
+  name: 'AZURE_AI_AISERVICES_ID_R'
   properties: {
     value: aiservices_account_aitest.id
   }
@@ -96,9 +90,9 @@ resource keyvalue_azureaiaiservicesidaitest 'Microsoft.AppConfiguration/configur
 
 
 
-resource keyvalue_azureaiaiservicesnameaitest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiaiservicesnamer 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_AISERVICES_NAME_AITEST'
+  name: 'AZURE_AI_AISERVICES_NAME_R'
   properties: {
     value: aiservices_account_aitest.name
   }
@@ -106,9 +100,9 @@ resource keyvalue_azureaiaiservicesnameaitest 'Microsoft.AppConfiguration/config
 
 
 
-resource keyvalue_azureaiaiservicesresourcegroupaitest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiaiservicesresourcegroupr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_AISERVICES_RESOURCE_GROUP_AITEST'
+  name: 'AZURE_AI_AISERVICES_RESOURCE_GROUP_R'
   properties: {
     value: resourceGroup().name
   }
@@ -116,9 +110,9 @@ resource keyvalue_azureaiaiservicesresourcegroupaitest 'Microsoft.AppConfigurati
 
 
 
-resource keyvalue_azureaiaiservicesendpointaitest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiaiservicesendpointr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_AISERVICES_ENDPOINT_AITEST'
+  name: 'AZURE_AI_AISERVICES_ENDPOINT_R'
   properties: {
     value: aiservices_account_aitest.properties.endpoint
   }
@@ -153,7 +147,7 @@ resource roleassignment_kvjoxlocbytxyhtrwdln 'Microsoft.Authorization/roleAssign
     )
 
   }
-  scope: resourceGroup('aitest')
+  scope: resourceGroup()
 }
 
 

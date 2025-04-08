@@ -52,8 +52,6 @@ resource aiservices_account 'Microsoft.CognitiveServices/accounts@2024-10-01' = 
     customSubDomainName: '${defaultName}-aiservices'
     networkAcls: {
       defaultAction: 'Allow'
-      virtualNetworkRules: []
-      ipRules: []
     }
   }
   name: '${defaultName}-aiservices'
@@ -70,10 +68,10 @@ resource aiservices_account 'Microsoft.CognitiveServices/accounts@2024-10-01' = 
   }
 }
 
-output AZURE_AI_AISERVICES_ID string = aiservices_account.id
-output AZURE_AI_AISERVICES_NAME string = aiservices_account.name
-output AZURE_AI_AISERVICES_RESOURCE_GROUP string = resourceGroup().name
-output AZURE_AI_AISERVICES_ENDPOINT string = aiservices_account.properties.endpoint
+output AZURE_AI_AISERVICES_ID_R string = aiservices_account.id
+output AZURE_AI_AISERVICES_NAME_R string = aiservices_account.name
+output AZURE_AI_AISERVICES_RESOURCE_GROUP_R string = resourceGroup().name
+output AZURE_AI_AISERVICES_ENDPOINT_R string = aiservices_account.properties.endpoint
 
 
 resource embeddings_deployment 'Microsoft.CognitiveServices/accounts/deployments@2024-10-01' = {
@@ -91,12 +89,13 @@ resource embeddings_deployment 'Microsoft.CognitiveServices/accounts/deployments
   name: '${defaultName}-embeddings-deployment'
 }
 
-output AZURE_AI_EMBEDDINGS_ID string = embeddings_deployment.id
-output AZURE_AI_EMBEDDINGS_NAME string = embeddings_deployment.name
-output AZURE_AI_EMBEDDINGS_RESOURCE_GROUP string = resourceGroup().name
-output AZURE_AI_EMBEDDINGS_MODEL_NAME string = embeddings_deployment.properties.model.name
-output AZURE_AI_EMBEDDINGS_MODEL_VERSION string = embeddings_deployment.properties.model.version
-output AZURE_AI_EMBEDDINGS_ENDPOINT string = '${aiservices_account.properties.endpoint}openai/deployments/${embeddings_deployment.name}'
+output AZURE_AI_EMBEDDINGS_ID_R string = embeddings_deployment.id
+output AZURE_AI_EMBEDDINGS_NAME_R string = embeddings_deployment.name
+output AZURE_AI_EMBEDDINGS_RESOURCE_GROUP_R string = resourceGroup().name
+output AZURE_AI_EMBEDDINGS_MODEL_NAME_R string = embeddings_deployment.properties.model.name
+output AZURE_AI_EMBEDDINGS_MODEL_VERSION_R string = embeddings_deployment.properties.model.version
+output AZURE_AI_EMBEDDINGS_MODEL_FORMAT_R string = embeddings_deployment.properties.model.format
+output AZURE_AI_EMBEDDINGS_ENDPOINT_R string = '${aiservices_account.properties.endpoint}openai/deployments/${embeddings_deployment.name}'
 
 
 resource keyvalue_azureappconfigid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
@@ -139,9 +138,9 @@ resource keyvalue_azureappconfigendpoint 'Microsoft.AppConfiguration/configurati
 
 
 
-resource keyvalue_azureaiaiservicesid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiaiservicesidr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_AISERVICES_ID'
+  name: 'AZURE_AI_AISERVICES_ID_R'
   properties: {
     value: aiservices_account.id
   }
@@ -149,9 +148,9 @@ resource keyvalue_azureaiaiservicesid 'Microsoft.AppConfiguration/configurationS
 
 
 
-resource keyvalue_azureaiaiservicesname 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiaiservicesnamer 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_AISERVICES_NAME'
+  name: 'AZURE_AI_AISERVICES_NAME_R'
   properties: {
     value: aiservices_account.name
   }
@@ -159,9 +158,9 @@ resource keyvalue_azureaiaiservicesname 'Microsoft.AppConfiguration/configuratio
 
 
 
-resource keyvalue_azureaiaiservicesresourcegroup 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiaiservicesresourcegroupr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_AISERVICES_RESOURCE_GROUP'
+  name: 'AZURE_AI_AISERVICES_RESOURCE_GROUP_R'
   properties: {
     value: resourceGroup().name
   }
@@ -169,9 +168,9 @@ resource keyvalue_azureaiaiservicesresourcegroup 'Microsoft.AppConfiguration/con
 
 
 
-resource keyvalue_azureaiaiservicesendpoint 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiaiservicesendpointr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_AISERVICES_ENDPOINT'
+  name: 'AZURE_AI_AISERVICES_ENDPOINT_R'
   properties: {
     value: aiservices_account.properties.endpoint
   }
@@ -179,9 +178,9 @@ resource keyvalue_azureaiaiservicesendpoint 'Microsoft.AppConfiguration/configur
 
 
 
-resource keyvalue_azureaiembeddingsid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiembeddingsidr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_EMBEDDINGS_ID'
+  name: 'AZURE_AI_EMBEDDINGS_ID_R'
   properties: {
     value: embeddings_deployment.id
   }
@@ -189,9 +188,9 @@ resource keyvalue_azureaiembeddingsid 'Microsoft.AppConfiguration/configurationS
 
 
 
-resource keyvalue_azureaiembeddingsname 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiembeddingsnamer 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_EMBEDDINGS_NAME'
+  name: 'AZURE_AI_EMBEDDINGS_NAME_R'
   properties: {
     value: embeddings_deployment.name
   }
@@ -199,9 +198,9 @@ resource keyvalue_azureaiembeddingsname 'Microsoft.AppConfiguration/configuratio
 
 
 
-resource keyvalue_azureaiembeddingsresourcegroup 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiembeddingsresourcegroupr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_EMBEDDINGS_RESOURCE_GROUP'
+  name: 'AZURE_AI_EMBEDDINGS_RESOURCE_GROUP_R'
   properties: {
     value: resourceGroup().name
   }
@@ -209,9 +208,9 @@ resource keyvalue_azureaiembeddingsresourcegroup 'Microsoft.AppConfiguration/con
 
 
 
-resource keyvalue_azureaiembeddingsmodelname 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiembeddingsmodelnamer 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_EMBEDDINGS_MODEL_NAME'
+  name: 'AZURE_AI_EMBEDDINGS_MODEL_NAME_R'
   properties: {
     value: embeddings_deployment.properties.model.name
   }
@@ -219,9 +218,9 @@ resource keyvalue_azureaiembeddingsmodelname 'Microsoft.AppConfiguration/configu
 
 
 
-resource keyvalue_azureaiembeddingsmodelversion 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiembeddingsmodelversionr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_EMBEDDINGS_MODEL_VERSION'
+  name: 'AZURE_AI_EMBEDDINGS_MODEL_VERSION_R'
   properties: {
     value: embeddings_deployment.properties.model.version
   }
@@ -229,9 +228,19 @@ resource keyvalue_azureaiembeddingsmodelversion 'Microsoft.AppConfiguration/conf
 
 
 
-resource keyvalue_azureaiembeddingsendpoint 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiembeddingsmodelformatr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_EMBEDDINGS_ENDPOINT'
+  name: 'AZURE_AI_EMBEDDINGS_MODEL_FORMAT_R'
+  properties: {
+    value: embeddings_deployment.properties.model.format
+  }
+}
+
+
+
+resource keyvalue_azureaiembeddingsendpointr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_AI_EMBEDDINGS_ENDPOINT_R'
   properties: {
     value: '${aiservices_account.properties.endpoint}openai/deployments/${embeddings_deployment.name}'
   }

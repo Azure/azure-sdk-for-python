@@ -52,10 +52,10 @@ resource metricsadvisor_account 'Microsoft.CognitiveServices/accounts@2024-10-01
   tags: azdTags
 }
 
-output AZURE_AI_METRICSADVISOR_ID string = metricsadvisor_account.id
-output AZURE_AI_METRICSADVISOR_NAME string = metricsadvisor_account.name
-output AZURE_AI_METRICSADVISOR_RESOURCE_GROUP string = resourceGroup().name
-output AZURE_AI_METRICSADVISOR_ENDPOINT string = metricsadvisor_account.properties.endpoint
+output AZURE_AI_METRICSADVISOR_ID_C string = metricsadvisor_account.id
+output AZURE_AI_METRICSADVISOR_NAME_C string = metricsadvisor_account.name
+output AZURE_AI_METRICSADVISOR_RESOURCE_GROUP_C string = resourceGroup().name
+output AZURE_AI_METRICSADVISOR_ENDPOINT_C string = metricsadvisor_account.properties.endpoint
 
 
 resource aiservices_account 'Microsoft.CognitiveServices/accounts@2024-10-01' = {
@@ -66,8 +66,6 @@ resource aiservices_account 'Microsoft.CognitiveServices/accounts@2024-10-01' = 
     customSubDomainName: '${defaultName}-aiservices'
     networkAcls: {
       defaultAction: 'Allow'
-      virtualNetworkRules: []
-      ipRules: []
     }
   }
   name: '${defaultName}-aiservices'
@@ -84,10 +82,10 @@ resource aiservices_account 'Microsoft.CognitiveServices/accounts@2024-10-01' = 
   }
 }
 
-output AZURE_AI_AISERVICES_ID string = aiservices_account.id
-output AZURE_AI_AISERVICES_NAME string = aiservices_account.name
-output AZURE_AI_AISERVICES_RESOURCE_GROUP string = resourceGroup().name
-output AZURE_AI_AISERVICES_ENDPOINT string = aiservices_account.properties.endpoint
+output AZURE_AI_AISERVICES_ID_R string = aiservices_account.id
+output AZURE_AI_AISERVICES_NAME_R string = aiservices_account.name
+output AZURE_AI_AISERVICES_RESOURCE_GROUP_R string = resourceGroup().name
+output AZURE_AI_AISERVICES_ENDPOINT_R string = aiservices_account.properties.endpoint
 
 
 resource keyvalue_azureappconfigid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
@@ -130,9 +128,9 @@ resource keyvalue_azureappconfigendpoint 'Microsoft.AppConfiguration/configurati
 
 
 
-resource keyvalue_azureaimetricsadvisorid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaimetricsadvisoridc 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_METRICSADVISOR_ID'
+  name: 'AZURE_AI_METRICSADVISOR_ID_C'
   properties: {
     value: metricsadvisor_account.id
   }
@@ -140,9 +138,9 @@ resource keyvalue_azureaimetricsadvisorid 'Microsoft.AppConfiguration/configurat
 
 
 
-resource keyvalue_azureaimetricsadvisorname 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaimetricsadvisornamec 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_METRICSADVISOR_NAME'
+  name: 'AZURE_AI_METRICSADVISOR_NAME_C'
   properties: {
     value: metricsadvisor_account.name
   }
@@ -150,9 +148,9 @@ resource keyvalue_azureaimetricsadvisorname 'Microsoft.AppConfiguration/configur
 
 
 
-resource keyvalue_azureaimetricsadvisorresourcegroup 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaimetricsadvisorresourcegroupc 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_METRICSADVISOR_RESOURCE_GROUP'
+  name: 'AZURE_AI_METRICSADVISOR_RESOURCE_GROUP_C'
   properties: {
     value: resourceGroup().name
   }
@@ -160,9 +158,9 @@ resource keyvalue_azureaimetricsadvisorresourcegroup 'Microsoft.AppConfiguration
 
 
 
-resource keyvalue_azureaimetricsadvisorendpoint 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaimetricsadvisorendpointc 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_METRICSADVISOR_ENDPOINT'
+  name: 'AZURE_AI_METRICSADVISOR_ENDPOINT_C'
   properties: {
     value: metricsadvisor_account.properties.endpoint
   }
@@ -170,9 +168,9 @@ resource keyvalue_azureaimetricsadvisorendpoint 'Microsoft.AppConfiguration/conf
 
 
 
-resource keyvalue_azureaiaiservicesid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiaiservicesidr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_AISERVICES_ID'
+  name: 'AZURE_AI_AISERVICES_ID_R'
   properties: {
     value: aiservices_account.id
   }
@@ -180,9 +178,9 @@ resource keyvalue_azureaiaiservicesid 'Microsoft.AppConfiguration/configurationS
 
 
 
-resource keyvalue_azureaiaiservicesname 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiaiservicesnamer 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_AISERVICES_NAME'
+  name: 'AZURE_AI_AISERVICES_NAME_R'
   properties: {
     value: aiservices_account.name
   }
@@ -190,9 +188,9 @@ resource keyvalue_azureaiaiservicesname 'Microsoft.AppConfiguration/configuratio
 
 
 
-resource keyvalue_azureaiaiservicesresourcegroup 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiaiservicesresourcegroupr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_AISERVICES_RESOURCE_GROUP'
+  name: 'AZURE_AI_AISERVICES_RESOURCE_GROUP_R'
   properties: {
     value: resourceGroup().name
   }
@@ -200,9 +198,9 @@ resource keyvalue_azureaiaiservicesresourcegroup 'Microsoft.AppConfiguration/con
 
 
 
-resource keyvalue_azureaiaiservicesendpoint 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiaiservicesendpointr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_AISERVICES_ENDPOINT'
+  name: 'AZURE_AI_AISERVICES_ENDPOINT_R'
   properties: {
     value: aiservices_account.properties.endpoint
   }

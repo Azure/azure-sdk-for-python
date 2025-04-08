@@ -22,12 +22,6 @@ resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024
   }
   location: location
   tags: azdTags
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${managedIdentityId}': {}
-    }
-  }
 }
 
 output AZURE_APPCONFIG_ID string = configurationstore.id
@@ -46,10 +40,10 @@ resource configurationstore_configtest 'Microsoft.AppConfiguration/configuration
   scope: resourcegroup_rgtest
 }
 
-output AZURE_APPCONFIG_ID string = configurationstore_configtest.id
-output AZURE_APPCONFIG_NAME string = configurationstore_configtest.name
-output AZURE_APPCONFIG_RESOURCE_GROUP string = resourceGroup().name
-output AZURE_APPCONFIG_ENDPOINT string = configurationstore_configtest.properties.endpoint
+output AZURE_APPCONFIG_ID_R string = configurationstore_configtest.id
+output AZURE_APPCONFIG_NAME_R string = configurationstore_configtest.name
+output AZURE_APPCONFIG_RESOURCE_GROUP_R string = 'rgtest'
+output AZURE_APPCONFIG_ENDPOINT_R string = configurationstore_configtest.properties.endpoint
 
 
 resource keyvalue_configtest_test 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' existing = {
@@ -99,9 +93,9 @@ resource keyvalue_azureappconfigendpoint 'Microsoft.AppConfiguration/configurati
 
 
 
-resource keyvalue_azureappconfigidconfigtest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureappconfigidr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore_configtest
-  name: 'AZURE_APPCONFIG_ID_CONFIGTEST'
+  name: 'AZURE_APPCONFIG_ID_R'
   properties: {
     value: configurationstore_configtest.id
   }
@@ -109,9 +103,9 @@ resource keyvalue_azureappconfigidconfigtest 'Microsoft.AppConfiguration/configu
 
 
 
-resource keyvalue_azureappconfignameconfigtest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureappconfignamer 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore_configtest
-  name: 'AZURE_APPCONFIG_NAME_CONFIGTEST'
+  name: 'AZURE_APPCONFIG_NAME_R'
   properties: {
     value: configurationstore_configtest.name
   }
@@ -119,9 +113,9 @@ resource keyvalue_azureappconfignameconfigtest 'Microsoft.AppConfiguration/confi
 
 
 
-resource keyvalue_azureappconfigresourcegroupconfigtest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureappconfigresourcegroupr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore_configtest
-  name: 'AZURE_APPCONFIG_RESOURCE_GROUP_CONFIGTEST'
+  name: 'AZURE_APPCONFIG_RESOURCE_GROUP_R'
   properties: {
     value: 'rgtest'
   }
@@ -129,9 +123,9 @@ resource keyvalue_azureappconfigresourcegroupconfigtest 'Microsoft.AppConfigurat
 
 
 
-resource keyvalue_azureappconfigendpointconfigtest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureappconfigendpointr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore_configtest
-  name: 'AZURE_APPCONFIG_ENDPOINT_CONFIGTEST'
+  name: 'AZURE_APPCONFIG_ENDPOINT_R'
   properties: {
     value: configurationstore_configtest.properties.endpoint
   }
@@ -166,7 +160,7 @@ resource roleassignment_cmjdzwakpcfdaqqbaykp 'Microsoft.Authorization/roleAssign
     )
 
   }
-  scope: resourceGroup('rgtest')
+  scope: resourceGroup()
 }
 
 

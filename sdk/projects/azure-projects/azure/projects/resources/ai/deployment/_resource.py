@@ -153,6 +153,7 @@ class AIDeployment(_ClientResource, Generic[AIDeploymentResourceType]):
             **kwargs,
         )
         self._properties_to_merge.append("sku")
+        self._properties_to_merge.append("model")
         self._settings["model_name"] = StoredPrioritizedSetting(
             name="model_name", env_vars=_build_envs(self._prefixes, ["MODEL_NAME"]), suffix=self._env_suffix
         )

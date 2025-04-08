@@ -38,15 +38,43 @@ resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024
   }
 }
 
+output AZURE_APPCONFIG_ID_R1 string = configurationstore.id
 output AZURE_APPCONFIG_ID string = configurationstore.id
+output AZURE_APPCONFIG_ID_R2 string = configurationstore.id
 output AZURE_APPCONFIG_NAME string = configurationstore.name
+output AZURE_APPCONFIG_NAME_R2 string = configurationstore.name
+output AZURE_APPCONFIG_NAME_R1 string = configurationstore.name
 output AZURE_APPCONFIG_RESOURCE_GROUP string = resourceGroup().name
+output AZURE_APPCONFIG_RESOURCE_GROUP_R1 string = resourceGroup().name
+output AZURE_APPCONFIG_RESOURCE_GROUP_R2 string = resourceGroup().name
+output AZURE_APPCONFIG_ENDPOINT_R1 string = configurationstore.properties.endpoint
+output AZURE_APPCONFIG_ENDPOINT_R2 string = configurationstore.properties.endpoint
 output AZURE_APPCONFIG_ENDPOINT string = configurationstore.properties.endpoint
+
+
+resource keyvalue_azureappconfigidr1 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_APPCONFIG_ID_R1'
+  properties: {
+    value: configurationstore.id
+  }
+}
+
 
 
 resource keyvalue_azureappconfigid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
   name: 'AZURE_APPCONFIG_ID'
+  properties: {
+    value: configurationstore.id
+  }
+}
+
+
+
+resource keyvalue_azureappconfigidr2 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_APPCONFIG_ID_R2'
   properties: {
     value: configurationstore.id
   }
@@ -64,11 +92,71 @@ resource keyvalue_azureappconfigname 'Microsoft.AppConfiguration/configurationSt
 
 
 
+resource keyvalue_azureappconfignamer2 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_APPCONFIG_NAME_R2'
+  properties: {
+    value: configurationstore.name
+  }
+}
+
+
+
+resource keyvalue_azureappconfignamer1 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_APPCONFIG_NAME_R1'
+  properties: {
+    value: configurationstore.name
+  }
+}
+
+
+
 resource keyvalue_azureappconfigresourcegroup 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
   name: 'AZURE_APPCONFIG_RESOURCE_GROUP'
   properties: {
     value: resourceGroup().name
+  }
+}
+
+
+
+resource keyvalue_azureappconfigresourcegroupr1 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_APPCONFIG_RESOURCE_GROUP_R1'
+  properties: {
+    value: resourceGroup().name
+  }
+}
+
+
+
+resource keyvalue_azureappconfigresourcegroupr2 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_APPCONFIG_RESOURCE_GROUP_R2'
+  properties: {
+    value: resourceGroup().name
+  }
+}
+
+
+
+resource keyvalue_azureappconfigendpointr1 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_APPCONFIG_ENDPOINT_R1'
+  properties: {
+    value: configurationstore.properties.endpoint
+  }
+}
+
+
+
+resource keyvalue_azureappconfigendpointr2 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_APPCONFIG_ENDPOINT_R2'
+  properties: {
+    value: configurationstore.properties.endpoint
   }
 }
 

@@ -54,8 +54,6 @@ resource aiservices_account 'Microsoft.CognitiveServices/accounts@2024-10-01' = 
     customSubDomainName: '${defaultName}-aiservices'
     networkAcls: {
       defaultAction: 'Allow'
-      virtualNetworkRules: []
-      ipRules: []
     }
   }
   name: '${defaultName}-aiservices'
@@ -72,10 +70,14 @@ resource aiservices_account 'Microsoft.CognitiveServices/accounts@2024-10-01' = 
   }
 }
 
-output AZURE_AI_AISERVICES_ID string = aiservices_account.id
-output AZURE_AI_AISERVICES_NAME string = aiservices_account.name
-output AZURE_AI_AISERVICES_RESOURCE_GROUP string = resourceGroup().name
-output AZURE_AI_AISERVICES_ENDPOINT string = aiservices_account.properties.endpoint
+output AZURE_AI_AISERVICES_ID_R string = aiservices_account.id
+output AZURE_AI_AISERVICES_ID_B string = aiservices_account.id
+output AZURE_AI_AISERVICES_NAME_B string = aiservices_account.name
+output AZURE_AI_AISERVICES_NAME_R string = aiservices_account.name
+output AZURE_AI_AISERVICES_RESOURCE_GROUP_R string = resourceGroup().name
+output AZURE_AI_AISERVICES_RESOURCE_GROUP_B string = resourceGroup().name
+output AZURE_AI_AISERVICES_ENDPOINT_R string = aiservices_account.properties.endpoint
+output AZURE_AI_AISERVICES_ENDPOINT_B string = aiservices_account.properties.endpoint
 
 
 resource chat_deployment_one 'Microsoft.CognitiveServices/accounts/deployments@2024-10-01' = {
@@ -92,12 +94,12 @@ resource chat_deployment_one 'Microsoft.CognitiveServices/accounts/deployments@2
   }
 }
 
-output AZURE_AI_CHAT_ID_ONE string = chat_deployment_one.id
-output AZURE_AI_CHAT_NAME_ONE string = chat_deployment_one.name
-output AZURE_AI_CHAT_RESOURCE_GROUP_ONE string = resourceGroup().name
-output AZURE_AI_CHAT_MODEL_NAME_ONE string = chat_deployment_one.properties.model.name
-output AZURE_AI_CHAT_MODEL_VERSION_ONE string = chat_deployment_one.properties.model.version
-output AZURE_AI_CHAT_ENDPOINT_ONE string = '${aiservices_account.properties.endpoint}openai/deployments/${chat_deployment_one.name}'
+output AZURE_AI_CHAT_ID_R string = chat_deployment_one.id
+output AZURE_AI_CHAT_NAME_R string = chat_deployment_one.name
+output AZURE_AI_CHAT_RESOURCE_GROUP_R string = resourceGroup().name
+output AZURE_AI_CHAT_MODEL_NAME_R string = chat_deployment_one.properties.model.name
+output AZURE_AI_CHAT_MODEL_VERSION_R string = chat_deployment_one.properties.model.version
+output AZURE_AI_CHAT_MODEL_FORMAT_R string = chat_deployment_one.properties.model.format
 
 
 resource chat_deployment_two 'Microsoft.CognitiveServices/accounts/deployments@2024-10-01' = {
@@ -108,18 +110,21 @@ resource chat_deployment_two 'Microsoft.CognitiveServices/accounts/deployments@2
     }
   }
   name: 'two'
+  dependsOn: [
+    chat_deployment_one
+  ]
   sku: {
     name: aiChatModelSku
     capacity: aiChatModelCapacity
   }
 }
 
-output AZURE_AI_CHAT_ID_TWO string = chat_deployment_two.id
-output AZURE_AI_CHAT_NAME_TWO string = chat_deployment_two.name
-output AZURE_AI_CHAT_RESOURCE_GROUP_TWO string = resourceGroup().name
-output AZURE_AI_CHAT_MODEL_NAME_TWO string = chat_deployment_two.properties.model.name
-output AZURE_AI_CHAT_MODEL_VERSION_TWO string = chat_deployment_two.properties.model.version
-output AZURE_AI_CHAT_ENDPOINT_TWO string = '${aiservices_account.properties.endpoint}openai/deployments/${chat_deployment_two.name}'
+output AZURE_AI_CHAT_ID_B string = chat_deployment_two.id
+output AZURE_AI_CHAT_NAME_B string = chat_deployment_two.name
+output AZURE_AI_CHAT_RESOURCE_GROUP_B string = resourceGroup().name
+output AZURE_AI_CHAT_MODEL_NAME_B string = chat_deployment_two.properties.model.name
+output AZURE_AI_CHAT_MODEL_VERSION_B string = chat_deployment_two.properties.model.version
+output AZURE_AI_CHAT_MODEL_FORMAT_B string = chat_deployment_two.properties.model.format
 
 
 resource keyvalue_azureappconfigid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
@@ -162,9 +167,9 @@ resource keyvalue_azureappconfigendpoint 'Microsoft.AppConfiguration/configurati
 
 
 
-resource keyvalue_azureaiaiservicesid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiaiservicesidr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_AISERVICES_ID'
+  name: 'AZURE_AI_AISERVICES_ID_R'
   properties: {
     value: aiservices_account.id
   }
@@ -172,9 +177,19 @@ resource keyvalue_azureaiaiservicesid 'Microsoft.AppConfiguration/configurationS
 
 
 
-resource keyvalue_azureaiaiservicesname 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiaiservicesidb 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_AISERVICES_NAME'
+  name: 'AZURE_AI_AISERVICES_ID_B'
+  properties: {
+    value: aiservices_account.id
+  }
+}
+
+
+
+resource keyvalue_azureaiaiservicesnameb 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_AI_AISERVICES_NAME_B'
   properties: {
     value: aiservices_account.name
   }
@@ -182,9 +197,19 @@ resource keyvalue_azureaiaiservicesname 'Microsoft.AppConfiguration/configuratio
 
 
 
-resource keyvalue_azureaiaiservicesresourcegroup 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiaiservicesnamer 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_AISERVICES_RESOURCE_GROUP'
+  name: 'AZURE_AI_AISERVICES_NAME_R'
+  properties: {
+    value: aiservices_account.name
+  }
+}
+
+
+
+resource keyvalue_azureaiaiservicesresourcegroupr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_AI_AISERVICES_RESOURCE_GROUP_R'
   properties: {
     value: resourceGroup().name
   }
@@ -192,9 +217,19 @@ resource keyvalue_azureaiaiservicesresourcegroup 'Microsoft.AppConfiguration/con
 
 
 
-resource keyvalue_azureaiaiservicesendpoint 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiaiservicesresourcegroupb 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_AISERVICES_ENDPOINT'
+  name: 'AZURE_AI_AISERVICES_RESOURCE_GROUP_B'
+  properties: {
+    value: resourceGroup().name
+  }
+}
+
+
+
+resource keyvalue_azureaiaiservicesendpointr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_AI_AISERVICES_ENDPOINT_R'
   properties: {
     value: aiservices_account.properties.endpoint
   }
@@ -202,9 +237,19 @@ resource keyvalue_azureaiaiservicesendpoint 'Microsoft.AppConfiguration/configur
 
 
 
-resource keyvalue_azureaichatidone 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaiaiservicesendpointb 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_CHAT_ID_ONE'
+  name: 'AZURE_AI_AISERVICES_ENDPOINT_B'
+  properties: {
+    value: aiservices_account.properties.endpoint
+  }
+}
+
+
+
+resource keyvalue_azureaichatidr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_AI_CHAT_ID_R'
   properties: {
     value: chat_deployment_one.id
   }
@@ -212,9 +257,9 @@ resource keyvalue_azureaichatidone 'Microsoft.AppConfiguration/configurationStor
 
 
 
-resource keyvalue_azureaichatnameone 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaichatnamer 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_CHAT_NAME_ONE'
+  name: 'AZURE_AI_CHAT_NAME_R'
   properties: {
     value: chat_deployment_one.name
   }
@@ -222,9 +267,9 @@ resource keyvalue_azureaichatnameone 'Microsoft.AppConfiguration/configurationSt
 
 
 
-resource keyvalue_azureaichatresourcegroupone 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaichatresourcegroupr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_CHAT_RESOURCE_GROUP_ONE'
+  name: 'AZURE_AI_CHAT_RESOURCE_GROUP_R'
   properties: {
     value: resourceGroup().name
   }
@@ -232,9 +277,9 @@ resource keyvalue_azureaichatresourcegroupone 'Microsoft.AppConfiguration/config
 
 
 
-resource keyvalue_azureaichatmodelnameone 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaichatmodelnamer 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_CHAT_MODEL_NAME_ONE'
+  name: 'AZURE_AI_CHAT_MODEL_NAME_R'
   properties: {
     value: chat_deployment_one.properties.model.name
   }
@@ -242,9 +287,9 @@ resource keyvalue_azureaichatmodelnameone 'Microsoft.AppConfiguration/configurat
 
 
 
-resource keyvalue_azureaichatmodelversionone 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaichatmodelversionr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_CHAT_MODEL_VERSION_ONE'
+  name: 'AZURE_AI_CHAT_MODEL_VERSION_R'
   properties: {
     value: chat_deployment_one.properties.model.version
   }
@@ -252,19 +297,19 @@ resource keyvalue_azureaichatmodelversionone 'Microsoft.AppConfiguration/configu
 
 
 
-resource keyvalue_azureaichatendpointone 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaichatmodelformatr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_CHAT_ENDPOINT_ONE'
+  name: 'AZURE_AI_CHAT_MODEL_FORMAT_R'
   properties: {
-    value: '${aiservices_account.properties.endpoint}openai/deployments/${chat_deployment_one.name}'
+    value: chat_deployment_one.properties.model.format
   }
 }
 
 
 
-resource keyvalue_azureaichatidtwo 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaichatidb 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_CHAT_ID_TWO'
+  name: 'AZURE_AI_CHAT_ID_B'
   properties: {
     value: chat_deployment_two.id
   }
@@ -272,9 +317,9 @@ resource keyvalue_azureaichatidtwo 'Microsoft.AppConfiguration/configurationStor
 
 
 
-resource keyvalue_azureaichatnametwo 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaichatnameb 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_CHAT_NAME_TWO'
+  name: 'AZURE_AI_CHAT_NAME_B'
   properties: {
     value: chat_deployment_two.name
   }
@@ -282,9 +327,9 @@ resource keyvalue_azureaichatnametwo 'Microsoft.AppConfiguration/configurationSt
 
 
 
-resource keyvalue_azureaichatresourcegrouptwo 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaichatresourcegroupb 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_CHAT_RESOURCE_GROUP_TWO'
+  name: 'AZURE_AI_CHAT_RESOURCE_GROUP_B'
   properties: {
     value: resourceGroup().name
   }
@@ -292,9 +337,9 @@ resource keyvalue_azureaichatresourcegrouptwo 'Microsoft.AppConfiguration/config
 
 
 
-resource keyvalue_azureaichatmodelnametwo 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaichatmodelnameb 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_CHAT_MODEL_NAME_TWO'
+  name: 'AZURE_AI_CHAT_MODEL_NAME_B'
   properties: {
     value: chat_deployment_two.properties.model.name
   }
@@ -302,9 +347,9 @@ resource keyvalue_azureaichatmodelnametwo 'Microsoft.AppConfiguration/configurat
 
 
 
-resource keyvalue_azureaichatmodelversiontwo 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaichatmodelversionb 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_CHAT_MODEL_VERSION_TWO'
+  name: 'AZURE_AI_CHAT_MODEL_VERSION_B'
   properties: {
     value: chat_deployment_two.properties.model.version
   }
@@ -312,11 +357,11 @@ resource keyvalue_azureaichatmodelversiontwo 'Microsoft.AppConfiguration/configu
 
 
 
-resource keyvalue_azureaichatendpointtwo 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureaichatmodelformatb 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_AI_CHAT_ENDPOINT_TWO'
+  name: 'AZURE_AI_CHAT_MODEL_FORMAT_B'
   properties: {
-    value: '${aiservices_account.properties.endpoint}openai/deployments/${chat_deployment_two.name}'
+    value: chat_deployment_two.properties.model.format
   }
 }
 
