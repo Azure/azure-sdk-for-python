@@ -442,33 +442,34 @@ class TestExcludedLocations:
             else:
                 self._verify_endpoint(client, [L1])
 
-    # TODO: enable this test once we figure out how to enable delete_all_items_by_partition_key feature
-    # @pytest.mark.parametrize('test_data', patch_item_test_data())
-    # def test_delete_all_items_by_partition_key(self, test_data):
-    #     # Init test variables
-    #     preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
-    #
-    #     for multiple_write_locations in [True, False]:
-    #         # Client setup
-    #         client, db, container = self._init_container(preferred_locations, client_excluded_locations, multiple_write_locations)
-    #
-    #         #create before delete
-    #         item_id = f'doc2-{str(uuid.uuid4())}'
-    #         pk_value = f'temp_partition_key_value-{str(uuid.uuid4())}'
-    #         container.create_item(body={PARTITION_KEY: pk_value, 'id': item_id})
-    #         MOCK_HANDLER.reset()
-    #
-    #         # API call: read_item
-    #         if request_excluded_locations is None:
-    #             container.delete_all_items_by_partition_key(pk_value)
-    #         else:
-    #             container.delete_all_items_by_partition_key(pk_value, excluded_locations=request_excluded_locations)
-    #
-    #         # Verify endpoint locations
-    #         if multiple_write_locations:
-    #             self._verify_endpoint(client, expected_locations)
-    #         else:
-    #             self._verify_endpoint(client, [L1])
+    @pytest.mark.parametrize('test_data', patch_item_test_data())
+    def test_delete_all_items_by_partition_key(self, test_data):
+        # Init test variables
+        preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
+
+        for multiple_write_locations in [True, False]:
+            # Client setup
+            client, db, container = self._init_container(preferred_locations, client_excluded_locations,
+                                                         multiple_write_locations)
+
+            # create before delete
+            item_id = f'doc2-{str(uuid.uuid4())}'
+            pk_value = f'temp_partition_key_value-{str(uuid.uuid4())}'
+            body = {PARTITION_KEY: pk_value, 'id': item_id}
+            _create_item_with_excluded_locations(container, body, request_excluded_locations)
+            MOCK_HANDLER.reset()
+
+            # API call: delete_item
+            if request_excluded_locations is None:
+                container.delete_all_items_by_partition_key(pk_value)
+            else:
+                container.delete_all_items_by_partition_key(pk_value, excluded_locations=request_excluded_locations)
+
+            # Verify endpoint locations
+            if multiple_write_locations:
+                self._verify_endpoint(client, expected_locations)
+            else:
+                self._verify_endpoint(client, [L1])
 
 if __name__ == "__main__":
     unittest.main()
