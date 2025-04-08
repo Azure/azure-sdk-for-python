@@ -202,7 +202,7 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
             if client_timeout:
                 kwargs['timeout'] = client_timeout - (time.time() - start_time)
                 if kwargs['timeout'] <= 0:
-                    global_endpoint_manager.record_failure(args[0])
+                    await global_endpoint_manager.record_failure(args[0])
                     raise exceptions.CosmosClientTimeoutError()
 
         except ServiceRequestError as e:
@@ -286,7 +286,7 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                 # the request ran into a socket timeout or failed to establish a new connection
                 # since request wasn't sent, raise exception immediately to be dealt with in client retry policies
                 if not _has_database_account_header(request.http_request.headers):
-                    global_endpoint_manager.record_failure(request_params)
+                    await global_endpoint_manager.record_failure(request_params)
                     if retry_settings['connect'] > 0:
                         retry_active = self.increment(retry_settings, response=request, error=err)
                         if retry_active:
@@ -304,7 +304,7 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                         ClientConnectionError)
                     if (isinstance(err.inner_exception, ClientConnectionError)
                             or _has_read_retryable_headers(request.http_request.headers)):
-                        global_endpoint_manager.record_failure(request_params)
+                        await global_endpoint_manager.record_failure(request_params)
                         # This logic is based on the _retry.py file from azure-core
                         if retry_settings['read'] > 0:
                             retry_active = self.increment(retry_settings, response=request, error=err)
@@ -319,7 +319,7 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                 if _has_database_account_header(request.http_request.headers):
                     raise err
                 if self._is_method_retryable(retry_settings, request.http_request):
-                    global_endpoint_manager.record_failure(request_params)
+                    await global_endpoint_manager.record_failure(request_params)
                     retry_active = self.increment(retry_settings, response=request, error=err)
                     if retry_active:
                         await self.sleep(retry_settings, request.context.transport)

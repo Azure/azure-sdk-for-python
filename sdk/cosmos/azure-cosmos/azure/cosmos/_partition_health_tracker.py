@@ -21,6 +21,7 @@
 
 """Internal class for partition health tracker for circuit breaker.
 """
+import logging
 import os
 from typing import Dict, Set, Any
 from azure.cosmos._routing.routing_range import PartitionKeyRangeWrapper
@@ -74,8 +75,18 @@ class _PartitionHealthInfo(object):
         self.read_consecutive_failure_count = 0
         self.write_consecutive_failure_count = 0
 
+    def __str__(self) -> str:
+        return (f"{self.__class__.__name__}: {self.unavailability_info}\n"
+                f"write failure count: {self.write_failure_count}\n"
+                f"read failure count: {self.read_failure_count}\n"
+                f"write success count: {self.write_success_count}\n"
+                f"read success count: {self.read_success_count}\n"
+                f"write consecutive failure count: {self.write_consecutive_failure_count}\n"
+                f"read consecutive failure count: {self.read_consecutive_failure_count}\n")
 
-class PartitionHealthTracker(object):
+logger = logging.getLogger("azure.cosmos._PartitionHealthTracker")
+
+class _PartitionHealthTracker(object):
     """
     This internal class implements the logic for tracking health thresholds for a partition.
     """
@@ -83,7 +94,7 @@ class PartitionHealthTracker(object):
 
     def __init__(self) -> None:
         # partition -> regions -> health info
-        self.pkrange_wrapper_to_health_info: Dict[PartitionKeyRangeWrapper, Dict[str, _PartitionHealthInfo]] = {}
+        self.pk_range_wrapper_to_health_info: Dict[PartitionKeyRangeWrapper, Dict[str, _PartitionHealthInfo]] = {}
         self.last_refresh = current_time_millis()
 
     # TODO: @tvaron3 look for useful places to add logs
@@ -97,26 +108,27 @@ class PartitionHealthTracker(object):
             pkrange_wrapper: PartitionKeyRangeWrapper,
             location: str
     ) -> None:
+        logger.warn("{} has been marked as unavailable.".format(pkrange_wrapper))
         current_time = current_time_millis()
-        if pkrange_wrapper not in self.pkrange_wrapper_to_health_info:
+        if pkrange_wrapper not in self.pk_range_wrapper_to_health_info:
             # healthy -> unhealthy tentative
             partition_health_info = _PartitionHealthInfo()
             partition_health_info.unavailability_info = {
                 LAST_UNAVAILABILITY_CHECK_TIME_STAMP: current_time,
                 HEALTH_STATUS: UNHEALTHY_TENTATIVE
             }
-            self.pkrange_wrapper_to_health_info[pkrange_wrapper] = {
+            self.pk_range_wrapper_to_health_info[pkrange_wrapper] = {
                 location: partition_health_info
             }
         else:
-            region_to_partition_health = self.pkrange_wrapper_to_health_info[pkrange_wrapper]
-            if location in region_to_partition_health:
+            region_to_partition_health = self.pk_range_wrapper_to_health_info[pkrange_wrapper]
+            if location in region_to_partition_health and region_to_partition_health[location].unavailability_info:
                 # healthy tentative -> unhealthy
                 # if the operation type is not empty, we are in the healthy tentative state
                 region_to_partition_health[location].unavailability_info[HEALTH_STATUS] = UNHEALTHY
                 # reset the last unavailability check time stamp
                 region_to_partition_health[location].unavailability_info[LAST_UNAVAILABILITY_CHECK_TIME_STAMP] \
-                    = UNHEALTHY
+                    = current_time
             else:
                 # healthy -> unhealthy tentative
                 # if the operation type is empty, we are in the unhealthy tentative state
@@ -125,49 +137,55 @@ class PartitionHealthTracker(object):
                     LAST_UNAVAILABILITY_CHECK_TIME_STAMP: current_time,
                     HEALTH_STATUS: UNHEALTHY_TENTATIVE
                 }
-                self.pkrange_wrapper_to_health_info[pkrange_wrapper][location] = partition_health_info
+                self.pk_range_wrapper_to_health_info[pkrange_wrapper][location] = partition_health_info
 
     def _transition_health_status_on_success(
             self,
             pkrange_wrapper: PartitionKeyRangeWrapper,
             location: str
     ) -> None:
-        if pkrange_wrapper in self.pkrange_wrapper_to_health_info:
+        if pkrange_wrapper in self.pk_range_wrapper_to_health_info:
             # healthy tentative -> healthy
-            self.pkrange_wrapper_to_health_info[pkrange_wrapper].pop(location, None)
+            self.pk_range_wrapper_to_health_info[pkrange_wrapper].pop(location, None)
 
     def _check_stale_partition_info(self, pk_range_wrapper: PartitionKeyRangeWrapper) -> None:
         current_time = current_time_millis()
 
         stale_partition_unavailability_check = int(os.environ.get(Constants.STALE_PARTITION_UNAVAILABILITY_CHECK,
                                                          Constants.STALE_PARTITION_UNAVAILABILITY_CHECK_DEFAULT)) * 1000
-        if pk_range_wrapper in self.pkrange_wrapper_to_health_info:
-            for _, partition_health_info in self.pkrange_wrapper_to_health_info[pk_range_wrapper].items():
-                elapsed_time = (current_time -
-                                partition_health_info.unavailability_info[LAST_UNAVAILABILITY_CHECK_TIME_STAMP])
-                current_health_status = partition_health_info.unavailability_info[HEALTH_STATUS]
-                # check if the partition key range is still unavailable
-                if ((current_health_status == UNHEALTHY and elapsed_time > stale_partition_unavailability_check)
-                        or (current_health_status == UNHEALTHY_TENTATIVE
-                            and  elapsed_time > INITIAL_UNAVAILABLE_TIME)):
-                    # unhealthy or unhealthy tentative -> healthy tentative
-                    partition_health_info.unavailability_info[HEALTH_STATUS] = HEALTHY_TENTATIVE
+        if pk_range_wrapper in self.pk_range_wrapper_to_health_info:
+            for _, partition_health_info in self.pk_range_wrapper_to_health_info[pk_range_wrapper].items():
+                if partition_health_info.unavailability_info:
+                    elapsed_time = (current_time -
+                                    partition_health_info.unavailability_info[LAST_UNAVAILABILITY_CHECK_TIME_STAMP])
+                    current_health_status = partition_health_info.unavailability_info[HEALTH_STATUS]
+                    # check if the partition key range is still unavailable
+                    if ((current_health_status == UNHEALTHY and elapsed_time > stale_partition_unavailability_check)
+                            or (current_health_status == UNHEALTHY_TENTATIVE
+                                and  elapsed_time > INITIAL_UNAVAILABLE_TIME)):
+                        # unhealthy or unhealthy tentative -> healthy tentative
+                        partition_health_info.unavailability_info[HEALTH_STATUS] = HEALTHY_TENTATIVE
 
-        if current_time - self.last_refresh < REFRESH_INTERVAL:
+        if current_time - self.last_refresh > REFRESH_INTERVAL:
             # all partition stats reset every minute
             self._reset_partition_health_tracker_stats()
 
 
-    def get_excluded_locations(self, pkrange_wrapper: PartitionKeyRangeWrapper) -> Set[str]:
-        self._check_stale_partition_info(pkrange_wrapper)
-        if pkrange_wrapper in self.pkrange_wrapper_to_health_info:
-            return set(self.pkrange_wrapper_to_health_info[pkrange_wrapper].keys())
-        return set()
+    def get_excluded_locations(self, pk_range_wrapper: PartitionKeyRangeWrapper) -> Set[str]:
+        self._check_stale_partition_info(pk_range_wrapper)
+        excluded_locations = set()
+        if pk_range_wrapper in self.pk_range_wrapper_to_health_info:
+            for location, partition_health_info in self.pk_range_wrapper_to_health_info[pk_range_wrapper].items():
+                if partition_health_info.unavailability_info:
+                    health_status = partition_health_info.unavailability_info[HEALTH_STATUS]
+                    if  health_status == UNHEALTHY_TENTATIVE or health_status == UNHEALTHY:
+                        excluded_locations.add(location)
+        return excluded_locations
 
 
     def add_failure(
             self,
-            pkrange_wrapper: PartitionKeyRangeWrapper,
+            pk_range_wrapper: PartitionKeyRangeWrapper,
             operation_type: str,
             location: str
     ) -> None:
@@ -176,12 +194,12 @@ class PartitionHealthTracker(object):
                                                Constants.FAILURE_PERCENTAGE_TOLERATED_DEFAULT))
 
         # Ensure that the health info dictionary is properly initialized.
-        if pkrange_wrapper not in self.pkrange_wrapper_to_health_info:
-            self.pkrange_wrapper_to_health_info[pkrange_wrapper] = {}
-        if location not in self.pkrange_wrapper_to_health_info[pkrange_wrapper]:
-            self.pkrange_wrapper_to_health_info[pkrange_wrapper][location] = _PartitionHealthInfo()
+        if pk_range_wrapper not in self.pk_range_wrapper_to_health_info:
+            self.pk_range_wrapper_to_health_info[pk_range_wrapper] = {}
+        if location not in self.pk_range_wrapper_to_health_info[pk_range_wrapper]:
+            self.pk_range_wrapper_to_health_info[pk_range_wrapper][location] = _PartitionHealthInfo()
 
-        health_info = self.pkrange_wrapper_to_health_info[pkrange_wrapper][location]
+        health_info = self.pk_range_wrapper_to_health_info[pk_range_wrapper][location]
 
         # Determine attribute names and environment variables based on the operation type.
         if operation_type == EndpointOperationType.WriteType:
@@ -189,24 +207,24 @@ class PartitionHealthTracker(object):
             failure_attr = 'write_failure_count'
             consecutive_attr = 'write_consecutive_failure_count'
             env_key = Constants.CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_WRITE
-            default_consec_threshold = Constants.CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_WRITE_DEFAULT
+            default_consecutive_threshold = Constants.CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_WRITE_DEFAULT
         else:
             success_attr = 'read_success_count'
             failure_attr = 'read_failure_count'
             consecutive_attr = 'read_consecutive_failure_count'
             env_key = Constants.CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_READ
-            default_consec_threshold = Constants.CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_READ_DEFAULT
+            default_consecutive_threshold = Constants.CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_READ_DEFAULT
 
         # Increment failure and consecutive failure counts.
         setattr(health_info, failure_attr, getattr(health_info, failure_attr) + 1)
         setattr(health_info, consecutive_attr, getattr(health_info, consecutive_attr) + 1)
 
         # Retrieve the consecutive failure threshold from the environment.
-        consecutive_failure_threshold = int(os.environ.get(env_key, default_consec_threshold))
+        consecutive_failure_threshold = int(os.environ.get(env_key, default_consecutive_threshold))
 
         # Call the threshold checker with the current stats.
         self._check_thresholds(
-            pkrange_wrapper,
+            pk_range_wrapper,
             getattr(health_info, success_attr),
             getattr(health_info, failure_attr),
             getattr(health_info, consecutive_attr),
@@ -214,10 +232,13 @@ class PartitionHealthTracker(object):
             failure_rate_threshold,
             consecutive_failure_threshold
         )
+        print(self.pk_range_wrapper_to_health_info[pk_range_wrapper][location])
+        print(pk_range_wrapper)
+        print(location)
 
     def _check_thresholds(
             self,
-            pkrange_wrapper: PartitionKeyRangeWrapper,
+            pk_range_wrapper: PartitionKeyRangeWrapper,
             successes: int,
             failures: int,
             consecutive_failures: int,
@@ -232,20 +253,20 @@ class PartitionHealthTracker(object):
                 failures,
                 failure_rate_threshold
         ):
-            self._transition_health_status_on_failure(pkrange_wrapper, location)
+            self._transition_health_status_on_failure(pk_range_wrapper, location)
 
         # add to consecutive failures and check that threshold was not exceeded
         if consecutive_failures >= consecutive_failure_threshold:
-            self._transition_health_status_on_failure(pkrange_wrapper, location)
+            self._transition_health_status_on_failure(pk_range_wrapper, location)
 
-    def add_success(self, pkrange_wrapper: PartitionKeyRangeWrapper, operation_type: str, location: str) -> None:
+    def add_success(self, pk_range_wrapper: PartitionKeyRangeWrapper, operation_type: str, location: str) -> None:
         # Ensure that the health info dictionary is initialized.
-        if pkrange_wrapper not in self.pkrange_wrapper_to_health_info:
-            self.pkrange_wrapper_to_health_info[pkrange_wrapper] = {}
-        if location not in self.pkrange_wrapper_to_health_info[pkrange_wrapper]:
-            self.pkrange_wrapper_to_health_info[pkrange_wrapper][location] = _PartitionHealthInfo()
+        if pk_range_wrapper not in self.pk_range_wrapper_to_health_info:
+            self.pk_range_wrapper_to_health_info[pk_range_wrapper] = {}
+        if location not in self.pk_range_wrapper_to_health_info[pk_range_wrapper]:
+            self.pk_range_wrapper_to_health_info[pk_range_wrapper][location] = _PartitionHealthInfo()
 
-        health_info = self.pkrange_wrapper_to_health_info[pkrange_wrapper][location]
+        health_info = self.pk_range_wrapper_to_health_info[pk_range_wrapper][location]
 
         if operation_type == EndpointOperationType.WriteType:
             health_info.write_success_count += 1
@@ -253,10 +274,13 @@ class PartitionHealthTracker(object):
         else:
             health_info.read_success_count += 1
             health_info.read_consecutive_failure_count = 0
-        self._transition_health_status_on_success(pkrange_wrapper, operation_type)
+        self._transition_health_status_on_success(pk_range_wrapper, operation_type)
+        print(self.pk_range_wrapper_to_health_info[pk_range_wrapper][location])
+        print(pk_range_wrapper)
+        print(location)
 
 
     def _reset_partition_health_tracker_stats(self) -> None:
-        for locations in self.pkrange_wrapper_to_health_info.values():
+        for locations in self.pk_range_wrapper_to_health_info.values():
             for health_info in locations.values():
                 health_info.reset_health_stats()

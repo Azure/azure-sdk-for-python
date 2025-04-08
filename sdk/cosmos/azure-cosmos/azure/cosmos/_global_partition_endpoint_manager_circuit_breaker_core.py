@@ -26,7 +26,7 @@ import os
 
 from azure.cosmos import documents
 
-from azure.cosmos._partition_health_tracker import PartitionHealthTracker
+from azure.cosmos._partition_health_tracker import _PartitionHealthTracker
 from azure.cosmos._routing.routing_range import PartitionKeyRangeWrapper
 from azure.cosmos._location_cache import EndpointOperationType, LocationCache
 from azure.cosmos._request_object import RequestObject
@@ -44,7 +44,7 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerCore(object):
 
 
     def __init__(self, client, location_cache: LocationCache):
-        self.partition_health_tracker = PartitionHealthTracker()
+        self.partition_health_tracker = _PartitionHealthTracker()
         self.location_cache = location_cache
         self.client = client
 

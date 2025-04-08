@@ -23,9 +23,10 @@
 """
 from typing import TYPE_CHECKING
 
+from azure.cosmos import PartitionKey
 from azure.cosmos._global_partition_endpoint_manager_circuit_breaker_core import \
     _GlobalPartitionEndpointManagerForCircuitBreakerCore
-from azure.cosmos._routing.routing_range import PartitionKeyRangeWrapper
+from azure.cosmos._routing.routing_range import PartitionKeyRangeWrapper, Range
 
 from azure.cosmos.aio._global_endpoint_manager_async import _GlobalEndpointManager
 from azure.cosmos._request_object import RequestObject
@@ -50,18 +51,23 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerAsync(_GlobalEndpointManag
 
     async def create_pk_range_wrapper(self, request: RequestObject) -> PartitionKeyRangeWrapper:
         container_rid = request.headers[HttpHeaders.IntendedCollectionRID]
-        partition_key = request.headers[HttpHeaders.PartitionKey]
+        partition_key_value = request.headers[HttpHeaders.PartitionKey]
         # get the partition key range for the given partition key
         target_container_link = None
         for container_link, properties in self.client._container_properties_cache.items(): # pylint: disable=protected-access
             if properties["_rid"] == container_rid:
                 target_container_link = container_link
+                partition_key_definition = properties["partitionKey"]
+                partition_key = PartitionKey(path=partition_key_definition["paths"], kind=partition_key_definition["kind"])
+
+                epk_range = [partition_key._get_epk_range_for_partition_key(partition_key_value)]
         if not target_container_link:
             raise RuntimeError("Illegal state: the container cache is not properly initialized.")
         # TODO: @tvaron3 check different clients and create them in different ways
-        pk_range = await (self.client._routing_map_provider # pylint: disable=protected-access
-                          .get_overlapping_ranges(target_container_link, partition_key))
-        return PartitionKeyRangeWrapper(pk_range, container_rid)
+        partition_ranges = await (self.client._routing_map_provider # pylint: disable=protected-access
+                          .get_overlapping_ranges(target_container_link, epk_range))
+        partition_range = Range.PartitionKeyRangeToRange(partition_ranges[0])
+        return PartitionKeyRangeWrapper(partition_range, container_rid)
 
     def is_circuit_breaker_applicable(self, request: RequestObject) -> bool:
         return self.global_partition_endpoint_manager_core.is_circuit_breaker_applicable(request)
