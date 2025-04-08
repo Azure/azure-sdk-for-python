@@ -118,7 +118,7 @@
       },
       "ArmConfig": {
         "MultiMaster_MultiRegion": {
-          "ArmTemplateParameters": "@{ enableMultipleWriteLocations = $true; defaultConsistencyLevel = 'Session'; enableMultipleRegions = $true }"
+          "ArmTemplateParameters": "@{ enableMultipleWriteLocations = $true; defaultConsistencyLevel = 'Session'; enableMultipleRegions = $true; enableDeleteAllItemsByPartitionKey = $true}"
         }
       }
     }

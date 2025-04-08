@@ -3,6 +3,9 @@ param baseName string
 @description('Flag to enable or disable multiple write locations on CosmosDB Account')
 param enableMultipleWriteLocations bool = false
 
+@description('Flag to enable or disable delete all items by partition key on CosmosDB Account')
+param enableDeleteAllItemsByPartitionKey bool = false
+
 @description('Default Cosmosdb Account level consistency')
 param defaultConsistencyLevel string = 'Session'
 
@@ -59,6 +62,7 @@ resource cosmosAccount 'Microsoft.DocumentDB/databaseAccounts@2023-04-15' = {
     disableKeyBasedMetadataWriteAccess: false
     enableFreeTier: false
     enableAnalyticalStorage: false
+    enableDeleteAllItemsByPartitionKey: enableDeleteAllItemsByPartitionKey
     databaseAccountOfferType: 'Standard'
     consistencyPolicy: {
       defaultConsistencyLevel: defaultConsistencyLevel
