@@ -1,6 +1,16 @@
 # Release History
 
-## 1.0.0b36 (Unreleased)
+## 1.0.0b37 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b36 (2025-04-07)
 
 ### Features Added
 
@@ -12,12 +22,6 @@
   ([#39941](https://github.com/Azure/azure-sdk-for-python/pull/39941))
 - Enabled Entra ID Credential configuration via env var
   ([#40237](https://github.com/Azure/azure-sdk-for-python/pull/40237))
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.0.0b35 (2025-03-04)
 
