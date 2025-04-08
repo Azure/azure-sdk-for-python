@@ -51,6 +51,7 @@ from ._attack_objective_generator import RiskCategory, _AttackObjectiveGenerator
 from pyrit.common import initialize_pyrit, DUCK_DB
 from pyrit.prompt_target import OpenAIChatTarget, PromptChatTarget
 from pyrit.models import ChatMessage
+from pyrit.memory import CentralMemory
 from pyrit.orchestrator.single_turn.prompt_sending_orchestrator import PromptSendingOrchestrator
 from pyrit.orchestrator import Orchestrator
 from pyrit.exceptions import PyritException
@@ -673,9 +674,11 @@ class RedTeam():
             
             # If scan output directory exists, place the file there
             if hasattr(self, 'scan_output_dir') and self.scan_output_dir:
-                output_path = os.path.join(self.scan_output_dir, base_path)
+                output_path = os.path.join(self.scan_output_dir, f"{base_path}{DATA_EXT}")
             else:
-                output_path = base_path
+                output_path = f"{base_path}{DATA_EXT}"
+
+            self.red_team_info[strategy_name][risk_category]["data_file"] = output_path
             
             # Process prompts concurrently within each batch
             if len(all_prompts) > batch_size:
@@ -684,18 +687,14 @@ class RedTeam():
                 
                 for batch_idx, batch in enumerate(batches):
                     self.logger.debug(f"Processing batch {batch_idx+1}/{len(batches)} with {len(batch)} prompts for {strategy_name}/{risk_category}")
-
-                    batch_memory_label = f"{output_path}_{batch_idx+1}"
-                    batch_memory_value = str(uuid.uuid4())
                     
                     batch_start_time = datetime.now()
                     # Send prompts in the batch concurrently with a timeout
                     try:
                         # Use wait_for to implement a timeout
                         await asyncio.wait_for(
-                            orchestrator.send_prompts_async(prompt_list=batch),
-                            timeout=timeout,  # Use provided timeout
-                            memory_labels = {batch_memory_label: batch_memory_value}
+                            orchestrator.send_prompts_async(prompt_list=batch, memory_labels = {"risk_strategy_path": output_path, "batch": batch_idx+1}),
+                            timeout=timeout  # Use provided timeouts
                         )
                         batch_duration = (datetime.now() - batch_start_time).total_seconds()
                         self.logger.debug(f"Successfully processed batch {batch_idx+1} for {strategy_name}/{risk_category} in {batch_duration:.2f} seconds")
@@ -712,14 +711,14 @@ class RedTeam():
                         batch_task_key = f"{strategy_name}_{risk_category}_batch_{batch_idx+1}"
                         self.task_statuses[batch_task_key] = TASK_STATUS["TIMEOUT"]
                         self.red_team_info[strategy_name][risk_category]["status"] = TASK_STATUS["INCOMPLETE"]
-                        self._write_pyrit_outputs_to_file(orchestrator, batch_memory_label)
+                        self._write_pyrit_outputs_to_file(orchestrator, strategy_name, risk_category, batch_idx+1)
                         # Continue with partial results rather than failing completely
                         continue
                     except Exception as e:
                         log_error(self.logger, f"Error processing batch {batch_idx+1}", e, f"{strategy_name}/{risk_category}")
                         self.logger.debug(f"ERROR: Strategy {strategy_name}, Risk {risk_category}, Batch {batch_idx+1}: {str(e)}")
                         self.red_team_info[strategy_name][risk_category]["status"] = TASK_STATUS["INCOMPLETE"]
-                        self._write_pyrit_outputs_to_file(orchestrator, batch_memory_label)
+                        self._write_pyrit_outputs_to_file(orchestrator, strategy_name, risk_category, batch_idx+1)
                         # Continue with other batches even if one fails
                         continue
             else:
@@ -754,7 +753,7 @@ class RedTeam():
             self.task_statuses[task_key] = TASK_STATUS["FAILED"]
             raise
 
-    def _write_pyrit_outputs_to_file(self, orchestrator: Orchestrator, memory_label: str) -> str:
+    def _write_pyrit_outputs_to_file(self, orchestrator: Orchestrator, strategy_name: str, risk_category: str, batch_idx: Optional[int] = None) -> str:
         """Write PyRIT outputs to a file with a name based on orchestrator, converter, and risk category.
         
         :param orchestrator: The orchestrator that generated the outputs
@@ -762,17 +761,15 @@ class RedTeam():
         :return: Path to the output file
         :rtype: Union[str, os.PathLike]
         """
-        # Use the orchestrator's memory label path to determine the output file name
-        temp_memory_label_path = memory_label.split("_")  # Remove the last part of the label path which is the batch index
-        temp_memory_label_path.pop(-1) # Remove the last part of the label path which is the batch index
-        output_path = "_".join(temp_memory_label_path) + DATA_EXT
-            
+        output_path = self.red_team_info[strategy_name][risk_category]["data_file"]
         self.logger.debug(f"Writing PyRIT outputs to file: {output_path}")
+        memory = CentralMemory.get_memory_instance()
 
-        memory = orchestrator.get_memory()
+        memory_label = {"risk_strategy_path": output_path}
 
-        prompts = memory.get_prompt_request_pieces(labels=memory_label)
-        
+        prompts_request_pieces = memory.get_prompt_request_pieces(labels=memory_label)
+
+        conversations = [[item.to_chat_message() for item in group] for conv_id, group in itertools.groupby(prompts_request_pieces, key=lambda x: x.conversation_id)]
         # Check if we should overwrite existing file with more conversations
         if os.path.exists(output_path):
             existing_line_count = 0
@@ -782,27 +779,29 @@ class RedTeam():
                 
                 # Use the number of prompts to determine if we have more conversations
                 # This is more accurate than using the memory which might have incomplete conversations
-                if len(prompts) > existing_line_count:
-                    self.logger.debug(f"Found more prompts ({len(prompts)}) than existing file lines ({existing_line_count}). Replacing content.")
+                if len(conversations) > existing_line_count:
+                    self.logger.debug(f"Found more prompts ({len(conversations)}) than existing file lines ({existing_line_count}). Replacing content.")
+                    #Convert to json lines
+                    json_lines = ""
+                    for conversation in conversations: # each conversation is a List[ChatMessage]
+                        json_lines += json.dumps({"conversation": {"messages": [self._message_to_dict(message) for message in conversation]}}) + "\n"
+                    with Path(output_path).open("w") as f:
+                        f.writelines(json_lines)
+                    self.logger.debug(f"Successfully wrote {len(conversations)-existing_line_count} new conversation(s) to {output_path}")
                 else:
-                    self.logger.debug(f"Existing file has {existing_line_count} lines, new data has {len(prompts)} prompts. Keeping existing file.")
+                    self.logger.debug(f"Existing file has {existing_line_count} lines, new data has {len(conversations)} prompts. Keeping existing file.")
                     return output_path
             except Exception as e:
                 self.logger.warning(f"Failed to read existing file {output_path}: {str(e)}")
-
-        # Get conversations as a List[List[ChatMessage]]
-        conversations = [[item.to_chat_message() for item in group] for conv_id, group in itertools.groupby(memory, key=lambda x: x.conversation_id)]
-        
-        #Convert to json lines
-        json_lines = ""
-        for conversation in conversations: # each conversation is a List[ChatMessage]
-            json_lines += json.dumps({"conversation": {"messages": [self._message_to_dict(message) for message in conversation]}}) + "\n"
-
-        with Path(output_path).open("w") as f:
-            f.writelines(json_lines)
-
-        orchestrator.dispose_db_engine()
-        self.logger.debug(f"Successfully wrote {len(conversations)} conversations to {output_path}")
+        else:
+            self.logger.debug(f"Creating new file: {output_path}")
+            #Convert to json lines
+            json_lines = ""
+            for conversation in conversations: # each conversation is a List[ChatMessage]
+                json_lines += json.dumps({"conversation": {"messages": [self._message_to_dict(message) for message in conversation]}}) + "\n"
+            with Path(output_path).open("w") as f:
+                f.writelines(json_lines)
+            self.logger.debug(f"Successfully wrote {len(conversations)} conversations to {output_path}")
         return str(output_path)
     
     # Replace with utility function
@@ -1410,7 +1409,8 @@ class RedTeam():
                     progress_bar.update(1)
                 return None
             
-            data_path = self._write_pyrit_outputs_to_file(orchestrator)
+            data_path = self._write_pyrit_outputs_to_file(orchestrator, strategy_name, risk_category.value)
+            orchestrator.dispose_db_engine()
             
             # Store data file in our tracking dictionary
             self.red_team_info[strategy_name][risk_category.value]["data_file"] = data_path
