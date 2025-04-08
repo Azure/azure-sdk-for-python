@@ -3,7 +3,7 @@
 This package contains a Python SDK for Azure Communication Services for Messages(Advanced Messaging).
 Read more about Azure Communication Services [here][product_docs]
 
-[Source code][source] | [Package (Pypi)](https://pypi.org/project/azure-communication-messages/) | [Product documentation][product_docs]
+[Source code][source] | [Package (Pypi)][pypi] | [Product documentation][product_docs]
 
 ## _Disclaimer_
 
@@ -100,5 +100,5 @@ additional questions or comments.
 
 [source]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-messages
 [product_docs]: https://docs.microsoft.com/azure/communication-services/overview
-[pypi]: https://pypi.org
+[pypi]: https://pypi.org/project/azure-communication-messages/
 [nextsteps]: https://learn.microsoft.com/azure/communication-services/concepts/advanced-messaging/whatsapp/whatsapp-overview
