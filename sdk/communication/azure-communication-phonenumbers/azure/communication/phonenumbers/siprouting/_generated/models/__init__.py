@@ -16,26 +16,26 @@ if TYPE_CHECKING:
 from ._models import (  # type: ignore
     CommunicationError,
     CommunicationErrorResponse,
-    Domain,
     DomainPatch,
-    Health,
     OverallHealth,
-    Ping,
+    PingHealth,
     RoutesForNumber,
     SipConfiguration,
+    SipDomainInternal,
     SipTrunkInternal,
     SipTrunkRouteInternal,
-    Tls,
+    TlsHealth,
+    TrunkHealth,
 )
 
 from ._enums import (  # type: ignore
     ExpandEnum,
-    InactiveStatusReason,
     IpAddressVersion,
     OverallHealthStatus,
     PingStatus,
     PrivacyHeader,
     TlsStatus,
+    UnhealthyStatusReason,
 )
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -44,23 +44,23 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "CommunicationError",
     "CommunicationErrorResponse",
-    "Domain",
     "DomainPatch",
-    "Health",
     "OverallHealth",
-    "Ping",
+    "PingHealth",
     "RoutesForNumber",
     "SipConfiguration",
+    "SipDomainInternal",
     "SipTrunkInternal",
     "SipTrunkRouteInternal",
-    "Tls",
+    "TlsHealth",
+    "TrunkHealth",
     "ExpandEnum",
-    "InactiveStatusReason",
     "IpAddressVersion",
     "OverallHealthStatus",
     "PingStatus",
     "PrivacyHeader",
     "TlsStatus",
+    "UnhealthyStatusReason",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

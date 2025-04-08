@@ -15,7 +15,7 @@ autorest ./SIP_ROUTING_SWAGGER.md
 
 ### Settings
 ``` yaml
-require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/8a218b1c6203d1ea118c3e0bcb4ae95bd44e1014/specification/communication/data-plane/SipRouting/readme.md
+require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/9191854514911a10bfd71636fd2903e6be2d7edf/specification/communication/data-plane/SipRouting/readme.md
 tag: package-2024-11-15-preview
 output-folder: ../azure/communication/phonenumbers/siprouting/_generated
 namespace: azure.communication.phonenumbers.siprouting
@@ -70,4 +70,49 @@ directive:
   where: "$.definitions.TrunkRoute"
   transform: >
     $["x-ms-client-name"] = "SipTrunkRouteInternal";
+```
+
+### Directive renaming "Domain" model to "SipDomainInternal"
+``` yaml
+directive:
+  from: swagger-document
+  where: "$.definitions.Domain"
+  transform: >
+    $["x-ms-client-name"] = "SipDomainInternal";
+```
+
+### Directive renaming "Health" model to "TrunkHealth"
+``` yaml
+directive:
+  from: swagger-document
+  where: "$.definitions.Health"
+  transform: >
+    $["x-ms-client-name"] = "TrunkHealth";
+```
+
+### Directive renaming "Tls" model to "TlsHealth"
+``` yaml
+directive:
+  from: swagger-document
+  where: "$.definitions.Tls"
+  transform: >
+    $["x-ms-client-name"] = "TlsHealth";
+```
+
+### Directive renaming "Ping" model to "PingHealth"
+``` yaml
+directive:
+  from: swagger-document
+  where: "$.definitions.Ping"
+  transform: >
+    $["x-ms-client-name"] = "PingHealth";
+```
+
+### Directive renaming "InactiveStatusReason" enum to "UnhealthyStatusReason"
+``` yaml
+directive:
+  from: swagger-document
+  where: "$.definitions.OverallHealth"
+  transform: >
+    $.properties.reason["x-ms-enum"].name = "UnhealthyStatusReason";
 ```

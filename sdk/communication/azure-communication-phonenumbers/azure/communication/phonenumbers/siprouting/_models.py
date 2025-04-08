@@ -121,3 +121,29 @@ class SipTrunkRoute(object):
         self.number_pattern = kwargs.get("number_pattern", None)
         self.trunks = kwargs.get("trunks", None)
         self.caller_id_override = kwargs.get("caller_id_override", None)
+
+class SipDomain(object):
+    """Represents Domain object as response of validation api.
+    Map key is domain.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar enabled: Enabled flag. Required.
+    :vartype enabled: bool
+    """
+
+    _validation = {
+        "enabled": {"required": True},
+    }
+
+    _attribute_map = {
+        "enabled": {"key": "enabled", "type": "bool"},
+    }
+
+    def __init__(self, **kwargs):
+        """
+        :keyword enabled: Enabled flag. Required.
+        :paramtype enabled: bool
+        """
+        self.enabled = kwargs.get("enabled", None)
+        

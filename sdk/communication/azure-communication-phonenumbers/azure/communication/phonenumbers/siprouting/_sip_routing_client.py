@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Any, List, Optional, Union
+from typing import TYPE_CHECKING, Any, List, Optional
 from urllib.parse import urlparse
 
 from azure.core.tracing.decorator import distributed_trace
@@ -81,22 +81,23 @@ class SipRoutingClient(object):
     def get_trunk(
         self,
         trunk_fqdn,  # type: str
-        expand: Optional[Union[str, ExpandEnum]] = None,
+        include_health: Optional[bool] = None,
         **kwargs  # type: Any
     ):  # type: (...) -> SipTrunk
         """Retrieve a single SIP trunk.
 
         :param trunk_fqdn: FQDN of the desired SIP trunk.
         :type trunk_fqdn: str
-        :param expand: Option to retrieve detailed configuration, default value is None.
-        :type expand: str or ~azure.communication.phonenumbers.siprouting.models.ExpandEnum
+        :param include_health: Option to retrieve detailed configuration, default value is None.
+        :type include_health: bool
         :returns: SIP trunk with specified trunk_fqdn. If it doesn't exist, throws KeyError.
         :rtype: ~azure.communication.siprouting.models.SipTrunk
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError, KeyError
         """
         if trunk_fqdn is None:
             raise ValueError("Parameter 'trunk_fqdn' must not be None.")
-
+        if include_health is not None:
+            expand = ExpandEnum.TRUNKS_HEALTH
         config = self._rest_service.sip_routing.get(expand = expand, **kwargs)
 
         trunk = config.trunks[trunk_fqdn]
@@ -143,13 +144,13 @@ class SipRoutingClient(object):
     @distributed_trace
     def list_trunks(
         self,
-        expand: Optional[Union[str, ExpandEnum]] = None,
+        include_health: Optional[bool] = None,
         **kwargs  # type: Any
     ):  # type: (...) -> ItemPaged[SipTrunk]
         """Retrieves the currently configured SIP trunks.
         
-        :param expand: Option to retrieve detailed configuration, default value is None..
-        :type expand: str or ~azure.communication.phonenumbers.siprouting.models.ExpandEnum
+        :param include_health: Option to retrieve detailed configuration, default value is None.
+        :type include_health: bool
         :returns: Current SIP trunks configuration.
         :rtype: ItemPaged[~azure.communication.siprouting.models.SipTrunk]
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -158,6 +159,9 @@ class SipRoutingClient(object):
         def extract_data(config):
             list_of_elem = [SipTrunk(fqdn=k, sip_signaling_port=v.sip_signaling_port) for k, v in config.trunks.items()]
             return None, list_of_elem
+
+        if include_health is not None:
+            expand = ExpandEnum.TRUNKS_HEALTH
 
         # pylint: disable=unused-argument
         def get_next(nextLink=None):

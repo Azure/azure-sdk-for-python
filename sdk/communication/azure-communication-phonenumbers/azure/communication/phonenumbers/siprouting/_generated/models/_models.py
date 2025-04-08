@@ -90,33 +90,6 @@ class CommunicationErrorResponse(_serialization.Model):
         self.error = error
 
 
-class Domain(_serialization.Model):
-    """Represents Domain object as response of validation api.
-    Map key is domain.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar enabled: Enabled flag. Required.
-    :vartype enabled: bool
-    """
-
-    _validation = {
-        "enabled": {"required": True},
-    }
-
-    _attribute_map = {
-        "enabled": {"key": "enabled", "type": "bool"},
-    }
-
-    def __init__(self, *, enabled: bool, **kwargs: Any) -> None:
-        """
-        :keyword enabled: Enabled flag. Required.
-        :paramtype enabled: bool
-        """
-        super().__init__(**kwargs)
-        self.enabled = enabled
-
-
 class DomainPatch(_serialization.Model):
     """Represents Domain that will be used.
     Map key is domain.
@@ -138,48 +111,6 @@ class DomainPatch(_serialization.Model):
         self.enabled = enabled
 
 
-class Health(_serialization.Model):
-    """Represents health state of a SIP trunk for routing calls.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar tls: The status of the TLS connections of the Trunk. Required.
-    :vartype tls: ~azure.communication.phonenumbers.siprouting.models.Tls
-    :ivar ping: The status of SIP OPTIONS message sent by Trunk. Required.
-    :vartype ping: ~azure.communication.phonenumbers.siprouting.models.Ping
-    :ivar overall: The overall health status of Trunk. Required.
-    :vartype overall: ~azure.communication.phonenumbers.siprouting.models.OverallHealth
-    """
-
-    _validation = {
-        "tls": {"required": True},
-        "ping": {"required": True},
-        "overall": {"required": True},
-    }
-
-    _attribute_map = {
-        "tls": {"key": "tls", "type": "Tls"},
-        "ping": {"key": "ping", "type": "Ping"},
-        "overall": {"key": "overall", "type": "OverallHealth"},
-    }
-
-    def __init__(
-        self, *, tls: "_models.Tls", ping: "_models.Ping", overall: "_models.OverallHealth", **kwargs: Any
-    ) -> None:
-        """
-        :keyword tls: The status of the TLS connections of the Trunk. Required.
-        :paramtype tls: ~azure.communication.phonenumbers.siprouting.models.Tls
-        :keyword ping: The status of SIP OPTIONS message sent by Trunk. Required.
-        :paramtype ping: ~azure.communication.phonenumbers.siprouting.models.Ping
-        :keyword overall: The overall health status of Trunk. Required.
-        :paramtype overall: ~azure.communication.phonenumbers.siprouting.models.OverallHealth
-        """
-        super().__init__(**kwargs)
-        self.tls = tls
-        self.ping = ping
-        self.overall = overall
-
-
 class OverallHealth(_serialization.Model):
     """The overall health status of Trunk.
 
@@ -191,7 +122,7 @@ class OverallHealth(_serialization.Model):
     :ivar reason: The reason overall status of Trunk is inactive. Known values are:
      "noRecentCalls", "noRecentPings", and "noRecentCallsAndPings".
     :vartype reason: str or
-     ~azure.communication.phonenumbers.siprouting.models.InactiveStatusReason
+     ~azure.communication.phonenumbers.siprouting.models.UnhealthyStatusReason
     """
 
     _validation = {
@@ -207,7 +138,7 @@ class OverallHealth(_serialization.Model):
         self,
         *,
         status: Union[str, "_models.OverallHealthStatus"],
-        reason: Optional[Union[str, "_models.InactiveStatusReason"]] = None,
+        reason: Optional[Union[str, "_models.UnhealthyStatusReason"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -218,14 +149,14 @@ class OverallHealth(_serialization.Model):
         :keyword reason: The reason overall status of Trunk is inactive. Known values are:
          "noRecentCalls", "noRecentPings", and "noRecentCallsAndPings".
         :paramtype reason: str or
-         ~azure.communication.phonenumbers.siprouting.models.InactiveStatusReason
+         ~azure.communication.phonenumbers.siprouting.models.UnhealthyStatusReason
         """
         super().__init__(**kwargs)
         self.status = status
         self.reason = reason
 
 
-class Ping(_serialization.Model):
+class PingHealth(_serialization.Model):
     """The status of SIP OPTIONS message sent by Trunk.
 
     All required parameters must be populated in order to send to server.
@@ -292,7 +223,8 @@ class SipConfiguration(_serialization.Model):
 
     :ivar domains: Validated Domains.
      Map key is domain.
-    :vartype domains: dict[str, ~azure.communication.phonenumbers.siprouting.models.Domain]
+    :vartype domains: dict[str,
+     ~azure.communication.phonenumbers.siprouting.models.SipDomainInternal]
     :ivar trunks: SIP trunks for routing calls.
      Map key is trunk's FQDN (1-249 characters).
     :vartype trunks: dict[str,
@@ -307,7 +239,7 @@ class SipConfiguration(_serialization.Model):
     }
 
     _attribute_map = {
-        "domains": {"key": "domains", "type": "{Domain}"},
+        "domains": {"key": "domains", "type": "{SipDomainInternal}"},
         "trunks": {"key": "trunks", "type": "{SipTrunkInternal}"},
         "routes": {"key": "routes", "type": "[SipTrunkRouteInternal]"},
     }
@@ -315,7 +247,7 @@ class SipConfiguration(_serialization.Model):
     def __init__(
         self,
         *,
-        domains: Optional[Dict[str, "_models.Domain"]] = None,
+        domains: Optional[Dict[str, "_models.SipDomainInternal"]] = None,
         trunks: Optional[Dict[str, "_models.SipTrunkInternal"]] = None,
         routes: Optional[List["_models.SipTrunkRouteInternal"]] = None,
         **kwargs: Any
@@ -323,7 +255,8 @@ class SipConfiguration(_serialization.Model):
         """
         :keyword domains: Validated Domains.
          Map key is domain.
-        :paramtype domains: dict[str, ~azure.communication.phonenumbers.siprouting.models.Domain]
+        :paramtype domains: dict[str,
+         ~azure.communication.phonenumbers.siprouting.models.SipDomainInternal]
         :keyword trunks: SIP trunks for routing calls.
          Map key is trunk's FQDN (1-249 characters).
         :paramtype trunks: dict[str,
@@ -338,6 +271,33 @@ class SipConfiguration(_serialization.Model):
         self.routes = routes
 
 
+class SipDomainInternal(_serialization.Model):
+    """Represents Domain object as response of validation api.
+    Map key is domain.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar enabled: Enabled flag. Required.
+    :vartype enabled: bool
+    """
+
+    _validation = {
+        "enabled": {"required": True},
+    }
+
+    _attribute_map = {
+        "enabled": {"key": "enabled", "type": "bool"},
+    }
+
+    def __init__(self, *, enabled: bool, **kwargs: Any) -> None:
+        """
+        :keyword enabled: Enabled flag. Required.
+        :paramtype enabled: bool
+        """
+        super().__init__(**kwargs)
+        self.enabled = enabled
+
+
 class SipTrunkInternal(_serialization.Model):
     """Represents a SIP trunk for routing calls. See RFC 4904. Can be expanded with additional data.
 
@@ -350,7 +310,7 @@ class SipTrunkInternal(_serialization.Model):
     :ivar enabled: Enabled flag.
     :vartype enabled: bool
     :ivar health: Represents health state of a SIP trunk for routing calls.
-    :vartype health: ~azure.communication.phonenumbers.siprouting.models.Health
+    :vartype health: ~azure.communication.phonenumbers.siprouting.models.TrunkHealth
     :ivar direct_transfer: When enabled, removes Azure Communication Services from the signaling
      path on call transfer and sets the SIP Refer-To header to the trunk's FQDN. By default false.
     :vartype direct_transfer: bool
@@ -372,7 +332,7 @@ class SipTrunkInternal(_serialization.Model):
     _attribute_map = {
         "sip_signaling_port": {"key": "sipSignalingPort", "type": "int"},
         "enabled": {"key": "enabled", "type": "bool"},
-        "health": {"key": "health", "type": "Health"},
+        "health": {"key": "health", "type": "TrunkHealth"},
         "direct_transfer": {"key": "directTransfer", "type": "bool"},
         "privacy_header": {"key": "privacyHeader", "type": "str"},
         "ip_address_version": {"key": "ipAddressVersion", "type": "str"},
@@ -408,7 +368,7 @@ class SipTrunkInternal(_serialization.Model):
         super().__init__(**kwargs)
         self.sip_signaling_port = sip_signaling_port
         self.enabled = enabled
-        self.health: Optional["_models.Health"] = None
+        self.health: Optional["_models.TrunkHealth"] = None
         self.direct_transfer = direct_transfer
         self.privacy_header = privacy_header
         self.ip_address_version = ip_address_version
@@ -486,7 +446,7 @@ class SipTrunkRouteInternal(_serialization.Model):
         self.caller_id_override = caller_id_override
 
 
-class Tls(_serialization.Model):
+class TlsHealth(_serialization.Model):
     """The status of the TLS connections of the Trunk.
 
     All required parameters must be populated in order to send to server.
@@ -512,3 +472,45 @@ class Tls(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.status = status
+
+
+class TrunkHealth(_serialization.Model):
+    """Represents health state of a SIP trunk for routing calls.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar tls: The status of the TLS connections of the Trunk. Required.
+    :vartype tls: ~azure.communication.phonenumbers.siprouting.models.TlsHealth
+    :ivar ping: The status of SIP OPTIONS message sent by Trunk. Required.
+    :vartype ping: ~azure.communication.phonenumbers.siprouting.models.PingHealth
+    :ivar overall: The overall health status of Trunk. Required.
+    :vartype overall: ~azure.communication.phonenumbers.siprouting.models.OverallHealth
+    """
+
+    _validation = {
+        "tls": {"required": True},
+        "ping": {"required": True},
+        "overall": {"required": True},
+    }
+
+    _attribute_map = {
+        "tls": {"key": "tls", "type": "TlsHealth"},
+        "ping": {"key": "ping", "type": "PingHealth"},
+        "overall": {"key": "overall", "type": "OverallHealth"},
+    }
+
+    def __init__(
+        self, *, tls: "_models.TlsHealth", ping: "_models.PingHealth", overall: "_models.OverallHealth", **kwargs: Any
+    ) -> None:
+        """
+        :keyword tls: The status of the TLS connections of the Trunk. Required.
+        :paramtype tls: ~azure.communication.phonenumbers.siprouting.models.TlsHealth
+        :keyword ping: The status of SIP OPTIONS message sent by Trunk. Required.
+        :paramtype ping: ~azure.communication.phonenumbers.siprouting.models.PingHealth
+        :keyword overall: The overall health status of Trunk. Required.
+        :paramtype overall: ~azure.communication.phonenumbers.siprouting.models.OverallHealth
+        """
+        super().__init__(**kwargs)
+        self.tls = tls
+        self.ping = ping
+        self.overall = overall
