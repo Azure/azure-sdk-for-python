@@ -11,29 +11,29 @@ import pytest_asyncio
 from azure.core.pipeline.transport._aiohttp import AioHttpTransport
 from azure.core.exceptions import ServiceResponseError
 
+import test_config
 from azure.cosmos import PartitionKey
 from azure.cosmos._partition_health_tracker import HEALTH_STATUS, UNHEALTHY, UNHEALTHY_TENTATIVE
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos.exceptions import CosmosHttpResponseError
-from tests import test_config
-from tests._fault_injection_transport_async import FaultInjectionTransportAsync
+from _fault_injection_transport_async import FaultInjectionTransportAsync
 
 COLLECTION = "created_collection"
 @pytest_asyncio.fixture()
 async def setup():
     os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "True"
-    client = CosmosClient(TestPPCBSmMrrAsync.host, TestPPCBSmMrrAsync.master_key, consistency_level="Session")
-    created_database = client.get_database_client(TestPPCBSmMrrAsync.TEST_DATABASE_ID)
+    client = CosmosClient(TestPerPartitionCircuitBreakerSmMrrAsync.host, TestPerPartitionCircuitBreakerSmMrrAsync.master_key, consistency_level="Session")
+    created_database = client.get_database_client(TestPerPartitionCircuitBreakerSmMrrAsync.TEST_DATABASE_ID)
     # print(TestPPCBSmMrrAsync.TEST_DATABASE_ID)
-    await client.create_database_if_not_exists(TestPPCBSmMrrAsync.TEST_DATABASE_ID)
-    created_collection = await created_database.create_container(TestPPCBSmMrrAsync.TEST_CONTAINER_SINGLE_PARTITION_ID,
+    await client.create_database_if_not_exists(TestPerPartitionCircuitBreakerSmMrrAsync.TEST_DATABASE_ID)
+    created_collection = await created_database.create_container(TestPerPartitionCircuitBreakerSmMrrAsync.TEST_CONTAINER_SINGLE_PARTITION_ID,
                                                                  partition_key=PartitionKey("/pk"),
                                                                  offer_throughput=10000)
     yield {
         COLLECTION: created_collection
     }
 
-    await created_database.delete_container(TestPPCBSmMrrAsync.TEST_CONTAINER_SINGLE_PARTITION_ID)
+    await created_database.delete_container(TestPerPartitionCircuitBreakerSmMrrAsync.TEST_CONTAINER_SINGLE_PARTITION_ID)
     await client.close()
     os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "False"
 
@@ -50,7 +50,7 @@ def errors():
 @pytest.mark.cosmosEmulator
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup")
-class TestPPCBSmMrrAsync:
+class TestPerPartitionCircuitBreakerSmMrrAsync:
     host = test_config.TestConfig.host
     master_key = test_config.TestConfig.masterKey
     connectionPolicy = test_config.TestConfig.connectionPolicy
@@ -69,6 +69,23 @@ class TestPPCBSmMrrAsync:
     async def cleanup_method(initialized_objects: Dict[str, Any]):
         method_client: CosmosClient = initialized_objects["client"]
         await method_client.close()
+
+    async def perform_write_operation(operation, container, id, pk):
+        document_definition = {'id': id,
+                               'pk': pk,
+                               'name': 'sample document',
+                               'key': 'value'}
+        if operation == "create":
+            await container.create_item(body=document_definition)
+        elif operation == "upsert":
+            await container.upsert_item(body=document_definition)
+        elif operation == "replace":
+            await container.replace_item(item=document_definition['id'], body=document_definition)
+        elif operation == "delete":
+            await container.delete_item(item=document_definition['id'], partition_key=document_definition['pk'])
+        elif operation == "read":
+            await container.read_item(item=document_definition['id'], partition_key=document_definition['pk'])
+
 
     async def create_custom_transport_sm_mrr(self):
         custom_transport =  FaultInjectionTransportAsync()
@@ -119,7 +136,7 @@ class TestPPCBSmMrrAsync:
                 await container.create_item(body=document_definition)
         global_endpoint_manager = container.client_connection._global_endpoint_manager
 
-        TestPPCBSmMrrAsync.validate_unhealthy_partitions(global_endpoint_manager, 0)
+        TestPerPartitionCircuitBreakerSmMrrAsync.validate_unhealthy_partitions(global_endpoint_manager, 0)
 
         # create item with client without fault injection
         await setup[COLLECTION].create_item(body=document_definition)
@@ -127,7 +144,7 @@ class TestPPCBSmMrrAsync:
         # reads should fail over and only the relevant partition should be marked as unavailable
         await container.read_item(item=document_definition['id'], partition_key=document_definition['pk'])
         # partition should not have been marked unavailable after one error
-        TestPPCBSmMrrAsync.validate_unhealthy_partitions(global_endpoint_manager, 0)
+        TestPerPartitionCircuitBreakerSmMrrAsync.validate_unhealthy_partitions(global_endpoint_manager, 0)
 
         for i in range(10):
             read_resp = await container.read_item(item=document_definition['id'], partition_key=document_definition['pk'])
@@ -136,7 +153,7 @@ class TestPPCBSmMrrAsync:
             assert request.url.startswith(expected_read_region_uri)
 
        # the partition should have been marked as unavailable after breaking read threshold
-        TestPPCBSmMrrAsync.validate_unhealthy_partitions(global_endpoint_manager, 1)
+        TestPerPartitionCircuitBreakerSmMrrAsync.validate_unhealthy_partitions(global_endpoint_manager, 1)
 
     @pytest.mark.parametrize("error", errors())
     async def test_failure_rate_threshold_async(self, setup, error):
@@ -173,7 +190,7 @@ class TestPPCBSmMrrAsync:
                 await container.upsert_item(body=document_definition_2)
         global_endpoint_manager = container.client_connection._global_endpoint_manager
 
-        TestPPCBSmMrrAsync.validate_unhealthy_partitions(global_endpoint_manager, 0)
+        TestPerPartitionCircuitBreakerSmMrrAsync.validate_unhealthy_partitions(global_endpoint_manager, 0)
 
         # create item with client without fault injection
         await setup[COLLECTION].create_item(body=document_definition)
@@ -181,7 +198,7 @@ class TestPPCBSmMrrAsync:
         # reads should fail over and only the relevant partition should be marked as unavailable
         await container.read_item(item=document_definition['id'], partition_key=document_definition['pk'])
         # partition should not have been marked unavailable after one error
-        TestPPCBSmMrrAsync.validate_unhealthy_partitions(global_endpoint_manager, 0)
+        TestPerPartitionCircuitBreakerSmMrrAsync.validate_unhealthy_partitions(global_endpoint_manager, 0)
         # lower minimum requests for testing
         global_endpoint_manager.global_partition_endpoint_manager_core.partition_health_tracker.MINIMUM_REQUESTS_FOR_FAILURE_RATE = 10
         try:
@@ -197,7 +214,7 @@ class TestPPCBSmMrrAsync:
                 assert request.url.startswith(expected_read_region_uri)
 
             # the partition should have been marked as unavailable after breaking read threshold
-            TestPPCBSmMrrAsync.validate_unhealthy_partitions(global_endpoint_manager, 1)
+            TestPerPartitionCircuitBreakerSmMrrAsync.validate_unhealthy_partitions(global_endpoint_manager, 1)
         finally:
             # restore minimum requests
             global_endpoint_manager.global_partition_endpoint_manager_core.partition_health_tracker.MINIMUM_REQUESTS_FOR_FAILURE_RATE = 100

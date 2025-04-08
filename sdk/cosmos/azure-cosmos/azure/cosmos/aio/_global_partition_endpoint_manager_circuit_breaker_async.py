@@ -37,7 +37,7 @@ if TYPE_CHECKING:
 
 
 
-class _GlobalPartitionEndpointManagerForCircuitBreakerAsync(_GlobalEndpointManager):
+class _GlobalPartitionEndpointManagerForCircuitBreakerAsync(_GlobalEndpointManager): # pylint: disable=protected-access
     """
     This internal class implements the logic for partition endpoint management for
     geo-replicated database accounts.
@@ -54,17 +54,18 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerAsync(_GlobalEndpointManag
         partition_key_value = request.headers[HttpHeaders.PartitionKey]
         # get the partition key range for the given partition key
         target_container_link = None
-        for container_link, properties in self.client._container_properties_cache.items(): # pylint: disable=protected-access
+        for container_link, properties in self.client._container_properties_cache.items():
             if properties["_rid"] == container_rid:
                 target_container_link = container_link
                 partition_key_definition = properties["partitionKey"]
-                partition_key = PartitionKey(path=partition_key_definition["paths"], kind=partition_key_definition["kind"])
+                partition_key = PartitionKey(path=partition_key_definition["paths"],
+                                             kind=partition_key_definition["kind"])
 
                 epk_range = [partition_key._get_epk_range_for_partition_key(partition_key_value)]
         if not target_container_link:
             raise RuntimeError("Illegal state: the container cache is not properly initialized.")
         # TODO: @tvaron3 check different clients and create them in different ways
-        partition_ranges = await (self.client._routing_map_provider # pylint: disable=protected-access
+        partition_ranges = await (self.client._routing_map_provider
                           .get_overlapping_ranges(target_container_link, epk_range))
         partition_range = Range.PartitionKeyRangeToRange(partition_ranges[0])
         return PartitionKeyRangeWrapper(partition_range, container_rid)

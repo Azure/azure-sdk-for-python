@@ -99,29 +99,28 @@ class _PartitionHealthTracker(object):
 
     # TODO: @tvaron3 look for useful places to add logs
 
-    def mark_partition_unavailable(self, pkrange_wrapper: PartitionKeyRangeWrapper, location: str) -> None:
+    def mark_partition_unavailable(self, pk_range_wrapper: PartitionKeyRangeWrapper, location: str) -> None:
         # mark the partition key range as unavailable
-        self._transition_health_status_on_failure(pkrange_wrapper, location)
+        self._transition_health_status_on_failure(pk_range_wrapper, location)
 
     def _transition_health_status_on_failure(
             self,
-            pkrange_wrapper: PartitionKeyRangeWrapper,
+            pk_range_wrapper: PartitionKeyRangeWrapper,
             location: str
     ) -> None:
-        logger.warn("{} has been marked as unavailable.".format(pkrange_wrapper))
-        current_time = current_time_millis()
-        if pkrange_wrapper not in self.pk_range_wrapper_to_health_info:
+        logger.warning("%s has been marked as unavailable.", pk_range_wrapper)        current_time = current_time_millis()
+        if pk_range_wrapper not in self.pk_range_wrapper_to_health_info:
             # healthy -> unhealthy tentative
             partition_health_info = _PartitionHealthInfo()
             partition_health_info.unavailability_info = {
                 LAST_UNAVAILABILITY_CHECK_TIME_STAMP: current_time,
                 HEALTH_STATUS: UNHEALTHY_TENTATIVE
             }
-            self.pk_range_wrapper_to_health_info[pkrange_wrapper] = {
+            self.pk_range_wrapper_to_health_info[pk_range_wrapper] = {
                 location: partition_health_info
             }
         else:
-            region_to_partition_health = self.pk_range_wrapper_to_health_info[pkrange_wrapper]
+            region_to_partition_health = self.pk_range_wrapper_to_health_info[pk_range_wrapper]
             if location in region_to_partition_health and region_to_partition_health[location].unavailability_info:
                 # healthy tentative -> unhealthy
                 # if the operation type is not empty, we are in the healthy tentative state
@@ -137,16 +136,16 @@ class _PartitionHealthTracker(object):
                     LAST_UNAVAILABILITY_CHECK_TIME_STAMP: current_time,
                     HEALTH_STATUS: UNHEALTHY_TENTATIVE
                 }
-                self.pk_range_wrapper_to_health_info[pkrange_wrapper][location] = partition_health_info
+                self.pk_range_wrapper_to_health_info[pk_range_wrapper][location] = partition_health_info
 
     def _transition_health_status_on_success(
             self,
-            pkrange_wrapper: PartitionKeyRangeWrapper,
+            pk_range_wrapper: PartitionKeyRangeWrapper,
             location: str
     ) -> None:
-        if pkrange_wrapper in self.pk_range_wrapper_to_health_info:
+        if pk_range_wrapper in self.pk_range_wrapper_to_health_info:
             # healthy tentative -> healthy
-            self.pk_range_wrapper_to_health_info[pkrange_wrapper].pop(location, None)
+            self.pk_range_wrapper_to_health_info[pk_range_wrapper].pop(location, None)
 
     def _check_stale_partition_info(self, pk_range_wrapper: PartitionKeyRangeWrapper) -> None:
         current_time = current_time_millis()
@@ -178,7 +177,7 @@ class _PartitionHealthTracker(object):
             for location, partition_health_info in self.pk_range_wrapper_to_health_info[pk_range_wrapper].items():
                 if partition_health_info.unavailability_info:
                     health_status = partition_health_info.unavailability_info[HEALTH_STATUS]
-                    if  health_status == UNHEALTHY_TENTATIVE or health_status == UNHEALTHY:
+                    if health_status in (UNHEALTHY_TENTATIVE, UNHEALTHY):
                         excluded_locations.add(location)
         return excluded_locations
 
