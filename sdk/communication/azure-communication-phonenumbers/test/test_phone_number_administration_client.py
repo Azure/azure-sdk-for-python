@@ -1,7 +1,7 @@
 import os
 import pytest
 import uuid
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils import recorded_by_proxy, add_general_regex_sanitizer
 from _shared.utils import create_token_credential, get_header_policy, get_http_logging_policy
 from azure.communication.phonenumbers import PhoneNumbersClient
 from azure.communication.phonenumbers import (
@@ -457,6 +457,11 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
     # This test does a lot of stuff because pytest doesn't have an easy built-in way to execute tests in a specific order.
     @recorded_by_proxy
     def test_phone_numbers_reservation_management(self):
+        add_general_regex_sanitizer(
+            regex=r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}",
+            value=STATIC_RESERVATION_ID,
+            function_scoped=True, # This ensures the sanitizer is only applied to this test
+        )
         reservation_id = self.reservation_id
 
         # Test that a reservation can be created without any phone numbers
@@ -509,6 +514,11 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
     # @pytest.mark.skipif(SKIP_PURCHASE_PHONE_NUMBER_TESTS, reason=PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON)
     @recorded_by_proxy
     def test_purchase_reservation_without_agreement_to_not_resell(self):
+        add_general_regex_sanitizer(
+            regex=r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}",
+            value=STATIC_RESERVATION_ID,
+            function_scoped=True, # This ensures the sanitizer is only applied to this test
+        )
         reservation_id = self.reservation_id
 
         # France doesn't allow reselling of phone numbers, so purchases without agreement to not resell should fail
@@ -538,6 +548,11 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
     @pytest.mark.skipif(SKIP_PURCHASE_PHONE_NUMBER_TESTS, reason=PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON)
     @recorded_by_proxy
     def test_purchase_reservation(self):
+        add_general_regex_sanitizer(
+            regex=r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}",
+            value=STATIC_RESERVATION_ID,
+            function_scoped=True, # This ensures the sanitizer is only applied to this test
+        )
         reservation_id = self.purchased_reservation_id
 
         # Test that we can purchase a reservation
