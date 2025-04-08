@@ -9,15 +9,11 @@ import json
 import os.path
 import time
 import unittest
-import urllib.parse as urllib
 import uuid
 
 import pytest
 import requests
-from azure.core import MatchConditions
-from azure.core.exceptions import AzureError, ServiceResponseError
 from azure.core.pipeline.transport import RequestsTransport, RequestsTransportResponse
-from urllib3.util.retry import Retry
 
 import azure.cosmos._base as base
 import azure.cosmos.cosmos_client as cosmos_client
