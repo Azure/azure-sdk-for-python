@@ -115,7 +115,7 @@ class AzureRAIServiceTarget(PromptChatTarget):
             print("3. View variables with 'p <variable_name>'")
             print("4. Set a breakpoint with 'b <line_number>'")
             print("==============================================\n\n")
-            pdb.set_trace()
+            # pdb.set_trace()
             
         self._validate_request(prompt_request=prompt_request)
         request = prompt_request.request_pieces[0]
@@ -161,7 +161,9 @@ class AzureRAIServiceTarget(PromptChatTarget):
                     "Content-Type": "application/json",
                     "X-CV": f"{uuid.uuid4()}",
                 },
-                "params": {},
+                "params": {
+                    "api-version": "2023-07-01-preview"
+                },
                 "simulationType": "Default"
             }
             
@@ -169,7 +171,7 @@ class AzureRAIServiceTarget(PromptChatTarget):
             
             # Submit the simulation request - this returns a LongRunningResponse object, not an awaitable
             # We don't use await here since it's not an async method
-            import pdb;pdb.set_trace()  # Set a breakpoint here for debugging
+            # import pdb;pdb.set_trace()  # Set a breakpoint here for debugging
             long_running_response = self._client._client.rai_svc.submit_simulation(body=body)
             logger.debug(f"Received long running response: {long_running_response}")
             
@@ -230,45 +232,76 @@ class AzureRAIServiceTarget(PromptChatTarget):
             
             for retry in range(max_retries):
                 try:
-                    import requests
                     
-                    token = self._client.token_manager.get_token("https://management.azure.com/.default")
-                    proxy_headers = {
-                        "Authorization": f"Bearer {token.token}",
-                        "Content-Type": "application/json",
-                        "User-Agent": USER_AGENT,
-                    }
-                    pdb.set_trace()  # Set a breakpoint here for debugging
-                    ops_result = requests.get(location_url, headers=proxy_headers)
-                    operation_result = self._client._client.rai_svc.get_operation_result(operation_id=operation_id, api_key=token, headers=proxy_headers)
+                    # pdb.set_trace()  # Set a breakpoint here for debugging
+                    operation_result = self._client._client.rai_svc.get_operation_result(operation_id=operation_id)
 
                     
                     logger.debug(f"Got operation result: {operation_result}")
                     await asyncio.sleep(retry_delay)
                 except Exception as e:
-                    pdb.set_trace()  # Set a breakpoint here for debugging
+                    # pdb.set_trace()  # Set a breakpoint here for debugging
                     logger.warning(f"Error polling for operation result: {str(e)}")
                     await asyncio.sleep(retry_delay)
-            pdb.set_trace() 
+            # pdb.set_trace() 
             response = operation_result
             # Process the response from the client
             logger.debug(f"Received final response: {response}")
             
+            # The response might be a JSON string, so we need to parse it first
+            if isinstance(response, str):
+                import json
+                try:
+                    # Parse the JSON string into a dictionary
+                    parsed_response = json.loads(response)
+                    logger.debug(f"Successfully parsed response string as JSON")
+                    response = parsed_response
+                except json.JSONDecodeError as e:
+                    logger.warning(f"Failed to parse response as JSON: {e}")
+                    # Continue with the string response
+            
             # Extract the content from the response
+            response_text = None
+            
+            # Handle the nested structure with generated_question field
             if isinstance(response, dict) and "choices" in response and len(response["choices"]) > 0:
-                if "message" in response["choices"][0] and "content" in response["choices"][0]["message"]:
-                    response_text = response["choices"][0]["message"]["content"]
-                elif "text" in response["choices"][0]:
+                choice = response["choices"][0]
+                if "message" in choice and "content" in choice["message"]:
+                    message_content = choice["message"]["content"]
+                    
+                    # Check if message content is a JSON string that needs to be parsed
+                    if isinstance(message_content, str) and message_content.strip().startswith("{"):
+                        try:
+                            content_json = json.loads(message_content)
+                            if "generated_question" in content_json:
+                                response_text = content_json["generated_question"]
+                                logger.info(f"Successfully extracted generated_question: {response_text[:50]}...")
+                            else:
+                                response_text = message_content
+                        except json.JSONDecodeError:
+                            logger.warning("Failed to parse message content as JSON")
+                            response_text = message_content
+                    else:
+                        response_text = message_content
+                elif "text" in choice:
                     # Some RAI services return text directly in the choices
-                    response_text = response["choices"][0]["text"]
-                else:
-                    # Fallback: convert the entire response to a string
+                    response_text = choice["text"]
+            
+            # If we still don't have a response_text, use fallback methods
+            if response_text is None:
+                logger.warning("Could not extract response using standard paths, using fallback methods")
+                if isinstance(response, dict):
+                    # Try to find any field that might contain the generated question
+                    for field_name in ["generated_question", "content", "text", "message"]:
+                        if field_name in response:
+                            response_text = response[field_name]
+                            logger.info(f"Found content in field '{field_name}'")
+                            break
+                
+                # Last resort fallback
+                if response_text is None:
                     logger.warning("Unexpected response format - using string representation")
                     response_text = str(response)
-            else:
-                # Fallback: convert the entire response to a string
-                logger.warning("Response doesn't contain expected 'choices' structure - using string representation")
-                response_text = str(response)
                 
             logger.info(f"Extracted response text: {response_text[:100]}...")  # Truncate long responses
                 
