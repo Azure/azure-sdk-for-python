@@ -74,10 +74,10 @@ setup(
         "azure-core>=1.32.0",
         "nltk>=3.9.1",
         "azure-storage-blob>=12.25.1",
-        "httpx>=0.25.1",
+        "httpx>=0.27.2",
         # Dependencies added since Promptflow will soon be made optional
         "pandas>=2.1.2,<3.0.0",
-        "openai>=1.40.0",
+        "openai>=1.58.1",
         "ruamel.yaml>=0.17.10,<1.0.0",
         "msrest>=0.6.21",
     ],
