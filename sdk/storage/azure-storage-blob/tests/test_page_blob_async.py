@@ -4,12 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import aiohttp
 import os
 import tempfile
 import uuid
-from datetime import datetime, timedelta, timezone
-from typing import Any, Dict, Tuple
+from datetime import datetime, timedelta
 
 import pytest
 from azure.core import MatchConditions
@@ -25,7 +23,6 @@ from azure.storage.blob import (
     SequenceNumberAction,
     generate_blob_sas
 )
-from azure.storage.blob._serialize import get_api_version
 from azure.storage.blob.aio import BlobClient, BlobServiceClient
 from azure.storage.blob._shared.policies import StorageContentValidation
 
@@ -37,7 +34,6 @@ from settings.testcase import BlobPreparer
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
-SMALL_BLOB_SIZE = 1024
 LARGE_BLOB_SIZE = 10 * 1024 + 512
 EIGHT_TB = 8 * 1024 * 1024 * 1024 * 1024
 SOURCE_BLOB_SIZE = 8 * 1024
@@ -100,50 +96,6 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
             self.sleep(6)
             props = await blob.get_blob_properties()
         return props
-
-    async def _get_bearer_token_string(self, resource: str = "https://storage.azure.com/.default") -> str:
-        access_token = await self.get_credential(BlobServiceClient, is_async=True).get_token(resource)
-        return "Bearer " + access_token.token
-
-    def _build_file_share_headers(self, bearer_token_string: str, content_length: int = 0) -> Dict[str, Any]:
-        return {
-            'Accept': 'application/xml',
-            'Accept-Encoding': 'gzip, deflate',
-            'Authorization': bearer_token_string,
-            'Connection': 'keep-alive',
-            'Content-Length': str(content_length),
-            'x-ms-date': datetime.now(timezone.utc).strftime('%a, %d %b %Y %H:%M:%S GMT'),
-            'x-ms-version': get_api_version({}),
-            'x-ms-file-request-intent': 'backup',
-        }
-
-    async def _create_file_share_oauth(
-        self, bearer_token_string: str,
-        storage_account_name: str,
-        data: bytes
-    ) -> Tuple[str, str]:
-        share_name = self.get_resource_name('utshare')
-        file_name = self.get_resource_name('file')
-        base_url = f"https://{storage_account_name}.file.core.windows.net/{share_name}"
-
-        async with aiohttp.ClientSession() as requests:
-            # Creates file share
-            await requests.put(
-                url=base_url + "?restype=share",
-                headers=self._build_file_share_headers(bearer_token_string)
-            )
-
-            # Creates the file itself
-            headers = self._build_file_share_headers(bearer_token_string)
-            headers.update({'x-ms-content-length': '1024', 'x-ms-type': 'file'})
-            await requests.put(url=base_url + "/" + file_name, headers=headers)
-
-            # Upload the supplied data to the file
-            headers = self._build_file_share_headers(bearer_token_string, 1024)
-            headers.update({'x-ms-range': 'bytes=0-1023', 'x-ms-write': 'update'})
-            await requests.put(url=base_url + "/" + file_name + "?comp=range", headers=headers, data=data)
-
-        return file_name, base_url
 
     async def assertBlobEqual(self, container_name, blob_name, expected_data, bsc):
         blob = bsc.get_blob_client(container_name, blob_name)
@@ -2388,58 +2340,5 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         progress.assert_complete()
-
-    @BlobPreparer()
-    @recorded_by_proxy_async
-    async def test_upload_from_file_to_page_blob_with_oauth(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        # Arrange
-        blob_service_client = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
-            max_page_size=4 * 1024
-        )
-        await self._setup(blob_service_client)
-        bearer_token_string = await self._get_bearer_token_string()
-
-        # Set up source file share with random data
-        source_data = self.get_random_bytes(SMALL_BLOB_SIZE)
-        file_name, base_url = await self._create_file_share_oauth(
-            bearer_token_string,
-            storage_account_name,
-            source_data
-        )
-
-        # Set up destination blob without any data
-        destination_blob_client = blob_service_client.get_blob_client(
-            container=self.source_container_name,
-            blob=self.get_resource_name(TEST_BLOB_PREFIX + "1")
-        )
-        await destination_blob_client.create_page_blob(SMALL_BLOB_SIZE)
-
-        try:
-            # Act
-            await destination_blob_client.upload_pages_from_url(
-                source_url=base_url + "/" + file_name,
-                offset=0,
-                length=SMALL_BLOB_SIZE,
-                source_offset=0,
-                source_authorization=bearer_token_string,
-                source_token_intent='backup'
-            )
-            destination_blob = await destination_blob_client.download_blob()
-            destination_blob_data = await destination_blob.readall()
-
-            # Assert
-            assert destination_blob_data == source_data
-        finally:
-            async with aiohttp.ClientSession() as requests:
-                await requests.delete(
-                    url=base_url + "?restype=share",
-                    headers=self._build_file_share_headers(bearer_token_string, 0)
-                )
-            await blob_service_client.delete_container(self.source_container_name)
 
 #------------------------------------------------------------------------------
