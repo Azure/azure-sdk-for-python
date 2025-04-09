@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -20,7 +21,7 @@ import asyncio
 import os
 
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import FileSearchTool, FilePurpose
+from azure.ai.projects.models import FileSearchTool, FilePurpose, MessageTextContent
 from azure.identity.aio import DefaultAzureCredential
 
 
@@ -37,7 +38,7 @@ async def main():
 
             # Create a vector store with no file and wait for it to be processed
             vector_store = await project_client.agents.create_vector_store_and_poll(
-                file_ids=[], name="sample_vector_store"
+                file_ids=[file.id], name="sample_vector_store"
             )
             print(f"Created vector store, vector store ID: {vector_store.id}")
 
@@ -62,7 +63,7 @@ async def main():
             )
             print(f"Created message, message ID: {message.id}")
 
-            run = await project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+            run = await project_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
             print(f"Created run, run ID: {run.id}")
 
             await project_client.agents.delete_vector_store(vector_store.id)
@@ -72,7 +73,14 @@ async def main():
             print("Deleted agent")
 
             messages = await project_client.agents.list_messages(thread_id=thread.id)
-            print(f"Messages: {messages}")
+
+            for message in reversed(messages.data):
+                # To remove characters, which are not correctly handled by print, we will encode the message
+                # and then decode it again.
+                clean_message = "\n".join(
+                    text_msg.text.value.encode("ascii", "ignore").decode("utf-8") for text_msg in message.text_messages
+                )
+                print(f"Role: {message.role}  Message: {clean_message}")
 
 
 if __name__ == "__main__":

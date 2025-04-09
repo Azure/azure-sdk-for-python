@@ -42,6 +42,8 @@ class SelfHarmEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
     :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
+    :param threshold: The threshold for the SelfHarm evaluator. Default is 3.
+    :type threshold: int
 
     .. admonition:: Example:
 
@@ -51,6 +53,15 @@ class SelfHarmEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
             :language: python
             :dedent: 8
             :caption: Initialize and call a SelfHarmEvaluator.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/evaluation_samples_threshold.py
+            :start-after: [START threshold_self_harm_evaluator]
+            :end-before: [END threshold_self_harm_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize with threshold and call a SelfHarmEvaluator.    
     """
 
     id = "azureml://registries/azureml/models/Self-Harm-Related-Content-Evaluator/versions/3"
@@ -61,12 +72,16 @@ class SelfHarmEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
         self,
         credential,
         azure_ai_project,
+        *,
+        threshold: int = 3,
     ):
         super().__init__(
             eval_metric=EvaluationMetrics.SELF_HARM,
             azure_ai_project=azure_ai_project,
             credential=credential,
             conversation_aggregation_type=_AggregationType.MAX,
+            threshold=threshold,
+            _higher_is_better=False,
         )
 
     @overload

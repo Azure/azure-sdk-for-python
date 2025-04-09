@@ -9,13 +9,13 @@ import datetime
 
 from azure.servicebus.aio.management import ServiceBusAdministrationClient
 from azure.servicebus.management import SubscriptionProperties
-from tests.utilities import get_logger
+from utilities import get_logger
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 
 from devtools_testutils import AzureMgmtRecordedTestCase, CachedResourceGroupPreparer, get_credential
 from devtools_testutils.aio import recorded_by_proxy_async
-from tests.sb_env_loader import ServiceBusPreparer
-from tests.servicebus_preparer import SERVICEBUS_ENDPOINT_SUFFIX
+from sb_env_loader import ServiceBusPreparer
+from servicebus_preparer import SERVICEBUS_ENDPOINT_SUFFIX
 
 from mgmt_test_utilities_async import async_pageable_to_list, clear_topics
 

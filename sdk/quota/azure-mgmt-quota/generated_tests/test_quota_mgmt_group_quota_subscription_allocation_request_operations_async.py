@@ -55,7 +55,7 @@ class TestQuotaMgmtGroupQuotaSubscriptionAllocationRequestOperationsAsync(AzureM
                     },
                     "type": "str",
                 },
-                api_version="2024-12-18-preview",
+                api_version="2025-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -70,7 +70,7 @@ class TestQuotaMgmtGroupQuotaSubscriptionAllocationRequestOperationsAsync(AzureM
             group_quota_name="str",
             resource_provider_name="str",
             allocation_id="str",
-            api_version="2024-12-18-preview",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -84,7 +84,7 @@ class TestQuotaMgmtGroupQuotaSubscriptionAllocationRequestOperationsAsync(AzureM
             group_quota_name="str",
             resource_provider_name="str",
             filter="str",
-            api_version="2024-12-18-preview",
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

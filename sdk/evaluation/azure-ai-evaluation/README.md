@@ -23,7 +23,7 @@ Azure AI SDK provides following to evaluate Generative AI Applications:
 ### Prerequisites
 
 - Python 3.9 or later is required to use this package.
-- [Optional] You must have [Azure AI Project][ai_project] or [Azure Open AI][azure_openai] to use AI-assisted evaluators
+- [Optional] You must have [Azure AI Foundry Project][ai_project] or [Azure Open AI][azure_openai] to use AI-assisted evaluators
 
 ### Install the package
 
@@ -31,10 +31,6 @@ Install the Azure AI Evaluation SDK for Python with [pip][pip_link]:
 
 ```bash
 pip install azure-ai-evaluation
-```
-If you want to track results in [AI Studio][ai_studio], install `remote` extra:
-```python
-pip install azure-ai-evaluation[remote]
 ```
 
 ## Key concepts
@@ -144,9 +140,9 @@ result = evaluate(
             } 
         }
     }
-    # Optionally provide your AI Studio project information to track your evaluation results in your Azure AI Studio project
+    # Optionally provide your AI Foundry project information to track your evaluation results in your Azure AI Foundry project
     azure_ai_project = azure_ai_project,
-    # Optionally provide an output path to dump a json of metric summary, row level data and metric and studio URL
+    # Optionally provide an output path to dump a json of metric summary, row level data and metric and AI Foundry URL
     output_path="./evaluation_results.json"
 )
 ```

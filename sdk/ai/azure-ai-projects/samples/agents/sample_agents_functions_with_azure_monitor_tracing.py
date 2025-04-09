@@ -19,7 +19,7 @@ USAGE:
     Set these environment variables with your own values:
     1) PROJECT_CONNECTION_STRING - The project connection string, as found in the overview page of your
        Azure AI Foundry project.
-    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
+    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
     3) AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to `true` to trace the content of chat
        messages, which may contain personal data. False by default.
@@ -28,6 +28,7 @@ from typing import Any, Callable, Set
 
 import os, time, json
 from azure.ai.projects import AIProjectClient
+from azure.ai.projects.telemetry import trace_function
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects.models import FunctionTool, RequiredFunctionToolCall, SubmitToolOutputsAction, ToolOutput
 from opentelemetry import trace
@@ -45,13 +46,16 @@ if not application_insights_connection_string:
     exit()
 configure_azure_monitor(connection_string=application_insights_connection_string)
 
+# enable additional instrumentations if needed
+project_client.telemetry.enable()
+
 scenario = os.path.basename(__file__)
 tracer = trace.get_tracer(__name__)
 
 
-# The tracer.start_as_current_span decorator will trace the function call and enable adding additional attributes
+# The trace_func decorator will trace the function call and enable adding additional attributes
 # to the span in the function implementation. Note that this will trace the function parameters and their values.
-@tracer.start_as_current_span("fetch_weather")  # type: ignore
+@trace_function()
 def fetch_weather(location: str) -> str:
     """
     Fetches the weather information for the specified location.
@@ -102,7 +106,7 @@ with tracer.start_as_current_span(scenario):
         )
         print(f"Created message, ID: {message.id}")
 
-        run = project_client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+        run = project_client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
         print(f"Created run, ID: {run.id}")
 
         while run.status in ["queued", "in_progress", "requires_action"]:

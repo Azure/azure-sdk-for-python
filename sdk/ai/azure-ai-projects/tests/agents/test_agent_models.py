@@ -22,8 +22,8 @@ main_stream_response = read_file("main_stream_response")
 fetch_current_datetime_and_weather_stream_response = read_file("fetch_current_datetime_and_weather_stream_response")
 
 
-def convert_to_byte_iterator(main_stream_response: str) -> Iterator[bytes]:
-    yield main_stream_response.encode()
+def convert_to_byte_iterator(input: str) -> Iterator[bytes]:
+    yield input.encode()
 
 
 class TestBaseAgentEventHandler:
@@ -31,12 +31,12 @@ class TestBaseAgentEventHandler:
         def _process_event(self, event_data_str: str) -> str:
             return event_data_str
 
-    def break_main_stream_response(self, indices: List[int], main_stream_response: str):
+    def break_main_stream_response(self, indices: List[int], response: str):
         previous_index = 0
         for index in indices:
-            yield main_stream_response[previous_index:index].encode()
+            yield response[previous_index:index].encode()
             previous_index = index
-        yield main_stream_response[previous_index:].encode()
+        yield response[previous_index:].encode()
 
     def mock_callable(self, _: ThreadRun, __: BaseAgentEventHandler[str]) -> None:
         pass
@@ -136,6 +136,30 @@ class TestBaseAgentEventHandler:
             count += 1
 
         assert fetch_current_datetime_and_weather_stream_response.count("event:")
+        assert all_event_str[-1].startswith("event: done")
+
+    def test_event_handler_with_split_chinese_char(self):
+        response_bytes_split_chinese_char: List[bytes] = [
+            b'event: thread.message.delta\ndata: data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\xe5',
+            b"\xa4",
+            b'\xa9"}}]}}\n\n',
+            b'event: thread.message.delta\ndata: data: {"id":"msg_02","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"."}}]}}}\n\nevent: done\ndata: [DONE]\n\n',
+        ]
+
+        handler = self.MyAgentEventhHandler()
+
+        handler.initialize(
+            # the numbers of the index around the new line characters, middle of the event, or at the end
+            iter(response_bytes_split_chinese_char),
+            self.mock_callable,
+        )
+        count = 0
+        all_event_str: List[str] = []
+        for event_str in handler:
+            assert event_str.startswith("event:")
+            all_event_str.append(event_str)
+            count += 1
+        assert count == 3
         assert all_event_str[-1].startswith("event: done")
 
 

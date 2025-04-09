@@ -6,13 +6,11 @@ import json
 import logging
 import os
 import re
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypedDict, TypeVar, Union
+from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypedDict, Union, cast
 
+from azure.ai.evaluation._legacy._adapters._constants import LINE_NUMBER
+from azure.ai.evaluation._legacy._adapters.entities import Run
 import pandas as pd
-from promptflow._sdk._constants import LINE_NUMBER
-from promptflow.client import PFClient
-from promptflow.entities import Run
-from promptflow._sdk._configuration import Configuration
 
 from azure.ai.evaluation._common.math import list_mean_nan_safe, apply_transform_nan_safe
 from azure.ai.evaluation._common.utils import validate_azure_ai_project
@@ -27,7 +25,14 @@ from .._constants import (
 )
 from .._model_configurations import AzureAIProject, EvaluationResult, EvaluatorConfig
 from .._user_agent import USER_AGENT
-from ._batch_run import EvalRunContext, CodeClient, ProxyClient, TargetRunContext, ProxyRun
+from ._batch_run import (
+    EvalRunContext,
+    CodeClient,
+    ProxyClient,
+    ProxyRun,
+    TargetRunContext,
+    RunSubmitterClient,
+)
 from ._utils import (
     _apply_column_mapping,
     _log_metrics_and_instance_results,
@@ -35,8 +40,8 @@ from ._utils import (
     _write_output,
     DataLoaderFactory,
 )
+from ._batch_run.batch_clients import BatchClient
 
-TClient = TypeVar("TClient", ProxyClient, CodeClient)
 LOGGER = logging.getLogger(__name__)
 
 # For metrics (aggregates) whose metric names intentionally differ from their
@@ -71,7 +76,7 @@ def _aggregate_other_metrics(df: pd.DataFrame) -> Tuple[List[str], Dict[str, flo
         if metric_name in METRIC_COLUMN_NAME_REPLACEMENTS:
             renamed_cols.append(col)
             new_col_name = metric_prefix + "." + METRIC_COLUMN_NAME_REPLACEMENTS[metric_name]
-            col_with_numeric_values = pd.to_numeric(df[col], errors="coerce")
+            col_with_numeric_values = cast(List[float], pd.to_numeric(df[col], errors="coerce"))
             try:
                 metric_columns[new_col_name] = round(list_mean_nan_safe(col_with_numeric_values), 2)
             except EvaluationException:  # only exception that can be cause is all NaN values
@@ -122,7 +127,7 @@ def _aggregate_content_safety_metrics(
     defect_rates = {}
     for col in content_safety_df.columns:
         defect_rate_name = col.replace("_score", "_defect_rate")
-        col_with_numeric_values = pd.to_numeric(content_safety_df[col], errors="coerce")
+        col_with_numeric_values = cast(List[float], pd.to_numeric(content_safety_df[col], errors="coerce"))
         try:
             col_with_boolean_values = apply_transform_nan_safe(
                 col_with_numeric_values, lambda x: 1 if x >= CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT else 0
@@ -152,24 +157,55 @@ def _aggregate_label_defect_metrics(df: pd.DataFrame) -> Tuple[List[str], Dict[s
         EvaluationMetrics.LOGOS_AND_BRANDS,
         _InternalEvaluationMetrics.ECI,
         EvaluationMetrics.XPIA,
+        EvaluationMetrics.CODE_VULNERABILITY,
+        EvaluationMetrics.UNGROUNDED_ATTRIBUTES,
     ]
     label_cols = []
+    details_cols = []
     for col in df.columns:
         metric_name = col.split(".")[1]
         if metric_name.endswith("_label") and metric_name.replace("_label", "").lower() in handled_metrics:
             label_cols.append(col)
+        if metric_name.endswith("_details") and metric_name.replace("_details", "").lower() in handled_metrics:
+            details_cols = col
 
     label_df = df[label_cols]
     defect_rates = {}
     for col in label_df.columns:
         defect_rate_name = col.replace("_label", "_defect_rate")
-        col_with_boolean_values = pd.to_numeric(label_df[col], errors="coerce")
+        col_with_boolean_values = cast(List[float], pd.to_numeric(label_df[col], errors="coerce"))
         try:
             defect_rates[defect_rate_name] = round(list_mean_nan_safe(col_with_boolean_values), 2)
         except EvaluationException:  # only exception that can be cause is all NaN values
             msg = f"All score evaluations are NaN/None for column {col}. No aggregation can be performed."
             LOGGER.warning(msg)
+
+    if details_cols:
+        details_df = df[details_cols]
+        detail_defect_rates = {}
+
+        for key, value in details_df.items():
+            _process_rows(value, detail_defect_rates)
+
+        for key, value in detail_defect_rates.items():
+            col_with_boolean_values = pd.to_numeric(value, errors="coerce")
+            try:
+                defect_rates[f"{details_cols}.{key}_defect_rate"] = round(
+                    list_mean_nan_safe(col_with_boolean_values), 2
+                )
+            except EvaluationException:  # only exception that can be cause is all NaN values
+                msg = f"All score evaluations are NaN/None for column {key}. No aggregation can be performed."
+                LOGGER.warning(msg)
+
     return label_cols, defect_rates
+
+
+def _process_rows(row, detail_defect_rates):
+    for key, value in row.items():
+        if key not in detail_defect_rates:
+            detail_defect_rates[key] = []
+        detail_defect_rates[key].append(value)
+    return detail_defect_rates
 
 
 def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Callable]) -> Dict[str, float]:
@@ -303,7 +339,7 @@ def _validate_columns_for_evaluators(
                 missing_inputs = []
             else:
                 optional_params = (
-                    evaluator._OPTIONAL_PARAMS  # pylint: disable=protected-access
+                    cast(Any, evaluator)._OPTIONAL_PARAMS  # pylint: disable=protected-access
                     if hasattr(evaluator, "_OPTIONAL_PARAMS")
                     else []
                 )
@@ -451,7 +487,7 @@ def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_proj
 def _apply_target_to_data(
     target: Callable,
     data: Union[str, os.PathLike],
-    batch_client: TClient,
+    batch_client: BatchClient,
     initial_data: pd.DataFrame,
     evaluation_name: Optional[str] = None,
     **kwargs,
@@ -472,22 +508,31 @@ def _apply_target_to_data(
     :return: The tuple, containing data frame and the list of added columns.
     :rtype: Tuple[pandas.DataFrame, List[str]]
     """
+
+    if not isinstance(batch_client, ProxyClient):
+        raise ValueError("Only ProxyClient supports target runs for now.")
+
     _run_name = kwargs.get("_run_name")
     with TargetRunContext():
-        run: ProxyRun = batch_client.run(
-            flow=target,
-            display_name=evaluation_name,
-            data=data,
-            stream=True,
-            name=_run_name,
+        run = cast(
+            ProxyRun,
+            batch_client.run(
+                flow=target,
+                display_name=evaluation_name,
+                data=data,
+                stream=True,
+                name=_run_name,
+            ),
         )
 
     target_output: pd.DataFrame = batch_client.get_details(run, all_results=True)
     run_summary = batch_client.get_run_summary(run)
 
     if run_summary["completed_lines"] == 0:
-        msg = (f"Evaluation target failed to produce any results."
-               f" Please check the logs at {run_summary['log_path']} for more details about cause of failure.")
+        msg = (
+            f"Evaluation target failed to produce any results."
+            f" Please check the logs at {run_summary['log_path']} for more details about cause of failure."
+        )
         raise EvaluationException(
             message=msg,
             target=ErrorTarget.EVALUATE,
@@ -577,7 +622,6 @@ def _rename_columns_conditionally(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-# @log_evaluate_activity
 def evaluate(
     *,
     data: Union[str, os.PathLike],
@@ -728,20 +772,24 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     if target is not None:
         _validate_columns_for_target(input_data_df, target)
 
-    Configuration.get_instance().set_config("trace.destination", "none")
-    pf_client = PFClient(user_agent=USER_AGENT)
-    target_run: Optional[Run] = None
-
     # Create default configuration for evaluators that directly maps
     # input data names to keyword inputs of the same name in the evaluators.
     column_mapping = column_mapping or {}
     column_mapping.setdefault("default", {})
 
-    # If target is set, apply 1-1 column mapping from target outputs to evaluator inputs
+    target_run: Optional[Run] = None
     target_generated_columns: Set[str] = set()
+    batch_run_client: BatchClient
+    batch_run_data: Union[str, os.PathLike, pd.DataFrame] = data
+
+    # If target is set, apply 1-1 column mapping from target outputs to evaluator inputs
     if data is not None and target is not None:
+        # Right now, only the ProxyClient that uses Promptflow supports a target function
+        batch_run_client = ProxyClient(user_agent=USER_AGENT)
+        batch_run_data = os.path.abspath(data)
+
         input_data_df, target_generated_columns, target_run = _apply_target_to_data(
-            target, data, ProxyClient(pf_client), input_data_df, evaluation_name, **kwargs
+            target, data, batch_run_client, input_data_df, evaluation_name, **kwargs
         )
 
         for evaluator_name, mapping in column_mapping.items():
@@ -755,6 +803,17 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
                 # customer did not mapped target output.
                 if col not in mapping and run_output not in mapped_to_values:
                     column_mapping[evaluator_name][col] = run_output  # pylint: disable=unnecessary-dict-index-lookup
+    elif kwargs.pop("_use_run_submitter_client", False):
+        batch_run_client = RunSubmitterClient()
+        batch_run_data = input_data_df
+    elif kwargs.pop("_use_pf_client", True):
+        batch_run_client = ProxyClient(user_agent=USER_AGENT)
+        # Ensure the absolute path is passed to pf.run, as relative path doesn't work with
+        # multiple evaluators. If the path is already absolute, abspath will return the original path.
+        batch_run_data = os.path.abspath(data)
+    else:
+        batch_run_client = CodeClient()
+        batch_run_data = input_data_df
 
     # After we have generated all columns, we can check if we have everything we need for evaluators.
     _validate_columns_for_evaluators(input_data_df, evaluators, target, target_generated_columns, column_mapping)
@@ -770,46 +829,32 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
             if not col.startswith(Prefixes.TSG_OUTPUTS) and col not in column_mapping["default"].keys():
                 column_mapping["default"][col] = f"${{data.{col}}}"
 
-    def eval_batch_run(
-        batch_run_client: TClient, *, data=Union[str, os.PathLike, pd.DataFrame]
-    ) -> Dict[str, __EvaluatorInfo]:
-        with EvalRunContext(batch_run_client):
-            runs = {
-                evaluator_name: batch_run_client.run(
-                    flow=evaluator,
-                    run=target_run,
-                    evaluator_name=evaluator_name,
-                    column_mapping=column_mapping.get(evaluator_name, column_mapping.get("default", None)),
-                    data=data,
-                    stream=True,
-                    name=kwargs.get("_run_name"),
-                )
-                for evaluator_name, evaluator in evaluators.items()
-            }
+    with EvalRunContext(batch_run_client):
+        runs = {
+            evaluator_name: batch_run_client.run(
+                flow=evaluator,
+                data=batch_run_data,
+                run=target_run,
+                evaluator_name=evaluator_name,
+                column_mapping=column_mapping.get(evaluator_name, column_mapping.get("default", None)),
+                stream=True,
+                name=kwargs.get("_run_name"),
+            )
+            for evaluator_name, evaluator in evaluators.items()
+        }
 
-            # get_details needs to be called within EvalRunContext scope in order to have user agent populated
-            return {
-                evaluator_name: {
-                    "result": batch_run_client.get_details(run, all_results=True),
-                    "metrics": batch_run_client.get_metrics(run),
-                    "run_summary": batch_run_client.get_run_summary(run),
-                }
-                for evaluator_name, run in runs.items()
+        # get_details needs to be called within EvalRunContext scope in order to have user agent populated
+        per_evaluator_results: Dict[str, __EvaluatorInfo] = {
+            evaluator_name: {
+                "result": batch_run_client.get_details(run, all_results=True),
+                "metrics": batch_run_client.get_metrics(run),
+                "run_summary": batch_run_client.get_run_summary(run),
             }
-
-    # Batch Run
-    use_pf_client = kwargs.get("_use_pf_client", True)
-    if use_pf_client:
-        # Ensure the absolute path is passed to pf.run, as relative path doesn't work with
-        # multiple evaluators. If the path is already absolute, abspath will return the original path.
-        data = os.path.abspath(data)
-        per_evaluator_results = eval_batch_run(ProxyClient(pf_client), data=data)
-    else:
-        data = input_data_df
-        per_evaluator_results = eval_batch_run(CodeClient(), data=input_data_df)
+            for evaluator_name, run in runs.items()
+        }
 
     # Concatenate all results
-    evaluators_result_df = None
+    evaluators_result_df = pd.DataFrame()
     evaluators_metric = {}
     for evaluator_name, evaluator_result in per_evaluator_results.items():
         if fail_on_evaluator_errors and evaluator_result["run_summary"]["failed_lines"] > 0:
@@ -851,7 +896,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     metrics.update(evaluators_metric)
 
     # Since tracing is disabled, pass None for target_run so a dummy evaluation run will be created each time.
-    target_run = None
+    target_run: Optional[Run] = None
     trace_destination = _trace_destination_from_project_scope(azure_ai_project) if azure_ai_project else None
     studio_url = None
     if trace_destination:

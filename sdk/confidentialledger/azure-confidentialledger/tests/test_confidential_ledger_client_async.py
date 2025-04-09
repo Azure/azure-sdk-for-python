@@ -29,7 +29,7 @@ from _shared.testcase import ConfidentialLedgerPreparer, ConfidentialLedgerTestC
 
 class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
     async def create_confidentialledger_client(
-        self, endpoint, ledger_id, is_aad,
+        self, endpoint, ledger_id, use_aad_auth,
     ):
         # Always explicitly fetch the TLS certificate.
         network_cert = await self.set_ledger_identity_async(ledger_id)
@@ -80,11 +80,11 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
                 self.network_certificate_path
             )
 
-        if not is_aad:
+        if not use_aad_auth:
             # We need to add the certificate-based user as an Administrator.
-            try:
-                await aad_based_client.create_or_update_user(
-                    USER_CERTIFICATE_THUMBPRINT, {"assignedRole": "Administrator"}
+            try: 
+                await aad_based_client.create_or_update_ledger_user(
+                    USER_CERTIFICATE_THUMBPRINT, {"assignedRoles": ["Administrator"]}
                 )
             finally:
                 await aad_based_client.close()
@@ -111,7 +111,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = await self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=True
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=True
         )
         try:
             await self.append_entry_flow_actions(client)
@@ -124,7 +124,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = await self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=False
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=False
         )
         try:
             await self.append_entry_flow_actions(client)
@@ -196,7 +196,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = await self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=True
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=True
         )
         try:
             await self.append_entry_flow_with_collection_id_actions(client)
@@ -211,7 +211,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = await self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=False
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=False
         )
         try:
             await self.append_entry_flow_with_collection_id_actions(client)
@@ -297,7 +297,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = await self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=True
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=True
         )
         try:
             await self.range_query_actions(client)
@@ -310,7 +310,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = await self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=False
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=False
         )
         try:
             await self.range_query_actions(client)
@@ -376,7 +376,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = await self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=True
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=True
         )
         try:
             await self.user_management_actions(client)
@@ -389,7 +389,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = await self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=False
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=False
         )
         try:
             await self.user_management_actions(client)
@@ -403,31 +403,32 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
             ":77:30:1F"
         )
         for user_id in [aad_user_id, cert_user_id]:
-            user = await client.create_or_update_user(
-                user_id, {"assignedRole": "Contributor"}
-            )
+            await client.delete_ledger_user(user_id)
+
+            await asyncio.sleep(3)  # Let the DELETE user operation be committed, just in case.
+
+            user = await client.create_or_update_ledger_user(user_id, {"assignedRoles": ["Contributor"]})
             assert user["userId"] == user_id
-            assert user["assignedRole"] == "Contributor"
+            assert user["assignedRoles"] == ["Contributor"]
 
             await asyncio.sleep(3)  # Let the PATCH user operation be committed, just in case.
 
-            user = await client.get_user(user_id)
+            user = await client.get_ledger_user(user_id)
             assert user["userId"] == user_id
-            assert user["assignedRole"] == "Contributor"
+            assert user["assignedRoles"] == ["Contributor"]
 
-            user = await client.create_or_update_user(
-                user_id, {"assignedRole": "Reader"}
-            )
+            user = await client.create_or_update_ledger_user(user_id, {"assignedRoles": ["Reader"]})
             assert user["userId"] == user_id
-            assert user["assignedRole"] == "Reader"
+            assert user["assignedRoles"] == ["Reader"]
 
             await asyncio.sleep(3)  # Let the PATCH user operation be committed, just in case.
 
-            user = await client.get_user(user_id)
+            user = await client.get_ledger_user(user_id)
             assert user["userId"] == user_id
-            assert user["assignedRole"] == "Reader"
+            assert user["assignedRoles"] == ["Contributor","Reader"]
 
-            await client.delete_user(user_id)
+            await client.delete_ledger_user(user_id)
+            await asyncio.sleep(3)  # Let the DELETE user operation be committed, just in case.
 
     @ConfidentialLedgerPreparer()
     @recorded_by_proxy_async
@@ -435,7 +436,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = await self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=True
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=True
         )
         try:
             await self.verification_methods_actions(client)
@@ -448,7 +449,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = await self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=False
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=False
         )
         try:
             await self.verification_methods_actions(client)
@@ -478,7 +479,6 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         for node_id, quote in ledger_enclaves["enclaveQuotes"].items():
             assert node_id == quote["nodeId"]
             assert quote["nodeId"]
-            assert quote["mrenclave"]
             assert quote["raw"]
             assert quote["quoteVersion"]
 

@@ -4,6 +4,7 @@
 # ------------------------------------
 import numbers
 import json
+from typing import List
 from opentelemetry.sdk.trace import Span
 
 
@@ -25,9 +26,9 @@ class GenAiTraceVerifier:
                 if span.attributes[attribute_name] != attribute_value:
                     print(
                         "Attribute value list "
-                        + span.attributes[attribute_name]
+                        + str(span.attributes[attribute_name])
                         + " does not match with "
-                        + attribute_value
+                        + str(attribute_value)
                     )
                     return False
             elif isinstance(attribute_value, tuple):
@@ -35,28 +36,81 @@ class GenAiTraceVerifier:
                 if span.attributes[attribute_name] != attribute_value:
                     print(
                         "Attribute value tuple "
-                        + span.attributes[attribute_name]
+                        + str(span.attributes[attribute_name])
                         + " does not match with "
-                        + attribute_value
+                        + str(attribute_value)
                     )
                     return False
             else:
                 # Check if the attribute value matches the provided value
                 if attribute_value == "+":
                     if not isinstance(span.attributes[attribute_name], numbers.Number):
-                        print("Attribute value " + span.attributes[attribute_name] + " is not a number")
+                        print("Attribute value " + str(span.attributes[attribute_name]) + " is not a number")
                         return False
                     if span.attributes[attribute_name] < 0:
-                        print("Attribute value " + span.attributes[attribute_name] + " is negative")
+                        print("Attribute value " + str(span.attributes[attribute_name]) + " is negative")
                         return False
                 elif attribute_value != "" and span.attributes[attribute_name] != attribute_value:
                     print(
-                        "Attribute value " + span.attributes[attribute_name] + " does not match with " + attribute_value
+                        "Attribute value "
+                        + str(span.attributes[attribute_name])
+                        + " does not match with "
+                        + str(attribute_value)
                     )
                     return False
                 # Check if the attribute value in the span is not empty when the provided value is ""
                 elif attribute_value == "" and not span.attributes[attribute_name]:
-                    print("Excpected non-empty attribute value")
+                    print("Expected non-empty attribute value")
+                    return False
+
+        return True
+
+    def check_decorator_span_attributes(self, span: Span, attributes: List[tuple]) -> bool:
+        # Convert the list of tuples to a dictionary for easier lookup
+        attribute_dict = dict(attributes)
+
+        # Ensure all required attributes are present in the span
+        for attribute_name in attribute_dict.keys():
+            if attribute_name not in span.attributes:
+                print("Required attribute name " + attribute_name + " not found in span attributes")
+                return False
+
+        for attribute_name in span.attributes.keys():
+            # Check if the attribute name exists in the input attributes
+            if attribute_name not in attribute_dict:
+                print("Attribute name " + attribute_name + " not in attribute dictionary")
+                return False
+
+            attribute_value = attribute_dict[attribute_name]
+            span_value = span.attributes[attribute_name]
+
+            if isinstance(attribute_value, (list, tuple)):
+                # Convert both to lists for comparison
+                if list(span_value) != list(attribute_value):
+                    print(
+                        "Attribute value list/tuple " + str(span_value) + " does not match with " + str(attribute_value)
+                    )
+                    return False
+            elif isinstance(attribute_value, dict):
+                # Check if both are dictionaries and compare them
+                if not isinstance(span_value, dict) or span_value != attribute_value:
+                    print("Attribute value dict " + str(span_value) + " does not match with " + str(attribute_value))
+                    return False
+            else:
+                # Check if the attribute value matches the provided value
+                if attribute_value == "+":
+                    if not isinstance(span_value, numbers.Number):
+                        print("Attribute value " + str(span_value) + " is not a number")
+                        return False
+                    if span_value < 0:
+                        print("Attribute value " + str(span_value) + " is negative")
+                        return False
+                elif attribute_value != "" and span_value != attribute_value:
+                    print("Attribute value " + str(span_value) + " does not match with " + str(attribute_value))
+                    return False
+                # Check if the attribute value in the span is not empty when the provided value is ""
+                elif attribute_value == "" and not span_value:
+                    print("Expected non-empty attribute value")
                     return False
 
         return True
@@ -138,13 +192,14 @@ class GenAiTraceVerifier:
         return True
 
     def check_span_events(self, span, expected_events):
+        print("Checking span: " + span.name)
         span_events = list(span.events)  # Create a list of events from the span
 
         for expected_event in expected_events:
             for actual_event in span_events:
                 if expected_event["name"] == actual_event.name:
-                    if not self.check_event_attributes(expected_event["attributes"], actual_event.attributes):
-                        print("check_span_events: event attributes do not match")
+                    if not self.check_event_attributes(expected_event["attributes"], actual_event.attributes._dict):
+                        print("Event attributes do not match")
                         return False
                     span_events.remove(actual_event)  # Remove the matched event from the span_events
                     break

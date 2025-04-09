@@ -1,4 +1,5 @@
 from unittest.mock import Mock
+from azure.eventhub._pyamqp.error import AMQPLinkError
 from azure.eventhub._pyamqp.link import Link
 from azure.eventhub._pyamqp.receiver import ReceiverLink
 from azure.eventhub._pyamqp.constants import LinkState
@@ -130,8 +131,6 @@ def test_receive_transfer_and_flow():
     )
 
     link._outgoing_flow = mock_outgoing
-    link.total_link_credit = 0  # Set the total link credit to 0 to start, no credit on the wire
-
     link.flow(link_credit=100)  # Send a flow frame with desired link credit of 100
 
     # frame: handle, delivery_id, delivery_tag, message_format, settled, more, rcv_settle_mode, state, resume, aborted, batchable, payload
@@ -141,17 +140,50 @@ def test_receive_transfer_and_flow():
 
     link._incoming_transfer(transfer_frame_one)
     assert link.current_link_credit == 99
-    assert link.total_link_credit == 99
 
     # Only received 1 transfer frame per receive call, we set desired link credit again
     # this will send a flow of 1
     link.flow(link_credit=100)
-    assert link.current_link_credit == 1
-    assert link.total_link_credit == 100
-
+    assert link.current_link_credit == 100
     link._incoming_transfer(transfer_frame_two)
-    assert link.current_link_credit == 0
-    assert link.total_link_credit == 99
+    assert link.current_link_credit == 99
     link._incoming_transfer(transfer_frame_three)
-    assert link.current_link_credit == -1
-    assert link.total_link_credit == 98
+    assert link.current_link_credit == 98
+
+@pytest.mark.parametrize(
+    "frame",
+    [
+        [2, True, [b'amqp:link:detach-forced', b"The link is force detached. Code: publisher(link3006875). Details: AmqpMessagePublisher.IdleTimerExpired: Idle timeout: 00:10:00.", None]],
+        [2, True, [b'amqp:link:detach-forced', None, b'something random']],
+        [2, True, [b'amqp:link:detach-forced', None, None]],
+        [2, True, [b'amqp:link:detach-forced']],
+        
+    ],
+    ids=["description and info", "info only", "description only", "no info or description"],
+)
+def test_detach_with_error(frame):
+    '''
+      A detach can optionally include an description and info field.
+      https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-error
+    '''
+    session = None
+    link = Link(
+        session,
+        3,
+        name="test_link",
+        role=True,
+        source_address="test_source",
+        target_address="test_target",
+        network_trace=False,
+        network_trace_params={},
+    )
+    link._set_state(LinkState.DETACH_RCVD)
+    link._incoming_detach(frame)
+
+    with pytest.raises(AMQPLinkError) as ae:
+        link.get_state()
+        assert ae.description == frame[2][1]
+        assert ae.info == frame[2][2]
+
+
+

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,6 +16,16 @@ from setuptools import setup, find_packages
 PACKAGE_NAME = "azure-ai-projects"
 PACKAGE_PPRINT_NAME = "Azure AI Projects"
 
+PIPY_LONG_DESCRIPTION_BEGIN = "<!-- PIPY LONG DESCRIPTION BEGIN -->"
+PIPY_LONG_DESCRIPTION_END = "<!-- PIPY LONG DESCRIPTION END -->"
+LINKS_DIVIDER = "<!-- LINKS -->"
+
+GITHUB_URL = f"https://aka.ms/azsdk/azure-ai-projects/python/code"
+
+# Define the regular expression pattern to match links in the format [section name](#section_header)
+pattern = re.compile(r"\[([^\]]+)\]\(#([^\)]+)\)")
+
+
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace("-", "/")
 
@@ -26,17 +37,36 @@ if not version:
     raise RuntimeError("Cannot find version information")
 
 
+long_description = ""
+
+# When you click the links in the Table of Content which has the format of {URL/#section_header}, you are supposed to be redirected to the section header.
+# However, this is not supported when the README is rendered in pypi.org.  The README doesn't render with id={section_header} in HTML.
+# To resolve this broken link, we make the long description to have top of the README content, the Table of Content, and the links at the bottom of the README
+# And replace the links in Table of Content to redirect to github.com.
+with open("README.md", "r") as f:
+    readme_content = f.read()
+    start_index = readme_content.find(PIPY_LONG_DESCRIPTION_BEGIN) + len(PIPY_LONG_DESCRIPTION_BEGIN)
+    end_index = readme_content.find(PIPY_LONG_DESCRIPTION_END)
+    long_description = readme_content[start_index:end_index].strip()
+    long_description = long_description.replace("{{package_name}}", PACKAGE_PPRINT_NAME)
+    long_description = re.sub(pattern, rf"[\1]({GITHUB_URL})", long_description)
+    links_index = readme_content.find(LINKS_DIVIDER)
+    long_description += "\n\n" + readme_content[links_index:].strip()
+
+with open("CHANGELOG.md", "r") as f:
+    long_description += "\n\n" + f.read()
+
 setup(
     name=PACKAGE_NAME,
     version=version,
     description="Microsoft {} Client Library for Python".format(PACKAGE_PPRINT_NAME),
-    long_description=open("README.md", "r").read(),
+    long_description=long_description,
     long_description_content_type="text/markdown",
     license="MIT License",
     author="Microsoft Corporation",
     author_email="azpysdkhelp@microsoft.com",
     url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects",
-    keywords="azure, azure sdk",
+    keywords="azure sdk, azure, ai, agents, foundry, inference, chat completion, project, evaluation",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Programming Language :: Python",
@@ -49,6 +79,7 @@ setup(
         "Programming Language :: Python :: 3.12",
         "Programming Language :: Python :: 3.13",
         "License :: OSI Approved :: MIT License",
+        "Topic :: Scientific/Engineering :: Artificial Intelligence",
     ],
     zip_safe=False,
     packages=find_packages(

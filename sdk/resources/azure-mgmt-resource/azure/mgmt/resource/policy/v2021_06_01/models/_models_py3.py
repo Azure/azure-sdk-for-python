@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -16,10 +16,9 @@ from ... import _serialization
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
@@ -330,7 +329,7 @@ class ParameterValuesValue(_serialization.Model):
         self.value = value
 
 
-class PolicyAssignment(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class PolicyAssignment(_serialization.Model):
     """The policy assignment.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -528,7 +527,7 @@ class PolicyAssignmentUpdate(_serialization.Model):
         self.identity = identity
 
 
-class PolicyDefinition(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class PolicyDefinition(_serialization.Model):
     """The policy definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -782,7 +781,7 @@ class PolicyDefinitionReference(_serialization.Model):
         self.group_names = group_names
 
 
-class PolicySetDefinition(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class PolicySetDefinition(_serialization.Model):
     """The policy set definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
