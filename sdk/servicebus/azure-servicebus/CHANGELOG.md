@@ -8,6 +8,7 @@
 - 
 ### Other Changes
 
+- Added support for handling a C# DateTime.MinValue timestamp, which is returned by the service as a sentinel for time which is not set.
 - Deprecating `uamqp_transport` in favor of pyAMQP transport. The `uamqp_transport` will be removed in the next minor release.
 - Dropped support for Python 3.8
 
