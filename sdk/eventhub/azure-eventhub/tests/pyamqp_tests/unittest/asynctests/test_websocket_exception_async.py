@@ -8,8 +8,8 @@ from azure.eventhub._pyamqp.aio._transport_async import WebSocketTransportAsync
 # class WebsocketException(unittest.TestCase):
 @pytest.mark.asyncio
 @pytest.mark.skipif(
-    not pytest.importorskip("aiohttp", reason="aiohttp is required for this test"),
-    reason="aiohttp is not installed"
+    sys.version_info < (3, 9),
+    reason="Python 3.8 or less is not supported for this test"
 )
 async def test_websocket_aiohttp_exception_async():
     import aiohttp
