@@ -25,6 +25,7 @@ USAGE:
 # TODO: Remove console logging
 import sys
 import logging
+
 logger = logging.getLogger("azure")
 logger.setLevel(logging.DEBUG)
 logger.addHandler(logging.StreamHandler(stream=sys.stdout))
@@ -41,9 +42,9 @@ index_name = os.environ["INDEX_NAME"]
 
 with AIProjectClient(
     endpoint=endpoint,
-    #credential=DefaultAzureCredential(),
+    # credential=DefaultAzureCredential(),
     credential=AzureKeyCredential(os.environ["PROJECT_API_KEY"]),
-    logging_enable=True, # TODO: Remove console logging
+    logging_enable=True,  # TODO: Remove console logging
 ) as project_client:
 
     print(f"Listing all versions of the Index named `{index_name}`:")

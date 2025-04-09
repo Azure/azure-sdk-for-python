@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -31,6 +32,7 @@ from azure.ai.projects.onedp.models import DatasetVersion, ListViewType
 # TODO: Remove console logging
 import sys
 import logging
+
 logger = logging.getLogger("azure")
 logger.setLevel(logging.DEBUG)
 logger.addHandler(logging.StreamHandler(stream=sys.stdout))
@@ -41,12 +43,14 @@ dataset_name = os.environ["DATASET_NAME"]
 
 with AIProjectClient(
     endpoint=endpoint,
-    #credential=DefaultAzureCredential(),
+    # credential=DefaultAzureCredential(),
     credential=AzureKeyCredential(os.environ["PROJECT_API_KEY"]),
-    logging_enable=True, # TODO: Remove console logging
+    logging_enable=True,  # TODO: Remove console logging
 ) as project_client:
-    
-    print("Upload a single file and create a new Dataset to reference the file. Here we explicitly specify the dataset version.")
+
+    print(
+        "Upload a single file and create a new Dataset to reference the file. Here we explicitly specify the dataset version."
+    )
     dataset: DatasetVersion = project_client.datasets.upload_file_and_create(
         name=dataset_name,
         version="1",

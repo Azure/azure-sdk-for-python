@@ -38,7 +38,7 @@ async def sample_connections_async() -> None:
 
     async with AIProjectClient(
         endpoint=endpoint,
-        #credential=DefaultAzureCredential(),
+        # credential=DefaultAzureCredential(),
         credential=AzureKeyCredential(os.environ["PROJECT_API_KEY"]),
     ) as project_client:
 

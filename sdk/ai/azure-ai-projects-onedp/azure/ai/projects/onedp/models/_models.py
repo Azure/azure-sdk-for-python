@@ -12,7 +12,7 @@ from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, U
 
 from .. import _model_base
 from .._model_base import rest_discriminator, rest_field
-from ._enums import DatasetType, DeploymentType, IndexType, PendingUploadType
+from ._enums import AuthenticationType, DatasetType, DeploymentType, IndexType, PendingUploadType
 
 if TYPE_CHECKING:
     from .. import models as _models
@@ -175,34 +175,272 @@ class BlobReferenceForConsumption(_model_base.Model):
 
 
 class Connection(_model_base.Model):
-    """Response from the listSecrets operation.
+    """Response from the list and get connections operations.
 
-    :ivar name: The name of the resource. Required.
-    :vartype name: str
-    :ivar type: Category of the connection. Required. Known values are: "AzureOpenAI", "AzureBlob",
-     "CognitiveSearch", "CosmosDB", "ApiKey", "AppInsights", and "CustomKeys".
-    :vartype type: str or ~azure.ai.projects.onedp.models.ConnectionType
-    :ivar target: The connection URL to be used for this service. Required.
-    :vartype target: str
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ConnectionWithEntraIDAuth, ConnectionWithApiKeyAuth, ConnectionWithCustomAuth,
+    ConnectionWithNoAuth, ConnectionWithSASAuth
+
     :ivar auth_type: The authentication type used by the connection. Required. Known values are:
      "ApiKey", "AAD", "SAS", "CustomKeys", and "None".
     :vartype auth_type: str or ~azure.ai.projects.onedp.models.AuthenticationType
+    :ivar name: The name of the resource. Required.
+    :vartype name: str
+    :ivar type: Category of the connection. Required. Known values are: "AzureOpenAI", "AzureBlob",
+     "AzureStorageAccount", "CognitiveSearch", "CosmosDB", "ApiKey", "AppConfig", "AppInsights", and
+     "CustomKeys".
+    :vartype type: str or ~azure.ai.projects.onedp.models.ConnectionType
+    :ivar target: The connection URL to be used for this service. Required.
+    :vartype target: str
+    :ivar is_default: Whether the connection is tagged as the default connection of its type.
+     Required.
+    :vartype is_default: bool
     :ivar metadata: Metadata of the connection. Required.
     :vartype metadata: dict[str, str]
     """
 
+    __mapping__: Dict[str, _model_base.Model] = {}
+    auth_type: str = rest_discriminator(name="authType", visibility=["read"])
+    """The authentication type used by the connection. Required. Known values are: \"ApiKey\",
+     \"AAD\", \"SAS\", \"CustomKeys\", and \"None\"."""
     name: str = rest_field(visibility=["read"])
     """The name of the resource. Required."""
     type: Union[str, "_models.ConnectionType"] = rest_field(visibility=["read"])
     """Category of the connection. Required. Known values are: \"AzureOpenAI\", \"AzureBlob\",
-     \"CognitiveSearch\", \"CosmosDB\", \"ApiKey\", \"AppInsights\", and \"CustomKeys\"."""
+     \"AzureStorageAccount\", \"CognitiveSearch\", \"CosmosDB\", \"ApiKey\", \"AppConfig\",
+     \"AppInsights\", and \"CustomKeys\"."""
     target: str = rest_field(visibility=["read"])
     """The connection URL to be used for this service. Required."""
-    auth_type: Union[str, "_models.AuthenticationType"] = rest_field(name="authType", visibility=["read"])
-    """The authentication type used by the connection. Required. Known values are: \"ApiKey\",
-     \"AAD\", \"SAS\", \"CustomKeys\", and \"None\"."""
+    is_default: bool = rest_field(name="isDefault", visibility=["read"])
+    """Whether the connection is tagged as the default connection of its type. Required."""
     metadata: Dict[str, str] = rest_field(visibility=["read"])
     """Metadata of the connection. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        auth_type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ConnectionWithApiKeyAuth(Connection, discriminator="ApiKey"):
+    """A connection with API key authentication.
+
+    :ivar name: The name of the resource. Required.
+    :vartype name: str
+    :ivar type: Category of the connection. Required. Known values are: "AzureOpenAI", "AzureBlob",
+     "AzureStorageAccount", "CognitiveSearch", "CosmosDB", "ApiKey", "AppConfig", "AppInsights", and
+     "CustomKeys".
+    :vartype type: str or ~azure.ai.projects.onedp.models.ConnectionType
+    :ivar target: The connection URL to be used for this service. Required.
+    :vartype target: str
+    :ivar is_default: Whether the connection is tagged as the default connection of its type.
+     Required.
+    :vartype is_default: bool
+    :ivar metadata: Metadata of the connection. Required.
+    :vartype metadata: dict[str, str]
+    :ivar auth_type: The authentication type used by the connection. Required. API Key
+     authentication
+    :vartype auth_type: str or ~azure.ai.projects.onedp.models.API_KEY
+    :ivar credentials: The credentials for API-key authentication.
+    :vartype credentials: ~azure.ai.projects.onedp.models.CredentialsApiKeyAuth
+    """
+
+    auth_type: Literal[AuthenticationType.API_KEY] = rest_discriminator(name="authType", visibility=["read"])  # type: ignore
+    """The authentication type used by the connection. Required. API Key authentication"""
+    credentials: Optional["_models.CredentialsApiKeyAuth"] = rest_field(visibility=["read"])
+    """The credentials for API-key authentication."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, auth_type=AuthenticationType.API_KEY, **kwargs)
+
+
+class ConnectionWithCustomAuth(Connection, discriminator="CustomKeys"):
+    """A connection with custom authentication.
+
+    :ivar name: The name of the resource. Required.
+    :vartype name: str
+    :ivar type: Category of the connection. Required. Known values are: "AzureOpenAI", "AzureBlob",
+     "AzureStorageAccount", "CognitiveSearch", "CosmosDB", "ApiKey", "AppConfig", "AppInsights", and
+     "CustomKeys".
+    :vartype type: str or ~azure.ai.projects.onedp.models.ConnectionType
+    :ivar target: The connection URL to be used for this service. Required.
+    :vartype target: str
+    :ivar is_default: Whether the connection is tagged as the default connection of its type.
+     Required.
+    :vartype is_default: bool
+    :ivar metadata: Metadata of the connection. Required.
+    :vartype metadata: dict[str, str]
+    :ivar auth_type: The authentication type used by the connection. Required. Custom
+     authentication
+    :vartype auth_type: str or ~azure.ai.projects.onedp.models.CUSTOM
+    """
+
+    auth_type: Literal[AuthenticationType.CUSTOM] = rest_discriminator(name="authType", visibility=["read"])  # type: ignore
+    """The authentication type used by the connection. Required. Custom authentication"""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, auth_type=AuthenticationType.CUSTOM, **kwargs)
+
+
+class ConnectionWithEntraIDAuth(Connection, discriminator="AAD"):
+    """A connection with EntraID authentication (aka ``Entra ID passthrough``).
+
+    :ivar name: The name of the resource. Required.
+    :vartype name: str
+    :ivar type: Category of the connection. Required. Known values are: "AzureOpenAI", "AzureBlob",
+     "AzureStorageAccount", "CognitiveSearch", "CosmosDB", "ApiKey", "AppConfig", "AppInsights", and
+     "CustomKeys".
+    :vartype type: str or ~azure.ai.projects.onedp.models.ConnectionType
+    :ivar target: The connection URL to be used for this service. Required.
+    :vartype target: str
+    :ivar is_default: Whether the connection is tagged as the default connection of its type.
+     Required.
+    :vartype is_default: bool
+    :ivar metadata: Metadata of the connection. Required.
+    :vartype metadata: dict[str, str]
+    :ivar auth_type: The authentication type used by the connection. Required. Entra ID
+     authentication (formerly known as AAD)
+    :vartype auth_type: str or ~azure.ai.projects.onedp.models.ENTRA_ID
+    """
+
+    auth_type: Literal[AuthenticationType.ENTRA_ID] = rest_discriminator(name="authType", visibility=["read"])  # type: ignore
+    """The authentication type used by the connection. Required. Entra ID authentication (formerly
+     known as AAD)"""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, auth_type=AuthenticationType.ENTRA_ID, **kwargs)
+
+
+class ConnectionWithNoAuth(Connection, discriminator="None"):
+    """A connection with no authentication.
+
+    :ivar name: The name of the resource. Required.
+    :vartype name: str
+    :ivar type: Category of the connection. Required. Known values are: "AzureOpenAI", "AzureBlob",
+     "AzureStorageAccount", "CognitiveSearch", "CosmosDB", "ApiKey", "AppConfig", "AppInsights", and
+     "CustomKeys".
+    :vartype type: str or ~azure.ai.projects.onedp.models.ConnectionType
+    :ivar target: The connection URL to be used for this service. Required.
+    :vartype target: str
+    :ivar is_default: Whether the connection is tagged as the default connection of its type.
+     Required.
+    :vartype is_default: bool
+    :ivar metadata: Metadata of the connection. Required.
+    :vartype metadata: dict[str, str]
+    :ivar auth_type: The authentication type used by the connection. Required. No authentication
+    :vartype auth_type: str or ~azure.ai.projects.onedp.models.NONE
+    """
+
+    auth_type: Literal[AuthenticationType.NONE] = rest_discriminator(name="authType", visibility=["read"])  # type: ignore
+    """The authentication type used by the connection. Required. No authentication"""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, auth_type=AuthenticationType.NONE, **kwargs)
+
+
+class ConnectionWithSASAuth(Connection, discriminator="SAS"):
+    """A connection with Shared Access Signature (SAS) authentication.
+
+    :ivar name: The name of the resource. Required.
+    :vartype name: str
+    :ivar type: Category of the connection. Required. Known values are: "AzureOpenAI", "AzureBlob",
+     "AzureStorageAccount", "CognitiveSearch", "CosmosDB", "ApiKey", "AppConfig", "AppInsights", and
+     "CustomKeys".
+    :vartype type: str or ~azure.ai.projects.onedp.models.ConnectionType
+    :ivar target: The connection URL to be used for this service. Required.
+    :vartype target: str
+    :ivar is_default: Whether the connection is tagged as the default connection of its type.
+     Required.
+    :vartype is_default: bool
+    :ivar metadata: Metadata of the connection. Required.
+    :vartype metadata: dict[str, str]
+    :ivar auth_type: The authentication type used by the connection. Required. Shared Access
+     Signature (SAS) authentication
+    :vartype auth_type: str or ~azure.ai.projects.onedp.models.SAS
+    :ivar credentials: The credentials for SAS authentication.
+    :vartype credentials: ~azure.ai.projects.onedp.models.CredentialsSASAuth
+    """
+
+    auth_type: Literal[AuthenticationType.SAS] = rest_discriminator(name="authType", visibility=["read"])  # type: ignore
+    """The authentication type used by the connection. Required. Shared Access Signature (SAS)
+     authentication"""
+    credentials: Optional["_models.CredentialsSASAuth"] = rest_field(visibility=["read"])
+    """The credentials for SAS authentication."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, auth_type=AuthenticationType.SAS, **kwargs)
 
 
 class CosmosDBIndex(Index, discriminator="CosmosDBNoSqlVectorStore"):
@@ -267,6 +505,28 @@ class CosmosDBIndex(Index, discriminator="CosmosDBNoSqlVectorStore"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, type=IndexType.COSMOS_DB, **kwargs)
+
+
+class CredentialsApiKeyAuth(_model_base.Model):
+    """The credentials needed for API key authentication.
+
+    :ivar key: The API key. Required.
+    :vartype key: str
+    """
+
+    key: str = rest_field(visibility=["read"])
+    """The API key. Required."""
+
+
+class CredentialsSASAuth(_model_base.Model):
+    """The credentials needed for Shared Access Signatures (SAS) authentication.
+
+    :ivar sas: The Shared Access Signatures (SAS) token. Required.
+    :vartype sas: str
+    """
+
+    sas: str = rest_field(name="SAS", visibility=["read"])
+    """The Shared Access Signatures (SAS) token. Required."""
 
 
 class DatasetVersion(_model_base.Model):
@@ -437,12 +697,6 @@ class Evaluation(_model_base.Model):
     :vartype properties: dict[str, str]
     :ivar evaluators: Evaluators to be used for the evaluation. Required.
     :vartype evaluators: dict[str, ~azure.ai.projects.onedp.models.EvaluatorConfiguration]
-    :ivar outputs: Read-only result outputs. Example: { 'evaluationResultId':
-     'azureai://accounts/{AccountName}/projects/{projectName}/evaluationresults/{name}/{version}',
-     'logId':
-     'azureai://accounts/{AccountName}/projects/{projectName}/datasets/{dataset-name}/{dataset-version}'
-     }. Required.
-    :vartype outputs: dict[str, str]
     """
 
     id: str = rest_field(visibility=["read"])
@@ -468,12 +722,6 @@ class Evaluation(_model_base.Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Evaluators to be used for the evaluation. Required."""
-    outputs: Dict[str, str] = rest_field(visibility=["read"])
-    """Read-only result outputs. Example: { 'evaluationResultId':
-     'azureai://accounts/{AccountName}/projects/{projectName}/evaluationresults/{name}/{version}',
-     'logId':
-     'azureai://accounts/{AccountName}/projects/{projectName}/datasets/{dataset-name}/{dataset-version}'
-     }. Required."""
 
     @overload
     def __init__(
@@ -485,110 +733,6 @@ class Evaluation(_model_base.Model):
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         properties: Optional[Dict[str, str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class EvaluationResult(_model_base.Model):
-    """Evaluation Result resource Definition.
-
-    :ivar result_type: Type of Evaluation result. Known values are: "Benchmark", "Evaluation",
-     "Redteam", and "Simulation".
-    :vartype result_type: str or ~azure.ai.projects.onedp.models.ResultType
-    :ivar model_name: Model Name.
-    :vartype model_name: str
-    :ivar model_version: Model Version.
-    :vartype model_version: str
-    :ivar model_asset_id: Model Asset ID.
-    :vartype model_asset_id: str
-    :ivar dataset_family: Dataset Family.
-    :vartype dataset_family: str
-    :ivar dataset_name: Dataset Name.
-    :vartype dataset_name: str
-    :ivar metrics: Metrics.
-    :vartype metrics: dict[str, float]
-    :ivar blob_uri: Blob URI.
-    :vartype blob_uri: str
-    :ivar stage: Asset stage.
-    :vartype stage: str
-    :ivar id: A unique identifier for the asset, assetId probably?.
-    :vartype id: str
-    :ivar name: The name of the resource. Required.
-    :vartype name: str
-    :ivar version: The version of the resource. Required.
-    :vartype version: str
-    :ivar description: The asset description text.
-    :vartype description: str
-    :ivar tags: Tag dictionary. Tags can be added, removed, and updated.
-    :vartype tags: dict[str, str]
-    """
-
-    result_type: Optional[Union[str, "_models.ResultType"]] = rest_field(
-        name="ResultType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Type of Evaluation result. Known values are: \"Benchmark\", \"Evaluation\", \"Redteam\", and
-     \"Simulation\"."""
-    model_name: Optional[str] = rest_field(name="ModelName", visibility=["read", "create", "update", "delete", "query"])
-    """Model Name."""
-    model_version: Optional[str] = rest_field(
-        name="ModelVersion", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Model Version."""
-    model_asset_id: Optional[str] = rest_field(
-        name="ModelAssetId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Model Asset ID."""
-    dataset_family: Optional[str] = rest_field(
-        name="DatasetFamily", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Dataset Family."""
-    dataset_name: Optional[str] = rest_field(
-        name="DatasetName", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Dataset Name."""
-    metrics: Optional[Dict[str, float]] = rest_field(
-        name="Metrics", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Metrics."""
-    blob_uri: Optional[str] = rest_field(name="BlobUri", visibility=["read", "create", "update", "delete", "query"])
-    """Blob URI."""
-    stage: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """Asset stage."""
-    id: Optional[str] = rest_field(visibility=["read"])
-    """A unique identifier for the asset, assetId probably?."""
-    name: str = rest_field(visibility=["read"])
-    """The name of the resource. Required."""
-    version: str = rest_field(visibility=["read"])
-    """The version of the resource. Required."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The asset description text."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Tag dictionary. Tags can be added, removed, and updated."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        result_type: Optional[Union[str, "_models.ResultType"]] = None,
-        model_name: Optional[str] = None,
-        model_version: Optional[str] = None,
-        model_asset_id: Optional[str] = None,
-        dataset_family: Optional[str] = None,
-        dataset_name: Optional[str] = None,
-        metrics: Optional[Dict[str, float]] = None,
-        blob_uri: Optional[str] = None,
-        stage: Optional[str] = None,
-        description: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -1032,12 +1176,6 @@ class RedTeam(_model_base.Model):
     :ivar simulation_only: Simulation-only or Simulation + Evaluation. Default false, if true the
      scan outputs conversation not evaluation result. Required.
     :vartype simulation_only: bool
-    :ivar outputs: Read-only result outputs. Example: { 'redTeamResultId':
-     'azureai://accounts/{AccountName}/projects/{projectName}/evaluationresults/{name}/{version}',
-     'logId':
-     'azureai://accounts/{AccountName}/projects/{projectName}/datasets/{dataset-name}/{dataset-version}'
-     }. Required.
-    :vartype outputs: dict[str, str]
     :ivar risk_categories: List of risk categories to generate attack objectives for. Required.
     :vartype risk_categories: list[str or ~azure.ai.projects.onedp.models.RiskCategory]
     :ivar application_scenario: Application scenario for the red team operation, to generate
@@ -1067,12 +1205,6 @@ class RedTeam(_model_base.Model):
     )
     """Simulation-only or Simulation + Evaluation. Default false, if true the scan outputs
      conversation not evaluation result. Required."""
-    outputs: Dict[str, str] = rest_field(visibility=["read"])
-    """Read-only result outputs. Example: { 'redTeamResultId':
-     'azureai://accounts/{AccountName}/projects/{projectName}/evaluationresults/{name}/{version}',
-     'logId':
-     'azureai://accounts/{AccountName}/projects/{projectName}/datasets/{dataset-name}/{dataset-version}'
-     }. Required."""
     risk_categories: List[Union[str, "_models.RiskCategory"]] = rest_field(
         name="riskCategories", visibility=["read", "create", "update", "delete", "query"]
     )

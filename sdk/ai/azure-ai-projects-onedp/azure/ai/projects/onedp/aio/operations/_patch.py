@@ -23,20 +23,17 @@ from ...models._models import (
     PendingUploadType,
     PendingUploadResponse,
 )
-from ...models._enums import (
-    DatasetType,
-    AuthenticationType,
-    ConnectionType
-)
+from ...models._enums import DatasetType, AuthenticationType, ConnectionType
 
 logger = logging.getLogger(__name__)
+
 
 class InferenceOperations:
 
     def __init__(self, outer_instance: "AIProjectClient") -> None:
 
         # TODO: Put the user agent initialization code below in a common place used by both sync and async operations.
-    
+
         # All returned inference clients will have this application id set on their user-agent.
         # For more info on user-agent HTTP header, see:
         # https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy
@@ -50,7 +47,6 @@ class InferenceOperations:
             self._user_agent = USER_AGENT_APP_ID
 
         self._outer_instance = outer_instance
-
 
     # TODO: Use a common method for both the sync and async operations
     @classmethod
@@ -67,10 +63,9 @@ class InferenceOperations:
         new_url = f"https://{parsed.netloc}/api/models"
         return new_url
 
-
     @distributed_trace
     def get_chat_completions_client(self, **kwargs) -> "ChatCompletionsClient":
-        """Get an authenticated ChatCompletionsClient (from the package azure-ai-inference) to use with 
+        """Get an authenticated ChatCompletionsClient (from the package azure-ai-inference) to use with
         AI models deployed to your AI Foundry Project. Keyword arguments are passed to the constructor of
         ChatCompletionsClient.
 
@@ -108,10 +103,9 @@ class InferenceOperations:
 
         return client
 
-
     @distributed_trace
     def get_embeddings_client(self, **kwargs) -> "EmbeddingsClient":
-        """Get an authenticated EmbeddingsClient (from the package azure-ai-inference) to use with 
+        """Get an authenticated EmbeddingsClient (from the package azure-ai-inference) to use with
         AI models deployed to your AI Foundry Project. Keyword arguments are passed to the constructor of
         ChatCompletionsClient.
 
@@ -149,10 +143,9 @@ class InferenceOperations:
 
         return client
 
-
     @distributed_trace
     def get_image_embeddings_client(self, **kwargs) -> "ImageEmbeddingsClient":
-        """Get an authenticated ImageEmbeddingsClient (from the package azure-ai-inference) to use with 
+        """Get an authenticated ImageEmbeddingsClient (from the package azure-ai-inference) to use with
         AI models deployed to your AI Foundry Project. Keyword arguments are passed to the constructor of
         ChatCompletionsClient.
 
@@ -189,7 +182,6 @@ class InferenceOperations:
         )
 
         return client
-
 
     @distributed_trace_async
     async def get_azure_openai_client(
@@ -233,19 +225,19 @@ class InferenceOperations:
         if connection_name:
             connection = await self._outer_instance.connections.get(name=connection_name, **kwargs)
         else:
-            connection = await self._outer_instance.connections.get_default(connection_type=ConnectionType.AZURE_OPEN_AI, **kwargs)
+            connection = await self._outer_instance.connections.get_default(
+                connection_type=ConnectionType.AZURE_OPEN_AI, **kwargs
+            )
             logger.debug("[InferenceOperations.get_azure_openai_client] connection = %s", str(connection))
 
-        azure_endpoint = (
-            connection.target[:-1]
-            if connection.target.endswith("/")
-            else connection.target
-        )
+        azure_endpoint = connection.target[:-1] if connection.target.endswith("/") else connection.target
 
         if connection.auth_type == AuthenticationType.API_KEY:
 
             # For api-key authentication, we need to make another service call to get the connection with credentials.
-            connection_with_credentials = self._outer_instance.connections.get_with_credentials(name=connection.name, **kwargs)
+            connection_with_credentials = self._outer_instance.connections.get_with_credentials(
+                name=connection.name, **kwargs
+            )
 
             api_key: Optional[str] = None
             if hasattr(connection_with_credentials.properties, "credentials"):
@@ -255,11 +247,7 @@ class InferenceOperations:
             logger.debug(
                 "[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI using API key authentication"
             )
-            client = AsyncAzureOpenAI(
-                api_key=api_key,
-                azure_endpoint=azure_endpoint,
-                api_version=api_version
-            )
+            client = AsyncAzureOpenAI(api_key=api_key, azure_endpoint=azure_endpoint, api_version=api_version)
 
         elif connection.auth_type == AuthenticationType.ENTRA_ID:
 
@@ -496,7 +484,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
 
 __all__: List[str] = [
     "InferenceOperations",
-    "DatasetsOperations"
+    "DatasetsOperations",
 ]  # Add all objects you want publicly available to users at this package level
 
 

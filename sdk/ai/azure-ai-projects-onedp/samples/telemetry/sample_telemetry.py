@@ -29,6 +29,7 @@ from azure.ai.projects.onedp.models import ConnectionType
 # Start remove me -- logging
 import sys
 import logging
+
 logger = logging.getLogger("azure")
 logger.setLevel(logging.DEBUG)
 logger.addHandler(logging.StreamHandler(stream=sys.stdout))
@@ -38,7 +39,7 @@ endpoint = os.environ["PROJECT_ENDPOINT"]
 
 with AIProjectClient(
     endpoint=endpoint,
-    #credential=DefaultAzureCredential(),
+    # credential=DefaultAzureCredential(),
     credential=AzureKeyCredential(os.environ["PROJECT_API_KEY"]),
     logging_enable=True,
 ) as project_client:

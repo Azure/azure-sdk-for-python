@@ -55,13 +55,17 @@ class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AZURE_OPEN_AI = "AzureOpenAI"
     """Azure OpenAI Service"""
     AZURE_BLOB_STORAGE = "AzureBlob"
-    """Azure Blob Storage"""
+    """Azure Blob Storage, with specified container"""
+    AZURE_STORAGE_ACCOUNT = "AzureStorageAccount"
+    """Azure Blob Storage, with container not specified (used by Assistants)"""
     AZURE_AI_SEARCH = "CognitiveSearch"
     """Azure AI Search"""
     COSMOS_DB = "CosmosDB"
     """CosmosDB"""
     API_KEY = "ApiKey"
     """Generic connection that uses API Key authentication"""
+    APPLICATION_CONFIGURATION = "AppConfig"
+    """Application Configuration"""
     APPLICATION_INSIGHTS = "AppInsights"
     """Application Insights"""
     CUSTOM = "CustomKeys"
@@ -113,32 +117,6 @@ class PendingUploadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """No pending upload."""
     TEMPORARY_BLOB_REFERENCE = "TemporaryBlobReference"
     """Temporary Blob Reference is the only supported type."""
-
-
-class RepeatabilityResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Repeatability Result header options."""
-
-    ACCEPTED = "accepted"
-    """If the request was accepted and the server guarantees that the server state reflects a single
-    execution of the operation."""
-    REJECTED = "rejected"
-    """If the request was rejected because the combination of Repeatability-First-Sent and
-    Repeatability-Request-ID were invalid
-    or because the Repeatability-First-Sent value was outside the range of values held by the
-    server."""
-
-
-class ResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of Evaluation result."""
-
-    BENCHMARK = "Benchmark"
-    """Benchmark result"""
-    EVALUATION = "Evaluation"
-    """Evaluations Result"""
-    REDTEAM = "Redteam"
-    """Red Team Result"""
-    SIMULATION = "Simulation"
-    """Simulation Result"""
 
 
 class RiskCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):

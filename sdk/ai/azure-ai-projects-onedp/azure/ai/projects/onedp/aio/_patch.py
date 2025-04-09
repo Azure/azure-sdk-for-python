@@ -11,6 +11,7 @@ from azure.core.credentials import AzureKeyCredential
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import InferenceOperations
 
+
 class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-instance-attributes
     """AIProjectClient.
 
@@ -51,9 +52,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         self.inference = InferenceOperations(self)
 
 
-__all__: List[str] = [
-    "AIProjectClient"
-]  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = ["AIProjectClient"]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():

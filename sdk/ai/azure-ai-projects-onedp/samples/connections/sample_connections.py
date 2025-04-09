@@ -32,6 +32,7 @@ from azure.ai.projects.onedp.models import ConnectionType
 # TODO: Remove console logging
 import sys
 import logging
+
 logger = logging.getLogger("azure")
 logger.setLevel(logging.DEBUG)
 logger.addHandler(logging.StreamHandler(stream=sys.stdout))
@@ -42,16 +43,16 @@ connection_name = os.environ["CONNECTION_NAME"]
 
 with AIProjectClient(
     endpoint=endpoint,
-    #credential=DefaultAzureCredential(),
+    # credential=DefaultAzureCredential(),
     credential=AzureKeyCredential(os.environ["PROJECT_API_KEY"]),
-    logging_enable=True, # TODO: Remove console logging
+    logging_enable=True,  # TODO: Remove console logging
 ) as project_client:
 
     print("List the properties of all connections:")
     connections = project_client.connections.list()
     for connection in connections:
         print(connection)
-    
+
     print("List the properties of all connections of a particular type (in this case, Azure OpenAI connections):")
     connections = project_client.connections.list(
         connection_type=ConnectionType.AZURE_OPEN_AI,
@@ -62,4 +63,3 @@ with AIProjectClient(
     print(f"Get the properties of a connection named `{connection_name}`:")
     connection = project_client.connections.get(connection_name)
     print(connection)
-

@@ -41,7 +41,6 @@ class TestAIProjectRedTeamsOperations(AIProjectClientTestBase):
                 "attackStrategy": ["str"],
                 "id": "str",
                 "numTurns": 0,
-                "outputs": {"str": "str"},
                 "riskCategories": ["str"],
                 "scanName": "str",
                 "simulationOnly": bool,

@@ -58,29 +58,6 @@ class TestAIProjectDatasetsOperations(AIProjectClientTestBase):
 
     @AIProjectPreparer()
     @recorded_by_proxy
-    def test_datasets_create(self, aiproject_endpoint):
-        client = self.create_client(endpoint=aiproject_endpoint)
-        response = client.datasets.create(
-            name="str",
-            body={
-                "datasetUri": "str",
-                "name": "str",
-                "openAIPurpose": "str",
-                "type": "uri_file",
-                "version": "str",
-                "description": "str",
-                "id": "str",
-                "isReference": bool,
-                "stage": "str",
-                "tags": {"str": "str"},
-            },
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @AIProjectPreparer()
-    @recorded_by_proxy
     def test_datasets_create_version(self, aiproject_endpoint):
         client = self.create_client(endpoint=aiproject_endpoint)
         response = client.datasets.create_version(
@@ -110,18 +87,6 @@ class TestAIProjectDatasetsOperations(AIProjectClientTestBase):
         response = client.datasets.start_pending_upload_version(
             name="str",
             version="str",
-            body={"pendingUploadType": "str", "connectionName": "str", "pendingUploadId": "str"},
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @AIProjectPreparer()
-    @recorded_by_proxy
-    def test_datasets_start_pending_upload(self, aiproject_endpoint):
-        client = self.create_client(endpoint=aiproject_endpoint)
-        response = client.datasets.start_pending_upload(
-            name="str",
             body={"pendingUploadType": "str", "connectionName": "str", "pendingUploadId": "str"},
         )
 
