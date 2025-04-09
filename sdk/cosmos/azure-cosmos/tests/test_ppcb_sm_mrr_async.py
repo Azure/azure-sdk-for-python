@@ -99,7 +99,7 @@ class TestPerPartitionCircuitBreakerSmMrrAsync:
             await container.delete_item(item=doc['id'], partition_key=doc['pk'])
         elif operation == "patch":
             operations = [{"op": "incr", "path": "/company", "value": 3}]
-            await container.patch_item(item=doc['id'], partition_key=doc['pk'], operations=operations)
+            await container.patch_item(item=doc['id'], partition_key=doc['pk'], patch_operations=operations)
         elif operation == "batch":
             batch_operations = [
                 ("create", (doc, )),
