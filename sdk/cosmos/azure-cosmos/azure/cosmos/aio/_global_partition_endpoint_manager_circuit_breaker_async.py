@@ -49,7 +49,7 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerAsync(_GlobalEndpointManag
         self.global_partition_endpoint_manager_core = (
             _GlobalPartitionEndpointManagerForCircuitBreakerCore(client, self.location_cache))
 
-    async def create_pk_range_wrapper(self, request: RequestObject, kwargs) -> PartitionKeyRangeWrapper:
+    async def create_pk_range_wrapper(self, request: RequestObject) -> PartitionKeyRangeWrapper:
         container_rid = request.headers[HttpHeaders.IntendedCollectionRID]
         print(request.headers)
         target_container_link = None

@@ -119,8 +119,9 @@ class TestPerPartitionCircuitBreakerSmMrrAsync:
         elif operation == "query":
             query = "SELECT * FROM c WHERE c.id = @id AND c.pk = @pk"
             parameters = [{"name": "@id", "value": doc_id}, {"name": "@pk", "value": pk}]
-            async for _ in container.query_items(query=query, parameters=parameters):
+            async for _ in container.query_items(query=query, partition_key=pk, parameters=parameters):
                 pass
+            # need to do query with no pk and with feed range
         elif operation == "changefeed":
             async for _ in container.query_items_change_feed():
                 pass
@@ -148,6 +149,9 @@ class TestPerPartitionCircuitBreakerSmMrrAsync:
             is_get_account_predicate,
             emulator_as_multi_region_sm_account_transformation)
         return custom_transport
+
+
+    # split this into write and read tests
 
     @pytest.mark.parametrize("write_operation, read_operation, error", operations_and_errors())
     async def test_consecutive_failure_threshold_async(self, setup, write_operation, read_operation, error):
