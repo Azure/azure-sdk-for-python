@@ -3,9 +3,11 @@
 ## 7.14.2 (2025-04-09)
 
 ### Bugs Fixed
+
 - Fixed a bug where max number of messages was not being requested when receiving from the service due to an incorrect link credit calculation. ([#40156](https://github.com/Azure/azure-sdk-for-python/issues/40156))
 - 
 ### Other Changes
+
 - Deprecating `uamqp_transport` in favor of pyAMQP transport. The `uamqp_transport` will be removed in the next minor release.
 - Dropped support for Python 3.8
 
