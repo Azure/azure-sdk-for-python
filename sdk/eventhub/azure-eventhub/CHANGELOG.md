@@ -5,18 +5,18 @@
 ### Features Added
 
 - Added support for geo-replication and disaster recovery-enabled Event Hubs. To learn more about geo-replication, refer to this [doc](https://learn.microsoft.com/azure/event-hubs/geo-replication). To enable geo-replication on your Dedicated Event Hubs namespace, refer to [this guide](https://learn.microsoft.com/azure/event-hubs/use-geo-replication).
-- Added a class method `from bytes` to `EventData` to create from a message payload of bytes. ([#39711](https://github.com/Azure/azure-sdk-for-python/issues/39711))
-
-### Other Changes
-- Deprecating `uamqp_transport` in favor of pyAMQP transport. The `uamqp_transport` will be removed in the next minor release.
-- Dropped support for Python 3.8
+- Added a class method `from_bytes` to `EventData` to create from a message payload of bytes. ([#39711](https://github.com/Azure/azure-sdk-for-python/issues/39711))
 
 ### Bugs Fixed
 
 - Fixed a bug where service errors were incorrectly required and expected to have info/description fields.
+- Fixed a bug so that the BufferedProducer ThreadPoolExecutor uses one worker is used per partition. ([#38961](https://github.com/Azure/azure-sdk-for-python/issues/38961))
 
 ### Other Changes
 
+- Added support for handling a C# DateTime.MinValue timestamp, which is returned by the service as a sentinel for time which is not set.
+- Deprecating `uamqp_transport` in favor of pyAMQP transport. The `uamqp_transport` will be removed in the next minor release.
+- Dropped support for Python 3.8
 - The following change has been temporarily pulled out and will be added to a future release:
   - Implemented a new websockets library so that using `AmqpOverWebsocket` no longer requires separate optional dependency installations.
 
