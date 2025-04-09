@@ -101,7 +101,7 @@ class SipRoutingClient(object):
         if trunk_fqdn is None:
             raise ValueError("Parameter 'trunk_fqdn' must not be None.")
 
-        if include_health is not None:
+        if include_health is True:
             expand = ExpandEnum.TRUNKS_HEALTH
 
         config = await self._rest_service.sip_routing.get(expand = expand, **kwargs)
@@ -166,7 +166,7 @@ class SipRoutingClient(object):
             list_of_elem = [SipTrunk(fqdn=k, sip_signaling_port=v.sip_signaling_port) for k, v in config.trunks.items()]
             return None, AsyncList(list_of_elem)
 
-        if include_health is not None:
+        if include_health is True:
             expand = ExpandEnum.TRUNKS_HEALTH
 
         # pylint: disable=unused-argument

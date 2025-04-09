@@ -7,7 +7,8 @@
 
 from ._sip_routing_client import SipRoutingClient
 from ._models import SipTrunk, SipTrunkRoute, SipDomain
-from ._generated.models._enums import IpAddressVersion, PrivacyHeader, ExpandEnum
+from ._generated.models._enums import IpAddressVersion, PrivacyHeader
+from ._generated.models import PingHealth, TlsHealth, TrunkHealth, OverallHealth, PingStatus, TlsStatus, UnhealthyStatusReason, OverallHealthStatus
 
 __all__ = [
     "SipRoutingClient",
@@ -16,5 +17,12 @@ __all__ = [
     "SipTrunkRoute",
     "IpAddressVersion",
     "PrivacyHeader",
-    "ExpandEnum",
+    "PingHealth",
+    "TlsHealth",
+    "TrunkHealth",
+    "OverallHealth",
+    "PingStatus",
+    "TlsStatus",
+    "UnhealthyStatusReason",
+    "OverallHealthStatus",
     ]
