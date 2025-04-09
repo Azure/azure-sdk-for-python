@@ -10,10 +10,10 @@
 ### Bugs Fixed
 
 - Fixed a bug where service errors were incorrectly required and expected to have info/description fields.
+- Fixed a bug so that the BufferedProducer ThreadPoolExecutor uses one worker is used per partition. ([#38961](https://github.com/Azure/azure-sdk-for-python/issues/38961))
 
 ### Other Changes
 
-- Updated the BufferedProducer ThreadPoolExecutor so that one worker is used per partition. ([#38961](https://github.com/Azure/azure-sdk-for-python/issues/38961))
 - Added support for handling a C# DateTime.MinValue timestamp, which is returned by the service as a sentinel for time which is not set.
 - Deprecating `uamqp_transport` in favor of pyAMQP transport. The `uamqp_transport` will be removed in the next minor release.
 - Dropped support for Python 3.8
