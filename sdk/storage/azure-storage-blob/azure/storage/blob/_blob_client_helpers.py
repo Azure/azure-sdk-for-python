@@ -447,8 +447,9 @@ def _set_http_headers_options(content_settings: Optional["ContentSettings"] = No
         'blob_http_headers': blob_headers,
         'lease_access_conditions': access_conditions,
         'modified_access_conditions': mod_conditions,
-        'cls': return_response_headers}
-    options.update(kwargs)
+        'cls': return_response_headers
+    }
+    options.update({k: v for k, v in kwargs.items() if v is not None})
     return options
 
 
@@ -721,7 +722,7 @@ def _abort_copy_options(copy_id: Union[str, Dict[str, Any], BlobProperties], **k
         'lease_access_conditions': access_conditions,
         'timeout': kwargs.pop('timeout', None)
     }
-    options.update(kwargs)
+    options.update({k: v for k, v in kwargs.items() if v is not None})
     return options
 
 
@@ -793,8 +794,11 @@ def _stage_block_from_url_options(
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
-        cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                            encryption_algorithm=cpk.algorithm)
+        cpk_info = CpkInfo(
+            encryption_key=cpk.key_value,
+            encryption_key_sha256=cpk.key_hash,
+            encryption_algorithm=cpk.algorithm
+        )
     options = {
         'copy_source_authorization': source_authorization,
         'block_id': block_id,
@@ -808,7 +812,7 @@ def _stage_block_from_url_options(
         'cpk_info': cpk_info,
         'cls': return_response_headers,
     }
-    options.update(kwargs)
+    options.update({k: v for k, v in kwargs.items() if v is not None})
     return options
 
 
@@ -859,8 +863,11 @@ def _commit_block_list_options(
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
-        cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                            encryption_algorithm=cpk.algorithm)
+        cpk_info = CpkInfo(
+            encryption_key=cpk.key_value,
+            encryption_key_sha256=cpk.key_hash,
+            encryption_algorithm=cpk.algorithm
+        )
 
     immutability_policy = kwargs.pop('immutability_policy', None)
     if immutability_policy:
@@ -884,7 +891,7 @@ def _commit_block_list_options(
         'blob_tags_string': blob_tags_string,
         'headers': headers
     }
-    options.update(kwargs)
+    options.update({k: v for k, v in kwargs.items() if v is not None})
     return options
 
 
@@ -892,7 +899,7 @@ def _set_blob_tags_options(
     version_id: Optional[str],
     tags: Optional[Dict[str, str]] = None,
     **kwargs: Any
-)-> Dict[str, Any]:
+) -> Dict[str, Any]:
     serialized_tags = serialize_blob_tags(tags)
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     mod_conditions = get_modify_conditions(kwargs)
@@ -902,8 +909,9 @@ def _set_blob_tags_options(
         'lease_access_conditions': access_conditions,
         'modified_access_conditions': mod_conditions,
         'version_id': version_id,
-        'cls': return_response_headers}
-    options.update(kwargs)
+        'cls': return_response_headers
+    }
+    options.update({k: v for k, v in kwargs.items() if v is not None})
     return options
 
 
@@ -917,7 +925,8 @@ def _get_blob_tags_options(version_id: Optional[str], snapshot: Optional[str], *
         'lease_access_conditions': access_conditions,
         'modified_access_conditions': mod_conditions,
         'timeout': kwargs.pop('timeout', None),
-        'cls': return_headers_and_deserialized}
+        'cls': return_headers_and_deserialized
+    }
     return options
 
 
@@ -942,7 +951,8 @@ def _get_page_ranges_options(
         'lease_access_conditions': access_conditions,
         'modified_access_conditions': mod_conditions,
         'timeout': kwargs.pop('timeout', None),
-        'range': page_range}
+        'range': page_range
+    }
     if previous_snapshot_diff:
         try:
             options['prevsnapshot'] = previous_snapshot_diff.snapshot # type: ignore
@@ -951,7 +961,7 @@ def _get_page_ranges_options(
                 options['prevsnapshot'] = previous_snapshot_diff['snapshot'] # type: ignore
             except TypeError:
                 options['prevsnapshot'] = previous_snapshot_diff
-    options.update(kwargs)
+    options.update({k: v for k, v in kwargs.items() if v is not None})
     return options
 
 
@@ -970,8 +980,9 @@ def _set_sequence_number_options(
         'blob_sequence_number': sequence_number,
         'lease_access_conditions': access_conditions,
         'modified_access_conditions': mod_conditions,
-        'cls': return_response_headers}
-    options.update(kwargs)
+        'cls': return_response_headers
+    }
+    options.update({k: v for k, v in kwargs.items() if v is not None})
     return options
 
 
@@ -984,16 +995,20 @@ def _resize_blob_options(size: int, **kwargs: Any) -> Dict[str, Any]:
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
-        cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                            encryption_algorithm=cpk.algorithm)
+        cpk_info = CpkInfo(
+            encryption_key=cpk.key_value,
+            encryption_key_sha256=cpk.key_hash,
+            encryption_algorithm=cpk.algorithm
+        )
     options = {
         'blob_content_length': size,
         'timeout': kwargs.pop('timeout', None),
         'lease_access_conditions': access_conditions,
         'modified_access_conditions': mod_conditions,
         'cpk_info': cpk_info,
-        'cls': return_response_headers}
-    options.update(kwargs)
+        'cls': return_response_headers
+    }
+    options.update({k: v for k, v in kwargs.items() if v is not None})
     return options
 
 
@@ -1023,8 +1038,11 @@ def _upload_page_options(
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
-        cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                            encryption_algorithm=cpk.algorithm)
+        cpk_info = CpkInfo(
+            encryption_key=cpk.key_value,
+            encryption_key_sha256=cpk.key_hash,
+            encryption_algorithm=cpk.algorithm
+        )
     options = {
         'body': page[:length],
         'content_length': length,
@@ -1037,8 +1055,9 @@ def _upload_page_options(
         'validate_content': validate_content,
         'cpk_scope_info': cpk_scope_info,
         'cpk_info': cpk_info,
-        'cls': return_response_headers}
-    options.update(kwargs)
+        'cls': return_response_headers
+    }
+    options.update({k: v for k, v in kwargs.items() if v is not None})
     return options
 
 
@@ -1077,8 +1096,11 @@ def _upload_pages_from_url_options(
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
-        cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                            encryption_algorithm=cpk.algorithm)
+        cpk_info = CpkInfo(
+            encryption_key=cpk.key_value,
+            encryption_key_sha256=cpk.key_hash,
+            encryption_algorithm=cpk.algorithm
+        )
 
     options = {
         'copy_source_authorization': source_authorization,
@@ -1094,8 +1116,9 @@ def _upload_pages_from_url_options(
         'source_modified_access_conditions': source_mod_conditions,
         'cpk_scope_info': cpk_scope_info,
         'cpk_info': cpk_info,
-        'cls': return_response_headers}
-    options.update(kwargs)
+        'cls': return_response_headers
+    }
+    options.update({k: v for k, v in kwargs.items() if v is not None})
     return options
 
 
@@ -1121,8 +1144,11 @@ def _clear_page_options(
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
-        cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                            encryption_algorithm=cpk.algorithm)
+        cpk_info = CpkInfo(
+            encryption_key=cpk.key_value,
+            encryption_key_sha256=cpk.key_hash,
+            encryption_algorithm=cpk.algorithm
+        )
 
     options = {
         'content_length': 0,
@@ -1132,8 +1158,9 @@ def _clear_page_options(
         'sequence_number_access_conditions': seq_conditions,
         'modified_access_conditions': mod_conditions,
         'cpk_info': cpk_info,
-        'cls': return_response_headers}
-    options.update(kwargs)
+        'cls': return_response_headers
+    }
+    options.update({k: v for k, v in kwargs.items() if v is not None})
     return options
 
 
@@ -1168,8 +1195,11 @@ def _append_block_options(
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
-        cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                            encryption_algorithm=cpk.algorithm)
+        cpk_info = CpkInfo(
+            encryption_key=cpk.key_value,
+            encryption_key_sha256=cpk.key_hash,
+            encryption_algorithm=cpk.algorithm
+        )
     options = {
         'body': data,
         'content_length': length,
@@ -1181,8 +1211,9 @@ def _append_block_options(
         'validate_content': validate_content,
         'cpk_scope_info': cpk_scope_info,
         'cpk_info': cpk_info,
-        'cls': return_response_headers}
-    options.update(kwargs)
+        'cls': return_response_headers
+    }
+    options.update({k: v for k, v in kwargs.items() if v is not None})
     return options
 
 
@@ -1221,8 +1252,11 @@ def _append_block_from_url_options(
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
-        cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                            encryption_algorithm=cpk.algorithm)
+        cpk_info = CpkInfo(
+            encryption_key=cpk.key_value,
+            encryption_key_sha256=cpk.key_hash,
+            encryption_algorithm=cpk.algorithm
+        )
 
     options = {
         'copy_source_authorization': source_authorization,
@@ -1238,8 +1272,9 @@ def _append_block_from_url_options(
         'cpk_scope_info': cpk_scope_info,
         'cpk_info': cpk_info,
         'cls': return_response_headers,
-        'timeout': kwargs.pop('timeout', None)}
-    options.update(kwargs)
+        'timeout': kwargs.pop('timeout', None)
+    }
+    options.update({k: v for k, v in kwargs.items() if v is not None})
     return options
 
 
@@ -1258,8 +1293,9 @@ def _seal_append_blob_options(**kwargs: Any) -> Dict[str, Any]:
         'lease_access_conditions': access_conditions,
         'append_position_access_conditions': append_conditions,
         'modified_access_conditions': mod_conditions,
-        'cls': return_response_headers}
-    options.update(kwargs)
+        'cls': return_response_headers
+    }
+    options.update({k: v for k, v in kwargs.items() if v is not None})
     return options
 
 
@@ -1307,7 +1343,7 @@ def _from_blob_url(
             path_snapshot = snapshot['snapshot']
         else:
             path_snapshot = snapshot
-    return (account_url, container_name, blob_name, path_snapshot)
+    return account_url, container_name, blob_name, path_snapshot
 
 
 def _get_blob_properties_options(version_id: Optional[str], snapshot: Optional[str], **kwargs: Any) -> Dict[str, Any]:
