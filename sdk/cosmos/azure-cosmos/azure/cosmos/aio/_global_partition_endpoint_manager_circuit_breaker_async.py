@@ -49,29 +49,35 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerAsync(_GlobalEndpointManag
         self.global_partition_endpoint_manager_core = (
             _GlobalPartitionEndpointManagerForCircuitBreakerCore(client, self.location_cache))
 
-    async def create_pk_range_wrapper(self, request: RequestObject) -> PartitionKeyRangeWrapper:
+    async def create_pk_range_wrapper(self, request: RequestObject, kwargs) -> PartitionKeyRangeWrapper:
         container_rid = request.headers[HttpHeaders.IntendedCollectionRID]
         print(request.headers)
+        target_container_link = None
+        partition_key = None
+        # TODO: @tvaron3 see if the container link is absolutely necessary or change container cache
+        for container_link, properties in self.client._container_properties_cache.items():
+            if properties["_rid"] == container_rid:
+                target_container_link = container_link
+                partition_key_definition = properties["partitionKey"]
+                partition_key = PartitionKey(path=partition_key_definition["paths"],
+                                             kind=partition_key_definition["kind"])
+
+        if not target_container_link or not partition_key:
+            raise RuntimeError("Illegal state: the container cache is not properly initialized.")
+
         if request.headers.get(HttpHeaders.PartitionKey):
             partition_key_value = request.headers[HttpHeaders.PartitionKey]
             # get the partition key range for the given partition key
-            target_container_link = None
-            for container_link, properties in self.client._container_properties_cache.items():
-                if properties["_rid"] == container_rid:
-                    target_container_link = container_link
-                    partition_key_definition = properties["partitionKey"]
-                    partition_key = PartitionKey(path=partition_key_definition["paths"],
-                                                 kind=partition_key_definition["kind"])
-
-                    epk_range = [partition_key._get_epk_range_for_partition_key(partition_key_value)]
-            if not target_container_link:
-                raise RuntimeError("Illegal state: the container cache is not properly initialized.")
             # TODO: @tvaron3 check different clients and create them in different ways
+            epk_range = [partition_key._get_epk_range_for_partition_key(partition_key_value)]
             partition_ranges = await (self.client._routing_map_provider
                               .get_overlapping_ranges(target_container_link, epk_range))
             partition_range = Range.PartitionKeyRangeToRange(partition_ranges[0])
         elif request.headers.get(HttpHeaders.PartitionKeyRangeID):
             pk_range_id = request.headers[HttpHeaders.PartitionKeyRangeID]
+            range = await (self.client._routing_map_provider
+                                      .get_range_by_partition_key_range_id(target_container_link, pk_range_id))
+            partition_range = Range.PartitionKeyRangeToRange(range)
 
         return PartitionKeyRangeWrapper(partition_range, container_rid)
 

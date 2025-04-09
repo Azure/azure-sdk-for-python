@@ -201,6 +201,7 @@ class TestPerPartitionCircuitBreakerSmMrrAsync:
 
        # the partition should have been marked as unavailable after breaking read threshold
         TestPerPartitionCircuitBreakerSmMrrAsync.validate_unhealthy_partitions(global_endpoint_manager, 1)
+        # test recovering the partition again
 
     @pytest.mark.parametrize("write_operation, read_operation, error", operations_and_errors())
     async def test_failure_rate_threshold_async(self, setup, write_operation, read_operation, error):
@@ -269,7 +270,7 @@ class TestPerPartitionCircuitBreakerSmMrrAsync:
             # restore minimum requests
             global_endpoint_manager.global_partition_endpoint_manager_core.partition_health_tracker.MINIMUM_REQUESTS_FOR_FAILURE_RATE = 100
 
-        # look at the urls for verifying fall back
+        # look at the urls for verifying fall back and use another id for same partition
 
     @staticmethod
     def validate_unhealthy_partitions(global_endpoint_manager,
