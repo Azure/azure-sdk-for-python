@@ -263,7 +263,9 @@ class AsyncPrompty:
         if is_reasoning_model:
             # Replace 'max_tokens' with 'max_completion_tokens'
             if "max_tokens" in parameters:
-                parameters["max_completion_tokens"] = parameters.pop("max_tokens")
+                parameters.pop("max_tokens", None)
+                # setting max_completion_tokens to 25000 as recommended by openai
+                parameters["max_completion_tokens"] = 25000
             # Remove unsupported parameters for reasoning models
             for key in ["temperature", "top_p", "presence_penalty", "frequency_penalty"]:
                 parameters.pop(key, None)

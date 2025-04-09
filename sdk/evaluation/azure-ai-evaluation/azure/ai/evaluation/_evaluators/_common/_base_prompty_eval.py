@@ -46,12 +46,12 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
     _DEFAULT_OPEN_API_VERSION = "2024-02-15-preview"
 
     def __init__(self, *, result_key: str, prompty_file: str, model_config: dict, eval_last_turn: bool = False,
-                 threshold: int = 3, _higher_is_better: bool = False, is_reasoning_model: bool = False) -> None:
+                 threshold: int = 3, _higher_is_better: bool = False, **kwargs) -> None:
         self._result_key = result_key
-        self._prompty_file = AsyncPrompty._update_prompty_file(prompty_file, is_reasoning_model)
+        self._is_reasoning_model = kwargs.get("is_reasoning_model", False)
+        self._prompty_file = AsyncPrompty._update_prompty_file(prompty_file, self._is_reasoning_model)
         self._threshold = threshold
         self._higher_is_better = _higher_is_better
-        self.is_reasoning_model = is_reasoning_model
         super().__init__(eval_last_turn=eval_last_turn, threshold=threshold, _higher_is_better=_higher_is_better)
 
         subclass_name = self.__class__.__name__
@@ -62,10 +62,10 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
             user_agent,
         )
 
-        self._flow = AsyncPrompty.load(source=prompty_file, model=prompty_model_config)
+        self._flow = AsyncPrompty.load(source=self._prompty_file, model=prompty_model_config)
 
         # delete the temporary prompty file
-        if self.is_reasoning_model is True:
+        if self._is_reasoning_model:
             if os.path.exists(self._prompty_file):
                 os.remove(self._prompty_file)
 

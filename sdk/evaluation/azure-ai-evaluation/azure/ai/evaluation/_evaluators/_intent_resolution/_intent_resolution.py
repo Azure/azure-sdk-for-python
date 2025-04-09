@@ -49,13 +49,13 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     @override
     def __init__(self, model_config, *,
                  threshold = _DEFAULT_INTENT_RESOLUTION_THRESHOLD,
-                 is_reasoning_model=False):
+                 **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self.threshold = threshold
         super().__init__(model_config=model_config, prompty_file=prompty_path,
                          result_key=self._RESULT_KEY,
-                         is_reasoning_model=is_reasoning_model)
+                         **kwargs)
 
     @overload
     def __call__(

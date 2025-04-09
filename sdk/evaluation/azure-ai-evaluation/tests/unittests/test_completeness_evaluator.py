@@ -29,7 +29,7 @@ class TestResponseCompletenessEvaluator:
         # Test initialization of ResponseCompletenessEvaluator
         assert response_completeness_evaluator.threshold == ResponseCompletenessEvaluator._DEFAULT_COMPLETENESS_THRESHOLD
         assert response_completeness_evaluator._result_key == ResponseCompletenessEvaluator._RESULT_KEY
-        assert response_completeness_evaluator.is_reasoning_model is False
+        assert response_completeness_evaluator._is_reasoning_model is False
 
     def test_initialization2(self, mock_model_config):
         response_completeness_evaluator = ResponseCompletenessEvaluator(model_config=mock_model_config,
@@ -37,7 +37,7 @@ class TestResponseCompletenessEvaluator:
         # Test initialization of ResponseCompletenessEvaluator
         assert response_completeness_evaluator.threshold == ResponseCompletenessEvaluator._DEFAULT_COMPLETENESS_THRESHOLD
         assert response_completeness_evaluator._result_key == ResponseCompletenessEvaluator._RESULT_KEY
-        assert response_completeness_evaluator.is_reasoning_model is True
+        assert response_completeness_evaluator._is_reasoning_model is True
 
     def test_evaluate_completeness_valid1(self, mock_model_config):
         response_completeness_evaluator = ResponseCompletenessEvaluator(model_config=mock_model_config)
