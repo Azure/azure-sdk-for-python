@@ -11,6 +11,7 @@ from azure.eventhub._pyamqp.aio import _authentication_async
 from azure.eventhub._pyamqp.aio import ReceiveClientAsync, SendClientAsync
 from azure.eventhub._pyamqp.constants import TransportType
 from azure.eventhub._pyamqp.message import Message
+import sys
 
 
 async def send_message(live_eventhub):
@@ -32,6 +33,7 @@ async def send_message(live_eventhub):
 
 
 @pytest.mark.asyncio
+@pytest.mark.skipif(sys.version_info < (3, 9), reason="Test requires Python 3.9 or higher")
 async def test_event_hubs_client_web_socket_async(live_eventhub):
     uri = "sb://{}/{}".format(live_eventhub["hostname"], live_eventhub["event_hub"])
     sas_auth = _authentication_async.SASTokenAuthAsync(
