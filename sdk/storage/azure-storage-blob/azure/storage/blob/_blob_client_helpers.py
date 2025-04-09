@@ -1394,3 +1394,18 @@ def _set_standard_blob_tier_options(
 
 def _acquire_lease_options(**kwargs: Any):
     return {k: v for k, v in kwargs.items() if v is not None}
+
+
+def _get_block_list_options(block_list_type: str, snapshot: Optional[str], **kwargs: Any) -> Dict[str, Any]:
+    access_conditions = get_access_conditions(kwargs.pop('lease', None))
+    mod_conditions = get_modify_conditions(kwargs)
+
+    options = {
+        'list_type': block_list_type,
+        'timeout': kwargs.pop('timeout', None),
+        'lease_access_conditions': access_conditions,
+        'modified_access_conditions': mod_conditions,
+        'snapshot': snapshot,
+    }
+    options.update({k: v for k, v in kwargs.items() if v is not None})
+    return options
