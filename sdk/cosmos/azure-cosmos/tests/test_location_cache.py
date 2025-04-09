@@ -93,7 +93,7 @@ class TestLocationCache(unittest.TestCase):
             found_endpoint = False
             endpoint = read_region['databaseAccountEndpoint']
             for region in read_regions:
-                if endpoint in (region.get_primary(), region.get_alternate()):
+                if endpoint == region.get_primary():
                     found_endpoint = True
             assert found_endpoint
 
@@ -104,7 +104,7 @@ class TestLocationCache(unittest.TestCase):
             found_endpoint = False
             endpoint = write_region['databaseAccountEndpoint']
             for region in write_regions:
-                if endpoint in (region.get_primary(), region.get_alternate()):
+                if endpoint == region.get_primary():
                     found_endpoint = True
             assert found_endpoint
 
