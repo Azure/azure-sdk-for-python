@@ -8,9 +8,9 @@ parameters:
 # Please use `$(TargetingString)` to refer to the python packages glob string. This variable is set from resolve-package-targeting.yml.
 steps:
   - task: UsePythonVersion@0
-    displayName: 'Use Python 3.8'
+    displayName: 'Use Python $(PYVERSION_N4)'
     inputs:
-     versionSpec: '3.8'
+     versionSpec: $(PYVERSION_N4)
     condition: and(succeededOrFailed(), ne(variables['Skip.MyPy'],'true'))
 
   - script: |

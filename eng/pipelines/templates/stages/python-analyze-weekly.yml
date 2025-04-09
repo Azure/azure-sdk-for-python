@@ -21,7 +21,7 @@ stages:
 
         variables:
           - name: PythonVersion
-            value: '3.8'
+            value: $(PYVERSION_N4)
 
         pool:
           name: $(LINUXPOOL)
@@ -30,9 +30,9 @@ stages:
 
         steps:
           - task: UsePythonVersion@0
-            displayName: 'Use Python 3.8'
+            displayName: 'Use Python $(PYVERSION_N4)'
             inputs:
-              versionSpec: '3.8'
+              versionSpec: $(PYVERSION_N4)
           - script: |
               python -m pip install -r eng/ci_tools.txt
             displayName: 'Prep Environment'
