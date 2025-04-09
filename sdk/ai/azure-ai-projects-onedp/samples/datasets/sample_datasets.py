@@ -24,32 +24,38 @@ USAGE:
 
 import os
 from azure.identity import DefaultAzureCredential
+from azure.core.credentials import AzureKeyCredential
 from azure.ai.projects.onedp import AIProjectClient
 from azure.ai.projects.onedp.models import DatasetVersion, ListViewType
+
+# TODO: Remove console logging
+import sys
+import logging
+logger = logging.getLogger("azure")
+logger.setLevel(logging.DEBUG)
+logger.addHandler(logging.StreamHandler(stream=sys.stdout))
+# End logging
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
 dataset_name = os.environ["DATASET_NAME"]
 
 with AIProjectClient(
     endpoint=endpoint,
-    credential=DefaultAzureCredential(),
+    #credential=DefaultAzureCredential(),
+    credential=AzureKeyCredential(os.environ["PROJECT_API_KEY"]),
+    logging_enable=True, # TODO: Remove console logging
 ) as project_client:
-
-    print(
-        """Upload a single file and create a new Dataset to reference the file.
-    Here we explicitly specify the dataset version."""
-    )
+    
+    print("Upload a single file and create a new Dataset to reference the file. Here we explicitly specify the dataset version.")
     dataset: DatasetVersion = project_client.datasets.upload_file_and_create(
         name=dataset_name,
         version="1",
-        file="sample_folder/file1.txt",
+        file="sample_folder/sample_file1.txt",
     )
     print(dataset)
 
-    print(
-        """Upload all files in a folder (including subfolders) to the existing Dataset to reference the folder."
-    Here again we explicitly specify the a new dataset version"""
-    )
+    """
+    print("Upload all files in a folder (including subfolders) to the existing Dataset to reference the folder. Here again we explicitly specify the a new dataset version")
     dataset = project_client.datasets.upload_folder_and_create(
         name=dataset_name,
         version="2",
@@ -80,3 +86,4 @@ with AIProjectClient(
     project_client.datasets.delete_version(name=dataset_name, version="1")
     project_client.datasets.delete_version(name=dataset_name, version="2")
     project_client.datasets.delete_version(name=dataset_name, version="3")
+    """

@@ -34,7 +34,7 @@ from azure.ai.projects.onedp.models import ConnectionType
 async def sample_connections_async() -> None:
 
     endpoint = os.environ["PROJECT_ENDPOINT"]
-    #connection_name = os.environ["CONNECTION_NAME"]
+    connection_name = os.environ["CONNECTION_NAME"]
 
     async with AIProjectClient(
         endpoint=endpoint,
@@ -42,18 +42,17 @@ async def sample_connections_async() -> None:
         credential=AzureKeyCredential(os.environ["PROJECT_API_KEY"]),
     ) as project_client:
 
-        print("List the properties of all connections")
+        print("List the properties of all connections:")
         async for connection in project_client.connections.list():
             print(connection)
-        exit()
 
-        print("List the properties of all connections of a particular type (in this case, Azure OpenAI connections)")
+        print("List the properties of all connections of a particular type (in this case, Azure OpenAI connections):")
         async for connection in project_client.connections.list(
             connection_type=ConnectionType.AZURE_OPEN_AI,
         ):
             print(connection)
 
-        print(f"Get the properties of a connection named {connection_name}")
+        print(f"Get the properties of a connection named `{connection_name}`:")
         connection = await project_client.connections.get(connection_name)
         print(connection)
 

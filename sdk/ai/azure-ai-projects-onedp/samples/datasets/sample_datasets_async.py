@@ -46,7 +46,7 @@ async def sample_datasets_async() -> None:
         dataset: DatasetVersion = await project_client.datasets.upload_file_and_create(
             name=dataset_name,
             version="1",
-            file="sample_folder/file1.txt",
+            file="sample_folder/sample_file1.txt",
         )
         print(dataset)
 
