@@ -163,7 +163,7 @@ class TestPerPartitionCircuitBreakerSmMrrAsync:
                                'pk': 'pk1',
                                'name': 'sample document',
                                'key': 'value'}
-        predicate = lambda r: (FaultInjectionTransportAsync.predicate_req_for_document_with_id(r, id_value) and
+        predicate = lambda r: (FaultInjectionTransportAsync.predicate_is_document_operation(r) and
                                FaultInjectionTransportAsync.predicate_targets_region(r, expected_write_region_uri))
         custom_transport.add_fault(predicate, lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
             0,
