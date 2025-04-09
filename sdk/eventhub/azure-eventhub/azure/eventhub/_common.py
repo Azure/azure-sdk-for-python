@@ -227,10 +227,13 @@ class EventData:
     @classmethod
     def from_bytes(cls, message: bytes) -> "EventData":
         """
-        Creates an EventData object from a raw bytes message payload.
+        Constructs an EventData object from the raw bytes of a message payload.
+        The message payload should adhere to the Message Format specification
+        outlined in the AMQP v1.0 standard:
+        http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#section-message-format
 
-        :param bytes message: A raw bytes message.
-        :return: An EventData object.
+        :param bytes message: The raw bytes representing the message payload.
+        :return: An EventData object created from the provided message payload.
         :rtype: ~azure.eventhub.EventData
         """
         amqp_message = decode_payload(memoryview(message))
