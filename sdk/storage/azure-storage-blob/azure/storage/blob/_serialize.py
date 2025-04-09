@@ -31,6 +31,7 @@ from ._models import ContainerEncryptionScope, DelimitedJsonDialect
 
 if TYPE_CHECKING:
     from ._lease import BlobLeaseClient
+    from aio._lease_async import BlobLeaseClient as AsyncBlobLeaseClient
 
 
 _SUPPORTED_API_VERSIONS = [
@@ -90,7 +91,9 @@ def _get_match_headers(
     return if_match, if_none_match
 
 
-def get_access_conditions(lease: Optional[Union["BlobLeaseClient", str]]) -> Optional[LeaseAccessConditions]:
+def get_access_conditions(
+    lease: Optional[Union["BlobLeaseClient", "AsyncBlobLeaseClient", str]]
+) -> Optional[LeaseAccessConditions]:
     if lease is None:
         return None
     if hasattr(lease, "id"):

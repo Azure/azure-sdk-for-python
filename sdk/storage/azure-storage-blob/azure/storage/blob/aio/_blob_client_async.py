@@ -55,6 +55,7 @@ from .._blob_client_helpers import (
     _set_blob_metadata_options,
     _set_blob_tags_options,
     _set_http_headers_options,
+    _set_premium_page_blob_tier_options,
     _set_sequence_number_options,
     _set_standard_blob_tier_options,
     _stage_block_from_url_options,
@@ -74,7 +75,7 @@ from .._deserialize import (
 from .._encryption import StorageEncryptionMixin, _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
 from .._generated.aio import AzureBlobStorage
 from .._models import BlobType, BlobBlock, BlobProperties, PageRange
-from .._serialize import get_access_conditions, get_api_version, get_modify_conditions, get_version_id
+from .._serialize import get_api_version
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
 from .._shared.policies_async import ExponentialRetry
 from .._shared.response_handlers import process_storage_error, return_response_headers
@@ -270,11 +271,33 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             The optional blob snapshot on which to operate. This can be the snapshot ID string
             or the response returned from :func:`create_snapshot`. If specified, this will override
             the snapshot in the url.
+        :keyword str api_version:
+            The Storage API version to use for requests. Default value is the most recent service version that is
+            compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
+
+            .. versionadded:: 12.2.0
+
+        :keyword str secondary_hostname:
+            The hostname of the secondary endpoint.
         :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
             specifies the version of the blob to operate on.
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
             authentication. Only has an effect when credential is of type TokenCredential. The value could be
             https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
+        :keyword int max_block_size: The maximum chunk size for uploading a block blob in chunks.
+            Defaults to 4*1024*1024, or 4MB.
+        :keyword int max_single_put_size:
+            If the blob size is less than or equal max_single_put_size, then the blob will be
+            uploaded with only one http PUT request. If the blob size is larger than max_single_put_size,
+            the blob will be uploaded in chunks. Defaults to 64*1024*1024, or 64MB.
+        :keyword int min_large_block_upload_threshold: The minimum chunk size required to use the memory efficient
+            algorithm when uploading a block blob. Defaults to 4*1024*1024+1.
+        :keyword bool use_byte_buffer: Use a byte buffer for block blob uploads. Defaults to False.
+        :keyword int max_page_size: The maximum chunk size for uploading a page blob. Defaults to 4*1024*1024, or 4MB.
+        :keyword int max_single_get_size: The maximum size for a blob to be downloaded in a single call,
+            the exceeded part will be downloaded in chunks (could be parallel). Defaults to 32*1024*1024, or 32MB.
+        :keyword int max_chunk_get_size: The maximum chunk size used for downloading a blob.
+            Defaults to 4*1024*1024, or 4MB.
         :returns: A Blob client.
         :rtype: ~azure.storage.blob.BlobClient
         """
@@ -341,11 +364,33 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
         :type credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]]  # pylint: disable=line-too-long
+        :keyword str api_version:
+            The Storage API version to use for requests. Default value is the most recent service version that is
+            compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
+
+            .. versionadded:: 12.2.0
+
+        :keyword str secondary_hostname:
+            The hostname of the secondary endpoint.
         :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
             specifies the version of the blob to operate on.
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
             authentication. Only has an effect when credential is of type TokenCredential. The value could be
             https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
+        :keyword int max_block_size: The maximum chunk size for uploading a block blob in chunks.
+            Defaults to 4*1024*1024, or 4MB.
+        :keyword int max_single_put_size:
+            If the blob size is less than or equal max_single_put_size, then the blob will be
+            uploaded with only one http PUT request. If the blob size is larger than max_single_put_size,
+            the blob will be uploaded in chunks. Defaults to 64*1024*1024, or 64MB.
+        :keyword int min_large_block_upload_threshold: The minimum chunk size required to use the memory efficient
+            algorithm when uploading a block blob. Defaults to 4*1024*1024+1.
+        :keyword bool use_byte_buffer: Use a byte buffer for block blob uploads. Defaults to False.
+        :keyword int max_page_size: The maximum chunk size for uploading a page blob. Defaults to 4*1024*1024, or 4MB.
+        :keyword int max_single_get_size: The maximum size for a blob to be downloaded in a single call,
+            the exceeded part will be downloaded in chunks (could be parallel). Defaults to 32*1024*1024, or 32MB.
+        :keyword int max_chunk_get_size: The maximum chunk size used for downloading a blob.
+            Defaults to 4*1024*1024, or 4MB.
         :returns: A Blob client.
         :rtype: ~azure.storage.blob.BlobClient
 
@@ -1245,6 +1290,14 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
     @distributed_trace_async
     async def set_http_headers(
         self, content_settings: Optional["ContentSettings"] = None,
+        *,
+        lease: Optional[Union[BlobLeaseClient, str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional["MatchConditions"] = None,
+        if_tags_match_condition: Optional[str] = None,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Sets system properties on the blob.
@@ -1290,7 +1343,17 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         :returns: Blob-updated property dict (Etag and last modified)
         :rtype: Dict[str, Any]
         """
-        options = _set_http_headers_options(content_settings=content_settings, **kwargs)
+        options = _set_http_headers_options(
+            content_settings=content_settings,
+            lease=lease,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_condition=match_condition,
+            if_tags_match_condition=if_tags_match_condition,
+            timeout=timeout,
+            **kwargs
+        )
         try:
             return cast(Dict[str, Any], await self._client.blob.set_http_headers(**options))
         except HttpResponseError as error:
@@ -1418,8 +1481,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         :returns: Key value pairs of blob tags.
         :rtype: Dict[str, str]
         """
-
-        version_id = get_version_id(self.version_id, kwargs)
         kwargs['immutability_policy_expiry'] = immutability_policy.expiry_time
         kwargs['immutability_policy_mode'] = immutability_policy.policy_mode
         return cast(Dict[str, str], await self._client.blob.set_immutability_policy(
@@ -1868,6 +1929,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         if_unmodified_since: Optional[datetime] = None,
         etag: Optional[str] = None,
         match_condition: Optional["MatchConditions"] = None,
+        if_tags_match_condition: Optional[str] = None,
         destination_lease: Optional[Union[BlobLeaseClient, str]] = None,
         source_lease: Optional[Union[BlobLeaseClient, str]] = None,
         premium_page_blob_tier: Optional["PremiumPageBlobTier"] = None,
@@ -2077,6 +2139,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             if_unmodified_since=if_unmodified_since,
             etag=etag,
             match_condition=match_condition,
+            if_tags_match_condition=if_tags_match_condition,
             destination_lease=destination_lease,
             source_lease=source_lease,
             premium_page_blob_tier=premium_page_blob_tier,
@@ -2235,6 +2298,13 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         :type standard_blob_tier: str or ~azure.storage.blob.StandardBlobTier
         :keyword ~azure.storage.blob.RehydratePriority rehydrate_priority:
             Indicates the priority with which to rehydrate an archived blob
+        :keyword str version_id:
+            The version id parameter is an opaque DateTime
+            value that, when present, specifies the version of the blob to download.
+
+            .. versionadded:: 12.4.0
+
+            This keyword argument was introduced in API version '2019-12-12'.
         :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
             eg. ``\"\\\"tagname\\\"='my tag'\"``
@@ -2254,7 +2324,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         :rtype: None
         """
         options = _set_standard_blob_tier_options(
-            version_id,
+            version_id or self.version_id,
             self.snapshot,
             standard_blob_tier=standard_blob_tier,
             timeout=timeout,
@@ -2622,6 +2692,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
     async def set_premium_page_blob_tier(
         self, premium_page_blob_tier: "PremiumPageBlobTier",
         *,
+        if_tags_match_condition: Optional[str] = None,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
@@ -2651,18 +2722,17 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             #other-client--per-operation-configuration>`__.
         :rtype: None
         """
-        access_conditions = get_access_conditions(lease)
-        mod_conditions = get_modify_conditions(kwargs)
         if premium_page_blob_tier is None:
             raise ValueError("A PremiumPageBlobTiermust be specified")
+        options = _set_premium_page_blob_tier_options(
+            premium_page_blob_tier=premium_page_blob_tier,
+            if_tags_match_condition=if_tags_match_condition,
+            lease=lease,
+            timeout=timeout,
+            **kwargs
+        )
         try:
-            await self._client.blob.set_tier(
-                tier=premium_page_blob_tier,
-                timeout=timeout,
-                lease_access_conditions=access_conditions,
-                modified_access_conditions=mod_conditions,
-                **kwargs
-            )
+            await self._client.blob.set_tier(**options)
         except HttpResponseError as error:
             process_storage_error(error)
 

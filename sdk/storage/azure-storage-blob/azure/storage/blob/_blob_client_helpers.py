@@ -1409,3 +1409,17 @@ def _get_block_list_options(block_list_type: str, snapshot: Optional[str], **kwa
     }
     options.update({k: v for k, v in kwargs.items() if v is not None})
     return options
+
+
+def _set_premium_page_blob_tier_options(**kwargs: Any) -> Dict[str, Any]:
+    access_conditions = get_access_conditions(kwargs.pop('lease', None))
+    mod_conditions = get_modify_conditions(kwargs)
+
+    options = {
+        'tier': kwargs.pop('premium_page_blob_tier'),
+        'timeout': kwargs.pop('timeout', None),
+        'lease_access_conditions': access_conditions,
+        'modified_access_conditions': mod_conditions,
+    }
+    options.update({k: v for k, v in kwargs.items() if v is not None})
+    return options

@@ -45,6 +45,7 @@ from ._blob_client_helpers import (
     _set_blob_metadata_options,
     _set_blob_tags_options,
     _set_http_headers_options,
+    _set_premium_page_blob_tier_options,
     _set_sequence_number_options,
     _set_standard_blob_tier_options,
     _stage_block_from_url_options,
@@ -76,12 +77,7 @@ from ._models import (
 from ._quick_query_helper import BlobQueryReader
 from ._shared.base_client import parse_connection_str, StorageAccountHostsMixin, TransportWrapper
 from ._shared.response_handlers import process_storage_error, return_response_headers
-from ._serialize import (
-    get_access_conditions,
-    get_api_version,
-    get_modify_conditions,
-    get_version_id
-)
+from ._serialize import get_api_version
 from ._upload_helpers import (
     upload_append_blob,
     upload_block_blob,
@@ -290,11 +286,33 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             The optional blob snapshot on which to operate. This can be the snapshot ID string
             or the response returned from :func:`create_snapshot`. If specified, this will override
             the snapshot in the url.
+        :keyword str api_version:
+            The Storage API version to use for requests. Default value is the most recent service version that is
+            compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
+
+            .. versionadded:: 12.2.0
+
+        :keyword str secondary_hostname:
+            The hostname of the secondary endpoint.
         :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
             specifies the version of the blob to operate on.
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
             authentication. Only has an effect when credential is of type TokenCredential. The value could be
             https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
+        :keyword int max_block_size: The maximum chunk size for uploading a block blob in chunks.
+            Defaults to 4*1024*1024, or 4MB.
+        :keyword int max_single_put_size:
+            If the blob size is less than or equal max_single_put_size, then the blob will be
+            uploaded with only one http PUT request. If the blob size is larger than max_single_put_size,
+            the blob will be uploaded in chunks. Defaults to 64*1024*1024, or 64MB.
+        :keyword int min_large_block_upload_threshold: The minimum chunk size required to use the memory efficient
+            algorithm when uploading a block blob. Defaults to 4*1024*1024+1.
+        :keyword bool use_byte_buffer: Use a byte buffer for block blob uploads. Defaults to False.
+        :keyword int max_page_size: The maximum chunk size for uploading a page blob. Defaults to 4*1024*1024, or 4MB.
+        :keyword int max_single_get_size: The maximum size for a blob to be downloaded in a single call,
+            the exceeded part will be downloaded in chunks (could be parallel). Defaults to 32*1024*1024, or 32MB.
+        :keyword int max_chunk_get_size: The maximum chunk size used for downloading a blob.
+            Defaults to 4*1024*1024, or 4MB.
         :returns: A Blob client.
         :rtype: ~azure.storage.blob.BlobClient
         """
@@ -365,11 +383,33 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             ~azure.core.credentials.AzureSasCredential or
             ~azure.core.credentials.TokenCredential or
             str or Dict[str, str] or None
+        :keyword str api_version:
+            The Storage API version to use for requests. Default value is the most recent service version that is
+            compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
+
+            .. versionadded:: 12.2.0
+
+        :keyword str secondary_hostname:
+            The hostname of the secondary endpoint.
         :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
             specifies the version of the blob to operate on.
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
             authentication. Only has an effect when credential is of type TokenCredential. The value could be
             https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
+        :keyword int max_block_size: The maximum chunk size for uploading a block blob in chunks.
+            Defaults to 4*1024*1024, or 4MB.
+        :keyword int max_single_put_size:
+            If the blob size is less than or equal max_single_put_size, then the blob will be
+            uploaded with only one http PUT request. If the blob size is larger than max_single_put_size,
+            the blob will be uploaded in chunks. Defaults to 64*1024*1024, or 64MB.
+        :keyword int min_large_block_upload_threshold: The minimum chunk size required to use the memory efficient
+            algorithm when uploading a block blob. Defaults to 4*1024*1024+1.
+        :keyword bool use_byte_buffer: Use a byte buffer for block blob uploads. Defaults to False.
+        :keyword int max_page_size: The maximum chunk size for uploading a page blob. Defaults to 4*1024*1024, or 4MB.
+        :keyword int max_single_get_size: The maximum size for a blob to be downloaded in a single call,
+            the exceeded part will be downloaded in chunks (could be parallel). Defaults to 32*1024*1024, or 32MB.
+        :keyword int max_chunk_get_size: The maximum chunk size used for downloading a blob.
+            Defaults to 4*1024*1024, or 4MB.
         :returns: A Blob client.
         :rtype: ~azure.storage.blob.BlobClient
 
@@ -1396,7 +1436,18 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         return blob_props
 
     @distributed_trace
-    def set_http_headers(self, content_settings: Optional["ContentSettings"] = None, **kwargs: Any) -> Dict[str, Any]:
+    def set_http_headers(
+        self, content_settings: Optional["ContentSettings"] = None,
+        *,
+        lease: Optional[Union[BlobLeaseClient, str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional["MatchConditions"] = None,
+        if_tags_match_condition: Optional[str] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """Sets system properties on the blob.
 
         If one property is set for the content_settings, all properties will be overridden.
@@ -1440,7 +1491,17 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :returns: Blob-updated property dict (Etag and last modified)
         :rtype: Dict[str, Any]
         """
-        options = _set_http_headers_options(content_settings=content_settings, **kwargs)
+        options = _set_http_headers_options(
+            content_settings=content_settings,
+            lease=lease,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_condition=match_condition,
+            if_tags_match_condition=if_tags_match_condition,
+            timeout=timeout,
+            **kwargs
+        )
         try:
             return cast(Dict[str, Any], self._client.blob.set_http_headers(**options))
         except HttpResponseError as error:
@@ -2015,6 +2076,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         if_unmodified_since: Optional[datetime] = None,
         etag: Optional[str] = None,
         match_condition: Optional["MatchConditions"] = None,
+        if_tags_match_condition: Optional[str] = None,
         destination_lease: Optional[Union[BlobLeaseClient, str]] = None,
         source_lease: Optional[Union[BlobLeaseClient, str]] = None,
         premium_page_blob_tier: Optional["PremiumPageBlobTier"] = None,
@@ -2125,6 +2187,12 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions source_match_condition:
             The source match condition to use upon the etag.
+        :keyword str if_tags_match_condition:
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
+
+            .. versionadded:: 12.4.0
+
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -2219,6 +2287,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             if_unmodified_since=if_unmodified_since,
             etag=etag,
             match_condition=match_condition,
+            if_tags_match_condition=if_tags_match_condition,
             destination_lease=destination_lease,
             source_lease=source_lease,
             premium_page_blob_tier=premium_page_blob_tier,
@@ -2403,7 +2472,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :rtype: None
         """
         options = _set_standard_blob_tier_options(
-            version_id,
+            version_id or self.version_id,
             self.snapshot,
             standard_blob_tier=standard_blob_tier,
             timeout=timeout,
@@ -2769,6 +2838,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
     def set_premium_page_blob_tier(
         self, premium_page_blob_tier: "PremiumPageBlobTier",
         *,
+        if_tags_match_condition: Optional[str] = None,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
@@ -2798,18 +2868,17 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             #other-client--per-operation-configuration>`__.
         :rtype: None
         """
-        access_conditions = get_access_conditions(lease)
-        mod_conditions = get_modify_conditions(kwargs)
         if premium_page_blob_tier is None:
             raise ValueError("A PremiumPageBlobTier must be specified")
+        options = _set_premium_page_blob_tier_options(
+            premium_page_blob_tier=premium_page_blob_tier,
+            if_tags_match_condition=if_tags_match_condition,
+            lease=lease,
+            timeout=timeout,
+            **kwargs
+        )
         try:
-            self._client.blob.set_tier(
-                tier=premium_page_blob_tier,
-                timeout=timeout,
-                lease_access_conditions=access_conditions,
-                modified_access_conditions=mod_conditions,
-                **kwargs
-            )
+            self._client.blob.set_tier(**options)
         except HttpResponseError as error:
             process_storage_error(error)
 
