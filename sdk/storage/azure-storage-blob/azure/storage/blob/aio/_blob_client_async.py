@@ -2540,7 +2540,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             **kwargs
         )
         try:
-            blocks = self._client.block_blob.get_block_list(**options)
+            blocks = await self._client.block_blob.get_block_list(**options)
         except HttpResponseError as error:
             process_storage_error(error)
         return _get_block_list_result(blocks)
