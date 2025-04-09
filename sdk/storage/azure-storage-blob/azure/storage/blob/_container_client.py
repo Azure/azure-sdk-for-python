@@ -137,6 +137,9 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         self, account_url: str,
         container_name: str,
         credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        *,
+        api_version: Optional[str] = None,
+        # TODO
         **kwargs: Any
     ) -> None:
         parsed_url, sas_token = _parse_url(account_url=account_url, container_name=container_name)
@@ -146,7 +149,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         self._raw_credential = credential if credential else sas_token
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(ContainerClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
-        self._api_version = get_api_version(kwargs)
+        self._api_version = get_api_version(api_version)
         self._client = self._build_generated_client()
         self._configure_encryption(kwargs)
 
