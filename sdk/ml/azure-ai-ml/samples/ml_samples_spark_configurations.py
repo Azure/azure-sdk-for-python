@@ -40,7 +40,7 @@ class SparkConfigurationOptions(object):
         )
 
         monitor_definition = MonitorDefinition(
-            compute=SparkResourceConfiguration(instance_type="standard_e4s_v3", runtime_version="3.4"),
+            compute=SparkResourceConfiguration(instance_type="standard_e4s_v3", runtime_version="3.4"),  # type:ignore
             monitoring_target=MonitoringTarget(
                 ml_task="Classification",
                 endpoint_deployment_id="azureml:fraud_detection_endpoint:fraud_detection_deployment",
@@ -116,11 +116,11 @@ class SparkConfigurationOptions(object):
         materialization_settings = MaterializationSettings(
             offline_enabled=True,
             spark_configuration={
-                "spark.driver.cores": 2,
+                "spark.driver.cores": "2",
                 "spark.driver.memory": "18g",
-                "spark.executor.cores": 4,
+                "spark.executor.cores": "4",
                 "spark.executor.memory": "18g",
-                "spark.executor.instances": 5,
+                "spark.executor.instances": "5",
             },
             resource=MaterializationComputeResource(instance_type="standard_e4s_v3"),
         )
@@ -170,7 +170,7 @@ class SparkConfigurationOptions(object):
             dynamic_allocation_enabled=True,
             dynamic_allocation_min_executors=1,
             dynamic_allocation_max_executors=3,
-            identity=ManagedIdentityConfiguration(),
+            identity=ManagedIdentityConfiguration(),  # type:ignore
             inputs={
                 "input1": Input(
                     type="uri_file", path="azureml://datastores/workspaceblobstore/paths/python/data.csv", mode="direct"
@@ -252,11 +252,11 @@ class SparkConfigurationOptions(object):
         )
 
         # Define pipeline
-        @dsl.pipeline(description="submit a pipeline with spark job")
+        @dsl.pipeline(description="submit a pipeline with spark job")  # type:ignore
         def spark_pipeline_from_builder(data):
             add_greeting_column = first_step(file_input=data)
             count_by_row = second_step(file_input=data)
-            return {"output": count_by_row.outputs.output}
+            return {"output": count_by_row.outputs.output}  # type:ignore
 
         pipeline = spark_pipeline_from_builder(
             data=Input(path="/dataset/iris.csv", type=AssetTypes.URI_FILE, mode=InputOutputModes.DIRECT),
