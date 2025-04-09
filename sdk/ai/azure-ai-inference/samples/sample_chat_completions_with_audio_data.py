@@ -37,7 +37,7 @@ def sample_chat_completions_with_audio_data():
         SystemMessage,
         UserMessage,
         TextContentItem,
-        AudioContentItem,
+        AudioDataContentItem,
         InputAudio,
         AudioContentFormat,
     )
@@ -69,7 +69,7 @@ def sample_chat_completions_with_audio_data():
             UserMessage(
                 [
                     TextContentItem(text="Please translate this audio snippet to spanish."),
-                    AudioContentItem(
+                    AudioDataContentItem(
                         input_audio=InputAudio.load(
                             audio_file="hello_how_are_you.mp3", audio_format=AudioContentFormat.MP3
                         )
