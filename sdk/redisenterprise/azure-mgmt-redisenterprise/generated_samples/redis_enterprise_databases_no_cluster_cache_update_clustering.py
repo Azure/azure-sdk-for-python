@@ -15,7 +15,7 @@ from azure.mgmt.redisenterprise import RedisEnterpriseManagementClient
     pip install azure-identity
     pip install azure-mgmt-redisenterprise
 # USAGE
-    python redis_enterprise_access_policy_assignment_get.py
+    python redis_enterprise_databases_no_cluster_cache_update_clustering.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,15 +30,22 @@ def main():
         subscription_id="e7b5a9d2-6b6a-4d2f-9143-20d9a10f5b8f",
     )
 
-    response = client.access_policy_assignment.get(
+    response = client.databases.begin_update(
         resource_group_name="rg1",
         cluster_name="cache1",
         database_name="default",
-        access_policy_assignment_name="accessPolicyAssignmentName1",
-    )
+        parameters={
+            "properties": {
+                "clientProtocol": "Encrypted",
+                "clusteringPolicy": "EnterpriseCluster",
+                "evictionPolicy": "NoEviction",
+                "port": 10000,
+            }
+        },
+    ).result()
     print(response)
 
 
-# x-ms-original-file: specification/redisenterprise/resource-manager/Microsoft.Cache/preview/2025-05-01-preview/examples/RedisEnterpriseAccessPolicyAssignmentGet.json
+# x-ms-original-file: specification/redisenterprise/resource-manager/Microsoft.Cache/preview/2025-05-01-preview/examples/RedisEnterpriseDatabasesNoClusterCacheUpdateClustering.json
 if __name__ == "__main__":
     main()
