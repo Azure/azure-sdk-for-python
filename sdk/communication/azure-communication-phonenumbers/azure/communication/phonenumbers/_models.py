@@ -4,9 +4,9 @@
 # ------------------------------------
 
 import datetime
+from typing import Iterable
 import uuid
-from azure.communication.phonenumbers._generated.models import ReservationStatus
-
+from azure.communication.phonenumbers._generated.models import ReservationStatus, AvailablePhoneNumber
 
 class PhoneNumbersReservation:
     """Represents a reservation for phone numbers. A reservation is a temporary hold on phone numbers
@@ -33,13 +33,13 @@ class PhoneNumbersReservation:
     :vartype status: str or ~azure.communication.phonenumbers.ReservationStatus
     """
     
-    def __init__(self, id: str, phone_numbers: dict):
+    def __init__(self, id: str, *, phone_numbers: Iterable[AvailablePhoneNumber] = None, **kwargs):
         """Initialize a PhoneNumbersReservation object.
 
         :param id: The id of the reservation in GUID format.
         :type id: str
-        :param phone_numbers: A dictionary containing the reservation phone numbers.
-        :type phone_numbers: dict[str, ~azure.communication.phonenumbers.AvailablePhoneNumber]
+        :keyword phone_numbers: An iterable of phone numbers to add to the reservation.
+        :paramtype phone_numbers: Iterable[~azure.communication.phonenumbers.AvailablePhoneNumber]
         :raises ValueError: If the id is not in valid GUID format or if any required parameter is missing.
         """
         if id is None:
@@ -51,26 +51,39 @@ class PhoneNumbersReservation:
             raise ValueError("The reservation id must be in valid GUID format")
         
         self.id = id
-        self.phone_numbers = phone_numbers
-        self.expires_at = None
-        self.status = None
+        self.phone_numbers = dict()
 
-    @classmethod
-    def _from_generated(cls, generated_reservation):
-        """Creates a PhoneNumbersReservation object from a generated model.
+        # These properties are not intended to be set by the user, but they are used when mapping from the generated model.
+        self.expires_at = kwargs.get("expires_at", None)
+        self.status = kwargs.get("status", None)
 
-        :param generated_reservation: The generated PhoneNumbersReservation model.
-        :type generated_reservation: ~azure.communication.phonenumbers.models.PhoneNumbersReservation
-        :return: A PhoneNumbersReservation object
-        :rtype: ~azure.communication.phonenumbers.PhoneNumbersReservation
+        if phone_numbers is not None:
+            for phone_number in phone_numbers:
+                self.add_phone_number(phone_number)
+
+    def add_phone_number(self, available_phone_number: AvailablePhoneNumber):
+        """Adds a phone number to the reservation. 
+
+        :param available_phone_number: The phone number to add to the reservation.
+        :type available_phone_number: ~azure.communication.phonenumbers.AvailablePhoneNumber
         """
-        reservation = cls(
-            id=generated_reservation.id,
-            phone_numbers=generated_reservation.phone_numbers
-        )
-        reservation.expires_at = generated_reservation.expires_at
-        reservation.status = generated_reservation.status
-        return reservation
+        if not isinstance(available_phone_number, AvailablePhoneNumber):
+            raise ValueError("The phone number must be an instance of AvailablePhoneNumber")
+        
+        phone_number_id = available_phone_number.id if available_phone_number.id else available_phone_number.phone_number
+        
+        if phone_number_id is None:
+            raise ValueError("The phone number id is required.")
+
+        self.phone_numbers[phone_number_id] = available_phone_number
+
+    def remove_phone_number(self, phone_number_id: str):
+        """Removes a phone number from the reservation.
+
+        :param phone_number_id: The ID of the phone number to remove from the reservation.
+        :type phone_number_id: str
+        """
+        self.phone_numbers[phone_number_id] = None
 
 
 class PhoneNumbersReservationItem:

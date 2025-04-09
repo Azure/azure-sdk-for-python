@@ -486,7 +486,7 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
         reservation_id = self.reservation_id
 
         # Test that a reservation can be created without any phone numbers
-        reservation = PhoneNumbersReservation(reservation_id, dict())
+        reservation = PhoneNumbersReservation(reservation_id)
         created_reservation = self.phone_number_client.create_or_update_reservation(reservation)
 
         assert created_reservation.id == reservation_id
@@ -500,7 +500,7 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
         )
 
         phone_number_to_reserve = browse_result.phone_numbers[0]
-        created_reservation.phone_numbers[phone_number_to_reserve.id] = phone_number_to_reserve
+        created_reservation.add_phone_number(phone_number_to_reserve)
         updated_reservation = self.phone_number_client.create_or_update_reservation(created_reservation)
         
         assert updated_reservation.id == reservation_id
@@ -518,7 +518,7 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
         assert len(retrieved_reservation.phone_numbers) == len(updated_reservation.phone_numbers)
 
         # Test that we can remove numbers from the reservation
-        updated_reservation.phone_numbers[phone_number_to_reserve.id] = None
+        updated_reservation.remove_phone_number(phone_number_to_reserve.id)
         reservation_after_remove = self.phone_number_client.create_or_update_reservation(updated_reservation)
 
         assert reservation_after_remove.id == updated_reservation.id
@@ -549,7 +549,7 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
 
         # The phone number can be reserved, but not purchased without agreement to not resell
         phone_number = browse_result.phone_numbers[0]
-        reservation = PhoneNumbersReservation(reservation_id, {phone_number.id: phone_number})
+        reservation = PhoneNumbersReservation(reservation_id, phone_numbers=[phone_number])
         created_reservation = self.phone_number_client.create_or_update_reservation(reservation)
         assert created_reservation.phone_numbers[phone_number.id].status == AvailablePhoneNumberStatus.RESERVED
         assert created_reservation.status == ReservationStatus.ACTIVE
@@ -582,7 +582,7 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
         )
 
         phone_number = browse_result.phone_numbers[0]
-        reservation = PhoneNumbersReservation(reservation_id, {phone_number.id: phone_number})
+        reservation = PhoneNumbersReservation(reservation_id, phone_numbers=[phone_number])
         created_reservation = self.phone_number_client.create_or_update_reservation(reservation)
         assert created_reservation.phone_numbers[phone_number.id].status == AvailablePhoneNumberStatus.RESERVED
         assert created_reservation.status == ReservationStatus.ACTIVE
