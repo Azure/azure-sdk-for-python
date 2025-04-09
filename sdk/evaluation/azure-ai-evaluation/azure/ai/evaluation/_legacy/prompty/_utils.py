@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# cspell:ignore apng, retriable
+
 import copy
 import os
 import re
@@ -219,7 +221,7 @@ DEFAULT_IMAGE_MIME_TYPE: Final[str] = "image/*"
 """The mime type to use when we don't know the image type"""
 
 FILE_EXT_TO_MIME: Final[Mapping[str, str]] = {
-    ".apng": "image/apng",  # cspell:ignore apng
+    ".apng": "image/apng",
     ".avif": "image/avif",
     ".bmp": "image/bmp",
     ".gif": "image/gif",
@@ -573,7 +575,7 @@ def openai_error_retryable(
             "server disconnected without sending a response",
         ]
         should_retry = (
-            isinstance(error, APITimeoutError)  # APIimeoutError is a subclass of APIConnectionError
+            isinstance(error, APITimeoutError)  # APITimeoutError is a subclass of APIConnectionError
             or str(error).lower() in retriable_error_messages
             or str(error.__cause__).lower() in retriable_error_messages
         )
