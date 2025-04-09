@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import List, Any, Union, Optional
 from azure.core.credentials import AzureKeyCredential
 from ._client import AIProjectClient as AIProjectClientGenerated
-from .operations import TelemetryOperations, InferenceOperations
+from .operations import TelemetryOperations, InferenceOperations, AssistantsOperations
 
 
 class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-instance-attributes
@@ -49,6 +49,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         super().__init__(endpoint=endpoint, credential=credential, **kwargs)
         self.telemetry = TelemetryOperations(self)
         self.inference = InferenceOperations(self)
+        self.assistants = AssistantsOperations(self)
 
 
 __all__: List[str] = ["AIProjectClient"]  # Add all objects you want publicly available to users at this package level

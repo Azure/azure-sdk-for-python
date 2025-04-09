@@ -25,7 +25,6 @@ USAGE:
 # TODO: Remove console logging
 import sys
 import logging
-
 logger = logging.getLogger("azure")
 logger.setLevel(logging.DEBUG)
 logger.addHandler(logging.StreamHandler(stream=sys.stdout))
@@ -34,7 +33,7 @@ logger.addHandler(logging.StreamHandler(stream=sys.stdout))
 
 import os
 from azure.identity import DefaultAzureCredential
-from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials import AzureKeyCredential # TODO: Remove me when EntraID is supported
 from azure.ai.projects.onedp import AIProjectClient
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
