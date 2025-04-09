@@ -19,8 +19,8 @@ variables:
   - group: Azure SDK Auto Release Pipeline Secrets
 
 jobs:
-- job: LiveTestPython310
-  displayName: Live Test Python 3.10
+- job: LiveTestPython
+  displayName: Live Test Python
   timeoutInMinutes: 1500
   strategy:
     maxParallel: 5
