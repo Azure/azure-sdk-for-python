@@ -246,12 +246,18 @@ class AIProjectClient(
         project_name = parts[3]
         return cls(endpoint, subscription_id, resource_group_name, project_name, credential, **kwargs)
 
-    def upload_file(self, file_path: Union[Path, str, PathLike]) -> Tuple[str, str]:
+    def upload_file(
+            self,
+            file_path: Union[Path, str, PathLike],
+            file_name: str = str(uuid.uuid4()),
+            file_version: str = "1",
+        ) -> Tuple[str, str]:
         """Upload a file to the Azure AI Foundry project.
            This method required *azure-ai-ml* to be installed.
 
-        :param file_path: The path to the file to upload.
-        :type file_path: Union[str, Path, PathLike]
+        :param Union[str, Path, PathLike] file_path: The path to the file to upload.
+        :param str, optional file_name: The name of the file to upload.
+        :param str, optional file_version: The version of the file to upload.
         :return: The tuple, containing asset id and asset URI of uploaded file.
         :rtype: Tuple[str]
         """
@@ -267,9 +273,9 @@ class AIProjectClient(
         data = Data(
             path=str(file_path),
             type=AssetTypes.URI_FILE,
-            name=str(uuid.uuid4()),  # generating random name
+            name=file_name,
             is_anonymous=True,
-            version="1",
+            version=file_version,
         )
 
         ml_client = MLClient(
@@ -278,8 +284,12 @@ class AIProjectClient(
             self._config3.resource_group_name,
             self._config3.project_name,
         )
-
-        data_asset = ml_client.data.create_or_update(data)
+        try:
+            data_asset = ml_client.data.create_or_update(data)
+        except Exception as e:
+            raise RuntimeError(
+                "Failed to upload file. Please ensure that the file path is correct and you have the necessary permissions."
+            ) from e
 
         return data_asset.id, data_asset.path
 
