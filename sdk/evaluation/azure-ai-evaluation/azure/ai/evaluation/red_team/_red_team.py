@@ -52,7 +52,7 @@ from pyrit.common import initialize_pyrit, DUCK_DB
 from pyrit.prompt_target import OpenAIChatTarget, PromptChatTarget
 from pyrit.models import ChatMessage
 from pyrit.orchestrator.single_turn.prompt_sending_orchestrator import PromptSendingOrchestrator
-from pyrit.orchestrator import Orchestrator
+from pyrit.orchestrator import Orchestrator, CrescendoOrchestrator
 from pyrit.exceptions import PyritException
 from pyrit.prompt_converter import PromptConverter, MathPromptConverter, Base64Converter, FlipConverter, MorseConverter, AnsiAttackConverter, AsciiArtConverter, AsciiSmugglerConverter, AtbashConverter, BinaryConverter, CaesarConverter, CharacterSpaceConverter, CharSwapGenerator, DiacriticConverter, LeetspeakConverter, UrlConverter, UnicodeSubstitutionConverter, UnicodeConfusableConverter, SuffixAppendConverter, StringJoinConverter, ROT13Converter
 
@@ -66,6 +66,7 @@ from ._utils.logging_utils import (
     setup_logger, log_section_header, log_subsection_header,
     log_strategy_start, log_strategy_completion, log_error
 )
+from ._utils.rai_service_target import AzureRAIServiceTarget
 
 @experimental
 class RedTeam():
@@ -739,6 +740,158 @@ class RedTeam():
             self.task_statuses[task_key] = TASK_STATUS["FAILED"]
             raise
 
+    async def _crescendo_orchestrator(
+        self, 
+        chat_target: PromptChatTarget, 
+        all_prompts: List[str], 
+        converter: Union[PromptConverter, List[PromptConverter]], 
+        strategy_name: str = "crescendo", 
+        risk_category: str = "unknown",
+        timeout: int = 480,
+        max_turns: int = 10,
+        max_backtracks: int = 5
+    ) -> Orchestrator:
+        """Run the Crescendo Orchestrator attack which uses a meta-LLM to try to jailbreak the target.
+        
+        :param chat_target: The target to send prompts to
+        :type chat_target: PromptChatTarget
+        :param all_prompts: List of prompts to send (objectives)
+        :type all_prompts: List[str]
+        :param converter: Converter or list of converters (not used by Crescendo but kept for API compatibility)
+        :type converter: Union[PromptConverter, List[PromptConverter]]
+        :param strategy_name: Name of the strategy being used (for logging)
+        :type strategy_name: str
+        :param risk_category: Name of the risk category being evaluated (for logging)
+        :type risk_category: str
+        :param timeout: The timeout in seconds for API calls
+        :type timeout: int
+        :param max_turns: Maximum number of turns in the Crescendo conversation
+        :type max_turns: int
+        :param max_backtracks: Maximum number of backtracks in the Crescendo conversation
+        :type max_backtracks: int 
+        :return: The orchestrator instance with processed results
+        :rtype: Orchestrator
+        """
+        task_key = f"{strategy_name}_{risk_category}_orchestrator"
+        self.task_statuses[task_key] = TASK_STATUS["RUNNING"]
+        
+        log_strategy_start(self.logger, strategy_name, risk_category)
+        
+        # Log which orchestrator and parameters are being used
+        self.logger.debug(f"Using CrescendoOrchestrator with max_turns={max_turns}, max_backtracks={max_backtracks}")
+        
+        # Create a main orchestrator to collect all results
+        # This will be our return value after processing all prompts
+        main_orchestrator = None
+        
+        try:
+            if not all_prompts:
+                self.logger.warning(f"No prompts provided to orchestrator for {strategy_name}/{risk_category}")
+                self.task_statuses[task_key] = TASK_STATUS["COMPLETED"]
+                # Create an empty orchestrator to return
+                adversarial_target = AzureRAIServiceTarget(
+                    client=self.generated_rai_client,
+                    api_version=None,
+                    model="gpt-4"
+                )
+                scoring_target = AzureRAIServiceTarget(  # Using AzureRAIServiceTarget instead of OpenAIChatTarget
+                    client=self.generated_rai_client,
+                    api_version=None,
+                    model="gpt-4"
+                )
+                main_orchestrator = CrescendoOrchestrator(
+                    objective_target=chat_target,
+                    adversarial_chat=adversarial_target,
+                    max_turns=max_turns,
+                    max_backtracks=max_backtracks,
+                    scoring_target=scoring_target,
+                    prompt_converters=None
+                )
+                return main_orchestrator
+            
+            # Debug log the first few characters of each prompt
+            self.logger.debug(f"First objective (truncated): {all_prompts[0][:50]}...")
+            self.logger.debug(f"Processing {len(all_prompts)} objectives individually for {strategy_name}/{risk_category}")
+            
+            # Process each prompt individually (batch size of 1)
+            for prompt_idx, prompt in enumerate(all_prompts):
+                prompt_start_time = datetime.now()
+                self.logger.debug(f"Processing prompt {prompt_idx+1}/{len(all_prompts)}: {prompt[:50]}...")
+                
+                try:
+                    # Create new targets specifically for this prompt
+                    # The adversarial target now gets the specific objective for this prompt
+                    adversarial_target = AzureRAIServiceTarget(
+                        client=self.generated_rai_client,
+                        api_version=None,
+                        model="gpt-4",
+                        objective=prompt  # Use the current prompt as the objective
+                    )
+                    
+                    # Use AzureRAIServiceTarget for scoring as well
+                    scoring_target = AzureRAIServiceTarget(
+                        client=self.generated_rai_client,
+                        api_version=None,
+                        model="gpt-4"
+                    )
+                    
+                    # Create a new orchestrator for this specific prompt
+                    orchestrator = CrescendoOrchestrator(
+                        objective_target=chat_target,
+                        adversarial_chat=adversarial_target,
+                        max_turns=max_turns,
+                        max_backtracks=max_backtracks,
+                        scoring_target=scoring_target,
+                        prompt_converters=None  # Crescendo doesn't use converters
+                    )
+                    
+                    # Store the first orchestrator as our main one to return later
+                    if main_orchestrator is None:
+                        main_orchestrator = orchestrator
+                    
+                    # Use wait_for to implement a timeout
+                    # Note: Using a list with a single prompt to match the expected API
+                    await asyncio.wait_for(
+                        orchestrator.run_attacks_async(objectives=[prompt]),
+                        timeout=timeout  # Use provided timeout
+                    )
+                    
+                    prompt_duration = (datetime.now() - prompt_start_time).total_seconds()
+                    self.logger.debug(f"Successfully processed prompt {prompt_idx+1} for {strategy_name}/{risk_category} in {prompt_duration:.2f} seconds")
+                    
+                    # Print progress to console
+                    if prompt_idx < len(all_prompts) - 1:  # Don't print for the last prompt
+                        print(f"Strategy {strategy_name}, Risk {risk_category}: Processed prompt {prompt_idx+1}/{len(all_prompts)}")
+                        
+                except asyncio.TimeoutError:
+                    self.logger.warning(f"Prompt {prompt_idx+1} for {strategy_name}/{risk_category} timed out after {timeout} seconds")
+                    self.logger.debug(f"Timeout: Strategy {strategy_name}, Risk {risk_category}, Prompt {prompt_idx+1} after {timeout} seconds.", exc_info=True)
+                    print(f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category}, Prompt {prompt_idx+1}")
+                    
+                    # Set task status to TIMEOUT
+                    prompt_task_key = f"{strategy_name}_{risk_category}_prompt_{prompt_idx+1}"
+                    self.task_statuses[prompt_task_key] = TASK_STATUS["TIMEOUT"]
+                    self.red_team_info[strategy_name][risk_category]["status"] = TASK_STATUS["INCOMPLETE"]
+                    
+                    # Continue with the next prompt rather than failing completely
+                    continue
+                except Exception as e:
+                    log_error(self.logger, f"Error processing prompt {prompt_idx+1}", e, f"{strategy_name}/{risk_category}")
+                    self.logger.debug(f"ERROR: Strategy {strategy_name}, Risk {risk_category}, Prompt {prompt_idx+1}: {str(e)}")
+                    self.red_team_info[strategy_name][risk_category]["status"] = TASK_STATUS["INCOMPLETE"]
+                    
+                    # Continue with the next prompt even if one fails
+                    continue
+            
+            self.task_statuses[task_key] = TASK_STATUS["COMPLETED"]
+            return orchestrator
+            
+        except Exception as e:
+            log_error(self.logger, "Failed to initialize orchestrator", e, f"{strategy_name}/{risk_category}")
+            self.logger.debug(f"CRITICAL: Failed to create orchestrator for {strategy_name}/{risk_category}: {str(e)}")
+            self.task_statuses[task_key] = TASK_STATUS["FAILED"]
+            raise
+
     def _write_pyrit_outputs_to_file(self, orchestrator: Orchestrator) -> str:
         """Write PyRIT outputs to a file with a name based on orchestrator, converter, and risk category.
         
@@ -783,6 +936,14 @@ class RedTeam():
     def _get_orchestrators_for_attack_strategies(self, attack_strategy: List[Union[AttackStrategy, List[AttackStrategy]]]) -> List[Callable]:
         # We need to modify this to use our actual _prompt_sending_orchestrator since the utility function can't access it
         call_to_orchestrators = []
+        
+        # Special handling for Crescendo strategy
+        if AttackStrategy.Crescendo in attack_strategy:
+            self.logger.debug("Using Crescendo orchestrator for Crescendo strategy")
+            call_to_orchestrators.extend([self._crescendo_orchestrator])
+            return call_to_orchestrators
+            
+        # Default handling for other strategies
         # Sending PromptSendingOrchestrator for each complexity level
         if AttackStrategy.EASY in attack_strategy:
             call_to_orchestrators.extend([self._prompt_sending_orchestrator])
