@@ -423,8 +423,6 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 :caption: Creating the BlobClient from a connection string.
         """
         account_url, secondary, credential = parse_connection_str(conn_str, credential, 'blob')
-        if 'secondary_hostname' not in kwargs:
-            kwargs['secondary_hostname'] = secondary
         return cls(
             account_url,
             container_name=container_name,
@@ -434,7 +432,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             version_id=version_id,
             audience=audience,
             api_version=api_version,
-            secondary_hostname=secondary_hostname,
+            secondary_hostname=secondary or secondary_hostname,
             max_block_size=max_block_size,
             max_page_size=max_page_size,
             max_chunk_get_size=max_chunk_get_size,
@@ -3185,7 +3183,6 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             etag=etag,
             match_condition=match_condition,
             if_tags_match_condition=if_tags_match_condition,
-            results_per_page=results_per_page,
             timeout=timeout,
             **kwargs
         )

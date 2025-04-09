@@ -226,7 +226,7 @@ def _upload_blob_from_url_options(source_url: str, **kwargs: Any) -> Dict[str, A
     options = {
         'copy_source_authorization': source_authorization,
         'content_length': 0,
-        'copy_source_blob_properties': kwargs.pop('include_source_blob_properties') or True,
+        'copy_source_blob_properties': kwargs.pop('include_source_blob_properties'),
         'source_content_md5': kwargs.pop('source_content_md5', None),
         'copy_source': source_url,
         'modified_access_conditions': get_modify_conditions(kwargs),
