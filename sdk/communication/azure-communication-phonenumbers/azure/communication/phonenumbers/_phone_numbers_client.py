@@ -400,9 +400,9 @@ class PhoneNumbersClient:
         :return: PhoneNumbersReservation
         :rtype: ~azure.communication.phonenumbers.PhoneNumbersReservation
         """
-        return PhoneNumbersReservation._from_generated(
-            self._phone_number_client.phone_numbers.get_reservation(reservation_id, **kwargs)
-        )
+        reservation = self._phone_number_client.phone_numbers.get_reservation(reservation_id, **kwargs)
+
+        return PhoneNumbersReservation(reservation.id, expires_at=reservation.expires_at, status=reservation.status, phone_numbers=list(reservation.phone_numbers.values()))
     
     @distributed_trace
     def list_phone_numbers_reservations(
@@ -464,10 +464,10 @@ class PhoneNumbersClient:
             phone_numbers=reservation.phone_numbers,
         )
 
-        return PhoneNumbersReservation._from_generated(
-            self._phone_number_client.phone_numbers.create_or_update_reservation(
-                reservation.id, res_request, **kwargs)
-            )
+        result = self._phone_number_client.phone_numbers.create_or_update_reservation(
+            reservation.id, res_request, **kwargs)
+        
+        return PhoneNumbersReservation(result.id, expires_at=result.expires_at, status=result.status, phone_numbers=list(result.phone_numbers.values()))
     
     @distributed_trace
     def delete_reservation(

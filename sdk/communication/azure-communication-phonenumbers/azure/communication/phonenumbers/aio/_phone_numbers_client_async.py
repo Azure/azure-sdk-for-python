@@ -413,7 +413,8 @@ class PhoneNumbersClient:
         reservation = await self._phone_number_client.phone_numbers.get_reservation(
             reservation_id, **kwargs
         )
-        return PhoneNumbersReservation._from_generated(reservation)
+        
+        return PhoneNumbersReservation(reservation.id, expires_at=reservation.expires_at, status=reservation.status, phone_numbers=list(reservation.phone_numbers.values()))
     
     @distributed_trace
     def list_phone_numbers_reservations(
@@ -475,10 +476,11 @@ class PhoneNumbersClient:
             phone_numbers=reservation.phone_numbers,
         )
 
-        response = await self._phone_number_client.phone_numbers.create_or_update_reservation(
+        result = await self._phone_number_client.phone_numbers.create_or_update_reservation(
             reservation.id, res_request, **kwargs
         )
-        return PhoneNumbersReservation._from_generated(response)
+        
+        return PhoneNumbersReservation(result.id, expires_at=result.expires_at, status=result.status, phone_numbers=list(result.phone_numbers.values()))
     
     @distributed_trace_async
     async def delete_reservation(
