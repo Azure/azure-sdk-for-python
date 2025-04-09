@@ -1072,34 +1072,15 @@ class AgentsOperations:
 
     @overload
     async def create_agent(
-        self,
-        *,
-        name: str,
-        content_type: str = "application/json",
-        agent_model: Optional[_models.AgentModel] = None,
-        instructions: Optional[List[_models.DeveloperMessage]] = None,
-        tools: Optional[List[_models.AgentToolDefinition]] = None,
-        tool_choice: Optional[_models.ToolChoiceBehavior] = None,
-        **kwargs: Any
+        self, *, options: _models.AgentCreationOptions, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Agent:
         """Creates a new Agent resource and returns it.
 
-        :keyword name: The name of the agent; used for display purposes and sent to the LLM to identify
-         the agent. Required.
-        :paramtype name: str
+        :keyword options: The options for agent creation. Required.
+        :paramtype options: ~azure.ai.projects.dp1.models.AgentCreationOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword agent_model: The model definition for this agent. This is optional (not needed) when
-         doing a run using persistent agent. Default value is None.
-        :paramtype agent_model: ~azure.ai.projects.dp1.models.AgentModel
-        :keyword instructions: Instructions provided to guide how this agent operates. Default value is
-         None.
-        :paramtype instructions: list[~azure.ai.projects.dp1.models.DeveloperMessage]
-        :keyword tools: A list of tool definitions available to the agent. Default value is None.
-        :paramtype tools: list[~azure.ai.projects.dp1.models.AgentToolDefinition]
-        :keyword tool_choice: How the agent should choose among provided tools. Default value is None.
-        :paramtype tool_choice: ~azure.ai.projects.dp1.models.ToolChoiceBehavior
         :return: Agent. The Agent is compatible with MutableMapping
         :rtype: ~azure.ai.projects.dp1.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1137,33 +1118,14 @@ class AgentsOperations:
 
     @distributed_trace_async
     async def create_agent(
-        self,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        name: str = _Unset,
-        agent_model: Optional[_models.AgentModel] = None,
-        instructions: Optional[List[_models.DeveloperMessage]] = None,
-        tools: Optional[List[_models.AgentToolDefinition]] = None,
-        tool_choice: Optional[_models.ToolChoiceBehavior] = None,
-        **kwargs: Any
+        self, body: Union[JSON, IO[bytes]] = _Unset, *, options: _models.AgentCreationOptions = _Unset, **kwargs: Any
     ) -> _models.Agent:
         """Creates a new Agent resource and returns it.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword name: The name of the agent; used for display purposes and sent to the LLM to identify
-         the agent. Required.
-        :paramtype name: str
-        :keyword agent_model: The model definition for this agent. This is optional (not needed) when
-         doing a run using persistent agent. Default value is None.
-        :paramtype agent_model: ~azure.ai.projects.dp1.models.AgentModel
-        :keyword instructions: Instructions provided to guide how this agent operates. Default value is
-         None.
-        :paramtype instructions: list[~azure.ai.projects.dp1.models.DeveloperMessage]
-        :keyword tools: A list of tool definitions available to the agent. Default value is None.
-        :paramtype tools: list[~azure.ai.projects.dp1.models.AgentToolDefinition]
-        :keyword tool_choice: How the agent should choose among provided tools. Default value is None.
-        :paramtype tool_choice: ~azure.ai.projects.dp1.models.ToolChoiceBehavior
+        :keyword options: The options for agent creation. Required.
+        :paramtype options: ~azure.ai.projects.dp1.models.AgentCreationOptions
         :return: Agent. The Agent is compatible with MutableMapping
         :rtype: ~azure.ai.projects.dp1.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1183,15 +1145,9 @@ class AgentsOperations:
         cls: ClsType[_models.Agent] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            if name is _Unset:
-                raise TypeError("missing required argument: name")
-            body = {
-                "agentModel": agent_model,
-                "instructions": instructions,
-                "name": name,
-                "toolChoice": tool_choice,
-                "tools": tools,
-            }
+            if options is _Unset:
+                raise TypeError("missing required argument: options")
+            body = {"options": options}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -1536,49 +1492,20 @@ class AgentsOperations:
     async def run(
         self,
         *,
-        input: List[_models.ChatMessage],
+        options: _models.AgentConfigurationOptions,
+        inputs: _models.RunInputs,
         content_type: str = "application/json",
-        agent_model: Optional[_models.AgentModel] = None,
-        instructions: Optional[List[_models.DeveloperMessage]] = None,
-        tools: Optional[List[_models.AgentToolDefinition]] = None,
-        tool_choice: Optional[_models.ToolChoiceBehavior] = None,
-        agent_id: Optional[str] = None,
-        thread_id: Optional[str] = None,
-        metadata: Optional[Dict[str, str]] = None,
-        truncation_strategy: Optional[_models.TruncationStrategy] = None,
-        user_id: Optional[str] = None,
         **kwargs: Any
     ) -> _models.Run:
         """Creates and waits for a run to finish, returning the completed Run (including its outputs).
 
-        :keyword input: The list of input messages for the run. Required.
-        :paramtype input: list[~azure.ai.projects.dp1.models.ChatMessage]
+        :keyword options: The options for the agent completing the run. Required.
+        :paramtype options: ~azure.ai.projects.dp1.models.AgentConfigurationOptions
+        :keyword inputs: The inputs for the run. Required.
+        :paramtype inputs: ~azure.ai.projects.dp1.models.RunInputs
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword agent_model: The model definition for this agent. This is optional (not needed) when
-         doing a run using persistent agent. Default value is None.
-        :paramtype agent_model: ~azure.ai.projects.dp1.models.AgentModel
-        :keyword instructions: Instructions provided to guide how this agent operates. Default value is
-         None.
-        :paramtype instructions: list[~azure.ai.projects.dp1.models.DeveloperMessage]
-        :keyword tools: A list of tool definitions available to the agent. Default value is None.
-        :paramtype tools: list[~azure.ai.projects.dp1.models.AgentToolDefinition]
-        :keyword tool_choice: How the agent should choose among provided tools. Default value is None.
-        :paramtype tool_choice: ~azure.ai.projects.dp1.models.ToolChoiceBehavior
-        :keyword agent_id: Unique identifier for the agent responsible for the run. This is optional
-         (not needeed) when doing a run using ephemeral agent. Default value is None.
-        :paramtype agent_id: str
-        :keyword thread_id: Optional identifier for an existing conversation thread. Default value is
-         None.
-        :paramtype thread_id: str
-        :keyword metadata: Optional metadata associated with the run request. Default value is None.
-        :paramtype metadata: dict[str, str]
-        :keyword truncation_strategy: Strategy for truncating messages when input exceeds model limits.
-         Default value is None.
-        :paramtype truncation_strategy: ~azure.ai.projects.dp1.models.TruncationStrategy
-        :keyword user_id: Identifier for the user making the request. Default value is None.
-        :paramtype user_id: str
         :return: Run. The Run is compatible with MutableMapping
         :rtype: ~azure.ai.projects.dp1.models.Run
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1617,47 +1544,18 @@ class AgentsOperations:
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        input: List[_models.ChatMessage] = _Unset,
-        agent_model: Optional[_models.AgentModel] = None,
-        instructions: Optional[List[_models.DeveloperMessage]] = None,
-        tools: Optional[List[_models.AgentToolDefinition]] = None,
-        tool_choice: Optional[_models.ToolChoiceBehavior] = None,
-        agent_id: Optional[str] = None,
-        thread_id: Optional[str] = None,
-        metadata: Optional[Dict[str, str]] = None,
-        truncation_strategy: Optional[_models.TruncationStrategy] = None,
-        user_id: Optional[str] = None,
+        options: _models.AgentConfigurationOptions = _Unset,
+        inputs: _models.RunInputs = _Unset,
         **kwargs: Any
     ) -> _models.Run:
         """Creates and waits for a run to finish, returning the completed Run (including its outputs).
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword input: The list of input messages for the run. Required.
-        :paramtype input: list[~azure.ai.projects.dp1.models.ChatMessage]
-        :keyword agent_model: The model definition for this agent. This is optional (not needed) when
-         doing a run using persistent agent. Default value is None.
-        :paramtype agent_model: ~azure.ai.projects.dp1.models.AgentModel
-        :keyword instructions: Instructions provided to guide how this agent operates. Default value is
-         None.
-        :paramtype instructions: list[~azure.ai.projects.dp1.models.DeveloperMessage]
-        :keyword tools: A list of tool definitions available to the agent. Default value is None.
-        :paramtype tools: list[~azure.ai.projects.dp1.models.AgentToolDefinition]
-        :keyword tool_choice: How the agent should choose among provided tools. Default value is None.
-        :paramtype tool_choice: ~azure.ai.projects.dp1.models.ToolChoiceBehavior
-        :keyword agent_id: Unique identifier for the agent responsible for the run. This is optional
-         (not needeed) when doing a run using ephemeral agent. Default value is None.
-        :paramtype agent_id: str
-        :keyword thread_id: Optional identifier for an existing conversation thread. Default value is
-         None.
-        :paramtype thread_id: str
-        :keyword metadata: Optional metadata associated with the run request. Default value is None.
-        :paramtype metadata: dict[str, str]
-        :keyword truncation_strategy: Strategy for truncating messages when input exceeds model limits.
-         Default value is None.
-        :paramtype truncation_strategy: ~azure.ai.projects.dp1.models.TruncationStrategy
-        :keyword user_id: Identifier for the user making the request. Default value is None.
-        :paramtype user_id: str
+        :keyword options: The options for the agent completing the run. Required.
+        :paramtype options: ~azure.ai.projects.dp1.models.AgentConfigurationOptions
+        :keyword inputs: The inputs for the run. Required.
+        :paramtype inputs: ~azure.ai.projects.dp1.models.RunInputs
         :return: Run. The Run is compatible with MutableMapping
         :rtype: ~azure.ai.projects.dp1.models.Run
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1677,20 +1575,11 @@ class AgentsOperations:
         cls: ClsType[_models.Run] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            if input is _Unset:
-                raise TypeError("missing required argument: input")
-            body = {
-                "agentId": agent_id,
-                "agentModel": agent_model,
-                "input": input,
-                "instructions": instructions,
-                "metadata": metadata,
-                "threadId": thread_id,
-                "toolChoice": tool_choice,
-                "tools": tools,
-                "truncationStrategy": truncation_strategy,
-                "userId": user_id,
-            }
+            if options is _Unset:
+                raise TypeError("missing required argument: options")
+            if inputs is _Unset:
+                raise TypeError("missing required argument: inputs")
+            body = {"inputs": inputs, "options": options}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -1741,49 +1630,20 @@ class AgentsOperations:
     async def stream(
         self,
         *,
-        input: List[_models.ChatMessage],
+        options: _models.AgentConfigurationOptions,
+        inputs: _models.RunInputs,
         content_type: str = "application/json",
-        agent_model: Optional[_models.AgentModel] = None,
-        instructions: Optional[List[_models.DeveloperMessage]] = None,
-        tools: Optional[List[_models.AgentToolDefinition]] = None,
-        tool_choice: Optional[_models.ToolChoiceBehavior] = None,
-        agent_id: Optional[str] = None,
-        thread_id: Optional[str] = None,
-        metadata: Optional[Dict[str, str]] = None,
-        truncation_strategy: Optional[_models.TruncationStrategy] = None,
-        user_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """The most basic operation.
 
-        :keyword input: The list of input messages for the run. Required.
-        :paramtype input: list[~azure.ai.projects.dp1.models.ChatMessage]
+        :keyword options: The options for the agent completing the run. Required.
+        :paramtype options: ~azure.ai.projects.dp1.models.AgentConfigurationOptions
+        :keyword inputs: The inputs for the run. Required.
+        :paramtype inputs: ~azure.ai.projects.dp1.models.RunInputs
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword agent_model: The model definition for this agent. This is optional (not needed) when
-         doing a run using persistent agent. Default value is None.
-        :paramtype agent_model: ~azure.ai.projects.dp1.models.AgentModel
-        :keyword instructions: Instructions provided to guide how this agent operates. Default value is
-         None.
-        :paramtype instructions: list[~azure.ai.projects.dp1.models.DeveloperMessage]
-        :keyword tools: A list of tool definitions available to the agent. Default value is None.
-        :paramtype tools: list[~azure.ai.projects.dp1.models.AgentToolDefinition]
-        :keyword tool_choice: How the agent should choose among provided tools. Default value is None.
-        :paramtype tool_choice: ~azure.ai.projects.dp1.models.ToolChoiceBehavior
-        :keyword agent_id: Unique identifier for the agent responsible for the run. This is optional
-         (not needeed) when doing a run using ephemeral agent. Default value is None.
-        :paramtype agent_id: str
-        :keyword thread_id: Optional identifier for an existing conversation thread. Default value is
-         None.
-        :paramtype thread_id: str
-        :keyword metadata: Optional metadata associated with the run request. Default value is None.
-        :paramtype metadata: dict[str, str]
-        :keyword truncation_strategy: Strategy for truncating messages when input exceeds model limits.
-         Default value is None.
-        :paramtype truncation_strategy: ~azure.ai.projects.dp1.models.TruncationStrategy
-        :keyword user_id: Identifier for the user making the request. Default value is None.
-        :paramtype user_id: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1822,47 +1682,18 @@ class AgentsOperations:
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        input: List[_models.ChatMessage] = _Unset,
-        agent_model: Optional[_models.AgentModel] = None,
-        instructions: Optional[List[_models.DeveloperMessage]] = None,
-        tools: Optional[List[_models.AgentToolDefinition]] = None,
-        tool_choice: Optional[_models.ToolChoiceBehavior] = None,
-        agent_id: Optional[str] = None,
-        thread_id: Optional[str] = None,
-        metadata: Optional[Dict[str, str]] = None,
-        truncation_strategy: Optional[_models.TruncationStrategy] = None,
-        user_id: Optional[str] = None,
+        options: _models.AgentConfigurationOptions = _Unset,
+        inputs: _models.RunInputs = _Unset,
         **kwargs: Any
     ) -> None:
         """The most basic operation.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword input: The list of input messages for the run. Required.
-        :paramtype input: list[~azure.ai.projects.dp1.models.ChatMessage]
-        :keyword agent_model: The model definition for this agent. This is optional (not needed) when
-         doing a run using persistent agent. Default value is None.
-        :paramtype agent_model: ~azure.ai.projects.dp1.models.AgentModel
-        :keyword instructions: Instructions provided to guide how this agent operates. Default value is
-         None.
-        :paramtype instructions: list[~azure.ai.projects.dp1.models.DeveloperMessage]
-        :keyword tools: A list of tool definitions available to the agent. Default value is None.
-        :paramtype tools: list[~azure.ai.projects.dp1.models.AgentToolDefinition]
-        :keyword tool_choice: How the agent should choose among provided tools. Default value is None.
-        :paramtype tool_choice: ~azure.ai.projects.dp1.models.ToolChoiceBehavior
-        :keyword agent_id: Unique identifier for the agent responsible for the run. This is optional
-         (not needeed) when doing a run using ephemeral agent. Default value is None.
-        :paramtype agent_id: str
-        :keyword thread_id: Optional identifier for an existing conversation thread. Default value is
-         None.
-        :paramtype thread_id: str
-        :keyword metadata: Optional metadata associated with the run request. Default value is None.
-        :paramtype metadata: dict[str, str]
-        :keyword truncation_strategy: Strategy for truncating messages when input exceeds model limits.
-         Default value is None.
-        :paramtype truncation_strategy: ~azure.ai.projects.dp1.models.TruncationStrategy
-        :keyword user_id: Identifier for the user making the request. Default value is None.
-        :paramtype user_id: str
+        :keyword options: The options for the agent completing the run. Required.
+        :paramtype options: ~azure.ai.projects.dp1.models.AgentConfigurationOptions
+        :keyword inputs: The inputs for the run. Required.
+        :paramtype inputs: ~azure.ai.projects.dp1.models.RunInputs
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1882,20 +1713,11 @@ class AgentsOperations:
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            if input is _Unset:
-                raise TypeError("missing required argument: input")
-            body = {
-                "agentId": agent_id,
-                "agentModel": agent_model,
-                "input": input,
-                "instructions": instructions,
-                "metadata": metadata,
-                "threadId": thread_id,
-                "toolChoice": tool_choice,
-                "tools": tools,
-                "truncationStrategy": truncation_strategy,
-                "userId": user_id,
-            }
+            if options is _Unset:
+                raise TypeError("missing required argument: options")
+            if inputs is _Unset:
+                raise TypeError("missing required argument: inputs")
+            body = {"inputs": inputs, "options": options}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None

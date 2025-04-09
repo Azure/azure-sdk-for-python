@@ -18,6 +18,7 @@ if TYPE_CHECKING:
 
 from ._models import RunOutputs as RunOutputsGenerated
 
+
 class RunOutputs(RunOutputsGenerated):
     """Fields describing the final run outcome, including status, output messages, and usage.
 

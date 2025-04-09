@@ -28,18 +28,8 @@ class Agent(_model_base.Model):
     :vartype description: str
     :ivar metadata: Arbitrary metadata associated with this agent.
     :vartype metadata: dict[str, str]
-    :ivar name: The name of the agent; used for display purposes and sent to the LLM to identify
-     the agent. Required.
-    :vartype name: str
-    :ivar agent_model: The model definition for this agent. This is optional (not needed) when
-     doing a run using persistent agent.
-    :vartype agent_model: ~azure.ai.projects.dp1.models.AgentModel
-    :ivar instructions: Instructions provided to guide how this agent operates.
-    :vartype instructions: list[~azure.ai.projects.dp1.models.DeveloperMessage]
-    :ivar tools: A list of tool definitions available to the agent.
-    :vartype tools: list[~azure.ai.projects.dp1.models.AgentToolDefinition]
-    :ivar tool_choice: How the agent should choose among provided tools.
-    :vartype tool_choice: ~azure.ai.projects.dp1.models.ToolChoiceBehavior
+    :ivar creation_options: Options that were used to create this agent. Required.
+    :vartype creation_options: ~azure.ai.projects.dp1.models.AgentCreationOptions
     """
 
     agent_id: str = rest_field(name="agentId", visibility=["read"])
@@ -48,17 +38,51 @@ class Agent(_model_base.Model):
     """A description of the agent; used for display purposes and to describe the agent."""
     metadata: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Arbitrary metadata associated with this agent."""
-    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The name of the agent; used for display purposes and sent to the LLM to identify the agent.
-     Required."""
+    creation_options: "_models.AgentCreationOptions" = rest_field(
+        name="creationOptions", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Options that were used to create this agent. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        creation_options: "_models.AgentCreationOptions",
+        description: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentConfigurationOptions(_model_base.Model):
+    """Options used when completing a run.
+
+    :ivar agent_model: The model definition for this agent. This is optional (not needed) when
+     doing a run using persistent agent.
+    :vartype agent_model: ~azure.ai.projects.dp1.models.AgentModel
+    :ivar instructions: Instructions provided to guide how this agent operates.
+    :vartype instructions: str
+    :ivar tools: A list of tool definitions available to the agent.
+    :vartype tools: list[~azure.ai.projects.dp1.models.AgentToolDefinition]
+    :ivar tool_choice: How the agent should choose among provided tools.
+    :vartype tool_choice: ~azure.ai.projects.dp1.models.ToolChoiceBehavior
+    """
+
     agent_model: Optional["_models.AgentModel"] = rest_field(
         name="agentModel", visibility=["read", "create", "update", "delete", "query"]
     )
     """The model definition for this agent. This is optional (not needed) when doing a run using
      persistent agent."""
-    instructions: Optional[List["_models.DeveloperMessage"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    instructions: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Instructions provided to guide how this agent operates."""
     tools: Optional[List["_models.AgentToolDefinition"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -73,13 +97,47 @@ class Agent(_model_base.Model):
     def __init__(
         self,
         *,
-        name: str,
-        description: Optional[str] = None,
-        metadata: Optional[Dict[str, str]] = None,
         agent_model: Optional["_models.AgentModel"] = None,
-        instructions: Optional[List["_models.DeveloperMessage"]] = None,
+        instructions: Optional[str] = None,
         tools: Optional[List["_models.AgentToolDefinition"]] = None,
         tool_choice: Optional["_models.ToolChoiceBehavior"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentCreationOptions(_model_base.Model):
+    """Options used when creating or updating an agent.
+
+    :ivar display_name: The display name of the agent; used for display purposes and sent to the
+     LLM to identify the agent. Required.
+    :vartype display_name: str
+    :ivar configuration_options: Configuation options for the agent. Required.
+    :vartype configuration_options: ~azure.ai.projects.dp1.models.AgentConfigurationOptions
+    """
+
+    display_name: str = rest_field(name="displayName", visibility=["read", "create", "update", "delete", "query"])
+    """The display name of the agent; used for display purposes and sent to the LLM to identify the
+     agent. Required."""
+    configuration_options: "_models.AgentConfigurationOptions" = rest_field(
+        name="configurationOptions", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configuation options for the agent. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        display_name: str,
+        configuration_options: "_models.AgentConfigurationOptions",
     ) -> None: ...
 
     @overload
@@ -109,8 +167,8 @@ class ChatMessage(_model_base.Model):
     :vartype agent_run_id: str
     :ivar thread_id: The thread to which this message belongs. Required.
     :vartype thread_id: str
-    :ivar role: The role of this message's author. Known values are: "user", "agent", "system",
-     "tool", and "developer".
+    :ivar role: The role of this message's author. Required. Known values are: "user", "agent",
+     "system", "tool", and "developer".
     :vartype role: str or ~azure.ai.projects.dp1.models.AuthorRole
     :ivar content: The contents of the message. Required.
     :vartype content: list[~azure.ai.projects.dp1.models.AIContent]
@@ -137,8 +195,8 @@ class ChatMessage(_model_base.Model):
     thread_id: str = rest_field(name="threadId", visibility=["read"])
     """The thread to which this message belongs. Required."""
     role: str = rest_discriminator(name="role", visibility=["read", "create", "update", "delete", "query"])
-    """The role of this message's author. Known values are: \"user\", \"agent\", \"system\", \"tool\",
-     and \"developer\"."""
+    """The role of this message's author. Required. Known values are: \"user\", \"agent\", \"system\",
+     \"tool\", and \"developer\"."""
     content: List["_models.AIContent"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The contents of the message. Required."""
     author_name: Optional[str] = rest_field(
@@ -156,11 +214,11 @@ class ChatMessage(_model_base.Model):
     def __init__(
         self,
         *,
+        role: str,
         content: List["_models.AIContent"],
         user_id: Optional[str] = None,
         agent_id: Optional[str] = None,
         agent_run_id: Optional[str] = None,
-        role: str = None,
         author_name: Optional[str] = None,
         created_at: Optional[int] = None,
         completed_at: Optional[int] = None,
@@ -2617,8 +2675,8 @@ class RunInputs(_model_base.Model):
     :vartype thread_id: str
     :ivar metadata: Optional metadata associated with the run request.
     :vartype metadata: dict[str, str]
-    :ivar truncation_strategy: Strategy for truncating messages when input exceeds model limits.
-    :vartype truncation_strategy: ~azure.ai.projects.dp1.models.TruncationStrategy
+    :ivar options: Optional configuration for run generation.
+    :vartype options: ~azure.ai.projects.dp1.models.RunOptions
     :ivar user_id: Identifier for the user making the request.
     :vartype user_id: str
     """
@@ -2632,10 +2690,8 @@ class RunInputs(_model_base.Model):
     """Optional identifier for an existing conversation thread."""
     metadata: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional metadata associated with the run request."""
-    truncation_strategy: Optional["_models.TruncationStrategy"] = rest_field(
-        name="truncationStrategy", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Strategy for truncating messages when input exceeds model limits."""
+    options: Optional["_models.RunOptions"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional configuration for run generation."""
     user_id: Optional[str] = rest_field(name="userId", visibility=["read", "create", "update", "delete", "query"])
     """Identifier for the user making the request."""
 
@@ -2647,8 +2703,38 @@ class RunInputs(_model_base.Model):
         agent_id: Optional[str] = None,
         thread_id: Optional[str] = None,
         metadata: Optional[Dict[str, str]] = None,
-        truncation_strategy: Optional["_models.TruncationStrategy"] = None,
+        options: Optional["_models.RunOptions"] = None,
         user_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RunOptions(_model_base.Model):
+    """Represents advanced options for controlling agent runs.
+
+    :ivar truncation_strategy: Strategy for truncating messages when input exceeds model limits.
+    :vartype truncation_strategy: ~azure.ai.projects.dp1.models.TruncationStrategy
+    """
+
+    truncation_strategy: Optional["_models.TruncationStrategy"] = rest_field(
+        name="truncationStrategy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Strategy for truncating messages when input exceeds model limits."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        truncation_strategy: Optional["_models.TruncationStrategy"] = None,
     ) -> None: ...
 
     @overload

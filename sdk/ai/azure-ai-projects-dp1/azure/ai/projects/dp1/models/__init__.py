@@ -16,6 +16,8 @@ if TYPE_CHECKING:
 from ._models import (  # type: ignore
     AIContent,
     Agent,
+    AgentConfigurationOptions,
+    AgentCreationOptions,
     AgentMessage,
     AgentModel,
     AgentToolDefinition,
@@ -68,6 +70,7 @@ from ._models import (  # type: ignore
     RequiredToolChoiceBehavior,
     Run,
     RunInputs,
+    RunOptions,
     RunOutputs,
     RunOutputsIncompleteDetails,
     SasCredential,
@@ -104,6 +107,8 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "AIContent",
     "Agent",
+    "AgentConfigurationOptions",
+    "AgentCreationOptions",
     "AgentMessage",
     "AgentModel",
     "AgentToolDefinition",
@@ -156,6 +161,7 @@ __all__ = [
     "RequiredToolChoiceBehavior",
     "Run",
     "RunInputs",
+    "RunOptions",
     "RunOutputs",
     "RunOutputsIncompleteDetails",
     "SasCredential",

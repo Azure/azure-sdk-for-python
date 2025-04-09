@@ -9,7 +9,7 @@ project_client = AIProjectClient(
 
 with project_client:
     run = project_client.agents.run(
-        model_id="gpt-4o", instructions_str="You are helpful assistant", message="Tell me a joke"
+        model_id="gpt-4o", instructions="You are helpful assistant", message="Tell me a joke"
     )
     messages = run.run_outputs.messages
     for text_message in messages.text_messages:
