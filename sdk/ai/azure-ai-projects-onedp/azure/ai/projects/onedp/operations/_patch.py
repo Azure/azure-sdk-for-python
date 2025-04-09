@@ -9,23 +9,316 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import logging
 import inspect
-from typing import List, Optional, Any, Tuple
+from typing import List, Optional, Any, Tuple, Iterable
 from pathlib import Path
+from urllib.parse import urlparse
 from azure.storage.blob import ContainerClient
-
+from azure.core.exceptions import ResourceNotFoundError
+from azure.core.tracing.decorator import distributed_trace
 from ._operations import DatasetsOperations as DatasetsOperationsGenerated
 from ..models._models import (
     DatasetVersion,
     PendingUploadRequest,
     PendingUploadType,
     PendingUploadResponse,
+    Connection
 )
 from ..models._enums import (
     DatasetType,
     AuthenticationType,
+    ConnectionType,
 )
 
 logger = logging.getLogger(__name__)
+
+
+class InferenceOperations:
+
+    def __init__(self, outer_instance: "AIProjectClient") -> None:
+
+        # All returned inference clients will have this application id set on their user-agent.
+        # For more info on user-agent HTTP header, see:
+        # https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy
+        USER_AGENT_APP_ID = "AIProjectClient"
+
+        if hasattr(outer_instance, "_user_agent") and outer_instance._user_agent:
+            # If the calling application has set "user_agent" when constructing the AIProjectClient,
+            # take that value and prepend it to USER_AGENT_APP_ID.
+            self._user_agent = f"{outer_instance._user_agent}-{USER_AGENT_APP_ID}"
+        else:
+            self._user_agent = USER_AGENT_APP_ID
+
+        self._outer_instance = outer_instance
+
+
+    @classmethod
+    def _get_inference_url(cls, input_url: str) -> str:
+        """
+        Converts an input URL in the format:
+        https://<host-name>/<some-path>
+        to:
+        https://<host-name>/api/models
+        """
+        parsed = urlparse(input_url)
+        if parsed.scheme != "https" or not parsed.netloc:
+            raise ValueError("Invalid endpoint URL format. Must be an https URL with a host.")
+        new_url = f"https://{parsed.netloc}/api/models"
+        return new_url
+
+
+    @distributed_trace
+    def get_chat_completions_client(self, **kwargs) -> "ChatCompletionsClient":
+        """Get an authenticated ChatCompletionsClient (from the package azure-ai-inference) to use with 
+        AI models deployed to your AI Foundry Project. Keyword arguments are passed to the constructor of
+        ChatCompletionsClient.
+
+        At least one AI model that supports chat completions must be deployed.
+
+        .. note:: The package `azure-ai-inference` must be installed prior to calling this method.
+
+        :return: An authenticated chat completions client.
+        :rtype: ~azure.ai.inference.ChatCompletionsClient
+
+        :raises ~azure.core.exceptions.ModuleNotFoundError: if the `azure-ai-inference` package
+         is not installed.
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        try:
+            from azure.ai.inference import ChatCompletionsClient
+        except ModuleNotFoundError as e:
+            raise ModuleNotFoundError(
+                "Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'"
+            ) from e
+
+        endpoint = self._get_inference_url(self._outer_instance._endpoint)
+        # Older Inference SDK versions use ml.azure.com as the scope. Make sure to set the correct value here. This
+        # is only relevent of course if EntraID auth is used.
+        credential_scopes = ["https://cognitiveservices.azure.com/.default"]
+
+        client = ChatCompletionsClient(
+            endpoint=endpoint,
+            credential=self._outer_instance._config.credential,
+            credential_scopes=credential_scopes,
+            user_agent=kwargs.pop("user_agent", self._user_agent),
+            **kwargs,
+        )
+
+        return client
+
+
+    @distributed_trace
+    def get_embeddings_client(self, **kwargs) -> "EmbeddingsClient":
+        """Get an authenticated EmbeddingsClient (from the package azure-ai-inference) to use with 
+        AI models deployed to your AI Foundry Project. Keyword arguments are passed to the constructor of
+        ChatCompletionsClient.
+
+        At least one AI model that supports text embeddings must be deployed.
+
+        .. note:: The package `azure-ai-inference` must be installed prior to calling this method.
+
+        :return: An authenticated Embeddings client.
+        :rtype: ~azure.ai.inference.EmbeddingsClient
+
+        :raises ~azure.core.exceptions.ModuleNotFoundError: if the `azure-ai-inference` package
+         is not installed.
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        try:
+            from azure.ai.inference import EmbeddingsClient
+        except ModuleNotFoundError as e:
+            raise ModuleNotFoundError(
+                "Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'"
+            ) from e
+
+        endpoint = self._get_inference_url(self._outer_instance._endpoint)
+        # Older Inference SDK versions use ml.azure.com as the scope. Make sure to set the correct value here. This
+        # is only relevent of course if EntraID auth is used.
+        credential_scopes = ["https://cognitiveservices.azure.com/.default"]
+
+        client = EmbeddingsClient(
+            endpoint=endpoint,
+            credential=self._outer_instance._config.credential,
+            credential_scopes=credential_scopes,
+            user_agent=kwargs.pop("user_agent", self._user_agent),
+            **kwargs,
+        )
+
+        return client
+
+
+    @distributed_trace
+    def get_image_embeddings_client(self, **kwargs) -> "ImageEmbeddingsClient":
+        """Get an authenticated ImageEmbeddingsClient (from the package azure-ai-inference) to use with 
+        AI models deployed to your AI Foundry Project. Keyword arguments are passed to the constructor of
+        ChatCompletionsClient.
+
+        At least one AI model that supports image embeddings must be deployed.
+
+        .. note:: The package `azure-ai-inference` must be installed prior to calling this method.
+
+        :return: An authenticated Image Embeddings client.
+        :rtype: ~azure.ai.inference.ImageEmbeddingsClient
+
+        :raises ~azure.core.exceptions.ModuleNotFoundError: if the `azure-ai-inference` package
+         is not installed.
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        try:
+            from azure.ai.inference import ImageEmbeddingsClient
+        except ModuleNotFoundError as e:
+            raise ModuleNotFoundError(
+                "Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'"
+            ) from e
+
+        endpoint = self._get_inference_url(self._outer_instance._endpoint)
+        # Older Inference SDK versions use ml.azure.com as the scope. Make sure to set the correct value here. This
+        # is only relevent of course if EntraID auth is used.
+        credential_scopes = ["https://cognitiveservices.azure.com/.default"]
+
+        client = ImageEmbeddingsClient(
+            endpoint=endpoint,
+            credential=self._outer_instance._config.credential,
+            credential_scopes=credential_scopes,
+            user_agent=kwargs.pop("user_agent", self._user_agent),
+            **kwargs,
+        )
+
+        return client
+
+
+    @distributed_trace
+    def get_azure_openai_client(
+        self, *, api_version: Optional[str] = None, connection_name: Optional[str] = None, **kwargs
+    ) -> "AzureOpenAI":
+        """Get an authenticated AzureOpenAI client (from the `openai` package) for the default
+        Azure OpenAI connection (if `connection_name` is not specificed), or from the Azure OpenAI
+        resource given by its connection name.
+
+        .. note:: The package `openai` must be installed prior to calling this method.
+
+        :keyword api_version: The Azure OpenAI api-version to use when creating the client. Optional.
+         See "Data plane - Inference" row in the table at
+         https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs. If this keyword
+         is not specified, you must set the environment variable `OPENAI_API_VERSION` instead.
+        :paramtype api_version: str
+        :keyword connection_name: The name of a connection to an Azure OpenAI resource in your AI Foundry project.
+         resource. Optional. If not provided, the default Azure OpenAI connection will be used.
+        :type connection_name: str
+
+        :return: An authenticated AzureOpenAI client
+        :rtype: ~openai.AzureOpenAI
+
+        :raises ~azure.core.exceptions.ResourceNotFoundError: if an Azure OpenAI connection
+         does not exist.
+        :raises ~azure.core.exceptions.ModuleNotFoundError: if the `openai` package
+         is not installed.
+        :raises ValueError: if the connection name is an empty string.
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        if connection_name is not None and not connection_name:
+            raise ValueError("Connection name cannot be empty")
+
+        try:
+            from openai import AzureOpenAI
+        except ModuleNotFoundError as e:
+            raise ModuleNotFoundError(
+                "OpenAI SDK is not installed. Please install it using 'pip install openai'"
+            ) from e
+
+        if connection_name:
+            connection = self._outer_instance.connections.get(name=connection_name, **kwargs)
+        else:
+            connection = self._outer_instance.connections.get_default(connection_type=ConnectionType.AZURE_OPEN_AI, **kwargs)
+            logger.debug("[InferenceOperations.get_azure_openai_client] connection = %s", str(connection))
+
+        azure_endpoint = (
+            connection.target[:-1]
+            if connection.target.endswith("/")
+            else connection.target
+        )
+
+        if connection.auth_type == AuthenticationType.API_KEY:
+
+            # For api-key authentication, we need to make another service call to get the connection with credentials.
+            connection_with_credentials = self._outer_instance.connections.get_with_credentials(name=connection.name, **kwargs)
+
+            api_key: Optional[str] = None
+            if hasattr(connection_with_credentials.properties, "credentials"):
+                if hasattr(connection_with_credentials.properties.credentials, "key"):  # type: ignore
+                    api_key = connection_with_credentials.properties.credentials.key  # type: ignore
+
+            logger.debug(
+                "[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI using API key authentication"
+            )
+            client = AzureOpenAI(
+                api_key=api_key,
+                azure_endpoint=azure_endpoint,
+                api_version=api_version
+            )
+
+        elif connection.auth_type == AuthenticationType.ENTRA_ID:
+
+            logger.debug(
+                "[InferenceOperations.get_azure_openai_client] " + "Creating AzureOpenAI using Entra ID authentication"
+            )
+
+            try:
+                from azure.identity import get_bearer_token_provider
+            except ModuleNotFoundError as e:
+                raise ModuleNotFoundError(
+                    "azure.identity package not installed. Please install it using 'pip install azure.identity'"
+                ) from e
+
+            client = AzureOpenAI(
+                # See https://learn.microsoft.com/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider # pylint: disable=line-too-long
+                azure_ad_token_provider=get_bearer_token_provider(
+                    self._outer_instance._config.credential, "https://cognitiveservices.azure.com/.default"
+                ),
+                azure_endpoint=azure_endpoint,
+                api_version=api_version,
+            )
+
+        else:
+            raise ValueError("Unsupported authentication type {connection.auth_type}")
+
+        return client
+
+
+class TelemetryOperations:
+
+    _connection_string: Optional[str] = None
+
+    def __init__(self, outer_instance: "AIProjectClient") -> None:
+        self._outer_instance = outer_instance
+
+    @distributed_trace
+    def get_connection_string(self) -> str:
+        """Get the Application Insights connection string associated with the Project's Application Insights resource.
+
+        :return: The Application Insights connection string if a the resource was enabled for the Project.
+        :rtype: str
+        :raises ~azure.core.exceptions.ResourceNotFoundError: An Application Insights resource was not
+            enabled for this project.
+        """
+        if not self._connection_string:
+
+            # TODO: Test what happens here when there is no AppInsights connection. Does this throw or just returns an empty list?
+            connections: Iterable[Connection] = self._outer_instance.connections.list(
+                connection_type=ConnectionType.APPLICATION_INSIGHTS
+            )
+
+            # Read AppInsights connection string from the first connection in the list.
+            for connection in connections:
+                self._connection_string = connection.metadata.get("connection_string")
+                break
+
+            if not self._connection_string:
+                raise ResourceNotFoundError("Application Insights resource was not enabled for this Project.")
+
+        return self._connection_string
 
 
 class DatasetsOperations(DatasetsOperationsGenerated):
@@ -232,6 +525,8 @@ class DatasetsOperations(DatasetsOperationsGenerated):
 
 
 __all__: List[str] = [
+    "InferenceOperations",
+    "TelemetryOperations",
     "DatasetsOperations"
 ]  # Add all objects you want publicly available to users at this package level
 
