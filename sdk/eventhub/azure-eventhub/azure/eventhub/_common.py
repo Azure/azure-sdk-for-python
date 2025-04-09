@@ -226,7 +226,13 @@ class EventData:
 
     @classmethod
     def from_bytes(cls, message: bytes) -> "EventData":
+        """
+        Creates an EventData object from a raw bytes message payload.
 
+        :param bytes message: A raw bytes message.
+        :return: An EventData object.
+        :rtype: ~azure.eventhub.EventData
+        """
         amqp_message = decode_payload(memoryview(message))
         event_data = cls(body="")
         event_data._message = amqp_message
