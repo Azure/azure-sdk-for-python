@@ -3,7 +3,7 @@
 azure-identity~=1.17.0
 azure-mgmt-eventhub<=10.1.0
 azure-mgmt-resource==20.0.0
-aiohttp>=3.10.10
+aiohttp>=3.11.0
 websocket-client
 ../azure-eventhub-checkpointstoreblob-aio
 ../azure-eventhub-checkpointstoreblob
