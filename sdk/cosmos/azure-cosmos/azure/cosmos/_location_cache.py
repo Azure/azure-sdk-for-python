@@ -84,25 +84,13 @@ def add_endpoint_if_preferred(endpoint: str, preferred_endpoints: Set[str], endp
     return False
 
 def _get_health_check_endpoints(
-        account_regional_routing_contexts_by_location,
         regional_routing_contexts) -> Set[str]:
     # only check 2 read regions and 2 write regions
     region_count = 2
     # should use the endpoints in the order returned from gateway and only the ones specified in preferred locations
     endpoints: Set[str] = set()
-    i = 0
-    preferred_endpoints = {context.get_primary() for context in regional_routing_contexts}
-
-    for regional_routing_context in account_regional_routing_contexts_by_location.values():
-        region_added = add_endpoint_if_preferred(
-            regional_routing_context.get_primary(),
-            preferred_endpoints,
-            endpoints)
-
-        if region_added:
-            i += 1
-        if i == region_count:
-            break
+    for regional_routing_contexts in regional_routing_contexts[:region_count]:
+        endpoints.add(regional_routing_contexts.get_primary())
 
     return endpoints
 
@@ -329,7 +317,8 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                         regional_endpoint = endpoints_by_location[location] if location in endpoints_by_location \
                             else None
                         if regional_endpoint:
-                            if self.is_endpoint_unavailable(regional_endpoint.get_primary(), expected_available_operation):
+                            if self.is_endpoint_unavailable(regional_endpoint.get_primary(),
+                                                            expected_available_operation):
                                 unavailable_endpoints.append(regional_endpoint)
                             else:
                                 regional_endpoints.append(regional_endpoint)
@@ -365,15 +354,9 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
     def endpoints_to_health_check(self) -> Set[str]:
         # only check 2 read regions and 2 write regions
         # add read endpoints from gateway and in preferred locations
-        health_check_endpoints = _get_health_check_endpoints(
-            self.account_read_regional_routing_contexts_by_location,
-            self.read_regional_routing_contexts
-        )
+        health_check_endpoints = _get_health_check_endpoints(self.read_regional_routing_contexts)
         # add write endpoints from gateway and in preferred locations
-        health_check_endpoints.union(_get_health_check_endpoints(
-            self.account_write_regional_routing_contexts_by_location,
-            self.write_regional_routing_contexts
-        ))
+        health_check_endpoints.union(_get_health_check_endpoints(self.write_regional_routing_contexts))
 
         return health_check_endpoints
 
