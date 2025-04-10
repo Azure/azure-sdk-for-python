@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from functools import cached_property
 from logging import getLogger, Formatter
 from typing import Dict, List, cast
 
@@ -26,11 +25,8 @@ from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.trace import set_tracer_provider
-from opentelemetry.util._importlib_metadata import (
-    EntryPoint,
-    distributions,
-    entry_points,
-)
+from opentelemetry.util._importlib_metadata import entry_points
+
 
 from azure.core.settings import settings
 from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
