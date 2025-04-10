@@ -794,11 +794,17 @@ class RedTeam():
                     api_version=None,
                     model="gpt-4"
                 )
-                scoring_target = AzureRAIServiceTarget(  # Using AzureRAIServiceTarget instead of OpenAIChatTarget
-                    client=self.generated_rai_client,
-                    api_version=None,
-                    model="gpt-4"
+                scoring_target = OpenAIChatTarget(
+                    model_name=os.environ.get("UNSAFE_LLM_MODEL_NAME", "gpt-4o-unsafe"),
+                    endpoint=os.environ.get("UNSAFE_LLM_ENDPOINT", ""),
+                    use_aad_auth=True,
+                    api_version=os.environ.get("UNSAFE_LLM_API_VERSION", "2025-01-01-preview"),
                 )
+                # scoring_target = AzureRAIServiceTarget(  # Using AzureRAIServiceTarget instead of OpenAIChatTarget
+                #     client=self.generated_rai_client,
+                #     api_version=None,
+                #     model="gpt-4"
+                # )
                 main_orchestrator = CrescendoOrchestrator(
                     objective_target=chat_target,
                     adversarial_chat=adversarial_target,
@@ -1512,7 +1518,7 @@ class RedTeam():
         """Process a red team scan with the given orchestrator, converter, and prompts.
         
         :param target: The target model or function to scan
-        :param call_orchestrator: Function to call to create an orchestrator
+        :param call_orchestrator: Function to call to create an orchestrator - DEPRECATED, will be determined by strategy
         :param strategy: The attack strategy to use
         :param risk_category: The risk category to evaluate
         :param all_prompts: List of prompts to use for the scan
@@ -1527,6 +1533,19 @@ class RedTeam():
         task_key = f"{strategy_name}_{risk_category.value}_attack"
         self.task_statuses[task_key] = TASK_STATUS["RUNNING"]
         
+        # Determine which orchestrator to use based on the strategy
+        # This is the key improvement - we select the right orchestrator here
+        # instead of relying on the passed-in orchestrator
+        is_crescendo = False
+        if isinstance(strategy, list):
+            is_crescendo = AttackStrategy.Crescendo in strategy
+        else:
+            is_crescendo = strategy == AttackStrategy.Crescendo
+            
+        # Choose the right orchestrator function based on the strategy
+        orchestrator_func = self._crescendo_orchestrator if is_crescendo else self._prompt_sending_orchestrator
+        self.logger.debug(f"Selected {'Crescendo' if is_crescendo else 'PromptSending'} orchestrator for {strategy_name}")
+        
         try:
             start_time = time.time()
             print(f"▶️ Starting task: {strategy_name} strategy for {risk_category.value} risk category")
@@ -1535,7 +1554,8 @@ class RedTeam():
             converter = self._get_converter_for_strategy(strategy)
             try:
                 self.logger.debug(f"Calling orchestrator for {strategy_name} strategy")
-                orchestrator = await call_orchestrator(self.chat_target, all_prompts, converter, strategy_name, risk_category.value, timeout)
+                # Use the orchestrator function that was determined by the strategy
+                orchestrator = await orchestrator_func(self.chat_target, all_prompts, converter, strategy_name, risk_category.value, timeout)
             except PyritException as e:
                 log_error(self.logger, f"Error calling orchestrator for {strategy_name} strategy", e)
                 self.logger.debug(f"Orchestrator error for {strategy_name}/{risk_category.value}: {str(e)}")

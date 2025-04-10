@@ -40,7 +40,8 @@ ATTACK_STRATEGY_COMPLEXITY_MAP = {
     str(AttackStrategy.Tense.value): "moderate",
     str(AttackStrategy.MODERATE.value): "moderate",
     str(AttackStrategy.DIFFICULT.value): "difficult",
-    str(AttackStrategy.Jailbreak.value): "easy"
+    str(AttackStrategy.Jailbreak.value): "easy",
+    str(AttackStrategy.Crescendo.value): "difficult"  # Mark Crescendo as DIFFICULT
 }
 
 # Mapping of risk categories to their evaluators
