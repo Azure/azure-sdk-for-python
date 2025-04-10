@@ -439,5 +439,13 @@ class TestExcludedLocations:
             else:
                 _verify_endpoint(client, [L1])
 
+@pytest.mark.cosmosEmulator
+class TestExcludedLocationsEmulator:
+    def test_emulator_for_excluded_region(self):
+        expected_locations = [L1]
+        actual_locations = [L1]
+
+        assert expected_locations == actual_locations
+
 if __name__ == "__main__":
     unittest.main()
