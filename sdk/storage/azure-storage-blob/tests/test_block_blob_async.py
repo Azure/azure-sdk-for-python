@@ -123,7 +123,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         async with aiohttp.ClientSession() as session:
             # Creates file share
             await session.put(
-                url=base_url + "?restype=share",
+                url=base_url,
                 headers=self._build_base_file_share_headers(bearer_token_string),
                 params={'restype': 'share'}
             )
