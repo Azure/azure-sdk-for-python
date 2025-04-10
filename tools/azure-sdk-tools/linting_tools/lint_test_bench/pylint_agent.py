@@ -7,6 +7,7 @@ import uuid
 from azure.identity import get_bearer_token_provider
 from pathlib import Path
 from datetime import datetime
+from azure.ai.evaluation import EvaluationClient
 
 token_provider = get_bearer_token_provider(
     DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"
@@ -213,6 +214,19 @@ def run_pylint(file_path: str, logger) -> dict:
             'file': file_path
         }
 
+def evaluate_fixes(original_content, fixed_content):
+    """
+    Use azure-ai-evaluation to compare the original and fixed content.
+    Args:
+        original_content (str): The original file content.
+        fixed_content (str): The fixed file content.
+    Returns:
+        dict: Evaluation results.
+    """
+    client = EvaluationClient()
+    evaluation_result = client.compare(original_content, fixed_content)
+    return evaluation_result
+
 # Example usage
 if __name__ == "__main__":
     ensure_directories()
@@ -239,6 +253,11 @@ if __name__ == "__main__":
                 result = fix_file(str(file_path), logger)
                 logger.debug("Running pylint on fixed file...")
                 fixed_pylint = run_pylint(str(result['fixed_file']), logger)
+
+                # Evaluate the fixes
+                evaluation_result = evaluate_fixes(result['original_content'], result['fixed_content'])
+                logger.debug(f"Evaluation Result: {evaluation_result}")
+
                 # Update file_path for next iteration
                 logger.debug("-----"*80)
                 file_path = str(result['fixed_file'])
