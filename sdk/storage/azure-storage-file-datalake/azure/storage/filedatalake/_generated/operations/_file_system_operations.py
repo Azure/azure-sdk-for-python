@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -50,7 +51,7 @@ def build_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     resource: Literal["filesystem"] = kwargs.pop("resource", _params.pop("resource", "filesystem"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -91,7 +92,7 @@ def build_set_properties_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     resource: Literal["filesystem"] = kwargs.pop("resource", _params.pop("resource", "filesystem"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -129,7 +130,7 @@ def build_get_properties_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     resource: Literal["filesystem"] = kwargs.pop("resource", _params.pop("resource", "filesystem"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -167,7 +168,7 @@ def build_delete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     resource: Literal["filesystem"] = kwargs.pop("resource", _params.pop("resource", "filesystem"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -212,7 +213,7 @@ def build_list_paths_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     resource: Literal["filesystem"] = kwargs.pop("resource", _params.pop("resource", "filesystem"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -264,7 +265,7 @@ def build_list_blob_hierarchy_segment_request(  # pylint: disable=name-too-long
 
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -331,7 +332,6 @@ class FileSystemOperations:
         properties: Optional[str] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """Create FileSystem.
 
         Create a FileSystem rooted at the specified location. If the FileSystem already exists, the
@@ -343,7 +343,7 @@ class FileSystemOperations:
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param properties: Optional. User-defined properties to be stored with the filesystem, in the
@@ -418,12 +418,11 @@ class FileSystemOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """Set FileSystem Properties.
 
         Set properties for the FileSystem.  This operation supports conditional HTTP requests.  For
         more information, see `Specifying Conditional Headers for Blob Service Operations
-        <https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
+        <https://learn.microsoft.com/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
 
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
@@ -431,7 +430,7 @@ class FileSystemOperations:
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param properties: Optional. User-defined properties to be stored with the filesystem, in the
@@ -508,7 +507,6 @@ class FileSystemOperations:
     def get_properties(  # pylint: disable=inconsistent-return-statements
         self, request_id_parameter: Optional[str] = None, timeout: Optional[int] = None, **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """Get FileSystem Properties.
 
         All system and user-defined filesystem properties are specified in the response headers.
@@ -519,7 +517,7 @@ class FileSystemOperations:
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :return: None or the result of cls(response)
@@ -584,7 +582,6 @@ class FileSystemOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
-        # pylint: disable=line-too-long
         """Delete FileSystem.
 
         Marks the FileSystem for deletion.  When a FileSystem is deleted, a FileSystem with the same
@@ -595,7 +592,7 @@ class FileSystemOperations:
         directories within the filesystem, will fail with status code 404 (Not Found) while the
         filesystem is being deleted. This operation supports conditional HTTP requests.  For more
         information, see `Specifying Conditional Headers for Blob Service Operations
-        <https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
+        <https://learn.microsoft.com/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
 
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
@@ -603,7 +600,7 @@ class FileSystemOperations:
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param modified_access_conditions: Parameter group. Default value is None.
@@ -676,7 +673,6 @@ class FileSystemOperations:
         upn: Optional[bool] = None,
         **kwargs: Any
     ) -> _models.PathList:
-        # pylint: disable=line-too-long
         """List Paths.
 
         List FileSystem paths and their properties.
@@ -689,7 +685,7 @@ class FileSystemOperations:
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param continuation: Optional.  When deleting a directory, the number of paths that are deleted
@@ -785,7 +781,6 @@ class FileSystemOperations:
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
     ) -> _models.ListBlobsHierarchySegmentResponse:
-        # pylint: disable=line-too-long
         """The List Blobs operation returns a list of the blobs under the specified container.
 
         :param prefix: Filters results to filesystems within the specified prefix. Default value is
@@ -815,7 +810,7 @@ class FileSystemOperations:
         :type showonly: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
