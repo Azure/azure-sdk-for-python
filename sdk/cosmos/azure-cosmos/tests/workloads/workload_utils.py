@@ -17,9 +17,9 @@ async def upsert_item_concurrently(container, num_upserts):
     await asyncio.gather(*tasks)
 
 
-async def read_item_concurrently(container, num_upserts):
+async def read_item_concurrently(container, num_reads):
     tasks = []
-    for _ in range(num_upserts):
+    for _ in range(num_reads):
         item = get_random_item()
         tasks.append(container.read_item(item["id"], item["id"], etag=None, match_condition=None))
     await asyncio.gather(*tasks)
