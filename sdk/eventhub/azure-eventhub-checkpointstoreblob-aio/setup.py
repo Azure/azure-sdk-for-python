@@ -71,7 +71,7 @@ setup(
     package_data={
         'pytyped': ['py.typed'],
     },
-    python_requires=">=3.8",
+    python_requires=">=3.9",
     install_requires=[
         # dependencies for the vendored storage blob
         "azure-core>=1.30.0",
