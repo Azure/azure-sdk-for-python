@@ -241,7 +241,7 @@ def _write_output(path: Union[str, os.PathLike], data_dict: Any) -> None:
         p = p / DEFAULT_EVALUATION_RESULTS_FILE_NAME
 
     with open(p, "w", encoding=DefaultOpenEncoding.WRITE) as f:
-        json.dump(data_dict, f)
+        json.dump(data_dict, f, ensure_ascii=False)
 
     print(f'Evaluation results saved to "{p.resolve()}".\n')
 

@@ -90,6 +90,10 @@ def questions_answers_file():
 def questions_answers_basic_file():
     return _get_file("questions_answers_basic.jsonl")
 
+@pytest.fixture
+def questions_answers_korean_file():
+    return _get_file("questions_answers_korean.jsonl")
+
 
 def _target_fn(query):
     """An example target function."""
@@ -851,3 +855,22 @@ class TestEvaluate:
             )
 
         assert "Evaluation target failed to produce any results. Please check the logs at " in str(exc_info.value)
+    
+    def test_evaluate_korean_characters_result(self, questions_answers_korean_file):
+        output_path = "eval_test_results_korean.jsonl"
+
+        result = evaluate(
+            data=questions_answers_korean_file,
+            evaluators={"g": F1ScoreEvaluator()},
+            output_path=output_path,
+        )
+
+        assert result is not None
+
+        with open(questions_answers_korean_file, "r", encoding="utf-8") as f:
+            first_line = f.readline()
+            data_from_file = json.loads(first_line)
+
+        assert result["rows"][0]["inputs.query"] == data_from_file["query"]
+
+        os.remove(output_path)
