@@ -22,14 +22,14 @@ USAGE:
         where `your-unique-resource-name` is your globally unique AOAI resource name,
         and `your-deployment-name` is your AI Model deployment name.
         For example: https://your-unique-host.openai.azure.com/openai/deployments/gpt-4o
-    2) AZURE_OPENAI_CHAT_KEY - Your model key (a 32-character string). Keep it secret.
+    2) AZURE_OPENAI_CHAT_KEY - Your model key. Keep it secret.
 
     For use_azure_openai_endpoint = False, set these two environment variables before running the sample:
     1) AZURE_AI_CHAT_ENDPOINT - Your endpoint URL, in the form 
         https://<your-deployment-name>.<your-azure-region>.models.ai.azure.com
         where `your-deployment-name` is your unique AI Model deployment name, and
         `your-azure-region` is the Azure region where your model is deployed.
-    2) AZURE_AI_CHAT_KEY - Your model key (a 32-character string). Keep it secret.
+    2) AZURE_AI_CHAT_KEY - Your model key. Keep it secret.
 """
 import sys
 
@@ -120,8 +120,8 @@ def sample_chat_completions_streaming_with_tools():
 
     # Make a streaming chat completions call asking for flight information, while providing a tool to handle the request
     messages = [
-        SystemMessage(content="You an assistant that helps users find flight information."),
-        UserMessage(content="What is the next flights from Seattle to Miami?"),
+        SystemMessage("You an assistant that helps users find flight information."),
+        UserMessage("What is the next flights from Seattle to Miami?"),
     ]
 
     response = client.complete(messages=messages, tools=[flight_info], stream=True)
@@ -165,14 +165,17 @@ def sample_chat_completions_streaming_with_tools():
     print(f"Function response = {function_response}")
 
     # Append the function response as a tool message to the chat history
-    messages.append(ToolMessage(tool_call_id=tool_call_id, content=function_response))
+    messages.append(ToolMessage(function_response, tool_call_id=tool_call_id))
 
     # With the additional tools information on hand, get another streaming response from the model
     response = client.complete(messages=messages, tools=[flight_info], stream=True)
 
     print("Model response = ", end="")
     for update in response:
-        print(update.choices[0].delta.content or "", end="", flush=True)
+        if update.choices and update.choices[0].delta:
+            print(update.choices[0].delta.content or "", end="", flush=True)
+        if update.usage:
+            print(f"\n\nToken usage: {update.usage}")
 
     client.close()
 

@@ -15,8 +15,11 @@ USAGE:
 
     pip install azure-ai-projects azure-identity
 
-    Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
+    Set these environment variables with your own values:
+    1) PROJECT_CONNECTION_STRING - The project connection string, as found in the overview page of your
+       Azure AI Foundry project.
+    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
+       the "Models + endpoints" tab in your Azure AI Foundry project.
 """
 
 import os
@@ -29,7 +32,6 @@ from azure.ai.projects.models import (
     ThreadRun,
 )
 from azure.ai.projects.models import FunctionTool, ToolSet
-from azure.ai.projects.operations._operations import AgentsOperations
 from azure.identity import DefaultAzureCredential
 from user_functions import user_functions
 
@@ -56,7 +58,7 @@ with project_client:
     message = project_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, what's the time?")
     print(f"Created message, message ID {message.id}")
 
-    with project_client.agents.create_stream(thread_id=thread.id, assistant_id=agent.id) as stream:
+    with project_client.agents.create_stream(thread_id=thread.id, agent_id=agent.id) as stream:
 
         for event_type, event_data, _ in stream:
 

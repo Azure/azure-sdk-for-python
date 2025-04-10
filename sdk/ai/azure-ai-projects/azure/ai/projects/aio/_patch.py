@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -6,8 +7,6 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-import asyncio
-import concurrent.futures
 import uuid
 from os import PathLike
 from pathlib import Path
@@ -15,7 +14,6 @@ from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
 from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
-from azure.core.credentials import TokenCredential
 from azure.core.pipeline import policies
 
 from .._serialization import Deserializer, Serializer
@@ -27,7 +25,7 @@ from .operations import (
     EvaluationsOperations,
     TelemetryOperations,
 )
-from .operations._patch import InferenceOperations
+from .operations._patch import _SyncCredentialWrapper, InferenceOperations
 
 if TYPE_CHECKING:
     from azure.core.credentials import AccessToken
@@ -66,6 +64,8 @@ class AIProjectClient(
         kwargs1 = kwargs.copy()
         kwargs2 = kwargs.copy()
         kwargs3 = kwargs.copy()
+
+        self._user_agent: Optional[str] = kwargs.get("user_agent", None)
 
         # For getting AppInsights connection string from the AppInsights resource.
         # The AppInsights resource URL is not known at this point. We need to get it from the
@@ -310,39 +310,6 @@ class AIProjectClient(
 __all__: List[str] = [
     "AIProjectClient",
 ]  # Add all objects you want publicly available to users at this package level
-
-
-class _SyncCredentialWrapper(TokenCredential):
-    """
-    The class, synchronizing AsyncTokenCredential.
-
-    :param async_credential: The async credential to be synchronized.
-    :type async_credential: ~azure.core.credentials_async.AsyncTokenCredential
-    """
-
-    def __init__(self, async_credential: "AsyncTokenCredential"):
-        self._async_credential = async_credential
-
-    def get_token(
-        self,
-        *scopes: str,
-        claims: Optional[str] = None,
-        tenant_id: Optional[str] = None,
-        enable_cae: bool = False,
-        **kwargs: Any,
-    ) -> "AccessToken":
-
-        pool = concurrent.futures.ThreadPoolExecutor()
-        return pool.submit(
-            asyncio.run,
-            self._async_credential.get_token(
-                *scopes,
-                claims=claims,
-                tenant_id=tenant_id,
-                enable_cae=enable_cae,
-                **kwargs,
-            ),
-        ).result()
 
 
 def patch_sdk():

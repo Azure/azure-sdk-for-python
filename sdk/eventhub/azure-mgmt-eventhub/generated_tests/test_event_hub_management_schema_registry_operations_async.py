@@ -21,11 +21,11 @@ class TestEventHubManagementSchemaRegistryOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_namespace(self, resource_group):
+    async def test_schema_registry_list_by_namespace(self, resource_group):
         response = self.client.schema_registry.list_by_namespace(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            api_version="2022-10-01-preview",
+            api_version="2024-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestEventHubManagementSchemaRegistryOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_schema_registry_create_or_update(self, resource_group):
         response = await self.client.schema_registry.create_or_update(
             resource_group_name=resource_group.name,
             namespace_name="str",
@@ -58,7 +58,7 @@ class TestEventHubManagementSchemaRegistryOperationsAsync(AzureMgmtRecordedTestC
                 "type": "str",
                 "updatedAtUtc": "2020-02-20 00:00:00",
             },
-            api_version="2022-10-01-preview",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself
@@ -66,12 +66,12 @@ class TestEventHubManagementSchemaRegistryOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_schema_registry_delete(self, resource_group):
         response = await self.client.schema_registry.delete(
             resource_group_name=resource_group.name,
             namespace_name="str",
             schema_group_name="str",
-            api_version="2022-10-01-preview",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself
@@ -79,12 +79,12 @@ class TestEventHubManagementSchemaRegistryOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_schema_registry_get(self, resource_group):
         response = await self.client.schema_registry.get(
             resource_group_name=resource_group.name,
             namespace_name="str",
             schema_group_name="str",
-            api_version="2022-10-01-preview",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself

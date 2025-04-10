@@ -20,12 +20,12 @@ class TestDataBoxManagementServiceOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_available_skus_by_resource_group(self, resource_group):
+    def test_service_list_available_skus_by_resource_group(self, resource_group):
         response = self.client.service.list_available_skus_by_resource_group(
             resource_group_name=resource_group.name,
             location="str",
             available_sku_request={"country": "str", "location": "str", "transferType": "str", "skuNames": ["str"]},
-            api_version="2022-12-01",
+            api_version="2025-02-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestDataBoxManagementServiceOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_validate_address(self, resource_group):
+    def test_service_validate_address(self, resource_group):
         response = self.client.service.validate_address(
             location="str",
             validate_address={
@@ -53,9 +53,10 @@ class TestDataBoxManagementServiceOperations(AzureMgmtRecordedTestCase):
                     "zipExtendedCode": "str",
                 },
                 "validationType": "ValidateAddress",
+                "model": "str",
                 "transportPreferences": {"preferredShipmentType": "str", "isUpdated": bool},
             },
-            api_version="2022-12-01",
+            api_version="2025-02-01",
         )
 
         # please add some check logic here by yourself
@@ -63,7 +64,7 @@ class TestDataBoxManagementServiceOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_validate_inputs_by_resource_group(self, resource_group):
+    def test_service_validate_inputs_by_resource_group(self, resource_group):
         response = self.client.service.validate_inputs_by_resource_group(
             resource_group_name=resource_group.name,
             location="str",
@@ -71,7 +72,7 @@ class TestDataBoxManagementServiceOperations(AzureMgmtRecordedTestCase):
                 "individualRequestDetails": ["validation_input_request"],
                 "validationCategory": "JobCreationValidation",
             },
-            api_version="2022-12-01",
+            api_version="2025-02-01",
         )
 
         # please add some check logic here by yourself
@@ -79,14 +80,14 @@ class TestDataBoxManagementServiceOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_validate_inputs(self, resource_group):
+    def test_service_validate_inputs(self, resource_group):
         response = self.client.service.validate_inputs(
             location="str",
             validation_request={
                 "individualRequestDetails": ["validation_input_request"],
                 "validationCategory": "JobCreationValidation",
             },
-            api_version="2022-12-01",
+            api_version="2025-02-01",
         )
 
         # please add some check logic here by yourself
@@ -94,15 +95,16 @@ class TestDataBoxManagementServiceOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_region_configuration(self, resource_group):
+    def test_service_region_configuration(self, resource_group):
         response = self.client.service.region_configuration(
             location="str",
             region_configuration_request={
-                "datacenterAddressRequest": {"skuName": "str", "storageLocation": "str"},
+                "datacenterAddressRequest": {"skuName": "str", "storageLocation": "str", "model": "str"},
+                "deviceCapabilityRequest": {"model": "str", "skuName": "str"},
                 "scheduleAvailabilityRequest": "schedule_availability_request",
-                "transportAvailabilityRequest": {"skuName": "str"},
+                "transportAvailabilityRequest": {"model": "str", "skuName": "str"},
             },
-            api_version="2022-12-01",
+            api_version="2025-02-01",
         )
 
         # please add some check logic here by yourself
@@ -110,16 +112,17 @@ class TestDataBoxManagementServiceOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_region_configuration_by_resource_group(self, resource_group):
+    def test_service_region_configuration_by_resource_group(self, resource_group):
         response = self.client.service.region_configuration_by_resource_group(
             resource_group_name=resource_group.name,
             location="str",
             region_configuration_request={
-                "datacenterAddressRequest": {"skuName": "str", "storageLocation": "str"},
+                "datacenterAddressRequest": {"skuName": "str", "storageLocation": "str", "model": "str"},
+                "deviceCapabilityRequest": {"model": "str", "skuName": "str"},
                 "scheduleAvailabilityRequest": "schedule_availability_request",
-                "transportAvailabilityRequest": {"skuName": "str"},
+                "transportAvailabilityRequest": {"model": "str", "skuName": "str"},
             },
-            api_version="2022-12-01",
+            api_version="2025-02-01",
         )
 
         # please add some check logic here by yourself

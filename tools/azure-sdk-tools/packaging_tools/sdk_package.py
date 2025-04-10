@@ -5,8 +5,11 @@ import logging
 import os
 from pathlib import Path
 from subprocess import check_call
+from typing import Any
+import multiprocessing
+from functools import partial
 
-from .package_utils import create_package, change_log_generate, extract_breaking_change
+from .package_utils import create_package, change_log_generate, extract_breaking_change, get_version_info, check_file
 
 logging.basicConfig(
     stream=sys.stdout,
@@ -14,6 +17,11 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %X",
 )
 _LOGGER = logging.getLogger(__name__)
+
+
+def execute_func_with_timeout(func, timeout: int = 900) -> Any:
+    """Execute function with timeout"""
+    return multiprocessing.Pool(processes=1).apply_async(func).get(timeout)
 
 
 def main(generate_input, generate_output):
@@ -27,15 +35,20 @@ def main(generate_input, generate_output):
         package_name = package["packageName"]
         prefolder = package["path"][0]
         # Changelog
-        last_version = ["first release"]
+        last_version, last_stable_release = get_version_info(package_name, package["tagIsStable"])
+        change_log_func = partial(
+            change_log_generate,
+            package_name,
+            last_version,
+            package["tagIsStable"],
+            last_stable_release=last_stable_release,
+            prefolder=prefolder,
+            is_multiapi=package["isMultiapi"],
+        )
         try:
-            md_output = change_log_generate(
-                package_name,
-                last_version,
-                package["tagIsStable"],
-                prefolder=prefolder,
-                is_multiapi=package["isMultiapi"],
-            )
+            md_output = execute_func_with_timeout(change_log_func)
+        except multiprocessing.TimeoutError:
+            md_output = "change log generation was timeout!!!"
         except:
             md_output = "change log generation failed!!!"
         package["changelog"] = {
@@ -43,16 +56,11 @@ def main(generate_input, generate_output):
             "hasBreakingChange": "Breaking Changes" in md_output,
             "breakingChangeItems": extract_breaking_change(md_output),
         }
-        package["version"] = last_version[-1]
+        package["version"] = last_version
 
         _LOGGER.info(f"[PACKAGE]({package_name})[CHANGELOG]:{md_output}")
-        # Built package
-        create_package(prefolder, package_name)
-        folder_name = package["path"][0]
-        dist_path = Path(sdk_folder, folder_name, package_name, "dist")
-        package["artifacts"] = [str(dist_path / package_file) for package_file in os.listdir(dist_path)]
-        package["result"] = "succeeded"
         # Generate api stub File
+        folder_name = package["path"][0]
         try:
             package_path = Path(sdk_folder, folder_name, package_name)
             check_call(
@@ -74,15 +82,28 @@ def main(generate_input, generate_output):
                     package["apiViewArtifact"] = str(Path(package_path, file))
         except Exception as e:
             _LOGGER.debug(f"Fail to generate ApiView token file for {package_name}: {e}")
+
+        # check generated files and update package["version"]
+        if package_name.startswith("azure-mgmt-"):
+            try:
+                check_file(package)
+            except Exception as e:
+                _LOGGER.error(f"Fail to check generated files for {package_name}: {e}")
+
+        # Built package
+        create_package(prefolder, package_name)
+        dist_path = Path(sdk_folder, folder_name, package_name, "dist")
+        package["artifacts"] = [str(dist_path / package_file) for package_file in os.listdir(dist_path)]
+        for artifact in package["artifacts"]:
+            if ".whl" in artifact:
+                package["language"] = "Python"
+                break
         # Installation package
         package["installInstructions"] = {
             "full": "You can install the use using pip install of the artifacts.",
             "lite": f"pip install {package_name}",
         }
-        for artifact in package["artifacts"]:
-            if ".whl" in artifact:
-                package["language"] = "Python"
-                break
+        package["result"] = "succeeded"
         package["packageFolder"] = package["path"][0]
         result["packages"].append(package)
 

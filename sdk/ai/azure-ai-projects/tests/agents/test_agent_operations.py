@@ -2,12 +2,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Optional, Dict
+from typing import Any, Iterator, List, MutableMapping, Optional, Dict
 
 import json
 import os
 import pytest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, Mock, patch
 
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
@@ -20,7 +20,28 @@ from azure.ai.projects.models import (
     SubmitToolOutputsAction,
     SubmitToolOutputsDetails,
     ToolSet,
+    ToolOutput,
 )
+
+from azure.ai.projects.operations import AgentsOperations
+from user_functions import user_functions
+
+
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+
+
+def read_file(file_name: str) -> str:
+    with open(os.path.join(os.path.dirname(__file__), "assets", f"{file_name}.txt"), "r") as file:
+        return file.read()
+
+
+main_stream_response = read_file("main_stream_response")
+fetch_current_datetime_and_weather_stream_response = read_file("fetch_current_datetime_and_weather_stream_response")
+send_email_stream_response = read_file("send_email_stream_response")
+
+
+def convert_to_byte_iterator(main_stream_response: str) -> Iterator[bytes]:
+    yield main_stream_response.encode()
 
 
 def function1():
@@ -90,7 +111,7 @@ class TestAgentsOperations:
             assert "tools" not in data, "tools must not be in data"
         mock_pipeline_run.reset_mock()
 
-    def _get_agent_json(self, name: str, assistant_id: str, tool_set: Optional[ToolSet]) -> Dict[str, Any]:
+    def _get_agent_json(self, name: str, agent_id: str, tool_set: Optional[ToolSet]) -> Dict[str, Any]:
         """Read in the agent JSON, so that we can assume service returnred it."""
         with open(
             os.path.join(os.path.dirname(os.path.dirname(__file__)), "test_data", "agent.json"),
@@ -99,7 +120,7 @@ class TestAgentsOperations:
             agent_dict: Dict[str, Any] = json.load(fp)
         assert isinstance(agent_dict, dict)
         agent_dict["name"] = name
-        agent_dict["id"] = assistant_id
+        agent_dict["id"] = agent_id
         if tool_set is not None:
             agent_dict["tool_resources"] = tool_set.resources.as_dict()
             agent_dict["tools"] = tool_set.definitions
@@ -257,10 +278,10 @@ class TestAgentsOperations:
             )
             self._assert_pipeline_and_reset(mock_pipeline._pipeline.run, tool_set=toolset2)
             # Check that the new agents are called with correct tool sets.
-            project_client.agents.create_and_process_run(thread_id="some_thread_id", assistant_id=agent1.id)
+            project_client.agents.create_and_process_run(thread_id="some_thread_id", agent_id=agent1.id)
             self._assert_tool_call(project_client.agents.submit_tool_outputs_to_run, "run123", toolset1)
 
-            project_client.agents.create_and_process_run(thread_id="some_thread_id", assistant_id=agent2.id)
+            project_client.agents.create_and_process_run(thread_id="some_thread_id", agent_id=agent2.id)
             self._assert_tool_call(project_client.agents.submit_tool_outputs_to_run, "run456", toolset2)
             # Check the contents of a toolset
             self._assert_toolset_dict(project_client, agent1.id, toolset1)
@@ -372,7 +393,7 @@ class TestAgentsOperations:
 
             # Create run with new tool set, which also can be none.
             project_client.agents.create_and_process_run(
-                thread_id="some_thread_id", assistant_id=agent1.id, toolset=toolset2
+                thread_id="some_thread_id", agent_id=agent1.id, toolset=toolset2
             )
             if toolset2 is not None:
                 self._assert_tool_call(project_client.agents.submit_tool_outputs_to_run, "run123", toolset2)
@@ -423,7 +444,7 @@ class TestAgentsOperations:
                 toolset=toolset,
             )
             # Create run with new tool set, which also can be none.
-            project_client.agents.create_and_process_run(thread_id="some_thread_id", assistant_id=agent1.id)
+            project_client.agents.create_and_process_run(thread_id="some_thread_id", agent_id=agent1.id)
             self._assert_tool_call(project_client.agents.submit_tool_outputs_to_run, "run123", toolset)
 
     def _assert_stream_call(self, submit_tool_mock: MagicMock, run_id: str, tool_set: Optional[ToolSet]) -> None:
@@ -485,7 +506,55 @@ class TestAgentsOperations:
                 toolset=toolset,
             )
             # Create run with new tool set, which also can be none.
-            run = project_client.agents.create_and_process_run(thread_id="some_thread_id", assistant_id=agent1.id)
+            run = project_client.agents.create_and_process_run(thread_id="some_thread_id", agent_id=agent1.id)
             self._assert_tool_call(project_client.agents.submit_tool_outputs_to_run, "run123", toolset)
             project_client.agents._handle_submit_tool_outputs(run)
             self._assert_stream_call(project_client.agents.submit_tool_outputs_to_stream, "run123", toolset)
+
+
+class TestIntegrationAgentsOperations:
+
+    def submit_tool_outputs_to_run(
+        self, thread_id: str, run_id: str, *, tool_outputs: List[ToolOutput], stream_parameter: bool, stream: bool
+    ) -> Iterator[bytes]:
+        assert thread_id == "thread_01"
+        assert run_id == "run_01"
+        assert stream_parameter == True
+        assert stream == True
+        if (
+            len(tool_outputs) == 2
+            and tool_outputs[0]["tool_call_id"] == "call_01"
+            and tool_outputs[1]["tool_call_id"] == "call_02"
+        ):
+            return convert_to_byte_iterator(fetch_current_datetime_and_weather_stream_response)
+        elif len(tool_outputs) == 1 and tool_outputs[0]["tool_call_id"] == "call_03":
+            return convert_to_byte_iterator(send_email_stream_response)
+        raise ValueError("Unexpected tool outputs")
+
+    @pytest.mark.asyncio
+    @patch(
+        "azure.ai.projects.operations._operations.AgentsOperations.create_run",
+        return_value=convert_to_byte_iterator(main_stream_response),
+    )
+    @patch("azure.ai.projects.operations._operations.AgentsOperations.__init__")
+    @patch(
+        "azure.ai.projects.operations._operations.AgentsOperations.submit_tool_outputs_to_run",
+    )
+    async def test_create_stream_with_tool_calls(self, mock_submit_tool_outputs_to_run: Mock, *args):
+        mock_submit_tool_outputs_to_run.side_effect = self.submit_tool_outputs_to_run
+        functions = FunctionTool(user_functions)
+        toolset = ToolSet()
+        toolset.add(functions)
+
+        operation = AgentsOperations()
+        operation._toolset = {"asst_01": toolset}
+        count = 0
+
+        with operation.create_stream(thread_id="thread_id", agent_id="asst_01") as stream:
+            for _ in stream:
+                count += 1
+        assert count == (
+            main_stream_response.count("event:")
+            + fetch_current_datetime_and_weather_stream_response.count("event:")
+            + send_email_stream_response.count("event:")
+        )

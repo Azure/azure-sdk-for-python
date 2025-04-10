@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -12,6 +12,7 @@ import sys
 from typing import Any, Callable, Dict, IO, Iterable, List, Optional, TYPE_CHECKING, TypeVar, Union, overload
 import urllib.parse
 
+from azure.core import PipelineClient
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -29,8 +30,9 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import _model_base, models as _models
+from .._configuration import AIProjectClientConfiguration
 from .._model_base import SdkJSONEncoder, _deserialize
-from .._serialization import Serializer
+from .._serialization import Deserializer, Serializer
 from .._vendor import FileType, prepare_multipart_form_data
 
 if sys.version_info >= (3, 9):
@@ -105,7 +107,7 @@ def build_agents_list_agents_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_get_agent_request(assistant_id: str, **kwargs: Any) -> HttpRequest:
+def build_agents_get_agent_request(agent_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -115,7 +117,7 @@ def build_agents_get_agent_request(assistant_id: str, **kwargs: Any) -> HttpRequ
     # Construct URL
     _url = "/assistants/{assistantId}"
     path_format_arguments = {
-        "assistantId": _SERIALIZER.url("assistant_id", assistant_id, "str"),
+        "assistantId": _SERIALIZER.url("agent_id", agent_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -129,7 +131,7 @@ def build_agents_get_agent_request(assistant_id: str, **kwargs: Any) -> HttpRequ
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_update_agent_request(assistant_id: str, **kwargs: Any) -> HttpRequest:
+def build_agents_update_agent_request(agent_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -140,7 +142,7 @@ def build_agents_update_agent_request(assistant_id: str, **kwargs: Any) -> HttpR
     # Construct URL
     _url = "/assistants/{assistantId}"
     path_format_arguments = {
-        "assistantId": _SERIALIZER.url("assistant_id", assistant_id, "str"),
+        "assistantId": _SERIALIZER.url("agent_id", agent_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -156,7 +158,7 @@ def build_agents_update_agent_request(assistant_id: str, **kwargs: Any) -> HttpR
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_delete_agent_request(assistant_id: str, **kwargs: Any) -> HttpRequest:
+def build_agents_delete_agent_request(agent_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -166,7 +168,7 @@ def build_agents_delete_agent_request(assistant_id: str, **kwargs: Any) -> HttpR
     # Construct URL
     _url = "/assistants/{assistantId}"
     path_format_arguments = {
-        "assistantId": _SERIALIZER.url("assistant_id", assistant_id, "str"),
+        "assistantId": _SERIALIZER.url("agent_id", agent_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1525,24 +1527,10 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
     def __init__(self, *args, **kwargs):
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @overload
-    def create_agent(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Agent:
-        """Creates a new agent.
-
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: Agent. The Agent is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Agent
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
     def create_agent(
@@ -1603,6 +1591,20 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
+        :return: Agent. The Agent is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Agent
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_agent(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Agent:
+        """Creates a new agent.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :return: Agent. The Agent is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1856,11 +1858,11 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_agent(self, assistant_id: str, **kwargs: Any) -> _models.Agent:
+    def get_agent(self, agent_id: str, **kwargs: Any) -> _models.Agent:
         """Retrieves an existing agent.
 
-        :param assistant_id: Identifier of the agent. Required.
-        :type assistant_id: str
+        :param agent_id: Identifier of the agent. Required.
+        :type agent_id: str
         :return: Agent. The Agent is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1879,7 +1881,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[_models.Agent] = kwargs.pop("cls", None)
 
         _request = build_agents_get_agent_request(
-            assistant_id=assistant_id,
+            agent_id=agent_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -1922,26 +1924,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     def update_agent(
-        self, assistant_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Agent:
-        """Modifies an existing agent.
-
-        :param assistant_id: The ID of the agent to modify. Required.
-        :type assistant_id: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: Agent. The Agent is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Agent
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def update_agent(
         self,
-        assistant_id: str,
+        agent_id: str,
         *,
         content_type: str = "application/json",
         model: Optional[str] = None,
@@ -1958,8 +1942,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.Agent:
         """Modifies an existing agent.
 
-        :param assistant_id: The ID of the agent to modify. Required.
-        :type assistant_id: str
+        :param agent_id: The ID of the agent to modify. Required.
+        :type agent_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2009,12 +1993,30 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     def update_agent(
-        self, assistant_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, agent_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Agent:
         """Modifies an existing agent.
 
-        :param assistant_id: The ID of the agent to modify. Required.
-        :type assistant_id: str
+        :param agent_id: The ID of the agent to modify. Required.
+        :type agent_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Agent. The Agent is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Agent
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update_agent(
+        self, agent_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Agent:
+        """Modifies an existing agent.
+
+        :param agent_id: The ID of the agent to modify. Required.
+        :type agent_id: str
         :param body: Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -2028,7 +2030,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def update_agent(
         self,
-        assistant_id: str,
+        agent_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         model: Optional[str] = None,
@@ -2045,8 +2047,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.Agent:
         """Modifies an existing agent.
 
-        :param assistant_id: The ID of the agent to modify. Required.
-        :type assistant_id: str
+        :param agent_id: The ID of the agent to modify. Required.
+        :type agent_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
         :keyword model: The ID of the model to use. Default value is None.
@@ -2128,7 +2130,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_agents_update_agent_request(
-            assistant_id=assistant_id,
+            agent_id=agent_id,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -2172,11 +2174,11 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def delete_agent(self, assistant_id: str, **kwargs: Any) -> _models.AgentDeletionStatus:
+    def delete_agent(self, agent_id: str, **kwargs: Any) -> _models.AgentDeletionStatus:
         """Deletes an agent.
 
-        :param assistant_id: Identifier of the agent. Required.
-        :type assistant_id: str
+        :param agent_id: Identifier of the agent. Required.
+        :type agent_id: str
         :return: AgentDeletionStatus. The AgentDeletionStatus is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentDeletionStatus
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2195,7 +2197,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[_models.AgentDeletionStatus] = kwargs.pop("cls", None)
 
         _request = build_agents_delete_agent_request(
-            assistant_id=assistant_id,
+            agent_id=agent_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2238,22 +2240,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     def create_thread(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentThread:
-        """Creates a new thread. Threads contain messages and can be run by agents.
-
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentThread. The AgentThread is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentThread
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create_thread(
         self,
         *,
         content_type: str = "application/json",
@@ -2281,6 +2267,22 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
+        :return: AgentThread. The AgentThread is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentThread
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_thread(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.AgentThread:
+        """Creates a new thread. Threads contain messages and can be run by agents.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :return: AgentThread. The AgentThread is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentThread
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2468,24 +2470,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     def update_thread(
-        self, thread_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentThread:
-        """Modifies an existing thread.
-
-        :param thread_id: The ID of the thread to modify. Required.
-        :type thread_id: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentThread. The AgentThread is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentThread
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def update_thread(
         self,
         thread_id: str,
         *,
@@ -2512,6 +2496,24 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
+        :return: AgentThread. The AgentThread is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentThread
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update_thread(
+        self, thread_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.AgentThread:
+        """Modifies an existing thread.
+
+        :param thread_id: The ID of the thread to modify. Required.
+        :type thread_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :return: AgentThread. The AgentThread is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentThread
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2701,24 +2703,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     def create_message(
-        self, thread_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ThreadMessage:
-        """Creates a new message on a specified thread.
-
-        :param thread_id: Identifier of the thread. Required.
-        :type thread_id: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ThreadMessage. The ThreadMessage is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ThreadMessage
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create_message(
         self,
         thread_id: str,
         *,
@@ -2757,6 +2741,24 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
+        :return: ThreadMessage. The ThreadMessage is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ThreadMessage
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_message(
+        self, thread_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ThreadMessage:
+        """Creates a new message on a specified thread.
+
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :return: ThreadMessage. The ThreadMessage is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.ThreadMessage
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3064,26 +3066,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     def update_message(
-        self, thread_id: str, message_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ThreadMessage:
-        """Modifies an existing message on an existing thread.
-
-        :param thread_id: Identifier of the thread. Required.
-        :type thread_id: str
-        :param message_id: Identifier of the message. Required.
-        :type message_id: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ThreadMessage. The ThreadMessage is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ThreadMessage
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def update_message(
         self,
         thread_id: str,
         message_id: str,
@@ -3106,6 +3088,26 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
+        :return: ThreadMessage. The ThreadMessage is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ThreadMessage
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update_message(
+        self, thread_id: str, message_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ThreadMessage:
+        """Modifies an existing message on an existing thread.
+
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :param message_id: Identifier of the message. Required.
+        :type message_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :return: ThreadMessage. The ThreadMessage is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.ThreadMessage
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3231,37 +3233,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     def create_run(
         self,
         thread_id: str,
-        body: JSON,
         *,
-        include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.ThreadRun:
-        """Creates a new run for an agent thread.
-
-        :param thread_id: Identifier of the thread. Required.
-        :type thread_id: str
-        :param body: Required.
-        :type body: JSON
-        :keyword include: A list of additional fields to include in the response.
-         Currently the only supported value is
-         ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
-         content. Default value is None.
-        :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ThreadRun
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create_run(
-        self,
-        thread_id: str,
-        *,
-        assistant_id: str,
+        agent_id: str,
         include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
         content_type: str = "application/json",
         model: Optional[str] = None,
@@ -3285,8 +3258,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
-        :keyword assistant_id: The ID of the agent that should run the thread. Required.
-        :paramtype assistant_id: str
+        :keyword agent_id: The ID of the agent that should run the thread. Required.
+        :paramtype agent_id: str
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
@@ -3373,6 +3346,35 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     def create_run(
         self,
         thread_id: str,
+        body: JSON,
+        *,
+        include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ThreadRun:
+        """Creates a new run for an agent thread.
+
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword include: A list of additional fields to include in the response.
+         Currently the only supported value is
+         ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
+         content. Default value is None.
+        :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ThreadRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_run(
+        self,
+        thread_id: str,
         body: IO[bytes],
         *,
         include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
@@ -3404,7 +3406,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         thread_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        assistant_id: str = _Unset,
+        agent_id: str = _Unset,
         include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
         model: Optional[str] = None,
         instructions: Optional[str] = None,
@@ -3429,8 +3431,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type thread_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword assistant_id: The ID of the agent that should run the thread. Required.
-        :paramtype assistant_id: str
+        :keyword agent_id: The ID of the agent that should run the thread. Required.
+        :paramtype agent_id: str
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
@@ -3524,12 +3526,12 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[_models.ThreadRun] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            if assistant_id is _Unset:
-                raise TypeError("missing required argument: assistant_id")
+            if agent_id is _Unset:
+                raise TypeError("missing required argument: agent_id")
             body = {
                 "additional_instructions": additional_instructions,
                 "additional_messages": additional_messages,
-                "assistant_id": assistant_id,
+                "assistant_id": agent_id,
                 "instructions": instructions,
                 "max_completion_tokens": max_completion_tokens,
                 "max_prompt_tokens": max_prompt_tokens,
@@ -3762,26 +3764,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     def update_run(
-        self, thread_id: str, run_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ThreadRun:
-        """Modifies an existing thread run.
-
-        :param thread_id: Identifier of the thread. Required.
-        :type thread_id: str
-        :param run_id: Identifier of the run. Required.
-        :type run_id: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ThreadRun
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def update_run(
         self,
         thread_id: str,
         run_id: str,
@@ -3804,6 +3786,26 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
+        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ThreadRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update_run(
+        self, thread_id: str, run_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ThreadRun:
+        """Modifies an existing thread run.
+
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :param run_id: Identifier of the run. Required.
+        :type run_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3927,28 +3929,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     def submit_tool_outputs_to_run(
-        self, thread_id: str, run_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ThreadRun:
-        """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
-        outputs will have a status of 'requires_action' with a required_action.type of
-        'submit_tool_outputs'.
-
-        :param thread_id: Identifier of the thread. Required.
-        :type thread_id: str
-        :param run_id: Identifier of the run. Required.
-        :type run_id: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ThreadRun
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def submit_tool_outputs_to_run(
         self,
         thread_id: str,
         run_id: str,
@@ -3974,6 +3954,28 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :keyword stream_parameter: If true, returns a stream of events that happen during the Run as
          server-sent events, terminating when the run enters a terminal state. Default value is None.
         :paramtype stream_parameter: bool
+        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ThreadRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def submit_tool_outputs_to_run(
+        self, thread_id: str, run_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ThreadRun:
+        """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
+        outputs will have a status of 'requires_action' with a required_action.type of
+        'submit_tool_outputs'.
+
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :param run_id: Identifier of the run. Required.
+        :type run_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4172,25 +4174,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     def create_thread_and_run(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ThreadRun:
-        """Creates a new agent thread and immediately starts a run using that new thread.
-
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ThreadRun
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create_thread_and_run(
         self,
         *,
-        assistant_id: str,
+        agent_id: str,
         content_type: str = "application/json",
         thread: Optional[_models.AgentThreadCreationOptions] = None,
         model: Optional[str] = None,
@@ -4211,8 +4197,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.ThreadRun:
         """Creates a new agent thread and immediately starts a run using that new thread.
 
-        :keyword assistant_id: The ID of the agent for which the thread should be created. Required.
-        :paramtype assistant_id: str
+        :keyword agent_id: The ID of the agent for which the thread should be created. Required.
+        :paramtype agent_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4291,6 +4277,22 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     def create_thread_and_run(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ThreadRun:
+        """Creates a new agent thread and immediately starts a run using that new thread.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ThreadRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_thread_and_run(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ThreadRun:
         """Creates a new agent thread and immediately starts a run using that new thread.
@@ -4310,7 +4312,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        assistant_id: str = _Unset,
+        agent_id: str = _Unset,
         thread: Optional[_models.AgentThreadCreationOptions] = None,
         model: Optional[str] = None,
         instructions: Optional[str] = None,
@@ -4332,8 +4334,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword assistant_id: The ID of the agent for which the thread should be created. Required.
-        :paramtype assistant_id: str
+        :keyword agent_id: The ID of the agent for which the thread should be created. Required.
+        :paramtype agent_id: str
         :keyword thread: The details used to create the new thread. If no thread is provided, an empty
          one will be created. Default value is None.
         :paramtype thread: ~azure.ai.projects.models.AgentThreadCreationOptions
@@ -4421,10 +4423,10 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[_models.ThreadRun] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            if assistant_id is _Unset:
-                raise TypeError("missing required argument: assistant_id")
+            if agent_id is _Unset:
+                raise TypeError("missing required argument: agent_id")
             body = {
-                "assistant_id": assistant_id,
+                "assistant_id": agent_id,
                 "instructions": instructions,
                 "max_completion_tokens": max_completion_tokens,
                 "max_prompt_tokens": max_prompt_tokens,
@@ -4753,17 +4755,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    def upload_file(self, body: JSON, **kwargs: Any) -> _models.OpenAIFile:
-        """Uploads a file for use by other operations.
-
-        :param body: Required.
-        :type body: JSON
-        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.OpenAIFile
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
     def upload_file(
         self, *, file: FileType, purpose: Union[str, _models.FilePurpose], filename: Optional[str] = None, **kwargs: Any
     ) -> _models.OpenAIFile:
@@ -4778,6 +4769,17 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype purpose: str or ~azure.ai.projects.models.FilePurpose
         :keyword filename: The name of the file. Default value is None.
         :paramtype filename: str
+        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.OpenAIFile
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def upload_file(self, body: JSON, **kwargs: Any) -> _models.OpenAIFile:
+        """Uploads a file for use by other operations.
+
+        :param body: Required.
+        :type body: JSON
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5166,22 +5168,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     def create_vector_store(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.VectorStore:
-        """Creates a vector store.
-
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: VectorStore. The VectorStore is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.VectorStore
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create_vector_store(
         self,
         *,
         content_type: str = "application/json",
@@ -5216,6 +5202,22 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
+        :return: VectorStore. The VectorStore is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.VectorStore
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_vector_store(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.VectorStore:
+        """Creates a vector store.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :return: VectorStore. The VectorStore is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5417,24 +5419,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     def modify_vector_store(
-        self, vector_store_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.VectorStore:
-        """The ID of the vector store to modify.
-
-        :param vector_store_id: Identifier of the vector store. Required.
-        :type vector_store_id: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: VectorStore. The VectorStore is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.VectorStore
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def modify_vector_store(
         self,
         vector_store_id: str,
         *,
@@ -5460,6 +5444,24 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
+        :return: VectorStore. The VectorStore is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.VectorStore
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def modify_vector_store(
+        self, vector_store_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.VectorStore:
+        """The ID of the vector store to modify.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :return: VectorStore. The VectorStore is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5749,30 +5751,12 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     def create_vector_store_file(
-        self, vector_store_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.VectorStoreFile:
-        """Create a vector store file by attaching a file to a vector store.
-
-        :param vector_store_id: Identifier of the vector store. Required.
-        :type vector_store_id: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.VectorStoreFile
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create_vector_store_file(
         self,
         vector_store_id: str,
         *,
         content_type: str = "application/json",
         file_id: Optional[str] = None,
-        data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
+        data_source: Optional[_models.VectorStoreDataSource] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         **kwargs: Any
     ) -> _models.VectorStoreFile:
@@ -5785,11 +5769,29 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype content_type: str
         :keyword file_id: Identifier of the file. Default value is None.
         :paramtype file_id: str
-        :keyword data_sources: Azure asset ID. Default value is None.
-        :paramtype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
+        :keyword data_source: Azure asset ID. Default value is None.
+        :paramtype data_source: ~azure.ai.projects.models.VectorStoreDataSource
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
         :paramtype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyRequest
+        :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.VectorStoreFile
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_vector_store_file(
+        self, vector_store_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.VectorStoreFile:
+        """Create a vector store file by attaching a file to a vector store.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.VectorStoreFile
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5820,7 +5822,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         file_id: Optional[str] = None,
-        data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
+        data_source: Optional[_models.VectorStoreDataSource] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         **kwargs: Any
     ) -> _models.VectorStoreFile:
@@ -5832,8 +5834,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type body: JSON or IO[bytes]
         :keyword file_id: Identifier of the file. Default value is None.
         :paramtype file_id: str
-        :keyword data_sources: Azure asset ID. Default value is None.
-        :paramtype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
+        :keyword data_source: Azure asset ID. Default value is None.
+        :paramtype data_source: ~azure.ai.projects.models.VectorStoreDataSource
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
         :paramtype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyRequest
@@ -5856,7 +5858,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[_models.VectorStoreFile] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            body = {"chunking_strategy": chunking_strategy, "data_sources": data_sources, "file_id": file_id}
+            body = {"chunking_strategy": chunking_strategy, "data_source": data_source, "file_id": file_id}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -6052,24 +6054,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     def create_vector_store_file_batch(
-        self, vector_store_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.VectorStoreFileBatch:
-        """Create a vector store file batch.
-
-        :param vector_store_id: Identifier of the vector store. Required.
-        :type vector_store_id: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.VectorStoreFileBatch
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create_vector_store_file_batch(
         self,
         vector_store_id: str,
         *,
@@ -6093,6 +6077,24 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
         :paramtype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyRequest
+        :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.VectorStoreFileBatch
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_vector_store_file_batch(
+        self, vector_store_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.VectorStoreFileBatch:
+        """Create a vector store file batch.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.VectorStoreFileBatch
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6470,10 +6472,10 @@ class ConnectionsOperations:
 
     def __init__(self, *args, **kwargs):
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
     def _get_workspace(self, **kwargs: Any) -> _models._models.GetWorkspaceResponse:
@@ -6551,7 +6553,8 @@ class ConnectionsOperations:
         """List the details of all the connections (not including their credentials).
 
         :keyword category: Category of the workspace connection. Known values are: "AzureOpenAI",
-         "Serverless", "AzureBlob", "AIServices", and "CognitiveSearch". Default value is None.
+         "Serverless", "AzureBlob", "AIServices", "CognitiveSearch", "ApiKey", "CustomKeys", and
+         "CognitiveService". Default value is None.
         :paramtype category: str or ~azure.ai.projects.models.ConnectionType
         :keyword include_all: Indicates whether to list datastores. Service default: do not list
          datastores. Default value is None.
@@ -6690,11 +6693,11 @@ class ConnectionsOperations:
 
     @overload
     def _get_connection_with_secrets(
-        self, connection_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, connection_name: str, *, ignored: str, content_type: str = "application/json", **kwargs: Any
     ) -> _models._models.GetConnectionResponse: ...
     @overload
     def _get_connection_with_secrets(
-        self, connection_name: str, *, ignored: str, content_type: str = "application/json", **kwargs: Any
+        self, connection_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models._models.GetConnectionResponse: ...
     @overload
     def _get_connection_with_secrets(
@@ -6802,16 +6805,15 @@ class TelemetryOperations:
 
     def __init__(self, *args, **kwargs):
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
     def _get_app_insights(
         self, app_insights_resource_url: str, **kwargs: Any
     ) -> _models._models.GetAppInsightsResponse:
-        # pylint: disable=line-too-long
         """Gets the properties of the specified Application Insights resource.
 
         :param app_insights_resource_url: The AppInsights Azure resource Url. It should have the
@@ -6893,10 +6895,10 @@ class EvaluationsOperations:
 
     def __init__(self, *args, **kwargs):
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
     def get(self, id: str, **kwargs: Any) -> _models.Evaluation:

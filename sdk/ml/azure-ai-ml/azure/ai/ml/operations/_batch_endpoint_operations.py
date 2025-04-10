@@ -252,7 +252,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_activity(ops_logger, "BatchEndpoint.Invoke", ActivityType.PUBLICAPI)
-    def invoke(  # pylint: disable=too-many-locals, too-many-branches, too-many-statements
+    def invoke(  # pylint: disable=too-many-statements
         self,
         endpoint_name: str,
         *,
@@ -349,7 +349,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
             PARAMS_OVERRIDE_KEY: params_override,
         }
 
-        batch_job = BatchJobSchema(context=context).load(data={})  # pylint: disable=no-member
+        batch_job = BatchJobSchema(context=context).load(data={})
         # update output datastore to arm id if needed
         # TODO: Unify datastore name -> arm id logic, TASK: 1104172
         request = {}

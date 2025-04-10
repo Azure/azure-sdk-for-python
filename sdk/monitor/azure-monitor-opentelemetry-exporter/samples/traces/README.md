@@ -197,7 +197,7 @@ $ python sample_jaeger.py
 
 ### Azure AppConfig Add Config Setting
 
-The following sample assumes that you have setup an Azure App Configuration [Store](https://docs.microsoft.com/azure/azure-app-configuration/quickstart-python).
+The following sample assumes that you have setup an Azure App Configuration [Store](https://learn.microsoft.com/azure/azure-app-configuration/quickstart-python).
 
 * Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
 
@@ -214,7 +214,7 @@ $ python sample_app_config.py
 
 ### Azure Communication Chat Create Client/Thread
 
-The following sample assumes that you have setup an Azure Communication Services [resource](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource).
+The following sample assumes that you have setup an Azure Communication Services [resource](https://learn.microsoft.com/azure/communication-services/quickstarts/create-communication-resource).
 
 * Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
 
@@ -233,7 +233,7 @@ $ python sample_comm_chat.py
 
 ### Azure Communication Phone Numbers List Purchased Numbers
 
-The following sample assumes that you have setup an Azure Communication Services [resource](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource).
+The following sample assumes that you have setup an Azure Communication Services [resource](https://learn.microsoft.com/azure/communication-services/quickstarts/create-communication-resource).
 
 * Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
 
@@ -250,7 +250,7 @@ $ python sample_comm_phone.py
 
 ### Azure Communication SMS Send Message
 
-The following sample assumes that you have setup an Azure Communication Services [resource](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource).
+The following sample assumes that you have setup an Azure Communication Services [resource](https://learn.microsoft.com/azure/communication-services/quickstarts/create-communication-resource).
 
 * Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
 
@@ -267,7 +267,7 @@ $ python sample_comm_sms.py
 
 ### Azure CosmosDb Create Db/Container
 
-The following sample assumes that you have setup Azure CosmosDb [account](https://docs.microsoft.com/azure/cosmos-db/sql/create-cosmosdb-resources-portal).
+The following sample assumes that you have setup Azure CosmosDb [account](https://learn.microsoft.com/azure/cosmos-db/sql/create-cosmosdb-resources-portal).
 
 * Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
 * Update `ACCOUNT_URI` environment variable
@@ -286,7 +286,7 @@ $ python sample_cosmos.py
 
 ### Azure EventHub Send EventData
 
-The following sample assumes that you have setup an Azure EventHubs namespace and [EventHub](https://docs.microsoft.com/azure/event-hubs/event-hubs-create).
+The following sample assumes that you have setup an Azure EventHubs namespace and [EventHub](https://learn.microsoft.com/azure/event-hubs/event-hubs-create).
 
 * Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
 * Update `EVENT_HUB_CONN_STR` environment variable
@@ -305,7 +305,7 @@ $ python sample_event_hub.py
 
 ### Azure EventHub Blob Storage Checkpoint Store
 
-The following sample assumes that you have setup an Azure EventHubs namespace, [EventHub](https://docs.microsoft.com/azure/event-hubs/event-hubs-create) and Azure Blob [storage](https://docs.microsoft.com/azure/storage/blobs/storage-quickstart-blobs-portal).
+The following sample assumes that you have setup an Azure EventHubs namespace, [EventHub](https://learn.microsoft.com/azure/event-hubs/event-hubs-create) and Azure Blob [storage](https://learn.microsoft.com/azure/storage/blobs/storage-quickstart-blobs-portal).
 
 * Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
 * Update `EVENT_HUB_CONN_STR` environment variable
@@ -325,7 +325,7 @@ $ python sample_blob_checkpoint.py
 
 ### Azure EventGrid Send Event
 
-The following sample assumes that you have setup an Azure Event Grid [Topic](https://docs.microsoft.com/azure/event-grid/custom-event-quickstart-portal).
+The following sample assumes that you have setup an Azure Event Grid [Topic](https://learn.microsoft.com/azure/event-grid/custom-event-quickstart-portal).
 
 * Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
 * Update `EG_ACCESS_KEY` environment variable
@@ -344,7 +344,7 @@ $ python sample_event_grid.py
 
 ### Azure Form Recognizer Analyze Document
 
-The following sample assumes that you have setup an Azure Form Recognizer [Resource](https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account).
+The following sample assumes that you have setup an Azure Form Recognizer [Resource](https://learn.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account).
 
 * Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
 
@@ -361,7 +361,7 @@ $ python sample_form_recognizer.py
 
 ### Azure KeyVault Create Certificate
 
-The following sample assumes that you have setup an Azure Key Vault [resource](https://docs.microsoft.com/azure/key-vault/general/quick-create-portal) and a service [principal](https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal) for authentication.
+The following sample assumes that you have setup an Azure Key Vault [resource](https://learn.microsoft.com/azure/key-vault/general/quick-create-portal) and a service [principal](https://learn.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal) for authentication.
 
 * Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
 
@@ -380,7 +380,7 @@ $ python sample_key_cert.py
 
 ### Azure KeyVault Set Secret
 
-The following sample assumes that you have setup an Azure Key Vault [resource](https://docs.microsoft.com/azure/key-vault/general/quick-create-portal) and a service [principal](https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal) for authentication.
+The following sample assumes that you have setup an Azure Key Vault [resource](https://learn.microsoft.com/azure/key-vault/general/quick-create-portal) and a service [principal](https://learn.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal) for authentication.
 
 * Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
 
@@ -399,7 +399,7 @@ $ python sample_key_secret.py
 
 ### Azure KeyVault Create Keys
 
-The following sample assumes that you have setup an Azure Key Vault [resource](https://docs.microsoft.com/azure/key-vault/general/quick-create-portal) and a service [principal](https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal) for authentication.
+The following sample assumes that you have setup an Azure Key Vault [resource](https://learn.microsoft.com/azure/key-vault/general/quick-create-portal) and a service [principal](https://learn.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal) for authentication.
 
 * Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
 
@@ -418,7 +418,7 @@ $ python sample_key_keys.py
 
 ### Azure Service Bus Send
 
-The following sample assumes that you have setup an Azure Service Bus [namespace](https://docs.microsoft.com/azure/service-bus-messaging/service-bus-quickstart-portal).
+The following sample assumes that you have setup an Azure Service Bus [namespace](https://learn.microsoft.com/azure/service-bus-messaging/service-bus-quickstart-portal).
 
 * Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
 * Update `SERVICE_BUS_CONN_STR` environment variable
@@ -437,7 +437,7 @@ $ python sample_servicebus_send.py
 
 ### Azure Service Bus Receive
 
-The following sample assumes that you have setup an Azure Service Bus [namespace](https://docs.microsoft.com/azure/service-bus-messaging/service-bus-quickstart-portal).
+The following sample assumes that you have setup an Azure Service Bus [namespace](https://learn.microsoft.com/azure/service-bus-messaging/service-bus-quickstart-portal).
 
 * Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
 * Update `SERVICE_BUS_CONN_STR` environment variable
@@ -456,7 +456,7 @@ $ python sample_servicebus_receive.py
 
 ### Azure Storage Blob Create Container
 
-The following sample assumes that you have setup Azure Blob [storage](https://docs.microsoft.com/azure/storage/blobs/storage-quickstart-blobs-portal).
+The following sample assumes that you have setup Azure Blob [storage](https://learn.microsoft.com/azure/storage/blobs/storage-quickstart-blobs-portal).
 
 * Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
 * Update `AZURE_STORAGE_CONNECTION_STRING` environment variable
@@ -475,7 +475,7 @@ $ python sample_storage_blob.py
 
 ### Azure Text Analytics Extract Key Phrases
 
-The following sample assumes that you have setup an Azure Cognitive Services [Resource](https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account).
+The following sample assumes that you have setup an Azure Cognitive Services [Resource](https://learn.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account).
 
 * Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
 
@@ -493,6 +493,6 @@ $ python sample_text_analytics.py
 ## Explore the data
 
 After running the applications, data would be available in [Azure](
-https://docs.microsoft.com/azure/azure-monitor/app/app-insights-overview#where-do-i-see-my-telemetry)
+https://learn.microsoft.com/azure/azure-monitor/app/app-insights-overview#where-do-i-see-my-telemetry)
 
 <!-- cSpell:enable -->

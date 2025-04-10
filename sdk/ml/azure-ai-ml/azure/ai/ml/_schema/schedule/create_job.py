@@ -49,7 +49,7 @@ class CreateJobFileRefField(FileRefField):
 
         from azure.ai.ml.entities import Job
 
-        return Job._load(  # pylint: disable=no-member
+        return Job._load(
             data=job_dict,
             yaml_path=self.context[BASE_PATH_CONTEXT_KEY] / value,
             **kwargs,
@@ -67,9 +67,7 @@ class BaseCreateJobSchema(BaseJobSchema):
     )
 
     # pylint: disable-next=docstring-missing-param
-    def _get_job_instance_for_remote_job(
-        self, id: Optional[str], data: Optional[dict], **kwargs
-    ) -> "Job":  # pylint: disable=redefined-builtin
+    def _get_job_instance_for_remote_job(self, id: Optional[str], data: Optional[dict], **kwargs) -> "Job":
         """Get a job instance to store updates for remote job.
 
         :return: The remote job
@@ -81,13 +79,13 @@ class BaseCreateJobSchema(BaseJobSchema):
         if "type" not in data:
             raise ValidationError("'type' must be specified when scheduling a remote job with updates.")
         # Create a job instance if job is arm id
-        job_instance = Job._load(  # pylint: disable=no-member
+        job_instance = Job._load(
             data=data,
             **kwargs,
         )
         # Set back the id and base path to created job
         job_instance._id = id
-        job_instance._base_path = self.context[BASE_PATH_CONTEXT_KEY]  # pylint: disable=no-member
+        job_instance._base_path = self.context[BASE_PATH_CONTEXT_KEY]
         return job_instance
 
     @pre_load
@@ -97,7 +95,7 @@ class BaseCreateJobSchema(BaseJobSchema):
             # dict type indicates there are updates to the scheduled job.
             copied_data = copy.deepcopy(data)
             copied_data.pop("job", None)
-            self.context[_SCHEDULED_JOB_UPDATES_KEY] = copied_data  # pylint: disable=no-member
+            self.context[_SCHEDULED_JOB_UPDATES_KEY] = copied_data
         return data
 
     @post_load
@@ -107,13 +105,13 @@ class BaseCreateJobSchema(BaseJobSchema):
         # Get the loaded job
         job = data.pop("job")
         # Get the raw dict data before load
-        raw_data = self.context.get(_SCHEDULED_JOB_UPDATES_KEY, {})  # pylint: disable=no-member
+        raw_data = self.context.get(_SCHEDULED_JOB_UPDATES_KEY, {})
         if isinstance(job, Job):
             if job._source_path is None:
                 raise ValidationError("Could not load job for schedule without '_source_path' set.")
             # Load local job again with updated values
             job_dict = yaml.safe_load(load_file(job._source_path))
-            return Job._load(  # pylint: disable=no-member
+            return Job._load(
                 data=merge_dict(job_dict, raw_data),
                 yaml_path=job._source_path,
                 **kwargs,

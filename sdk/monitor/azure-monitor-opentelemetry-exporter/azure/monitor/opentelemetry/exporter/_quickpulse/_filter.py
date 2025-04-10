@@ -133,7 +133,7 @@ def _check_filters(filters: List[FilterInfo], data: _TelemetryData) -> bool:
         elif name in ("ResultCode", "ResponseCode", "Duration"):
             try:
                 val = int(val)
-            except Exception:  # pylint: disable=broad-exception-caught,invalid-name
+            except Exception:  # pylint: disable=broad-exception-caught
                 return False
             numerical_val = _filter_time_stamp_to_ms(comparand) if name == "Duration" else int(comparand)
             if numerical_val is None:

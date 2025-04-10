@@ -8,6 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import asyncio
+import concurrent.futures
 import io
 import logging
 import os
@@ -29,6 +30,7 @@ from typing import (
     overload,
 )
 
+from azure.core.credentials import TokenCredential
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.tracing.decorator_async import distributed_trace_async
 
@@ -52,8 +54,10 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from openai import AsyncAzureOpenAI
 
-    from azure.ai.inference.aio import ChatCompletionsClient, EmbeddingsClient
+    from azure.ai.inference.aio import ChatCompletionsClient, EmbeddingsClient, ImageEmbeddingsClient
     from azure.ai.projects import _types
+    from azure.core.credentials import AccessToken
+    from azure.core.credentials_async import AsyncTokenCredential
 
 logger = logging.getLogger(__name__)
 
@@ -64,6 +68,19 @@ _Unset: Any = object()
 class InferenceOperations:
 
     def __init__(self, outer_instance):
+
+        # All returned inference clients will have this application id set on their user-agent.
+        # For more info on user-agent HTTP header, see:
+        # https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy
+        USER_AGENT_APP_ID = "AIProjectClient"
+
+        if hasattr(outer_instance, "_user_agent") and outer_instance._user_agent:
+            # If the calling application has set "user_agent" when constructing the AIProjectClient,
+            # take that value and prepend it to USER_AGENT_APP_ID.
+            self._user_agent = f"{outer_instance._user_agent}-{USER_AGENT_APP_ID}"
+        else:
+            self._user_agent = USER_AGENT_APP_ID
+
         self._outer_instance = outer_instance
 
     @distributed_trace_async
@@ -72,7 +89,8 @@ class InferenceOperations:
     ) -> "ChatCompletionsClient":
         """Get an authenticated asynchronous ChatCompletionsClient (from the package azure-ai-inference) for the default
         Azure AI Services connected resource (if `connection_name` is not specificed), or from the Azure AI
-        Services resource given by its connection name.
+        Services resource given by its connection name. Keyword arguments are passed to the constructor of
+        ChatCompletionsClient.
 
         At least one AI model that supports chat completions must be deployed in this resource.
 
@@ -82,8 +100,8 @@ class InferenceOperations:
          resource. Optional. If not provided, the default Azure AI Services connection will be used.
         :type connection_name: str
 
-        :return: An authenticated chat completions client
-        :rtype: ~azure.ai.inference.models.ChatCompletionsClient
+        :return: An authenticated chat completions client.
+        :rtype: ~azure.ai.inference.ChatCompletionsClient
 
         :raises ~azure.core.exceptions.ResourceNotFoundError: if an Azure AI Services connection
          does not exist.
@@ -103,16 +121,16 @@ class InferenceOperations:
 
         if connection_name:
             connection = await self._outer_instance.connections.get(
-                connection_name=connection_name, include_credentials=True, **kwargs
+                connection_name=connection_name, include_credentials=True
             )
         else:
             if use_serverless_connection:
                 connection = await self._outer_instance.connections.get_default(
-                    connection_type=ConnectionType.SERVERLESS, include_credentials=True, **kwargs
+                    connection_type=ConnectionType.SERVERLESS, include_credentials=True
                 )
             else:
                 connection = await self._outer_instance.connections.get_default(
-                    connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=True, **kwargs
+                    connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=True
                 )
 
         logger.debug("[InferenceOperations.get_chat_completions_client] connection = %s", str(connection))
@@ -138,14 +156,23 @@ class InferenceOperations:
             )
             from azure.core.credentials import AzureKeyCredential
 
-            client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(connection.key))
+            client = ChatCompletionsClient(
+                endpoint=endpoint,
+                credential=AzureKeyCredential(connection.key),
+                user_agent=kwargs.pop("user_agent", self._user_agent),
+                **kwargs,
+            )
         elif connection.authentication_type == AuthenticationType.ENTRA_ID:
             logger.debug(
                 "[InferenceOperations.get_chat_completions_client]"
                 + " Creating ChatCompletionsClient using Entra ID authentication"
             )
             client = ChatCompletionsClient(
-                endpoint=endpoint, credential=connection.token_credential, credential_scopes=credential_scopes
+                endpoint=endpoint,
+                credential=connection.token_credential,
+                credential_scopes=credential_scopes,
+                user_agent=kwargs.pop("user_agent", self._user_agent),
+                **kwargs,
             )
         elif connection.authentication_type == AuthenticationType.SAS:
             logger.debug(
@@ -162,9 +189,10 @@ class InferenceOperations:
 
     @distributed_trace_async
     async def get_embeddings_client(self, *, connection_name: Optional[str] = None, **kwargs) -> "EmbeddingsClient":
-        """Get an authenticated asynchronousEmbeddingsClient (from the package azure-ai-inference) for the default
+        """Get an authenticated asynchronous EmbeddingsClient (from the package azure-ai-inference) for the default
         Azure AI Services connected resource (if `connection_name` is not specificed), or from the Azure AI
-        Services resource given by its connection name.
+        Services resource given by its connection name. Keyword arguments are passed to the constructor of
+        EmbeddingsClient.
 
         At least one AI model that supports text embeddings must be deployed in this resource.
 
@@ -174,8 +202,8 @@ class InferenceOperations:
          resource. Optional. If not provided, the default Azure AI Services connection will be used.
         :type connection_name: str
 
-        :return: An authenticated chat completions client
-        :rtype: ~azure.ai.inference.models.EmbeddingsClient
+        :return: An authenticated text embeddings client
+        :rtype: ~azure.ai.inference.EmbeddingsClient
 
         :raises ~azure.core.exceptions.ResourceNotFoundError: if an Azure AI Services connection
          does not exist.
@@ -195,16 +223,16 @@ class InferenceOperations:
 
         if connection_name:
             connection = await self._outer_instance.connections.get(
-                connection_name=connection_name, include_credentials=True, **kwargs
+                connection_name=connection_name, include_credentials=True
             )
         else:
             if use_serverless_connection:
                 connection = await self._outer_instance.connections.get_default(
-                    connection_type=ConnectionType.SERVERLESS, include_credentials=True, **kwargs
+                    connection_type=ConnectionType.SERVERLESS, include_credentials=True
                 )
             else:
                 connection = await self._outer_instance.connections.get_default(
-                    connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=True, **kwargs
+                    connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=True
                 )
 
         logger.debug("[InferenceOperations.get_embeddings_client] connection = %s", str(connection))
@@ -229,17 +257,128 @@ class InferenceOperations:
             )
             from azure.core.credentials import AzureKeyCredential
 
-            client = EmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(connection.key))
+            client = EmbeddingsClient(
+                endpoint=endpoint,
+                credential=AzureKeyCredential(connection.key),
+                user_agent=kwargs.pop("user_agent", self._user_agent),
+                **kwargs,
+            )
         elif connection.authentication_type == AuthenticationType.ENTRA_ID:
             logger.debug(
                 "[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using Entra ID authentication"
             )
             client = EmbeddingsClient(
-                endpoint=endpoint, credential=connection.token_credential, credential_scopes=credential_scopes
+                endpoint=endpoint,
+                credential=connection.token_credential,
+                credential_scopes=credential_scopes,
+                user_agent=kwargs.pop("user_agent", self._user_agent),
+                **kwargs,
             )
         elif connection.authentication_type == AuthenticationType.SAS:
             logger.debug(
                 "[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using SAS authentication"
+            )
+            raise ValueError("Getting embeddings client from a connection with SAS authentication is not yet supported")
+        else:
+            raise ValueError("Unknown authentication type")
+
+        return client
+
+    @distributed_trace_async
+    async def get_image_embeddings_client(
+        self, *, connection_name: Optional[str] = None, **kwargs
+    ) -> "ImageEmbeddingsClient":
+        """Get an authenticated asynchronous ImageEmbeddingsClient (from the package azure-ai-inference) for the default
+        Azure AI Services connected resource (if `connection_name` is not specificed), or from the Azure AI
+        Services resource given by its connection name. Keyword arguments are passed to the constructor of
+        ImageEmbeddingsClient.
+
+        At least one AI model that supports image embeddings must be deployed in this resource.
+
+        .. note:: The packages `azure-ai-inference` and `aiohttp` must be installed prior to calling this method.
+
+        :keyword connection_name: The name of a connection to an Azure AI Services resource in your AI Foundry project.
+         resource. Optional. If not provided, the default Azure AI Services connection will be used.
+        :type connection_name: str
+
+        :return: An authenticated image embeddings client
+        :rtype: ~azure.ai.inference.ImageEmbeddingsClient
+
+        :raises ~azure.core.exceptions.ResourceNotFoundError: if an Azure AI Services connection
+         does not exist.
+        :raises ~azure.core.exceptions.ModuleNotFoundError: if the `azure-ai-inference` package
+         is not installed.
+        :raises ValueError: if the connection name is an empty string.
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        kwargs.setdefault("merge_span", True)
+
+        if connection_name is not None and not connection_name:
+            raise ValueError("Connection name cannot be empty")
+
+        # Back-door way to access the old behavior where each AI model (non-OpenAI) was hosted on
+        # a separate "Serverless" connection. This is now deprecated.
+        use_serverless_connection: bool = os.getenv("USE_SERVERLESS_CONNECTION", None) == "true"
+
+        if connection_name:
+            connection = await self._outer_instance.connections.get(
+                connection_name=connection_name, include_credentials=True
+            )
+        else:
+            if use_serverless_connection:
+                connection = await self._outer_instance.connections.get_default(
+                    connection_type=ConnectionType.SERVERLESS, include_credentials=True
+                )
+            else:
+                connection = await self._outer_instance.connections.get_default(
+                    connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=True
+                )
+
+        logger.debug("[InferenceOperations.get_embeddings_client] connection = %s", str(connection))
+
+        try:
+            from azure.ai.inference.aio import ImageEmbeddingsClient
+        except ModuleNotFoundError as e:
+            raise ModuleNotFoundError(
+                "Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'"
+            ) from e
+
+        if use_serverless_connection:
+            endpoint = connection.endpoint_url
+            credential_scopes = ["https://ml.azure.com/.default"]
+        else:
+            endpoint = f"{connection.endpoint_url}/models"
+            credential_scopes = ["https://cognitiveservices.azure.com/.default"]
+
+        if connection.authentication_type == AuthenticationType.API_KEY:
+            logger.debug(
+                "[InferenceOperations.get_image_embeddings_client] "
+                "Creating ImageEmbeddingsClient using API key authentication"
+            )
+            from azure.core.credentials import AzureKeyCredential
+
+            client = ImageEmbeddingsClient(
+                endpoint=endpoint,
+                credential=AzureKeyCredential(connection.key),
+                user_agent=kwargs.pop("user_agent", self._user_agent),
+                **kwargs,
+            )
+        elif connection.authentication_type == AuthenticationType.ENTRA_ID:
+            logger.debug(
+                "[InferenceOperations.get_image_embeddings_client] "
+                "Creating ImageEmbeddingsClient using Entra ID authentication"
+            )
+            client = ImageEmbeddingsClient(
+                endpoint=endpoint,
+                credential=connection.token_credential,
+                credential_scopes=credential_scopes,
+                user_agent=kwargs.pop("user_agent", self._user_agent),
+                **kwargs,
+            )
+        elif connection.authentication_type == AuthenticationType.SAS:
+            logger.debug(
+                "[InferenceOperations.get_image_embeddings_client] "
+                "Creating ImageEmbeddingsClient using SAS authentication"
             )
             raise ValueError("Getting embeddings client from a connection with SAS authentication is not yet supported")
         else:
@@ -345,14 +484,18 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
     ) -> ConnectionProperties:
         """Get the properties of the default connection of a certain connection type, with or without
         populating authentication credentials. Raises ~azure.core.exceptions.ResourceNotFoundError
-        exception if a connection with the given name was not found.
+        exception if there are no connections of the given type.
+
+        .. note::
+            `get_default(connection_type=ConnectionType.AZURE_BLOB_STORAGE, include_credentials=True)` does not
+            currently work. It does work with `include_credentials=False`.
 
         :keyword connection_type: The connection type. Required.
         :type connection_type: ~azure.ai.projects.models._models.ConnectionType
         :keyword include_credentials: Whether to populate the connection properties with authentication credentials.
             Optional.
         :type include_credentials: bool
-        :return: The connection properties, or `None` if there are no connections of the specified type.
+        :return: The connection properties.
         :rtype: ~azure.ai.projects.model.ConnectionProperties
         :raises ~azure.core.exceptions.ResourceNotFoundError:
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -382,6 +525,8 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         populating authentication credentials. Raises ~azure.core.exceptions.ResourceNotFoundError
         exception if a connection with the given name was not found.
 
+        .. note:: This method is not supported for Azure Blob Storage connections.
+
         :keyword connection_name: Connection Name. Required.
         :type connection_name: str
         :keyword include_credentials: Whether to populate the connection properties with authentication credentials.
@@ -405,10 +550,11 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
                 from ...models._patch import SASTokenCredential
 
                 cred_prop = cast(InternalConnectionPropertiesSASAuth, connection.properties)
+                sync_credential = _SyncCredentialWrapper(self._config.credential)
 
                 token_credential = SASTokenCredential(
                     sas_token=cred_prop.credentials.sas,
-                    credential=self._config.credential,
+                    credential=sync_credential,
                     subscription_id=self._config.subscription_id,
                     resource_group_name=self._config.resource_group_name,
                     project_name=self._config.project_name,
@@ -516,20 +662,6 @@ class AgentsOperations(AgentsOperationsGenerated):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self._toolset: Dict[str, _models.AsyncToolSet] = {}
-
-    @overload
-    async def create_agent(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Agent:
-        """Creates a new agent.
-
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: Agent. The Agent is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Agent
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
 
     # pylint: disable=arguments-differ
     @overload
@@ -655,6 +787,20 @@ class AgentsOperations(AgentsOperationsGenerated):
         """
 
     @overload
+    async def create_agent(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Agent:
+        """Creates a new agent.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Agent. The Agent is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Agent
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
     async def create_agent(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Agent:
@@ -719,7 +865,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype metadata: Optional[Dict[str, str]]
         :keyword content_type: Content type of the body.
         :paramtype content_type: str
-        :keyword kwargs: Additional parameters.
         :return: An Agent object.
         :rtype: _models.Agent
         :raises: HttpResponseError for HTTP errors.
@@ -751,29 +896,11 @@ class AgentsOperations(AgentsOperationsGenerated):
             self._toolset[new_agent.id] = toolset
         return new_agent
 
-    @overload
-    async def update_agent(
-        self, assistant_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Agent:
-        """Modifies an existing agent.
-
-        :param assistant_id: The ID of the agent to modify. Required.
-        :type assistant_id: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: Agent. The Agent is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Agent
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     # pylint: disable=arguments-differ
     @overload
     async def update_agent(  # pylint: disable=arguments-differ
         self,
-        assistant_id: str,
+        agent_id: str,
         *,
         content_type: str = "application/json",
         model: Optional[str] = None,
@@ -790,8 +917,8 @@ class AgentsOperations(AgentsOperationsGenerated):
     ) -> _models.Agent:
         """Modifies an existing agent.
 
-        :param assistant_id: The ID of the agent to modify. Required.
-        :type assistant_id: str
+        :param agent_id: The ID of the agent to modify. Required.
+        :type agent_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -842,7 +969,7 @@ class AgentsOperations(AgentsOperationsGenerated):
     @overload
     async def update_agent(  # pylint: disable=arguments-differ
         self,
-        assistant_id: str,
+        agent_id: str,
         *,
         content_type: str = "application/json",
         model: Optional[str] = None,
@@ -858,8 +985,8 @@ class AgentsOperations(AgentsOperationsGenerated):
     ) -> _models.Agent:
         """Modifies an existing agent.
 
-        :param assistant_id: The ID of the agent to modify. Required.
-        :type assistant_id: str
+        :param agent_id: The ID of the agent to modify. Required.
+        :type agent_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -903,12 +1030,30 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     async def update_agent(
-        self, assistant_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, agent_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Agent:
         """Modifies an existing agent.
 
-        :param assistant_id: The ID of the agent to modify. Required.
-        :type assistant_id: str
+        :param agent_id: The ID of the agent to modify. Required.
+        :type agent_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Agent. The Agent is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Agent
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update_agent(
+        self, agent_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Agent:
+        """Modifies an existing agent.
+
+        :param agent_id: The ID of the agent to modify. Required.
+        :type agent_id: str
         :param body: Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -922,7 +1067,7 @@ class AgentsOperations(AgentsOperationsGenerated):
     @distributed_trace_async
     async def update_agent(
         self,
-        assistant_id: str,
+        agent_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         model: Optional[str] = None,
@@ -941,8 +1086,8 @@ class AgentsOperations(AgentsOperationsGenerated):
     ) -> _models.Agent:
         """Modifies an existing agent.
 
-        :param assistant_id: The ID of the agent to modify. Required.
-        :type assistant_id: str
+        :param agent_id: The ID of the agent to modify. Required.
+        :type agent_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
         :keyword model: The ID of the model to use. Default value is None.
@@ -981,6 +1126,9 @@ class AgentsOperations(AgentsOperationsGenerated):
          AgentsApiResponseFormat Default value is None.
         :paramtype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
          or ~azure.ai.projects.models.AgentsApiResponseFormat
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
@@ -998,12 +1146,12 @@ class AgentsOperations(AgentsOperationsGenerated):
             return await super().update_agent(body=body, **kwargs)
 
         if toolset is not None:
-            self._toolset[assistant_id] = toolset
+            self._toolset[agent_id] = toolset
             tools = toolset.definitions
             tool_resources = toolset.resources
 
         return await super().update_agent(
-            assistant_id=assistant_id,
+            agent_id=agent_id,
             model=model,
             name=name,
             description=description,
@@ -1038,42 +1186,13 @@ class AgentsOperations(AgentsOperationsGenerated):
                 "Tools must contain a CodeInterpreterToolDefinition when tool_resources.code_interpreter is provided"
             )
 
-    @overload
-    async def create_run(
-        self,
-        thread_id: str,
-        body: JSON,
-        *,
-        include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> _models.ThreadRun:
-        """Creates a new run for an agent thread.
-
-        :param thread_id: Required.
-        :type thread_id: str
-        :param body: Required.
-        :type body: JSON
-        :keyword include: A list of additional fields to include in the response.
-         Currently the only supported value is
-         ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
-         content. Default value is None.
-        :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ThreadRun
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     # pylint: disable=arguments-differ
     @overload
     async def create_run(  # pylint: disable=arguments-differ
         self,
         thread_id: str,
         *,
-        assistant_id: str,
+        agent_id: str,
         include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
         content_type: str = "application/json",
         model: Optional[str] = None,
@@ -1096,8 +1215,8 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         :param thread_id: Required.
         :type thread_id: str
-        :keyword assistant_id: The ID of the agent that should run the thread. Required.
-        :paramtype assistant_id: str
+        :keyword agent_id: The ID of the agent that should run the thread. Required.
+        :paramtype agent_id: str
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
@@ -1178,6 +1297,35 @@ class AgentsOperations(AgentsOperationsGenerated):
     async def create_run(
         self,
         thread_id: str,
+        body: JSON,
+        *,
+        include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.ThreadRun:
+        """Creates a new run for an agent thread.
+
+        :param thread_id: Required.
+        :type thread_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword include: A list of additional fields to include in the response.
+         Currently the only supported value is
+         ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
+         content. Default value is None.
+        :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ThreadRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_run(
+        self,
+        thread_id: str,
         body: IO[bytes],
         *,
         include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
@@ -1209,7 +1357,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         thread_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        assistant_id: str = _Unset,
+        agent_id: str = _Unset,
         include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
         model: Optional[str] = None,
         instructions: Optional[str] = None,
@@ -1233,8 +1381,8 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type thread_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword assistant_id: The ID of the agent that should run the thread. Required.
-        :paramtype assistant_id: str
+        :keyword agent_id: The ID of the agent that should run the thread. Required.
+        :paramtype agent_id: str
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
@@ -1312,11 +1460,11 @@ class AgentsOperations(AgentsOperationsGenerated):
             content_type = kwargs.get("content_type", "application/json")
             response = super().create_run(thread_id, body, include=include, content_type=content_type, **kwargs)
 
-        elif assistant_id is not _Unset:  # Handle overload with keyword arguments.
+        elif agent_id is not _Unset:  # Handle overload with keyword arguments.
             response = super().create_run(
                 thread_id,
                 include=include,
-                assistant_id=assistant_id,
+                agent_id=agent_id,
                 model=model,
                 instructions=instructions,
                 additional_instructions=additional_instructions,
@@ -1350,7 +1498,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         self,
         thread_id: str,
         *,
-        assistant_id: str,
+        agent_id: str,
         include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
         model: Optional[str] = None,
         instructions: Optional[str] = None,
@@ -1373,8 +1521,8 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         :param thread_id: Required.
         :type thread_id: str
-        :keyword assistant_id: The ID of the agent that should run the thread. Required.
-        :paramtype assistant_id: str
+        :keyword agent_id: The ID of the agent that should run the thread. Required.
+        :paramtype agent_id: str
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
@@ -1455,7 +1603,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         # Create and initiate the run with additional parameters
         run = await self.create_run(
             thread_id=thread_id,
-            assistant_id=assistant_id,
+            agent_id=agent_id,
             include=include,
             model=model,
             instructions=instructions,
@@ -1492,7 +1640,7 @@ class AgentsOperations(AgentsOperationsGenerated):
                 # We need tool set only if we are executing local function. In case if
                 # the tool is azure_function we just need to wait when it will be finished.
                 if any(tool_call.type == "function" for tool_call in tool_calls):
-                    toolset = toolset or self._toolset.get(run.assistant_id)
+                    toolset = toolset or self._toolset.get(run.agent_id)
                     if toolset:
                         tool_outputs = await toolset.execute_tool_calls(tool_calls)
                     else:
@@ -1513,7 +1661,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         self,
         thread_id: str,
         *,
-        assistant_id: str,
+        agent_id: str,
         include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
         content_type: str = "application/json",
         model: Optional[str] = None,
@@ -1537,8 +1685,8 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         :param thread_id: Required.
         :type thread_id: str
-        :keyword assistant_id: The ID of the agent that should run the thread. Required.
-        :paramtype assistant_id: str
+        :keyword agent_id: The ID of the agent that should run the thread. Required.
+        :paramtype agent_id: str
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
@@ -1610,6 +1758,8 @@ class AgentsOperations(AgentsOperationsGenerated):
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
+        :keyword event_handler: None
+        :paramtype event_handler: None.  _models.AsyncAgentEventHandler will be applied as default.
         :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
         :rtype: ~azure.ai.projects.models.AsyncAgentRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1620,7 +1770,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         self,
         thread_id: str,
         *,
-        assistant_id: str,
+        agent_id: str,
         include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
         content_type: str = "application/json",
         model: Optional[str] = None,
@@ -1644,8 +1794,8 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         :param thread_id: Required.
         :type thread_id: str
-        :keyword assistant_id: The ID of the agent that should run the thread. Required.
-        :paramtype assistant_id: str
+        :keyword agent_id: The ID of the agent that should run the thread. Required.
+        :paramtype agent_id: str
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
@@ -1717,8 +1867,7 @@ class AgentsOperations(AgentsOperationsGenerated):
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
-        :keyword event_handler: The event handler to use for processing events during the run. Default
-            value is None.
+        :keyword event_handler: The event handler to use for processing events during the run.
         :paramtype event_handler: ~azure.ai.projects.models.AsyncAgentEventHandler
         :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
         :rtype: ~azure.ai.projects.models.AsyncAgentRunStream
@@ -1749,6 +1898,8 @@ class AgentsOperations(AgentsOperationsGenerated):
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
          content. Default value is None.
         :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
+        :keyword event_handler: None
+        :paramtype event_handler: None.  _models.AsyncAgentEventHandler will be applied as default.
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1799,7 +1950,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
-        assistant_id: str = _Unset,
+        agent_id: str = _Unset,
         model: Optional[str] = None,
         instructions: Optional[str] = None,
         additional_instructions: Optional[str] = None,
@@ -1830,8 +1981,8 @@ class AgentsOperations(AgentsOperationsGenerated):
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
          content. Default value is None.
         :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
-        :keyword assistant_id: The ID of the agent that should run the thread. Required.
-        :paramtype assistant_id: str
+        :keyword agent_id: The ID of the agent that should run the thread. Required.
+        :paramtype agent_id: str
         :keyword model: The overridden model name that the agent should use to run the thread. Default
          value is None.
         :paramtype model: str
@@ -1907,10 +2058,10 @@ class AgentsOperations(AgentsOperationsGenerated):
             content_type = kwargs.get("content_type", "application/json")
             response = super().create_run(thread_id, body, include=include, content_type=content_type, **kwargs)
 
-        elif assistant_id is not _Unset:  # Handle overload with keyword arguments.
+        elif agent_id is not _Unset:  # Handle overload with keyword arguments.
             response = super().create_run(
                 thread_id,
-                assistant_id=assistant_id,
+                agent_id=agent_id,
                 include=include,
                 model=model,
                 instructions=instructions,
@@ -1945,28 +2096,6 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         return _models.AsyncAgentRunStream(response_iterator, self._handle_submit_tool_outputs, event_handler)
 
-    @overload
-    async def submit_tool_outputs_to_run(
-        self, thread_id: str, run_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ThreadRun:
-        """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
-        outputs will have a status of 'requires_action' with a required_action.type of
-        'submit_tool_outputs'.
-
-        :param thread_id: Required.
-        :type thread_id: str
-        :param run_id: Required.
-        :type run_id: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ThreadRun
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     # pylint: disable=arguments-differ
     @overload
     async def submit_tool_outputs_to_run(  # pylint: disable=arguments-differ
@@ -1991,9 +2120,28 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword event_handler: The event handler to use for processing events during the run. Default
-            value is None.
-        :paramtype event_handler: ~azure.ai.projects.models.AsyncAgentEventHandler
+        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ThreadRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def submit_tool_outputs_to_run(
+        self, thread_id: str, run_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ThreadRun:
+        """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
+        outputs will have a status of 'requires_action' with a required_action.type of
+        'submit_tool_outputs'.
+
+        :param thread_id: Required.
+        :type thread_id: str
+        :param run_id: Required.
+        :type run_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2073,39 +2221,10 @@ class AgentsOperations(AgentsOperationsGenerated):
         run_id: str,
         body: Union[JSON, IO[bytes]],
         *,
-        event_handler: None = None,
+        event_handler: _models.BaseAsyncAgentEventHandler,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> _models.AsyncAgentRunStream[_models.AsyncAgentEventHandler]:
-        """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
-        outputs will have a status of 'requires_action' with a required_action.type of
-        'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
-
-        :param thread_id: Required.
-        :type thread_id: str
-        :param run_id: Required.
-        :type run_id: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
-        :rtype: ~azure.ai.projects.models.AsyncAgentRunStream
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def submit_tool_outputs_to_stream(
-        self,
-        thread_id: str,
-        run_id: str,
-        body: Union[JSON, IO[bytes]],
-        *,
-        event_handler: _models.BaseAsyncAgentEventHandlerT,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> _models.AsyncAgentRunStream[_models.BaseAsyncAgentEventHandlerT]:
+    ) -> None:
         """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
@@ -2122,8 +2241,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
-        :rtype: ~azure.ai.projects.models.AsyncAgentRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2135,9 +2252,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         *,
         tool_outputs: List[_models.ToolOutput],
         content_type: str = "application/json",
-        event_handler: None = None,
+        event_handler: _models.BaseAsyncAgentEventHandler,
         **kwargs: Any,
-    ) -> _models.AsyncAgentRunStream[_models.AsyncAgentEventHandler]:
+    ) -> None:
         """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
@@ -2151,43 +2268,8 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword event_handler: The event handler to use for processing events during the run. Default
-            value is None.
+        :keyword event_handler: The event handler to use for processing events during the run.
         :paramtype event_handler: ~azure.ai.projects.models.AsyncAgentEventHandler
-        :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
-        :rtype: ~azure.ai.projects.models.AsyncAgentRunStream
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def submit_tool_outputs_to_stream(
-        self,
-        thread_id: str,
-        run_id: str,
-        *,
-        tool_outputs: List[_models.ToolOutput],
-        content_type: str = "application/json",
-        event_handler: _models.BaseAsyncAgentEventHandlerT,
-        **kwargs: Any,
-    ) -> _models.AsyncAgentRunStream[_models.BaseAsyncAgentEventHandlerT]:
-        """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
-        outputs will have a status of 'requires_action' with a required_action.type of
-        'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
-
-        :param thread_id: Required.
-        :type thread_id: str
-        :param run_id: Required.
-        :type run_id: str
-        :keyword tool_outputs: Required.
-        :paramtype tool_outputs: list[~azure.ai.projects.models.ToolOutput]
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword event_handler: The event handler to use for processing events during the run. Default
-            value is None.
-        :paramtype event_handler: ~azure.ai.projects.models.AsyncAgentEventHandler
-        :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
-        :rtype: ~azure.ai.projects.models.AsyncAgentRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2199,9 +2281,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         tool_outputs: List[_models.ToolOutput] = _Unset,
-        event_handler: Optional[_models.BaseAsyncAgentEventHandlerT] = None,
+        event_handler: _models.BaseAsyncAgentEventHandler,
         **kwargs: Any,
-    ) -> _models.AsyncAgentRunStream[_models.BaseAsyncAgentEventHandlerT]:
+    ) -> None:
         """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
@@ -2215,8 +2297,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword tool_outputs: Required.
         :paramtype tool_outputs: list[~azure.ai.projects.models.ToolOutput]
         :keyword event_handler: The event handler to use for processing events during the run.
-        :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
-        :rtype: ~azure.ai.projects.models.AsyncAgentRunStream
+        :paramtype event_handler: ~azure.ai.projects.models.AsyncAgentEventHandler
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2239,10 +2320,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         # Cast the response to Iterator[bytes] for type correctness
         response_iterator: AsyncIterator[bytes] = cast(AsyncIterator[bytes], await response)
 
-        if not event_handler:
-            event_handler = cast(_models.BaseAsyncAgentEventHandlerT, _models.AsyncAgentEventHandler())
-
-        return _models.AsyncAgentRunStream(response_iterator, self._handle_submit_tool_outputs, event_handler)
+        event_handler.initialize(response_iterator, self._handle_submit_tool_outputs)
 
     async def _handle_submit_tool_outputs(
         self, run: _models.ThreadRun, event_handler: _models.BaseAsyncAgentEventHandler
@@ -2256,26 +2334,31 @@ class AgentsOperations(AgentsOperationsGenerated):
             # We need tool set only if we are executing local function. In case if
             # the tool is azure_function we just need to wait when it will be finished.
             if any(tool_call.type == "function" for tool_call in tool_calls):
-                toolset = self._toolset.get(run.assistant_id)
+                toolset = self._toolset.get(run.agent_id)
                 if toolset:
                     tool_outputs = await toolset.execute_tool_calls(tool_calls)
                 else:
-                    logger.warning("Toolset is not available in the client.")
+                    logger.debug("Toolset is not available in the client.")
                     return
 
                 logger.info("Tool outputs: %s", tool_outputs)
                 if tool_outputs:
-                    async with await self.submit_tool_outputs_to_stream(
+                    await self.submit_tool_outputs_to_stream(
                         thread_id=run.thread_id, run_id=run.id, tool_outputs=tool_outputs, event_handler=event_handler
-                    ) as stream:
-                        await stream.until_done()
+                    )
 
+    # pylint: disable=arguments-differ
     @overload
-    async def upload_file(self, body: JSON, **kwargs: Any) -> _models.OpenAIFile:
+    async def upload_file(  # pylint: disable=arguments-differ
+        self, *, file_path: str, purpose: Union[str, _models.FilePurpose], **kwargs: Any
+    ) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
-        :param body: Required.
-        :type body: JSON
+        :keyword file_path: Required.
+        :type file_path: str
+        :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
+         "assistants_output", "batch", "batch_output", and "vision". Required.
+        :paramtype purpose: str or ~azure.ai.projects.models.FilePurpose
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2300,18 +2383,12 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    # pylint: disable=arguments-differ
     @overload
-    async def upload_file(  # pylint: disable=arguments-differ
-        self, *, file_path: str, purpose: Union[str, _models.FilePurpose], **kwargs: Any
-    ) -> _models.OpenAIFile:
+    async def upload_file(self, body: JSON, **kwargs: Any) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
-        :keyword file_path: Required.
-        :type file_path: str
-        :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
-         "assistants_output", "batch", "batch_output", and "vision". Required.
-        :paramtype purpose: str or ~azure.ai.projects.models.FilePurpose
+        :param body: Required.
+        :type body: JSON
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2376,10 +2453,10 @@ class AgentsOperations(AgentsOperationsGenerated):
         raise ValueError("Invalid parameters for upload_file. Please provide the necessary arguments.")
 
     @overload
-    async def upload_file_and_poll(self, *, body: JSON, sleep_interval: float = 1, **kwargs: Any) -> _models.OpenAIFile:
+    async def upload_file_and_poll(self, body: JSON, *, sleep_interval: float = 1, **kwargs: Any) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
-        :keyword body: Required.
+        :param body: Required.
         :type body: JSON
         :keyword sleep_interval: Time to wait before polling for the status of the uploaded file. Default value
          is 1.
@@ -2573,7 +2650,7 @@ class AgentsOperations(AgentsOperationsGenerated):
     @distributed_trace_async
     async def create_vector_store_and_poll(
         self,
-        body: Union[JSON, IO[bytes], None] = None,
+        body: Union[JSON, IO[bytes]] = _Unset,
         *,
         content_type: str = "application/json",
         file_ids: Optional[List[str]] = None,
@@ -2589,6 +2666,9 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :keyword file_ids: A list of file IDs that the vector store should use. Useful for tools like
          ``file_search`` that can access files. Default value is None.
         :paramtype file_ids: list[str]
@@ -2614,29 +2694,33 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        if body is not None:
-            vector_store = await self.create_vector_store(body=body, content_type=content_type, **kwargs)
-        elif file_ids is not None or data_sources is not None or (name is not None and expires_after is not None):
-            store_configuration = _models.VectorStoreConfiguration(data_sources=data_sources) if data_sources else None
-            vector_store = await self.create_vector_store(
-                content_type=content_type,
+        if body is not _Unset:
+            if isinstance(body, dict):
+                vector_store = await super().create_vector_store(
+                    body=body, content_type=content_type or "application/json", **kwargs
+                )
+            elif isinstance(body, io.IOBase):
+                vector_store = await super().create_vector_store(body=body, content_type=content_type, **kwargs)
+            else:
+                raise ValueError("Invalid 'body' type: must be a dictionary (JSON) or a file-like object (IO[bytes]).")
+        else:
+            store_configuration = None
+            if data_sources:
+                store_configuration = _models.VectorStoreConfiguration(data_sources=data_sources)
+
+            vector_store = await super().create_vector_store(
                 file_ids=file_ids,
-                name=name,
                 store_configuration=store_configuration,
+                name=name,
                 expires_after=expires_after,
                 chunking_strategy=chunking_strategy,
                 metadata=metadata,
                 **kwargs,
             )
-        else:
-            raise ValueError(
-                "Invalid parameters for create_vector_store_and_poll. Please provide either 'body', "
-                "'file_ids', 'store_configuration', or 'name' and 'expires_after'."
-            )
 
         while vector_store.status == "in_progress":
             time.sleep(sleep_interval)
-            vector_store = await self.get_vector_store(vector_store.id)
+            vector_store = await super().get_vector_store(vector_store.id)
 
         return vector_store
 
@@ -2672,7 +2756,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         self,
         vector_store_id: str,
         *,
-        file_ids: List[str],
+        file_ids: Optional[List[str]] = None,
         data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
         content_type: str = "application/json",
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
@@ -2732,11 +2816,12 @@ class AgentsOperations(AgentsOperationsGenerated):
     async def create_vector_store_file_batch_and_poll(
         self,
         vector_store_id: str,
-        body: Union[JSON, IO[bytes], None] = None,
+        body: Union[JSON, IO[bytes]] = _Unset,
         *,
         file_ids: Optional[List[str]] = None,
         data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
+        content_type: str = "application/json",
         sleep_interval: float = 1,
         **kwargs: Any,
     ) -> _models.VectorStoreFileBatch:
@@ -2753,23 +2838,40 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
         :paramtype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyRequest
+        :keyword content_type: Body parameter content-type. Defaults to "application/json".
+        :paramtype content_type: str
+        :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
+         is 1.
+        :paramtype sleep_interval: float
         :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.VectorStoreFileBatch
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        if body is None:
+        if body is not _Unset:
+            if isinstance(body, dict):
+                vector_store_file_batch = await super().create_vector_store_file_batch(
+                    vector_store_id=vector_store_id,
+                    body=body,
+                    content_type=content_type or "application/json",
+                    **kwargs,
+                )
+            elif isinstance(body, io.IOBase):
+                vector_store_file_batch = await super().create_vector_store_file_batch(
+                    vector_store_id=vector_store_id,
+                    body=body,
+                    content_type=content_type,
+                    **kwargs,
+                )
+            else:
+                raise ValueError("Invalid type for 'body'. Must be a dict (JSON) or file-like (IO[bytes]).")
+        else:
             vector_store_file_batch = await super().create_vector_store_file_batch(
                 vector_store_id=vector_store_id,
                 file_ids=file_ids,
                 data_sources=data_sources,
                 chunking_strategy=chunking_strategy,
                 **kwargs,
-            )
-        else:
-            content_type = kwargs.get("content_type", "application/json")
-            vector_store_file_batch = await super().create_vector_store_file_batch(
-                body=body, content_type=content_type, **kwargs
             )
 
         while vector_store_file_batch.status == "in_progress":
@@ -2814,7 +2916,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         *,
         content_type: str = "application/json",
         file_id: Optional[str] = None,
-        data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
+        data_source: Optional[_models.VectorStoreDataSource] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         sleep_interval: float = 1,
         **kwargs: Any,
@@ -2828,8 +2930,8 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype content_type: str
         :keyword file_id: Identifier of the file. Default value is None.
         :paramtype file_id: str
-        :keyword data_sources: Azure asset ID. Default value is None.
-        :paramtype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
+        :keyword data_source: Azure asset ID. Default value is None.
+        :paramtype data_source: ~azure.ai.projects.models.VectorStoreDataSource
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
         :paramtype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyRequest
@@ -2874,8 +2976,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         vector_store_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
+        content_type: str = "application/json",
         file_id: Optional[str] = None,
-        data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
+        data_source: Optional[_models.VectorStoreDataSource] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         sleep_interval: float = 1,
         **kwargs: Any,
@@ -2886,10 +2989,12 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type vector_store_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
+        :keyword content_type: Body Parameter content-type. Defaults to 'application/json'.
+        :paramtype content_type: str
         :keyword file_id: Identifier of the file. Default value is None.
         :paramtype file_id: str
-        :keyword data_sources: Azure asset ID. Default value is None.
-        :paramtype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
+        :keyword data_source: Azure asset ID. Default value is None.
+        :paramtype data_source: ~azure.ai.projects.models.VectorStoreDataSource
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
         :paramtype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyRequest
@@ -2900,17 +3005,32 @@ class AgentsOperations(AgentsOperationsGenerated):
         :rtype: ~azure.ai.projects.models.VectorStoreFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        if body is None:
+
+        if body is not _Unset:
+            if isinstance(body, dict):
+                vector_store_file = await super().create_vector_store_file(
+                    vector_store_id=vector_store_id,
+                    body=body,
+                    content_type=content_type or "application/json",
+                    **kwargs,
+                )
+            elif isinstance(body, io.IOBase):
+                vector_store_file = await super().create_vector_store_file(
+                    vector_store_id=vector_store_id,
+                    body=body,
+                    content_type=content_type,
+                    **kwargs,
+                )
+            else:
+                raise ValueError("Invalid type for 'body'. Must be a dict (JSON) or file-like object (IO[bytes]).")
+        else:
             vector_store_file = await super().create_vector_store_file(
                 vector_store_id=vector_store_id,
                 file_id=file_id,
-                data_sources=data_sources,
+                data_source=data_source,
                 chunking_strategy=chunking_strategy,
                 **kwargs,
             )
-        else:
-            content_type = kwargs.get("content_type", "application/json")
-            vector_store_file = await super().create_vector_store_file(body=body, content_type=content_type, **kwargs)
 
         while vector_store_file.status == "in_progress":
             time.sleep(sleep_interval)
@@ -2995,18 +3115,51 @@ class AgentsOperations(AgentsOperationsGenerated):
             raise
 
     @distributed_trace_async
-    async def delete_agent(self, assistant_id: str, **kwargs: Any) -> _models.AgentDeletionStatus:
+    async def delete_agent(self, agent_id: str, **kwargs: Any) -> _models.AgentDeletionStatus:
         """Deletes an agent.
 
-        :param assistant_id: Identifier of the agent. Required.
-        :type assistant_id: str
+        :param agent_id: Identifier of the agent. Required.
+        :type agent_id: str
         :return: AgentDeletionStatus. The AgentDeletionStatus is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentDeletionStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        if assistant_id in self._toolset:
-            del self._toolset[assistant_id]
-        return await super().delete_agent(assistant_id, **kwargs)
+        if agent_id in self._toolset:
+            del self._toolset[agent_id]
+        return await super().delete_agent(agent_id, **kwargs)
+
+
+class _SyncCredentialWrapper(TokenCredential):
+    """
+    The class, synchronizing AsyncTokenCredential.
+
+    :param async_credential: The async credential to be synchronized.
+    :type async_credential: ~azure.core.credentials_async.AsyncTokenCredential
+    """
+
+    def __init__(self, async_credential: "AsyncTokenCredential"):
+        self._async_credential = async_credential
+
+    def get_token(
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        enable_cae: bool = False,
+        **kwargs: Any,
+    ) -> "AccessToken":
+
+        pool = concurrent.futures.ThreadPoolExecutor()
+        return pool.submit(
+            asyncio.run,
+            self._async_credential.get_token(
+                *scopes,
+                claims=claims,
+                tenant_id=tenant_id,
+                enable_cae=enable_cae,
+                **kwargs,
+            ),
+        ).result()
 
 
 __all__: List[str] = [

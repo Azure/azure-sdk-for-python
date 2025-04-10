@@ -308,7 +308,9 @@ class _LocalDeploymentHelper(object):
             conda_yaml_contents=yaml_env_conda_file_contents,
             volumes=volumes,
             environment=environment_variables,
-            azureml_port=inference_config.scoring_route.port if is_byoc else LocalEndpointConstants.DOCKER_PORT,
+            azureml_port=(
+                inference_config.scoring_route.port if is_byoc else LocalEndpointConstants.DOCKER_PORT  # type: ignore
+            ),
             local_endpoint_mode=local_endpoint_mode,
             prebuilt_image_name=yaml_base_image_name if is_byoc else None,
             local_enable_gpu=local_enable_gpu,

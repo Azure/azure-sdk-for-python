@@ -93,7 +93,7 @@ class _Infinity:
 class PartitionKey(dict):
     """Key used to partition a container into logical partitions.
 
-    See https://docs.microsoft.com/azure/cosmos-db/partitioning-overview#choose-partitionkey
+    See https://learn.microsoft.com/azure/cosmos-db/partitioning-overview#choose-partitionkey
     for information on how to choose partition keys.
 
     :ivar str path: The path of the partition key

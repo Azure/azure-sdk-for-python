@@ -12,6 +12,7 @@ from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGrou
 
 AZURE_LOCATION = "eastus"
 
+
 @pytest.mark.live_test_only
 class TestEventHubManagementOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):

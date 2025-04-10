@@ -142,7 +142,6 @@ class WorkspaceOperations(WorkspaceOperationsBase):
 
     @monitor_with_activity(ops_logger, "Workspace.Get_Keys", ActivityType.PUBLICAPI)
     @distributed_trace
-    # pylint: disable=arguments-differ
     def get_keys(self, name: Optional[str] = None) -> Optional[WorkspaceKeys]:
         """Get WorkspaceKeys by workspace name.
 
@@ -433,7 +432,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
             return Workspace._from_rest_object(deserialized)
 
         with modified_operation_client(self.dataplane_workspace_operations, workspace_base_uri):
-            result = self.dataplane_workspace_operations.begin_hub_join(
+            result = self.dataplane_workspace_operations.begin_hub_join(  # type: ignore
                 resource_group_name=resource_group,
                 workspace_name=hub_name,
                 project_workspace_name=workspace.name,

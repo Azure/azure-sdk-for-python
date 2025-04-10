@@ -4,7 +4,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import TYPE_CHECKING, List, Union, Tuple
+from datetime import timedelta
+from typing import List, Optional, Union, Tuple
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.credentials import AccessToken
 from azure.core.credentials_async import AsyncTokenCredential
@@ -18,9 +19,7 @@ from .._shared.models import CommunicationUserIdentifier
 from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION
 from .._utils import convert_timedelta_to_mins
-
-if TYPE_CHECKING:
-    from .._generated.models import CommunicationTokenScope
+from .._generated.models import CommunicationTokenScope
 
 
 class CommunicationIdentityClient:
@@ -88,7 +87,9 @@ class CommunicationIdentityClient:
 
     @distributed_trace_async
     async def create_user_and_token(
-        self, scopes: List[Union[str, "CommunicationTokenScope"]], **kwargs
+        self, scopes: List[Union[str, CommunicationTokenScope]], *,
+        token_expires_in: Optional[timedelta] = None,
+        **kwargs
     ) -> Tuple["CommunicationUserIdentifier", AccessToken]:
         """Create a single Communication user with an identity token.
 
@@ -102,7 +103,6 @@ class CommunicationIdentityClient:
         :rtype:
             tuple of (~azure.communication.identity.CommunicationUserIdentifier, ~azure.core.credentials.AccessToken)
         """
-        token_expires_in = kwargs.pop("token_expires_in", None)
         request_body = {
             "createTokenWithScopes": scopes,
             "expiresInMinutes": convert_timedelta_to_mins(token_expires_in),
@@ -136,7 +136,10 @@ class CommunicationIdentityClient:
 
     @distributed_trace_async
     async def get_token(
-        self, user: CommunicationUserIdentifier, scopes: List[Union[str, "CommunicationTokenScope"]], **kwargs
+        self, user: CommunicationUserIdentifier,
+        scopes: List[Union[str, CommunicationTokenScope]], *,
+        token_expires_in: Optional[timedelta] = None,
+        **kwargs
     ) -> AccessToken:
         """Generates a new token for an identity.
 
@@ -145,13 +148,11 @@ class CommunicationIdentityClient:
         :param scopes:
             List of scopes to be added to the token.
         :type scopes: list[str or ~azure.communication.identity.CommunicationTokenScope]
-        :keyword token_expires_in: Custom validity period of the Communication Identity access token
+        :keyword ~datetime.timedelta token_expires_in: Custom validity period of the Communication Identity access token
          within [1, 24] hours range. If not provided, the default value of 24 hours will be used.
-        :paramtype token_expires_in: ~datetime.timedelta
         :return: AccessToken
         :rtype: ~azure.core.credentials.AccessToken
         """
-        token_expires_in = kwargs.pop("token_expires_in", None)
         request_body = {
             "scopes": scopes,
             "expiresInMinutes": convert_timedelta_to_mins(token_expires_in),

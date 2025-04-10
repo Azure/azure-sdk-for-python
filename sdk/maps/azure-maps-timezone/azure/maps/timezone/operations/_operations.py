@@ -296,7 +296,7 @@ class TimezoneOperations:
         :paramtype timezone_id: str
         :keyword accept_language: Specifies the language code in which the timezone names should be
          returned. If no language code is provided, the response will be in "EN". Please refer to
-         `Supported Languages <https://docs.microsoft.com/azure/azure-maps/supported-languages>`_ for
+         `Supported Languages <https://learn.microsoft.com/azure/azure-maps/supported-languages>`_ for
          details. Default value is None.
         :paramtype accept_language: str
         :keyword options: Alternatively, use alias "o". Options available for types of information
@@ -451,7 +451,7 @@ class TimezoneOperations:
         :paramtype coordinates: list[float]
         :keyword accept_language: Specifies the language code in which the timezone names should be
          returned. If no language code is provided, the response will be in "EN". Please refer to
-         `Supported Languages <https://docs.microsoft.com/azure/azure-maps/supported-languages>`_ for
+         `Supported Languages <https://learn.microsoft.com/azure/azure-maps/supported-languages>`_ for
          details. Default value is None.
         :paramtype accept_language: str
         :keyword options: Alternatively, use alias "o". Options available for types of information

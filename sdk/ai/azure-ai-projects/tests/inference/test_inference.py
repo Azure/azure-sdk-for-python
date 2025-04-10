@@ -1,9 +1,9 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
 import pprint
-import pytest
 from devtools_testutils import recorded_by_proxy, is_live_and_not_recording
 from inference_test_base import InferenceTestBase, servicePreparerInferenceTests
 from azure.ai.inference.models import SystemMessage, UserMessage
@@ -72,7 +72,7 @@ class TestInference(InferenceTestBase):
     def test_inference_get_aoai_client_with_empty_connection_name(self, **kwargs):
         with self.get_sync_client(**kwargs) as project_client:
             try:
-                with project_client.inference.get_azure_openai_client(connection_name="") as azure_openai_client:
+                with project_client.inference.get_azure_openai_client(connection_name="") as _:
                     assert False
             except ValueError as e:
                 print(e)
@@ -86,7 +86,7 @@ class TestInference(InferenceTestBase):
                 try:
                     with project_client.inference.get_azure_openai_client(
                         connection_name=InferenceTestBase.NON_EXISTING_CONNECTION_NAME
-                    ) as azure_openai_client:
+                    ) as _:
                         assert False
                 except ResourceNotFoundError as e:
                     print(e)
@@ -101,7 +101,7 @@ class TestInference(InferenceTestBase):
     @recorded_by_proxy
     def test_inference_get_chat_completions_client_key_auth(self, **kwargs):
         model = kwargs.pop("azure_ai_projects_inference_tests_chat_completions_model_deployment_name")
-        with self.get_sync_client(**kwargs) as project_client:
+        with self.get_sync_client(user_agent="MyAppId", **kwargs) as project_client:
             with project_client.inference.get_chat_completions_client() as chat_completions_client:
                 response = chat_completions_client.complete(
                     model=model,
@@ -109,11 +109,13 @@ class TestInference(InferenceTestBase):
                         SystemMessage(content="You are a helpful assistant."),
                         UserMessage(content="How many feet are in a mile?"),
                     ],
+                    raw_request_hook=self.request_callback,
                 )
                 print("\nChatCompletionsClient response:")
                 pprint.pprint(response)
                 contains = ["5280", "5,280"]
                 assert any(item in response.choices[0].message.content for item in contains)
+                self.validate_user_agent(starts_with="MyAppId-AIProjectClient azsdk-python-ai-inference/")
 
     @servicePreparerInferenceTests()
     @recorded_by_proxy
@@ -130,19 +132,19 @@ class TestInference(InferenceTestBase):
                         SystemMessage(content="You are a helpful assistant."),
                         UserMessage(content="How many feet are in a mile?"),
                     ],
+                    raw_request_hook=self.request_callback,
                 )
                 print("\nChatCompletionsClient response:")
                 pprint.pprint(response)
                 contains = ["5280", "5,280"]
                 assert any(item in response.choices[0].message.content for item in contains)
+                self.validate_user_agent(starts_with="AIProjectClient azsdk-python-ai-inference/")
 
     @servicePreparerInferenceTests()
     def test_inference_get_chat_completions_client_with_empty_connection_name(self, **kwargs):
         with self.get_sync_client(**kwargs) as project_client:
             try:
-                with project_client.inference.get_chat_completions_client(
-                    connection_name=""
-                ) as chat_completions_client:
+                with project_client.inference.get_chat_completions_client(connection_name="") as _:
                     assert False
             except ValueError as e:
                 print(e)
@@ -155,7 +157,7 @@ class TestInference(InferenceTestBase):
             try:
                 with project_client.inference.get_chat_completions_client(
                     connection_name=InferenceTestBase.NON_EXISTING_CONNECTION_NAME
-                ) as chat_completions_client:
+                ) as _:
                     assert False
             except ResourceNotFoundError as e:
                 print(e)
@@ -167,9 +169,13 @@ class TestInference(InferenceTestBase):
     @recorded_by_proxy
     def test_inference_get_embeddings_client_key_auth(self, **kwargs):
         model = kwargs.pop("azure_ai_projects_inference_tests_embeddings_model_deployment_name")
-        with self.get_sync_client(**kwargs) as project_client:
+        with self.get_sync_client(user_agent="MyAppId", **kwargs) as project_client:
             with project_client.inference.get_embeddings_client() as embeddings_client:
-                response = embeddings_client.embed(model=model, input=["first phrase", "second phrase", "third phrase"])
+                response = embeddings_client.embed(
+                    model=model,
+                    input=["first phrase", "second phrase", "third phrase"],
+                    raw_request_hook=self.request_callback,
+                )
                 print("\nEmbeddingsClient response:")
                 for item in response.data:
                     length = len(item.embedding)
@@ -182,6 +188,7 @@ class TestInference(InferenceTestBase):
                     assert len(item.embedding) > 0
                     assert item.embedding[0] != 0
                     assert item.embedding[-1] != 0
+                self.validate_user_agent(starts_with="MyAppId-AIProjectClient azsdk-python-ai-inference/")
 
     @servicePreparerInferenceTests()
     @recorded_by_proxy
@@ -190,7 +197,11 @@ class TestInference(InferenceTestBase):
         model = kwargs.pop("azure_ai_projects_inference_tests_embeddings_model_deployment_name")
         with self.get_sync_client(**kwargs) as project_client:
             with project_client.inference.get_embeddings_client(connection_name=connection_name) as embeddings_client:
-                response = embeddings_client.embed(model=model, input=["first phrase", "second phrase", "third phrase"])
+                response = embeddings_client.embed(
+                    model=model,
+                    input=["first phrase", "second phrase", "third phrase"],
+                    raw_request_hook=self.request_callback,
+                )
                 print("\nEmbeddingsClient response:")
                 for item in response.data:
                     length = len(item.embedding)
@@ -203,12 +214,13 @@ class TestInference(InferenceTestBase):
                     assert len(item.embedding) > 0
                     assert item.embedding[0] != 0
                     assert item.embedding[-1] != 0
+                self.validate_user_agent(starts_with="AIProjectClient azsdk-python-ai-inference/")
 
     @servicePreparerInferenceTests()
     def test_inference_get_embeddings_client_with_empty_connection_name(self, **kwargs):
         with self.get_sync_client(**kwargs) as project_client:
             try:
-                with project_client.inference.get_embeddings_client(connection_name="") as embeddings_client:
+                with project_client.inference.get_embeddings_client(connection_name="") as _:
                     assert False
             except ValueError as e:
                 print(e)
@@ -221,7 +233,85 @@ class TestInference(InferenceTestBase):
             try:
                 with project_client.inference.get_embeddings_client(
                     connection_name=InferenceTestBase.NON_EXISTING_CONNECTION_NAME
-                ) as embeddings_client:
+                ) as _:
+                    assert False
+            except ResourceNotFoundError as e:
+                print(e)
+                assert InferenceTestBase.EXPECTED_EXCEPTION_MESSAGE_FOR_NON_EXISTING_CONNECTION_NAME in e.message
+
+    # ----------------------------------------------------------------------------------------------------------------------
+
+    @servicePreparerInferenceTests()
+    @recorded_by_proxy
+    def test_inference_get_image_embeddings_client_key_auth(self, **kwargs):
+        model = kwargs.pop("azure_ai_projects_inference_tests_embeddings_model_deployment_name")
+        with self.get_sync_client(user_agent="MyAppId", **kwargs) as project_client:
+            with project_client.inference.get_image_embeddings_client() as embeddings_client:
+                response = embeddings_client.embed(
+                    model=model,
+                    input=[InferenceTestBase.get_image_embeddings_input()],
+                    raw_request_hook=self.request_callback,
+                )
+                print("\nImageEmbeddingsClient response:")
+                for item in response.data:
+                    length = len(item.embedding)
+                    print(
+                        f"data[{item.index}] (vector length={length}): "
+                        f"[{item.embedding[0]}, {item.embedding[1]}, "
+                        f"..., {item.embedding[length-2]}, {item.embedding[length-1]}]"
+                    )
+                assert len(response.data) == 1
+                assert len(response.data[0].embedding) > 0
+                assert response.data[0].embedding[0] != 0.0
+                assert response.data[0].embedding[-1] != 0.0
+                self.validate_user_agent(starts_with="MyAppId-AIProjectClient azsdk-python-ai-inference/")
+
+    @servicePreparerInferenceTests()
+    @recorded_by_proxy
+    def test_inference_get_image_embeddings_client_entra_id_auth(self, **kwargs):
+        connection_name = kwargs.pop("azure_ai_projects_inference_tests_entraid_auth_aiservices_connection_name")
+        model = kwargs.pop("azure_ai_projects_inference_tests_embeddings_model_deployment_name")
+        with self.get_sync_client(**kwargs) as project_client:
+            with project_client.inference.get_image_embeddings_client(
+                connection_name=connection_name
+            ) as embeddings_client:
+                response = embeddings_client.embed(
+                    model=model,
+                    input=[InferenceTestBase.get_image_embeddings_input()],
+                    raw_request_hook=self.request_callback,
+                )
+                print("\nImageEmbeddingsClient response:")
+                for item in response.data:
+                    length = len(item.embedding)
+                    print(
+                        f"data[{item.index}] (vector length={length}): "
+                        f"[{item.embedding[0]}, {item.embedding[1]}, "
+                        f"..., {item.embedding[length-2]}, {item.embedding[length-1]}]"
+                    )
+                assert len(response.data) == 1
+                assert len(response.data[0].embedding) > 0
+                assert response.data[0].embedding[0] != 0.0
+                assert response.data[0].embedding[-1] != 0.0
+                self.validate_user_agent(starts_with="AIProjectClient azsdk-python-ai-inference/")
+
+    @servicePreparerInferenceTests()
+    def test_inference_get_image_embeddings_client_with_empty_connection_name(self, **kwargs):
+        with self.get_sync_client(**kwargs) as project_client:
+            try:
+                with project_client.inference.get_image_embeddings_client(connection_name="") as _:
+                    assert False
+            except ValueError as e:
+                print(e)
+                assert InferenceTestBase.EXPECTED_EXCEPTION_MESSAGE_FOR_EMPTY_CONNECTION_NAME in e.__str__()
+
+    @servicePreparerInferenceTests()
+    @recorded_by_proxy
+    def test_inference_get_image_embeddings_client_with_nonexisting_connection_name(self, **kwargs):
+        with self.get_sync_client(**kwargs) as project_client:
+            try:
+                with project_client.inference.get_image_embeddings_client(
+                    connection_name=InferenceTestBase.NON_EXISTING_CONNECTION_NAME
+                ) as _:
                     assert False
             except ResourceNotFoundError as e:
                 print(e)

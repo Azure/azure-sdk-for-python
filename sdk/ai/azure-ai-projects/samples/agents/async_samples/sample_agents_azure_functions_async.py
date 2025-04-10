@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -29,6 +30,7 @@ from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.models import (
     AzureFunctionStorageQueue,
     AzureFunctionTool,
+    MessageRole,
 )
 
 
@@ -83,7 +85,7 @@ async def main():
             )
             print(f"Created message, message ID: {message.id}")
 
-            run = await project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+            run = await project_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
             if run.status == "failed":
                 print(f"Run failed: {run.last_error}")
 
@@ -92,7 +94,7 @@ async def main():
             print(f"Messages: {messages}")
 
             # Get the last message from the sender
-            last_msg = messages.get_last_text_message_by_sender("assistant")
+            last_msg = messages.get_last_text_message_by_role(MessageRole.AGENT)
             if last_msg:
                 print(f"Last Message: {last_msg.text.value}")
 

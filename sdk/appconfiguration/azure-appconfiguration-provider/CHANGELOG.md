@@ -1,5 +1,18 @@
 # Release History
 
+## 2.0.1 (2025-03-07)
+
+### Bugs Fixed
+
+* Updates the failure to load from a config store from a debug level log to a warning level log.
+* Fixes an issue where the stack trace from the azure sdk wasn't being logged on startup.
+* Fixes a bug where feature flags could be loaded as configurations.
+
+### Other Changes
+
+* Bumped minimum dependency on `azure-core` to `>=1.30.0`
+* Bumped minimum dependency on `azure-appconfiguration` to `>=1.6.1`
+
 ## 2.0.0 (2025-01-06)
 
 ### Features Added

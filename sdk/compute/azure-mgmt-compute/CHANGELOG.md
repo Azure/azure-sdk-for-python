@@ -1,5 +1,52 @@
 # Release History
 
+## 34.1.0 (2025-03-24)
+
+### Features Added
+
+  - Added operation AvailabilitySetsOperations.begin_convert_to_virtual_machine_scale_set
+  - Added operation AvailabilitySetsOperations.cancel_migration_to_virtual_machine_scale_set
+  - Added operation AvailabilitySetsOperations.start_migration_to_virtual_machine_scale_set
+  - Added operation AvailabilitySetsOperations.validate_migration_to_virtual_machine_scale_set
+  - Added operation VirtualMachineImagesOperations.list_with_properties
+  - Added operation VirtualMachinesOperations.begin_migrate_to_vm_scale_set
+  - Model AvailabilitySet has a new parameter virtual_machine_scale_set_migration_info
+  - Model AvailabilitySetUpdate has a new parameter virtual_machine_scale_set_migration_info
+  - Model ProxyAgentSettings has a new parameter imds
+  - Model ProxyAgentSettings has a new parameter wire_server
+  - Model ResiliencyPolicy has a new parameter automatic_zone_rebalancing_policy
+  - Model ScaleInPolicy has a new parameter prioritize_unhealthy_v_ms
+  - Model SkuProfileVMSize has a new parameter rank
+  - Model StorageProfile has a new parameter align_regional_disks_to_vm_zone
+  - Model VirtualMachine has a new parameter placement
+  - Model VirtualMachineScaleSetVM has a new parameter resilient_vm_deletion_status
+
+## 34.0.0 (2025-01-20)
+
+### Features Added
+
+  - Model CloudServiceVaultCertificate has a new parameter is_bootstrap_certificate
+
+### Breaking Changes
+
+  - Removed subfolders of some unused Api-Versions for smaller package size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ignore this change.
+  - Model Gallery no longer has parameter identity
+  - Model GalleryImage no longer has parameter allow_update_image
+  - Model GalleryImageFeature no longer has parameter starts_at_version
+  - Model GalleryImageUpdate no longer has parameter allow_update_image
+  - Model GalleryImageVersion no longer has parameter restore
+  - Model GalleryImageVersion no longer has parameter validations_profile
+  - Model GalleryImageVersionSafetyProfile no longer has parameter block_deletion_before_end_of_life
+  - Model GalleryImageVersionUpdate no longer has parameter restore
+  - Model GalleryImageVersionUpdate no longer has parameter validations_profile
+  - Model GalleryList no longer has parameter security_profile
+  - Model GalleryUpdate no longer has parameter identity
+  - Model TargetRegion no longer has parameter additional_replica_sets
+  - Model UserArtifactSettings no longer has parameter script_behavior_after_reboot
+  - Removed operation group GalleryInVMAccessControlProfileVersionsOperations
+  - Removed operation group GalleryInVMAccessControlProfilesOperations
+  - Removed operation group SoftDeletedResourceOperation
+
 ## 33.1.0 (2024-12-16)
 
 ### Features Added

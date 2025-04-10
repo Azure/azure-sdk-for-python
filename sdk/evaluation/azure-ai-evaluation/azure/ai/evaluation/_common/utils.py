@@ -9,7 +9,7 @@ from typing import Any, List, Literal, Mapping, Type, TypeVar, Tuple, Union, cas
 
 import nltk
 from typing_extensions import NotRequired, Required, TypeGuard
-from promptflow.core._errors import MissingRequiredPackage
+from azure.ai.evaluation._legacy._adapters._errors import MissingRequiredPackage
 from azure.ai.evaluation._constants import AZURE_OPENAI_TYPE, OPENAI_TYPE
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._model_configurations import (
@@ -274,8 +274,26 @@ def _validate_typed_dict(o: object, t: Type[T_TypedDict]) -> T_TypedDict:
 
     return cast(T_TypedDict, o)
 
+def check_score_is_valid(score: Union[str, float], min_score = 1, max_score = 5) -> bool:
+    """Check if the score is valid, i.e. is convertable to number and is in the range [min_score, max_score].
 
-def parse_quality_evaluator_reason_score(llm_output: str) -> Tuple[float, str]:
+    :param score: The score to check.
+    :type score: Union[str, float]
+    :param min_score: The minimum score. Default is 1.
+    :type min_score: int
+    :param max_score: The maximum score. Default is 5.
+    :type max_score: int
+    :return: True if the score is valid, False otherwise.
+    :rtype: bool
+    """
+    try:
+        numeric_score = float(score)
+    except (ValueError, TypeError):
+        return False
+
+    return min_score <= numeric_score <= max_score
+
+def parse_quality_evaluator_reason_score(llm_output: str, valid_score_range: str = "[1-5]") -> Tuple[float, str]:
     """Parse the output of prompt-based quality evaluators that return a score and reason.
 
     Current supported evaluators:
@@ -284,6 +302,8 @@ def parse_quality_evaluator_reason_score(llm_output: str) -> Tuple[float, str]:
         - Retrieval
         - Groundedness
         - Coherence
+        - ResponseCompleteness
+        - TaskAdherence
 
     :param llm_output: The output of the prompt-based quality evaluator.
     :type llm_output: str
@@ -294,7 +314,7 @@ def parse_quality_evaluator_reason_score(llm_output: str) -> Tuple[float, str]:
     reason = ""
     if llm_output:
         try:
-            score_pattern = r"<S2>\D*?([1-5]).*?</S2>"
+            score_pattern = rf"<S2>\D*?({valid_score_range}).*?</S2>"
             reason_pattern = r"<S1>(.*?)</S1>"
             score_match = re.findall(score_pattern, llm_output, re.DOTALL)
             reason_match = re.findall(reason_pattern, llm_output, re.DOTALL)
@@ -366,7 +386,7 @@ def validate_conversation(conversation):
     if not isinstance(messages, list):
         raise_exception(
             "'messages' parameter must be a JSON-compatible list of chat messages",
-            ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+            ErrorTarget.CONTENT_SAFETY_CHAT_EVALUATOR,
         )
     expected_roles = {"user", "assistant", "system"}
     image_found = False
@@ -393,7 +413,7 @@ def validate_conversation(conversation):
             ):
                 raise_exception(
                     f"Messages must be a strongly typed class of ChatRequestMessage. Message number: {num}",
-                    ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+                    ErrorTarget.CONTENT_SAFETY_CHAT_EVALUATOR,
                 )
             if isinstance(message, AssistantMessage):
                 assistant_message_count += 1
@@ -407,7 +427,7 @@ def validate_conversation(conversation):
         if message.get("role") not in expected_roles:
             raise_exception(
                 f"Invalid role provided: {message.get('role')}. Message number: {num}",
-                ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+                ErrorTarget.CONTENT_SAFETY_CHAT_EVALUATOR,
             )
         if message.get("role") == "assistant":
             assistant_message_count += 1
@@ -417,7 +437,7 @@ def validate_conversation(conversation):
         if not isinstance(content, (str, list)):
             raise_exception(
                 f"Content in each turn must be a string or array. Message number: {num}",
-                ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+                ErrorTarget.CONTENT_SAFETY_CHAT_EVALUATOR,
             )
         if isinstance(content, list):
             if any(item.get("type") == "image_url" and "url" in item.get("image_url", {}) for item in content):
@@ -425,21 +445,21 @@ def validate_conversation(conversation):
     if not image_found:
         raise_exception(
             "Message needs to have multi-modal input like images.",
-            ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+            ErrorTarget.CONTENT_SAFETY_CHAT_EVALUATOR,
         )
     if assistant_message_count == 0:
         raise_exception(
             "Assistant role required in one of the messages.",
-            ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+            ErrorTarget.CONTENT_SAFETY_CHAT_EVALUATOR,
         )
     if user_message_count == 0:
         raise_exception(
             "User role required in one of the messages.",
-            ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+            ErrorTarget.CONTENT_SAFETY_CHAT_EVALUATOR,
         )
     if assistant_message_count > 1:
         raise_exception(
             "Evaluators for multimodal conversations only support single turn. "
             "User and assistant role expected as the only role in each message.",
-            ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+            ErrorTarget.CONTENT_SAFETY_CHAT_EVALUATOR,
         )

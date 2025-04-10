@@ -438,6 +438,7 @@ class WebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too-many-
             from aiohttp import (  # pylint: disable=networking-import-outside-azure-core-transport
                 ClientSession,
                 ClientConnectorError,
+                ClientWSTimeout,
             )
             from urllib.parse import urlsplit
         except ImportError:
@@ -466,7 +467,7 @@ class WebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too-many-
 
             self.sock = await self.session.ws_connect(
                 url=url,
-                timeout=self.socket_timeout,  # timeout for connect
+                timeout=ClientWSTimeout(ws_close=self.socket_timeout),
                 protocols=[AMQP_WS_SUBPROTOCOL],
                 autoclose=False,
                 proxy=http_proxy_host,
@@ -499,18 +500,23 @@ class WebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too-many-
         length += nbytes
         toread -= nbytes
         try:
-            while toread:
-                data = await self.sock.receive_bytes()
-                read_length = len(data)
-                if read_length <= toread:
-                    view[length : length + read_length] = data
-                    toread -= read_length
-                    length += read_length
-                else:
-                    view[length : length + toread] = data[0:toread]
-                    self._read_buffer = BytesIO(data[toread:])
-                    toread = 0
-            return view
+            try:
+                while toread:
+                    data = await self.sock.receive_bytes()
+                    read_length = len(data)
+                    if read_length <= toread:
+                        view[length : length + read_length] = data
+                        toread -= read_length
+                        length += read_length
+                    else:
+                        view[length : length + toread] = data[0:toread]
+                        self._read_buffer = BytesIO(data[toread:])
+                        toread = 0
+                return view
+            except TypeError as te:
+                # aiohttp websocket raises TypeError when a websocket disconnects, as it ends up
+                # reading None over the wire and cant convert to bytes.
+                raise ConnectionError("Websocket disconnected: %r" % te) from None
         except:
             self._read_buffer = BytesIO(view[:length])
             raise

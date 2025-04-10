@@ -25,6 +25,6 @@
 # --------------------------------------------------------------------------
 from ._schema_registry_json_encoder_async import (
     JsonSchemaEncoder,
-)  # pylint: disable=import-error
+)
 
 __all__ = ["JsonSchemaEncoder"]

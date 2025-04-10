@@ -174,6 +174,6 @@ def _filter_time_stamp_to_ms(time_stamp: str) -> Optional[int]:
             + float(minutes) * 60 * 1000  # minutes to milliseconds
             + float(seconds) * 1000  # seconds to milliseconds
         )
-    except Exception:  # pylint: disable=broad-except,invalid-name
+    except Exception:  # pylint: disable=broad-except
         pass
     return total_milliseconds

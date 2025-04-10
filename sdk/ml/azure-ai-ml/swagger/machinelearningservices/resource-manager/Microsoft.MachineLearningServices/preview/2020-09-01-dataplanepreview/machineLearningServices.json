@@ -680,7 +680,7 @@
         ],
         "responses": {
           "200": {
-            "description": "The response includes a paginated array of Machine Learning computes and a URI to the next set of results, if any. For the more information the limits of the number of items in a resource group, see https://azure.microsoft.com/en-us/documentation/articles/azure-subscription-service-limits/.",
+            "description": "The response includes a paginated array of Machine Learning computes and a URI to the next set of results, if any. For the more information the limits of the number of items in a resource group, see https://azure.microsoft.com/documentation/articles/azure-subscription-service-limits/.",
             "schema": {
               "$ref": "#/definitions/PaginatedComputeResourcesList"
             }
@@ -1615,7 +1615,7 @@
         ],
         "responses": {
           "200": {
-            "description": "The response includes a paginated array of Machine Learning services and a URI to the next set of results, if any. For the more information the limits of the number of items in a resource group, see https://azure.microsoft.com/en-us/documentation/articles/azure-subscription-service-limits/.",
+            "description": "The response includes a paginated array of Machine Learning services and a URI to the next set of results, if any. For the more information the limits of the number of items in a resource group, see https://azure.microsoft.com/documentation/articles/azure-subscription-service-limits/.",
             "schema": {
               "$ref": "#/definitions/PaginatedServiceList"
             }
@@ -1912,7 +1912,7 @@
         ],
         "responses": {
           "200": {
-            "description": "The response includes a paginated array of Workspace connections and a URI to the next set of results, if any. For the more information the limits of the number of items in a resource group, see https://azure.microsoft.com/en-us/documentation/articles/azure-subscription-service-limits/.",
+            "description": "The response includes a paginated array of Workspace connections and a URI to the next set of results, if any. For the more information the limits of the number of items in a resource group, see https://azure.microsoft.com/documentation/articles/azure-subscription-service-limits/.",
             "schema": {
               "$ref": "#/definitions/PaginatedWorkspaceConnectionsList"
             }

@@ -1,13 +1,16 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
 import sys
-import os
 import logging
 import functools
+from os import path
+from typing import Optional
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.aio import AIProjectClient as AIProjectClientAsync
+from azure.ai.inference.models import ImageEmbeddingInput
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 
 servicePreparerInferenceTests = functools.partial(
@@ -51,6 +54,7 @@ class InferenceTestBase(AzureRecordedTestCase):
             credential=self.get_credential(AIProjectClient, is_async=False),
             conn_str=conn_str,
             logging_enable=LOGGING_ENABLED,
+            **kwargs,
         )
         return project_client
 
@@ -60,5 +64,31 @@ class InferenceTestBase(AzureRecordedTestCase):
             credential=self.get_credential(AIProjectClientAsync, is_async=True),
             conn_str=conn_str,
             logging_enable=LOGGING_ENABLED,
+            **kwargs,
         )
         return project_client
+
+    @staticmethod
+    def get_image_embeddings_input(with_text: Optional[bool] = False) -> ImageEmbeddingInput:
+        local_folder = path.dirname(path.abspath(__file__))
+        image_file = path.join(local_folder, "test_image1.png")
+        if with_text:
+            return ImageEmbeddingInput.load(
+                image_file=image_file,
+                image_format="png",
+                text="some text",
+            )
+        else:
+            return ImageEmbeddingInput.load(
+                image_file=image_file,
+                image_format="png",
+            )
+
+    def validate_user_agent(self, starts_with: str) -> None:
+        print(f"Actual HTTP request headers: {self.pipeline_request.http_request.headers}")
+        headers = self.pipeline_request.http_request.headers
+        assert headers["User-Agent"].startswith(starts_with)
+        assert " Python/" in headers["User-Agent"]
+
+    def request_callback(self, pipeline_request) -> None:
+        self.pipeline_request = pipeline_request

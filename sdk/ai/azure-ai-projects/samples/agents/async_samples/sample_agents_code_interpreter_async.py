@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -22,7 +23,7 @@ import asyncio
 
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import CodeInterpreterTool
-from azure.ai.projects.models import FilePurpose
+from azure.ai.projects.models import FilePurpose, MessageRole
 from azure.identity.aio import DefaultAzureCredential
 from pathlib import Path
 
@@ -63,7 +64,7 @@ async def main() -> None:
             )
             print(f"Created message, message ID: {message.id}")
 
-            run = await project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+            run = await project_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
             print(f"Run finished with status: {run.status}")
 
             if run.status == "failed":
@@ -73,7 +74,7 @@ async def main() -> None:
             messages = await project_client.agents.list_messages(thread_id=thread.id)
             print(f"Messages: {messages}")
 
-            last_msg = messages.get_last_text_message_by_sender("assistant")
+            last_msg = messages.get_last_text_message_by_role(MessageRole.AGENT)
             if last_msg:
                 print(f"Last Message: {last_msg.text.value}")
 

@@ -1,6 +1,6 @@
 # Release History
 
-## 1.4.1 (Unreleased)
+## 1.4.2 (Unreleased)
 
 ### Features Added
 
@@ -8,7 +8,15 @@
 
 ### Bugs Fixed
 
+- Fixed an issue where the package version in operation user agent strings was always set to "unknown" instead of the actual package version. ([#39866](https://github.com/Azure/azure-sdk-for-python/pull/39866))
+
 ### Other Changes
+
+## 1.4.1 (2025-01-14)
+
+### Other Changes
+
+- Internal updates for linting and typing improvements.
 
 ## 1.4.0 (2024-06-11)
 

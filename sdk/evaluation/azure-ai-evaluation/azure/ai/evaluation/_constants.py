@@ -1,7 +1,9 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+import enum
 from typing import Literal
+from azure.ai.evaluation._common._experimental import experimental
 
 
 class EvaluationMetrics:
@@ -20,7 +22,12 @@ class EvaluationMetrics:
     SELF_HARM = "self_harm"
     SEXUAL = "sexual"
     PROTECTED_MATERIAL = "protected_material"
+    ARTWORK = "artwork"
+    FICTIONAL_CHARACTERS = "fictional_characters"
+    LOGOS_AND_BRANDS = "logos_and_brands"
     XPIA = "xpia"
+    CODE_VULNERABILITY = "code_vulnerability"
+    UNGROUNDED_ATTRIBUTES = "ungrounded_attributes"
 
 
 class _InternalEvaluationMetrics:
@@ -57,6 +64,22 @@ class EvaluationRunProperties:
     EVALUATION_SDK = "_azureml.evaluation_sdk_name"
 
 
+@experimental
+class _AggregationType(enum.Enum):
+    """Defines how numeric evaluation results should be aggregated
+    to produce a single value. Used by individual evaluators to combine per-turn results for
+    a conversation-based input. In general, wherever this enum is used, it is also possible
+    to directly assign the underlying aggregation function for more complex use cases.
+    The 'custom' value is generally not an acceptable input, and should only be used as an output
+    to indicate that a custom aggregation function has been injected."""
+
+    MEAN = "mean"
+    MAX = "max"
+    MIN = "min"
+    SUM = "sum"
+    CUSTOM = "custom"
+
+
 DEFAULT_EVALUATION_RESULTS_FILE_NAME = "evaluation_results.json"
 
 CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT = 4
@@ -71,3 +94,8 @@ OTEL_EXPORTER_OTLP_TRACES_TIMEOUT_DEFAULT = 60
 AZURE_OPENAI_TYPE: Literal["azure_openai"] = "azure_openai"
 
 OPENAI_TYPE: Literal["openai"] = "openai"
+
+EVALUATION_PASS_FAIL_MAPPING = {
+    True: "pass",
+    False: "fail",
+}

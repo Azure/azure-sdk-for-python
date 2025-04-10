@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
+import sys
 from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
 
 from azure.core.exceptions import (
@@ -18,16 +18,18 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
-from ..._vendor import _convert_request
 from ...operations._database_operations import build_invite_follower_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -76,7 +78,6 @@ class DatabaseOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DatabaseInviteFollowerResult or the result of cls(response)
         :rtype: ~azure.mgmt.kusto.models.DatabaseInviteFollowerResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -88,7 +89,7 @@ class DatabaseOperations:
         resource_group_name: str,
         cluster_name: str,
         database_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -103,11 +104,10 @@ class DatabaseOperations:
         :param database_name: The name of the database in the Kusto cluster. Required.
         :type database_name: str
         :param parameters: The follower invitation request parameters. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DatabaseInviteFollowerResult or the result of cls(response)
         :rtype: ~azure.mgmt.kusto.models.DatabaseInviteFollowerResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -119,7 +119,7 @@ class DatabaseOperations:
         resource_group_name: str,
         cluster_name: str,
         database_name: str,
-        parameters: Union[_models.DatabaseInviteFollowerRequest, IO],
+        parameters: Union[_models.DatabaseInviteFollowerRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.DatabaseInviteFollowerResult:
         """Generates an invitation token that allows attaching a follower database to this database.
@@ -132,17 +132,13 @@ class DatabaseOperations:
         :param database_name: The name of the database in the Kusto cluster. Required.
         :type database_name: str
         :param parameters: The follower invitation request parameters. Is either a
-         DatabaseInviteFollowerRequest type or a IO type. Required.
-        :type parameters: ~azure.mgmt.kusto.models.DatabaseInviteFollowerRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         DatabaseInviteFollowerRequest type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.kusto.models.DatabaseInviteFollowerRequest or IO[bytes]
         :return: DatabaseInviteFollowerResult or the result of cls(response)
         :rtype: ~azure.mgmt.kusto.models.DatabaseInviteFollowerResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -165,7 +161,7 @@ class DatabaseOperations:
         else:
             _json = self._serialize.body(parameters, "DatabaseInviteFollowerRequest")
 
-        request = build_invite_follower_request(
+        _request = build_invite_follower_request(
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
             database_name=database_name,
@@ -174,16 +170,14 @@ class DatabaseOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.invite_follower.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -193,13 +187,9 @@ class DatabaseOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("DatabaseInviteFollowerResult", pipeline_response)
+        deserialized = self._deserialize("DatabaseInviteFollowerResult", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    invite_follower.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/databases/{databaseName}/inviteFollower"
-    }
+        return deserialized  # type: ignore

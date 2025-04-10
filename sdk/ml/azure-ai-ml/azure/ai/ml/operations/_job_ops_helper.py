@@ -248,7 +248,7 @@ def stream_logs_until_completion(
         )
         is_uri_folder = default_output and default_output.job_output_type == DataType.URI_FOLDER
         if is_uri_folder:
-            output_uri = default_output.uri
+            output_uri = default_output.uri  # type: ignore
             # Parse the uri format
             output_uri = output_uri.split("datastores/")[1]
             datastore_name, prefix = output_uri.split("/", 1)
@@ -435,6 +435,22 @@ def get_git_properties() -> Dict[str, str]:
     return properties
 
 
+def has_pat_token(url: Optional[str]) -> bool:
+    """Check if the given repository URL contains a PAT token.
+
+    :param url: Repository URL to check.
+    :type url: Optional[str]
+    :return: True if PAT token is detected, False otherwise.
+    :rtype: bool
+    """
+    if url is None:
+        return False
+
+    # Matches both "https://dev.azure.com/mypattoken@..." and "https://mypattoken@dev.azure.com/..."
+    pat_regex = r"https://(?:[^/@]+/)?([^/@]+)@"
+    return re.search(pat_regex, url) is not None
+
+
 def get_job_output_uris_from_dataplane(
     job_name: Optional[str],
     run_operations: RunOperations,
@@ -507,6 +523,7 @@ def get_job_output_uris_from_dataplane(
             if model_dataplane_operations is not None
             else None
         )
-        output_name_to_model_uri = {asset_id_to_output_name[k]: v.path for k, v in model_uris.values.items()}
-
+        output_name_to_model_uri = {
+            asset_id_to_output_name[k]: v.path for k, v in model_uris.values.items()  # type: ignore
+        }
     return {**output_name_to_dataset_uri, **output_name_to_model_uri}

@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,protected-access
+# pylint: disable=protected-access
 
 import yaml
 
@@ -22,7 +22,7 @@ class ImportDataFileRefField(FileRefField):
 
         from azure.ai.ml.entities._data_import.data_import import DataImport
 
-        return DataImport._load(  # pylint: disable=no-member
+        return DataImport._load(
             data=data_import_dict,
             yaml_path=self.context[BASE_PATH_CONTEXT_KEY] / value,
             **kwargs,

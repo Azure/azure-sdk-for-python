@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Dict, TypeVar, Union
+from typing import Dict, TypeVar, Union, Optional
 
 from typing_extensions import override
 
@@ -15,6 +15,7 @@ from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service, e
 from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._exceptions import EvaluationException
 from azure.ai.evaluation._common.utils import validate_conversation
+from azure.ai.evaluation._constants import _AggregationType
 from azure.core.credentials import TokenCredential
 
 from . import EvaluatorBase
@@ -35,6 +36,14 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         aggregated. Per-turn results are still be available in the output via the "evaluation_per_turn" key
         when this occurs. Default is False, resulting full conversation evaluation and aggregation.
     :type eval_last_turn: bool
+    :param conversation_aggregation_type: The type of aggregation to perform on the per-turn results of a conversation
+        to produce a single result.
+        Default is ~azure.ai.evaluation._AggregationType.MEAN.
+    :type conversation_aggregation_type: ~azure.ai.evaluation._AggregationType
+    :param threshold: The threshold for the evaluation. Default is 3.
+    :type threshold: Optional[int]
+    :param _higher_is_better: If True, higher scores are better. Default is True.
+    :type _higher_is_better: Optional[bool]
     """
 
     @override
@@ -44,11 +53,16 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         azure_ai_project: dict,
         credential: TokenCredential,
         eval_last_turn: bool = False,
+        conversation_aggregation_type: _AggregationType = _AggregationType.MEAN,
+        threshold: int = 3,
+        _higher_is_better: Optional[bool] = False,
     ):
-        super().__init__(eval_last_turn=eval_last_turn)
+        super().__init__(eval_last_turn=eval_last_turn, conversation_aggregation_type=conversation_aggregation_type, threshold=threshold, _higher_is_better=_higher_is_better)
         self._eval_metric = eval_metric
         self._azure_ai_project = validate_azure_ai_project(azure_ai_project)
         self._credential = credential
+        self._threshold = threshold
+        self._higher_is_better = _higher_is_better
 
     @override
     def __call__(  # pylint: disable=docstring-missing-param
@@ -112,8 +126,8 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         return result
 
     async def _evaluate_query_response(self, eval_input: Dict) -> Dict[str, T]:
-        query = eval_input.get("query", None)
-        response = eval_input.get("response", None)
+        query = str(eval_input.get("query", None))
+        response = str(eval_input.get("response", None))
         if query is None or response is None:
             raise EvaluationException(
                 message="Not implemented",
@@ -162,4 +176,8 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
             return _InternalAnnotationTasks.ECI
         if self._eval_metric == EvaluationMetrics.PROTECTED_MATERIAL:
             return Tasks.PROTECTED_MATERIAL
+        if self._eval_metric == EvaluationMetrics.CODE_VULNERABILITY:
+            return Tasks.CODE_VULNERABILITY
+        if self._eval_metric == EvaluationMetrics.UNGROUNDED_ATTRIBUTES:
+            return Tasks.UNGROUNDED_ATTRIBUTES
         return Tasks.CONTENT_HARM

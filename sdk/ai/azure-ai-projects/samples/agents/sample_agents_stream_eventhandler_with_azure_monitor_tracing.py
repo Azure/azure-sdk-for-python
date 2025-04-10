@@ -17,9 +17,12 @@ USAGE:
     pip install azure-ai-projects azure-identity opentelemetry-sdk azure-monitor-opentelemetry
 
     Set these environment variables with your own values:
-    * PROJECT_CONNECTION_STRING - The Azure AI Project connection string, as found in your AI Foundry project.
-    * AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to `true` to trace the content of chat
-      messages, which may contain personal data. False by default.
+    1) PROJECT_CONNECTION_STRING - The project connection string, as found in the overview page of your
+       Azure AI Foundry project.
+    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
+       the "Models + endpoints" tab in your Azure AI Foundry project.
+    3) AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to `true` to trace the content of chat
+       messages, which may contain personal data. False by default.
 
 """
 
@@ -83,6 +86,9 @@ configure_azure_monitor(connection_string=application_insights_connection_string
 scenario = os.path.basename(__file__)
 tracer = trace.get_tracer(__name__)
 
+# enable additional instrumentations
+project_client.telemetry.enable()
+
 with tracer.start_as_current_span(scenario):
     with project_client:
         # Create an agent and run stream with event handler
@@ -100,7 +106,7 @@ with tracer.start_as_current_span(scenario):
         print(f"Created message, message ID {message.id}")
 
         with project_client.agents.create_stream(
-            thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
+            thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler()
         ) as stream:
             stream.until_done()
 

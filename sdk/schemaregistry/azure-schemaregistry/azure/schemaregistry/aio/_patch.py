@@ -132,7 +132,7 @@ class SchemaRegistryClient:
             await self._generated_client._register_schema(  # type: ignore # pylint:disable=protected-access
                 group_name=group_name,
                 schema_name=name,
-                content=cast(IO[Any], definition),
+                schema_content=cast(IO[Any], definition),
                 content_type=kwargs.pop("content_type", get_content_type(format)),
                 cls=partial(prepare_schema_properties_result, format),
                 **http_request_kwargs,
@@ -201,7 +201,7 @@ class SchemaRegistryClient:
         ...
 
     @distributed_trace_async
-    async def get_schema(  # pylint: disable=docstring-missing-param,docstring-should-be-keyword
+    async def get_schema(  # pylint: disable=docstring-missing-param,docstring-should-be-keyword,docstring-keyword-should-match-keyword-only
         self, *args: str, **kwargs: Any
     ) -> Schema:
         """Gets a registered schema. There are two ways to call this method:
@@ -261,7 +261,7 @@ class SchemaRegistryClient:
                 cls=prepare_schema_result,
                 headers={  # TODO: remove when multiple content types are supported
                     "Accept": """application/json; serialization=Avro, application/json; """
-                        """serialization=json, text/plain; charset=utf-8"""
+                    """serialization=json, text/plain; charset=utf-8"""
                 },
                 stream=True,
                 **http_request_kwargs,
@@ -286,7 +286,7 @@ class SchemaRegistryClient:
                 cls=prepare_schema_result,
                 headers={  # TODO: remove when multiple content types are supported
                     "Accept": """application/json; serialization=Avro, application/json; """
-                        """serialization=json, text/plain; charset=utf-8"""
+                    """serialization=json, text/plain; charset=utf-8"""
                 },
                 stream=True,
                 **http_request_kwargs,

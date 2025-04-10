@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -13,7 +13,6 @@ from typing import Any, List, Literal, Optional, TYPE_CHECKING
 from .. import _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -198,7 +197,7 @@ class BlobPrefix(_serialization.Model):
         self.name = name
 
 
-class BlobPropertiesInternal(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class BlobPropertiesInternal(_serialization.Model):
     """Properties of a blob.
 
     All required parameters must be populated in order to send to server.
@@ -698,7 +697,7 @@ class ModifiedAccessConditions(_serialization.Model):
         self.if_none_match = if_none_match
 
 
-class Path(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class Path(_serialization.Model):
     """Path.
 
     :ivar name:

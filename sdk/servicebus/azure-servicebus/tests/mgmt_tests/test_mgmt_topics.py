@@ -9,11 +9,11 @@ import datetime
 
 from azure.servicebus.management import ServiceBusAdministrationClient, TopicProperties, ApiVersion
 from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
-from tests.utilities import get_logger
+from utilities import get_logger
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 
 from devtools_testutils import AzureMgmtRecordedTestCase, CachedResourceGroupPreparer, recorded_by_proxy, get_credential
-from tests.sb_env_loader import ServiceBusPreparer
+from sb_env_loader import ServiceBusPreparer
 
 from mgmt_test_utilities import clear_topics
 
@@ -133,10 +133,10 @@ class TestServiceBusAdministrationClientTopicTests(AzureMgmtRecordedTestCase):
             assert topic.duplicate_detection_history_time_window == datetime.timedelta(minutes=12)
             assert topic.enable_batched_operations
             # enable_express is not supported for the premium sku, see doc
-            # https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-premium-messaging#express-entities
+            # https://learn.microsoft.com/azure/service-bus-messaging/service-bus-premium-messaging#express-entities
             # assert topic.enable_express
             # partitioning is not available for the the premium sku, see doc
-            # https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-partitioning
+            # https://learn.microsoft.com/azure/service-bus-messaging/service-bus-partitioning
             # assert topic.enable_partitioning
             assert topic.max_size_in_megabytes % 3072 == 0
             assert topic.max_message_size_in_kilobytes == 12345

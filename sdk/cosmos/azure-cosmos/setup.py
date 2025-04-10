@@ -34,7 +34,7 @@ with open("CHANGELOG.md", encoding="utf-8") as f:
     changelog = f.read()
 
 exclude_packages = [
-    "test",
+    "tests",
     "samples",
     # Exclude packages that will be covered by PEP420 or nspkg
     "azure",
@@ -75,6 +75,6 @@ setup(
     python_requires=">=3.8",
     install_requires=[
         "azure-core>=1.30.0",
-        "typing-extensions>=4.6.0",
+        "typing-extensions>=4.6.0"
     ],
 )

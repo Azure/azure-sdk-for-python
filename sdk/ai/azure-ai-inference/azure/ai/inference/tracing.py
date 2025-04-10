@@ -208,7 +208,7 @@ class _AIInferenceInstrumentorPreview:
                     f"gen_ai.{message.get('role')}.message",
                     {
                         "gen_ai.system": _INFERENCE_GEN_AI_SYSTEM_NAME,
-                        "gen_ai.event.content": json.dumps(message),
+                        "gen_ai.event.content": json.dumps(message, ensure_ascii=False),
                     },
                     timestamp,
                 )
@@ -285,8 +285,8 @@ class _AIInferenceInstrumentorPreview:
 
         return "none"
 
-    def _add_response_chat_message_events(self, span: "AbstractSpan",
-        result: _models.ChatCompletions, last_event_timestamp_ns: int
+    def _add_response_chat_message_events(
+        self, span: "AbstractSpan", result: _models.ChatCompletions, last_event_timestamp_ns: int
     ) -> None:
         for choice in result.choices:
             attributes = {}
@@ -300,7 +300,7 @@ class _AIInferenceInstrumentorPreview:
                     full_response["message"]["tool_calls"] = [tool.as_dict() for tool in choice.message.tool_calls]
                 attributes = {
                     "gen_ai.system": _INFERENCE_GEN_AI_SYSTEM_NAME,
-                    "gen_ai.event.content": json.dumps(full_response),
+                    "gen_ai.event.content": json.dumps(full_response, ensure_ascii=False),
                 }
             else:
                 response: Dict[str, Any] = {
@@ -318,7 +318,7 @@ class _AIInferenceInstrumentorPreview:
 
                 attributes = {
                     "gen_ai.system": _INFERENCE_GEN_AI_SYSTEM_NAME,
-                    "gen_ai.event.content": json.dumps(response),
+                    "gen_ai.event.content": json.dumps(response, ensure_ascii=False),
                 }
             last_event_timestamp_ns = self._record_event(span, "gen_ai.choice", attributes, last_event_timestamp_ns)
 
@@ -476,9 +476,9 @@ class _AIInferenceInstrumentorPreview:
                                     accumulate["message"]["tool_calls"] = list(
                                         tool_calls_function_names_and_arguments_removed
                                     )
-                    attributes={
+                    attributes = {
                         "gen_ai.system": _INFERENCE_GEN_AI_SYSTEM_NAME,
-                        "gen_ai.event.content": json.dumps(accumulate),
+                        "gen_ai.event.content": json.dumps(accumulate, ensure_ascii=False),
                     }
                     self._instrumentor._record_event(span, "gen_ai.choice", attributes, previous_event_timestamp)
                     span.finish()
@@ -530,23 +530,20 @@ class _AIInferenceInstrumentorPreview:
                                     self._accumulate["message"]["tool_calls"]
                                 )
                                 self._accumulate["message"]["tool_calls"] = list(tools_no_recording)
-                attributes={
+                attributes = {
                     "gen_ai.system": _INFERENCE_GEN_AI_SYSTEM_NAME,
-                    "gen_ai.event.content": json.dumps(self._accumulate),
+                    "gen_ai.event.content": json.dumps(self._accumulate, ensure_ascii=False),
                 }
-                self._last_event_timestamp_ns = self._instrumentor._record_event( # pylint: disable=protected-access, line-too-long # pyright: ignore [reportFunctionMemberAccess]
-                        span,
-                        "gen_ai.choice",
-                        attributes,
-                        self._last_event_timestamp_ns
-                    )
+                self._last_event_timestamp_ns = self._instrumentor._record_event(  # pylint: disable=protected-access, line-too-long # pyright: ignore [reportFunctionMemberAccess]
+                    span, "gen_ai.choice", attributes, self._last_event_timestamp_ns
+                )
                 span.finish()
 
         async_stream_wrapper = AsyncStreamWrapper(stream_obj, self, span, last_event_timestamp_ns)
         return async_stream_wrapper
 
-    def _record_event(self, span: "AbstractSpan", name: str,
-        attributes: Dict[str, Any], last_event_timestamp_ns: int
+    def _record_event(
+        self, span: "AbstractSpan", name: str, attributes: Dict[str, Any], last_event_timestamp_ns: int
     ) -> int:
         timestamp = time_ns()
 
@@ -562,9 +559,7 @@ class _AIInferenceInstrumentorPreview:
         if last_event_timestamp_ns > 0 and timestamp <= (last_event_timestamp_ns + 1000):
             timestamp = last_event_timestamp_ns + 1000
 
-        span.span_instance.add_event(name=name,
-                                    attributes=attributes,
-                                    timestamp=timestamp)
+        span.span_instance.add_event(name=name, attributes=attributes, timestamp=timestamp)
 
         return timestamp
 

@@ -204,7 +204,16 @@ class _QuickpulseManager(metaclass=Singleton):
                 # Process docs for quickpulse filtering
                 _apply_document_filters_from_telemetry_data(data)
 
-                # TODO: derive exception metrics from span events
+                # Derive exception metrics from span events
+                if span.events:
+                    for event in span.events:
+                        if event.name == "exception":
+                            self._exception_rate_counter.add(1)
+                            # Derive metrics for quickpulse filtering for exception
+                            exc_data = _ExceptionData._from_span_event(event)
+                            _derive_metrics_from_telemetry_data(exc_data)
+                            # Process docs for quickpulse filtering for exception
+                            _apply_document_filters_from_telemetry_data(exc_data)
             except Exception:  # pylint: disable=broad-except
                 _logger.exception("Exception occurred while recording span.")
 

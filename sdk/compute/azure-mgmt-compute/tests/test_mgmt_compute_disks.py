@@ -40,7 +40,7 @@ class TestMgmtComputeMultiVersion(AzureMgmtRecordedTestCase):
                     "dedicated_host_groups": "2019-07-01",
                     "dedicated_hosts": "2019-07-01",
                     "disk_encryption_sets": "2019-11-01",
-                    "disks": "2019-03-01",  # test old version
+                    "disks": "2019-07-01",  # test old version
                     "images": "2019-07-01",
                     "log_analytics": "2019-07-01",
                     "operations": "2019-07-01",

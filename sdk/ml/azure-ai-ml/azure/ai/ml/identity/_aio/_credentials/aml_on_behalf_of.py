@@ -19,7 +19,7 @@ class AzureMLOnBehalfOfCredential(AsyncContextManager):
     """Authenticates a user via the on-behalf-of flow.
 
     This credential can only be used on `Azure Machine Learning Compute.
-    <https://docs.microsoft.com/azure/machine-learning/concept-compute-target#azure-machine-learning-compute-managed>`_ during job execution when user request to
+    <https://learn.microsoft.com/azure/machine-learning/concept-compute-target#azure-machine-learning-compute-managed>`_ during job execution when user request to
     run job during its identity.
     """
     # pylint: enable=line-too-long
@@ -53,20 +53,17 @@ class AzureMLOnBehalfOfCredential(AsyncContextManager):
 
 
 class _AzureMLOnBehalfOfCredential(AsyncManagedIdentityBase):
-    def get_client(self, **kwargs):
-        # type: (**Any) -> Optional[AsyncManagedIdentityClient]
+    def get_client(self, **kwargs) -> Optional[AsyncManagedIdentityClient]:
         client_args = _get_client_args(**kwargs)
         if client_args:
             return AsyncManagedIdentityClient(**client_args)
         return None
 
-    def get_unavailable_message(self):
-        # type: () -> str
+    def get_unavailable_message(self) -> str:
         return "AzureML On Behalf of credentials not available in this environment"
 
 
-def _get_client_args(**kwargs):
-    # type: (dict) -> Optional[dict]
+def _get_client_args(**kwargs) -> Optional[dict]:
 
     url = os.environ.get("OBO_ENDPOINT")
     if not url:
@@ -79,8 +76,7 @@ def _get_client_args(**kwargs):
     )
 
 
-def _get_request(url, resource):
-    # type: (str, str) -> HttpRequest
+def _get_request(url: str, resource: str) -> HttpRequest:
     request = HttpRequest("GET", url)
     request.format_parameters(dict({"resource": resource}))
     return request

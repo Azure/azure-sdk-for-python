@@ -74,7 +74,7 @@ if __name__ == "__main__":
         )
         if args.next and in_ci():
             from gh_tools.vnext_issue_creator import create_vnext_issue
-            create_vnext_issue(pkg_details.name, "pylint")
+            create_vnext_issue(pkg_dir, "pylint")
 
         exit(1)
 

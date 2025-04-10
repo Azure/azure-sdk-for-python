@@ -1,12 +1,12 @@
 {
-  "commit": "416353cabfea1fc7a1c7c46ba3340408a2618de1",
+  "commit": "85dbdf68f1c3e1693bd94eff5e8a869f1a07ed78",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "autorest": "3.10.2",
   "use": [
-    "@autorest/python@6.27.2",
+    "@autorest/python@6.27.4",
     "@autorest/modelerfour@4.27.0"
   ],
-  "autorest_command": "autorest specification/compute/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/mnt/vss/_work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.27.2 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
+  "autorest_command": "autorest specification/compute/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/mnt/vss/_work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.27.4 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
   "readme": "specification/compute/resource-manager/readme.md",
   "package-2024-03-02-only": "2024-07-16 12:23:13 -0400 602fb5144a226577186e35845422c11db9067cf8 Microsoft.Compute/DiskRP/stable/2024-03-02/snapshot.json",
   "package-2024-03-01-only": "2024-06-05 15:03:47 -0700 491e00d17f24909ecf5e1030b3833bed51224e92 Microsoft.Compute/ComputeRP/stable/2024-03-01/virtualMachineScaleSet.json",

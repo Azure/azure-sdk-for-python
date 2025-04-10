@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, Callable, Dict, IO, Iterable, Iterator, Optional, Type, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterable, Iterator, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -36,7 +36,7 @@ from ..._serialization import Serializer
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -335,7 +335,7 @@ class DeploymentScriptsOperations:
         deployment_script: Union[_models.DeploymentScript, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -407,6 +407,7 @@ class DeploymentScriptsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.DeploymentScript]:
+        # pylint: disable=line-too-long
         """Creates a deployment script.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -437,6 +438,7 @@ class DeploymentScriptsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.DeploymentScript]:
+        # pylint: disable=line-too-long
         """Creates a deployment script.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -464,6 +466,7 @@ class DeploymentScriptsOperations:
         deployment_script: Union[_models.DeploymentScript, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.DeploymentScript]:
+        # pylint: disable=line-too-long
         """Creates a deployment script.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -611,7 +614,7 @@ class DeploymentScriptsOperations:
         :rtype: ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.DeploymentScript
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -684,7 +687,7 @@ class DeploymentScriptsOperations:
         :rtype: ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.DeploymentScript
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -745,7 +748,7 @@ class DeploymentScriptsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -788,6 +791,7 @@ class DeploymentScriptsOperations:
 
     @distributed_trace
     def list_by_subscription(self, **kwargs: Any) -> Iterable["_models.DeploymentScript"]:
+        # pylint: disable=line-too-long
         """Lists all deployment scripts for a given subscription.
 
         :return: An iterator like instance of either DeploymentScript or the result of cls(response)
@@ -803,7 +807,7 @@ class DeploymentScriptsOperations:
         )
         cls: ClsType[_models.DeploymentScriptListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -877,7 +881,7 @@ class DeploymentScriptsOperations:
         :rtype: ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ScriptLogsList
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -941,7 +945,7 @@ class DeploymentScriptsOperations:
         :rtype: ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ScriptLog
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -989,6 +993,7 @@ class DeploymentScriptsOperations:
 
     @distributed_trace
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> Iterable["_models.DeploymentScript"]:
+        # pylint: disable=line-too-long
         """Lists deployments scripts.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1007,7 +1012,7 @@ class DeploymentScriptsOperations:
         )
         cls: ClsType[_models.DeploymentScriptListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

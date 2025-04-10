@@ -135,7 +135,7 @@ class ScheduleOperations(_ScopeDependentOperations):
     def list(
         self,
         *,
-        list_view_type: ScheduleListViewType = ScheduleListViewType.ENABLED_ONLY,  # pylint: disable=unused-argument
+        list_view_type: ScheduleListViewType = ScheduleListViewType.ENABLED_ONLY,
         **kwargs: Any,
     ) -> Iterable[Schedule]:
         """List schedules in specified workspace.

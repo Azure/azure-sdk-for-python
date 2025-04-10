@@ -20,10 +20,10 @@ class TestSqlManagementCapabilitiesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_location(self, resource_group):
+    def test_capabilities_list_by_location(self, resource_group):
         response = self.client.capabilities.list_by_location(
             location_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself

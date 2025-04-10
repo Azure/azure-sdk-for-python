@@ -352,6 +352,48 @@ class TestQuickpulseManager(unittest.TestCase):
         metric_derive_mock.assert_called_once_with(data)
         doc_mock.assert_called_once_with(data)
 
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._ExceptionData")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._apply_document_filters_from_telemetry_data")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._derive_metrics_from_telemetry_data")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._TelemetryData")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._is_post_state")
+    def test_record_span_span_event_exception(
+        self, post_state_mock, data_mock, metric_derive_mock, doc_mock, exc_data_mock,
+    ):
+        post_state_mock.return_value = True
+        span_mock = mock.Mock()
+        event_mock = mock.Mock()
+        event_mock.name = "exception"
+        span_mock.events = [event_mock]
+        span_mock.end_time = 10
+        span_mock.start_time = 5
+        data = _RequestData(
+            custom_dimensions={},
+            duration=1000,
+            success=True,
+            name="test_req",
+            response_code=400,
+            url="test_url",
+        )
+        exc_data = _ExceptionData(
+            custom_dimensions={},
+            message="exception",
+            stack_trace="",
+        )
+        data_mock._from_span.return_value = data
+        exc_data_mock._from_span_event.return_value = exc_data
+        qpm = _QuickpulseManager(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ac;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
+            resource=Resource.create(),
+        )
+        qpm._record_span(span_mock)
+        data_mock._from_span.assert_called_once_with(span_mock)
+        exc_data_mock._from_span_event.assert_called_once_with(event_mock)
+        metric_derive_mock.assert_any_call(data)
+        doc_mock.assert_any_call(data)
+        metric_derive_mock.assert_any_call(exc_data)
+        doc_mock.assert_any_call(exc_data)
+
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._apply_document_filters_from_telemetry_data")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._derive_metrics_from_telemetry_data")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._TelemetryData")

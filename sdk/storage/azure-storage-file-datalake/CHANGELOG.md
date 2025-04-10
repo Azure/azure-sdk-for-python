@@ -1,10 +1,28 @@
 # Release History
 
-## 12.19.0b1 (Unreleased)
+## 12.21.0b1 (Unreleased)
 
 ### Features Added
 
+## 12.20.0 (2025-03-27)
+
+### Features Added
+- Updated type hints across the entire package and enabled MyPy to run during CI. Some public types may have been adjusted if they were previously erroneous or incomplete.
+
+## 12.19.0 (2025-03-11)
+
+### Features Added
+- Stable release of features from 12.19.0b1
+
+## 12.19.0b1 (2025-02-11)
+
+### Features Added
+- Added support for service version 2025-05-05.
+
+## 12.18.1 (2025-01-22)
+
 ### Bugs Fixed
+- Fixed an issue where custom transports may encounter `AttributeError` on certain requests.
 - Fixed request handler to handle `None` value for `expires_on` keyword to `set_file_expiry` API.
 
 ## 12.18.0 (2024-11-13)

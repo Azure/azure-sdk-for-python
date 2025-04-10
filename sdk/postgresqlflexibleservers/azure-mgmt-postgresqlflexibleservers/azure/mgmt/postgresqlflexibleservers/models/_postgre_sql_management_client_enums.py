@@ -123,8 +123,7 @@ class FailoverMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class FastProvisioningSupportedEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets a value indicating whether fast provisioning is supported. "Enabled" means fast
-    provisioning is supported. "Disabled" stands for fast provisioning is not supported. Will be
-    deprecated in future, please look to Supported Features for "FastProvisioning".
+    provisioning is supported. "Disabled" stands for fast provisioning is not supported.
     """
 
     ENABLED = "Enabled"
@@ -133,8 +132,7 @@ class FastProvisioningSupportedEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta
 
 class GeoBackupSupportedEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Determines if geo-backup is supported in this region. "Enabled" means geo-backup is supported.
-    "Disabled" stands for geo-back is not supported. Will be deprecated in future, please look to
-    Supported Features for "GeoBackup".
+    "Disabled" stands for geo-back is not supported.
     """
 
     ENABLED = "Enabled"
@@ -169,6 +167,7 @@ class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NONE = "None"
     USER_ASSIGNED = "UserAssigned"
     SYSTEM_ASSIGNED = "SystemAssigned"
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
 
 
 class KeyStatusEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -272,8 +271,7 @@ class MigrationSubState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class OnlineResizeSupportedEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A value indicating whether online resize is supported in this region for the given
     subscription. "Enabled" means storage online resize is supported. "Disabled" means storage
-    online resize is not supported. Will be deprecated in future, please look to Supported Features
-    for "OnlineResize".
+    online resize is not supported.
     """
 
     ENABLED = "Enabled"
@@ -345,20 +343,6 @@ class ReadReplicaPromoteMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SWITCHOVER = "switchover"
 
 
-class RecommendationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """RecommendationType."""
-
-    CREATE_INDEX = "CreateIndex"
-    DROP_INDEX = "DropIndex"
-
-
-class RecommendationTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type for this recommendation."""
-
-    CREATE_INDEX = "CreateIndex"
-    DROP_INDEX = "DropIndex"
-
-
 class ReplicationPromoteOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Sets the promote options for a replica server. This is a write only property."""
 
@@ -390,8 +374,7 @@ class ReplicationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class RestrictedEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A value indicating whether this region is restricted. "Enabled" means region is restricted.
-    "Disabled" stands for region is not restricted. Will be deprecated in future, please look to
-    Supported Features for "Restricted".
+    "Disabled" stands for region is not restricted.
     """
 
     ENABLED = "Enabled"
@@ -431,7 +414,6 @@ class ServerState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class ServerVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The version of a server."""
 
-    SEVENTEEN = "17"
     SIXTEEN = "16"
     FIFTEEN = "15"
     FOURTEEN = "14"
@@ -450,10 +432,7 @@ class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class SourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Migration source server type : OnPremises, AWS, GCP, AzureVM, PostgreSQLSingleServer, AWS_RDS,
-    AWS_AURORA, AWS_EC2, GCP_CloudSQL, GCP_AlloyDB, GCP_Compute, EDB, EDB_Oracle_Server,
-    EDB_PostgreSQL, PostgreSQLFlexibleServer, PostgreSQLCosmosDB, Huawei_RDS, Huawei_Compute,
-    Heroku_PostgreSQL, Crunchy_PostgreSQL, ApsaraDB_RDS, Digital_Ocean_Droplets,
-    Digital_Ocean_PostgreSQL, or Supabase_PostgreSQL.
+    AWS_AURORA, AWS_EC2, GCP_CloudSQL, GCP_AlloyDB, GCP_Compute, or EDB.
     """
 
     ON_PREMISES = "OnPremises"
@@ -468,18 +447,6 @@ class SourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     GCP_ALLOY_DB = "GCP_AlloyDB"
     GCP_COMPUTE = "GCP_Compute"
     EDB = "EDB"
-    EDB_ORACLE_SERVER = "EDB_Oracle_Server"
-    EDB_POSTGRE_SQL = "EDB_PostgreSQL"
-    POSTGRE_SQL_FLEXIBLE_SERVER = "PostgreSQLFlexibleServer"
-    POSTGRE_SQL_COSMOS_DB = "PostgreSQLCosmosDB"
-    HUAWEI_RDS = "Huawei_RDS"
-    HUAWEI_COMPUTE = "Huawei_Compute"
-    HEROKU_POSTGRE_SQL = "Heroku_PostgreSQL"
-    CRUNCHY_POSTGRE_SQL = "Crunchy_PostgreSQL"
-    APSARA_DB_RDS = "ApsaraDB_RDS"
-    DIGITAL_OCEAN_DROPLETS = "Digital_Ocean_Droplets"
-    DIGITAL_OCEAN_POSTGRE_SQL = "Digital_Ocean_PostgreSQL"
-    SUPABASE_POSTGRE_SQL = "Supabase_PostgreSQL"
 
 
 class SslMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -509,8 +476,7 @@ class StorageAutoGrow(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class StorageAutoGrowthSupportedEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A value indicating whether storage auto-grow is supported in this region. "Enabled" means
-    storage auto-grow is supported. "Disabled" stands for storage auto-grow is not supported. Will
-    be deprecated in future, please look to Supported Features for "StorageAutoGrowth".
+    storage auto-grow is supported. "Disabled" stands for storage auto-grow is not supported.
     """
 
     ENABLED = "Enabled"
@@ -518,20 +484,12 @@ class StorageAutoGrowthSupportedEnum(str, Enum, metaclass=CaseInsensitiveEnumMet
 
 
 class StorageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Storage type for the server. Allowed values are Premium_LRS, PremiumV2_LRS, and UltraSSD_LRS.
-    Default is Premium_LRS if not specified.
+    """Storage type for the server. Allowed values are Premium_LRS and PremiumV2_LRS, and default is
+    Premium_LRS if not specified.
     """
 
     PREMIUM_LRS = "Premium_LRS"
     PREMIUM_V2_LRS = "PremiumV2_LRS"
-    ULTRA_SSD_LRS = "UltraSSD_LRS"
-
-
-class SupportedFeatureStatusEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Status of feature."""
-
-    ENABLED = "Enabled"
-    DISABLED = "Disabled"
 
 
 class ThreatProtectionName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -556,12 +514,6 @@ class TriggerCutoverEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FALSE = "False"
 
 
-class TuningOptionEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """TuningOptionEnum."""
-
-    INDEX = "index"
-
-
 class ValidationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Validation status for migration."""
 
@@ -579,8 +531,7 @@ class VirtualEndpointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class ZoneRedundantHaAndGeoBackupSupportedEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A value indicating whether Zone Redundant HA and Geo-backup is supported in this region.
     "Enabled" means zone redundant HA and geo-backup is supported. "Disabled" stands for zone
-    redundant HA and geo-backup is not supported. Will be deprecated in future, please look to
-    Supported Features for "ZoneRedundantHaAndGeoBackup".
+    redundant HA and geo-backup is not supported.
     """
 
     ENABLED = "Enabled"
@@ -589,8 +540,7 @@ class ZoneRedundantHaAndGeoBackupSupportedEnum(str, Enum, metaclass=CaseInsensit
 
 class ZoneRedundantHaSupportedEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A value indicating whether Zone Redundant HA is supported in this region. "Enabled" means zone
-    redundant HA is supported. "Disabled" stands for zone redundant HA is not supported. Will be
-    deprecated in future, please look to Supported Features for "ZoneRedundantHa".
+    redundant HA is supported. "Disabled" stands for zone redundant HA is not supported.
     """
 
     ENABLED = "Enabled"

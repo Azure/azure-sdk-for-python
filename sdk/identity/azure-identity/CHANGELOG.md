@@ -1,16 +1,38 @@
 # Release History
 
-## 1.19.1 (Unreleased)
+## 1.21.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+- Previously, if a `client_id` or `identity_config` was specified in `ManagedIdentityCredential` for Service Fabric managed identity, which is not supported, the `client_id` (or `resource_id`/`object_id` specified `identity_config`) would be silently ignored. Now, an exception will be raised during a token request if a `client_id` or `identity_config` is specified for Service Fabric managed identity.
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.21.0 (2025-03-11)
+
+### Other Changes
+
+- Updated the asynchronous `CertificateCredential` to use the PS256 algorithm with PSS padding for certificate authentication in non-ADFS tenants. ([#39761](https://github.com/Azure/azure-sdk-for-python/pull/39761))
+- Deprecated `UsernamePasswordCredential`, as it doesn't support multifactor authentication (MFA). MFA will soon be enforced on all Microsoft Entra tenants. For more details, see [Planning for mandatory MFA](https://aka.ms/mfaforazure). ([#39785](https://github.com/Azure/azure-sdk-for-python/pull/39785))
+
+## 1.20.0 (2025-02-11)
 
 ### Features Added
 
 - Added `subscription` parameter to `AzureCliCredential` to specify the subscription to use when authenticating with the Azure CLI. ([#37994](https://github.com/Azure/azure-sdk-for-python/pull/37994))
 
-### Breaking Changes
-
 ### Bugs Fixed
 
+- A bug in the error handling for AzureCliCredentials and AzureDeveloperCliCredential which would result in the unexpected error `'NoneType' object has no attribute 'startswith'` has been fixed ([#39176](https://github.com/Azure/azure-sdk-for-python/pull/39176))
+
 ### Other Changes
+
+- `AzureCliCredential` and `AzureDeveloperCliCredential` will now call their corresponding executables directly instead of going through the shell. ([#38606](https://github.com/Azure/azure-sdk-for-python/pull/38606))
+- `ManagedIdentityCredential` will now log the configured user-assigned identity if one is set. ([#39621](https://github.com/Azure/azure-sdk-for-python/pull/39621))
 
 ## 1.19.0 (2024-10-08)
 
