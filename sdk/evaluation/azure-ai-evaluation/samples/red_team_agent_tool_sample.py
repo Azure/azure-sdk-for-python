@@ -25,7 +25,6 @@ from typing import Dict, Any
 import json
 
 from azure.identity import DefaultAzureCredential
-from azure.ai.evaluation.red_team import RiskCategory
 from azure.ai.evaluation.agent import RedTeamToolProvider, get_red_team_tools
 
 # Optional: For local development, you can use environment variables for configuration
@@ -139,134 +138,135 @@ async def main():
             # Store the prompt ID for later use
             prompt_id = result["prompt_id"]
         else:
+            import pdb; pdb.set_trace()
             print(f"❌ Error: {result['message']}")
     except Exception as e:
         print(f"❌ Error calling tool: {str(e)}")
 
-    # Example 2: Using the unified red_team tool with immediate conversion
-    print("\n=== Example 2: Get a harmful prompt with immediate conversion ===")
-    risk_category = "hate_unfairness"
-    try:
-        result = await agent.call_tool(
-            "red_team",
-            category=risk_category,
-            strategy="morse"
-        )
+    # # Example 2: Using the unified red_team tool with immediate conversion
+    # print("\n=== Example 2: Get a harmful prompt with immediate conversion ===")
+    # risk_category = "hate_unfairness"
+    # try:
+    #     result = await agent.call_tool(
+    #         "red_team",
+    #         category=risk_category,
+    #         strategy="morse"
+    #     )
         
-        if result["status"] == "success":
-            print(f"✅ Successfully fetched and converted harmful prompt for {risk_category}")
-            print(f"Risk Category: {result['risk_category']}")
-            print(f"Strategy: {result['strategy']}")
-            print(f"Original: {result['original_prompt'][:50]}...")
-            print(f"Converted: {result['converted_prompt'][:100]}...")
-        else:
-            print(f"❌ Error: {result['message']}")
-    except Exception as e:
-        print(f"❌ Error calling tool: {str(e)}")
+    #     if result["status"] == "success":
+    #         print(f"✅ Successfully fetched and converted harmful prompt for {risk_category}")
+    #         print(f"Risk Category: {result['risk_category']}")
+    #         print(f"Strategy: {result['strategy']}")
+    #         print(f"Original: {result['original_prompt'][:50]}...")
+    #         print(f"Converted: {result['converted_prompt'][:100]}...")
+    #     else:
+    #         print(f"❌ Error: {result['message']}")
+    # except Exception as e:
+    #     print(f"❌ Error calling tool: {str(e)}")
 
-    print("\n==============================")
-    print("DEMONSTRATION 2: STEP-BY-STEP APPROACH")
-    print("==============================")
-    print("Using the 'fetch_harmful_prompt' and 'convert_prompt' tools separately")
+    # print("\n==============================")
+    # print("DEMONSTRATION 2: STEP-BY-STEP APPROACH")
+    # print("==============================")
+    # print("Using the 'fetch_harmful_prompt' and 'convert_prompt' tools separately")
     
-    # Example 3: First fetch a harmful prompt
-    print("\n=== Example 3: Fetch a harmful prompt ===")
-    risk_category = "sexual"
-    try:
-        result = await agent.call_tool(
-            "fetch_harmful_prompt", 
-            risk_category_text=risk_category
-        )
+    # # Example 3: First fetch a harmful prompt
+    # print("\n=== Example 3: Fetch a harmful prompt ===")
+    # risk_category = "sexual"
+    # try:
+    #     result = await agent.call_tool(
+    #         "fetch_harmful_prompt", 
+    #         risk_category_text=risk_category
+    #     )
         
-        if result["status"] == "success":
-            print(f"✅ Successfully fetched harmful prompt for {risk_category}")
-            print(f"Risk Category: {result['risk_category']}")
-            print(f"Prompt: {result['prompt'][:100]}..." if len(result['prompt']) > 100 else result['prompt'])
-            print(f"Prompt ID for later reference: {result['prompt_id']}")
+    #     if result["status"] == "success":
+    #         print(f"✅ Successfully fetched harmful prompt for {risk_category}")
+    #         print(f"Risk Category: {result['risk_category']}")
+    #         print(f"Prompt: {result['prompt'][:100]}..." if len(result['prompt']) > 100 else result['prompt'])
+    #         print(f"Prompt ID for later reference: {result['prompt_id']}")
             
-            # Store the prompt ID for later use
-            prompt_id_sexual = result["prompt_id"]
-        else:
-            print(f"❌ Error: {result['message']}")
-    except Exception as e:
-        print(f"❌ Error calling tool: {str(e)}")
+    #         # Store the prompt ID for later use
+    #         prompt_id_sexual = result["prompt_id"]
+    #     else:
+    #         print(f"❌ Error: {result['message']}")
+    # except Exception as e:
+    #     print(f"❌ Error calling tool: {str(e)}")
 
-    # Example 4: Then convert the previously fetched prompt
-    print("\n=== Example 4: Convert the previously fetched prompt ===")
-    if 'prompt_id_sexual' in locals():
-        try:
-            result = await agent.call_tool(
-                "convert_prompt",
-                prompt_or_id=prompt_id_sexual,
-                strategy="binary"
-            )
+    # # Example 4: Then convert the previously fetched prompt
+    # print("\n=== Example 4: Convert the previously fetched prompt ===")
+    # if 'prompt_id_sexual' in locals():
+    #     try:
+    #         result = await agent.call_tool(
+    #             "convert_prompt",
+    #             prompt_or_id=prompt_id_sexual,
+    #             strategy="binary"
+    #         )
             
-            if result["status"] == "success":
-                print(f"✅ Successfully converted prompt using binary strategy")
-                print(f"Original: {result['original_prompt'][:50]}...")
-                print(f"Converted: {result['converted_prompt'][:100]}...")
-            else:
-                print(f"❌ Error: {result['message']}")
-        except Exception as e:
-            print(f"❌ Error calling tool: {str(e)}")
+    #         if result["status"] == "success":
+    #             print(f"✅ Successfully converted prompt using binary strategy")
+    #             print(f"Original: {result['original_prompt'][:50]}...")
+    #             print(f"Converted: {result['converted_prompt'][:100]}...")
+    #         else:
+    #             print(f"❌ Error: {result['message']}")
+    #     except Exception as e:
+    #         print(f"❌ Error calling tool: {str(e)}")
     
-    # Example 5: Fetch and convert in a single call using fetch_harmful_prompt
-    print("\n=== Example 5: Fetch and convert in one call with fetch_harmful_prompt ===")
-    risk_category = "self_harm"
-    try:
-        result = await agent.call_tool(
-            "fetch_harmful_prompt", 
-            risk_category_text=risk_category,
-            convert_with_strategy="base64"
-        )
+    # # Example 5: Fetch and convert in a single call using fetch_harmful_prompt
+    # print("\n=== Example 5: Fetch and convert in one call with fetch_harmful_prompt ===")
+    # risk_category = "self_harm"
+    # try:
+    #     result = await agent.call_tool(
+    #         "fetch_harmful_prompt", 
+    #         risk_category_text=risk_category,
+    #         convert_with_strategy="base64"
+    #     )
         
-        if result["status"] == "success":
-            print(f"✅ Successfully fetched and converted harmful prompt for {risk_category}")
-            print(f"Risk Category: {result['risk_category']}")
-            print(f"Strategy: {result['conversion_strategy']}")
-            print(f"Original: {result['original_prompt'][:50]}...")
-            print(f"Converted: {result['converted_prompt'][:100]}...")
-        else:
-            print(f"❌ Error: {result['message']}")
-    except Exception as e:
-        print(f"❌ Error calling tool: {str(e)}")
+    #     if result["status"] == "success":
+    #         print(f"✅ Successfully fetched and converted harmful prompt for {risk_category}")
+    #         print(f"Risk Category: {result['risk_category']}")
+    #         print(f"Strategy: {result['conversion_strategy']}")
+    #         print(f"Original: {result['original_prompt'][:50]}...")
+    #         print(f"Converted: {result['converted_prompt'][:100]}...")
+    #     else:
+    #         print(f"❌ Error: {result['message']}")
+    # except Exception as e:
+    #     print(f"❌ Error calling tool: {str(e)}")
     
-    # Example 6: Convert a custom prompt
-    print("\n=== Example 6: Convert a custom prompt ===")
-    custom_prompt = "This is a custom prompt that wasn't fetched from the tool"
-    try:
-        result = await agent.call_tool(
-            "convert_prompt",
-            prompt_or_id=custom_prompt,
-            strategy="leetspeak"
-        )
+    # # Example 6: Convert a custom prompt
+    # print("\n=== Example 6: Convert a custom prompt ===")
+    # custom_prompt = "This is a custom prompt that wasn't fetched from the tool"
+    # try:
+    #     result = await agent.call_tool(
+    #         "convert_prompt",
+    #         prompt_or_id=custom_prompt,
+    #         strategy="leetspeak"
+    #     )
         
-        if result["status"] == "success":
-            print(f"✅ Successfully converted custom prompt using leetspeak strategy")
-            print(f"Original: {result['original_prompt']}")
-            print(f"Converted: {result['converted_prompt']}")
-        else:
-            print(f"❌ Error: {result['message']}")
-    except Exception as e:
-        print(f"❌ Error calling tool: {str(e)}")
+    #     if result["status"] == "success":
+    #         print(f"✅ Successfully converted custom prompt using leetspeak strategy")
+    #         print(f"Original: {result['original_prompt']}")
+    #         print(f"Converted: {result['converted_prompt']}")
+    #     else:
+    #         print(f"❌ Error: {result['message']}")
+    # except Exception as e:
+    #     print(f"❌ Error calling tool: {str(e)}")
 
-    print("\n==============================")
-    print("AGENT CONVERSATION EXAMPLES")
-    print("==============================")
-    print("In a real agent conversation, users would interact like:")
-    print("\n=== Example A: Using the unified approach ===")
-    print("User: @red_team violence")
-    print("Agent: Here's a harmful prompt for violence: \"...\"")
-    print("       You can convert this with strategies like morse, binary, base64, etc.")
-    print("User: @red_team violence morse")
-    print("Agent: Here's the morse code version: \".--- ..- ... - / ....\"")
+    # print("\n==============================")
+    # print("AGENT CONVERSATION EXAMPLES")
+    # print("==============================")
+    # print("In a real agent conversation, users would interact like:")
+    # print("\n=== Example A: Using the unified approach ===")
+    # print("User: @red_team violence")
+    # print("Agent: Here's a harmful prompt for violence: \"...\"")
+    # print("       You can convert this with strategies like morse, binary, base64, etc.")
+    # print("User: @red_team violence morse")
+    # print("Agent: Here's the morse code version: \".--- ..- ... - / ....\"")
     
-    print("\n=== Example B: Using the step-by-step approach ===")
-    print("User: @fetch_harmful_prompt hate")
-    print("Agent: Here's a harmful prompt for hate: \"...\"")
-    print("       The prompt ID is prompt_1")
-    print("User: @convert_prompt prompt_1 binary")
-    print("Agent: Here's the binary version: \"01001000 01100101 01110010 01100101 ...\"")
+    # print("\n=== Example B: Using the step-by-step approach ===")
+    # print("User: @fetch_harmful_prompt hate")
+    # print("Agent: Here's a harmful prompt for hate: \"...\"")
+    # print("       The prompt ID is prompt_1")
+    # print("User: @convert_prompt prompt_1 binary")
+    # print("Agent: Here's the binary version: \"01001000 01100101 01110010 01100101 ...\"")
 
 
 if __name__ == "__main__":
