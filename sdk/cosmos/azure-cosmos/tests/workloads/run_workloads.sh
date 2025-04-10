@@ -27,11 +27,11 @@ for (( i=0; i<num_runs; i++ )); do
 done
 
 for (( i=0; i<num_runs; i++ )); do
-    python3 r_w_q_workload_sync.py &
+    python3 w_workload.py &
 done
 
 for (( i=0; i<num_runs; i++ )); do
-    python3 r-w-q-workload-sync-1.py &
+    python3 r_w_q_workload_sync.py &
 done
 
 wait

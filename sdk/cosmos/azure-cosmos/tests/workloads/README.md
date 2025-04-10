@@ -36,6 +36,6 @@ file when run. These logs are named in this format.
     - `python3 run_workloads.sh`
 
 ## Monitor Run
-- `ps eaf | grep python` to see the running processes
+- `ps -eaf | grep "python3"` to see the running processes
 - `tail -f <log_file>` to see the logs in real time 
 - `pkill -f "python3"` This will stop all the running python processes

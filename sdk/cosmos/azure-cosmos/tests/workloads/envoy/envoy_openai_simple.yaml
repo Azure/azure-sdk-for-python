@@ -29,21 +29,21 @@ static_resources:
               - match:
                   prefix: "/"
                 route:
-                  host_rewrite_literal: openai-canary-test.documents.azure.com
-                  cluster: openai-canary-test
+                  host_rewrite_literal: openai-atm-test.documents.azure.com
+                  cluster: openai-atm-test
 
   clusters:
-  - name: openai-canary-test
+  - name: openai-atm-test
     type: LOGICAL_DNS
     dns_lookup_family: V4_ONLY
     load_assignment:
-      cluster_name: openai-canary-test
+      cluster_name: openai-atm-test
       endpoints:
       - lb_endpoints:
         - endpoint:
             address:
               socket_address:
-                address: openai-canary-test.documents.azure.com
+                address: openai-atm-test.documents.azure.com
                 port_value: 443
     transport_socket:
       name: envoy.transport_sockets.tls
