@@ -20,7 +20,6 @@ client = AzureOpenAI(
 
 pylint_scores = {}
 
-
 def my_custom_logger(logger_name, level=logging.DEBUG):
     """
     Method to return a custom logger with the given name and level
@@ -30,20 +29,23 @@ def my_custom_logger(logger_name, level=logging.DEBUG):
     format_string = ("%(asctime)s — %(name)s — %(levelname)s — %(funcName)s:"
                     "%(lineno)d — %(message)s")
     log_format = logging.Formatter(format_string)
+
     # Creating and adding the console handler
     console_handler = logging.StreamHandler(sys.stdout)
     console_handler.setFormatter(log_format)
     logger.addHandler(console_handler)
+
     # Creating and adding the file handler
     file_handler = logging.FileHandler(logger_name, mode='a')
     file_handler.setFormatter(log_format)
     logger.addHandler(file_handler)
+
     return logger
 
 def ensure_directories():
     """Create necessary directories for file organization."""
     base_dir = Path(__file__).parent
-    dirs = ['test_files', 'fixed_files', 'backup_files', 'fixed_files_without_comments', 'test_files_without_comment', 'output_logs']
+    dirs = ['test_files', 'fixed_files', 'backup_files', 'output_logs']
     for dir_name in dirs:
         (base_dir / dir_name).mkdir(exist_ok=True)
     return base_dir
@@ -54,29 +56,24 @@ def get_test_cases():
     Returns:
         list: A list of dictionaries containing file name and content
     """
-    try:
-        test_cases = []
-        test_files_dir = Path(__file__).parent / 'test_files'
-        
-        # Create test_files directory if it doesn't exist
-        test_files_dir.mkdir(exist_ok=True)
-        
-        # Read all .py files from test_files directory
-        for test_file in test_files_dir.glob('*.py'):
-            with open(test_file, 'r', encoding='utf-8') as f:
-                test_cases.append({
-                    'name': test_file.name,
-                    'content': f
-                })
-        
-        if not test_cases:
-            print("Warning: No test files found in test_files directory")
-            # Fallback to default test case
-        
-        return test_cases
-    except Exception as e:
-        print(f"Error reading test cases from local directory: {e}")
-        return []
+    test_cases = []
+    test_files_dir = Path(__file__).parent / 'test_files'
+
+    # Create test_files directory if it doesn't exist
+    test_files_dir.mkdir(exist_ok=True)
+
+    # Read all .py files from test_files directory
+    for test_file in test_files_dir.glob('*.py'):
+        with open(test_file, 'r', encoding='utf-8') as f:
+            test_cases.append({
+                'name': test_file.name,
+                'content': f
+            })
+
+    if not test_cases:
+        print("Warning: No test files found in test_files directory")
+
+    return test_cases
 
 def fix_file(file_path: str, logger) -> dict:
     """
@@ -92,7 +89,6 @@ def fix_file(file_path: str, logger) -> dict:
         
         # Define output paths
         fixed_path = base_dir / 'fixed_files' / f"{file_name}_fixed_{datetime.now().strftime('%Y%m%d_%H%M%S')}.py"
-        # fixed_path = base_dir / 'fixed_files_without_comments' / f"{file_name}_fixed.{datetime.now().strftime('%Y%m%d_%H%M%S')}.py"
 
         # Read the original content
         with open(file_path, 'r', encoding='utf-8') as f:
@@ -188,10 +184,6 @@ def run_pylint(file_path: str, logger) -> dict:
         if not pylintrc_path.exists():
             raise FileNotFoundError(f"pylintrc not found at {pylintrc_path}")
 
-        # Create string buffer for JSON output
-        output = StringIO()
-        reporter = JSONReporter(output)
-
         # Run pylint with configuration
         results = Run(
             [
@@ -199,9 +191,11 @@ def run_pylint(file_path: str, logger) -> dict:
                 f'--rcfile={pylintrc_path}',
                 '--output-format=json'
             ],
-            reporter=reporter,
             exit=False
         )
+
+        messages = results.linter.reporter.messages
+        logger.debug(f"PYLINT MESSAGES: {messages}")
 
         logger.debug(f"PYLINT SCORE: {results.linter.stats.global_note}")
         pylint_name = file_path.split("/")[-1].split(".py")[0]
@@ -229,7 +223,6 @@ if __name__ == "__main__":
             logger = my_custom_logger(f"Logger_{test_case['name']}_{next}.log")
             logger.debug(test_case['name'])
             file_path = Path(__file__).parent / 'test_files' / test_case['name']
-            # file_path = Path(__file__).parent / 'test_files_without_comment' / test_case['name']
         
             print(f"Processing file: {file_path}")
                 
@@ -237,7 +230,6 @@ if __name__ == "__main__":
             logger.debug("Running pylint on original file...")
             original_pylint = run_pylint(str(file_path), logger)
             logger.debug("-----"*80)
-
 
             fixed_pylint = original_pylint
             counter = 0
