@@ -1,3 +1,4 @@
+import os
 import sys
 
 from azure.cosmos import documents
@@ -33,5 +34,6 @@ async def run_workload(client_id, client_logger):
 
 
 if __name__ == "__main__":
-    first_name, logger = create_logger()
+    file_name = os.path.basename(__file__)
+    first_name, logger = create_logger(file_name)
     asyncio.run(run_workload(first_name, logger))

@@ -40,10 +40,9 @@ async def perform_query(container):
                                     partition_key=random_item["id"])
     items = [item async for item in results]
 
-def create_logger():
+def create_logger(file_name):
     logger = logging.getLogger('azure.cosmos')
-    file_name = os.path.basename(__file__)
-    first_name = file_name.split(".")[0] + str(os.getpid())
+    first_name = file_name.split(".")[0] + "-" + str(os.getpid())
     # Create a rotating file handler
     handler = RotatingFileHandler(
         "log-" + first_name + "-" + datetime.now().strftime("%Y%m%d-%H%M%S") + '.log',
