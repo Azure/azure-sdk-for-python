@@ -414,6 +414,7 @@ class OperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INVALID = "Invalid"
     REGISTER = "Register"
     REREGISTER = "Reregister"
+    REHYDRATE = "Rehydrate"
 
 
 class OverwriteOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
