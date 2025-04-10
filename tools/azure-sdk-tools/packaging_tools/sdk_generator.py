@@ -1,4 +1,5 @@
 import sys
+import time
 from typing import List, Dict, Any
 import argparse
 import json
@@ -223,6 +224,7 @@ def main(generate_input, generate_output):
     for readme_or_tsp in readme_and_tsp:
         _LOGGER.info(f"[CODEGEN]({readme_or_tsp})codegen begin")
         try:
+            code_generation_start_time = time.time()
             if "resource-manager" in readme_or_tsp:
                 relative_path_readme = str(Path(spec_folder, readme_or_tsp))
                 del_outdated_files(relative_path_readme)
@@ -244,6 +246,7 @@ def main(generate_input, generate_output):
             else:
                 del_outdated_generated_files(str(Path(spec_folder, readme_or_tsp)))
                 config = gen_typespec(readme_or_tsp, spec_folder, data["headSha"], data["repoHttpsUrl"])
+            _LOGGER.info(f"code generation cost time: {int(time.time() - code_generation_start_time)} seconds")
         except Exception as e:
             _LOGGER.error(f"fail to generate sdk for {readme_or_tsp}: {str(e)}")
             for hint_message in [
