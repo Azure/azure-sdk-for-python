@@ -35,6 +35,9 @@ This guide walks you through how to investigate failures, common errors in the `
 - Risk and safety evaluators depend on the Azure AI Studio safety evaluation backend service. For a list of supported regions, please refer to the documentation [here](https://aka.ms/azureaisafetyeval-regionsupport).
 - If you encounter a 403 Unauthorized error when using safety evaluators, verify that you have the `Contributor` role assigned to your Azure AI project. `Contributor` role is currently required to run safety evaluations.
 
+### Troubleshoot Quality Evaluator Issues
+- For `ToolCallAccuracyEvaluator`, if your input did not have a tool to evaluate, the current behavior is to output `null`.
+
 ## Handle Simulation Errors
 
 ### Adversarial Simulation Supported Regions
