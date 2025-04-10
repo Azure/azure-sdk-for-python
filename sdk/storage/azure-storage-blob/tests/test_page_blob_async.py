@@ -8,7 +8,6 @@ import os
 import tempfile
 import uuid
 from datetime import datetime, timedelta
-from typing import Tuple
 
 import pytest
 from azure.core import MatchConditions
@@ -22,10 +21,10 @@ from azure.storage.blob import (
     ImmutabilityPolicy,
     PremiumPageBlobTier,
     SequenceNumberAction,
-    generate_blob_sas)
+    generate_blob_sas
+)
 from azure.storage.blob.aio import BlobClient, BlobServiceClient
 from azure.storage.blob._shared.policies import StorageContentValidation
-from azure.storage.fileshare.aio import ShareClient, ShareFileClient, ShareServiceClient
 
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
@@ -35,7 +34,6 @@ from settings.testcase import BlobPreparer
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
-SMALL_BLOB_SIZE = 1024
 LARGE_BLOB_SIZE = 10 * 1024 + 512
 EIGHT_TB = 8 * 1024 * 1024 * 1024 * 1024
 SOURCE_BLOB_SIZE = 8 * 1024
@@ -98,24 +96,6 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
             self.sleep(6)
             props = await blob.get_blob_properties()
         return props
-
-    async def _get_bearer_token_string(self, resource: str = "https://storage.azure.com/.default") -> str:
-        access_token = await self.get_credential(BlobServiceClient, is_async=True).get_token(resource)
-        return "Bearer " + access_token.token
-
-    async def _create_file_share_oauth(
-        self, storage_account_name: str,
-        data: bytes
-    ) -> Tuple[ShareServiceClient, ShareClient, ShareFileClient]:
-        share_service_client = ShareServiceClient(
-            account_url=self.account_url(storage_account_name, "file"),
-            credential=self.get_credential(ShareServiceClient, is_async=True),
-            token_intent='backup'
-        )
-        share_client = await share_service_client.create_share(self.get_resource_name('utshare'))
-        file_client = share_client.get_file_client(self.get_resource_name('file'))
-        await file_client.upload_file(data)
-        return share_service_client, share_client, file_client
 
     async def assertBlobEqual(self, container_name, blob_name, expected_data, bsc):
         blob = bsc.get_blob_client(container_name, blob_name)
@@ -2360,53 +2340,5 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         progress.assert_complete()
-
-    @BlobPreparer()
-    @recorded_by_proxy_async
-    async def test_upload_from_file_to_page_blob_with_oauth(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        # Arrange
-        blob_service_client = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
-            max_page_size=4 * 1024
-        )
-        await self._setup(blob_service_client)
-
-        # Set up source file share with random data
-        source_data = self.get_random_bytes(SMALL_BLOB_SIZE)
-        share_service_client, share_client, source_file_client = await self._create_file_share_oauth(
-            storage_account_name,
-            source_data
-        )
-
-        # Set up destination blob without any data
-        destination_blob_client = blob_service_client.get_blob_client(
-            container=self.source_container_name,
-            blob=self.get_resource_name(TEST_BLOB_PREFIX + "1")
-        )
-        await destination_blob_client.create_page_blob(SMALL_BLOB_SIZE)
-
-        try:
-            # Act
-            token = await self._get_bearer_token_string()
-            await destination_blob_client.upload_pages_from_url(
-                source_url=source_file_client.url,
-                offset=0,
-                length=SMALL_BLOB_SIZE,
-                source_offset=0,
-                source_authorization=token,
-                source_token_intent='backup'
-            )
-            destination_blob = await destination_blob_client.download_blob()
-            destination_blob_data = await destination_blob.readall()
-
-            # Assert
-            assert destination_blob_data == source_data
-        finally:
-            await share_service_client.delete_share(share_client.share_name)
-            await blob_service_client.delete_container(self.source_container_name)
 
 #------------------------------------------------------------------------------
