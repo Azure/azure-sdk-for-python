@@ -40,6 +40,8 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
     :param ignore_queries: If True, queries will be ignored in conversation evaluations. Default is False.
         Useful since some evaluators of this format are response-only.
     :type ignore_queries: bool
+    :keyword is_reasoning_model: This parameter is in preview. If True, updates the config parameters in prompty file based on reasoning models. Defaults to False.
+    :type is_reasoning_model: bool
     """
 
     _LLM_CALL_TIMEOUT = 600
