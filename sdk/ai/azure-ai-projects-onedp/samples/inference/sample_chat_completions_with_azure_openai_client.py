@@ -26,9 +26,6 @@ USAGE:
 
 import os
 from azure.ai.projects.onedp import AIProjectClient
-from azure.core.credentials import (
-    AzureKeyCredential,
-)  # TODO: Remove me when EntraID is supported # TODO: Remove me when EntraID is supported
 from azure.identity import DefaultAzureCredential
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
@@ -36,9 +33,7 @@ deployment_name = os.environ["DEPLOYMENT_NAME"]
 
 with AIProjectClient(
     endpoint=endpoint,
-    # credential=DefaultAzureCredential(),
-    credential=AzureKeyCredential(os.environ["PROJECT_API_KEY"]),
-    logging_enable=True,  # TODO: Remove console logging
+    credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
 ) as project_client:
 
     with project_client.inference.get_azure_openai_client(api_version="2024-06-01") as client:

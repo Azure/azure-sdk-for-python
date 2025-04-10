@@ -25,7 +25,7 @@ from ...models._models import (
     PendingUploadResponse,
     Connection,
     ApiKeyCredentials,
-    EntraIDCredentials
+    EntraIDCredentials,
 )
 from ...models._enums import DatasetType, CredentialType, ConnectionType
 
@@ -292,8 +292,8 @@ class InferenceOperations:
             except StopAsyncIteration:
                 raise ResourceNotFoundError("No default Azure OpenAI connection found.")
 
-            # TODO: if there isn't a default openai connection, we would have to by convention 
-            # use https://{resource-name}.openai.azure.com where {resource-name} is the same as the 
+            # TODO: if there isn't a default openai connection, we would have to by convention
+            # use https://{resource-name}.openai.azure.com where {resource-name} is the same as the
             # foundry API endpoint (https://{resource-name}.services.ai.azure.com)
 
         # If the connection uses API key authentication, we need to make another service call to get
@@ -372,7 +372,7 @@ class TelemetryOperations:
                 break
             if not connection_name:
                 raise ResourceNotFoundError("No Application Insights connection found.")
-    
+
             connection = await self._outer_instance.connections.get_with_credentials(name=connection_name)
 
             if isinstance(connection.credentials, ApiKeyCredentials):

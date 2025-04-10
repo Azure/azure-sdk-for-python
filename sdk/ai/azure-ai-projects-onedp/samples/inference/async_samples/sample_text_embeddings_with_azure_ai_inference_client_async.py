@@ -25,9 +25,6 @@ USAGE:
 
 import os
 import asyncio
-from azure.core.credentials import (
-    AzureKeyCredential,
-)  # TODO: Remove me when EntraID is supported # TODO: Remove me when EntraID is supported
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.onedp.aio import AIProjectClient
 
@@ -41,8 +38,7 @@ async def sample_text_embeddings_with_azure_ai_inference_client_async():
 
         async with AIProjectClient(
             endpoint=endpoint,
-            # credential=DefaultAzureCredential(),
-            credential=AzureKeyCredential(os.environ["PROJECT_API_KEY"]),
+            credential=DefaultAzureCredential(),
         ) as project_client:
 
             async with project_client.inference.get_embeddings_client() as client:

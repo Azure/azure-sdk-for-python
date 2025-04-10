@@ -24,17 +24,7 @@ USAGE:
 
 import os
 from azure.identity import DefaultAzureCredential
-from azure.core.credentials import AzureKeyCredential  # TODO: Remove me when EntraID is supported
 from azure.ai.projects.onedp import AIProjectClient
-
-# TODO: Remove console logging
-import sys
-import logging
-
-logger = logging.getLogger("azure")
-logger.setLevel(logging.DEBUG)
-logger.addHandler(logging.StreamHandler(stream=sys.stdout))
-# End logging
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
 deployment_name = os.environ["DEPLOYMENT_NAME"]
@@ -42,9 +32,7 @@ model_publisher = os.environ["MODEL_PUBLISHER"]
 
 with AIProjectClient(
     endpoint=endpoint,
-    # credential=DefaultAzureCredential(),
-    credential=AzureKeyCredential(os.environ["PROJECT_API_KEY"]),
-    logging_enable=True,  # TODO: Remove console logging
+    credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
 ) as project_client:
 
     print("List all deployments:")

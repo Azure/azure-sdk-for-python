@@ -26,7 +26,6 @@ USAGE:
 import asyncio
 import os
 from azure.identity.aio import DefaultAzureCredential
-from azure.core.credentials import AzureKeyCredential  # TODO: Remove me when EntraID is supported
 from azure.ai.projects.onedp.aio import AIProjectClient
 from azure.ai.projects.onedp.models import ConnectionType
 
@@ -38,8 +37,7 @@ async def sample_connections_async() -> None:
 
     async with AIProjectClient(
         endpoint=endpoint,
-        # credential=DefaultAzureCredential(),
-        credential=AzureKeyCredential(os.environ["PROJECT_API_KEY"]),
+        credential=DefaultAzureCredential(),
     ) as project_client:
 
         print("List the properties of all connections:")

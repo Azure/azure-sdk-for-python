@@ -23,26 +23,13 @@ USAGE:
 
 import os
 from azure.identity import DefaultAzureCredential
-from azure.core.credentials import AzureKeyCredential  # TODO: Remove me when EntraID is supported
 from azure.ai.projects.onedp import AIProjectClient
-from azure.ai.projects.onedp.models import ConnectionType
-
-# Start remove me -- logging
-import sys
-import logging
-
-logger = logging.getLogger("azure")
-logger.setLevel(logging.DEBUG)
-logger.addHandler(logging.StreamHandler(stream=sys.stdout))
-# End remove me
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
 
 with AIProjectClient(
     endpoint=endpoint,
-    # credential=DefaultAzureCredential(),
-    credential=AzureKeyCredential(os.environ["PROJECT_API_KEY"]),
-    logging_enable=True,
+    credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
 ) as project_client:
 
     print("Get the Application Insights connection string:")

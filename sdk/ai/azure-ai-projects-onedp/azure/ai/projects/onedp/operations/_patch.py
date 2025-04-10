@@ -16,7 +16,15 @@ from azure.storage.blob import ContainerClient
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 from ._operations import DatasetsOperations as DatasetsOperationsGenerated
-from ..models._models import DatasetVersion, PendingUploadRequest, PendingUploadType, PendingUploadResponse, Connection, ApiKeyCredentials, EntraIDCredentials
+from ..models._models import (
+    DatasetVersion,
+    PendingUploadRequest,
+    PendingUploadType,
+    PendingUploadResponse,
+    Connection,
+    ApiKeyCredentials,
+    EntraIDCredentials,
+)
 from ..models._enums import (
     DatasetType,
     CredentialType,
@@ -284,8 +292,8 @@ class InferenceOperations:
                 raise ResourceNotFoundError("No default Azure OpenAI connection found.")
             connection_name = connection.name
 
-            # TODO: if there isn't a default openai connection, we would have to by convention 
-            # use https://{resource-name}.openai.azure.com where {resource-name} is the same as the 
+            # TODO: if there isn't a default openai connection, we would have to by convention
+            # use https://{resource-name}.openai.azure.com where {resource-name} is the same as the
             # foundry API endpoint (https://{resource-name}.services.ai.azure.com)
 
         # If the connection uses API key authentication, we need to make another service call to get
