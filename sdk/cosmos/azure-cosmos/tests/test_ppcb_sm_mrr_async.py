@@ -38,7 +38,7 @@ async def setup():
 
 def operations_and_errors():
     write_operations = ["create", "upsert", "replace", "delete", "patch", "batch"]
-    read_operations = ["read", "query", "changefeed"]
+    read_operations = ["read", "query", "changefeed", "read_all_items", "delete_all_items_by_partition_key"]
     errors = []
     error_codes = [408, 500, 502, 503]
     for error_code in error_codes:
@@ -108,6 +108,11 @@ class TestPerPartitionCircuitBreakerSmMrrAsync:
                 ("upsert", (doc,)),
             ]
             await container.execute_item_batch(batch_operations, partition_key=doc['pk'])
+        elif operation == "delete_all_items_by_partition_key":
+            await container.create_item(body=doc)
+            await container.create_item(body=doc)
+            await container.create_item(body=doc)
+            await container.delete_all_items_by_partition_key(pk)
 
     @staticmethod
     async def perform_read_operation(operation, container, doc_id, pk, expected_read_region_uri):
@@ -119,12 +124,18 @@ class TestPerPartitionCircuitBreakerSmMrrAsync:
         elif operation == "query":
             query = "SELECT * FROM c WHERE c.id = @id AND c.pk = @pk"
             parameters = [{"name": "@id", "value": doc_id}, {"name": "@pk", "value": pk}]
-            async for _ in container.query_items(query=query, partition_key=pk, parameters=parameters):
-                pass
+            async for item in container.query_items(query=query, partition_key=pk, parameters=parameters):
+                assert item['id'] == doc_id
             # need to do query with no pk and with feed range
         elif operation == "changefeed":
             async for _ in container.query_items_change_feed():
                 pass
+        elif operation == "read_all_items":
+            async for item in container.read_all_items(partition_key=pk):
+                assert item['pk'] == pk
+
+
+
 
 
     async def create_custom_transport_sm_mrr(self):
