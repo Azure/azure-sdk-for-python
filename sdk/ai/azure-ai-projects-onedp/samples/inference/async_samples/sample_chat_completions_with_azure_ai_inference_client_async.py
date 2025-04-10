@@ -25,10 +25,13 @@ USAGE:
 
 import os
 import asyncio
-from azure.core.credentials import AzureKeyCredential # TODO: Remove me when EntraID is supported # TODO: Remove me when EntraID is supported
+from azure.core.credentials import (
+    AzureKeyCredential,
+)  # TODO: Remove me when EntraID is supported # TODO: Remove me when EntraID is supported
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.onedp.aio import AIProjectClient
 from azure.ai.inference.models import UserMessage
+
 
 async def sample_chat_completions_with_azure_ai_inference_client_async():
 

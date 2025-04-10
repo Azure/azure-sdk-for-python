@@ -24,7 +24,9 @@ USAGE:
 """
 
 import os
-from azure.core.credentials import AzureKeyCredential # TODO: Remove me when EntraID is supported # TODO: Remove me when EntraID is supported
+from azure.core.credentials import (
+    AzureKeyCredential,
+)  # TODO: Remove me when EntraID is supported # TODO: Remove me when EntraID is supported
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects.onedp import AIProjectClient
 from azure.ai.inference.models import ImageEmbeddingInput
@@ -32,6 +34,7 @@ from azure.ai.inference.models import ImageEmbeddingInput
 # TODO: Remove console logging
 import sys
 import logging
+
 logger = logging.getLogger("azure")
 logger.setLevel(logging.DEBUG)
 logger.addHandler(logging.StreamHandler(stream=sys.stdout))

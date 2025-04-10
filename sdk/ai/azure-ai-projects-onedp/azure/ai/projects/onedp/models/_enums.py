@@ -34,21 +34,6 @@ class AttackStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents character swapping, a technique for rearranging characters in text."""
 
 
-class AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The authentication type used by the connection."""
-
-    API_KEY = "ApiKey"
-    """API Key authentication"""
-    ENTRA_ID = "AAD"
-    """Entra ID authentication (formerly known as AAD)"""
-    SAS = "SAS"
-    """Shared Access Signature (SAS) authentication"""
-    CUSTOM = "CustomKeys"
-    """Custom authentication"""
-    NONE = "None"
-    """No authentication"""
-
-
 class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Type (or category) of the connection."""
 
@@ -70,6 +55,21 @@ class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Application Insights"""
     CUSTOM = "CustomKeys"
     """Custom Keys"""
+
+
+class CredentialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The credential type used by the connection."""
+
+    API_KEY = "ApiKey"
+    """API Key credential"""
+    ENTRA_ID = "AAD"
+    """Entra ID credential (formerly known as AAD)"""
+    SAS = "SAS"
+    """Shared Access Signature (SAS) credential"""
+    CUSTOM = "CustomKeys"
+    """Custom credential"""
+    NONE = "None"
+    """No credential"""
 
 
 class DatasetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

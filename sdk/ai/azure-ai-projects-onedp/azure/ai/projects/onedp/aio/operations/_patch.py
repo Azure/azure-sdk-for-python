@@ -23,10 +23,14 @@ from ...models._models import (
     PendingUploadRequest,
     PendingUploadType,
     PendingUploadResponse,
+    Connection,
+    ApiKeyCredentials,
+    EntraIDCredentials
 )
-from ...models._enums import DatasetType, AuthenticationType, ConnectionType
+from ...models._enums import DatasetType, CredentialType, ConnectionType
 
 logger = logging.getLogger(__name__)
+
 
 class AssistantsOperations:
 
@@ -275,38 +279,41 @@ class InferenceOperations:
             ) from e
 
         if connection_name:
-            connection = await self._outer_instance.connections.get(name=connection_name, **kwargs)
+            connection: Connection = await self._outer_instance.connections.get(name=connection_name, **kwargs)
+            if connection.type != ConnectionType.AZURE_OPEN_AI:
+                raise ValueError(f"Connection `{connection_name}` is not of type Azure OpenAI.")            
         else:
             # If connection name was not specified, get the default Azure OpenAI connection.
             connections = await self._outer_instance.connections.list(
-                connection_type=ConnectionType.AZURE_OPEN_AI,
-                default_connection=True,
-                **kwargs
+                connection_type=ConnectionType.AZURE_OPEN_AI, default_connection=True, **kwargs
             )
-            connection = next(iter(connections), None)
+            connection: Connection = next(iter(connections), None)
             if not connection:
                 raise ResourceNotFoundError("No default Azure OpenAI connection found.")
             connection_name = connection.name
 
-        # If the connection uses API key authentication, we need to make another service call to get 
+            # TODO: if there isn't a default openai connection, we would have to by convention 
+            # use https://{resource-name}.openai.azure.com where {resource-name} is the same as the 
+            # foundry API endpoint (https://{resource-name}.services.ai.azure.com)
+
+        # If the connection uses API key authentication, we need to make another service call to get
         # the connection with API key populated.
-        if connection.auth_type == AuthenticationType.API_KEY:
+        if connection.credentials.auth_type == CredentialType.API_KEY:
             connection = await self._outer_instance.connections.get_with_credentials(name=connection_name, **kwargs)
 
         logger.debug("[InferenceOperations.get_azure_openai_client] connection = %s", str(connection))
 
         azure_endpoint = connection.target[:-1] if connection.target.endswith("/") else connection.target
 
-        if connection.auth_type == AuthenticationType.API_KEY:
-
-            api_key = connection.credentials.key
+        if isinstance(connection.credentials, ApiKeyCredentials):
 
             logger.debug(
                 "[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI using API key authentication"
             )
+            api_key = connection.credentials.api_key
             client = AsyncAzureOpenAI(api_key=api_key, azure_endpoint=azure_endpoint, api_version=api_version)
 
-        elif connection.auth_type == AuthenticationType.ENTRA_ID:
+        elif isinstance(connection.credentials, EntraIDCredentials):
 
             logger.debug(
                 "[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI using Entra ID authentication"
@@ -365,7 +372,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
             raise ValueError("Blob reference for consumption is not present")
         if not pending_upload_response.blob_reference_for_consumption.credential.type:
             raise ValueError("Credential type is not present")
-        if pending_upload_response.blob_reference_for_consumption.credential.type != AuthenticationType.SAS:
+        if pending_upload_response.blob_reference_for_consumption.credential.type != CredentialType.SAS:
             raise ValueError("Credential type is not SAS")
         if not pending_upload_response.blob_reference_for_consumption.blob_uri:
             raise ValueError("Blob URI is not present or empty")
@@ -401,7 +408,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
                 "[%s] pending_upload_response.blob_reference_for_consumption.credential.type = %s.",
                 method,
                 pending_upload_response.blob_reference_for_consumption.credential.type,
-            )  # == AuthenticationType.SAS
+            )  # == CredentialType.SAS
 
         # For overview on Blob storage SDK in Python see:
         # https://learn.microsoft.com/azure/storage/blobs/storage-quickstart-blobs-python
@@ -415,9 +422,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
             output_version,
         )
 
-    async def upload_file_and_create(
-        self, *, name: str, version: str, file: str, **kwargs: Any
-    ) -> DatasetVersion:
+    async def upload_file_and_create(self, *, name: str, version: str, file: str, **kwargs: Any) -> DatasetVersion:
         """Upload file to a blob storage, and create a dataset that references this file.
         This method uses the `ContainerClient.upload_blob` method from the azure-storage-blob package
         to upload the file. Any keyword arguments provided will be passed to the `upload_blob` method.
@@ -473,9 +478,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
 
         return dataset_version
 
-    async def upload_folder_and_create(
-        self, *, name: str, version: str, folder: str, **kwargs: Any
-    ) -> DatasetVersion:
+    async def upload_folder_and_create(self, *, name: str, version: str, folder: str, **kwargs: Any) -> DatasetVersion:
         """Upload all files in a folder and its sub folders to a blob storage, while maintaining
         relative paths, and create a dataset that references this folder.
         This method uses the `ContainerClient.upload_blob` method from the azure-storage-blob package

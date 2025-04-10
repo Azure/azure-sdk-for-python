@@ -28,7 +28,9 @@ USAGE:
 import os
 import asyncio
 from azure.ai.projects.aio import AIProjectClient
-from azure.core.credentials import AzureKeyCredential # TODO: Remove me when EntraID is supported # TODO: Remove me when EntraID is supported
+from azure.core.credentials import (
+    AzureKeyCredential,
+)  # TODO: Remove me when EntraID is supported # TODO: Remove me when EntraID is supported
 from azure.identity.aio import DefaultAzureCredential
 
 
@@ -43,7 +45,7 @@ async def sample_chat_completions_with_azure_openai_client_async():
             endpoint=endpoint,
             # credential=DefaultAzureCredential(),
             credential=AzureKeyCredential(os.environ["PROJECT_API_KEY"]),
-            logging_enable=True, # TODO: Remove console logging
+            logging_enable=True,  # TODO: Remove console logging
         ) as project_client:
 
             # Get an authenticated AsyncAzureOpenAI client for your default Azure OpenAI connection:

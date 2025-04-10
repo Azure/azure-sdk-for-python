@@ -23,9 +23,12 @@ USAGE:
 
 import os
 import asyncio
-from azure.core.credentials import AzureKeyCredential # TODO: Remove me when EntraID is supported # TODO: Remove me when EntraID is supported
+from azure.core.credentials import (
+    AzureKeyCredential,
+)  # TODO: Remove me when EntraID is supported # TODO: Remove me when EntraID is supported
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects.onedp.aio import AIProjectClient
+
 
 async def sample_get_assistant_client_async():
 
