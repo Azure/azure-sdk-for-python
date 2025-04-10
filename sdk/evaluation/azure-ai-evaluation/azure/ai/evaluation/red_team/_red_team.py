@@ -794,23 +794,18 @@ class RedTeam():
                     api_version=None,
                     model="gpt-4"
                 )
-                scoring_target = OpenAIChatTarget(
+                scoring_target_red_llm = OpenAIChatTarget(
                     model_name=os.environ.get("UNSAFE_LLM_MODEL_NAME", "gpt-4o-unsafe"),
                     endpoint=os.environ.get("UNSAFE_LLM_ENDPOINT", ""),
                     use_aad_auth=True,
                     api_version=os.environ.get("UNSAFE_LLM_API_VERSION", "2025-01-01-preview"),
                 )
-                # scoring_target = AzureRAIServiceTarget(  # Using AzureRAIServiceTarget instead of OpenAIChatTarget
-                #     client=self.generated_rai_client,
-                #     api_version=None,
-                #     model="gpt-4"
-                # )
                 main_orchestrator = CrescendoOrchestrator(
                     objective_target=chat_target,
                     adversarial_chat=adversarial_target,
                     max_turns=max_turns,
-                    max_backtracks=max_backtracks,
-                    scoring_target=scoring_target,
+                    max_backtracks=max_turns,
+                    scoring_target=scoring_target_red_llm,
                     prompt_converters=None
                 )
                 return main_orchestrator
@@ -835,10 +830,11 @@ class RedTeam():
                     )
                     
                     # Use AzureRAIServiceTarget for scoring as well
-                    scoring_target = AzureRAIServiceTarget(
-                        client=self.generated_rai_client,
-                        api_version=None,
-                        model="gpt-4"
+                    scoring_target_red_llm = OpenAIChatTarget(
+                        model_name=os.environ.get("UNSAFE_LLM_MODEL_NAME", "gpt-4o-unsafe"),
+                        endpoint=os.environ.get("UNSAFE_LLM_ENDPOINT", ""),
+                        use_aad_auth=True,
+                        api_version=os.environ.get("UNSAFE_LLM_API_VERSION", "2025-01-01-preview"),
                     )
                     
                     # Create a new orchestrator for this specific prompt
@@ -847,7 +843,7 @@ class RedTeam():
                         adversarial_chat=adversarial_target,
                         max_turns=max_turns,
                         max_backtracks=max_backtracks,
-                        scoring_target=scoring_target,
+                        scoring_target=scoring_target_red_llm,
                         prompt_converters=None  # Crescendo doesn't use converters
                     )
                     
