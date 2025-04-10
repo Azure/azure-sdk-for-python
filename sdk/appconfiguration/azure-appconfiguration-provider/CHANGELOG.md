@@ -1,5 +1,12 @@
 # Release History
 
+## 2.1.0b1 (2025-04-10)
+
+### Bugs Fixed
+
+* Updates the feature flag telemetry to use the provided endpoint instead of the endpoint of the store the feature flag was loaded from.
+* Removes Feature Id from feature flag telemetry.
+
 ## 2.0.1 (2025-03-07)
 
 ### Bugs Fixed
