@@ -1,37 +1,37 @@
 #!/bin/bash
-python3 r_proxy_workload.py &
-python3 r-proxy-workload-1.py &
-python3 r-proxy-workload-2.py &
-python3 r-proxy-workload-3.py &
-python3 r-proxy-workload-4.py &
-python3 r-proxy-workload-5.py &
-python3 r-proxy-workload-6.py &
-python3 r_w_q_proxy_workload.py &
-python3 r-w-q-proxy-workload-1.py &
-python3 r-w-q-proxy-workload-2.py &
-python3 r_w_q_workload.py &
-python3 r-w-q-workload-1.py &
-python3 r-w-q-workload-2.py &
-python3 r_workload.py &
-python3 r-workload-1.py &
-python3 r-workload-2.py &
-python3 r-workload-3.py &
-python3 r-workload-4.py &
-python3 r-workload-5.py &
-python3 r-workload-6.py &
-python3 w_workload.py &
-python3 w-workload-1.py &
-python3 w-workload-2.py &
-python3 w-workload-3.py &
-python3 w-workload-4.py &
-python3 w-workload-5.py &
-python3 w-workload-6.py &
-python3 w_proxy_workload.py &
-python3 w-proxy-workload-1.py &
-python3 w-proxy-workload-2.py &
-python3 w-proxy-workload-3.py &
-python3 w-proxy-workload-4.py &
-python3 w-proxy-workload-5.py &
-python3 w-proxy-workload-6.py &
-python3 r_w_q_workload_sync.py &
-python3 r-w-q-workload-sync-1.py &
+if [ $# -eq 0 ]; then
+    echo "Usage: $0 num_runs"
+    exit 1
+fi
+
+num_runs=$1
+
+for (( i=0; i<num_runs; i++ )); do
+    python3 r_proxy_workload.py &
+done
+
+for (( i=0; i<num_runs; i++ )); do
+    python3 r_w_q_proxy_workload.py &
+done
+
+for (( i=0; i<num_runs; i++ )); do
+    python3 r_w_q_workload.py &
+done
+
+for (( i=0; i<num_runs; i++ )); do
+    python3 r_workload.py &
+done
+
+for (( i=0; i<num_runs; i++ )); do
+    python3 w_proxy_workload.py &
+done
+
+for (( i=0; i<num_runs; i++ )); do
+    python3 r_w_q_workload_sync.py &
+done
+
+for (( i=0; i<num_runs; i++ )); do
+    python3 r-w-q-workload-sync-1.py &
+done
+
+wait

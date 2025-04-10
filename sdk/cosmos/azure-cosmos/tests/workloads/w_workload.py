@@ -1,8 +1,7 @@
-import os
-import random
 import sys
 
 from azure.cosmos import documents
+from workload_utils import create_logger, upsert_item_concurrently
 from workload_configs import (PREFERRED_LOCATIONS, COSMOS_URI, COSMOS_KEY, USE_MULTIPLE_WRITABLE_LOCATIONS,
                               CONCURRENT_REQUESTS, COSMOS_DATABASE, COSMOS_CONTAINER)
 
@@ -13,22 +12,6 @@ import asyncio
 
 import time
 from datetime import datetime
-
-import logging
-from logging.handlers import RotatingFileHandler
-
-
-def get_random_item():
-    random_int = random.randint(1, 1000000)
-    return {"id": "Simon-" + str(random_int), "pk": "pk-" + str(random_int)}
-
-
-async def upsert_item_concurrently(container, num_upserts):
-    tasks = []
-    for _ in range(num_upserts):
-        tasks.append(container.upsert_item(get_random_item(), etag=None, match_condition=None))
-    await asyncio.gather(*tasks)
-
 
 async def run_workload(client_id, client_logger):
     connectionPolicy = documents.ConnectionPolicy()
@@ -50,15 +33,5 @@ async def run_workload(client_id, client_logger):
 
 
 if __name__ == "__main__":
-    logger = logging.getLogger('azure.cosmos')
-    file_name = os.path.basename(__file__)
-    first_name = file_name.split(".")[0]
-    # Create a rotating file handler
-    handler = RotatingFileHandler(
-        "log-" + first_name + "-" + datetime.now().strftime("%Y%m%d-%H%M%S") + '.log',
-        maxBytes=1024 * 1024 * 10, # 10 mb
-        backupCount=3
-    )
-    logger.setLevel(logging.DEBUG)
-    logger.addHandler(handler)
+    first_name, logger = create_logger()
     asyncio.run(run_workload(first_name, logger))

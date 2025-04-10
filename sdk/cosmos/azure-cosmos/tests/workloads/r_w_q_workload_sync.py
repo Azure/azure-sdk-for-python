@@ -1,7 +1,6 @@
-import os
-import random
 import sys
 
+from workload_utils import create_logger, get_random_item
 from workload_configs import (COSMOS_URI, COSMOS_KEY, PREFERRED_LOCATIONS, USE_MULTIPLE_WRITABLE_LOCATIONS,
                               CONCURRENT_REQUESTS, COSMOS_DATABASE, COSMOS_CONTAINER)
 
@@ -12,22 +11,13 @@ from azure.cosmos import CosmosClient, documents
 import time
 from datetime import datetime
 
-import logging
-from logging.handlers import RotatingFileHandler
-
-
-def get_random_item():
-    random_int = random.randint(1, 10000)
-    return {"id": "Simon-" + str(random_int), "pk": "pk-" + str(random_int)}
-
-
 def upsert_item(container, num_upserts):
     for _ in range(num_upserts):
         container.upsert_item(get_random_item(), etag=None, match_condition=None)
 
 
-def read_item(container, num_upserts):
-    for _ in range(num_upserts):
+def read_item(container, num_reads):
+    for _ in range(num_reads):
         item = get_random_item()
         container.read_item(item["id"], item["id"], etag=None, match_condition=None)
 
@@ -69,15 +59,5 @@ def run_workload(client_id, client_logger):
 
 
 if __name__ == "__main__":
-    logger = logging.getLogger('azure.cosmos')
-    file_name = os.path.basename(__file__)
-    first_name = file_name.split(".")[0]
-    # Create a rotating file handler
-    handler = RotatingFileHandler(
-        "log-" + first_name + "-" + datetime.now().strftime("%Y%m%d-%H%M%S") + '.log',
-        maxBytes=1024 * 1024 * 10, # 10 mb
-        backupCount=3
-    )
-    logger.setLevel(logging.DEBUG)
-    logger.addHandler(handler)
+    first_name, logger = create_logger()
     run_workload(first_name, logger)
