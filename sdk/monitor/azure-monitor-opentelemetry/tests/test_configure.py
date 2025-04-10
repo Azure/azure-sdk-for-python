@@ -14,6 +14,10 @@
 import unittest
 from unittest.mock import Mock, call, patch
 
+from opentelemetry.instrumentation.dependencies import (
+    DependencyConflict,
+    DependencyConflictError,
+)
 from opentelemetry.sdk._logs import LoggingHandler
 from opentelemetry.sdk.resources import Resource
 
@@ -533,12 +537,10 @@ class TestConfigure(unittest.TestCase):
 
     @patch("azure.monitor.opentelemetry._configure._ALL_SUPPORTED_INSTRUMENTED_LIBRARIES", ("test_instr2"))
     @patch("azure.monitor.opentelemetry._configure._is_instrumentation_enabled")
-    @patch("azure.monitor.opentelemetry._configure.get_dist_dependency_conflicts")
     @patch("azure.monitor.opentelemetry._configure.entry_points")
     def test_setup_instrumentations_lib_not_supported(
         self,
         iter_mock,
-        dep_mock,
         enabled_mock,
     ):
         ep_mock = Mock()
@@ -550,10 +552,8 @@ class TestConfigure(unittest.TestCase):
         ep_mock.name = "test_instr1"
         ep2_mock.name = "test_instr2"
         ep2_mock.load.return_value = instr_class_mock
-        dep_mock.return_value = None
         enabled_mock.return_value = True
         _setup_instrumentations({})
-        dep_mock.assert_called_with(ep2_mock.dist)
         ep_mock.load.assert_not_called()
         ep2_mock.load.assert_called_once()
         instrumentor_mock.instrument.assert_called_once()
@@ -579,12 +579,10 @@ class TestConfigure(unittest.TestCase):
     @patch("azure.monitor.opentelemetry._configure._ALL_SUPPORTED_INSTRUMENTED_LIBRARIES", ("test_instr"))
     @patch("azure.monitor.opentelemetry._configure._is_instrumentation_enabled")
     @patch("azure.monitor.opentelemetry._configure._logger")
-    @patch("azure.monitor.opentelemetry._configure.get_dist_dependency_conflicts")
     @patch("azure.monitor.opentelemetry._configure.entry_points")
     def test_setup_instrumentations_conflict(
         self,
         iter_mock,
-        dep_mock,
         logger_mock,
         enabled_mock,
     ):
@@ -595,23 +593,24 @@ class TestConfigure(unittest.TestCase):
         instr_class_mock.return_value = instrumentor_mock
         ep_mock.name = "test_instr"
         ep_mock.load.return_value = instr_class_mock
-        dep_mock.return_value = True
+        instrumentor_mock.instrument.side_effect = DependencyConflictError(
+            DependencyConflict(
+                required="test_instr"
+            )
+        )
         enabled_mock.return_value = True
         _setup_instrumentations({})
-        dep_mock.assert_called_with(ep_mock.dist)
-        ep_mock.load.assert_not_called()
-        instrumentor_mock.instrument.assert_not_called()
+        ep_mock.load.assert_called_once()
+        instrumentor_mock.instrument.assert_called_once()
         logger_mock.debug.assert_called_once()
 
     @patch("azure.monitor.opentelemetry._configure._ALL_SUPPORTED_INSTRUMENTED_LIBRARIES", ("test_instr"))
     @patch("azure.monitor.opentelemetry._configure._is_instrumentation_enabled")
     @patch("azure.monitor.opentelemetry._configure._logger")
-    @patch("azure.monitor.opentelemetry._configure.get_dist_dependency_conflicts")
     @patch("azure.monitor.opentelemetry._configure.entry_points")
     def test_setup_instrumentations_exception(
         self,
         iter_mock,
-        dep_mock,
         logger_mock,
         enabled_mock,
     ):
@@ -622,10 +621,8 @@ class TestConfigure(unittest.TestCase):
         instr_class_mock.return_value = instrumentor_mock
         ep_mock.name = "test_instr"
         ep_mock.load.side_effect = Exception()
-        dep_mock.return_value = None
         enabled_mock.return_value = True
         _setup_instrumentations({})
-        dep_mock.assert_called_with(ep_mock.dist)
         ep_mock.load.assert_called_once()
         instrumentor_mock.instrument.assert_not_called()
         logger_mock.warning.assert_called_once()
@@ -635,12 +632,10 @@ class TestConfigure(unittest.TestCase):
     )
     @patch("azure.monitor.opentelemetry._configure._is_instrumentation_enabled")
     @patch("azure.monitor.opentelemetry._configure._logger")
-    @patch("azure.monitor.opentelemetry._configure.get_dist_dependency_conflicts")
     @patch("azure.monitor.opentelemetry._configure.entry_points")
     def test_setup_instrumentations_disabled(
         self,
         iter_mock,
-        dep_mock,
         logger_mock,
         enabled_mock,
     ):
@@ -653,10 +648,8 @@ class TestConfigure(unittest.TestCase):
         ep_mock.name = "test_instr1"
         ep2_mock.name = "test_instr2"
         ep2_mock.load.return_value = instr_class_mock
-        dep_mock.return_value = None
         enabled_mock.side_effect = [False, True]
         _setup_instrumentations({})
-        dep_mock.assert_called_with(ep2_mock.dist)
         ep_mock.load.assert_not_called()
         ep2_mock.load.assert_called_once()
         instrumentor_mock.instrument.assert_called_once()

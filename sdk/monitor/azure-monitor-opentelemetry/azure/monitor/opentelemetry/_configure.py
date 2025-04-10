@@ -3,14 +3,13 @@
 # Licensed under the MIT License. See License in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from functools import cached_property
 from logging import getLogger, Formatter
 from typing import Dict, List, cast
 
 from opentelemetry._events import _set_event_logger_provider
 from opentelemetry._logs import set_logger_provider
 from opentelemetry.instrumentation.dependencies import (
-    get_dist_dependency_conflicts,
+    DependencyConflictError,
 )
 from opentelemetry.instrumentation.instrumentor import (  # type: ignore
     BaseInstrumentor,
@@ -26,11 +25,8 @@ from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.trace import set_tracer_provider
-from opentelemetry.util._importlib_metadata import (
-    EntryPoint,
-    distributions,
-    entry_points,
-)
+from opentelemetry.util._importlib_metadata import entry_points
+
 
 from azure.core.settings import settings
 from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
@@ -211,25 +207,8 @@ def _setup_live_metrics(configurations):
     enable_live_metrics(**configurations)
 
 
-class _EntryPointDistFinder:
-    @cached_property
-    def _mapping(self):
-        return {self._key_for(ep): dist for dist in distributions() for ep in dist.entry_points}
-
-    def dist_for(self, entry_point: EntryPoint):
-        dist = getattr(entry_point, "dist", None)
-        if dist:
-            return dist
-
-        return self._mapping.get(self._key_for(entry_point))
-
-    @staticmethod
-    def _key_for(entry_point: EntryPoint):
-        return f"{entry_point.group}:{entry_point.name}:{entry_point.value}"
-
-
 def _setup_instrumentations(configurations: Dict[str, ConfigurationValue]):
-    entry_point_finder = _EntryPointDistFinder()
+    # entry_point_finder = _EntryPointDistFinder()
     # use pkg_resources for now until https://github.com/open-telemetry/opentelemetry-python/pull/3168 is merged
     for entry_point in entry_points(group="opentelemetry_instrumentor"):
         lib_name = entry_point.name
@@ -239,20 +218,16 @@ def _setup_instrumentations(configurations: Dict[str, ConfigurationValue]):
             _logger.debug("Instrumentation skipped for library %s", entry_point.name)
             continue
         try:
-            # Check if dependent libraries/version are installed
-            entry_point_dist = entry_point_finder.dist_for(entry_point)  # type: ignore
-            conflict = get_dist_dependency_conflicts(entry_point_dist)  # type: ignore
-            if conflict:
-                _logger.debug(
-                    "Skipping instrumentation %s: %s",
-                    entry_point.name,
-                    conflict,
-                )
-                continue
             # Load the instrumentor via entrypoint
             instrumentor: BaseInstrumentor = entry_point.load()
-            # tell instrumentation to not run dep checks again as we already did it above
-            instrumentor().instrument(skip_dep_check=True)
+            instrumentor().instrument(raise_exception_on_conflict=True)
+        except DependencyConflictError as exc:
+            _logger.debug(
+                "Skipping instrumentation %s: %s",
+                entry_point.name,
+                exc.conflict,
+            )
+            continue
         except Exception as ex:  # pylint: disable=broad-except
             _logger.warning(
                 "Exception occurred when instrumenting: %s.",
