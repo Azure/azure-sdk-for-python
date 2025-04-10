@@ -7,7 +7,6 @@ reached the service, and as such we will attempt cross regional retries dependin
 operation type.
 """
 
-import logging
 from azure.cosmos.documents import _OperationType
 from azure.cosmos.http_constants import ResourceType
 
@@ -20,7 +19,6 @@ class ServiceRequestRetryPolicy(object):
         self.failover_retry_count = 0
         self.connection_policy = connection_policy
         self.request = args[0] if args else None
-        self.logger = logging.getLogger("azure.cosmos.ServiceRequestRetryPolicy")
         if self.request:
             if _OperationType.IsReadOnlyOperation(self.request.operation_type):
                 self.total_retries = len(self.global_endpoint_manager.location_cache.read_regional_routing_contexts)
@@ -45,13 +43,11 @@ class ServiceRequestRetryPolicy(object):
             # This logic is for the last retry and mark the region unavailable
             self.mark_endpoint_unavailable(self.request.location_endpoint_to_route)
 
-            self.update_location_cache()
             # We just directly got to the next location in case of read requests
-            # We don't retry again on the same region for regional endpoint
             self.failover_retry_count += 1
             if self.failover_retry_count >= self.total_retries:
                 return False
-            # # Check if it is safe to failover to another region
+            # Check if it is safe to failover to another region
             location_endpoint = self.resolve_next_region_service_endpoint()
 
             self.request.route_to_location(location_endpoint)
