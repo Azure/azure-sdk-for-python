@@ -30,13 +30,13 @@ var singleRegionConfiguration = [
 ]
 var multiRegionConfiguration = [
   {
-    locationName: 'East US 2'
+    locationName: 'West US 3'
     provisioningState: 'Succeeded'
     failoverPriority: 0
     isZoneRedundant: false
   }
   {
-    locationName: 'East US'
+    locationName: 'West US'
     provisioningState: 'Succeeded'
     failoverPriority: 1
     isZoneRedundant: false
