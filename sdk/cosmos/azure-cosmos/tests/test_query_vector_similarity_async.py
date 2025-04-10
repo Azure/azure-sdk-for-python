@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-
+import os
 import unittest
 import uuid
 
@@ -127,6 +127,22 @@ class TestVectorSimilarityQueryAsync(unittest.IsolatedAsyncioTestCase):
             assert ("One of the input values is invalid." in e.message
                     or "Specifying a sorting order (ASC or DESC) with VectorDistance function is not supported." in e.message)
 
+    async def test_vector_search_environment_variables_async(self):
+        vector_string = vector_test_data.get_embedding_string("I am having a wonderful day.")
+        query = "SELECT TOP 10 c.text, VectorDistance(c.embedding, [{}]) AS " \
+                "SimilarityScore FROM c ORDER BY VectorDistance(c.embedding, [{}])".format(vector_string, vector_string)
+        os.environ["AZURE_COSMOS_MAX_ITEM_BUFFER_VECTOR_SEARCH"] = "1"
+        try:
+            [item async for item in self.created_large_container.query_items(query=query)]
+            pytest.fail("Config was not set correctly.")
+        except ValueError as e:
+            assert e.args[0] == ("Executing a vector search query with more items than the max is not allowed. "
+                                 "Please ensure you are using a limit smaller than the max, or change the max.")
+
+        os.environ["AZURE_COSMOS_MAX_ITEM_BUFFER_VECTOR_SEARCH"] = "50000"
+
+        os.environ["AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY"] = "False"
+        [item async for item in self.created_large_container.query_items(query=query)]
 
     async def test_ordering_distances_async(self):
         # Besides ordering distances, we also verify that the query text properly replaces any set embedding policies
