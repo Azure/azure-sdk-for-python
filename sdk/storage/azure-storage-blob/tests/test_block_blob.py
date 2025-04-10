@@ -197,6 +197,163 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy
+    def test_stage_from_file_to_blob_with_oauth(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        self._setup(storage_account_name, storage_account_key)
+        bearer_token_string = self._get_bearer_token_string()
+
+        # Set up source file share with random data
+        source_data = self.get_random_bytes(SMALL_BLOB_SIZE)
+        file_name, base_url = self._create_file_share_oauth(
+            bearer_token_string,
+            storage_account_name,
+            source_data
+        )
+
+        # Set up destination blob without data
+        blob_service_client = BlobServiceClient(
+            account_url=self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key
+        )
+        destination_blob_client = blob_service_client.get_blob_client(
+            container=self.source_container_name,
+            blob=self.get_resource_name(TEST_BLOB_PREFIX + "1")
+        )
+
+        try:
+            # Act / Assert
+            block_id = '1'
+            destination_blob_client.stage_block_from_url(
+                block_id=block_id,
+                source_url=base_url + "/" + file_name,
+                source_authorization=bearer_token_string,
+                source_token_intent='backup'
+            )
+            block_list = [BlobBlock(block_id=block_id)]
+            resp = destination_blob_client.commit_block_list(block_list)
+            assert resp is not None
+
+            destination_blob_data = destination_blob_client.download_blob().readall()
+            assert destination_blob_data == source_data
+        finally:
+            requests.delete(
+                url=base_url,
+                headers=self._build_base_file_share_headers(bearer_token_string, 0),
+                params={'restype': 'share'}
+            )
+            blob_service_client.delete_container(self.source_container_name)
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_copy_from_file_to_blob_with_oauth(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        self._setup(storage_account_name, storage_account_key)
+        bearer_token_string = self._get_bearer_token_string()
+
+        # Set up source file share with random data
+        source_data = self.get_random_bytes(SMALL_BLOB_SIZE)
+        file_name, base_url = self._create_file_share_oauth(
+            bearer_token_string,
+            storage_account_name,
+            source_data
+        )
+
+        # Set up destination blob without data
+        blob_service_client = BlobServiceClient(
+            account_url=self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key
+        )
+        destination_blob_client = blob_service_client.get_blob_client(
+            container=self.source_container_name,
+            blob=self.get_resource_name(TEST_BLOB_PREFIX + "1")
+        )
+
+        try:
+            # Act
+            with pytest.raises(ValueError):
+                destination_blob_client.start_copy_from_url(
+                    source_url=base_url + "/" + file_name,
+                    source_authorization=bearer_token_string,
+                    source_token_intent='backup',
+                    requires_sync=False
+                )
+            destination_blob_client.start_copy_from_url(
+                source_url=base_url + "/" + file_name,
+                source_authorization=bearer_token_string,
+                source_token_intent='backup',
+                requires_sync=True
+            )
+            destination_blob_data = destination_blob_client.download_blob().readall()
+
+            # Assert
+            assert destination_blob_data == source_data
+        finally:
+            requests.delete(
+                url=base_url,
+                headers=self._build_base_file_share_headers(bearer_token_string, 0),
+                params={'restype': 'share'}
+            )
+            blob_service_client.delete_container(self.source_container_name)
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_append_block_from_file_to_blob_with_oauth(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        self._setup(storage_account_name, storage_account_key)
+        bearer_token_string = self._get_bearer_token_string()
+
+        # Set up source file share with random data
+        source_data = self.get_random_bytes(SMALL_BLOB_SIZE)
+        file_name, base_url = self._create_file_share_oauth(
+            bearer_token_string,
+            storage_account_name,
+            source_data
+        )
+
+        # Set up destination blob without data
+        account_url = self.account_url(storage_account_name, "blob")
+        blob_service_client = BlobServiceClient(
+            account_url=account_url,
+            credential=storage_account_key
+        )
+        destination_blob_client = BlobClient(
+            account_url=account_url,
+            container_name=self.source_container_name,
+            blob_name=self.get_resource_name(TEST_BLOB_PREFIX + "1"),
+            credential=storage_account_key
+        )
+        destination_blob_client.create_append_blob()
+
+        try:
+            # Act
+            destination_blob_client.append_block_from_url(
+                copy_source_url=base_url + "/" + file_name,
+                source_authorization=bearer_token_string,
+                source_token_intent='backup'
+            )
+            destination_blob_data = destination_blob_client.download_blob().readall()
+
+            # Assert
+            assert destination_blob_data == source_data
+        finally:
+            requests.delete(
+                url=base_url,
+                headers=self._build_base_file_share_headers(bearer_token_string, 0),
+                params={'restype': 'share'}
+            )
+            blob_service_client.delete_container(self.source_container_name)
+
+    @BlobPreparer()
+    @recorded_by_proxy
     def test_upload_blob_with_and_without_overwrite(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
