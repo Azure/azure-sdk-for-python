@@ -42,6 +42,7 @@ class ConnectionPolicy:
         self.ProxyConfiguration: Optional[ProxyConfiguration] = None
         self.EnableEndpointDiscovery: bool = True
         self.PreferredLocations: List[str] = []
+        self.ExcludedLocations = None
         self.RetryOptions: RetryOptions = RetryOptions()
         self.DisableSSLVerification: bool = False
         self.UseMultipleWriteLocations: bool = False
