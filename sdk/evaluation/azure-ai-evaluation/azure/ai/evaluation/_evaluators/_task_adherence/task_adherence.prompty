@@ -82,12 +82,12 @@ The rating ranges from 1 to 5, with higher numbers indicating greater adherence 
 
     **Example:**
     **Query:** Recommend a historical fiction book.
-    **Response:**
-    Let me check...
-    → **[Tool Call: get_book({ "genre": "historical fiction" })]**
-    → **[Tool Result: { "title": "Wolf Hall", "author": "Hilary Mantel" }]**
-    You might enjoy **Wolf Hall** by Hilary Mantel.
-
+    **Response:** [  
+      { "role": "assistant", "content": [{ "type": "text", "text": "Let me check..." }] },  
+      { "role": "assistant", "content": [{ "type": "tool_call", "tool_call_id": "tool_call_001", "name": "get_book", "arguments": { "genre": "historical fiction" } }] },  
+      { "role": "tool", "tool_call_id": "tool_call_001", "content": [{ "type": "tool_result", "tool_result": "{ \"title\": \"Wolf Hall\", \"author\": \"Hilary Mantel\" }" }] },  
+      { "role": "assistant", "content": [{ "type": "text", "text": "You might enjoy *Wolf Hall* by Hilary Mantel." }] }  
+    ]  
     **Tool Definitions:** [{ **name**: "get_book", **description**: "Retrieve a book recommendation for a specified genre.", **parameters**: { "genre": "string" } }]
 
 **Explanation:** The tool is correctly used and the result is relevant. The response is solid but could be improved with more context.
@@ -98,12 +98,12 @@ The rating ranges from 1 to 5, with higher numbers indicating greater adherence 
 
 **Example:**
     **Query:** Recommend a historical fiction book.
-    **Response:**
-    Sure! Fetching a recommendation...
-    → **[Tool Call: get_book({ "genre": "historical fiction" })]**
-    → **[Tool Result: { "title": "The Nightingale", "author": "Kristin Hannah", "summary": "A WWII-era story of two sisters resisting the German occupation in France." }]**
-    I recommend **The Nightingale** by Kristin Hannah — a moving WWII-era novel about two sisters' survival and resistance in occupied France.
-
+    **Response:** [  
+        { "role": "assistant", "content": [{ "type": "text", "text": "Sure! Fetching a recommendation..." }] },  
+        { "role": "assistant", "content": [{ "type": "tool_call", "tool_call_id": "tool_call_20250314_001", "name": "get_book", "arguments": { "genre": "historical fiction" } }] },  
+        { "role": "tool", "tool_call_id": "tool_call_20250314_001", "content": [{ "type": "tool_result", "tool_result": "{ \"book\": { \"title\": \"The Nightingale\", \"author\": \"Kristin Hannah\", \"summary\": \"A WWII-era story of two sisters resisting the German occupation in France.\" } }" }] },  
+        { "role": "assistant", "content": [{ "type": "text", "text": "I recommend *The Nightingale* by Kristin Hannah — a moving WWII-era novel about two sisters' survival and resistance in occupied France." }] }  
+    ]  
     **Tool Definitions:** [{ **name**: "get_book", **description**: "Retrieve a book recommendation for a specified genre.", **parameters**: { "genre": "string" } }]
 
     **Explanation:** The assistant uses the tool, presents accurate content, and offers helpful detail. This fully meets the task's requirements.
