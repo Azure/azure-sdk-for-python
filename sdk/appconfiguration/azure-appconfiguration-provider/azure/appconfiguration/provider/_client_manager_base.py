@@ -5,6 +5,8 @@
 # -------------------------------------------------------------------------
 import json
 import random
+import base64
+import hashlib
 from dataclasses import dataclass
 from typing import Dict, List, Optional, Mapping, Any
 from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
