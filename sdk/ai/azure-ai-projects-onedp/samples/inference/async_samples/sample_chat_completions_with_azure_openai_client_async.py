@@ -27,7 +27,7 @@ USAGE:
 
 import os
 import asyncio
-from azure.ai.projects.aio import AIProjectClient
+from azure.ai.projects.onedp.aio import AIProjectClient
 from azure.core.credentials import (
     AzureKeyCredential,
 )  # TODO: Remove me when EntraID is supported # TODO: Remove me when EntraID is supported

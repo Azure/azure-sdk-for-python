@@ -49,15 +49,13 @@ with AIProjectClient(
 ) as project_client:
 
     print("List the properties of all connections:")
-    connections = project_client.connections.list()
-    for connection in connections:
+    for connection in project_client.connections.list():
         print(connection)
 
     print("List the properties of all connections of a particular type (in this case, Azure OpenAI connections):")
-    connections = project_client.connections.list(
+    for connection in project_client.connections.list(
         connection_type=ConnectionType.AZURE_OPEN_AI,
-    )
-    for connection in connections:
+    ):
         print(connection)
 
     print(f"Get the properties of a connection named `{connection_name}`:")

@@ -6,7 +6,8 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to use the synchronous
-    `.telemtry` methods to get the Application Insights connection string.
+    `.telemetry` methods to get the Application Insights connection string and
+    enable tracing.
 
 USAGE:
     python sample_telemetry.py
@@ -16,7 +17,7 @@ USAGE:
     pip install azure-ai-projects azure-identity
 
     Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+    1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the overview page of your
        Azure AI Foundry project.
 """
 

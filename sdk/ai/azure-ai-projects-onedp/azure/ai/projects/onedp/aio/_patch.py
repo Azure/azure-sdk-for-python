@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import List, Optional, Union, Any
 from azure.core.credentials import AzureKeyCredential
 from ._client import AIProjectClient as AIProjectClientGenerated
-from .operations import InferenceOperations, AssistantsOperations
+from .operations import InferenceOperations, AssistantsOperations, TelemetryOperations
 
 
 class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-instance-attributes
@@ -49,6 +49,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
     ) -> None:
         self._user_agent: Optional[str] = kwargs.get("user_agent", None)
         super().__init__(endpoint=endpoint, credential=credential, **kwargs)
+        self.telemetry = TelemetryOperations(self)
         self.inference = InferenceOperations(self)
         self.assistants = AssistantsOperations(self)
 

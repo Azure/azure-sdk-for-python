@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import logging
 import inspect
-from typing import List, Optional, Any, Tuple, Iterable
+from typing import List, Optional, Any, Tuple, Iterable, Union
 from pathlib import Path
 from urllib.parse import urlparse
 from azure.storage.blob import ContainerClient
@@ -274,12 +274,13 @@ class InferenceOperations:
             if connection.type != ConnectionType.AZURE_OPEN_AI:
                 raise ValueError(f"Connection `{connection_name}` is not of type Azure OpenAI.")
         else:
-            # If connection name was not specified, get the default Azure OpenAI connection.
-            connections = self._outer_instance.connections.list(
+            # If connection name was not specified, try to get the default Azure OpenAI connection.
+            connections: Iterable[Connection] = self._outer_instance.connections.list(
                 connection_type=ConnectionType.AZURE_OPEN_AI, default_connection=True, **kwargs
             )
-            connection: Connection = next(iter(connections), None)
-            if not connection:
+            try:
+                connection: Connection = next(iter(connections))
+            except StopAsyncIteration:
                 raise ResourceNotFoundError("No default Azure OpenAI connection found.")
             connection_name = connection.name
 
@@ -345,23 +346,33 @@ class TelemetryOperations:
 
         :return: The Application Insights connection string if a the resource was enabled for the Project.
         :rtype: str
-        :raises ~azure.core.exceptions.ResourceNotFoundError: An Application Insights resource was not
-            enabled for this project.
+        :raises ~azure.core.exceptions.ResourceNotFoundError: An Application Insights connection does not
+            exist for this Foundry project.
         """
         if not self._connection_string:
 
-            # TODO: Test what happens here when there is no AppInsights connection. Does this throw or just returns an empty list?
+            # TODO: Two REST APIs calls can be replaced by one if we have had REST API for get_with_credentials(connection_type=ConnectionType.APPLICATION_INSIGHTS)
+            # Returns an empty Iterable if no connections exits.
             connections: Iterable[Connection] = self._outer_instance.connections.list(
-                connection_type=ConnectionType.APPLICATION_INSIGHTS
+                connection_type=ConnectionType.APPLICATION_INSIGHTS,
+                default_connection=True,
             )
 
-            # Read AppInsights connection string from the first connection in the list.
+            connection_name: Optional[str] = None
             for connection in connections:
-                self._connection_string = connection.metadata.get("connection_string")
+                connection_name = connection.name
                 break
+            if not connection_name:
+                raise ResourceNotFoundError("No Application Insights connection found.")
 
-            if not self._connection_string:
-                raise ResourceNotFoundError("Application Insights resource was not enabled for this Project.")
+            connection = self._outer_instance.connections.get_with_credentials(name=connection_name)
+
+            if isinstance(connection.credentials, ApiKeyCredentials):
+                if not connection.credentials.api_key:
+                    raise ValueError("Application Insights connection does not have a connection string.")
+                self._connection_string = connection.credentials.api_key
+            else:
+                raise ValueError("Application Insights connection does not use API Key credentials.")
 
         return self._connection_string
 

@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import logging
 import inspect
-from typing import List, Optional, Any, Tuple
+from typing import List, Optional, Any, Tuple, AsyncIterable
 from pathlib import Path
 from urllib.parse import urlparse
 from azure.storage.blob.aio import ContainerClient
@@ -281,16 +281,16 @@ class InferenceOperations:
         if connection_name:
             connection: Connection = await self._outer_instance.connections.get(name=connection_name, **kwargs)
             if connection.type != ConnectionType.AZURE_OPEN_AI:
-                raise ValueError(f"Connection `{connection_name}` is not of type Azure OpenAI.")            
+                raise ValueError(f"Connection `{connection_name}` is not of type Azure OpenAI.")
         else:
-            # If connection name was not specified, get the default Azure OpenAI connection.
-            connections = await self._outer_instance.connections.list(
+            # If connection name was not specified, try to get the default Azure OpenAI connection.
+            connections: AsyncIterable[Connection] = self._outer_instance.connections.list(
                 connection_type=ConnectionType.AZURE_OPEN_AI, default_connection=True, **kwargs
             )
-            connection: Connection = next(iter(connections), None)
-            if not connection:
+            try:
+                connection: Connection = await connections.__anext__()
+            except StopAsyncIteration:
                 raise ResourceNotFoundError("No default Azure OpenAI connection found.")
-            connection_name = connection.name
 
             # TODO: if there isn't a default openai connection, we would have to by convention 
             # use https://{resource-name}.openai.azure.com where {resource-name} is the same as the 
@@ -339,6 +339,50 @@ class InferenceOperations:
             raise ValueError("Unsupported authentication type {connection.auth_type}")
 
         return client
+
+
+class TelemetryOperations:
+
+    _connection_string: Optional[str] = None
+
+    def __init__(self, outer_instance: "AIProjectClient") -> None:
+        self._outer_instance = outer_instance
+
+    @distributed_trace
+    async def get_connection_string(self) -> str:
+        """Get the Application Insights connection string associated with the Project's Application Insights resource.
+
+        :return: The Application Insights connection string if a the resource was enabled for the Project.
+        :rtype: str
+        :raises ~azure.core.exceptions.ResourceNotFoundError: An Application Insights connection does not
+            exist for this Foundry project.
+        """
+        if not self._connection_string:
+
+            # TODO: Two REST APIs calls can be replaced by one if we have had REST API for get_with_credentials(connection_type=ConnectionType.APPLICATION_INSIGHTS)
+            # Returns an empty Iterable if no connections exits.
+            connections: AsyncIterable[Connection] = self._outer_instance.connections.list(
+                connection_type=ConnectionType.APPLICATION_INSIGHTS,
+                default_connection=True,
+            )
+
+            connection_name: Optional[str] = None
+            async for connection in connections:
+                connection_name = connection.name
+                break
+            if not connection_name:
+                raise ResourceNotFoundError("No Application Insights connection found.")
+    
+            connection = await self._outer_instance.connections.get_with_credentials(name=connection_name)
+
+            if isinstance(connection.credentials, ApiKeyCredentials):
+                if not connection.credentials.api_key:
+                    raise ValueError("Application Insights connection does not have a connection string.")
+                self._connection_string = connection.credentials.api_key
+            else:
+                raise ValueError("Application Insights connection does not use API Key credentials.")
+
+        return self._connection_string
 
 
 class DatasetsOperations(DatasetsOperationsGenerated):
@@ -546,6 +590,7 @@ __all__: List[str] = [
     "InferenceOperations",
     "DatasetsOperations",
     "AssistantsOperations",
+    "TelemetryOperations",
 ]  # Add all objects you want publicly available to users at this package level
 
 

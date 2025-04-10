@@ -25,7 +25,7 @@ USAGE:
 """
 
 import os
-from azure.ai.projects import AIProjectClient
+from azure.ai.projects.onedp import AIProjectClient
 from azure.core.credentials import (
     AzureKeyCredential,
 )  # TODO: Remove me when EntraID is supported # TODO: Remove me when EntraID is supported
