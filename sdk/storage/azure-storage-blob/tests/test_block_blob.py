@@ -83,12 +83,9 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
     def _get_bearer_token_string(self, resource: str = "https://storage.azure.com/.default") -> str:
         return "Bearer " + f"{self.get_credential(BlobServiceClient).get_token(resource).token}"
 
-    def _build_file_share_headers(self, bearer_token_string: str, content_length: int = 0) -> Dict[str, Any]:
+    def _build_base_file_share_headers(self, bearer_token_string: str, content_length: int = 0) -> Dict[str, Any]:
         return {
-            'Accept': 'application/xml',
-            'Accept-Encoding': 'gzip, deflate',
             'Authorization': bearer_token_string,
-            'Connection': 'keep-alive',
             'Content-Length': str(content_length),
             'x-ms-date': datetime.now(timezone.utc).strftime('%a, %d %b %Y %H:%M:%S GMT'),
             'x-ms-version': get_api_version({}),
@@ -105,17 +102,22 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         base_url = f"https://{storage_account_name}.file.core.windows.net/{share_name}"
 
         # Creates file share
-        requests.put(url=base_url + "?restype=share", headers=self._build_file_share_headers(bearer_token_string))
+        with requests.Session() as session:
+            session.put(
+                url=base_url,
+                headers=self._build_base_file_share_headers(bearer_token_string),
+                params={'restype': 'share'}
+            )
 
-        # Creates the file itself
-        headers = self._build_file_share_headers(bearer_token_string)
-        headers.update({'x-ms-content-length': '1024', 'x-ms-type': 'file'})
-        requests.put(url=base_url + "/" + file_name, headers=headers)
+            # Creates the file itself
+            headers = self._build_base_file_share_headers(bearer_token_string)
+            headers.update({'x-ms-content-length': '1024', 'x-ms-type': 'file'})
+            session.put(url=base_url + "/" + file_name, headers=headers)
 
-        # Upload the supplied data to the file
-        headers = self._build_file_share_headers(bearer_token_string, 1024)
-        headers.update({'x-ms-range': 'bytes=0-1023', 'x-ms-write': 'update'})
-        requests.put(url=base_url + "/" + file_name + "?comp=range", headers=headers, data=data)
+            # Upload the supplied data to the file
+            headers = self._build_base_file_share_headers(bearer_token_string, 1024)
+            headers.update({'x-ms-range': 'bytes=0-1023', 'x-ms-write': 'update'})
+            session.put(url=base_url + "/" + file_name, headers=headers, data=data, params={'comp': 'range'})
 
         return file_name, base_url
 
@@ -187,8 +189,9 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
             assert destination_blob_data == source_data
         finally:
             requests.delete(
-                url=base_url + "?restype=share",
-                headers=self._build_file_share_headers(bearer_token_string, 0)
+                url=base_url,
+                headers=self._build_base_file_share_headers(bearer_token_string, 0),
+                params={'restype': 'share'}
             )
             blob_service_client.delete_container(self.source_container_name)
 
@@ -237,8 +240,9 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
             assert destination_blob_data == source_data
         finally:
             requests.delete(
-                url=base_url + "?restype=share",
-                headers=self._build_file_share_headers(bearer_token_string, 0)
+                url=base_url,
+                headers=self._build_base_file_share_headers(bearer_token_string, 0),
+                params={'restype': 'share'}
             )
             blob_service_client.delete_container(self.source_container_name)
 
@@ -291,8 +295,9 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
             assert destination_blob_data == source_data
         finally:
             requests.delete(
-                url=base_url + "?restype=share",
-                headers=self._build_file_share_headers(bearer_token_string, 0)
+                url=base_url,
+                headers=self._build_base_file_share_headers(bearer_token_string, 0),
+                params={'restype': 'share'}
             )
             blob_service_client.delete_container(self.source_container_name)
 
@@ -341,8 +346,9 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
             assert destination_blob_data == source_data
         finally:
             requests.delete(
-                url=base_url + "?restype=share",
-                headers=self._build_file_share_headers(bearer_token_string, 0)
+                url=base_url,
+                headers=self._build_base_file_share_headers(bearer_token_string, 0),
+                params={'restype': 'share'}
             )
             blob_service_client.delete_container(self.source_container_name)
 

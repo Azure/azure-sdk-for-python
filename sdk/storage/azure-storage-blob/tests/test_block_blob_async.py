@@ -102,12 +102,9 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         access_token = await self.get_credential(BlobServiceClient, is_async=True).get_token(resource)
         return "Bearer " + access_token.token
 
-    def _build_file_share_headers(self, bearer_token_string: str, content_length: int = 0) -> Dict[str, Any]:
+    def _build_base_file_share_headers(self, bearer_token_string: str, content_length: int = 0) -> Dict[str, Any]:
         return {
-            'Accept': 'application/xml',
-            'Accept-Encoding': 'gzip, deflate',
             'Authorization': bearer_token_string,
-            'Connection': 'keep-alive',
             'Content-Length': str(content_length),
             'x-ms-date': datetime.now(timezone.utc).strftime('%a, %d %b %Y %H:%M:%S GMT'),
             'x-ms-version': get_api_version({}),
@@ -123,22 +120,23 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         file_name = self.get_resource_name('file')
         base_url = f"https://{storage_account_name}.file.core.windows.net/{share_name}"
 
-        async with aiohttp.ClientSession() as requests:
+        async with aiohttp.ClientSession() as session:
             # Creates file share
-            await requests.put(
+            await session.put(
                 url=base_url + "?restype=share",
-                headers=self._build_file_share_headers(bearer_token_string)
+                headers=self._build_base_file_share_headers(bearer_token_string),
+                params={'restype': 'share'}
             )
 
             # Creates the file itself
-            headers = self._build_file_share_headers(bearer_token_string)
+            headers = self._build_base_file_share_headers(bearer_token_string)
             headers.update({'x-ms-content-length': '1024', 'x-ms-type': 'file'})
-            await requests.put(url=base_url + "/" + file_name, headers=headers)
+            await session.put(url=base_url + "/" + file_name, headers=headers)
 
             # Upload the supplied data to the file
-            headers = self._build_file_share_headers(bearer_token_string, 1024)
+            headers = self._build_base_file_share_headers(bearer_token_string, 1024)
             headers.update({'x-ms-range': 'bytes=0-1023', 'x-ms-write': 'update'})
-            await requests.put(url=base_url + "/" + file_name + "?comp=range", headers=headers, data=data)
+            await session.put(url=base_url + "/" + file_name, headers=headers, data=data, params={'comp': 'range'})
 
         return file_name, base_url
 
@@ -215,8 +213,9 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         finally:
             async with aiohttp.ClientSession() as requests:
                 await requests.delete(
-                    url=base_url + "?restype=share",
-                    headers=self._build_file_share_headers(bearer_token_string, 0)
+                    url=base_url,
+                    headers=self._build_base_file_share_headers(bearer_token_string, 0),
+                    params={'restype': 'share'}
                 )
             await blob_service_client.delete_container(self.source_container_name)
 
@@ -267,8 +266,9 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         finally:
             async with aiohttp.ClientSession() as requests:
                 await requests.delete(
-                    url=base_url + "?restype=share",
-                    headers=self._build_file_share_headers(bearer_token_string, 0)
+                    url=base_url,
+                    headers=self._build_base_file_share_headers(bearer_token_string, 0),
+                    params={'restype': 'share'}
                 )
             await blob_service_client.delete_container(self.source_container_name)
 
@@ -323,8 +323,9 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         finally:
             async with aiohttp.ClientSession() as requests:
                 await requests.delete(
-                    url=base_url + "?restype=share",
-                    headers=self._build_file_share_headers(bearer_token_string, 0)
+                    url=base_url,
+                    headers=self._build_base_file_share_headers(bearer_token_string, 0),
+                    params={'restype': 'share'}
                 )
             await blob_service_client.delete_container(self.source_container_name)
 
@@ -375,8 +376,9 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         finally:
             async with aiohttp.ClientSession() as requests:
                 await requests.delete(
-                    url=base_url + "?restype=share",
-                    headers=self._build_file_share_headers(bearer_token_string, 0)
+                    url=base_url,
+                    headers=self._build_base_file_share_headers(bearer_token_string, 0),
+                    params={'restype': 'share'}
                 )
             await blob_service_client.delete_container(self.source_container_name)
 
