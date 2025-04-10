@@ -38,8 +38,8 @@ Task Adherence rating should be calculated based on the following criteria:
 - **Instruction and Scope Alignment**: The response should follow the user’s instructions and stay within the intended boundaries of the task,
 avoiding irrelevant or off-topic content.
 - **Relevance and Completeness**: The response should directly address all parts of the user’s query, providing sufficient information without omitting key elements.
-- **Use of Tools**: If tool definitions are provided, and the response indicates that a relevant tool was available and applicable for fulfilling the task,
-the assistant's response should reflect appropriate tool usage. If a relevant tool was not invoked despite being available and useful, this should be considered a task adherence issue.
+- **Use of Tools**: When tool definitions are available, and a relevant tool is applicable based on the user’s QUERY, the RESPONSE must clearly
+indicate that the tool was invoked. Omission of tool usage in such cases should be regarded as a task adherence issue.
 
 user:
 
@@ -122,4 +122,5 @@ definitions. Keep it brief and start your ThoughtChain with "Let's think step by
 - **Score**: based on your previous analysis, provide your Score. The answer you give MUST be an integer score ("1", "2", ...) based on the categories of the definitions.
 
 ## Please provide your answers between the tags: <S0>your chain of thoughts</S0>, <S1>your explanation</S1>, <S2>your score</S2>.
+
 # Output
