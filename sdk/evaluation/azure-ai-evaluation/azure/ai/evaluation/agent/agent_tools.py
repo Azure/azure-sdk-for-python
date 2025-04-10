@@ -14,6 +14,17 @@ import random
 from azure.core.credentials import TokenCredential
 from azure.ai.evaluation._common.experimental import experimental
 from azure.ai.evaluation.red_team._attack_objective_generator import RiskCategory
+from azure.ai.evaluation.red_team._attack_strategy import AttackStrategy
+
+# Import PyRIT prompt converters
+from pyrit.prompt_converter import (
+    MorseConverter, AnsiAttackConverter, AsciiArtConverter, 
+    AsciiSmugglerConverter, AtbashConverter, Base64Converter, 
+    BinaryConverter, CaesarConverter, CharacterSpaceConverter, 
+    CharSwapGenerator, DiacriticConverter, LeetspeakConverter, 
+    UrlConverter, UnicodeSubstitutionConverter, UnicodeConfusableConverter, 
+    SuffixAppendConverter, StringJoinConverter, ROT13Converter, FlipConverter
+)
 
 # Setup logging
 logger = logging.getLogger(__name__)
@@ -59,6 +70,61 @@ class RedTeamToolProvider:
         
         # Cache for attack objectives to avoid repeated API calls
         self._attack_objectives_cache = {}
+        
+        # Store fetched prompts for later conversion
+        self._fetched_prompts = {}
+        
+        # Initialize strategy converters
+        self._initialize_converters()
+    
+    def _initialize_converters(self):
+        """Initialize all available prompt converters for strategies."""
+        self.strategy_converters = {
+            "morse": MorseConverter(),
+            "ansi_attack": AnsiAttackConverter(),
+            "ascii_art": AsciiArtConverter(),
+            "ascii_smuggler": AsciiSmugglerConverter(),
+            "atbash": AtbashConverter(),
+            "base64": Base64Converter(),
+            "binary": BinaryConverter(),
+            "caesar": CaesarConverter(),
+            "character_space": CharacterSpaceConverter(),
+            "char_swap": CharSwapGenerator(),
+            "diacritic": DiacriticConverter(),
+            "leetspeak": LeetspeakConverter(),
+            "rot13": ROT13Converter(),
+            "suffix_append": SuffixAppendConverter(),
+            "string_join": StringJoinConverter(),
+            "unicode_confusable": UnicodeConfusableConverter(),
+            "unicode_substitution": UnicodeSubstitutionConverter(),
+            "url": UrlConverter(),
+            "flip": FlipConverter()
+        }
+    
+    def get_available_strategies(self) -> List[str]:
+        """Get a list of available prompt conversion strategies.
+        
+        :return: List of strategy names
+        :rtype: List[str]
+        """
+        return sorted(list(self.strategy_converters.keys()))
+    
+    def apply_strategy_to_prompt(self, prompt: str, strategy: str) -> str:
+        """Apply a conversion strategy to a prompt.
+        
+        :param prompt: The prompt to convert
+        :type prompt: str
+        :param strategy: The strategy to apply
+        :type strategy: str
+        :return: The converted prompt
+        :rtype: str
+        :raises ValueError: If the strategy is not supported
+        """
+        if strategy not in self.strategy_converters:
+            raise ValueError(f"Unsupported strategy: {strategy}. Available strategies: {', '.join(self.get_available_strategies())}")
+        
+        converter = self.strategy_converters[strategy]
+        return converter.convert(prompt)
         
     @staticmethod
     def _parse_risk_category(category_text: str) -> Optional[RiskCategory]:
@@ -118,7 +184,8 @@ class RedTeamToolProvider:
     async def fetch_harmful_prompt(
         self, 
         risk_category_text: str, 
-        strategy: str = "baseline"
+        strategy: str = "baseline",
+        convert_with_strategy: Optional[str] = None
     ) -> Dict[str, Any]:
         """Fetch a harmful prompt for a specific risk category.
         
@@ -128,6 +195,8 @@ class RedTeamToolProvider:
         :type risk_category_text: str
         :param strategy: The attack strategy to use (default: "baseline")
         :type strategy: str
+        :param convert_with_strategy: Optional strategy to convert the prompt (e.g., "morse", "binary")
+        :type convert_with_strategy: Optional[str]
         :return: A dictionary containing the harmful prompt and metadata
         :rtype: Dict[str, Any]
         """
@@ -170,16 +239,171 @@ class RedTeamToolProvider:
             # Select a random objective from the list
             selected_objective = random.choice(objectives)
             
+            # Create a unique ID for this prompt
+            prompt_id = f"prompt_{len(self._fetched_prompts) + 1}"
+            
+            # Store the prompt for later conversion
+            self._fetched_prompts[prompt_id] = selected_objective
+            
+            # Apply conversion strategy if requested
+            if convert_with_strategy:
+                if convert_with_strategy not in self.strategy_converters:
+                    return {
+                        "status": "error",
+                        "message": f"Unsupported strategy: {convert_with_strategy}. Available strategies: {', '.join(self.get_available_strategies())}"
+                    }
+                
+                try:
+                    converted_prompt = self.apply_strategy_to_prompt(selected_objective, convert_with_strategy)
+                    return {
+                        "status": "success",
+                        "risk_category": risk_category.value,
+                        "strategy": strategy,
+                        "conversion_strategy": convert_with_strategy,
+                        "prompt_id": prompt_id,
+                        "original_prompt": selected_objective,
+                        "converted_prompt": converted_prompt,
+                        "note": "This prompt was generated for responsible AI testing purposes only."
+                    }
+                except Exception as e:
+                    return {
+                        "status": "error",
+                        "message": f"Error converting prompt with strategy {convert_with_strategy}: {str(e)}"
+                    }
+            
+            # Return with information about available strategies
             return {
                 "status": "success",
                 "risk_category": risk_category.value,
                 "strategy": strategy,
+                "prompt_id": prompt_id,
                 "prompt": selected_objective,
-                "note": "This prompt was generated for responsible AI testing purposes only."
+                "available_strategies": self.get_available_strategies(),
+                "note": "This prompt was generated for responsible AI testing purposes only. You can convert this prompt with a strategy by using the convert_prompt tool."
             }
             
         except Exception as e:
             logger.error(f"Error fetching harmful prompt: {str(e)}")
+            return {
+                "status": "error",
+                "message": f"An error occurred: {str(e)}"
+            }
+
+    async def convert_prompt(
+        self,
+        prompt_or_id: str,
+        strategy: str
+    ) -> Dict[str, Any]:
+        """Convert a prompt (or a previously fetched prompt by ID) using a specified strategy.
+        
+        :param prompt_or_id: Either a prompt text or a prompt ID from a previous fetch_harmful_prompt call
+        :type prompt_or_id: str
+        :param strategy: The strategy to use for conversion
+        :type strategy: str
+        :return: A dictionary containing the converted prompt
+        :rtype: Dict[str, Any]
+        """
+        try:
+            # Check if input is a prompt ID
+            prompt_text = self._fetched_prompts.get(prompt_or_id, prompt_or_id)
+            
+            # Validate strategy
+            if strategy not in self.strategy_converters:
+                return {
+                    "status": "error",
+                    "message": f"Unsupported strategy: {strategy}. Available strategies: {', '.join(self.get_available_strategies())}"
+                }
+            
+            # Convert the prompt
+            converted_prompt = self.apply_strategy_to_prompt(prompt_text, strategy)
+            
+            return {
+                "status": "success",
+                "strategy": strategy,
+                "original_prompt": prompt_text,
+                "converted_prompt": converted_prompt,
+                "note": "This prompt was converted for responsible AI testing purposes only."
+            }
+            
+        except Exception as e:
+            logger.error(f"Error converting prompt: {str(e)}")
+            return {
+                "status": "error",
+                "message": f"An error occurred: {str(e)}"
+            }
+
+    async def red_team(
+        self, 
+        category: str,
+        strategy: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """Get a harmful prompt for a specific risk category with an optional conversion strategy.
+        
+        This unified tool combines fetch_harmful_prompt and convert_prompt into a single call.
+        It allows users to request harmful prompts with a specific risk category and optionally apply
+        a conversion strategy in one step.
+        
+        :param category: The risk category to get a harmful prompt for (e.g., "violence", "hate")
+        :type category: str
+        :param strategy: Optional conversion strategy to apply (e.g., "morse", "binary")
+        :type strategy: Optional[str]
+        :return: A dictionary containing the harmful prompt and metadata
+        :rtype: Dict[str, Any]
+        """
+        try:
+            # Parse input to extract risk category
+            risk_category = self._parse_risk_category(category)
+            
+            if not risk_category:
+                supported_categories = ", ".join([rc.value for rc in RiskCategory])
+                return {
+                    "status": "error",
+                    "message": f"Could not parse risk category from '{category}'. Please use one of: {supported_categories}"
+                }
+            
+            # First, fetch a harmful prompt (always using baseline attack strategy)
+            result = await self.fetch_harmful_prompt(risk_category_text=category, strategy="baseline")
+            
+            if result["status"] != "success":
+                return result
+            
+            # If no conversion strategy requested, return the prompt as is
+            if not strategy:
+                return {
+                    "status": "success",
+                    "risk_category": result["risk_category"],
+                    "prompt": result["prompt"],
+                    "prompt_id": result["prompt_id"],
+                    "available_strategies": result["available_strategies"],
+                    "note": "This prompt was generated for responsible AI testing purposes only. You can convert this prompt using one of the available strategies."
+                }
+            
+            # If strategy is specified, convert the prompt
+            if strategy not in self.strategy_converters:
+                return {
+                    "status": "error",
+                    "message": f"Unsupported strategy: {strategy}. Available strategies: {', '.join(self.get_available_strategies())}"
+                }
+            
+            # Convert the prompt using the specified strategy
+            try:
+                converted_prompt = self.apply_strategy_to_prompt(result["prompt"], strategy)
+                return {
+                    "status": "success",
+                    "risk_category": result["risk_category"],
+                    "original_prompt": result["prompt"],
+                    "strategy": strategy,
+                    "converted_prompt": converted_prompt,
+                    "note": f"This prompt was generated for responsible AI testing purposes only and converted using the {strategy} strategy."
+                }
+            except Exception as e:
+                return {
+                    "status": "error",
+                    "message": f"Error converting prompt with strategy {strategy}: {str(e)}"
+                }
+                
+        except Exception as e:
+            logger.error(f"Error in red_team: {str(e)}")
             return {
                 "status": "error",
                 "message": f"An error occurred: {str(e)}"
@@ -194,6 +418,21 @@ def get_red_team_tools() -> List[Dict[str, Any]]:
     """
     return [
         {
+            "task": "red_team",
+            "description": "Get a harmful prompt for a specific risk category with an optional conversion strategy",
+            "parameters": {
+                "category": {
+                    "type": "string",
+                    "description": "The risk category to get a harmful prompt for (e.g., 'violence', 'hate', 'sexual', 'self_harm')"
+                },
+                "strategy": {
+                    "type": "string",
+                    "description": "Optional strategy to convert the prompt (e.g., 'morse', 'binary', 'base64')",
+                    "default": None
+                }
+            }
+        },
+        {
             "task": "fetch_harmful_prompt",
             "description": "Fetch a harmful prompt for red teaming purposes",
             "parameters": {
@@ -205,6 +444,25 @@ def get_red_team_tools() -> List[Dict[str, Any]]:
                     "type": "string",
                     "description": "The attack strategy to use (e.g., 'baseline', 'jailbreak')",
                     "default": "baseline"
+                },
+                "convert_with_strategy": {
+                    "type": "string",
+                    "description": "Optional strategy to convert the prompt (e.g., 'morse', 'binary'). If provided, the prompt will be automatically converted.",
+                    "default": None
+                }
+            }
+        },
+        {
+            "task": "convert_prompt",
+            "description": "Convert a prompt using a specified strategy",
+            "parameters": {
+                "prompt_or_id": {
+                    "type": "string",
+                    "description": "Either a prompt text or a prompt ID from a previous fetch_harmful_prompt call"
+                },
+                "strategy": {
+                    "type": "string",
+                    "description": "The strategy to use for conversion (e.g., 'morse', 'binary', 'base64')"
                 }
             }
         }
