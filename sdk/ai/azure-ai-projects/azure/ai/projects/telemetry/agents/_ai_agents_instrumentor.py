@@ -50,6 +50,13 @@ from azure.ai.projects.telemetry.agents._utils import (
     GEN_AI_THREAD_RUN_STATUS,
     GEN_AI_USAGE_INPUT_TOKENS,
     GEN_AI_USAGE_OUTPUT_TOKENS,
+    GEN_AI_CREATED_AT,
+    GEN_AI_COMPLETED_AT,
+    GEN_AI_CANCELLED_AT,
+    GEN_AI_FAILED_AT,
+    GEN_AI_RUN_STEP_STATUS,
+    GEN_AI_RUN_STEP_LAST_ERROR,
+    GEN_AI_RUN_STEP_DETAILS,
     OperationName,
     start_span,
 )
@@ -254,6 +261,12 @@ class _AIAgentsInstrumentorPreview:
         thread_run_id: Optional[str] = None,
         message_id: Optional[str] = None,
         message_status: Optional[str] = None,
+        run_step_status: Optional[str] = None,
+        created_at: Optional[int] = None,
+        completed_at: Optional[int] = None,
+        cancelled_at: Optional[int] = None,
+        failed_at: Optional[int] = None,
+        run_step_last_error: Optional[str] = None,
         usage: Optional[_models.RunStepCompletionUsage] = None,
     ) -> Dict[str, Any]:
         attrs: Dict[str, Any] = {GEN_AI_SYSTEM: AZ_AI_AGENT_SYSTEM}
@@ -271,6 +284,24 @@ class _AIAgentsInstrumentorPreview:
 
         if message_status:
             attrs[GEN_AI_MESSAGE_STATUS] = self._status_to_string(message_status)
+
+        if run_step_status:
+            attrs[GEN_AI_RUN_STEP_STATUS] = self._status_to_string(run_step_status)
+
+        if created_at:
+            attrs[GEN_AI_CREATED_AT] = created_at
+
+        if completed_at:
+            attrs[GEN_AI_COMPLETED_AT] = completed_at
+
+        if cancelled_at:
+            attrs[GEN_AI_CANCELLED_AT] = cancelled_at
+
+        if failed_at:
+            attrs[GEN_AI_FAILED_AT] = failed_at
+
+        if run_step_last_error:
+            attrs[GEN_AI_RUN_STEP_LAST_ERROR] = run_step_last_error
 
         if usage:
             attrs[GEN_AI_USAGE_INPUT_TOKENS] = usage.prompt_tokens
@@ -305,6 +336,105 @@ class _AIAgentsInstrumentorPreview:
             incomplete_details=message.incomplete_details,
             usage=usage,
         )
+
+    def add_run_step_event(self, span, step: RunStep) -> None:
+        if step["type"] == "message_creation":
+            self._add_message_creation_run_step_event(
+                span,
+                thread_id=step["thread_id"],
+                thread_run_id=step["run_id"],
+                agent_id=step["assistant_id"],
+                created_at=step["created_at"],
+                run_step_status=step["status"],
+                completed_at=step["completed_at"],
+                cancelled_at=step["cancelled_at"],
+                failed_at=step["failed_at"],
+                run_step_last_error=step["last_error"],
+                message_id=step["step_details"]["message_creation"]["message_id"],
+                usage=step["usage"],
+            )
+        elif step["type"] == "tool_calls":
+            step_details = None
+            if _trace_agents_content:
+                step_details = step["step_details"]["tool_calls"]
+
+            self._add_tool_call_run_step_event(
+                span,
+                thread_id=step["thread_id"],
+                thread_run_id=step["run_id"],
+                agent_id=step["assistant_id"],
+                created_at=step["created_at"],
+                run_step_status=step["status"],
+                completed_at=step["completed_at"],
+                cancelled_at=step["cancelled_at"],
+                failed_at=step["failed_at"],
+                run_step_last_error=step["last_error"],
+                usage=step["usage"],
+                run_step_details=step_details,
+            )
+
+    def _add_message_creation_run_step_event(
+        self,
+        span,
+        thread_id: Optional[str] = None,
+        thread_run_id: Optional[str] = None,
+        agent_id: Optional[str] = None,
+        created_at: Optional[int] = None,
+        run_step_status: Optional[str] = None,
+        completed_at: Optional[int] = None,
+        cancelled_at: Optional[int] = None,
+        failed_at: Optional[int] = None,
+        run_step_last_error: Optional[str] = None,
+        message_id: Optional[str] = None,
+        usage: Optional[_models.RunStepCompletionUsage] = None,
+    ) -> None:
+        attributes = self._create_event_attributes(
+            thread_id=thread_id,
+            agent_id=agent_id,
+            thread_run_id=thread_run_id,
+            message_id=message_id,
+            run_step_status=run_step_status,
+            created_at=created_at,
+            completed_at=completed_at,
+            cancelled_at=cancelled_at,
+            failed_at=failed_at,
+            run_step_last_error=run_step_last_error,
+            usage=usage,
+        )
+        span.span_instance.add_event(name="gen_ai.run_step.message_creation", attributes=attributes)
+
+    def _add_tool_call_run_step_event(
+        self,
+        span,
+        thread_id: Optional[str] = None,
+        thread_run_id: Optional[str] = None,
+        agent_id: Optional[str] = None,
+        created_at: Optional[int] = None,
+        run_step_status: Optional[str] = None,
+        completed_at: Optional[int] = None,
+        cancelled_at: Optional[int] = None,
+        failed_at: Optional[int] = None,
+        run_step_last_error: Optional[str] = None,
+        usage: Optional[_models.RunStepCompletionUsage] = None,
+        run_step_details: Optional[int] = None,
+    ) -> None:
+        attributes = self._create_event_attributes(
+            thread_id=thread_id,
+            agent_id=agent_id,
+            thread_run_id=thread_run_id,
+            run_step_status=run_step_status,
+            created_at=created_at,
+            completed_at=completed_at,
+            cancelled_at=cancelled_at,
+            failed_at=failed_at,
+            run_step_last_error=run_step_last_error,
+            usage=usage,
+        )
+
+        if run_step_details:
+            attributes[GEN_AI_RUN_STEP_DETAILS] = json.dumps(str(run_step_details), ensure_ascii=False)
+
+        span.span_instance.add_event(name="gen_ai.run_step.tool_calls", attributes=attributes)
 
     def _add_message_event(
         self,
@@ -607,6 +737,9 @@ class _AIAgentsInstrumentorPreview:
 
     def start_list_messages_span(self, project_name: str, thread_id: Optional[str] = None) -> "Optional[AbstractSpan]":
         return start_span(OperationName.LIST_MESSAGES, project_name, thread_id=thread_id)
+
+    def start_list_run_steps_span(self, project_name: str, run_id: Optional[str] = None, thread_id: Optional[str] = None) -> "Optional[AbstractSpan]":
+        return start_span(OperationName.LIST_RUN_STEPS, project_name, run_id=run_id, thread_id=thread_id)
 
     def trace_create_agent(self, function, *args, **kwargs):
         project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
@@ -1248,6 +1381,74 @@ class _AIAgentsInstrumentorPreview:
 
         return result
 
+    def trace_list_run_steps(self, function, *args, **kwargs):
+        project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
+            0
+        ]._config.project_name
+        run_id = kwargs.get("run_id")
+        thread_id = kwargs.get("thread_id")
+
+        span = self.start_list_run_steps_span(project_name=project_name, run_id=run_id, thread_id=thread_id)
+
+        if span is None:
+            return function(*args, **kwargs)
+
+        with span:
+            try:
+                result = function(*args, **kwargs)
+                if hasattr(result, "data") and result.data is not None:
+                    for step in result.data:
+                        self.add_run_step_event(span, step)
+
+            except Exception as exc:
+                # Set the span status to error
+                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
+                    span.span_instance.set_status(
+                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
+                        description=str(exc),
+                    )
+                module = getattr(exc, "__module__", "")
+                module = module if module != "builtins" else ""
+                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
+                self._set_attributes(span, ("error.type", error_type))
+                raise
+
+        return result
+
+    async def trace_list_run_steps_async(self, function, *args, **kwargs):
+        project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
+            0
+        ]._config.project_name
+        run_id = kwargs.get("run_id")
+        thread_id = kwargs.get("thread_id")
+
+        span = self.start_list_run_steps_span(project_name=project_name, run_id=run_id, thread_id=thread_id)
+
+        if span is None:
+            return function(*args, **kwargs)
+
+        with span:
+            try:
+                result = await function(*args, **kwargs)
+                if hasattr(result, "data") and result.data is not None:
+                    for step in result.data:
+                        self.add_run_step_event(span, step)
+
+            except Exception as exc:
+                # Set the span status to error
+                if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
+                    span.span_instance.set_status(
+                        StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
+                        description=str(exc),
+                    )
+                module = getattr(exc, "__module__", "")
+                module = module if module != "builtins" else ""
+                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
+                self._set_attributes(span, ("error.type", error_type))
+                raise
+
+        return result
+
     async def trace_list_messages_async(self, function, *args, **kwargs):
         project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
             0
@@ -1403,6 +1604,8 @@ class _AIAgentsInstrumentorPreview:
             if class_function_name.startswith("AgentsOperations.list_messages"):
                 kwargs.setdefault("merge_span", True)
                 return self.trace_list_messages(function, *args, **kwargs)
+            if class_function_name.startswith("AgentsOperations.list_run_steps"):
+                return self.trace_list_run_steps(function, *args, **kwargs)
             if class_function_name.startswith("AgentRunStream.__exit__"):
                 return self.handle_run_stream_exit(function, *args, **kwargs)
             # Handle the default case (if the function name does not match)
@@ -1471,6 +1674,9 @@ class _AIAgentsInstrumentorPreview:
             if class_function_name.startswith("AgentsOperations.list_messages"):
                 kwargs.setdefault("merge_span", True)
                 return await self.trace_list_messages_async(function, *args, **kwargs)
+            if class_function_name.startswith("AgentsOperations.list_run_steps"):
+                kwargs.setdefault("merge_span", True)
+                return await self.trace_list_run_steps_async(function, *args, **kwargs)
             if class_function_name.startswith("AsyncAgentRunStream.__aexit__"):
                 return self.handle_run_stream_exit(function, *args, **kwargs)
             # Handle the default case (if the function name does not match)
@@ -1524,6 +1730,7 @@ class _AIAgentsInstrumentorPreview:
             ),
             ("azure.ai.projects.operations", "AgentsOperations", "create_stream", TraceType.AGENTS, "create_stream"),
             ("azure.ai.projects.operations", "AgentsOperations", "list_messages", TraceType.AGENTS, "list_messages"),
+            ("azure.ai.projects.operations", "AgentsOperations", "list_run_steps", TraceType.AGENTS, "list_run_steps"),
             ("azure.ai.projects.models", "AgentRunStream", "__exit__", TraceType.AGENTS, "__exit__"),
         )
         async_apis = (
@@ -1584,6 +1791,13 @@ class _AIAgentsInstrumentorPreview:
                 "list_messages",
                 TraceType.AGENTS,
                 "list_messages",
+            ),
+            (
+                "azure.ai.projects.aio.operations",
+                "AgentsOperations",
+                "list_run_steps",
+                TraceType.AGENTS,
+                "list_run_steps",
             ),
             ("azure.ai.projects.models", "AsyncAgentRunStream", "__aexit__", TraceType.AGENTS, "__aexit__"),
         )
