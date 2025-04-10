@@ -5,5 +5,5 @@ azure-mgmt-eventhub<=10.1.0
 azure-mgmt-resource==20.0.0
 aiohttp; python_version >= "3.9"
 websocket-client
-../azure-eventhub-checkpointstoreblob-aio; python_version >= '3.9'
-../azure-eventhub-checkpointstoreblob; python_version >= '3.9'
+../azure-eventhub-checkpointstoreblob-aio;
+../azure-eventhub-checkpointstoreblob;
