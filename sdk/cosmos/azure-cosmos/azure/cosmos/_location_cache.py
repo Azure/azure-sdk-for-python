@@ -56,12 +56,12 @@ class RegionalRoutingContext(object):
     def __str__(self):
         return "Primary: " + self.primary_endpoint
 
-def get_regional_routing_contexts_by_location(new_locations):
+def get_regional_routing_contexts_by_loc(new_locations):
     # construct from previous object
     regional_routing_contexts_by_location = collections.OrderedDict()
     parsed_locations = []
 
-    for new_location in new_locations: # pylint: disable=too-many-nested-blocks
+    for new_location in new_locations:
         # if name in new_location and same for database account endpoint
         if "name" in new_location and "databaseAccountEndpoint" in new_location:
             if not new_location["name"]:
@@ -87,10 +87,9 @@ def _get_health_check_endpoints(
         regional_routing_contexts) -> Set[str]:
     # only check 2 read regions and 2 write regions
     region_count = 2
-    # should use the endpoints in the order returned from gateway and only the ones specified in preferred locations
     endpoints: Set[str] = set()
-    for regional_routing_contexts in regional_routing_contexts[:region_count]:
-        endpoints.add(regional_routing_contexts.get_primary())
+    for regional_routing_context in regional_routing_contexts[:region_count]:
+        endpoints.add(regional_routing_context.get_primary())
 
     return endpoints
 
@@ -276,11 +275,11 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         if self.enable_endpoint_discovery:
             if read_locations:
                 (self.account_read_regional_routing_contexts_by_location,
-                 self.account_read_locations) = get_regional_routing_contexts_by_location(read_locations)
+                 self.account_read_locations) = get_regional_routing_contexts_by_loc(read_locations)
 
             if write_locations:
                 (self.account_write_regional_routing_contexts_by_location,
-                 self.account_write_locations) = get_regional_routing_contexts_by_location(write_locations)
+                 self.account_write_locations) = get_regional_routing_contexts_by_loc(write_locations)
 
         self.write_regional_routing_contexts = self.get_preferred_regional_routing_contexts(
             self.account_write_regional_routing_contexts_by_location,
