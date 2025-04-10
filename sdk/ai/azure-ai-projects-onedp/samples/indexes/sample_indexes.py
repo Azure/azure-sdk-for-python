@@ -25,6 +25,7 @@ USAGE:
 # TODO: Remove console logging
 import sys
 import logging
+
 logger = logging.getLogger("azure")
 logger.setLevel(logging.DEBUG)
 logger.addHandler(logging.StreamHandler(stream=sys.stdout))
@@ -33,7 +34,7 @@ logger.addHandler(logging.StreamHandler(stream=sys.stdout))
 
 import os
 from azure.identity import DefaultAzureCredential
-from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials import AzureKeyCredential  # TODO: Remove me when EntraID is supported
 from azure.ai.projects.onedp import AIProjectClient
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
@@ -41,9 +42,9 @@ index_name = os.environ["INDEX_NAME"]
 
 with AIProjectClient(
     endpoint=endpoint,
-    #credential=DefaultAzureCredential(),
+    # credential=DefaultAzureCredential(),
     credential=AzureKeyCredential(os.environ["PROJECT_API_KEY"]),
-    logging_enable=True, # TODO: Remove console logging
+    logging_enable=True,  # TODO: Remove console logging
 ) as project_client:
 
     print(f"Listing all versions of the Index named `{index_name}`:")

@@ -1,0 +1,67 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+
+"""
+DESCRIPTION:
+    Given an AIProjectClient, this sample demonstrates how to get an authenticated 
+    async EmbeddingsClient from the azure.ai.inference package, and perform one text
+    embeddings operation. For more information on the azure.ai.inference package see
+    https://pypi.org/project/azure-ai-inference/.
+
+USAGE:
+    python sample_text_embeddings_with_azure_ai_inference_client_async.py
+
+    Before running the sample:
+
+    pip install azure-ai-projects azure-ai-inference aiohttp azure-identity
+
+    Set these environment variables with your own values:
+    1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the overview page of your
+       Azure AI Foundry project.
+    2) DEPLOYMENT_NAME - The AI model deployment name, as found in your AI Foundry project.
+"""
+
+import os
+import asyncio
+from azure.core.credentials import (
+    AzureKeyCredential,
+)  # TODO: Remove me when EntraID is supported # TODO: Remove me when EntraID is supported
+from azure.identity.aio import DefaultAzureCredential
+from azure.ai.projects.onedp.aio import AIProjectClient
+
+
+async def sample_text_embeddings_with_azure_ai_inference_client_async():
+
+    endpoint = os.environ["PROJECT_ENDPOINT"]
+    deployment_name = os.environ["DEPLOYMENT_NAME"]
+
+    async with DefaultAzureCredential() as credential:
+
+        async with AIProjectClient(
+            endpoint=endpoint,
+            # credential=DefaultAzureCredential(),
+            credential=AzureKeyCredential(os.environ["PROJECT_API_KEY"]),
+        ) as project_client:
+
+            async with project_client.inference.get_embeddings_client() as client:
+
+                response = await client.embed(
+                    model=deployment_name, input=["first phrase", "second phrase", "third phrase"]
+                )
+
+                for item in response.data:
+                    length = len(item.embedding)
+                    print(
+                        f"data[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, "
+                        f"..., {item.embedding[length-2]}, {item.embedding[length-1]}]"
+                    )
+
+
+async def main():
+    await sample_text_embeddings_with_azure_ai_inference_client_async()
+
+
+if __name__ == "__main__":
+    asyncio.run(main())

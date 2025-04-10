@@ -9,27 +9,73 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import logging
 import inspect
-from typing import List, Optional, Any, Tuple, Iterable
+from typing import List, Optional, Any, Tuple, Iterable, Union
 from pathlib import Path
 from urllib.parse import urlparse
 from azure.storage.blob import ContainerClient
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 from ._operations import DatasetsOperations as DatasetsOperationsGenerated
-from ..models._models import (
-    DatasetVersion,
-    PendingUploadRequest,
-    PendingUploadType,
-    PendingUploadResponse,
-    Connection
-)
+from ..models._models import DatasetVersion, PendingUploadRequest, PendingUploadType, PendingUploadResponse, Connection, ApiKeyCredentials, EntraIDCredentials
 from ..models._enums import (
     DatasetType,
-    AuthenticationType,
+    CredentialType,
     ConnectionType,
 )
 
 logger = logging.getLogger(__name__)
+
+
+class AssistantsOperations:
+
+    # TODO: Merge all code related to handling user-agent, into a single place.
+    def __init__(self, outer_instance: "AIProjectClient") -> None:
+
+        # All returned inference clients will have this application id set on their user-agent.
+        # For more info on user-agent HTTP header, see:
+        # https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy
+        USER_AGENT_APP_ID = "AIProjectClient"
+
+        if hasattr(outer_instance, "_user_agent") and outer_instance._user_agent:
+            # If the calling application has set "user_agent" when constructing the AIProjectClient,
+            # take that value and prepend it to USER_AGENT_APP_ID.
+            self._user_agent = f"{outer_instance._user_agent}-{USER_AGENT_APP_ID}"
+        else:
+            self._user_agent = USER_AGENT_APP_ID
+
+        self._outer_instance = outer_instance
+
+    @distributed_trace
+    def get_client(self, **kwargs) -> "AssistantClient":
+        """Get an authenticated AssistantClient (from the package azure-ai-assistants) to use with
+        your AI Foundry Project. Keyword arguments are passed to the constructor of
+        ChatCompletionsClient.
+
+        .. note:: The package `azure-ai-assistants` must be installed prior to calling this method.
+
+        :return: An authenticated Assistant Client.
+        :rtype: ~azure.ai.assistants.AssistantClient
+
+        :raises ~azure.core.exceptions.ModuleNotFoundError: if the `azure-ai-assistants` package
+         is not installed.
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        try:
+            from azure.ai.assistants import AssistantClient
+        except ModuleNotFoundError as e:
+            raise ModuleNotFoundError(
+                "Azure AI Assistant SDK is not installed. Please install it using 'pip install azure-ai-assistants'"
+            ) from e
+
+        client = AssistantClient(
+            endpoint=self._outer_instance._config.endpoint,
+            credential=self._outer_instance._config.cedential,
+            user_agent=kwargs.pop("user_agent", self._user_agent),
+            **kwargs,
+        )
+
+        return client
 
 
 class InferenceOperations:
@@ -50,7 +96,6 @@ class InferenceOperations:
 
         self._outer_instance = outer_instance
 
-
     @classmethod
     def _get_inference_url(cls, input_url: str) -> str:
         """
@@ -65,10 +110,9 @@ class InferenceOperations:
         new_url = f"https://{parsed.netloc}/api/models"
         return new_url
 
-
     @distributed_trace
     def get_chat_completions_client(self, **kwargs) -> "ChatCompletionsClient":
-        """Get an authenticated ChatCompletionsClient (from the package azure-ai-inference) to use with 
+        """Get an authenticated ChatCompletionsClient (from the package azure-ai-inference) to use with
         AI models deployed to your AI Foundry Project. Keyword arguments are passed to the constructor of
         ChatCompletionsClient.
 
@@ -91,7 +135,7 @@ class InferenceOperations:
                 "Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'"
             ) from e
 
-        endpoint = self._get_inference_url(self._outer_instance._endpoint)
+        endpoint = self._get_inference_url(self._outer_instance._config.endpoint)
         # Older Inference SDK versions use ml.azure.com as the scope. Make sure to set the correct value here. This
         # is only relevent of course if EntraID auth is used.
         credential_scopes = ["https://cognitiveservices.azure.com/.default"]
@@ -106,10 +150,9 @@ class InferenceOperations:
 
         return client
 
-
     @distributed_trace
     def get_embeddings_client(self, **kwargs) -> "EmbeddingsClient":
-        """Get an authenticated EmbeddingsClient (from the package azure-ai-inference) to use with 
+        """Get an authenticated EmbeddingsClient (from the package azure-ai-inference) to use with
         AI models deployed to your AI Foundry Project. Keyword arguments are passed to the constructor of
         ChatCompletionsClient.
 
@@ -132,7 +175,7 @@ class InferenceOperations:
                 "Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'"
             ) from e
 
-        endpoint = self._get_inference_url(self._outer_instance._endpoint)
+        endpoint = self._get_inference_url(self._outer_instance._config.endpoint)
         # Older Inference SDK versions use ml.azure.com as the scope. Make sure to set the correct value here. This
         # is only relevent of course if EntraID auth is used.
         credential_scopes = ["https://cognitiveservices.azure.com/.default"]
@@ -147,10 +190,9 @@ class InferenceOperations:
 
         return client
 
-
     @distributed_trace
     def get_image_embeddings_client(self, **kwargs) -> "ImageEmbeddingsClient":
-        """Get an authenticated ImageEmbeddingsClient (from the package azure-ai-inference) to use with 
+        """Get an authenticated ImageEmbeddingsClient (from the package azure-ai-inference) to use with
         AI models deployed to your AI Foundry Project. Keyword arguments are passed to the constructor of
         ChatCompletionsClient.
 
@@ -173,7 +215,7 @@ class InferenceOperations:
                 "Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'"
             ) from e
 
-        endpoint = self._get_inference_url(self._outer_instance._endpoint)
+        endpoint = self._get_inference_url(self._outer_instance._config.endpoint)
         # Older Inference SDK versions use ml.azure.com as the scope. Make sure to set the correct value here. This
         # is only relevent of course if EntraID auth is used.
         credential_scopes = ["https://cognitiveservices.azure.com/.default"]
@@ -187,7 +229,6 @@ class InferenceOperations:
         )
 
         return client
-
 
     @distributed_trace
     def get_azure_openai_client(
@@ -229,40 +270,45 @@ class InferenceOperations:
             ) from e
 
         if connection_name:
-            connection = self._outer_instance.connections.get(name=connection_name, **kwargs)
+            connection: Connection = self._outer_instance.connections.get(name=connection_name, **kwargs)
+            if connection.type != ConnectionType.AZURE_OPEN_AI:
+                raise ValueError(f"Connection `{connection_name}` is not of type Azure OpenAI.")
         else:
-            connection = self._outer_instance.connections.get_default(connection_type=ConnectionType.AZURE_OPEN_AI, **kwargs)
-            logger.debug("[InferenceOperations.get_azure_openai_client] connection = %s", str(connection))
+            # If connection name was not specified, try to get the default Azure OpenAI connection.
+            connections: Iterable[Connection] = self._outer_instance.connections.list(
+                connection_type=ConnectionType.AZURE_OPEN_AI, default_connection=True, **kwargs
+            )
+            try:
+                connection: Connection = next(iter(connections))
+            except StopAsyncIteration:
+                raise ResourceNotFoundError("No default Azure OpenAI connection found.")
+            connection_name = connection.name
 
-        azure_endpoint = (
-            connection.target[:-1]
-            if connection.target.endswith("/")
-            else connection.target
-        )
+            # TODO: if there isn't a default openai connection, we would have to by convention 
+            # use https://{resource-name}.openai.azure.com where {resource-name} is the same as the 
+            # foundry API endpoint (https://{resource-name}.services.ai.azure.com)
 
-        if connection.auth_type == AuthenticationType.API_KEY:
+        # If the connection uses API key authentication, we need to make another service call to get
+        # the connection with API key populated.
+        if connection.credentials.auth_type == CredentialType.API_KEY:
+            connection = self._outer_instance.connections.get_with_credentials(name=connection_name, **kwargs)
 
-            # For api-key authentication, we need to make another service call to get the connection with credentials.
-            connection_with_credentials = self._outer_instance.connections.get_with_credentials(name=connection.name, **kwargs)
+        logger.debug("[InferenceOperations.get_azure_openai_client] connection = %s", str(connection))
 
-            api_key: Optional[str] = None
-            if hasattr(connection_with_credentials.properties, "credentials"):
-                if hasattr(connection_with_credentials.properties.credentials, "key"):  # type: ignore
-                    api_key = connection_with_credentials.properties.credentials.key  # type: ignore
+        azure_endpoint = connection.target[:-1] if connection.target.endswith("/") else connection.target
+
+        if isinstance(connection.credentials, ApiKeyCredentials):
 
             logger.debug(
                 "[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI using API key authentication"
             )
-            client = AzureOpenAI(
-                api_key=api_key,
-                azure_endpoint=azure_endpoint,
-                api_version=api_version
-            )
+            api_key = connection.credentials.api_key
+            client = AzureOpenAI(api_key=api_key, azure_endpoint=azure_endpoint, api_version=api_version)
 
-        elif connection.auth_type == AuthenticationType.ENTRA_ID:
+        elif isinstance(connection.credentials, EntraIDCredentials):
 
             logger.debug(
-                "[InferenceOperations.get_azure_openai_client] " + "Creating AzureOpenAI using Entra ID authentication"
+                "[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI using Entra ID authentication"
             )
 
             try:
@@ -300,23 +346,33 @@ class TelemetryOperations:
 
         :return: The Application Insights connection string if a the resource was enabled for the Project.
         :rtype: str
-        :raises ~azure.core.exceptions.ResourceNotFoundError: An Application Insights resource was not
-            enabled for this project.
+        :raises ~azure.core.exceptions.ResourceNotFoundError: An Application Insights connection does not
+            exist for this Foundry project.
         """
         if not self._connection_string:
 
-            # TODO: Test what happens here when there is no AppInsights connection. Does this throw or just returns an empty list?
+            # TODO: Two REST APIs calls can be replaced by one if we have had REST API for get_with_credentials(connection_type=ConnectionType.APPLICATION_INSIGHTS)
+            # Returns an empty Iterable if no connections exits.
             connections: Iterable[Connection] = self._outer_instance.connections.list(
-                connection_type=ConnectionType.APPLICATION_INSIGHTS
+                connection_type=ConnectionType.APPLICATION_INSIGHTS,
+                default_connection=True,
             )
 
-            # Read AppInsights connection string from the first connection in the list.
+            connection_name: Optional[str] = None
             for connection in connections:
-                self._connection_string = connection.metadata.get("connection_string")
+                connection_name = connection.name
                 break
+            if not connection_name:
+                raise ResourceNotFoundError("No Application Insights connection found.")
 
-            if not self._connection_string:
-                raise ResourceNotFoundError("Application Insights resource was not enabled for this Project.")
+            connection = self._outer_instance.connections.get_with_credentials(name=connection_name)
+
+            if isinstance(connection.credentials, ApiKeyCredentials):
+                if not connection.credentials.api_key:
+                    raise ValueError("Application Insights connection does not have a connection string.")
+                self._connection_string = connection.credentials.api_key
+            else:
+                raise ValueError("Application Insights connection does not use API Key credentials.")
 
         return self._connection_string
 
@@ -352,7 +408,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
             raise ValueError("Blob reference for consumption is not present")
         if not pending_upload_response.blob_reference_for_consumption.credential.type:
             raise ValueError("Credential type is not present")
-        if pending_upload_response.blob_reference_for_consumption.credential.type != AuthenticationType.SAS:
+        if pending_upload_response.blob_reference_for_consumption.credential.type != CredentialType.SAS:
             raise ValueError("Credential type is not SAS")
         if not pending_upload_response.blob_reference_for_consumption.blob_uri:
             raise ValueError("Blob URI is not present or empty")
@@ -388,7 +444,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
                 "[%s] pending_upload_response.blob_reference_for_consumption.credential.type = %s.",
                 method,
                 pending_upload_response.blob_reference_for_consumption.credential.type,
-            )  # == AuthenticationType.SAS
+            )  # == CredentialType.SAS
 
         # For overview on Blob storage SDK in Python see:
         # https://learn.microsoft.com/azure/storage/blobs/storage-quickstart-blobs-python
@@ -402,17 +458,15 @@ class DatasetsOperations(DatasetsOperationsGenerated):
             output_version,
         )
 
-    def upload_file_and_create(
-        self, *, name: str, version: Optional[str] = None, file: str, **kwargs: Any
-    ) -> DatasetVersion:
+    def upload_file_and_create(self, *, name: str, version: str, file: str, **kwargs: Any) -> DatasetVersion:
         """Upload file to a blob storage, and create a dataset that references this file.
         This method uses the `ContainerClient.upload_blob` method from the azure-storage-blob package
         to upload the file. Any keyword arguments provided will be passed to the `upload_blob` method.
 
         :param name: The name of the dataset. Required.
         :type name: str
-        :param version: The version identifier for the dataset. Optional.
-        :type version: str or None
+        :param version: The version identifier for the dataset. Required.
+        :type version: str
         :param file: The file name (including optional path) to be uploaded. Required.
         :type file: str
         :return: The created dataset version.
@@ -460,9 +514,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
 
         return dataset_version
 
-    def upload_folder_and_create(
-        self, *, name: str, version: Optional[str] = None, folder: str, **kwargs: Any
-    ) -> DatasetVersion:
+    def upload_folder_and_create(self, *, name: str, version: str, folder: str, **kwargs: Any) -> DatasetVersion:
         """Upload all files in a folder and its sub folders to a blob storage, while maintaining
         relative paths, and create a dataset that references this folder.
         This method uses the `ContainerClient.upload_blob` method from the azure-storage-blob package
@@ -470,8 +522,8 @@ class DatasetsOperations(DatasetsOperationsGenerated):
 
         :param name: The name of the dataset. Required.
         :type name: str
-        :param version: The version identifier for the dataset. Optional.
-        :type version: str or None
+        :param version: The version identifier for the dataset. Required.
+        :type version: str
         :param folder: The folder name (including optional path) to be uploaded. Required.
         :type file: str
         :return: The created dataset version.
@@ -527,7 +579,8 @@ class DatasetsOperations(DatasetsOperationsGenerated):
 __all__: List[str] = [
     "InferenceOperations",
     "TelemetryOperations",
-    "DatasetsOperations"
+    "DatasetsOperations",
+    "AssistantsOperations",
 ]  # Add all objects you want publicly available to users at this package level
 
 

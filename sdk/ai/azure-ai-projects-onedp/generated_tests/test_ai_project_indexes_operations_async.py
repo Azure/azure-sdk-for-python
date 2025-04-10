@@ -59,28 +59,6 @@ class TestAIProjectIndexesOperationsAsync(AIProjectClientTestBaseAsync):
 
     @AIProjectPreparer()
     @recorded_by_proxy_async
-    async def test_indexes_create(self, aiproject_endpoint):
-        client = self.create_async_client(endpoint=aiproject_endpoint)
-        response = await client.indexes.create(
-            name="str",
-            body={
-                "connectionName": "str",
-                "indexName": "str",
-                "name": "str",
-                "type": "AzureSearch",
-                "version": "str",
-                "description": "str",
-                "id": "str",
-                "stage": "str",
-                "tags": {"str": "str"},
-            },
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @AIProjectPreparer()
-    @recorded_by_proxy_async
     async def test_indexes_create_version(self, aiproject_endpoint):
         client = self.create_async_client(endpoint=aiproject_endpoint)
         response = await client.indexes.create_version(

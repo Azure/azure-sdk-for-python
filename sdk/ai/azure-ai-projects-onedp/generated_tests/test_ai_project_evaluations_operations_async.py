@@ -42,7 +42,6 @@ class TestAIProjectEvaluationsOperationsAsync(AIProjectClientTestBaseAsync):
                 "data": "input_data",
                 "evaluators": {"str": {"id": "str", "dataMapping": {"str": "str"}, "initParams": {"str": {}}}},
                 "id": "str",
-                "outputs": {"str": "str"},
                 "description": "str",
                 "displayName": "str",
                 "properties": {"str": "str"},

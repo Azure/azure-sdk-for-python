@@ -25,7 +25,7 @@ USAGE:
 import asyncio
 import os
 from azure.identity.aio import DefaultAzureCredential
-from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials import AzureKeyCredential  # TODO: Remove me when EntraID is supported
 from azure.ai.projects.onedp.aio import AIProjectClient
 
 
@@ -37,7 +37,7 @@ async def sample_deployments_async() -> None:
 
     async with AIProjectClient(
         endpoint=endpoint,
-        #credential=DefaultAzureCredential(),
+        # credential=DefaultAzureCredential(),
         credential=AzureKeyCredential(os.environ["PROJECT_API_KEY"]),
     ) as project_client:
 
