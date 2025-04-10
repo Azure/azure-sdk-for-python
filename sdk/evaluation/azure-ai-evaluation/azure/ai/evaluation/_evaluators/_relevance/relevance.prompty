@@ -82,7 +82,8 @@ user:
   **Query:** What topics will the conference cover?
   **Response:** The conference will cover renewable energy, climate change, and sustainability practices, bringing together global experts to discuss these critical issues. 
 
-
+Note that the QUERY can either be a string with a user request or an entire conversation history including previous requests and responses from the assistant.
+In this case, the assistant's response should be evaluated in the context of the entire conversation but the focus should be on the last query and response.
 
 # Data
 QUERY: {{query}}
