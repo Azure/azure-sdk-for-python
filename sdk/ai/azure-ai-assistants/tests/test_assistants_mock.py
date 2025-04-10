@@ -536,7 +536,7 @@ class TestIntegrationAssistantsMock:
     )
     @patch("azure.ai.assistants.AssistantsClient.__init__", return_value=None)
     @patch(
-        "azure.ai.assistants.AssistantsClient.submit_tool_outputs_to_run",
+        "azure.ai.assistants._operations.AssistantsClientOperationsMixin.submit_tool_outputs_to_run",
     )
     def test_create_stream_with_tool_calls(self, mock_submit_tool_outputs_to_run: Mock, *args):
         mock_submit_tool_outputs_to_run.side_effect = self.submit_tool_outputs_to_run
@@ -551,9 +551,8 @@ class TestIntegrationAssistantsMock:
         with operation.create_stream(thread_id="thread_id", assistant_id="asst_01") as stream:
             for _ in stream:
                 count += 1
-        # TODO: Fix this test; it does not submit the tool output and hence cannot return all output.
         assert count == (
             main_stream_response.count("event:")
-            # + fetch_current_datetime_and_weather_stream_response.count("event:")
-            # + send_email_stream_response.count("event:")
+            + fetch_current_datetime_and_weather_stream_response.count("event:")
+            + send_email_stream_response.count("event:")
         )
