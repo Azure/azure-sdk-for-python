@@ -220,7 +220,6 @@ def _setup_instrumentations(configurations: Dict[str, ConfigurationValue]):
         try:
             # Load the instrumentor via entrypoint
             instrumentor: BaseInstrumentor = entry_point.load()
-            # tell instrumentation to not run dep checks again as we already did it above
             instrumentor().instrument(raise_exception_on_conflict=True)
         except DependencyConflictError as exc:
             _logger.debug(
