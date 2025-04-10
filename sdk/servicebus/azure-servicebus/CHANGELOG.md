@@ -1,5 +1,15 @@
 # Release History
 
+## 7.14.3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 7.14.2 (2025-04-09)
 
 ### Bugs Fixed
