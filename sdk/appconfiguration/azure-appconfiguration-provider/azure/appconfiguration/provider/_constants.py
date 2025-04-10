@@ -23,7 +23,6 @@ METADATA_KEY = "metadata"
 ALLOCATION_ID_KEY = "AllocationId"
 ETAG_KEY = "ETag"
 FEATURE_FLAG_REFERENCE_KEY = "FeatureFlagReference"
-FEATURE_FLAG_ID_KEY = "FeatureFlagId"
 
 PERCENTAGE_FILTER_NAMES = ["Percentage", "PercentageFilter", "Microsoft.Percentage", "Microsoft.PercentageFilter"]
 TIME_WINDOW_FILTER_NAMES = ["TimeWindow", "TimeWindowFilter", "Microsoft.TimeWindow", "Microsoft.TimeWindowFilter"]
