@@ -10,7 +10,7 @@ import pytest_asyncio
 
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos.partition_key import PartitionKey
-from tests.test_excluded_locations import _verify_endpoint
+from test_excluded_locations import _verify_endpoint
 
 class MockHandler(logging.Handler):
     def __init__(self):
