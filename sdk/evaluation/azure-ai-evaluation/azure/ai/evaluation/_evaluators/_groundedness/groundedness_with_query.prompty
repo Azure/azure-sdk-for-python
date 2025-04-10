@@ -95,6 +95,8 @@ user:
   **Query:** By what date must participants register to receive early bird pricing?
   **Response:** Participants must register by May 31st to receive early bird pricing.
 
+Note that the QUERY can either be a string with a user request or an entire conversation history including previous requests and responses from the assistant.
+In this case, the assistant's response should be evaluated in the context of the entire conversation but the focus should be on the last query and response.
 
 # Data
 CONTEXT: {{context}}
