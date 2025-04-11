@@ -31,7 +31,7 @@ from azure.ai.projects.onedp.aio import AIProjectClient
 async def sample_deployments_async() -> None:
 
     endpoint = os.environ["PROJECT_ENDPOINT"]
-    deployment_name = os.environ["DEPLOYMENT_NAME"]
+    model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
     model_publisher = os.environ["MODEL_PUBLISHER"]
 
     async with AIProjectClient(
@@ -47,8 +47,8 @@ async def sample_deployments_async() -> None:
         async for deployment in project_client.deployments.list(model_publisher=model_publisher):
             print(deployment)
 
-        print(f"Get a single deployment named `{deployment_name}`:")
-        deployment = await project_client.deployments.get(deployment_name)
+        print(f"Get a single deployment named `{model_deployment_name}`:")
+        deployment = await project_client.deployments.get(model_deployment_name)
         print(deployment)
 
 

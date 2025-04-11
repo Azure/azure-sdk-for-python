@@ -36,6 +36,7 @@ with AIProjectClient(
     credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
 ) as project_client:
 
+    # [START sample]
     print("List the properties of all connections:")
     for connection in project_client.connections.list():
         print(connection)
@@ -49,3 +50,4 @@ with AIProjectClient(
     print(f"Get the properties of a connection named `{connection_name}`:")
     connection = project_client.connections.get(connection_name)
     print(connection)
+    # [END sample]

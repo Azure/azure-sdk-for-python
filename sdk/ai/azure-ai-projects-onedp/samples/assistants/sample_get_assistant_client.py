@@ -32,6 +32,8 @@ with AIProjectClient(
     credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
 ) as project_client:
 
+    # [START sample]
     with project_client.assistants.get_client() as client:
         # TODO: Do something with the assistant client...
         pass
+    # [END sample]

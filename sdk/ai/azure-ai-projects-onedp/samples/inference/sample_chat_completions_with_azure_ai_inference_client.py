@@ -29,17 +29,19 @@ from azure.ai.projects.onedp import AIProjectClient
 from azure.ai.inference.models import UserMessage
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
-deployment_name = os.environ["DEPLOYMENT_NAME"]
+model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
 
 with AIProjectClient(
     endpoint=endpoint,
     credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
 ) as project_client:
 
+    # [START sample]
     with project_client.inference.get_chat_completions_client() as client:
 
         response = client.complete(
-            model=deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]
+            model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]
         )
 
         print(response.choices[0].message.content)
+    # [END sample]

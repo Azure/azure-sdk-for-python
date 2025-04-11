@@ -29,7 +29,7 @@ from azure.ai.projects.onedp import AIProjectClient
 from azure.ai.inference.models import ImageEmbeddingInput
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
-deployment_name = os.environ["DEPLOYMENT_NAME"]
+model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
 
 with AIProjectClient(
     endpoint=endpoint,
@@ -39,7 +39,7 @@ with AIProjectClient(
     with project_client.inference.get_image_embeddings_client() as client:
 
         response = client.embed(
-            model=deployment_name, input=[ImageEmbeddingInput.load(image_file="sample1.png", image_format="png")]
+            model=model_deployment_name, input=[ImageEmbeddingInput.load(image_file="sample1.png", image_format="png")]
         )
 
         for item in response.data:

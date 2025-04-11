@@ -32,7 +32,7 @@ from azure.ai.projects.onedp.aio import AIProjectClient
 async def sample_text_embeddings_with_azure_ai_inference_client_async():
 
     endpoint = os.environ["PROJECT_ENDPOINT"]
-    deployment_name = os.environ["DEPLOYMENT_NAME"]
+    model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
 
     async with DefaultAzureCredential() as credential:
 
@@ -44,7 +44,7 @@ async def sample_text_embeddings_with_azure_ai_inference_client_async():
             async with project_client.inference.get_embeddings_client() as client:
 
                 response = await client.embed(
-                    model=deployment_name, input=["first phrase", "second phrase", "third phrase"]
+                    model=model_deployment_name, input=["first phrase", "second phrase", "third phrase"]
                 )
 
                 for item in response.data:

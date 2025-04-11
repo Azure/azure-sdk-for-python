@@ -34,7 +34,7 @@ from azure.ai.inference.models import ImageEmbeddingInput
 async def sample_image_embeddings_with_azure_ai_inference_client_async():
 
     endpoint = os.environ["PROJECT_ENDPOINT"]
-    deployment_name = os.environ["DEPLOYMENT_NAME"]
+    model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
 
     async with DefaultAzureCredential() as credential:
 
@@ -46,7 +46,7 @@ async def sample_image_embeddings_with_azure_ai_inference_client_async():
             async with project_client.inference.get_image_embeddings_client() as client:
 
                 response = await client.embed(
-                    model=deployment_name,
+                    model=model_deployment_name,
                     input=[ImageEmbeddingInput.load(image_file="sample1.png", image_format="png")],
                 )
 

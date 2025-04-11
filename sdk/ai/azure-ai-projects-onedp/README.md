@@ -113,62 +113,20 @@ project_client = AIProjectClient.from_connection_string(
 
 ## Examples
 
-### Enumerate connections
+### Getting an authenticated Assistant client
 
-Your Azure AI Foundry project has a "Management center". When you enter it, you will see a tab named "Connected resources" under your project. The `.connections` operations on the client allow you to enumerate the connections and get connection properties. Connection properties include the resource URL and authentication credentials, among other things.
+Below is a code example of how to get an authenticated `AssistantClient` from the `azure-ai-assistants` package.
+Full samples can be found under the `assistants` folder in the [package samples][samples].
 
-Below are code examples of the connection operations. Full samples can be found under the "connetions" folder in the [package samples][samples].
-
-#### Get properties of all connections
-
-To list the properties of all the connections in the Azure AI Foundry project:
+<!-- SNIPPET:sample_get_assistant_client.sample -->
 
 ```python
-connections = project_client.connections.list()
-for connection in connections:
-    print(connection)
+with project_client.assistants.get_client() as client:
+    # TODO: Do something with the assistant client...
+    pass
 ```
 
-#### Get properties of all connections of a particular type
-
-To list the properties of connections of a certain type (here Azure OpenAI):
-
-```python
-connections = project_client.connections.list(
-    connection_type=ConnectionType.AZURE_OPEN_AI,
-)
-for connection in connections:
-    print(connection)
-
-```
-
-#### Get properties of a default connection
-
-To get the properties of the default connection of a certain type (here Azure OpenAI),
-with its authentication credentials:
-
-```python
-connection = project_client.connections.get_default(
-    connection_type=ConnectionType.AZURE_OPEN_AI,
-    include_credentials=True,  # Optional. Defaults to "False".
-)
-print(connection)
-```
-
-If the call was made with `include_credentials=True`, depending on the value of `connection.authentication_type`, either `connection.key` or `connection.token_credential`
-will be populated. Otherwise both will be `None`.
-
-#### Get properties of a connection by its connection name
-
-To get the connection properties of a connection named `connection_name`:
-
-```python
-connection = project_client.connections.get(
-    connection_name=connection_name,
-    include_credentials=True  # Optional. Defaults to "False"
-)
-print(connection)
-```
+<!-- END SNIPPET -->
 
 ### Get an authenticated ChatCompletionsClient
 
@@ -180,18 +138,21 @@ First, install the package:
 pip install azure-ai-inference
 ```
 
-Then run this code (replace "gpt-4o" with your model deployment name):
+Then run this code, assuming `model_deployment_name` was set:
+
+<!-- SNIPPET:sample_chat_completions_with_azure_ai_inference_client.sample-->
 
 ```python
-inference_client = project_client.inference.get_chat_completions_client()
+with project_client.inference.get_chat_completions_client() as client:
 
-response = inference_client.complete(
-    model="gpt-4o", # Model deployment name
-    messages=[UserMessage(content="How many feet are in a mile?")]
-)
+    response = client.complete(
+        model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]
+    )
 
-print(response.choices[0].message.content)
+    print(response.choices[0].message.content)
 ```
+
+<!-- END SNIPPET -->
 
 See the "inference" folder in the [package samples][samples] for additional samples, including getting an authenticated [EmbeddingsClient](https://learn.microsoft.com/python/api/azure-ai-inference/azure.ai.inference.embeddingsclient) and [ImageEmbeddingsClient](https://learn.microsoft.com/python/api/azure-ai-inference/azure.ai.inference.imageembeddingsclient).
 
@@ -224,6 +185,86 @@ print(response.choices[0].message.content)
 ```
 
 See the "inference" folder in the [package samples][samples] for additional samples.
+
+
+### Getting an authenticated inference client
+
+Below are code examples of the inference operations, allowing you to get authenticated clients from the
+`azure-ai-inference` or `openai` pacakges and perform one chat completions operation. Full samples can be
+found under the `inference` folder in the [package samples][samples].
+
+#### Azure OpenAI client
+
+Here is an example of geting an authenticated `AzureOpenAI` client from the `openai` pacakge. You have the option to specify
+the REST API version that the resulting client will use (see [API specs](https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs))
+). You also have the option (not shown) to expliclxyt specify the Azure OpenAI connection name in your AI Foundry Project, which
+the `get_azure_openai_client` method will use to get the inference endpoint and authentication credentials.
+If not present the default Azure OpenAI connection will be used.
+
+You need to first install the OpenAI package:
+```bash
+pip install openai
+```
+
+<!-- SNIPPET:sample_chat_completions_with_azure_openai_client.sample-->
+
+```python
+with project_client.inference.get_azure_openai_client(api_version="2024-06-01") as client:
+
+    response = client.chat.completions.create(
+        model=model_deployment_name,
+        messages=[
+            {
+                "role": "user",
+                "content": "How many feet are in a mile?",
+            },
+        ],
+    )
+
+    print(response.choices[0].message.content)
+```
+
+<!-- END SNIPPET -->
+
+Example of geting a `ChatCompletionsClient` from the `azure-ai-inference` pacakge:
+
+<!-- SNIPPET:sample_chat_completions_with_azure_ai_inference_client.sample-->
+
+```python
+with project_client.inference.get_chat_completions_client() as client:
+
+    response = client.complete(
+        model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]
+    )
+
+    print(response.choices[0].message.content)
+```
+
+<!-- END SNIPPET -->
+
+### Getting connections
+
+Below are code examples of the connection operations. Full samples can be found under the "connetions" folder in the [package samples][samples].
+
+<!-- SNIPPET:sample_connections.sample-->
+
+```python
+print("List the properties of all connections:")
+for connection in project_client.connections.list():
+    print(connection)
+
+print("List the properties of all connections of a particular type (in this case, Azure OpenAI connections):")
+for connection in project_client.connections.list(
+    connection_type=ConnectionType.AZURE_OPEN_AI,
+):
+    print(connection)
+
+print(f"Get the properties of a connection named `{connection_name}`:")
+connection = project_client.connections.get(connection_name)
+print(connection)
+```
+
+<!-- END SNIPPET -->
 
 ### Evaluation
 

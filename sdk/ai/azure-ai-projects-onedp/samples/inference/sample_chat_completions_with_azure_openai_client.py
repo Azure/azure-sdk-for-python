@@ -29,17 +29,18 @@ from azure.ai.projects.onedp import AIProjectClient
 from azure.identity import DefaultAzureCredential
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
-deployment_name = os.environ["DEPLOYMENT_NAME"]
+model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
 
 with AIProjectClient(
     endpoint=endpoint,
     credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
 ) as project_client:
 
+    # [START sample]
     with project_client.inference.get_azure_openai_client(api_version="2024-06-01") as client:
 
         response = client.chat.completions.create(
-            model=deployment_name,
+            model=model_deployment_name,
             messages=[
                 {
                     "role": "user",
@@ -49,3 +50,4 @@ with AIProjectClient(
         )
 
         print(response.choices[0].message.content)
+    # [END sample]

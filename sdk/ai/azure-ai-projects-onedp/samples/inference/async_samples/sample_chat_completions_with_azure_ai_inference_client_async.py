@@ -33,7 +33,7 @@ from azure.ai.inference.models import UserMessage
 async def sample_chat_completions_with_azure_ai_inference_client_async():
 
     endpoint = os.environ["PROJECT_ENDPOINT"]
-    deployment_name = os.environ["DEPLOYMENT_NAME"]
+    model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
 
     async with DefaultAzureCredential() as credential:
 
@@ -45,7 +45,7 @@ async def sample_chat_completions_with_azure_ai_inference_client_async():
             async with project_client.inference.get_chat_completions_client() as client:
 
                 response = await client.complete(
-                    model=deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]
+                    model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]
                 )
                 print(response.choices[0].message.content)
 

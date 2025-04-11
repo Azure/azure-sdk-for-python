@@ -34,7 +34,7 @@ from azure.identity.aio import DefaultAzureCredential
 async def sample_chat_completions_with_azure_openai_client_async():
 
     endpoint = os.environ["PROJECT_ENDPOINT"]
-    deployment_name = os.environ["DEPLOYMENT_NAME"]
+    model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
 
     async with DefaultAzureCredential() as credential:
 
@@ -47,7 +47,7 @@ async def sample_chat_completions_with_azure_openai_client_async():
             async with await project_client.inference.get_azure_openai_client(api_version="2024-06-01") as client:
 
                 response = await client.chat.completions.create(
-                    model=deployment_name,
+                    model=model_deployment_name,
                     messages=[
                         {
                             "role": "user",

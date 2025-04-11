@@ -27,7 +27,7 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects.onedp import AIProjectClient
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
-deployment_name = os.environ["DEPLOYMENT_NAME"]
+model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
 model_publisher = os.environ["MODEL_PUBLISHER"]
 
 with AIProjectClient(
@@ -43,6 +43,6 @@ with AIProjectClient(
     for deployment in project_client.deployments.list(model_publisher=model_publisher):
         print(deployment)
 
-    print(f"Get a single deployment named `{deployment_name}`:")
-    deployment = project_client.deployments.get(deployment_name)
+    print(f"Get a single deployment named `{model_deployment_name}`:")
+    deployment = project_client.deployments.get(model_deployment_name)
     print(deployment)

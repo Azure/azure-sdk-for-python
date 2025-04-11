@@ -28,7 +28,7 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects.onedp import AIProjectClient
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
-deployment_name = os.environ["DEPLOYMENT_NAME"]
+model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
 
 with AIProjectClient(
     endpoint=endpoint,
@@ -37,7 +37,7 @@ with AIProjectClient(
 
     with project_client.inference.get_embeddings_client() as client:
 
-        response = client.embed(model=deployment_name, input=["first phrase", "second phrase", "third phrase"])
+        response = client.embed(model=model_deployment_name, input=["first phrase", "second phrase", "third phrase"])
 
         for item in response.data:
             length = len(item.embedding)
