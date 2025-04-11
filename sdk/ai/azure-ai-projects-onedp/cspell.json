@@ -1,0 +1,9 @@
+{
+    "ignoreWords": [
+        "onedp",
+        "aiproject",
+        "Prompty",
+    ],
+    "ignorePaths": [
+    ]
+}

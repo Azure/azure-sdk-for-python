@@ -62,7 +62,7 @@ class AssistantsOperations:
 
         client = AssistantClient(
             endpoint=self._outer_instance._config.endpoint,
-            credential=self._outer_instance._config.cedential,
+            credential=self._outer_instance._config.credential,
             user_agent=kwargs.pop("user_agent", self._user_agent),
             **kwargs,
         )
