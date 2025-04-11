@@ -24,17 +24,9 @@ EVAL_RESULTS = {}
 PYLINT_SCORES = {}
 
 FILE_PROMPT = """
-DO prompt the user to create a virtual environment with `<path_to_python_installation>/python.exe -m venv <environment_name>` and activate it, before running any commands.
-
-# General Repository Guidelines
-- DO check this [website](https://azure.github.io/azure-sdk/python_design.html), and link to pages found there, if possible, when asked about guidelines, or guidance on how to write SDKs. The general guidelines for SDK in this repo are defined there.
-
 # Pylint
 
 ## Running Pylint
-- When asked how to run pylint, or given a command to run pylint, DO check [this website](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/pylint_checking.md.) and guide the user based on the information you find there. 
-- DO use a python 3.8 environment that is compatible with the code you are working on. If you are not sure, please ask the user for the python version they are using. 
-
 
 ## Fixing Pylint Warnings
 
@@ -285,15 +277,10 @@ if __name__ == "__main__":
                 if key in EVAL_RESULTS:
                     f.write(f"Evaluation Results for {key}:")
                     f.write("\n")
-                    f.write(f"Groundedness Score: {EVAL_RESULTS[key].score}")
+                    f.write(f"Groundedness Score: {EVAL_RESULTS[key]}")
                     f.write("\n")
-                    f.write(f"Groundedness Result: {EVAL_RESULTS[key].result}")
-                    if EVAL_RESULTS[key].explanation:
-                        f.write("\n")
-                        f.write(f"Explanation: {EVAL_RESULTS[key].explanation}")
                 f.write("\n")
                 f.write("-----"*80)
                 f.write("\n")
     except Exception as e:
         raise e
-        print(f"Error in processing test cases: {str(e)}")
