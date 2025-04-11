@@ -29,6 +29,15 @@ class TestResponseCompletenessEvaluator:
         # Test initialization of ResponseCompletenessEvaluator
         assert response_completeness_evaluator.threshold == ResponseCompletenessEvaluator._DEFAULT_COMPLETENESS_THRESHOLD
         assert response_completeness_evaluator._result_key == ResponseCompletenessEvaluator._RESULT_KEY
+        assert response_completeness_evaluator._is_reasoning_model is False
+
+    def test_initialization2(self, mock_model_config):
+        response_completeness_evaluator = ResponseCompletenessEvaluator(model_config=mock_model_config,
+                                                                        is_reasoning_model=True)
+        # Test initialization of ResponseCompletenessEvaluator
+        assert response_completeness_evaluator.threshold == ResponseCompletenessEvaluator._DEFAULT_COMPLETENESS_THRESHOLD
+        assert response_completeness_evaluator._result_key == ResponseCompletenessEvaluator._RESULT_KEY
+        assert response_completeness_evaluator._is_reasoning_model is True
 
     def test_evaluate_completeness_valid1(self, mock_model_config):
         response_completeness_evaluator = ResponseCompletenessEvaluator(model_config=mock_model_config)
@@ -50,6 +59,26 @@ class TestResponseCompletenessEvaluator:
 
     def test_evaluate_completeness_valid2(self, mock_model_config):
         response_completeness_evaluator = ResponseCompletenessEvaluator(model_config=mock_model_config)
+        response_completeness_evaluator._flow = MagicMock(return_value=completeness_response2_async_mock())
+
+        # Test evaluation with valid ground truth and response
+        ground_truth = "The capital of Japan is Tokyo."
+        response = "The capital of Japan is Tokyo."
+        result = response_completeness_evaluator(ground_truth=ground_truth, response=response)
+
+        key = ResponseCompletenessEvaluator._RESULT_KEY
+        assert result is not None
+
+        assert (key in result and f"{key}_result" in result and f"{key}_threshold" in result and
+                f"{key}_reason" in result)
+        assert result[key] == 5
+        assert result[f"{key}_result"] == "pass"
+        assert result[f"{key}_threshold"] == ResponseCompletenessEvaluator._DEFAULT_COMPLETENESS_THRESHOLD
+        assert "The response perfectly matches " in result[f"{key}_reason"]
+
+    def test_evaluate_completeness_valid3(self, mock_model_config):
+        response_completeness_evaluator = ResponseCompletenessEvaluator(model_config=mock_model_config,
+                                                                        is_reasoning_model=True)
         response_completeness_evaluator._flow = MagicMock(return_value=completeness_response2_async_mock())
 
         # Test evaluation with valid ground truth and response
