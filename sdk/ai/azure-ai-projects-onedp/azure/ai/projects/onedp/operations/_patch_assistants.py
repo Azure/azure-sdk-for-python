@@ -21,7 +21,7 @@ class AssistantsOperations:
     """
 
     # TODO: Merge all code related to handling user-agent, into a single place.
-    def __init__(self, outer_instance: "azure.ai.projects.onedp.AIProjectClient") -> None: # type: ignore[name-defined]
+    def __init__(self, outer_instance: "azure.ai.projects.onedp.AIProjectClient") -> None:  # type: ignore[name-defined]
 
         # All returned inference clients will have this application id set on their user-agent.
         # For more info on user-agent HTTP header, see:
@@ -38,7 +38,7 @@ class AssistantsOperations:
         self._outer_instance = outer_instance
 
     @distributed_trace
-    def get_client(self, **kwargs) -> "AssistantClient": # type: ignore[name-defined]
+    def get_client(self, **kwargs) -> "AssistantClient":  # type: ignore[name-defined]
         """Get an authenticated AssistantClient (from the package azure-ai-assistants) to use with
         your AI Foundry Project. Keyword arguments are passed to the constructor of
         ChatCompletionsClient.
@@ -61,8 +61,8 @@ class AssistantsOperations:
             ) from e
 
         client = AssistantClient(
-            endpoint=self._outer_instance._config.endpoint, # pylint: disable=protected-access
-            credential=self._outer_instance._config.credential, # pylint: disable=protected-access
+            endpoint=self._outer_instance._config.endpoint,  # pylint: disable=protected-access
+            credential=self._outer_instance._config.credential,  # pylint: disable=protected-access
             user_agent=kwargs.pop("user_agent", self._user_agent),
             **kwargs,
         )
