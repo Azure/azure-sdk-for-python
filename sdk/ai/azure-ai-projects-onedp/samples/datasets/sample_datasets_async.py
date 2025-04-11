@@ -50,10 +50,8 @@ async def sample_datasets_async() -> None:
         )
         print(dataset)
 
-        print(
-            """Upload all files in a folder (including subfolders) to the existing Dataset to reference the folder."
-        Here again we explicitly specify the a new dataset version"""
-        )
+        """
+        print("Upload all files in a folder (including subfolders) to the existing Dataset to reference the folder. Here again we explicitly specify the a new dataset version")
         dataset = await project_client.datasets.upload_folder_and_create(
             name=dataset_name,
             version="2",
@@ -84,6 +82,7 @@ async def sample_datasets_async() -> None:
         await project_client.datasets.delete_version(name=dataset_name, version="1")
         await project_client.datasets.delete_version(name=dataset_name, version="2")
         await project_client.datasets.delete_version(name=dataset_name, version="3")
+        """
 
 
 async def main():
