@@ -1,8 +1,6 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import os
-import tempfile
 
 from os import PathLike
 from typing import IO, Any, Dict, Optional, Union, cast
