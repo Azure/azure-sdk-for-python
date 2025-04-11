@@ -7,6 +7,7 @@
 DESCRIPTION:
     This sample demonstrates how to use agent operations with the Bing Custom Search tool from
     the Azure Agents service using a synchronous client.
+    For more information on the Bing Custom Search tool, see: https://aka.ms/AgentCustomSearchDoc
 
 USAGE:
     python sample_agents_bing_custom_search.py
