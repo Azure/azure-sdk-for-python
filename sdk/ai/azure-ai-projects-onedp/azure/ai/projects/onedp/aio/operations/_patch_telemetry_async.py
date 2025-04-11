@@ -19,6 +19,14 @@ from ...models._enums import ConnectionType
 
 
 class TelemetryOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.onedp.aio.AIProjectClient`'s
+        :attr:`telemetry` attribute.
+    """
 
     _connection_string: Optional[str] = None
 

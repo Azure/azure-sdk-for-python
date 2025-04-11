@@ -26,6 +26,14 @@ logger = logging.getLogger(__name__)
 
 
 class DatasetsOperations(DatasetsOperationsGenerated):
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.onedp.AIProjectClient`'s
+        :attr:`datasets` attribute.
+    """
 
     # Internal helper method to create a new dataset and return a ContainerClient from azure-storage-blob package,
     # to the dataset's blob storage.

@@ -25,6 +25,14 @@ logger = logging.getLogger(__name__)
 
 
 class InferenceOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.onedp.aio.AIProjectClient`'s
+        :attr:`inference` attribute.
+    """
 
     def __init__(self, outer_instance: "AIProjectClient") -> None:
 

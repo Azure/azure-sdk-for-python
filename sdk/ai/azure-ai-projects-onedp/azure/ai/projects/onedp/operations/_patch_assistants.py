@@ -11,6 +11,14 @@ from azure.core.tracing.decorator import distributed_trace
 
 
 class AssistantsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.onedp.AIProjectClient`'s
+        :attr:`assistants` attribute.
+    """
 
     # TODO: Merge all code related to handling user-agent, into a single place.
     def __init__(self, outer_instance: "AIProjectClient") -> None:
