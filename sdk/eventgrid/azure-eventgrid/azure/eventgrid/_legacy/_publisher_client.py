@@ -237,8 +237,7 @@ class EventGridPublisherClient(object):
             raise HttpResponseError(response=response)
 
     def close(self) -> None:
-        """Close the :class:`~azure.eventgrid.EventGridPublisherClient` session."""
-        return self._client.close()
+        self._client.close()
 
     def __enter__(self) -> "EventGridPublisherClient":
         self._client.__enter__()
