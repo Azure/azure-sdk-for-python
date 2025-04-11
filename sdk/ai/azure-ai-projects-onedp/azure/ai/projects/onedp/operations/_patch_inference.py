@@ -28,7 +28,7 @@ class InferenceOperations:
         :attr:`inference` attribute.
     """
 
-    def __init__(self, outer_instance: "azure.ai.projects.onedp.AIProjectClient") -> None:
+    def __init__(self, outer_instance: "azure.ai.projects.onedp.AIProjectClient") -> None: # type: ignore[name-defined]
 
         # All returned inference clients will have this application id set on their user-agent.
         # For more info on user-agent HTTP header, see:
@@ -59,7 +59,7 @@ class InferenceOperations:
         return new_url
 
     @distributed_trace
-    def get_chat_completions_client(self, **kwargs) -> "ChatCompletionsClient":
+    def get_chat_completions_client(self, **kwargs) -> "ChatCompletionsClient": # type: ignore[name-defined]
         """Get an authenticated ChatCompletionsClient (from the package azure-ai-inference) to use with
         AI models deployed to your AI Foundry Project. Keyword arguments are passed to the constructor of
         ChatCompletionsClient.
@@ -99,7 +99,7 @@ class InferenceOperations:
         return client
 
     @distributed_trace
-    def get_embeddings_client(self, **kwargs) -> "EmbeddingsClient":
+    def get_embeddings_client(self, **kwargs) -> "EmbeddingsClient": # type: ignore[name-defined]
         """Get an authenticated EmbeddingsClient (from the package azure-ai-inference) to use with
         AI models deployed to your AI Foundry Project. Keyword arguments are passed to the constructor of
         ChatCompletionsClient.
@@ -139,7 +139,7 @@ class InferenceOperations:
         return client
 
     @distributed_trace
-    def get_image_embeddings_client(self, **kwargs) -> "ImageEmbeddingsClient":
+    def get_image_embeddings_client(self, **kwargs) -> "ImageEmbeddingsClient": # type: ignore[name-defined]
         """Get an authenticated ImageEmbeddingsClient (from the package azure-ai-inference) to use with
         AI models deployed to your AI Foundry Project. Keyword arguments are passed to the constructor of
         ChatCompletionsClient.
@@ -181,7 +181,7 @@ class InferenceOperations:
     @distributed_trace
     def get_azure_openai_client(
         self, *, api_version: Optional[str] = None, connection_name: Optional[str] = None, **kwargs
-    ) -> "AzureOpenAI":
+    ) -> "AzureOpenAI": # type: ignore[name-defined]
         """Get an authenticated AzureOpenAI client (from the `openai` package) for the default
         Azure OpenAI connection (if `connection_name` is not specificed), or from the Azure OpenAI
         resource given by its connection name.
@@ -217,8 +217,9 @@ class InferenceOperations:
                 "OpenAI SDK is not installed. Please install it using 'pip install openai'"
             ) from e
 
+        connection = Connection()
         if connection_name:
-            connection: Connection = self._outer_instance.connections.get(name=connection_name, **kwargs)
+            connection = self._outer_instance.connections.get(name=connection_name, **kwargs)
             if connection.type != ConnectionType.AZURE_OPEN_AI:
                 raise ValueError(f"Connection `{connection_name}` is not of type Azure OpenAI.")
         else:
@@ -227,7 +228,7 @@ class InferenceOperations:
                 connection_type=ConnectionType.AZURE_OPEN_AI, default_connection=True, **kwargs
             )
             try:
-                connection: Connection = next(iter(connections))
+                connection = next(iter(connections))
             except StopAsyncIteration:
                 raise ResourceNotFoundError("No default Azure OpenAI connection found.")
             connection_name = connection.name
