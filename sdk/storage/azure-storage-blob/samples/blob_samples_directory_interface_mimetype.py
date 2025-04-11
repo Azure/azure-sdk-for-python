@@ -14,7 +14,7 @@ DESCRIPTION:
     uploading file. (e.g. 'text/html' is set when uploading .html files)
   USAGE: python blob_samples_directory_interface_mimetype.py CONTAINER_NAME
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 '''
 
 import sys
@@ -23,7 +23,8 @@ import glob
 from blob_samples_directory_interface import DirectoryClient
 import mimetypes
 import os
-from azure.storage.blob import ContentSettings
+from azure.storage.blob import ContentSettings, ContainerClient
+from azure.core.exceptions import ResourceExistsError
 
 class DirectoryClientEx(DirectoryClient):
     # overriding upload_file method
@@ -40,17 +41,17 @@ class DirectoryClientEx(DirectoryClient):
 # Sample setup
 
 try:
-    CONNECTION_STRING = os.environ['AZURE_STORAGE_CONNECTION_STRING']
+    CONNECTION_STRING = os.environ['STORAGE_CONNECTION_STRING']
 except KeyError:
-    print('AZURE_STORAGE_CONNECTION_STRING must be set')
+    print('STORAGE_CONNECTION_STRING must be set')
     sys.exit(1)
 
+CONTAINER_NAME = "mycontainerdirectory"
+container = ContainerClient.from_connection_string(CONNECTION_STRING, CONTAINER_NAME)
 try:
-    CONTAINER_NAME = sys.argv[1]
-except IndexError:
-    print('usage: directory_interface.py CONTAINER_NAME')
-    print('error: the following arguments are required: CONTAINER_NAME')
-    sys.exit(1)
+  container.create_container()
+except ResourceExistsError:
+  print("The specified container already exists.")
 
 SAMPLE_DIRS = [
     'cats/calico',

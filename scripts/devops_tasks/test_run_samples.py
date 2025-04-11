@@ -153,6 +153,12 @@ IGNORED_SAMPLES = {
         "sample_abstract_summary.py",
         "sample_abstract_summary_async.py",
     ],
+    "azure-storage-blob": [
+        "blob_samples_proxy_configuration.py",
+        "blob_samples_container_access_policy.py",
+        "blob_samples_container_access_policy_async.py",
+        "blob_samples_client_side_encryption_keyvault.py"
+    ],
 }
 
 def run_check_call_with_timeout(
