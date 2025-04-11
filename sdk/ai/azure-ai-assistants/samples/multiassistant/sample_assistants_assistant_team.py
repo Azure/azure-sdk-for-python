@@ -25,9 +25,9 @@ from azure.identity import DefaultAzureCredential
 from assistant_team import AssistantTeam
 from assistant_trace_configurator import AssistantTraceConfigurator
 
-assistants_client = AssistantsClient.from_connection_string(
+assistants_client = AssistantsClient(
+    endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
-    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
 
 model_deployment_name = os.getenv("MODEL_DEPLOYMENT_NAME")

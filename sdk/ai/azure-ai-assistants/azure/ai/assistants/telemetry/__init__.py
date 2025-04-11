@@ -10,8 +10,4 @@ from ._ai_assistants_instrumentor import AIAssistantsInstrumentor
 from ._utils import enable_telemetry
 from ._trace_function import trace_function
 
-__all__ = [
-    "AIAssistantsInstrumentor",
-    "enable_telemetry"
-    "trace_function"
-]
+__all__ = ["AIAssistantsInstrumentor", "enable_telemetry", "trace_function"]

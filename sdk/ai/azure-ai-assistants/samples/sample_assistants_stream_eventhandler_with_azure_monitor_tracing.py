@@ -41,9 +41,9 @@ from typing import Any
 from opentelemetry import trace
 from azure.monitor.opentelemetry import configure_azure_monitor
 
-assistants_client = AssistantsClient.from_connection_string(
+assistants_client = AssistantsClient(
+    endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
-    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
 
 
@@ -77,7 +77,7 @@ class MyEventHandler(AssistantEventHandler):
 
 
 # Enable Azure Monitor tracing
-application_insights_connection_string = os.environ['AI_APPINSIGHTS_CONNECTION_STRING']
+application_insights_connection_string = os.environ["AI_APPINSIGHTS_CONNECTION_STRING"]
 configure_azure_monitor(connection_string=application_insights_connection_string)
 
 scenario = os.path.basename(__file__)
@@ -97,9 +97,7 @@ with tracer.start_as_current_span(scenario):
         thread = assistants_client.create_thread()
         print(f"Created thread, thread ID {thread.id}")
 
-        message = assistants_client.create_message(
-            thread_id=thread.id, role="user", content="Hello, tell me a joke"
-        )
+        message = assistants_client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
         print(f"Created message, message ID {message.id}")
 
         with assistants_client.create_stream(

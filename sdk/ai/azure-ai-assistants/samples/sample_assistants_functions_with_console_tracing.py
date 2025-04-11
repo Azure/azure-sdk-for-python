@@ -38,8 +38,9 @@ from azure.ai.assistants.models import FunctionTool, RequiredFunctionToolCall, S
 from azure.ai.assistants.telemetry import trace_function, enable_telemetry
 from opentelemetry import trace
 
-assistants_client = AssistantsClient.from_connection_string(
-    credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+assistants_client = AssistantsClient(
+    endpoint=os.environ["PROJECT_ENDPOINT"],
+    credential=DefaultAzureCredential(),
 )
 
 # Enable console tracing

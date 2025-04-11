@@ -55,7 +55,9 @@ class TestSignatures:
             ),
         ), patch(
             "azure.ai.assistants._operations.AssistantsClientOperationsMixin.get_vector_store",
-            wraps=get_mock_fn(assistant.get_vector_store, return_val=VectorStore({"id": "store_1", "status": "completed"})),
+            wraps=get_mock_fn(
+                assistant.get_vector_store, return_val=VectorStore({"id": "store_1", "status": "completed"})
+            ),
         ):
 
             assistant.create_vector_store_and_poll(file_ids=file_ids, sleep_interval=0)

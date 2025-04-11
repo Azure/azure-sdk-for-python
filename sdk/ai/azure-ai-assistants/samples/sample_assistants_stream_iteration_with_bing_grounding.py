@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -39,12 +40,13 @@ from azure.ai.assistants.models import (
 )
 from azure.identity import DefaultAzureCredential
 
-assistants_client = AssistantsClient.from_connection_string(
-    credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+assistants_client = AssistantsClient(
+    endpoint=os.environ["PROJECT_ENDPOINT"],
+    credential=DefaultAzureCredential(),
 )
 
 with assistants_client:
-    bing_connection_id = os.environ['AZURE_BING_CONECTION_ID']
+    bing_connection_id = os.environ["AZURE_BING_CONECTION_ID"]
     bing = BingGroundingTool(connection_id=bing_connection_id)
     print(f"Bing Connection ID: {bing_connection_id}")
 

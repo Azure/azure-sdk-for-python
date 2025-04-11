@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -39,9 +38,9 @@ async def main():
     async with DefaultAzureCredential(
         exclude_managed_identity_credential=True, exclude_environment_credential=True
     ) as creds:
-        async with AssistantsClient.from_connection_string(
+        async with AssistantsClient(
+            endpoint=os.environ["PROJECT_ENDPOINT"],
             credential=creds,
-            conn_str=os.environ["PROJECT_CONNECTION_STRING"],
         ) as assistants_client:
 
             storage_service_endpoint = os.environ["STORAGE_SERVICE_ENDPONT"]

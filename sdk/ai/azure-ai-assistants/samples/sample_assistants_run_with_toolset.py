@@ -28,9 +28,9 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.assistants.models import FunctionTool, ToolSet, CodeInterpreterTool
 from user_functions import user_functions
 
-assistants_client = AssistantsClient.from_connection_string(
+assistants_client = AssistantsClient(
+    endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
-    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
 
 # Create assistant with toolset and process assistant run

@@ -27,8 +27,9 @@ from azure.ai.assistants import AssistantsClient
 from azure.ai.assistants.models import FilePurpose, FileSearchTool, MessageAttachment
 from azure.identity import DefaultAzureCredential
 
-assistants_client = AssistantsClient.from_connection_string(
-    credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+assistants_client = AssistantsClient(
+    endpoint=os.environ["PROJECT_ENDPOINT"],
+    credential=DefaultAzureCredential(),
 )
 
 with assistants_client:

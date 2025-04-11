@@ -26,13 +26,13 @@ from azure.ai.assistants import AssistantsClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.assistants.models import FabricTool
 
-assistants_client = AssistantsClient.from_connection_string(
+assistants_client = AssistantsClient(
+    endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
-    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
 
 # [START create_assistant_with_fabric_tool]
-conn_id = os.environ['FABRIC_CONNECTION_ID']
+conn_id = os.environ["FABRIC_CONNECTION_ID"]
 
 print(conn_id)
 

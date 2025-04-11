@@ -22,19 +22,14 @@ USAGE:
 import asyncio
 import os
 from azure.ai.assistants.aio import AssistantsClient
-from azure.ai.assistants.models import (
-    CodeInterpreterTool,
-    FilePurpose,
-    MessageAttachment,
-    ListSortOrder
-) 
+from azure.ai.assistants.models import CodeInterpreterTool, FilePurpose, MessageAttachment, ListSortOrder
 from azure.identity.aio import DefaultAzureCredential
 
 
 async def main():
     async with DefaultAzureCredential() as creds:
         async with AssistantsClient.from_connection_string(
-            credential=creds, conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+            credential=creds, conn_str=os.environ["PROJECT_ENDPOINT"]
         ) as assistants_client:
             # Upload a file and wait for it to be processed
             file = await assistants_client.upload_file_and_poll(

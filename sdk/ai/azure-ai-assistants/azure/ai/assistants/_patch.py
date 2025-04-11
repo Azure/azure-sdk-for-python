@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -11,8 +12,6 @@ import logging
 import os
 import sys
 import time
-import uuid
-from os import PathLike
 from pathlib import Path
 from typing import (
     IO,
@@ -22,20 +21,18 @@ from typing import (
     Iterator,
     List,
     Optional,
-    Self,
-    Tuple,
     Union,
     cast,
     overload,
 )
 
+from azure.core.credentials import TokenCredential, AzureKeyCredential
 from azure.core.tracing.decorator import distributed_trace
 
 from . import models as _models
 from ._vendor import FileType
 from .models._enums import FilePurpose, RunStatus
 from ._client import AssistantsClient as AssistantsClientGenerated
-from azure.core.credentials import TokenCredential
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -44,8 +41,6 @@ else:
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from openai import AzureOpenAI
-
     from . import _types
 
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
@@ -54,10 +49,10 @@ _Unset: Any = object()
 logger = logging.getLogger(__name__)
 
 
-class AssistantsClient(AssistantsClientGenerated):
+class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-accepts-api-version-keyword
 
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
+    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
+        super().__init__(endpoint, credential, **kwargs)
         self._toolset: Dict[str, _models.ToolSet] = {}
 
     # pylint: disable=arguments-differ
@@ -184,7 +179,9 @@ class AssistantsClient(AssistantsClientGenerated):
         """
 
     @overload
-    def create_assistant(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Assistant:
+    def create_assistant(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Assistant:
         """Creates a new assistant.
 
         :param body: Required.
@@ -198,7 +195,9 @@ class AssistantsClient(AssistantsClientGenerated):
         """
 
     @overload
-    def create_assistant(self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any) -> _models.Assistant:
+    def create_assistant(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Assistant:
         """Creates a new assistant.
 
         :param body: Required.
@@ -1492,7 +1491,11 @@ class AssistantsClient(AssistantsClientGenerated):
 
         if not event_handler:
             event_handler = cast(_models.BaseAssistantEventHandlerT, _models.AssistantEventHandler())
-        return _models.AssistantRunStream(response_iterator, self._handle_submit_tool_outputs, event_handler)
+        return _models.AssistantRunStream(
+            response_iterator=response_iterator,
+            submit_tool_outputs=self._handle_submit_tool_outputs,
+            event_handler=event_handler,
+        )
 
     # pylint: disable=arguments-differ
     @overload
@@ -1728,7 +1731,9 @@ class AssistantsClient(AssistantsClientGenerated):
 
         event_handler.initialize(response_iterator, self._handle_submit_tool_outputs)
 
-    def _handle_submit_tool_outputs(self, run: _models.ThreadRun, event_handler: _models.BaseAssistantEventHandler) -> None:
+    def _handle_submit_tool_outputs(
+        self, run: _models.ThreadRun, event_handler: _models.BaseAssistantEventHandler
+    ) -> None:
         if isinstance(run.required_action, _models.SubmitToolOutputsAction):
             tool_calls = run.required_action.submit_tool_outputs.tool_calls
             if not tool_calls:
@@ -1770,7 +1775,7 @@ class AssistantsClient(AssistantsClientGenerated):
         :rtype: ~azure.ai.projects.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
+    
     # pylint: disable=arguments-differ
     @overload
     def upload_file(  # pylint: disable=arguments-differ
@@ -1804,7 +1809,7 @@ class AssistantsClient(AssistantsClientGenerated):
     @distributed_trace
     def upload_file(
         self,
-        body: Optional[Union[_models.UploadFileRequest, JSON]] = None,
+        body: Union[_models.UploadFileRequest, JSON] = _Unset,
         *,
         file: Optional[FileType] = None,
         file_path: Optional[str] = None,
@@ -1832,18 +1837,14 @@ class AssistantsClient(AssistantsClientGenerated):
         :raises IOError: If there are issues with reading the file.
         :raises: HttpResponseError for HTTP errors.
         """
-        if body is not None:
+        if body is not _Unset:
             return super().upload_file(body=body, **kwargs)
 
         if isinstance(purpose, FilePurpose):
             purpose = purpose.value
 
         if file is not None and purpose is not None:
-            file_body = _models.UploadFileRequest(
-                file=file,
-                purpose=purpose,
-                filename=filename
-            )
+            file_body = _models.UploadFileRequest(file=file, purpose=purpose, filename=filename)
             return super().upload_file(body=file_body, **kwargs)
 
         if file_path is not None and purpose is not None:
@@ -1857,11 +1858,7 @@ class AssistantsClient(AssistantsClientGenerated):
                 # Determine filename and create correct FileType
                 base_filename = filename or os.path.basename(file_path)
                 file_content: FileType = (base_filename, content)
-                file_body = _models.UploadFileRequest(
-                    file=file_content,
-                    purpose=purpose,
-                    filename=filename
-                )
+                file_body = _models.UploadFileRequest(file=file_content, purpose=purpose, filename=filename)
 
                 return super().upload_file(body=file_body, **kwargs)
             except IOError as e:
@@ -2315,7 +2312,8 @@ class AssistantsClient(AssistantsClientGenerated):
         return cast(Iterator[bytes], response)
 
     @distributed_trace
-    def save_file(self, file_id: str, file_name: str, target_dir: Optional[Union[str, Path]] = None) -> None:
+    def save_file(  # pylint: disable=client-method-missing-kwargs
+            self, file_id: str, file_name: str, target_dir: Optional[Union[str, Path]] = None) -> None:
         """
         Synchronously saves file content retrieved using a file identifier to the specified local directory.
 
@@ -2521,74 +2519,9 @@ class AssistantsClient(AssistantsClientGenerated):
 
         return vector_store_file
 
-    @classmethod
-    def from_connection_string(cls, conn_str: str, credential: "TokenCredential", **kwargs) -> Self:
-        """
-        Create an asynchronous AIProjectClient from a connection string.
-
-        :param str conn_str: The connection string, copied from your AI Foundry project.
-        :param TokenCredential credential: Credential used to authenticate requests to the service.
-        :return: An AssistantsClient instance.
-        :rtype: AssistantsClient
-        """
-        if not conn_str:
-            raise ValueError("Connection string is required")
-        parts = conn_str.split(";")
-        if len(parts) != 4:
-            raise ValueError("Invalid connection string format")
-        endpoint = "https://" + parts[0]
-        subscription_id = parts[1]
-        resource_group_name = parts[2]
-        project_name = parts[3]
-        return cls(
-            endpoint,
-            subscription_id,
-            resource_group_name,
-            project_name,
-            credential,
-            **kwargs,
-        )
-
-    def upload_file_to_azure_blob(self, file_path: Union[Path, str, PathLike]) -> Tuple[str, str]:
-        """Upload a file to the Azure AI Foundry project.
-           This method required *azure-ai-ml* to be installed.
-
-        :param file_path: The path to the file to upload.
-        :type file_path: Union[str, Path, PathLike]
-        :return: The tuple, containing asset id and asset URI of uploaded file.
-        :rtype: Tuple[str, str]
-        """
-        try:
-            from azure.ai.ml import MLClient  # type: ignore
-            from azure.ai.ml.constants import AssetTypes  # type: ignore
-            from azure.ai.ml.entities import Data  # type: ignore
-        except ImportError as e:
-            raise ImportError(
-                "azure-ai-ml must be installed to use this function. Please install it using `pip install azure-ai-ml`"
-            ) from e
-
-        data = Data(
-            path=str(file_path),
-            type=AssetTypes.URI_FILE,
-            name=str(uuid.uuid4()),  # generating random name
-            is_anonymous=True,
-            version="1",
-        )
-        # We have to wrap async method get_token of
-
-        ml_client = MLClient(
-            self._config.credential,
-            self._config.subscription_id,
-            self._config.resource_group_name,
-            self._config.project_name,
-        )
-
-        data_asset = ml_client.data.create_or_update(data)
-
-        return data_asset.id, data_asset.path
-
     @distributed_trace
-    def delete_assistant(self, assistant_id: str, **kwargs: Any) -> _models.AssistantDeletionStatus:
+    def delete_assistant(  # pylint: disable=delete-operation-wrong-return-type
+            self, assistant_id: str, **kwargs: Any) -> _models.AssistantDeletionStatus:
         """Deletes an assistant.
 
         :param assistant_id: Identifier of the assistant. Required.
@@ -2601,16 +2534,8 @@ class AssistantsClient(AssistantsClientGenerated):
             del self._toolset[assistant_id]
         return super().delete_assistant(assistant_id, **kwargs)
 
-    @property
-    def scope(self) -> Dict[str, str]:
-        return {
-            "subscription_id": self._config.subscription_id,
-            "resource_group_name": self._config.resource_group_name,
-            "project_name": self._config.project_name,
-        }
 
-
-__all__: List[str] = ['AssistantsClient']  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = ["AssistantsClient"]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():

@@ -31,9 +31,9 @@ from azure.ai.assistants import AssistantsClient
 from azure.ai.assistants.models import AzureFunctionStorageQueue, AzureFunctionTool, MessageRole
 from azure.identity import DefaultAzureCredential
 
-assistants_client = AssistantsClient.from_connection_string(
-    credential=DefaultAzureCredential(exclude_managed_identity_credential=True, exclude_environment_credential=True),
-    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
+assistants_client = AssistantsClient(
+    endpoint=os.environ["PROJECT_ENDPOINT"],
+    credential=DefaultAzureCredential(),
 )
 
 with assistants_client:

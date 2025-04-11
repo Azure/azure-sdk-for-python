@@ -60,9 +60,6 @@ class TestAssistantsMock:
         """Return the fake project client"""
         client = AssistantsClient(
             endpoint="www.bcac95dd-a1eb-11ef-978f-8c1645fec84b.com",
-            subscription_id="00000000-0000-0000-0000-000000000000",
-            resource_group_name="non-existing-rg",
-            project_name="non-existing-project",
             credential=AsyncMock(),
         )
         client.submit_tool_outputs_to_run = AsyncMock()
@@ -214,7 +211,9 @@ class TestAssistantsMock:
         else:
             submit_tool_mock.assert_not_called()
 
-    def _assert_toolset_dict(self, assistants_client: AssistantsClient, assistant_id: str, toolset: Optional[AsyncToolSet]):
+    def _assert_toolset_dict(
+        self, assistants_client: AssistantsClient, assistant_id: str, toolset: Optional[AsyncToolSet]
+    ):
         """Check that the tool set dictionary state is as expected."""
         if toolset is None:
             assert assistant_id not in assistants_client._toolset

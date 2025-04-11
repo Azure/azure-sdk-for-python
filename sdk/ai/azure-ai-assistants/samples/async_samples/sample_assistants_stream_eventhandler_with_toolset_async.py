@@ -61,8 +61,9 @@ class MyEventHandler(AsyncAssistantEventHandler):
 
 async def main() -> None:
     async with DefaultAzureCredential() as creds:
-        async with AssistantsClient.from_connection_string(
-            credential=creds, conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+        async with AssistantsClient(
+            endpoint=os.environ["PROJECT_ENDPOINT"],
+            credential=creds,
         ) as assistants_client:
 
             # Initialize toolset with user functions

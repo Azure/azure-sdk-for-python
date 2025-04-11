@@ -81,7 +81,7 @@ if LOGGING_ENABLED:
 assistantClientPreparer = functools.partial(
     EnvironmentVariableLoader,
     "azure_ai.assistants",
-    azure_ai_assistants_assistants_tests_project_connection_string="region.api.azureml.ms;00000000-0000-0000-0000-000000000000;rg-resour-cegr-oupfoo1;abcd-abcdabcdabcda-abcdefghijklm",
+    azure_ai_assistants_assistants_tests_project_endpoint="https://aiservices-id.services.ai.azure.com/api/projects/project-name",
     azure_ai_assistants_assistants_tests_data_path="azureml://subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-resour-cegr-oupfoo1/workspaces/abcd-abcdabcdabcda-abcdefghijklm/datastores/workspaceblobstore/paths/LocalUpload/000000000000/product_info_1.md",
     azure_ai_assistants_assistants_tests_storage_queue="https://foobar.queue.core.windows.net",
 )
@@ -123,13 +123,13 @@ class TestAssistantClientAsync(AzureRecordedTestCase):
     # helper function: create client using environment variables
     def create_client(self, **kwargs):
         # fetch environment variables
-        connection_string = kwargs.pop("azure_ai.assistants_assistants_tests_project_connection_string")
+        endpoint = kwargs.pop("azure_ai_assistants_assistants_tests_project_endpoint")
         credential = self.get_credential(AssistantsClient, is_async=True)
 
         # create and return client
         client = AssistantsClient.from_connection_string(
+            endpoint=endpoint,
             credential=credential,
-            conn_str=connection_string,
         )
 
         return client
@@ -216,7 +216,10 @@ class TestAssistantClientAsync(AzureRecordedTestCase):
 
             # create assistant with tools
             assistant = await client.assistants.create_assistant(
-                model="gpt-4o", name="my-assistant", instructions="You are helpful assistant", tools=functions.definitions
+                model="gpt-4o",
+                name="my-assistant",
+                instructions="You are helpful assistant",
+                tools=functions.definitions,
             )
             assert assistant.id
             print("Created assistant, assistant ID", assistant.id)
@@ -1550,7 +1553,9 @@ class TestAssistantClientAsync(AzureRecordedTestCase):
                     print("Tool outputs:", tool_outputs)
                     if tool_outputs:
                         body = {"tool_outputs": tool_outputs}
-                        await client.assistants.submit_tool_outputs_to_run(thread_id=thread.id, run_id=run.id, body=body)
+                        await client.assistants.submit_tool_outputs_to_run(
+                            thread_id=thread.id, run_id=run.id, body=body
+                        )
 
                 print("Current run status:", run.status)
 
@@ -2236,7 +2241,7 @@ class TestAssistantClientAsync(AzureRecordedTestCase):
         else:
             ds = [
                 VectorStoreDataSource(
-                    asset_identifier=kwargs["azure_ai.assistants_assistants_tests_data_path"],
+                    asset_identifier=kwargs["azure_ai_assistants_assistants_tests_data_path"],
                     asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
                 )
             ]
@@ -2284,7 +2289,7 @@ class TestAssistantClientAsync(AzureRecordedTestCase):
             ds = None
         else:
             ds = VectorStoreDataSource(
-                asset_identifier=kwargs["azure_ai.assistants_assistants_tests_data_path"],
+                asset_identifier=kwargs["azure_ai_assistants_assistants_tests_data_path"],
                 asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
             )
         vector_store = await ai_client.assistants.create_vector_store_and_poll(file_ids=[], name="sample_vector_store")
@@ -2336,7 +2341,7 @@ class TestAssistantClientAsync(AzureRecordedTestCase):
             file_ids = None
             ds = [
                 VectorStoreDataSource(
-                    asset_identifier=kwargs["azure_ai.assistants_assistants_tests_data_path"],
+                    asset_identifier=kwargs["azure_ai_assistants_assistants_tests_data_path"],
                     asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
                 )
             ]
@@ -2371,7 +2376,9 @@ class TestAssistantClientAsync(AzureRecordedTestCase):
 
         if streaming:
             thread_run = None
-            async with await ai_client.assistants.create_stream(thread_id=thread.id, assistant_id=assistant.id) as stream:
+            async with await ai_client.assistants.create_stream(
+                thread_id=thread.id, assistant_id=assistant.id
+            ) as stream:
                 async for _, event_data, _ in stream:
                     if isinstance(event_data, ThreadRun):
                         thread_run = event_data
@@ -2404,7 +2411,7 @@ class TestAssistantClientAsync(AzureRecordedTestCase):
     async def test_message_attachement_azure(self, **kwargs):
         """Test message attachment with azure ID."""
         ds = VectorStoreDataSource(
-            asset_identifier=kwargs["azure_ai.assistants_assistants_tests_data_path"],
+            asset_identifier=kwargs["azure_ai_assistants_assistants_tests_data_path"],
             asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
         )
         await self._do_test_message_attachment(data_sources=[ds], **kwargs)
@@ -2472,7 +2479,7 @@ class TestAssistantClientAsync(AzureRecordedTestCase):
 
         ds = [
             VectorStoreDataSource(
-                asset_identifier=kwargs["azure_ai.assistants_assistants_tests_data_path"],
+                asset_identifier=kwargs["azure_ai_assistants_assistants_tests_data_path"],
                 asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
             )
         ]
@@ -2515,7 +2522,7 @@ class TestAssistantClientAsync(AzureRecordedTestCase):
     async def test_create_assistant_with_interpreter_azure(self, **kwargs):
         """Test Create assistant with code interpreter with azure asset ids."""
         ds = VectorStoreDataSource(
-            asset_identifier=kwargs["azure_ai.assistants_assistants_tests_data_path"],
+            asset_identifier=kwargs["azure_ai_assistants_assistants_tests_data_path"],
             asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
         )
         await self._do_test_create_assistant_with_interpreter(data_sources=[ds], **kwargs)
@@ -2580,7 +2587,7 @@ class TestAssistantClientAsync(AzureRecordedTestCase):
     async def test_create_thread_with_interpreter_azure(self, **kwargs):
         """Test Create assistant with code interpreter with azure asset ids."""
         ds = VectorStoreDataSource(
-            asset_identifier=kwargs["azure_ai.assistants_assistants_tests_data_path"],
+            asset_identifier=kwargs["azure_ai_assistants_assistants_tests_data_path"],
             asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
         )
         await self._do_test_create_thread_with_interpreter(data_sources=[ds], **kwargs)
@@ -2649,7 +2656,7 @@ class TestAssistantClientAsync(AzureRecordedTestCase):
 
         ds = [
             VectorStoreDataSource(
-                asset_identifier=kwargs["azure_ai.assistants_assistants_tests_data_path"],
+                asset_identifier=kwargs["azure_ai_assistants_assistants_tests_data_path"],
                 asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
             )
         ]
@@ -2692,7 +2699,7 @@ class TestAssistantClientAsync(AzureRecordedTestCase):
     async def test_create_attachment_in_thread_azure(self, **kwargs):
         """Create thread with message attachment inline with azure asset IDs."""
         ds = VectorStoreDataSource(
-            asset_identifier=kwargs["azure_ai.assistants_assistants_tests_data_path"],
+            asset_identifier=kwargs["azure_ai_assistants_assistants_tests_data_path"],
             asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
         )
         await self._do_test_create_attachment_in_thread_azure(data_sources=[ds], **kwargs)
@@ -2751,7 +2758,7 @@ class TestAssistantClientAsync(AzureRecordedTestCase):
         # Note: This test was recorded in westus region as for now
         # 2025-02-05 it is not supported in test region (East US 2)
         # create client
-        storage_queue = kwargs["azure_ai.assistants_assistants_tests_storage_queue"]
+        storage_queue = kwargs["azure_ai_assistants_assistants_tests_storage_queue"]
         async with self.create_client(**kwargs) as client:
             azure_function_tool = AzureFunctionTool(
                 name="foo",
@@ -2877,7 +2884,7 @@ class TestAssistantClientAsync(AzureRecordedTestCase):
         async with self.create_client(**kwargs) as ai_client:
             ds = [
                 VectorStoreDataSource(
-                    asset_identifier=kwargs["azure_ai.assistants_assistants_tests_data_path"],
+                    asset_identifier=kwargs["azure_ai_assistants_assistants_tests_data_path"],
                     asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
                 )
             ]

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 import io
 import json
 import unittest
@@ -101,9 +102,6 @@ def assert_same_http_requests(test_func):
         """Return the fake project client"""
         client = AssistantsClient(
             endpoint="www.bcac95dd-a1eb-11ef-978f-8c1645fec84b.com",
-            subscription_id="00000000-0000-0000-0000-000000000000",
-            resource_group_name="non-existing-rg",
-            project_name="non-existing-project",
             credential=MagicMock(),
         )
         client.submit_tool_outputs_to_run = MagicMock()

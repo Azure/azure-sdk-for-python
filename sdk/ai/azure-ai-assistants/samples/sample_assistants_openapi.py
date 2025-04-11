@@ -31,9 +31,9 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.assistants.models import OpenApiTool, OpenApiAnonymousAuthDetails
 
 
-assistants_client = AssistantsClient.from_connection_string(
+assistants_client = AssistantsClient(
+    endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
-    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
 # [START create_assistant_with_openapi]
 

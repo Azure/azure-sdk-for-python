@@ -33,18 +33,17 @@ from azure.identity.aio import DefaultAzureCredential
 async def main():
 
     async with DefaultAzureCredential() as credential:
-        async with AssistantsClient.from_connection_string(
-            credential=credential, conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+        async with AssistantsClient(
+            endpoint=os.environ["PROJECT_ENDPOINT"],
+            credential=creds,
         ) as assistants_client:
             # We will upload the local file to Azure and will use it for vector store creation.
-            _, asset_uri = assistants_client.upload_file_to_azure_blob("../product_info_1.md")
+            asset_uri = os.environ["AZURE_BLOB_URI"]
             ds = VectorStoreDataSource(
                 asset_identifier=asset_uri,
                 asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
             )
-            vector_store = await assistants_client.create_vector_store_and_poll(
-                file_ids=[], name="sample_vector_store"
-            )
+            vector_store = await assistants_client.create_vector_store_and_poll(file_ids=[], name="sample_vector_store")
             print(f"Created vector store, vector store ID: {vector_store.id}")
 
             # Add the file to the vector store or you can supply file ids in the vector store creation

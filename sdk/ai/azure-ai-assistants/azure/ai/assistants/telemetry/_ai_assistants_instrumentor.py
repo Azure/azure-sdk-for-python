@@ -80,7 +80,7 @@ _trace_assistants_content: bool = False
 class TraceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):  # pylint: disable=C4747
     """An enumeration class to represent different types of traces."""
 
-    AssistantS = "Assistants"
+    ASSISTANTS = "Assistants"
 
 
 class AIAssistantsInstrumentor:
@@ -532,7 +532,9 @@ class _AIAssistantsInstrumentorPreview:
     ) -> "Optional[AbstractSpan]":
         run_span = event_handler.span if isinstance(event_handler, _AssistantEventHandlerTraceWrapper) else None
         if run_span is None:
-            run_span = event_handler.span if isinstance(event_handler, _AsyncAssistantEventHandlerTraceWrapper) else None
+            run_span = (
+                event_handler.span if isinstance(event_handler, _AsyncAssistantEventHandlerTraceWrapper) else None
+            )
 
         if run_span:
             recorded = self._add_tool_message_events(run_span, tool_outputs)
@@ -1347,7 +1349,7 @@ class _AIAssistantsInstrumentorPreview:
         function: Callable,
         *,
         _args_to_ignore: Optional[List[str]] = None,
-        _trace_type=TraceType.AssistantS,
+        _trace_type=TraceType.ASSISTANTS,
         _name: Optional[str] = None,
     ) -> Callable:
         """
@@ -1358,7 +1360,7 @@ class _AIAssistantsInstrumentorPreview:
         :param args_to_ignore: A list of argument names to be ignored in the trace.
                             Defaults to None.
         :type: args_to_ignore: [List[str]], optional
-        :param trace_type: The type of the trace. Defaults to TraceType.AssistantS.
+        :param trace_type: The type of the trace. Defaults to TraceType.ASSISTANTS.
         :type trace_type: TraceType, optional
         :param name: The name of the trace, will set to func name if not provided.
         :type name: str, optional
@@ -1415,7 +1417,7 @@ class _AIAssistantsInstrumentorPreview:
         function: Callable,
         *,
         _args_to_ignore: Optional[List[str]] = None,
-        _trace_type=TraceType.AssistantS,
+        _trace_type=TraceType.ASSISTANTS,
         _name: Optional[str] = None,
     ) -> Callable:
         """
@@ -1426,7 +1428,7 @@ class _AIAssistantsInstrumentorPreview:
         :param args_to_ignore: A list of argument names to be ignored in the trace.
                             Defaults to None.
         :type: args_to_ignore: [List[str]], optional
-        :param trace_type: The type of the trace. Defaults to TraceType.AssistantS.
+        :param trace_type: The type of the trace. Defaults to TraceType.ASSISTANTS.
         :type trace_type: TraceType, optional
         :param name: The name of the trace, will set to func name if not provided.
         :type name: str, optional
@@ -1490,102 +1492,108 @@ class _AIAssistantsInstrumentorPreview:
 
     def _assistants_apis(self):
         sync_apis = (
-            ("azure.ai.assistants", "AssistantsClient", "create_assistant", TraceType.AssistantS, "assistant_create"),
-            ("azure.ai.assistants", "AssistantsClient", "create_thread", TraceType.AssistantS, "thread_create"),
-            ("azure.ai.assistants", "AssistantsClient", "create_message", TraceType.AssistantS, "message_create"),
-            ("azure.ai.assistants", "AssistantsClient", "create_run", TraceType.AssistantS, "create_run"),
+            ("azure.ai.assistants", "AssistantsClient", "create_assistant", TraceType.ASSISTANTS, "assistant_create"),
+            ("azure.ai.assistants", "AssistantsClient", "create_thread", TraceType.ASSISTANTS, "thread_create"),
+            ("azure.ai.assistants", "AssistantsClient", "create_message", TraceType.ASSISTANTS, "message_create"),
+            ("azure.ai.assistants", "AssistantsClient", "create_run", TraceType.ASSISTANTS, "create_run"),
             (
                 "azure.ai.assistants",
                 "AssistantsClient",
                 "create_and_process_run",
-                TraceType.AssistantS,
+                TraceType.ASSISTANTS,
                 "create_and_process_run",
             ),
             (
                 "azure.ai.assistants",
                 "AssistantsClient",
                 "submit_tool_outputs_to_run",
-                TraceType.AssistantS,
+                TraceType.ASSISTANTS,
                 "submit_tool_outputs_to_run",
             ),
             (
                 "azure.ai.assistants",
                 "AssistantsClient",
                 "submit_tool_outputs_to_stream",
-                TraceType.AssistantS,
+                TraceType.ASSISTANTS,
                 "submit_tool_outputs_to_stream",
             ),
             (
                 "azure.ai.assistants",
                 "AssistantsClient",
                 "_handle_submit_tool_outputs",
-                TraceType.AssistantS,
+                TraceType.ASSISTANTS,
                 "_handle_submit_tool_outputs",
             ),
-            ("azure.ai.assistants", "AssistantsClient", "create_stream", TraceType.AssistantS, "create_stream"),
-            ("azure.ai.assistants", "AssistantsClient", "list_messages", TraceType.AssistantS, "list_messages"),
-            ("azure.ai.assistants.models", "AssistantRunStream", "__exit__", TraceType.AssistantS, "__exit__"),
+            ("azure.ai.assistants", "AssistantsClient", "create_stream", TraceType.ASSISTANTS, "create_stream"),
+            ("azure.ai.assistants", "AssistantsClient", "list_messages", TraceType.ASSISTANTS, "list_messages"),
+            ("azure.ai.assistants.models", "AssistantRunStream", "__exit__", TraceType.ASSISTANTS, "__exit__"),
         )
         async_apis = (
-            ("azure.ai.assistants.aio", "AssistantsClient", "create_assistant", TraceType.AssistantS, "assistant_create"),
+            (
+                "azure.ai.assistants.aio",
+                "AssistantsClient",
+                "create_assistant",
+                TraceType.ASSISTANTS,
+                "assistant_create",
+            ),
             (
                 "azure.ai.assistants.aio",
                 "AssistantsClient",
                 "create_thread",
-                TraceType.AssistantS,
+                TraceType.ASSISTANTS,
                 "assistants_thread_create",
             ),
             (
                 "azure.ai.assistants.aio",
                 "AssistantsClient",
                 "create_message",
-                TraceType.AssistantS,
+                TraceType.ASSISTANTS,
                 "assistants_thread_message",
             ),
-            ("azure.ai.assistants.aio", "AssistantsClient", "create_run", TraceType.AssistantS, "create_run"),
+            ("azure.ai.assistants.aio", "AssistantsClient", "create_run", TraceType.ASSISTANTS, "create_run"),
             (
                 "azure.ai.assistants.aio",
                 "AssistantsClient",
                 "create_and_process_run",
-                TraceType.AssistantS,
+                TraceType.ASSISTANTS,
                 "create_and_process_run",
             ),
             (
                 "azure.ai.assistants.aio",
                 "AssistantsClient",
                 "submit_tool_outputs_to_run",
-                TraceType.AssistantS,
+                TraceType.ASSISTANTS,
                 "submit_tool_outputs_to_run",
             ),
             (
                 "azure.ai.assistants.aio",
                 "AssistantsClient",
                 "submit_tool_outputs_to_stream",
-                TraceType.AssistantS,
+                TraceType.ASSISTANTS,
                 "submit_tool_outputs_to_stream",
             ),
             (
                 "azure.ai.assistants.aio",
                 "AssistantsClient",
                 "_handle_submit_tool_outputs",
-                TraceType.AssistantS,
+                TraceType.ASSISTANTS,
                 "_handle_submit_tool_outputs",
             ),
             (
                 "azure.ai.assistants.aio",
                 "AssistantsClient",
                 "create_stream",
-                TraceType.AssistantS,
+                TraceType.ASSISTANTS,
                 "create_stream",
             ),
             (
                 "azure.ai.assistants.aio",
                 "AssistantsClient",
                 "list_messages",
-                TraceType.AssistantS,
+                TraceType.ASSISTANTS,
                 "list_messages",
             ),
-            ("azure.ai.assistants.models", "AsyncAssistantRunStream", "__aexit__", TraceType.AssistantS, "__aexit__"),
+            ("azure.ai.assistants.models", "AsyncAssistantRunStream", "__aexit__", TraceType.ASSISTANTS, "__aexit__"),
         )
         return sync_apis, async_apis
 

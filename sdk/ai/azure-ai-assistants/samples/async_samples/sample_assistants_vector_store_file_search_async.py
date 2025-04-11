@@ -27,8 +27,9 @@ from azure.identity.aio import DefaultAzureCredential
 
 async def main():
     async with DefaultAzureCredential() as credential:
-        async with AssistantsClient.from_connection_string(
-            credential=credential, conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+        async with AssistantsClient(
+            endpoint=os.environ["PROJECT_ENDPOINT"],
+            credential=credential,
         ) as assistants_client:
             # Upload a file and wait for it to be processed
             file = await assistants_client.upload_file_and_poll(

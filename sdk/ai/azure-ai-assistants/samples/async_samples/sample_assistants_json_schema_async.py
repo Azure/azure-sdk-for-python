@@ -48,9 +48,9 @@ class Planet(BaseModel):
 
 async def main():
     async with DefaultAzureCredential() as creds:
-        async with AssistantsClient.from_connection_string(
+        async with AssistantsClient(
+            endpoint=os.environ["PROJECT_ENDPOINT"],
             credential=creds,
-            conn_str=os.environ["PROJECT_CONNECTION_STRING"],
         ) as assistants_client:
 
             # [START create_assistant]

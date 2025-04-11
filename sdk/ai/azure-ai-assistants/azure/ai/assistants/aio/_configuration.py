@@ -23,18 +23,9 @@ class AssistantsClientConfiguration:  # pylint: disable=too-many-instance-attrib
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param endpoint: The Azure AI Foundry project endpoint, in the form
-     ``https://<azure-region>.api.azureml.ms`` or
-     ``https://<private-link-guid>.<azure-region>.api.azureml.ms``, where <azure-region> is the
-     Azure region where the project is deployed (e.g. westus) and <private-link-guid> is the GUID of
-     the Enterprise private link. Required.
+    :param endpoint: Project endpoint in the form of:
+     https://<aiservices-id>.services.ai.azure.com/api/projects/<project-name>. Required.
     :type endpoint: str
-    :param subscription_id: The Azure subscription ID. Required.
-    :type subscription_id: str
-    :param resource_group_name: The name of the Azure Resource Group. Required.
-    :type resource_group_name: str
-    :param project_name: The Azure AI Foundry project name. Required.
-    :type project_name: str
     :param credential: Credential used to authenticate requests to the service. Is either a key
      credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
@@ -45,34 +36,19 @@ class AssistantsClientConfiguration:  # pylint: disable=too-many-instance-attrib
     """
 
     def __init__(
-        self,
-        endpoint: str,
-        subscription_id: str,
-        resource_group_name: str,
-        project_name: str,
-        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
-        **kwargs: Any,
+        self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
     ) -> None:
         api_version: str = kwargs.pop("api_version", "latest")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
-        if subscription_id is None:
-            raise ValueError("Parameter 'subscription_id' must not be None.")
-        if resource_group_name is None:
-            raise ValueError("Parameter 'resource_group_name' must not be None.")
-        if project_name is None:
-            raise ValueError("Parameter 'project_name' must not be None.")
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
 
         self.endpoint = endpoint
-        self.subscription_id = subscription_id
-        self.resource_group_name = resource_group_name
-        self.project_name = project_name
         self.credential = credential
         self.api_version = api_version
-        self.credential_scopes = kwargs.pop("credential_scopes", ["https://management.azure.com/.default"])
+        self.credential_scopes = kwargs.pop("credential_scopes", ["https://cognitiveservices.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "ai-assistants/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)

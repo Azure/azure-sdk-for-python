@@ -36,9 +36,9 @@ from azure.ai.assistants.models import (
 )
 
 # [START create_assistants_client]
-assistants_client = AssistantsClient.from_connection_string(
+assistants_client = AssistantsClient(
+    endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
-    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
 # [END create_assistants_client]
 

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -281,7 +282,7 @@ def enable_telemetry(destination: Union[TextIO, str, None] = None, **kwargs) -> 
 
     log_exporter = _get_log_exporter(destination)
     _configure_logging(log_exporter)
-    
+
     try:
         from azure.ai.assistants.telemetry import AIAssistantsInstrumentor
 

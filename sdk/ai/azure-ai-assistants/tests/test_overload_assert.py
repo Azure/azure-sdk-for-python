@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 import unittest
 import pytest
 from azure.ai.assistants import AssistantsClient
@@ -9,7 +10,9 @@ class TestDeclarator(unittest.TestCase):
 
     @pytest.mark.asyncio
     @assert_same_http_requests
-    async def test_assert_errors(self, assistant: AssistantsClient, _: AsyncAssistantsOperations, assertion: OverloadAssertion):
+    async def test_assert_errors(
+        self, assistant: AssistantsClient, _: AsyncAssistantsOperations, assertion: OverloadAssertion
+    ):
         # This is a special test case tested verified the decorator assert name field presents in one call but not another
         model = "gpt-4-1106-preview"
         name = "first"

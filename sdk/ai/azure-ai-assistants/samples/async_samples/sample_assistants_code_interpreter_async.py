@@ -22,12 +22,7 @@ USAGE:
 import asyncio
 
 from azure.ai.assistants.aio import AssistantsClient
-from azure.ai.assistants.models import (
-    CodeInterpreterTool,
-    FilePurpose,
-    ListSortOrder,
-    MessageRole
-)
+from azure.ai.assistants.models import CodeInterpreterTool, FilePurpose, ListSortOrder, MessageRole
 from azure.identity.aio import DefaultAzureCredential
 from pathlib import Path
 
@@ -38,9 +33,7 @@ async def main() -> None:
 
     async with DefaultAzureCredential() as creds:
 
-        async with AssistantsClient.from_connection_string(
-            credential=creds, conn_str=os.environ["PROJECT_CONNECTION_STRING"]
-        ) as assistants_client:
+        async with AssistantsClient(endpoint=os.environ["PROJECT_ENDPOINT"], credential=creds) as assistants_client:
             # Upload a file and wait for it to be processed
             file = await assistants_client.upload_file_and_poll(
                 file_path="../nifty_500_quarterly_results.csv", purpose=FilePurpose.ASSISTANTS
@@ -96,9 +89,7 @@ async def main() -> None:
                 print(f"Start Index: {file_path_annotation.start_index}")
                 print(f"End Index: {file_path_annotation.end_index}")
                 file_name = Path(file_path_annotation.text).name
-                await assistants_client.save_file(
-                    file_id=file_path_annotation.file_path.file_id, file_name=file_name
-                )
+                await assistants_client.save_file(file_id=file_path_annotation.file_path.file_id, file_name=file_name)
                 print(f"Saved image file to: {Path.cwd() / file_name}")
 
             await assistants_client.delete_assistant(assistant.id)

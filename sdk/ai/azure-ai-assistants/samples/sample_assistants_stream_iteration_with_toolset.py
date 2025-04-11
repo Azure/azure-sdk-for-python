@@ -35,8 +35,9 @@ from azure.ai.assistants.models import FunctionTool, ToolSet
 from azure.identity import DefaultAzureCredential
 from user_functions import user_functions
 
-assistants_client = AssistantsClient.from_connection_string(
-    credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+assistants_client = AssistantsClient(
+    endpoint=os.environ["PROJECT_ENDPOINT"],
+    credential=DefaultAzureCredential(),
 )
 
 functions = FunctionTool(user_functions)

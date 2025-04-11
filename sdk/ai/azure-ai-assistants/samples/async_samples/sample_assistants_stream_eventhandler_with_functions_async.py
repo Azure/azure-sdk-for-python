@@ -96,8 +96,9 @@ class MyEventHandler(AsyncAssistantEventHandler[str]):
 
 async def main() -> None:
     async with DefaultAzureCredential() as creds:
-        async with AssistantsClient.from_connection_string(
-            credential=creds, conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+        async with AssistantsClient(
+            endpoint=os.environ["PROJECT_ENDPOINT"],
+            credential=creds,
         ) as assistants_client:
 
             # [START create_assistant_with_function_tool]
@@ -123,7 +124,9 @@ async def main() -> None:
             print(f"Created message, message ID {message.id}")
 
             async with await assistants_client.create_stream(
-                thread_id=thread.id, assistant_id=assistant.id, event_handler=MyEventHandler(functions, assistants_client)
+                thread_id=thread.id,
+                assistant_id=assistant.id,
+                event_handler=MyEventHandler(functions, assistants_client),
             ) as stream:
                 await stream.until_done()
 

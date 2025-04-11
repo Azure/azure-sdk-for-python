@@ -36,9 +36,9 @@ from azure.ai.assistants.telemetry import enable_telemetry
 from azure.identity import DefaultAzureCredential
 from opentelemetry import trace
 
-assistants_client = AssistantsClient.from_connection_string(
+assistants_client = AssistantsClient(
+    endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
-    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
 
 # Enable console tracing
@@ -59,9 +59,7 @@ with tracer.start_as_current_span(scenario):
         thread = assistants_client.create_thread()
         print(f"Created thread, thread ID: {thread.id}")
 
-        message = assistants_client.create_message(
-            thread_id=thread.id, role="user", content="Hello, tell me a joke"
-        )
+        message = assistants_client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
         print(f"Created message, message ID: {message.id}")
 
         run = assistants_client.create_run(thread_id=thread.id, assistant_id=assistant.id)

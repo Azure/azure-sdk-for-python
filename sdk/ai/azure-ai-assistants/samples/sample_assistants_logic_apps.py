@@ -37,7 +37,6 @@ USAGE:
 
 
 import os
-import requests
 from typing import Set
 
 from azure.ai.assistants import AssistantsClient
@@ -53,14 +52,14 @@ from user_logic_apps import AzureLogicAppTool, create_send_email_function
 # [START register_logic_app]
 
 # Create the project client
-assistants_client = AssistantsClient.from_connection_string(
+assistants_client = AssistantsClient(
+    endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
-    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
 
 # Extract subscription and resource group from the project scope
-subscription_id = assistants_client.scope["subscription_id"]
-resource_group = assistants_client.scope["resource_group_name"]
+subscription_id = os.environ["SUBSCRIPTION_ID"]
+resource_group = os.environ["resource_group_name"]
 
 # Logic App details
 logic_app_name = "<LOGIC_APP_NAME>"

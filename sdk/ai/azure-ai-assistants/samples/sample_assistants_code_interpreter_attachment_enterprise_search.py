@@ -32,8 +32,9 @@ from azure.ai.assistants.models import (
 )
 from azure.identity import DefaultAzureCredential
 
-assistants_client = AssistantsClient.from_connection_string(
-    credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+assistants_client = AssistantsClient(
+    endpoint=os.environ["PROJECT_ENDPOINT"],
+    credential=DefaultAzureCredential(),
 )
 
 with assistants_client:
@@ -56,7 +57,7 @@ with assistants_client:
 
     # [START upload_file_and_create_message_with_code_interpreter]
     # We will upload the local file to Azure and will use it for vector store creation.
-    _, asset_uri = assistants_client.upload_file_to_azure_blob("./product_info_1.md")
+    asset_uri = os.environ["AZURE_BLOB_URI"]
     ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
 
     # Create a message with the attachment

@@ -33,8 +33,8 @@ from azure.identity.aio import DefaultAzureCredential
 
 async def main():
     async with DefaultAzureCredential() as credential:
-        async with AssistantsClient.from_connection_string(
-            credential=credential, conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+        async with AssistantsClient(
+            endpoint=os.environ["PROJECT_ENDPOINT"], credential=credential
         ) as assistants_client:
 
             code_interpreter = CodeInterpreterTool()
@@ -52,7 +52,7 @@ async def main():
             print(f"Created thread, thread ID: {thread.id}")
 
             # We will upload the local file to Azure and will use it for vector store creation.
-            _, asset_uri = assistants_client.upload_file_to_azure_blob("../product_info_1.md")
+            asset_uri = os.environ["AZURE_BLOB_URI"]
             ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
 
             # Create a message with the attachment

@@ -31,9 +31,7 @@ from user_async_functions import user_async_functions
 
 async def main() -> None:
     async with DefaultAzureCredential() as creds:
-        async with AssistantsClient.from_connection_string(
-            credential=creds, conn_str=os.environ["PROJECT_CONNECTION_STRING"]
-        ) as assistants_client:
+        async with AssistantsClient(endpoint=os.environ["PROJECT_ENDPOINT"], credential=creds) as assistants_client:
             # Initialize assistant functions
             functions = AsyncFunctionTool(functions=user_async_functions)
 

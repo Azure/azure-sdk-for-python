@@ -31,8 +31,9 @@ import os
 async def main() -> None:
 
     async with DefaultAzureCredential() as creds:
-        assistant_client = AssistantsClient.from_connection_string(
-            credential=creds, conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+        assistant_client = AssistantsClient(
+            endpoint=os.environ["PROJECT_ENDPOINT"],
+            credential=creds,
         )
 
         async with assistant_client:

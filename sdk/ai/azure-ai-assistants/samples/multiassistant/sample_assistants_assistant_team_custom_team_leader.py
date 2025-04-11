@@ -28,9 +28,9 @@ from assistant_team import AssistantTeam, AssistantTask
 from assistant_trace_configurator import AssistantTraceConfigurator
 from azure.ai.assistants.models import FunctionTool, ToolSet
 
-assistants_client = AssistantsClient.from_connection_string(
+assistants_client = AssistantsClient(
+    endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
-    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
 
 model_deployment_name = os.getenv("MODEL_DEPLOYMENT_NAME")

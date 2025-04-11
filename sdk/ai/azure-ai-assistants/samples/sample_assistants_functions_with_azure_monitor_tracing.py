@@ -34,12 +34,13 @@ from azure.ai.assistants.models import FunctionTool, RequiredFunctionToolCall, S
 from opentelemetry import trace
 from azure.monitor.opentelemetry import configure_azure_monitor
 
-assistants_client = AssistantsClient.from_connection_string(
-    credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+assistants_client = AssistantsClient(
+    endpoint=os.environ["PROJECT_ENDPOINT"],
+    credential=DefaultAzureCredential(),
 )
 
 # Enable Azure Monitor tracing
-application_insights_connection_string = os.environ['AI_APPINSIGHTS_CONNECTION_STRING']
+application_insights_connection_string = os.environ["AI_APPINSIGHTS_CONNECTION_STRING"]
 configure_azure_monitor(connection_string=application_insights_connection_string)
 
 # enable additional instrumentations if needed

@@ -36,16 +36,20 @@ class _SyncCredentialWrapper(TokenCredential):
         enable_cae: bool = False,
         **kwargs: Any,
     ) -> "AccessToken":
-        return concurrent.futures.ThreadPoolExecutor().submit(
-            asyncio.run,
-            self._async_credential.get_token(
-                *scopes,
-                claims=claims,
-                tenant_id=tenant_id,
-                enable_cae=enable_cae,
-                **kwargs,
-            ),
-        ).result()
+        return (
+            concurrent.futures.ThreadPoolExecutor()
+            .submit(
+                asyncio.run,
+                self._async_credential.get_token(
+                    *scopes,
+                    claims=claims,
+                    tenant_id=tenant_id,
+                    enable_cae=enable_cae,
+                    **kwargs,
+                ),
+            )
+            .result()
+        )
 
 
 __all__: List[str] = []

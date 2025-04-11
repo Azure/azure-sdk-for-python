@@ -29,9 +29,9 @@ from user_async_functions import user_async_functions
 async def main() -> None:
 
     async with DefaultAzureCredential() as creds:
-        async with AssistantsClient.from_connection_string(
+        async with AssistantsClient(
+            endpoint=os.environ["PROJECT_ENDPOINT"],
             credential=creds,
-            conn_str=os.environ["PROJECT_CONNECTION_STRING"],
         ) as assistants_client:
 
             # Initialize assistant toolset with user functions and code interpreter

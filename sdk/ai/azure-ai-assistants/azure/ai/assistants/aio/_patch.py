@@ -1,8 +1,9 @@
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from openai.types import file_purpose
+
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
@@ -11,12 +12,10 @@ import asyncio
 import io
 import logging
 import os
-import uuid
 import time
 
-from os import PathLike
 from pathlib import Path
-from .. import models as _models
+
 
 from typing import (
     IO,
@@ -27,24 +26,21 @@ from typing import (
     List,
     MutableMapping,
     Optional,
-    Self,
-    Tuple,
     Union,
     cast,
     overload,
 )
 from azure.core.tracing.decorator_async import distributed_trace_async
+
+from .. import models as _models
 from .._vendor import FileType
 from ..models._enums import FilePurpose, RunStatus
-
 from ._client import AssistantsClient as AssistantsClientGenerated
-from ._operations._patch import _SyncCredentialWrapper
 
 if TYPE_CHECKING:
+    from .. import _types
     # pylint: disable=unused-import,ungrouped-imports
-    from openai import AsyncAzureOpenAI
-
-    from azure.core.credentials import AccessToken
+    from azure.core.credentials import AccessToken, AzureKeyCredential
     from azure.core.credentials_async import AsyncTokenCredential
 
 logger = logging.getLogger(__name__)
@@ -53,13 +49,12 @@ JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 _Unset: Any = object()
 
 
-class AssistantsClient(AssistantsClientGenerated):
-    
-    
-    
-    
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
+class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-accepts-api-version-keyword
+
+    def __init__(
+        self, endpoint: str, credential: Union["AzureKeyCredential", "AsyncTokenCredential"], **kwargs: Any
+    ) -> None:
+        super().__init__(endpoint, credential, **kwargs)
         self._toolset: Dict[str, _models.AsyncToolSet] = {}
 
     # pylint: disable=arguments-differ
@@ -139,7 +134,7 @@ class AssistantsClient(AssistantsClientGenerated):
         toolset: Optional[_models.AsyncToolSet] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
-        response_format: Optional["_types.assistantsApiResponseFormatOption"] = None,
+        response_format: Optional["_types.AssistantsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any,
     ) -> _models.Assistant:
@@ -186,7 +181,9 @@ class AssistantsClient(AssistantsClientGenerated):
         """
 
     @overload
-    async def create_assistant(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Assistant:
+    async def create_assistant(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Assistant:
         """Creates a new assistant.
 
         :param body: Required.
@@ -229,7 +226,7 @@ class AssistantsClient(AssistantsClientGenerated):
         toolset: Optional[_models.AsyncToolSet] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
-        response_format: Optional["_types.assistantsApiResponseFormatOption"] = None,
+        response_format: Optional["_types.AssistantsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -259,7 +256,7 @@ class AssistantsClient(AssistantsClientGenerated):
         :keyword top_p: Nucleus sampling parameter.
         :paramtype top_p: Optional[float]
         :keyword response_format: Response format for tool calls.
-        :paramtype response_format: Optional["_types.assistantsApiResponseFormatOption"]
+        :paramtype response_format: Optional["_types.AssistantsApiResponseFormatOption"]
         :keyword metadata: Key/value pairs for storing additional information.
         :paramtype metadata: Optional[Dict[str, str]]
         :keyword content_type: Content type of the body.
@@ -310,7 +307,7 @@ class AssistantsClient(AssistantsClientGenerated):
         tool_resources: Optional[_models.ToolResources] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
-        response_format: Optional["_types.assistantsApiResponseFormatOption"] = None,
+        response_format: Optional["_types.AssistantsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any,
     ) -> _models.Assistant:
@@ -378,7 +375,7 @@ class AssistantsClient(AssistantsClientGenerated):
         toolset: Optional[_models.AsyncToolSet] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
-        response_format: Optional["_types.assistantsApiResponseFormatOption"] = None,
+        response_format: Optional["_types.AssistantsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any,
     ) -> _models.Assistant:
@@ -478,7 +475,7 @@ class AssistantsClient(AssistantsClientGenerated):
         toolset: Optional[_models.AsyncToolSet] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
-        response_format: Optional["_types.assistantsApiResponseFormatOption"] = None,
+        response_format: Optional["_types.AssistantsApiResponseFormatOption"] = None,
         content_type: str = "application/json",
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any,
@@ -604,8 +601,8 @@ class AssistantsClient(AssistantsClientGenerated):
         max_prompt_tokens: Optional[int] = None,
         max_completion_tokens: Optional[int] = None,
         truncation_strategy: Optional[_models.TruncationObject] = None,
-        tool_choice: Optional["_types.assistantsApiToolChoiceOption"] = None,
-        response_format: Optional["_types.assistantsApiResponseFormatOption"] = None,
+        tool_choice: Optional["_types.AssistantsApiToolChoiceOption"] = None,
+        response_format: Optional["_types.AssistantsApiResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any,
@@ -768,8 +765,8 @@ class AssistantsClient(AssistantsClientGenerated):
         max_prompt_tokens: Optional[int] = None,
         max_completion_tokens: Optional[int] = None,
         truncation_strategy: Optional[_models.TruncationObject] = None,
-        tool_choice: Optional["_types.assistantsApiToolChoiceOption"] = None,
-        response_format: Optional["_types.assistantsApiResponseFormatOption"] = None,
+        tool_choice: Optional["_types.AssistantsApiToolChoiceOption"] = None,
+        response_format: Optional["_types.AssistantsApiResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any,
@@ -909,8 +906,8 @@ class AssistantsClient(AssistantsClientGenerated):
         max_prompt_tokens: Optional[int] = None,
         max_completion_tokens: Optional[int] = None,
         truncation_strategy: Optional[_models.TruncationObject] = None,
-        tool_choice: Optional["_types.assistantsApiToolChoiceOption"] = None,
-        response_format: Optional["_types.assistantsApiResponseFormatOption"] = None,
+        tool_choice: Optional["_types.AssistantsApiToolChoiceOption"] = None,
+        response_format: Optional["_types.AssistantsApiResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
         sleep_interval: int = 1,
@@ -1073,8 +1070,8 @@ class AssistantsClient(AssistantsClientGenerated):
         max_prompt_tokens: Optional[int] = None,
         max_completion_tokens: Optional[int] = None,
         truncation_strategy: Optional[_models.TruncationObject] = None,
-        tool_choice: Optional["_types.assistantsApiToolChoiceOption"] = None,
-        response_format: Optional["_types.assistantsApiResponseFormatOption"] = None,
+        tool_choice: Optional["_types.AssistantsApiToolChoiceOption"] = None,
+        response_format: Optional["_types.AssistantsApiResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
         event_handler: None = None,
@@ -1182,8 +1179,8 @@ class AssistantsClient(AssistantsClientGenerated):
         max_prompt_tokens: Optional[int] = None,
         max_completion_tokens: Optional[int] = None,
         truncation_strategy: Optional[_models.TruncationObject] = None,
-        tool_choice: Optional["_types.assistantsApiToolChoiceOption"] = None,
-        response_format: Optional["_types.assistantsApiResponseFormatOption"] = None,
+        tool_choice: Optional["_types.AssistantsApiToolChoiceOption"] = None,
+        response_format: Optional["_types.AssistantsApiResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
         event_handler: _models.BaseAsyncAssistantEventHandlerT,
@@ -1360,8 +1357,8 @@ class AssistantsClient(AssistantsClientGenerated):
         max_prompt_tokens: Optional[int] = None,
         max_completion_tokens: Optional[int] = None,
         truncation_strategy: Optional[_models.TruncationObject] = None,
-        tool_choice: Optional["_types.assistantsApiToolChoiceOption"] = None,
-        response_format: Optional["_types.assistantsApiResponseFormatOption"] = None,
+        tool_choice: Optional["_types.AssistantsApiToolChoiceOption"] = None,
+        response_format: Optional["_types.AssistantsApiResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
         event_handler: Optional[_models.BaseAsyncAssistantEventHandlerT] = None,
@@ -1491,9 +1488,13 @@ class AssistantsClient(AssistantsClientGenerated):
         response_iterator: AsyncIterator[bytes] = cast(AsyncIterator[bytes], await response)
 
         if not event_handler:
-            event_handler = cast(_models.BaseAssistantEventHandlerT, _models.AsyncAssistantEventHandler())
+            event_handler = cast(_models.BaseAsyncAssistantEventHandlerT, _models.AsyncAssistantEventHandler())
 
-        return _models.AsyncAssistantRunStream(response_iterator, self._handle_submit_tool_outputs, event_handler)
+        return _models.AsyncAssistantRunStream(
+            response_iterator=response_iterator,
+            submit_tool_outputs=self._handle_submit_tool_outputs,
+            event_handler=event_handler,
+        )
 
     # pylint: disable=arguments-differ
     @overload
@@ -1796,7 +1797,7 @@ class AssistantsClient(AssistantsClientGenerated):
     @distributed_trace_async
     async def upload_file(
         self,
-        body: Optional[Union[_models.UploadFileRequest, JSON]] = None,
+        body: Union[_models.UploadFileRequest, JSON] = _Unset,
         *,
         file: Optional[FileType] = None,
         file_path: Optional[str] = None,
@@ -1824,18 +1825,14 @@ class AssistantsClient(AssistantsClientGenerated):
         :raises IOError: If there are issues with reading the file.
         :raises: HttpResponseError for HTTP errors.
         """
-        if body is not None:
+        if body is not _Unset:
             return await super().upload_file(body=body, **kwargs)
 
         if isinstance(purpose, FilePurpose):
             purpose = purpose.value
 
         if file is not None and purpose is not None:
-            file_body = _models.UploadFileRequest(
-                file=file,
-                purpose=purpose,
-                filename=filename
-            )
+            file_body = _models.UploadFileRequest(file=file, purpose=purpose, filename=filename)
             return await super().upload_file(body=file_body, **kwargs)
 
         if file_path is not None and purpose is not None:
@@ -1849,11 +1846,7 @@ class AssistantsClient(AssistantsClientGenerated):
                 # Determine filename and create correct FileType
                 base_filename = filename or os.path.basename(file_path)
                 file_content: FileType = (base_filename, content)
-                file_body = _models.UploadFileRequest(
-                    file=file_content,
-                    purpose=purpose,
-                    filename=filename
-                )
+                file_body = _models.UploadFileRequest(file=file_content, purpose=purpose, filename=filename)
 
                 return await super().upload_file(body=file_body, **kwargs)
             except IOError as e:
@@ -2465,7 +2458,8 @@ class AssistantsClient(AssistantsClientGenerated):
         return cast(AsyncIterator[bytes], response)
 
     @distributed_trace_async
-    async def save_file(self, file_id: str, file_name: str, target_dir: Optional[Union[str, Path]] = None) -> None:
+    async def save_file(  # pylint: disable=client-method-missing-kwargs
+        self, file_id: str, file_name: str, target_dir: Optional[Union[str, Path]] = None) -> None:
         """
         Asynchronously saves file content retrieved using a file identifier to the specified local directory.
 
@@ -2522,72 +2516,6 @@ class AssistantsClient(AssistantsClientGenerated):
         except (ValueError, RuntimeError, TypeError, IOError) as e:
             logger.error("An error occurred in save_file: %s", e)
             raise
-        
-    @classmethod
-    def from_connection_string(cls, conn_str: str, credential: "AsyncTokenCredential", **kwargs) -> Self:
-        """
-        Create an asynchronous AIProjectClient from a connection string.
-
-        :param str conn_str: The connection string, copied from your AI Foundry project.
-        :param AsyncTokenCredential credential: Credential used to authenticate requests to the service.
-        :return: An AssistantsClient instance.
-        :rtype: AssistantsClient
-        """
-        if not conn_str:
-            raise ValueError("Connection string is required")
-        parts = conn_str.split(";")
-        if len(parts) != 4:
-            raise ValueError("Invalid connection string format")
-        endpoint = "https://" + parts[0]
-        subscription_id = parts[1]
-        resource_group_name = parts[2]
-        project_name = parts[3]
-        return cls(
-            endpoint,
-            subscription_id,
-            resource_group_name,
-            project_name,
-            credential,
-            **kwargs,
-        )
-
-    def upload_file_to_azure_blob(self, file_path: Union[Path, str, PathLike]) -> Tuple[str, str]:
-        """Upload a file to the Azure AI Foundry project.
-           This method required *azure-ai-ml* to be installed.
-
-        :param file_path: The path to the file to upload.
-        :type file_path: Union[str, Path, PathLike]
-        :return: The tuple, containing asset id and asset URI of uploaded file.
-        :rtype: Tuple[str, str]
-        """
-        try:
-            from azure.ai.ml import MLClient  # type: ignore
-            from azure.ai.ml.constants import AssetTypes  # type: ignore
-            from azure.ai.ml.entities import Data  # type: ignore
-        except ImportError as e:
-            raise ImportError(
-                "azure-ai-ml must be installed to use this function. Please install it using `pip install azure-ai-ml`"
-            ) from e
-
-        data = Data(
-            path=str(file_path),
-            type=AssetTypes.URI_FILE,
-            name=str(uuid.uuid4()),  # generating random name
-            is_anonymous=True,
-            version="1",
-        )
-        # We have to wrap async method get_token of
-
-        ml_client = MLClient(
-            _SyncCredentialWrapper(self._config.credential),
-            self._config.subscription_id,
-            self._config.resource_group_name,
-            self._config.project_name,
-        )
-
-        data_asset = ml_client.data.create_or_update(data)
-
-        return data_asset.id, data_asset.path
 
     @distributed_trace_async
     async def delete_assistant(self, assistant_id: str, **kwargs: Any) -> _models.AssistantDeletionStatus:
@@ -2603,16 +2531,8 @@ class AssistantsClient(AssistantsClientGenerated):
             del self._toolset[assistant_id]
         return await super().delete_assistant(assistant_id, **kwargs)
 
-    @property
-    def scope(self) -> Dict[str, str]:
-        return {
-            "subscription_id": self._config.subscription_id,
-            "resource_group_name": self._config.resource_group_name,
-            "project_name": self._config.project_name,
-        }
 
-
-__all__: List[str] = ['AssistantsClient']  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = ["AssistantsClient"]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():

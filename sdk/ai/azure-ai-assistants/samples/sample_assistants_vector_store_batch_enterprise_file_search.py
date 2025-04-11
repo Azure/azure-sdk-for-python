@@ -25,14 +25,15 @@ from azure.ai.assistants import AssistantsClient
 from azure.ai.assistants.models import FileSearchTool, VectorStoreDataSource, VectorStoreDataSourceAssetType
 from azure.identity import DefaultAzureCredential
 
-assistants_client = AssistantsClient.from_connection_string(
-    credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+assistants_client = AssistantsClient(
+    endpoint=os.environ["PROJECT_ENDPOINT"],
+    credential=DefaultAzureCredential(),
 )
 
 with assistants_client:
 
     # We will upload the local file to Azure and will use it for vector store creation.
-    _, asset_uri = assistants_client.upload_file_to_azure_blob("./product_info_1.md")
+    asset_uri = os.environ["AZURE_BLOB_URI"]
 
     # [START attach_files_to_store]
     # Create a vector store with no file and wait for it to be processed

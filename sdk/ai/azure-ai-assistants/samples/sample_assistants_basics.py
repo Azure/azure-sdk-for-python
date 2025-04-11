@@ -25,15 +25,12 @@ USAGE:
 import os, time
 from azure.ai.assistants import AssistantsClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.assistants.models import (
-    ListSortOrder,
-    MessageTextContent
-)
+from azure.ai.assistants.models import ListSortOrder, MessageTextContent
 
 # [START create_project_client]
-assistants_client = AssistantsClient.from_connection_string(
+assistants_client = AssistantsClient(
+    endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
-    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
 # [END create_project_client]
 
