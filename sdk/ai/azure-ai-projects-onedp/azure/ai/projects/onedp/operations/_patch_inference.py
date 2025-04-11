@@ -51,6 +51,12 @@ class InferenceOperations:
         https://<host-name>/<some-path>
         to:
         https://<host-name>/api/models
+
+        :param input_url: The input endpoint URL used to construct AIProjectClient.
+        :type input_url: str
+
+        :return: The endpoint URL requred to construct inference clients from the azure-ai-inference package.
+        :rtype: str
         """
         parsed = urlparse(input_url)
         if parsed.scheme != "https" or not parsed.netloc:
@@ -83,14 +89,14 @@ class InferenceOperations:
                 "Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'"
             ) from e
 
-        endpoint = self._get_inference_url(self._outer_instance._config.endpoint)
+        endpoint = self._get_inference_url(self._outer_instance._config.endpoint) # pylint: disable=protected-access
         # Older Inference SDK versions use ml.azure.com as the scope. Make sure to set the correct value here. This
         # is only relevent of course if EntraID auth is used.
         credential_scopes = ["https://cognitiveservices.azure.com/.default"]
 
         client = ChatCompletionsClient(
             endpoint=endpoint,
-            credential=self._outer_instance._config.credential,
+            credential=self._outer_instance._config.credential, # pylint: disable=protected-access
             credential_scopes=credential_scopes,
             user_agent=kwargs.pop("user_agent", self._user_agent),
             **kwargs,
@@ -123,14 +129,14 @@ class InferenceOperations:
                 "Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'"
             ) from e
 
-        endpoint = self._get_inference_url(self._outer_instance._config.endpoint)
+        endpoint = self._get_inference_url(self._outer_instance._config.endpoint) # pylint: disable=protected-access
         # Older Inference SDK versions use ml.azure.com as the scope. Make sure to set the correct value here. This
         # is only relevent of course if EntraID auth is used.
         credential_scopes = ["https://cognitiveservices.azure.com/.default"]
 
         client = EmbeddingsClient(
             endpoint=endpoint,
-            credential=self._outer_instance._config.credential,
+            credential=self._outer_instance._config.credential, # pylint: disable=protected-access
             credential_scopes=credential_scopes,
             user_agent=kwargs.pop("user_agent", self._user_agent),
             **kwargs,
@@ -163,14 +169,14 @@ class InferenceOperations:
                 "Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'"
             ) from e
 
-        endpoint = self._get_inference_url(self._outer_instance._config.endpoint)
+        endpoint = self._get_inference_url(self._outer_instance._config.endpoint) # pylint: disable=protected-access
         # Older Inference SDK versions use ml.azure.com as the scope. Make sure to set the correct value here. This
         # is only relevent of course if EntraID auth is used.
         credential_scopes = ["https://cognitiveservices.azure.com/.default"]
 
         client = ImageEmbeddingsClient(
             endpoint=endpoint,
-            credential=self._outer_instance._config.credential,
+            credential=self._outer_instance._config.credential, # pylint: disable=protected-access
             credential_scopes=credential_scopes,
             user_agent=kwargs.pop("user_agent", self._user_agent),
             **kwargs,
@@ -229,8 +235,8 @@ class InferenceOperations:
             )
             try:
                 connection = next(iter(connections))
-            except StopAsyncIteration:
-                raise ResourceNotFoundError("No default Azure OpenAI connection found.")
+            except StopAsyncIteration as exc:
+                raise ResourceNotFoundError("No default Azure OpenAI connection found.") from exc
             connection_name = connection.name
 
             # TODO: if there isn't a default openai connection, we would have to by convention
@@ -270,7 +276,7 @@ class InferenceOperations:
             client = AzureOpenAI(
                 # See https://learn.microsoft.com/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider # pylint: disable=line-too-long
                 azure_ad_token_provider=get_bearer_token_provider(
-                    self._outer_instance._config.credential, "https://cognitiveservices.azure.com/.default"
+                    self._outer_instance._config.credential, "https://cognitiveservices.azure.com/.default" # pylint: disable=protected-access
                 ),
                 azure_endpoint=azure_endpoint,
                 api_version=api_version,

@@ -61,8 +61,8 @@ class AssistantsOperations:
             ) from e
 
         client = AssistantClient(
-            endpoint=self._outer_instance._config.endpoint,
-            credential=self._outer_instance._config.credential,
+            endpoint=self._outer_instance._config.endpoint, # pylint: disable=protected-access
+            credential=self._outer_instance._config.credential, # pylint: disable=protected-access
             user_agent=kwargs.pop("user_agent", self._user_agent),
             **kwargs,
         )

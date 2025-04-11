@@ -8,8 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import logging
-import inspect
-from typing import Optional, Any, Tuple
+from typing import Any, Tuple
 from pathlib import Path
 from azure.storage.blob import ContainerClient
 from azure.core.tracing.decorator import distributed_trace
@@ -103,12 +102,12 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         This method uses the `ContainerClient.upload_blob` method from the azure-storage-blob package
         to upload the file. Any keyword arguments provided will be passed to the `upload_blob` method.
 
-        :param name: The name of the dataset. Required.
-        :type name: str
-        :param version: The version identifier for the dataset. Required.
-        :type version: str
-        :param file: The file name (including optional path) to be uploaded. Required.
-        :type file: str
+        :keyword name: The name of the dataset. Required.
+        :paramtype name: str
+        :keyword version: The version identifier for the dataset. Required.
+        :paramtype version: str
+        :keyword file: The file name (including optional path) to be uploaded. Required.
+        :paramtype file: str
         :return: The created dataset version.
         :rtype: ~azure.ai.projects.models.DatasetVersion
         :raises ~azure.core.exceptions.HttpResponseError: If an error occurs during the HTTP request.
@@ -160,12 +159,12 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         This method uses the `ContainerClient.upload_blob` method from the azure-storage-blob package
         to upload each file. Any keyword arguments provided will be passed to the `upload_blob` method.
 
-        :param name: The name of the dataset. Required.
-        :type name: str
-        :param version: The version identifier for the dataset. Required.
-        :type version: str
-        :param folder: The folder name (including optional path) to be uploaded. Required.
-        :type file: str
+        :keyword name: The name of the dataset. Required.
+        :paramtype name: str
+        :keyword version: The version identifier for the dataset. Required.
+        :paramtype version: str
+        :keyword folder: The folder name (including optional path) to be uploaded. Required.
+        :paramtype file: str
         :return: The created dataset version.
         :rtype: ~azure.ai.projects.models.DatasetVersion
         :raises ~azure.core.exceptions.HttpResponseError: If an error occurs during the HTTP request.
