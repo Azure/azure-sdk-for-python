@@ -312,7 +312,7 @@ class TestExcludedLocations:
             if multiple_write_locations:
                 _verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
             else:
-                _verify_endpoint(client, [L1])
+                _verify_endpoint(MOCK_HANDLER.messages, client, [L1])
 
     @pytest.mark.parametrize('test_data', replace_item_test_data())
     async def test_upsert_item(self, test_data):
@@ -334,7 +334,7 @@ class TestExcludedLocations:
             if multiple_write_locations:
                 _verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
             else:
-                _verify_endpoint(client, [L1])
+                _verify_endpoint(MOCK_HANDLER.messages, client, [L1])
 
     @pytest.mark.parametrize('test_data', replace_item_test_data())
     async def test_create_item(self, test_data):
@@ -353,7 +353,7 @@ class TestExcludedLocations:
             if multiple_write_locations:
                 _verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
             else:
-                _verify_endpoint(client, [L1])
+                _verify_endpoint(MOCK_HANDLER.messages, client, [L1])
 
     @pytest.mark.parametrize('test_data', patch_item_test_data())
     async def test_patch_item(self, test_data):
@@ -381,7 +381,7 @@ class TestExcludedLocations:
             if multiple_write_locations:
                 _verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
             else:
-                _verify_endpoint(client, [L1])
+                _verify_endpoint(MOCK_HANDLER.messages, client, [L1])
 
     @pytest.mark.parametrize('test_data', patch_item_test_data())
     async def test_execute_item_batch(self, test_data):
@@ -410,7 +410,7 @@ class TestExcludedLocations:
             if multiple_write_locations:
                 _verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
             else:
-                _verify_endpoint(client, [L1])
+                _verify_endpoint(MOCK_HANDLER.messages, client, [L1])
 
     @pytest.mark.parametrize('test_data', patch_item_test_data())
     async def test_delete_item(self, test_data):
@@ -437,7 +437,7 @@ class TestExcludedLocations:
             if multiple_write_locations:
                 _verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
             else:
-                _verify_endpoint(client, [L1])
+                _verify_endpoint(MOCK_HANDLER.messages, client, [L1])
 
 if __name__ == "__main__":
     unittest.main()
