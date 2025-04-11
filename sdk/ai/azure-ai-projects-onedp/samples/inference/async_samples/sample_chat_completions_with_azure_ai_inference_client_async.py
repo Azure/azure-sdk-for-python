@@ -7,7 +7,7 @@
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to get an authenticated 
     async ChatCompletionsClient from the azure.ai.inference package, and perform one
-    chat completions peration. For more information on the azure.ai.inference package see
+    chat completions operation. For more information on the azure.ai.inference package see
     https://pypi.org/project/azure-ai-inference/.
 
 USAGE:

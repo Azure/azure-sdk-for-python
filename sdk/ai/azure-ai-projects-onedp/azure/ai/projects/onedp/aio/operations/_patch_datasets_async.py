@@ -8,8 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import logging
-import inspect
-from typing import Optional, Any, Tuple
+from typing import Any, Tuple
 from pathlib import Path
 from azure.storage.blob.aio import ContainerClient
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -27,31 +26,29 @@ logger = logging.getLogger(__name__)
 
 
 class DatasetsOperations(DatasetsOperationsGenerated):
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.onedp.aio.AIProjectClient`'s
+        :attr:`datasets` attribute.
+    """
 
     # Internal helper method to create a new dataset and return a ContainerClient from azure-storage-blob package,
     # to the dataset's blob storage.
     async def _create_dataset_and_get_its_container_client(
         self,
         name: str,
-        input_version: Optional[str] = None,
+        input_version: str,
     ) -> Tuple[ContainerClient, str]:
 
-        if input_version:
-            pending_upload_response: PendingUploadResponse = await self.start_pending_upload_version(
-                name=name,
-                version=input_version,
-                body=PendingUploadRequest(pending_upload_type=PendingUploadType.TEMPORARY_BLOB_REFERENCE),
-            )
-            output_version: str = input_version
-        else:
-            pending_upload_response: PendingUploadResponse = await self.start_pending_upload(
-                name=name,
-                body=PendingUploadRequest(pending_upload_type=PendingUploadType.TEMPORARY_BLOB_REFERENCE),
-            )
-            if pending_upload_response.dataset_version:
-                output_version: str = pending_upload_response.dataset_version
-            else:
-                raise ValueError("Dataset version is not present in the response")
+        pending_upload_response: PendingUploadResponse = await self.start_pending_upload_version(
+            name=name,
+            version=input_version,
+            body=PendingUploadRequest(pending_upload_type=PendingUploadType.TEMPORARY_BLOB_REFERENCE),
+        )
+        output_version: str = input_version
 
         if not pending_upload_response.blob_reference_for_consumption:
             raise ValueError("Blob reference for consumption is not present")
@@ -63,35 +60,28 @@ class DatasetsOperations(DatasetsOperationsGenerated):
             raise ValueError("Blob URI is not present or empty")
 
         if logger.getEffectiveLevel() == logging.DEBUG:
-            method = inspect.currentframe().f_code.co_name
             logger.debug(
-                "[%s] pending_upload_response.pending_upload_id = %s.",
-                method,
+                "[_create_dataset_and_get_its_container_client] pending_upload_response.pending_upload_id = %s.",
                 pending_upload_response.pending_upload_id,
             )
             logger.debug(
-                "[%s] pending_upload_response.pending_upload_type = %s.",
-                method,
+                "[_create_dataset_and_get_its_container_client] pending_upload_response.pending_upload_type = %s.",
                 pending_upload_response.pending_upload_type,
             )  # == PendingUploadType.TEMPORARY_BLOB_REFERENCE
             logger.debug(
-                "[%s] pending_upload_response.blob_reference_for_consumption.blob_uri = %s.",
-                method,
+                "[_create_dataset_and_get_its_container_client] pending_upload_response.blob_reference_for_consumption.blob_uri = %s.",
                 pending_upload_response.blob_reference_for_consumption.blob_uri,
             )  # Hosted on behalf of (HOBO) not visible to the user. If the form of: "https://<account>.blob.core.windows.net/<container>?<sasToken>"
             logger.debug(
-                "[%s] pending_upload_response.blob_reference_for_consumption.storage_account_arm_id = %s.",
-                method,
+                "[_create_dataset_and_get_its_container_client] pending_upload_response.blob_reference_for_consumption.storage_account_arm_id = %s.",
                 pending_upload_response.blob_reference_for_consumption.storage_account_arm_id,
             )  # /subscriptions/<>/resourceGroups/<>/Microsoft.Storage/accounts/<>
             logger.debug(
-                "[%s] pending_upload_response.blob_reference_for_consumption.credential.sas_uri = %s.",
-                method,
+                "[_create_dataset_and_get_its_container_client] pending_upload_response.blob_reference_for_consumption.credential.sas_uri = %s.",
                 pending_upload_response.blob_reference_for_consumption.credential.sas_uri,
             )
             logger.debug(
-                "[%s] pending_upload_response.blob_reference_for_consumption.credential.type = %s.",
-                method,
+                "[_create_dataset_and_get_its_container_client] pending_upload_response.blob_reference_for_consumption.credential.type = %s.",
                 pending_upload_response.blob_reference_for_consumption.credential.type,
             )  # == CredentialType.SAS
 
@@ -113,12 +103,12 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         This method uses the `ContainerClient.upload_blob` method from the azure-storage-blob package
         to upload the file. Any keyword arguments provided will be passed to the `upload_blob` method.
 
-        :param name: The name of the dataset. Required.
-        :type name: str
-        :param version: The version identifier for the dataset. Required.
-        :type version: str
-        :param file: The file name (including optional path) to be uploaded. Required.
-        :type file: str
+        :keyword name: The name of the dataset. Required.
+        :paramtype name: str
+        :keyword version: The version identifier for the dataset. Required.
+        :paramtype version: str
+        :keyword file: The file name (including optional path) to be uploaded. Required.
+        :paramtype file: str
         :return: The created dataset version.
         :rtype: ~azure.ai.projects.models.DatasetVersion
         :raises ~azure.core.exceptions.HttpResponseError: If an error occurs during the HTTP request.
@@ -140,8 +130,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
 
                 blob_name = path_file.name  # Extract the file name from the path.
                 logger.debug(
-                    "[%s] Start uploading file `%s` as blob `%s`.",
-                    inspect.currentframe().f_code.co_name,
+                    "[upload_file_and_create] Start uploading file `%s` as blob `%s`.",
                     file,
                     blob_name,
                 )
@@ -149,7 +138,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
                 # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.containerclient?view=azure-python#azure-storage-blob-containerclient-upload-blob
                 with await container_client.upload_blob(name=blob_name, data=data, **kwargs) as blob_client:
 
-                    logger.debug("[%s] Done uploading", inspect.currentframe().f_code.co_name)
+                    logger.debug("[upload_file_and_create] Done uploading")
 
                     dataset_version = await self.create_version(
                         name=name,
@@ -171,12 +160,12 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         This method uses the `ContainerClient.upload_blob` method from the azure-storage-blob package
         to upload each file. Any keyword arguments provided will be passed to the `upload_blob` method.
 
-        :param name: The name of the dataset. Required.
-        :type name: str
-        :param version: The version identifier for the dataset. Required.
-        :type version: str
-        :param folder: The folder name (including optional path) to be uploaded. Required.
-        :type file: str
+        :keyword name: The name of the dataset. Required.
+        :paramtype name: str
+        :keyword version: The version identifier for the dataset. Required.
+        :paramtype version: str
+        :keyword folder: The folder name (including optional path) to be uploaded. Required.
+        :paramtype file: str
         :return: The created dataset version.
         :rtype: ~azure.ai.projects.models.DatasetVersion
         :raises ~azure.core.exceptions.HttpResponseError: If an error occurs during the HTTP request.
@@ -199,8 +188,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
                 if file_path.is_file():  # Check if the path is a file. Skip folders.
                     blob_name = file_path.relative_to(path_folder)  # Blob name relative to the folder
                     logger.debug(
-                        "[%s] Start uploading file `%s` as blob `%s`.",
-                        inspect.currentframe().f_code.co_name,
+                        "[upload_folder_and_create] Start uploading file `%s` as blob `%s`.",
                         file_path,
                         blob_name,
                     )
@@ -209,7 +197,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
                     ) as data:  # Open the file for reading in binary mode # TODO: async version?
                         # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.containerclient?view=azure-python#azure-storage-blob-containerclient-upload-blob
                         container_client.upload_blob(name=str(blob_name), data=data, **kwargs)
-                    logger.debug("[%s] Done uploaded.", inspect.currentframe().f_code.co_name)
+                    logger.debug("[upload_folder_and_create] Done uploaded.")
                     files_uploaded = True
 
             if not files_uploaded:

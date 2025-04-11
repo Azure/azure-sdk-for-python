@@ -31,7 +31,7 @@ To report an issue with the client library, or request additional features, plea
   - [Prerequisite](#prerequisite)
   - [Install the package](#install-the-package)
 - [Key concepts](#key-concepts)
-  - [Create and authenticate the client](#create-and-authenticate-the-client)
+  - [Create and authenticate the client with Entra ID](#create-and-authenticate-the-client-with-entra-id)
 - [Examples](#examples)
   - [Enumerate connections](#enumerate-connections)
     - [Get properties of all connections](#get-properties-of-all-connections)
@@ -47,10 +47,6 @@ To report an issue with the client library, or request additional features, plea
       - [Data to be evaluated](#data-to-be-evaluated)
         - [[Optional] Azure OpenAI Model](#optional-azure-openai-model)
         - [Example Remote Evaluation](#example-remote-evaluation)
-  - [Tracing](#tracing)
-    - [Installation](#installation)
-    - [How to enable tracing](#how-to-enable-tracing)
-    - [How to trace your own functions](#how-to-trace-your-own-functions)
 - [Troubleshooting](#troubleshooting)
   - [Exceptions](#exceptions)
   - [Logging](#logging)
@@ -341,78 +337,6 @@ print("----------------------------------------------------------------")
 ```
 
 NOTE: For running evaluators locally refer to [Evaluate with the Azure AI Evaluation SDK][evaluators].
-
-### Tracing
-
-You can add an Application Insights Azure resource to your Azure AI Foundry project. See the Tracing tab in your AI Foundry project. If one was enabled, you can get the Application Insights connection string, configure your Agents, and observe the full execution path through Azure Monitor. Typically, you might want to start tracing before you create an Agent.
-
-#### Installation
-
-Make sure to install OpenTelemetry and the Azure SDK tracing plugin via
-
-```bash
-pip install opentelemetry
-pip install azure-ai-projects azure-identity opentelemetry-sdk azure-core-tracing-opentelemetry
-```
-
-You will also need an exporter to send telemetry to your observability backend. You can print traces to the console or use a local viewer such as [Aspire Dashboard](https://learn.microsoft.com/dotnet/aspire/fundamentals/dashboard/standalone?tabs=bash).
-
-To connect to Aspire Dashboard or another OpenTelemetry compatible backend, install OTLP exporter:
-
-```bash
-pip install opentelemetry-exporter-otlp
-```
-
-#### How to enable tracing
-
-Here is a code sample that shows how to enable Azure Monitor tracing:
-
-<!-- SNIPPET:sample_agents_basics_with_azure_monitor_tracing.enable_tracing -->
-
-```python
-from opentelemetry import trace
-from azure.monitor.opentelemetry import configure_azure_monitor
-
-# Enable Azure Monitor tracing
-application_insights_connection_string = project_client.telemetry.get_connection_string()
-if not application_insights_connection_string:
-    print("Application Insights was not enabled for this project.")
-    print("Enable it via the 'Tracing' tab in your AI Foundry project page.")
-    exit()
-configure_azure_monitor(connection_string=application_insights_connection_string)
-
-# enable additional instrumentations
-project_client.telemetry.enable()
-
-scenario = os.path.basename(__file__)
-tracer = trace.get_tracer(__name__)
-
-with tracer.start_as_current_span(scenario):
-    with project_client:
-```
-
-<!-- END SNIPPET -->
-
-In addition, you might find helpful to see the tracing logs in console. You can achieve by the following code:
-
-```python
-project_client.telemetry.enable(destination=sys.stdout)
-```
-
-#### How to trace your own functions
-
-The decorator `trace_function` is provided for tracing your own function calls using OpenTelemetry. By default the function name is used as the name for the span. Alternatively you can provide the name for the span as a parameter to the decorator.
-
-This decorator handles various data types for function parameters and return values, and records them as attributes in the trace span. The supported data types include:
-* Basic data types: str, int, float, bool
-* Collections: list, dict, tuple, set
-    * Special handling for collections:
-      - If a collection (list, dict, tuple, set) contains nested collections, the entire collection is converted to a string before being recorded as an attribute.
-      - Sets and dictionaries are always converted to strings to ensure compatibility with span attributes.
-
-Object types are omitted, and the corresponding parameter is not traced.
-
-The parameters are recorded in attributes `code.function.parameter.<parameter_name>` and the return value is recorder in attribute `code.function.return.value`
 
 ## Troubleshooting
 

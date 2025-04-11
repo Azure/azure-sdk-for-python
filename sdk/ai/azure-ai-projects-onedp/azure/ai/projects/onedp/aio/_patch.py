@@ -8,6 +8,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from typing import List, Optional, Union, Any
 from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import InferenceOperations, AssistantsOperations, TelemetryOperations
 
@@ -15,10 +16,14 @@ from .operations import InferenceOperations, AssistantsOperations, TelemetryOper
 class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-instance-attributes
     """AIProjectClient.
 
-    :ivar service_patterns: ServicePatternsOperations operations
-    :vartype service_patterns: azure.ai.projects.onedp.aio.operations.ServicePatternsOperations
     :ivar connections: ConnectionsOperations operations
     :vartype connections: azure.ai.projects.onedp.aio.operations.ConnectionsOperations
+    :ivar assistants: AssistantsOperations operations
+    :vartype assistants: azure.ai.projects.onedp.aio.operations.AssistantsOperations
+    :ivar inference: InferenceOperations operations
+    :vartype inference: azure.ai.projects.onedp.aio.operations.InferenceOperations
+    :ivar telemetry: TelemetryOperations operations
+    :vartype telemetry: azure.ai.projects.onedp.aio.operations.TelemetryOperations
     :ivar evaluations: EvaluationsOperations operations
     :vartype evaluations: azure.ai.projects.onedp.aio.operations.EvaluationsOperations
     :ivar datasets: DatasetsOperations operations
@@ -27,8 +32,6 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
     :vartype indexes: azure.ai.projects.onedp.aio.operations.IndexesOperations
     :ivar deployments: DeploymentsOperations operations
     :vartype deployments: azure.ai.projects.onedp.aio.operations.DeploymentsOperations
-    :ivar evaluation_results: EvaluationResultsOperations operations
-    :vartype evaluation_results: azure.ai.projects.onedp.aio.operations.EvaluationResultsOperations
     :ivar red_teams: RedTeamsOperations operations
     :vartype red_teams: azure.ai.projects.onedp.aio.operations.RedTeamsOperations
     :param endpoint: Project endpoint in the form of:
@@ -45,7 +48,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
     """
 
     def __init__(
-        self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
+        self, endpoint: str, credential: Union[AzureKeyCredential, AsyncTokenCredential], **kwargs: Any
     ) -> None:
         self._user_agent: Optional[str] = kwargs.get("user_agent", None)
         super().__init__(endpoint=endpoint, credential=credential, **kwargs)

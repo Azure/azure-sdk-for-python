@@ -25,8 +25,16 @@ logger = logging.getLogger(__name__)
 
 
 class InferenceOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    def __init__(self, outer_instance: "AIProjectClient") -> None:
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.onedp.aio.AIProjectClient`'s
+        :attr:`inference` attribute.
+    """
+
+    def __init__(self, outer_instance: "azure.ai.projects.onedp.aio.AIProjectClient") -> None:  # type: ignore[name-defined]
 
         # TODO: Put the user agent initialization code below in a common place used by both sync and async operations.
 
@@ -52,6 +60,12 @@ class InferenceOperations:
         https://<host-name>/<some-path>
         to:
         https://<host-name>/api/models
+
+        :param input_url: The input endpoint URL used to construct AIProjectClient.
+        :type input_url: str
+
+        :return: The endpoint URL required to construct inference clients from the azure-ai-inference package.
+        :rtype: str
         """
         parsed = urlparse(input_url)
         if parsed.scheme != "https" or not parsed.netloc:
@@ -60,7 +74,7 @@ class InferenceOperations:
         return new_url
 
     @distributed_trace
-    def get_chat_completions_client(self, **kwargs) -> "ChatCompletionsClient":
+    def get_chat_completions_client(self, **kwargs) -> "ChatCompletionsClient":  # type: ignore[name-defined]
         """Get an authenticated asynchronous ChatCompletionsClient (from the package azure-ai-inference) to use with
         AI models deployed to your AI Foundry Project. Keyword arguments are passed to the constructor of
         ChatCompletionsClient.
@@ -84,14 +98,14 @@ class InferenceOperations:
                 "Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'"
             ) from e
 
-        endpoint = self._get_inference_url(self._outer_instance._config.endpoint)
+        endpoint = self._get_inference_url(self._outer_instance._config.endpoint)  # pylint: disable=protected-access
         # Older Inference SDK versions use ml.azure.com as the scope. Make sure to set the correct value here. This
         # is only relevent of course if EntraID auth is used.
         credential_scopes = ["https://cognitiveservices.azure.com/.default"]
 
         client = ChatCompletionsClient(
             endpoint=endpoint,
-            credential=self._outer_instance._config.credential,
+            credential=self._outer_instance._config.credential,  # pylint: disable=protected-access
             credential_scopes=credential_scopes,
             user_agent=kwargs.pop("user_agent", self._user_agent),
             **kwargs,
@@ -100,7 +114,7 @@ class InferenceOperations:
         return client
 
     @distributed_trace
-    def get_embeddings_client(self, **kwargs) -> "EmbeddingsClient":
+    def get_embeddings_client(self, **kwargs) -> "EmbeddingsClient":  # type: ignore[name-defined]
         """Get an authenticated asynchronous EmbeddingsClient (from the package azure-ai-inference) to use with
         AI models deployed to your AI Foundry Project. Keyword arguments are passed to the constructor of
         ChatCompletionsClient.
@@ -124,14 +138,14 @@ class InferenceOperations:
                 "Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'"
             ) from e
 
-        endpoint = self._get_inference_url(self._outer_instance._config.endpoint)
+        endpoint = self._get_inference_url(self._outer_instance._config.endpoint)  # pylint: disable=protected-access
         # Older Inference SDK versions use ml.azure.com as the scope. Make sure to set the correct value here. This
         # is only relevent of course if EntraID auth is used.
         credential_scopes = ["https://cognitiveservices.azure.com/.default"]
 
         client = EmbeddingsClient(
             endpoint=endpoint,
-            credential=self._outer_instance._config.credential,
+            credential=self._outer_instance._config.credential,  # pylint: disable=protected-access
             credential_scopes=credential_scopes,
             user_agent=kwargs.pop("user_agent", self._user_agent),
             **kwargs,
@@ -140,7 +154,7 @@ class InferenceOperations:
         return client
 
     @distributed_trace
-    def get_image_embeddings_client(self, **kwargs) -> "ImageEmbeddingsClient":
+    def get_image_embeddings_client(self, **kwargs) -> "ImageEmbeddingsClient":  # type: ignore[name-defined]
         """Get an authenticated asynchronous ImageEmbeddingsClient (from the package azure-ai-inference) to use with
         AI models deployed to your AI Foundry Project. Keyword arguments are passed to the constructor of
         ChatCompletionsClient.
@@ -164,14 +178,14 @@ class InferenceOperations:
                 "Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'"
             ) from e
 
-        endpoint = self._get_inference_url(self._outer_instance._config.endpoint)
+        endpoint = self._get_inference_url(self._outer_instance._config.endpoint)  # pylint: disable=protected-access
         # Older Inference SDK versions use ml.azure.com as the scope. Make sure to set the correct value here. This
         # is only relevent of course if EntraID auth is used.
         credential_scopes = ["https://cognitiveservices.azure.com/.default"]
 
         client = ImageEmbeddingsClient(
             endpoint=endpoint,
-            credential=self._outer_instance._config.credential,
+            credential=self._outer_instance._config.credential,  # pylint: disable=protected-access
             credential_scopes=credential_scopes,
             user_agent=kwargs.pop("user_agent", self._user_agent),
             **kwargs,
@@ -182,7 +196,7 @@ class InferenceOperations:
     @distributed_trace_async
     async def get_azure_openai_client(
         self, *, api_version: Optional[str] = None, connection_name: Optional[str] = None, **kwargs
-    ) -> "AsyncAzureOpenAI":
+    ) -> "AsyncAzureOpenAI":  # type: ignore[name-defined]
         """Get an authenticated AsyncAzureOpenAI client (from the `openai` package) for the default
         Azure OpenAI connection (if `connection_name` is not specificed), or from the Azure OpenAI
         resource given by its connection name.
@@ -218,8 +232,9 @@ class InferenceOperations:
                 "OpenAI SDK is not installed. Please install it using 'pip install openai'"
             ) from e
 
+        connection = Connection()
         if connection_name:
-            connection: Connection = await self._outer_instance.connections.get(name=connection_name, **kwargs)
+            connection = await self._outer_instance.connections.get(name=connection_name, **kwargs)
             if connection.type != ConnectionType.AZURE_OPEN_AI:
                 raise ValueError(f"Connection `{connection_name}` is not of type Azure OpenAI.")
         else:
@@ -228,9 +243,9 @@ class InferenceOperations:
                 connection_type=ConnectionType.AZURE_OPEN_AI, default_connection=True, **kwargs
             )
             try:
-                connection: Connection = await connections.__anext__()
-            except StopAsyncIteration:
-                raise ResourceNotFoundError("No default Azure OpenAI connection found.")
+                connection = await connections.__aiter__().__anext__()
+            except StopAsyncIteration as exc:
+                raise ResourceNotFoundError("No default Azure OpenAI connection found.") from exc
 
             # TODO: if there isn't a default openai connection, we would have to by convention
             # use https://{resource-name}.openai.azure.com where {resource-name} is the same as the
@@ -269,7 +284,8 @@ class InferenceOperations:
             client = AsyncAzureOpenAI(
                 # See https://learn.microsoft.com/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider # pylint: disable=line-too-long
                 azure_ad_token_provider=get_bearer_token_provider(
-                    self._outer_instance._config.credential, "https://cognitiveservices.azure.com/.default"
+                    self._outer_instance._config.credential,
+                    "https://cognitiveservices.azure.com/.default",  # pylint: disable=protected-access
                 ),
                 azure_endpoint=azure_endpoint,
                 api_version=api_version,
