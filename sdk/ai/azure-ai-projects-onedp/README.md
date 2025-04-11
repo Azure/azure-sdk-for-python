@@ -31,7 +31,7 @@ To report an issue with the client library, or request additional features, plea
   - [Prerequisite](#prerequisite)
   - [Install the package](#install-the-package)
 - [Key concepts](#key-concepts)
-  - [Create and authenticate the client](#create-and-authenticate-the-client)
+  - [Create and authenticate the client with Entra ID](#create-and-authenticate-the-client-with-entra-id)
 - [Examples](#examples)
   - [Enumerate connections](#enumerate-connections)
     - [Get properties of all connections](#get-properties-of-all-connections)
