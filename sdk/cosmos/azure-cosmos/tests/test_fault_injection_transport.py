@@ -15,6 +15,7 @@ from azure.cosmos import PartitionKey
 from azure.cosmos import CosmosClient
 from azure.cosmos.container import ContainerProxy
 from azure.cosmos.database import DatabaseProxy
+from azure.cosmos.documents import ConnectionPolicy
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from _fault_injection_transport import FaultInjectionTransport
 from azure.core.exceptions import ServiceRequestError
@@ -62,8 +63,13 @@ class TestFaultInjectionTransport:
             logger.warning("Exception trying to delete database {}. {}".format(created_database.id, containerDeleteError))
 
     @staticmethod
-    def setup_method_with_custom_transport(custom_transport: RequestsTransport, default_endpoint=host, **kwargs):
-        client = CosmosClient(default_endpoint, master_key, consistency_level="Session",
+    def setup_method_with_custom_transport(custom_transport: RequestsTransport,
+                                           default_endpoint=host,
+                                           use_multiple_write_locations=False,
+                                           **kwargs):
+        connection_policy = ConnectionPolicy()
+        connection_policy.UseMultipleWriteLocations = use_multiple_write_locations
+        client = CosmosClient(default_endpoint, master_key, connection_policy=connection_policy, consistency_level="Session",
                               transport=custom_transport, logger=logger, enable_diagnostics_logging=True, **kwargs)
         db: DatabaseProxy = client.get_database_client(TEST_DATABASE_ID)
         container: ContainerProxy = db.get_container_client(SINGLE_PARTITION_CONTAINER_NAME)
@@ -340,6 +346,7 @@ class TestFaultInjectionTransport:
 
         initialized_objects = self.setup_method_with_custom_transport(
             custom_transport,
+            use_multiple_write_locations=True,
             preferred_locations=["First Region", "Second Region"])
         container: ContainerProxy = initialized_objects["col"]
 

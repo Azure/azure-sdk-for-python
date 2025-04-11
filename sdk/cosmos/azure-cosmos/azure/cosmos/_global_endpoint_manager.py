@@ -135,7 +135,6 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         try:
             database_account = self._GetDatabaseAccountStub(self.DefaultEndpoint, **kwargs)
             self._database_account_cache = database_account
-            self.location_cache.mark_endpoint_available(self.DefaultEndpoint)
             return database_account, self.DefaultEndpoint
         # If for any reason(non-globaldb related), we are not able to get the database
         # account from the above call to GetDatabaseAccount, we would try to get this
@@ -146,8 +145,6 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         except (exceptions.CosmosHttpResponseError, AzureError):
             # when atm is available, L: 145, 146 should be removed as the global endpoint shouldn't be used
             # for dataplane operations anymore
-            self.mark_endpoint_unavailable_for_read(self.DefaultEndpoint, False)
-            self.mark_endpoint_unavailable_for_write(self.DefaultEndpoint, False)
             for location_name in self.PreferredLocations:
                 locational_endpoint = LocationCache.GetLocationalEndpoint(self.DefaultEndpoint, location_name)
                 try:
@@ -171,11 +168,8 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         self.location_cache.perform_on_database_account_read(database_account)
         # get all the regional routing contexts to check
         endpoints = self.location_cache.endpoints_to_health_check()
-        success_count = 0
         for endpoint in endpoints:
             if endpoint not in endpoints_attempted:
-                if success_count >= 4:
-                    break
                 endpoints_attempted.add(endpoint)
                 # save current dba timeouts
                 previous_dba_read_timeout = self.Client.connection_policy.DBAReadTimeout
@@ -192,7 +186,6 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                         self.Client._GetDatabaseAccountCheck(endpoint, **kwargs)
                     else:
                         self.Client._GetDatabaseAccountCheck(endpoint, **kwargs)
-                    success_count += 1
                     self.location_cache.mark_endpoint_available(endpoint)
                 except (exceptions.CosmosHttpResponseError, AzureError):
                     self.mark_endpoint_unavailable_for_read(endpoint, False)
