@@ -7,8 +7,8 @@ import uuid
 from azure.identity import get_bearer_token_provider
 from pathlib import Path
 from datetime import datetime
-from azure.ai.evaluation import evaluate, SimilarityEvaluator, ContentSafetyEvaluator, GroundednessEvaluator
-import json
+from azure.ai.evaluation import GroundednessEvaluator
+from pylint.lint import Run
 
 token_provider = get_bearer_token_provider(
     DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"
@@ -20,9 +20,10 @@ client = AzureOpenAI(
     azure_ad_token_provider=token_provider,
 )
 
-pylint_scores = {}
+EVAL_RESULTS = {}
+PYLINT_SCORES = {}
 
-fix_file_prompt = """
+FILE_PROMPT = """
 DO prompt the user to create a virtual environment with `<path_to_python_installation>/python.exe -m venv <environment_name>` and activate it, before running any commands.
 
 # General Repository Guidelines
@@ -127,7 +128,6 @@ def fix_file(file_path: str, logger) -> dict:
         with open(file_path, 'r', encoding='utf-8') as f:
             original_content = f.read()
 
-        # logger.debug(f"PROMPT FOR FIXING FILE: {fix_file_prompt}")
         logger.debug(f"MODEL: {os.environ['AZURE_OPENAI_MODEL']}")
         
 
@@ -135,7 +135,7 @@ def fix_file(file_path: str, logger) -> dict:
         response = client.chat.completions.create(
             model=os.environ["AZURE_OPENAI_MODEL"],
             messages=[
-                {"role": "system", "content": fix_file_prompt},
+                {"role": "system", "content": FILE_PROMPT},
                 {"role": "user", "content": f"Fix pylint issues in this code:\n\n{original_content}"}
             ],
         )
@@ -177,9 +177,7 @@ def run_pylint(file_path: str, logger) -> dict:
         dict: Pylint analysis results including score and messages
     """
     try:
-        from pylint.lint import Run
-        from pylint.reporters import JSONReporter
-        from io import StringIO
+        
 
         # Get path to pylintrc
         pylintrc_path = Path(__file__).parent / '.pylintrc'
@@ -203,9 +201,9 @@ def run_pylint(file_path: str, logger) -> dict:
         logger.debug(f"PYLINT SCORE: {results.linter.stats.global_note}")
         pylint_name = file_path.split("/")[-1].split(".py")[0]
         try:
-            pylint_scores[pylint_name].append(results.linter.stats.global_note)
+            PYLINT_SCORES[pylint_name].append(results.linter.stats.global_note)
         except:
-            pylint_scores[pylint_name] = [results.linter.stats.global_note]
+            PYLINT_SCORES[pylint_name] = [results.linter.stats.global_note]
 
         return results.linter.stats.global_note
 
@@ -216,10 +214,11 @@ def run_pylint(file_path: str, logger) -> dict:
             'file': file_path
         }
 
-def evaluate_fixes(original_content, fixed_content):
+def evaluate_fixes(file_path, original_content, fixed_content):
     """
     Use azure-ai-evaluation to compare the original and fixed content.
     Args:
+        file_path (str): The path of the file being evaluated.
         original_content (str): The original file content.
         fixed_content (str): The fixed file content.
     Returns:
@@ -231,14 +230,15 @@ def evaluate_fixes(original_content, fixed_content):
     "azure_deployment": os.environ['AZURE_OPENAI_MODEL'],
     "api_version": os.environ["AZURE_OPENAI_VERSION"],
     "api_key": os.environ.get("AZURE_OPENAI_KEY"),
-}
+    }
+
+    pylint_name = file_path.split("/")[-1].split(".py")[0]
 
     # Use the evaluate function with the JSONL file
     eval = GroundednessEvaluator(model_config=model_config)
 
-    evaluation_result = eval(context=fix_file_prompt + f"Fix pylint issues in this code:\n\n{original_content}", response=fixed_content) 
-    
-    return evaluation_result
+    evaluation_result = eval(context=FILE_PROMPT + f"Fix pylint issues in this code:\n\n{original_content}", response=fixed_content) 
+    EVAL_RESULTS[pylint_name] = evaluation_result
 
 # Example usage
 if __name__ == "__main__":
@@ -268,22 +268,32 @@ if __name__ == "__main__":
                 fixed_pylint = run_pylint(str(result['fixed_file']), logger)
 
                 # Evaluate the fixes
-                evaluation_result = evaluate_fixes(result['original_content'], result['fixed_content'])
-                logger.debug(f"Evaluation Result: {evaluation_result}")
-
+                evaluate_fixes(str(result['fixed_file']), result['original_content'], result['fixed_content'])
+    
                 # Update file_path for next iteration
                 logger.debug("-----"*80)
                 file_path = str(result['fixed_file'])
                 counter += 1
             logger.debug("-----"*80)
-            logger.debug("\n\n\n")     
+            logger.debug("\n\n\n")
+        base_dir = Path(__file__).parent
+        with open(f"{base_dir}/output_logs/final_{next}", 'w', encoding='utf-8') as f:
+            for key, value in PYLINT_SCORES.items():
+                f.write(f"{key}: {value}")
+                f.write("\n")
+                # Add corresponding evaluation scores if available
+                if key in EVAL_RESULTS:
+                    f.write(f"Evaluation Results for {key}:")
+                    f.write("\n")
+                    f.write(f"Groundedness Score: {EVAL_RESULTS[key].score}")
+                    f.write("\n")
+                    f.write(f"Groundedness Result: {EVAL_RESULTS[key].result}")
+                    if EVAL_RESULTS[key].explanation:
+                        f.write("\n")
+                        f.write(f"Explanation: {EVAL_RESULTS[key].explanation}")
+                f.write("\n")
+                f.write("-----"*80)
+                f.write("\n")
     except Exception as e:
         raise e
         print(f"Error in processing test cases: {str(e)}")
-    base_dir = Path(__file__).parent
-    with open(f"{base_dir}/output_logs/final_{next}", 'w', encoding='utf-8') as f:
-        for key, value in pylint_scores.items():
-            f.write(f"{key}: {value}")
-            f.write("\n")
-            f.write("-----"*80)
-            f.write("\n")
