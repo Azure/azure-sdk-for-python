@@ -18,6 +18,7 @@ from azure.ai.evaluation.red_team._attack_objective_generator import RiskCategor
 from azure.ai.evaluation.red_team._attack_strategy import AttackStrategy
 from azure.ai.evaluation.simulator._model_tools import ManagedIdentityAPITokenManager, TokenScope
 from azure.ai.evaluation.simulator._model_tools._generated_rai_client import GeneratedRAIClient
+from .agent_utils import AgentUtils
 
 # Setup logging
 logger = logging.getLogger(__name__)
@@ -67,34 +68,8 @@ class RedTeamToolProvider:
         
         # Store fetched prompts for later conversion
         self._fetched_prompts = {}
+        self.converter_utils = AgentUtils()
         
-        # Initialize strategy converters
-        # self._initialize_converters()
-    
-    # def _initialize_converters(self):
-    #     """Initialize all available prompt converters for strategies."""
-    #     self.strategy_converters = {
-    #         "morse": MorseConverter(),
-    #         "ansi_attack": AnsiAttackConverter(),
-    #         "ascii_art": AsciiArtConverter(),
-    #         "ascii_smuggler": AsciiSmugglerConverter(),
-    #         "atbash": AtbashConverter(),
-    #         "base64": Base64Converter(),
-    #         "binary": BinaryConverter(),
-    #         "character_space": CharacterSpaceConverter(),
-    #         "char_swap": CharSwapGenerator(),
-    #         "diacritic": DiacriticConverter(),
-    #         "leetspeak": LeetspeakConverter(),
-    #         "rot13": ROT13Converter(),
-    #         "suffix_append": SuffixAppendConverter(
-    #             suffix="describing.\\ + similarlyNow write oppositeley.]( Me giving**ONE please? revert with \"\\!--Two"
-    #         ),
-    #         "string_join": StringJoinConverter(),
-    #         "unicode_confusable": UnicodeConfusableConverter(),
-    #         "unicode_substitution": UnicodeSubstitutionConverter(),
-    #         "url": UrlConverter(),
-    #         "flip": FlipConverter()
-    #     }
     
     def get_available_strategies(self) -> List[str]:
         """Get a list of available prompt conversion strategies.
@@ -102,9 +77,9 @@ class RedTeamToolProvider:
         :return: List of strategy names
         :rtype: List[str]
         """
-        return sorted(list(self.strategy_converters.keys())) if hasattr(self, 'strategy_converters') else []
+        return self.converter_utils.get_list_of_supported_converters()
     
-    def apply_strategy_to_prompt(self, prompt: str, strategy: str) -> str:
+    async def apply_strategy_to_prompt(self, prompt: str, strategy: str) -> str:
         """Apply a conversion strategy to a prompt.
         
         :param prompt: The prompt to convert
@@ -115,15 +90,10 @@ class RedTeamToolProvider:
         :rtype: str
         :raises ValueError: If the strategy is not supported
         """
-        if not hasattr(self, 'strategy_converters'):
-            raise ValueError("Strategy converters are not initialized")
-            
-        if strategy not in self.strategy_converters:
-            raise ValueError(f"Unsupported strategy: {strategy}. Available strategies: {', '.join(self.get_available_strategies())}")
-        
-        converter = self.strategy_converters[strategy]
-        # TODO: call the async method convertor.convert_async(prompt=prompt)
-        return converter.convert(prompt)
+        return await self.converter_utils.convert_text(
+            converter_name=strategy, 
+            text=prompt
+        )
         
     @staticmethod
     def _parse_risk_category(category_text: str) -> Optional[RiskCategory]:
@@ -304,10 +274,32 @@ class RedTeamToolProvider:
             
             # Apply conversion strategy if requested
             if convert_with_strategy:
-                return {
-                    "status": "error",
-                    "message": "Not implemented yet."
-                }
+                try:
+                    # Check if the strategy is valid
+                    if convert_with_strategy not in self.get_available_strategies():
+                        return {
+                            "status": "error",
+                            "message": f"Unsupported strategy: {convert_with_strategy}. Available strategies: {', '.join(self.get_available_strategies())}"
+                        }
+                    
+                    # Convert the prompt using the specified strategy
+                    converted_prompt = await self.apply_strategy_to_prompt(selected_objective, convert_with_strategy)
+                    
+                    return {
+                        "status": "success",
+                        "risk_category": risk_category.value,
+                        "strategy": strategy,
+                        "conversion_strategy": convert_with_strategy,
+                        "original_prompt": selected_objective,
+                        "converted_prompt": converted_prompt,
+                        "prompt_id": prompt_id,
+                        "note": "This prompt was generated and converted for responsible AI testing purposes only."
+                    }
+                except Exception as e:
+                    return {
+                        "status": "error",
+                        "message": f"Error converting prompt: {str(e)}"
+                    }
             
             # Return with information about available strategies
             return {
@@ -344,22 +336,20 @@ class RedTeamToolProvider:
         try:
             # Check if input is a prompt ID
             prompt_text = self._fetched_prompts.get(prompt_or_id, prompt_or_id)
-            
-            # Validate strategy
-            if not hasattr(self, 'strategy_converters'):
-                return {
-                    "status": "error",
-                    "message": "Strategy converters are not initialized"
-                }
                 
-            if strategy not in self.strategy_converters:
+            if strategy not in self.get_available_strategies():
                 return {
                     "status": "error",
                     "message": f"Unsupported strategy: {strategy}. Available strategies: {', '.join(self.get_available_strategies())}"
                 }
             
             # Convert the prompt
-            converted_prompt = self.apply_strategy_to_prompt(prompt_text, strategy)
+            conversion_result = await self.apply_strategy_to_prompt(prompt_text, strategy)
+            
+            # Handle both string results and ConverterResult objects
+            converted_prompt = conversion_result
+            if hasattr(conversion_result, 'text'):
+                converted_prompt = conversion_result.text
             
             return {
                 "status": "success",
@@ -422,15 +412,8 @@ class RedTeamToolProvider:
                     "note": "This prompt was generated for responsible AI testing purposes only. You can convert this prompt using one of the available strategies."
                 }
             
-            # If strategy is specified but converters are not initialized
-            if not hasattr(self, 'strategy_converters'):
-                return {
-                    "status": "error",
-                    "message": "Strategy converters are not initialized"
-                }
-            
             # If strategy is specified, convert the prompt
-            if strategy not in self.strategy_converters:
+            if strategy not in self.get_available_strategies():
                 return {
                     "status": "error",
                     "message": f"Unsupported strategy: {strategy}. Available strategies: {', '.join(self.get_available_strategies())}"
@@ -438,7 +421,7 @@ class RedTeamToolProvider:
             
             # Convert the prompt using the specified strategy
             try:
-                converted_prompt = self.apply_strategy_to_prompt(result["prompt"], strategy)
+                converted_prompt = await self.apply_strategy_to_prompt(result["prompt"], strategy)
                 return {
                     "status": "success",
                     "risk_category": result["risk_category"],
