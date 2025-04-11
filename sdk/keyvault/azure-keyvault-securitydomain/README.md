@@ -31,7 +31,7 @@ Install [azure-keyvault-securitydomain][pypi_package] and [azure-identity][azure
 python -m pip install azure-keyvault-securitydomain azure-identity
 ```
 
-[azure-identity][azure_identity] is used for Azure Active Directory authentication as demonstrated below.
+[azure-identity][azure_identity] is used for Microsoft Entra ID authentication as demonstrated below.
 
 #### Prequisites
 
@@ -101,7 +101,7 @@ additional questions or comments.
 [library_src]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-securitydomain/azure/keyvault/securitydomain
 
 [managed_hsm_cli]: https://learn.microsoft.com/azure/key-vault/managed-hsm/quick-create-cli
-[managed_identity]: https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview
+[managed_identity]: https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/overview
 
 [pip]: https://pypi.org/project/pip/
 [pypi_package]: https://pypi.org/project/azure-keyvault-securitydomain/
