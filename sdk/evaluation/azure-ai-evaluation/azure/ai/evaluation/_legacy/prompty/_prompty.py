@@ -18,7 +18,7 @@ from azure.ai.evaluation._legacy.prompty._exceptions import (
     NotSupportedError,
 )
 from azure.ai.evaluation._legacy.prompty._connection import AzureOpenAIConnection, Connection, OpenAIConnection
-from azure.ai.evaluation._legacy.prompty._yaml_utils import load_yaml_string, _save_prompty_file
+from azure.ai.evaluation._legacy.prompty._yaml_utils import load_yaml_string
 from azure.ai.evaluation._legacy.prompty._utils import (
     dataclass_from_dict,
     PromptyModelConfiguration,
