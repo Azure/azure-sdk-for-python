@@ -51,7 +51,7 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
                  threshold: int = 3, _higher_is_better: bool = False, **kwargs) -> None:
         self._result_key = result_key
         self._is_reasoning_model = kwargs.get("is_reasoning_model", False)
-        self._prompty_file = AsyncPrompty._update_prompty_file(prompty_file, self._is_reasoning_model)
+        self._prompty_file = prompty_file
         self._threshold = threshold
         self._higher_is_better = _higher_is_better
         super().__init__(eval_last_turn=eval_last_turn, threshold=threshold, _higher_is_better=_higher_is_better)
@@ -64,12 +64,8 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
             user_agent,
         )
 
-        self._flow = AsyncPrompty.load(source=self._prompty_file, model=prompty_model_config)
-
-        # delete the temporary prompty file
-        if self._is_reasoning_model:
-            if os.path.exists(self._prompty_file):
-                os.remove(self._prompty_file)
+        self._flow = AsyncPrompty.load(source=self._prompty_file, model=prompty_model_config,
+                                       is_reasoning_model=self._is_reasoning_model)
 
     # __call__ not overridden here because child classes have such varied signatures that there's no point
     # defining a default here.
