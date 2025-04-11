@@ -1,14 +1,11 @@
 # Release History
 
-## 1.6.7 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.6.7 (2025-04-10)
 
 ### Bugs Fixed
 
-### Other Changes
+- Adapt to OpenTelemetry dependency resolver change.
+    ([#40463](https://github.com/Azure/azure-sdk-for-python/pull/40463))
 
 ## 1.6.6 (2025-04-07)
 
