@@ -6,9 +6,19 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+from enum import Enum
 from typing import List
 
-__all__: List[str] = []  # Add all objects you want publicly available to users at this package level
+
+class EvaluationMetrics(str, Enum):
+    Relevance = "relevance"
+    HateUnfairness = "hate_unfairness"
+    Violence = "violence"
+    Groundedness = "groundedness"
+    GroundednessPro = "groundedness_pro"
+
+
+__all__: List[str] = ["EvaluationMetrics"]
 
 
 def patch_sdk():

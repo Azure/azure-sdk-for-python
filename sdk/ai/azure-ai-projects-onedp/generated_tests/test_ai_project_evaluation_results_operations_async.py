@@ -67,12 +67,6 @@ class TestAIProjectEvaluationResultsOperationsAsync(AIProjectClientTestBaseAsync
                 "name": "str",
                 "version": "str",
                 "BlobUri": "str",
-                "DatasetFamily": "str",
-                "DatasetName": "str",
-                "Metrics": {"str": 0.0},
-                "ModelAssetId": "str",
-                "ModelName": "str",
-                "ModelVersion": "str",
                 "ResultType": "str",
                 "description": "str",
                 "id": "str",
@@ -95,31 +89,12 @@ class TestAIProjectEvaluationResultsOperationsAsync(AIProjectClientTestBaseAsync
                 "name": "str",
                 "version": "str",
                 "BlobUri": "str",
-                "DatasetFamily": "str",
-                "DatasetName": "str",
-                "Metrics": {"str": 0.0},
-                "ModelAssetId": "str",
-                "ModelName": "str",
-                "ModelVersion": "str",
                 "ResultType": "str",
                 "description": "str",
                 "id": "str",
                 "stage": "str",
                 "tags": {"str": "str"},
             },
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @AIProjectPreparer()
-    @recorded_by_proxy_async
-    async def test_evaluation_results_start_pending_upload(self, aiproject_endpoint):
-        client = self.create_async_client(endpoint=aiproject_endpoint)
-        response = await client.evaluation_results.start_pending_upload(
-            name="str",
-            version="str",
-            body={"pendingUploadType": "str", "connectionName": "str", "pendingUploadId": "str"},
         )
 
         # please add some check logic here by yourself

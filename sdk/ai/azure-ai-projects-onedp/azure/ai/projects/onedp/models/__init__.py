@@ -14,6 +14,8 @@ if TYPE_CHECKING:
 
 
 from ._models import (  # type: ignore
+    AssetCredentialRequest,
+    AssetCredentialResponse,
     AzureAISearchIndex,
     BlobReferenceForConsumption,
     Connection,
@@ -22,7 +24,6 @@ from ._models import (  # type: ignore
     Deployment,
     EmbeddingConfiguration,
     Evaluation,
-    EvaluationResult,
     EvaluatorConfiguration,
     FileDatasetVersion,
     FolderDatasetVersion,
@@ -33,13 +34,12 @@ from ._models import (  # type: ignore
     ModelDeployment,
     PendingUploadRequest,
     PendingUploadResponse,
-    RedTeam,
     SasCredential,
     Sku,
+    SystemData,
 )
 
 from ._enums import (  # type: ignore
-    AttackStrategy,
     AuthenticationType,
     ConnectionType,
     DatasetType,
@@ -48,14 +48,14 @@ from ._enums import (  # type: ignore
     ListViewType,
     PendingUploadType,
     RepeatabilityResult,
-    ResultType,
-    RiskCategory,
 )
 from ._patch import __all__ as _patch_all
 from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "AssetCredentialRequest",
+    "AssetCredentialResponse",
     "AzureAISearchIndex",
     "BlobReferenceForConsumption",
     "Connection",
@@ -64,7 +64,6 @@ __all__ = [
     "Deployment",
     "EmbeddingConfiguration",
     "Evaluation",
-    "EvaluationResult",
     "EvaluatorConfiguration",
     "FileDatasetVersion",
     "FolderDatasetVersion",
@@ -75,10 +74,9 @@ __all__ = [
     "ModelDeployment",
     "PendingUploadRequest",
     "PendingUploadResponse",
-    "RedTeam",
     "SasCredential",
     "Sku",
-    "AttackStrategy",
+    "SystemData",
     "AuthenticationType",
     "ConnectionType",
     "DatasetType",
@@ -87,8 +85,6 @@ __all__ = [
     "ListViewType",
     "PendingUploadType",
     "RepeatabilityResult",
-    "ResultType",
-    "RiskCategory",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

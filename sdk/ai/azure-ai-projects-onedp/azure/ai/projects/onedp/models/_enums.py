@@ -158,3 +158,14 @@ class RiskCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents content related to code vulnerabilities."""
     UNGROUNDED_ATTRIBUTES = "UngroundedAttributes"
     """Represents content with ungrounded attributes."""
+
+
+class SimulationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Simulation type."""
+
+    DEFAULT = "Default"
+    """Default simulation type."""
+    CUSTOM_PERSONA = "CustomPersona"
+    """Custom persona simulation type."""
+    HARM_TURN_GENERATOR = "HarmTurnGenerator"
+    """Harm turn generator simulation type."""

@@ -35,22 +35,21 @@ class TestAIProjectRedTeamsOperationsAsync(AIProjectClientTestBaseAsync):
 
     @AIProjectPreparer()
     @recorded_by_proxy_async
-    async def test_red_teams_create_run(self, aiproject_endpoint):
+    async def test_red_teams_get_template_parameters_with_type(self, aiproject_endpoint):
         client = self.create_async_client(endpoint=aiproject_endpoint)
-        response = await client.red_teams.create_run(
-            red_team={
-                "attackStrategy": ["str"],
-                "id": "str",
-                "numTurns": 0,
-                "outputs": {"str": "str"},
-                "riskCategories": ["str"],
-                "scanName": "str",
-                "simulationOnly": bool,
-                "applicationScenario": "str",
-                "properties": {"str": "str"},
-                "status": "str",
-                "tags": {"str": "str"},
-            },
+        response = await client.red_teams.get_template_parameters_with_type(
+            type="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @AIProjectPreparer()
+    @recorded_by_proxy_async
+    async def test_red_teams_get_template_parameters_image(self, aiproject_endpoint):
+        client = self.create_async_client(endpoint=aiproject_endpoint)
+        response = await client.red_teams.get_template_parameters_image(
+            path="str",
         )
 
         # please add some check logic here by yourself

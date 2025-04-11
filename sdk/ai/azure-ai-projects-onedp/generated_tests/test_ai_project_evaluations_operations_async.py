@@ -47,7 +47,14 @@ class TestAIProjectEvaluationsOperationsAsync(AIProjectClientTestBaseAsync):
                 "displayName": "str",
                 "properties": {"str": "str"},
                 "status": "str",
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                },
                 "tags": {"str": "str"},
+                "target": {"modelConfig": "target_model_config", "systemMessage": "str", "modelParams": {"str": {}}},
             },
         )
 

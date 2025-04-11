@@ -132,7 +132,13 @@ def build_evaluations_get_request(name: str, **kwargs: Any) -> HttpRequest:
 
 
 def build_evaluations_list_request(
-    *, top: Optional[int] = None, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
+    *,
+    tags: Optional[str] = None,
+    properties: Optional[str] = None,
+    top: Optional[int] = None,
+    skip: Optional[int] = None,
+    maxpagesize: Optional[int] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -145,6 +151,10 @@ def build_evaluations_list_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if tags is not None:
+        _params["tags"] = _SERIALIZER.query("tags", tags, "str")
+    if properties is not None:
+        _params["properties"] = _SERIALIZER.query("properties", properties, "str")
     if top is not None:
         _params["top"] = _SERIALIZER.query("top", top, "int")
     if skip is not None:
@@ -178,6 +188,98 @@ def build_evaluations_create_run_request(**kwargs: Any) -> HttpRequest:
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_evaluations_check_annotation_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("apiVersion", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/evaluations/checkannotation"
+
+    # Construct parameters
+    _params["apiVersion"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_evaluations_submit_annotation_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("apiVersion", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "text/plain")
+
+    # Construct URL
+    _url = "/evaluations/submitannotation"
+
+    # Construct parameters
+    _params["apiVersion"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_evaluations_upload_run_request(**kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/evaluations/runs:upload"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_evaluations_upload_update_run_request(  # pylint: disable=name-too-long
+    name: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/evaluations/runs:updateUpload/{name}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_datasets_list_versions_request(
@@ -409,6 +511,36 @@ def build_datasets_start_pending_upload_request(  # pylint: disable=name-too-lon
     _url = "/datasets/{name}/startPendingUpload"
     path_format_arguments = {
         "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_datasets_fetch_asset_credentials_request(  # pylint: disable=name-too-long
+    name: str, version: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/datasets/{name}/versions/{version}/credentials"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+        "version": _SERIALIZER.url("version", version, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -670,227 +802,6 @@ def build_deployments_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_evaluation_results_list_versions_request(  # pylint: disable=name-too-long
-    name: str,
-    *,
-    top: Optional[int] = None,
-    skip: Optional[str] = None,
-    tags: Optional[str] = None,
-    list_view_type: Optional[Union[str, _models.ListViewType]] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/evaluationResults/{name}/versions"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
-    if skip is not None:
-        _params["skip"] = _SERIALIZER.query("skip", skip, "str")
-    if tags is not None:
-        _params["tags"] = _SERIALIZER.query("tags", tags, "str")
-    if list_view_type is not None:
-        _params["listViewType"] = _SERIALIZER.query("list_view_type", list_view_type, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_evaluation_results_list_latest_request(  # pylint: disable=name-too-long
-    *,
-    top: Optional[int] = None,
-    skip: Optional[str] = None,
-    tags: Optional[str] = None,
-    list_view_type: Optional[Union[str, _models.ListViewType]] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/evaluationResults"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
-    if skip is not None:
-        _params["skip"] = _SERIALIZER.query("skip", skip, "str")
-    if tags is not None:
-        _params["tags"] = _SERIALIZER.query("tags", tags, "str")
-    if list_view_type is not None:
-        _params["listViewType"] = _SERIALIZER.query("list_view_type", list_view_type, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_evaluation_results_get_version_request(  # pylint: disable=name-too-long
-    name: str, version: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/evaluationResults/{name}/versions/{version}"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-        "version": _SERIALIZER.url("version", version, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_evaluation_results_delete_version_request(  # pylint: disable=name-too-long
-    name: str, version: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/evaluationResults/{name}/versions/{version}"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-        "version": _SERIALIZER.url("version", version, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_evaluation_results_create_request(name: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/evaluationResults/{name}/versions"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if "Repeatability-Request-ID" not in _headers:
-        _headers["Repeatability-Request-ID"] = str(uuid.uuid4())
-    if "Repeatability-First-Sent" not in _headers:
-        _headers["Repeatability-First-Sent"] = _SERIALIZER.serialize_data(
-            datetime.datetime.now(datetime.timezone.utc), "rfc-1123"
-        )
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_evaluation_results_create_version_request(  # pylint: disable=name-too-long
-    name: str, version: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/evaluationResults/{name}/versions/{version}"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-        "version": _SERIALIZER.url("version", version, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_evaluation_results_start_pending_upload_request(  # pylint: disable=name-too-long
-    name: str, version: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/evaluationResults/{name}/versions/{version}/startPendingUpload"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-        "version": _SERIALIZER.url("version", version, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
 def build_red_teams_get_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -952,6 +863,467 @@ def build_red_teams_create_run_request(**kwargs: Any) -> HttpRequest:
 
     # Construct URL
     _url = "/redTeams/runs:run"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_red_teams_upload_run_request(**kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/redTeams/runs:upload"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_red_teams_upload_update_run_request(name: str, **kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/redTeams/runs:updateUpload/{name}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_red_teams_get_jail_break_dataset_with_type_request(  # pylint: disable=name-too-long
+    type: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/redTeams/simulation/jailbreak/{type}"
+    path_format_arguments = {
+        "type": _SERIALIZER.url("type", type, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_red_teams_get_attack_objectives_request(  # pylint: disable=name-too-long
+    *, risk_types: Optional[List[str]] = None, lang: Optional[str] = None, strategy: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/redTeams/simulation/attackobjectives"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if risk_types is not None:
+        _params["riskTypes"] = [_SERIALIZER.query("risk_types", q, "str") if q is not None else "" for q in risk_types]
+    if lang is not None:
+        _params["lang"] = _SERIALIZER.query("lang", lang, "str")
+    if strategy is not None:
+        _params["strategy"] = _SERIALIZER.query("strategy", strategy, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_red_teams_get_jail_break_dataset_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/redTeams/simulation/jailbreak/"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_red_teams_get_template_parameters_with_type_request(  # pylint: disable=name-too-long
+    type: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "text/plain")
+
+    # Construct URL
+    _url = "/redTeams/simulation/template/parameters/{type}"
+    path_format_arguments = {
+        "type": _SERIALIZER.url("type", type, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_red_teams_get_template_parameters_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "text/plain")
+
+    # Construct URL
+    _url = "/redTeams/simulation/template/parameters/"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_red_teams_get_template_parameters_image_request(  # pylint: disable=name-too-long
+    *, path: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "text/plain")
+
+    # Construct URL
+    _url = "/redTeams/simulation/template/parameters/image"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["path"] = _SERIALIZER.query("path", path, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_red_teams_submit_simulation_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/redTeams/simulation/chat/completions/submit"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_evaluation_results_list_versions_request(  # pylint: disable=name-too-long
+    name: str,
+    *,
+    top: Optional[int] = None,
+    skip: Optional[str] = None,
+    tags: Optional[str] = None,
+    list_view_type: Optional[Union[str, _models.ListViewType]] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/evaluationResult/{name}/versions"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["top"] = _SERIALIZER.query("top", top, "int")
+    if skip is not None:
+        _params["skip"] = _SERIALIZER.query("skip", skip, "str")
+    if tags is not None:
+        _params["tags"] = _SERIALIZER.query("tags", tags, "str")
+    if list_view_type is not None:
+        _params["listViewType"] = _SERIALIZER.query("list_view_type", list_view_type, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_evaluation_results_list_latest_request(  # pylint: disable=name-too-long
+    *,
+    top: Optional[int] = None,
+    skip: Optional[str] = None,
+    tags: Optional[str] = None,
+    list_view_type: Optional[Union[str, _models.ListViewType]] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/evaluationResult"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["top"] = _SERIALIZER.query("top", top, "int")
+    if skip is not None:
+        _params["skip"] = _SERIALIZER.query("skip", skip, "str")
+    if tags is not None:
+        _params["tags"] = _SERIALIZER.query("tags", tags, "str")
+    if list_view_type is not None:
+        _params["listViewType"] = _SERIALIZER.query("list_view_type", list_view_type, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_evaluation_results_get_version_request(  # pylint: disable=name-too-long
+    name: str, version: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/evaluationResult/{name}/versions/{version}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+        "version": _SERIALIZER.url("version", version, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_evaluation_results_delete_version_request(  # pylint: disable=name-too-long
+    name: str, version: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/evaluationResult/{name}/versions/{version}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+        "version": _SERIALIZER.url("version", version, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_evaluation_results_create_request(name: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/evaluationResult/{name}/versions"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if "Repeatability-Request-ID" not in _headers:
+        _headers["Repeatability-Request-ID"] = str(uuid.uuid4())
+    if "Repeatability-First-Sent" not in _headers:
+        _headers["Repeatability-First-Sent"] = _SERIALIZER.serialize_data(
+            datetime.datetime.now(datetime.timezone.utc), "rfc-1123"
+        )
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_evaluation_results_create_version_request(  # pylint: disable=name-too-long
+    name: str, version: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/evaluationResult/{name}/versions/{version}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+        "version": _SERIALIZER.url("version", version, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_evaluation_results_start_pending_upload_request(  # pylint: disable=name-too-long
+    name: str, version: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/evaluationResult/{name}/versions/{version}/startPendingUpload"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+        "version": _SERIALIZER.url("version", version, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_evaluation_results_fetch_asset_credentials_request(  # pylint: disable=name-too-long
+    name: str, version: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/evaluationResult/{name}/versions/{version}/credentials"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+        "version": _SERIALIZER.url("version", version, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1261,14 +1633,35 @@ class EvaluationsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={
-            "2025-05-15-preview": ["api_version", "top", "skip", "maxpagesize", "client_request_id", "accept"]
+            "2025-05-15-preview": [
+                "api_version",
+                "tags",
+                "properties",
+                "top",
+                "skip",
+                "maxpagesize",
+                "client_request_id",
+                "accept",
+            ]
         },
     )
     def list(
-        self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+        self,
+        *,
+        tags: Optional[str] = None,
+        properties: Optional[str] = None,
+        top: Optional[int] = None,
+        skip: Optional[int] = None,
+        **kwargs: Any
     ) -> Iterable["_models.Evaluation"]:
         """List evaluation runs.
 
+        :keyword tags: Comma-separated list of tag names (and optionally values). Example:
+         tag1,tag2=value2. Default value is None.
+        :paramtype tags: str
+        :keyword properties: Comma-separated list of property names (and optionally values). Example:
+         prop1,prop2=value2. Default value is None.
+        :paramtype properties: str
         :keyword top: The number of result items to return. Default value is None.
         :paramtype top: int
         :keyword skip: The number of result items to skip. Default value is None.
@@ -1295,6 +1688,8 @@ class EvaluationsOperations:
             if not next_link:
 
                 _request = build_evaluations_list_request(
+                    tags=tags,
+                    properties=properties,
                     top=top,
                     skip=skip,
                     maxpagesize=maxpagesize,
@@ -1440,6 +1835,343 @@ class EvaluationsOperations:
             _content = json.dumps(evaluation, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_evaluations_create_run_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.Evaluation, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "accept"]},
+    )
+    def _check_annotation(self, **kwargs: Any) -> List[str]:
+        """Check annotation supported by the service.
+
+        :return: list of str
+        :rtype: list[str]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[str]] = kwargs.pop("cls", None)
+
+        _request = build_evaluations_check_annotation_request(
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(List[str], response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def _submit_annotation(
+        self, annotation_dto: _models._models.AnnotationDTO, *, content_type: str = "application/json", **kwargs: Any
+    ) -> str: ...
+    @overload
+    def _submit_annotation(
+        self, annotation_dto: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> str: ...
+    @overload
+    def _submit_annotation(
+        self, annotation_dto: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> str: ...
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "content_type", "accept"]},
+    )
+    def _submit_annotation(
+        self, annotation_dto: Union[_models._models.AnnotationDTO, JSON, IO[bytes]], **kwargs: Any
+    ) -> str:
+        """Submit the annotation.
+
+        :param annotation_dto: Annotation data inputList of supported annotation. Is one of the
+         following types: AnnotationDTO, JSON, IO[bytes] Required.
+        :type annotation_dto: ~azure.ai.projects.onedp.models._models.AnnotationDTO or JSON or
+         IO[bytes]
+        :return: str
+        :rtype: str
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[str] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(annotation_dto, (IOBase, bytes)):
+            _content = annotation_dto
+        else:
+            _content = json.dumps(annotation_dto, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_evaluations_submit_annotation_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(str, response.text())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def _upload_run(
+        self, evaluation: _models._models.EvaluationUpload, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Evaluation: ...
+    @overload
+    def _upload_run(
+        self, evaluation: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Evaluation: ...
+    @overload
+    def _upload_run(
+        self, evaluation: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Evaluation: ...
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "content_type", "accept"]},
+    )
+    def _upload_run(
+        self, evaluation: Union[_models._models.EvaluationUpload, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.Evaluation:
+        """Upload the result to an evaluation run.
+
+        :param evaluation: Evaluation to upload. Is one of the following types: EvaluationUpload, JSON,
+         IO[bytes] Required.
+        :type evaluation: ~azure.ai.projects.onedp.models._models.EvaluationUpload or JSON or IO[bytes]
+        :return: Evaluation. The Evaluation is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.onedp.models.Evaluation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Evaluation] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(evaluation, (IOBase, bytes)):
+            _content = evaluation
+        else:
+            _content = json.dumps(evaluation, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_evaluations_upload_run_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.Evaluation, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def _upload_update_run(
+        self,
+        name: str,
+        evaluation: _models._models.EvaluationUpload,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.Evaluation: ...
+    @overload
+    def _upload_update_run(
+        self, name: str, evaluation: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Evaluation: ...
+    @overload
+    def _upload_update_run(
+        self, name: str, evaluation: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Evaluation: ...
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "name", "content_type", "accept"]},
+    )
+    def _upload_update_run(
+        self, name: str, evaluation: Union[_models._models.EvaluationUpload, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.Evaluation:
+        """Update the uploaded the result to an evaluation run.
+
+        :param name: Name of the evaluation run to update. Required.
+        :type name: str
+        :param evaluation: Evaluation upload to update. Is one of the following types:
+         EvaluationUpload, JSON, IO[bytes] Required.
+        :type evaluation: ~azure.ai.projects.onedp.models._models.EvaluationUpload or JSON or IO[bytes]
+        :return: Evaluation. The Evaluation is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.onedp.models.Evaluation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Evaluation] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(evaluation, (IOBase, bytes)):
+            _content = evaluation
+        else:
+            _content = json.dumps(evaluation, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_evaluations_upload_update_run_request(
+            name=name,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -2381,6 +3113,171 @@ class DatasetsOperations:
 
         return deserialized  # type: ignore
 
+    @overload
+    def fetch_asset_credentials(
+        self,
+        name: str,
+        version: str,
+        asset_credential_request: _models.AssetCredentialRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AssetCredentialResponse:
+        """Enable downloading json.
+
+        :param name: Name of the resource. Required.
+        :type name: str
+        :param version: Version of the resource. Required.
+        :type version: str
+        :param asset_credential_request: Input asset to fetch credentials for. Required.
+        :type asset_credential_request: ~azure.ai.projects.onedp.models.AssetCredentialRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AssetCredentialResponse. The AssetCredentialResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.onedp.models.AssetCredentialResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def fetch_asset_credentials(
+        self,
+        name: str,
+        version: str,
+        asset_credential_request: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AssetCredentialResponse:
+        """Enable downloading json.
+
+        :param name: Name of the resource. Required.
+        :type name: str
+        :param version: Version of the resource. Required.
+        :type version: str
+        :param asset_credential_request: Input asset to fetch credentials for. Required.
+        :type asset_credential_request: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AssetCredentialResponse. The AssetCredentialResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.onedp.models.AssetCredentialResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def fetch_asset_credentials(
+        self,
+        name: str,
+        version: str,
+        asset_credential_request: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AssetCredentialResponse:
+        """Enable downloading json.
+
+        :param name: Name of the resource. Required.
+        :type name: str
+        :param version: Version of the resource. Required.
+        :type version: str
+        :param asset_credential_request: Input asset to fetch credentials for. Required.
+        :type asset_credential_request: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AssetCredentialResponse. The AssetCredentialResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.onedp.models.AssetCredentialResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "name", "version", "content_type", "accept"]},
+    )
+    def fetch_asset_credentials(
+        self,
+        name: str,
+        version: str,
+        asset_credential_request: Union[_models.AssetCredentialRequest, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.AssetCredentialResponse:
+        """Enable downloading json.
+
+        :param name: Name of the resource. Required.
+        :type name: str
+        :param version: Version of the resource. Required.
+        :type version: str
+        :param asset_credential_request: Input asset to fetch credentials for. Is one of the following
+         types: AssetCredentialRequest, JSON, IO[bytes] Required.
+        :type asset_credential_request: ~azure.ai.projects.onedp.models.AssetCredentialRequest or JSON
+         or IO[bytes]
+        :return: AssetCredentialResponse. The AssetCredentialResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.onedp.models.AssetCredentialResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AssetCredentialResponse] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(asset_credential_request, (IOBase, bytes)):
+            _content = asset_credential_request
+        else:
+            _content = json.dumps(asset_credential_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_datasets_fetch_asset_credentials_request(
+            name=name,
+            version=version,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.AssetCredentialResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
 
 class IndexesOperations:
     """
@@ -3191,6 +4088,949 @@ class DeploymentsOperations:
         return ItemPaged(get_next, extract_data)
 
 
+class RedTeamsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.onedp.AIProjectClient`'s
+        :attr:`red_teams` attribute.
+    """
+
+    def __init__(self, *args, **kwargs):
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "name", "client_request_id", "accept"]},
+    )
+    def _get(self, name: str, **kwargs: Any) -> _models._models.RedTeam:
+        """Get a redteam by name.
+
+        :param name: Identifier of the red team. Required.
+        :type name: str
+        :return: RedTeam. The RedTeam is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.onedp.models._models.RedTeam
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models._models.RedTeam] = kwargs.pop("cls", None)
+
+        _request = build_red_teams_get_request(
+            name=name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models._models.RedTeam, response.json())  # pylint: disable=protected-access
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-05-15-preview",
+        params_added_on={
+            "2025-05-15-preview": ["api_version", "top", "skip", "maxpagesize", "client_request_id", "accept"]
+        },
+    )
+    def _list(
+        self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+    ) -> Iterable["_models._models.RedTeam"]:
+        """List a redteam by name.
+
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip: The number of result items to skip. Default value is None.
+        :paramtype skip: int
+        :return: An iterator like instance of RedTeam
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.onedp.models._models.RedTeam]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        maxpagesize = kwargs.pop("maxpagesize", None)
+        cls: ClsType[List[_models._models.RedTeam]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_red_teams_list_request(
+                    top=top,
+                    skip=skip,
+                    maxpagesize=maxpagesize,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models._models.RedTeam], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @overload
+    def _create_run(
+        self, red_team: _models._models.RedTeam, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models._models.RedTeam: ...
+    @overload
+    def _create_run(
+        self, red_team: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models._models.RedTeam: ...
+    @overload
+    def _create_run(
+        self, red_team: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models._models.RedTeam: ...
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "content_type", "accept"]},
+    )
+    def _create_run(
+        self, red_team: Union[_models._models.RedTeam, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models._models.RedTeam:
+        """Creates a redteam run.
+
+        :param red_team: Redteam to be run. Is one of the following types: RedTeam, JSON, IO[bytes]
+         Required.
+        :type red_team: ~azure.ai.projects.onedp.models._models.RedTeam or JSON or IO[bytes]
+        :return: RedTeam. The RedTeam is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.onedp.models._models.RedTeam
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models._models.RedTeam] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(red_team, (IOBase, bytes)):
+            _content = red_team
+        else:
+            _content = json.dumps(red_team, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_red_teams_create_run_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models._models.RedTeam, response.json())  # pylint: disable=protected-access
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def _upload_run(
+        self, redteam: _models._models.RedTeamUpload, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models._models.RedTeam: ...
+    @overload
+    def _upload_run(
+        self, redteam: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models._models.RedTeam: ...
+    @overload
+    def _upload_run(
+        self, redteam: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models._models.RedTeam: ...
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "content_type", "accept"]},
+    )
+    def _upload_run(
+        self, redteam: Union[_models._models.RedTeamUpload, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models._models.RedTeam:
+        """Upload the result to a redteam run.
+
+        :param redteam: Redteam to upload. Is one of the following types: RedTeamUpload, JSON,
+         IO[bytes] Required.
+        :type redteam: ~azure.ai.projects.onedp.models._models.RedTeamUpload or JSON or IO[bytes]
+        :return: RedTeam. The RedTeam is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.onedp.models._models.RedTeam
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models._models.RedTeam] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(redteam, (IOBase, bytes)):
+            _content = redteam
+        else:
+            _content = json.dumps(redteam, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_red_teams_upload_run_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models._models.RedTeam, response.json())  # pylint: disable=protected-access
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def _upload_update_run(
+        self,
+        name: str,
+        redteam: _models._models.RedTeamUpload,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models._models.RedTeam: ...
+    @overload
+    def _upload_update_run(
+        self, name: str, redteam: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models._models.RedTeam: ...
+    @overload
+    def _upload_update_run(
+        self, name: str, redteam: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models._models.RedTeam: ...
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "name", "content_type", "accept"]},
+    )
+    def _upload_update_run(
+        self, name: str, redteam: Union[_models._models.RedTeamUpload, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models._models.RedTeam:
+        """Update the uploaded the result to an redteam run.
+
+        :param name: Name of the redteam run to update. Required.
+        :type name: str
+        :param redteam: Redteam upload to update. Is one of the following types: RedTeamUpload, JSON,
+         IO[bytes] Required.
+        :type redteam: ~azure.ai.projects.onedp.models._models.RedTeamUpload or JSON or IO[bytes]
+        :return: RedTeam. The RedTeam is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.onedp.models._models.RedTeam
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models._models.RedTeam] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(redteam, (IOBase, bytes)):
+            _content = redteam
+        else:
+            _content = json.dumps(redteam, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_red_teams_upload_update_run_request(
+            name=name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models._models.RedTeam, response.json())  # pylint: disable=protected-access
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "type", "accept"]},
+    )
+    def _get_jail_break_dataset_with_type(self, type: str, **kwargs: Any) -> List[str]:
+        """Get the jailbreak dataset with type.
+
+        :param type: Type of jailbreak dataset. Required.
+        :type type: str
+        :return: list of str
+        :rtype: list[str]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[str]] = kwargs.pop("cls", None)
+
+        _request = build_red_teams_get_jail_break_dataset_with_type_request(
+            type=type,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(List[str], response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "risk_types", "lang", "strategy", "accept"]},
+    )
+    def _get_attack_objectives(
+        self,
+        *,
+        risk_types: Optional[List[str]] = None,
+        lang: Optional[str] = None,
+        strategy: Optional[str] = None,
+        **kwargs: Any
+    ) -> List[_models._models.AttackObjective]:
+        """Get the attack objectives.
+
+        :keyword risk_types: Risk types for the attack objectives dataset. Default value is None.
+        :paramtype risk_types: list[str]
+        :keyword lang: The language for the attack objectives dataset, defaults to 'en'. Default value
+         is None.
+        :paramtype lang: str
+        :keyword strategy: The strategy. Default value is None.
+        :paramtype strategy: str
+        :return: list of AttackObjective
+        :rtype: list[~azure.ai.projects.onedp.models._models.AttackObjective]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models._models.AttackObjective]] = kwargs.pop("cls", None)
+
+        _request = build_red_teams_get_attack_objectives_request(
+            risk_types=risk_types,
+            lang=lang,
+            strategy=strategy,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(List[_models._models.AttackObjective], response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "accept"]},
+    )
+    def _get_jail_break_dataset(self, **kwargs: Any) -> List[str]:
+        """Get the jailbreak dataset.
+
+        :return: list of str
+        :rtype: list[str]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[str]] = kwargs.pop("cls", None)
+
+        _request = build_red_teams_get_jail_break_dataset_request(
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(List[str], response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "type", "accept"]},
+    )
+    def _get_template_parameters_with_type(self, type: str, **kwargs: Any) -> str:
+        """Get template parameters with type.
+
+        :param type: Type for the template parameters. Required.
+        :type type: str
+        :return: str
+        :rtype: str
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[str] = kwargs.pop("cls", None)
+
+        _request = build_red_teams_get_template_parameters_with_type_request(
+            type=type,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(str, response.text())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "accept"]},
+    )
+    def _get_template_parameters(self, **kwargs: Any) -> str:
+        """Get template parameters.
+
+        :return: str
+        :rtype: str
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[str] = kwargs.pop("cls", None)
+
+        _request = build_red_teams_get_template_parameters_request(
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(str, response.text())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "path", "accept"]},
+    )
+    def _get_template_parameters_image(self, *, path: str, **kwargs: Any) -> str:
+        """Get the template parameters image.
+
+        :keyword path: Image path. Required.
+        :paramtype path: str
+        :return: str
+        :rtype: str
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[str] = kwargs.pop("cls", None)
+
+        _request = build_red_teams_get_template_parameters_image_request(
+            path=path,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(str, response.text())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def _submit_simulation(
+        self, body: _models._models.SimulationDTO, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models._models.LongRunningResponse: ...
+    @overload
+    def _submit_simulation(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models._models.LongRunningResponse: ...
+    @overload
+    def _submit_simulation(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models._models.LongRunningResponse: ...
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "content_type", "accept"]},
+    )
+    def _submit_simulation(
+        self, body: Union[_models._models.SimulationDTO, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models._models.LongRunningResponse:
+        """Submit a request for simulation.
+
+        :param body: Properties of a Prompt Version. Is one of the following types: SimulationDTO,
+         JSON, IO[bytes] Required.
+        :type body: ~azure.ai.projects.onedp.models._models.SimulationDTO or JSON or IO[bytes]
+        :return: LongRunningResponse. The LongRunningResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.onedp.models._models.LongRunningResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models._models.LongRunningResponse] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_red_teams_submit_simulation_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(
+                _models._models.LongRunningResponse, response.json()  # pylint: disable=protected-access
+            )
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
 class EvaluationResultsOperations:
     """
     .. warning::
@@ -3215,7 +5055,7 @@ class EvaluationResultsOperations:
             "2025-05-15-preview": ["api_version", "name", "top", "skip", "tags", "list_view_type", "accept"]
         },
     )
-    def list_versions(
+    def _list_versions(
         self,
         name: str,
         *,
@@ -3224,7 +5064,7 @@ class EvaluationResultsOperations:
         tags: Optional[str] = None,
         list_view_type: Optional[Union[str, _models.ListViewType]] = None,
         **kwargs: Any
-    ) -> Iterable["_models.EvaluationResult"]:
+    ) -> Iterable["_models._models.EvaluationResult"]:
         """List all versions of the given EvaluationResult.
 
         :param name: The name of the resource. Required.
@@ -3242,13 +5082,13 @@ class EvaluationResultsOperations:
          "ActiveOnly", "ArchivedOnly", and "All". Default value is None.
         :paramtype list_view_type: str or ~azure.ai.projects.onedp.models.ListViewType
         :return: An iterator like instance of EvaluationResult
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.onedp.models.EvaluationResult]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.onedp.models._models.EvaluationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.EvaluationResult]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models._models.EvaluationResult]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3302,7 +5142,7 @@ class EvaluationResultsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.EvaluationResult], deserialized.get("value", []))
+            list_of_elem = _deserialize(List[_models._models.EvaluationResult], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -3329,7 +5169,7 @@ class EvaluationResultsOperations:
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "top", "skip", "tags", "list_view_type", "accept"]},
     )
-    def list_latest(
+    def _list_latest(
         self,
         *,
         top: Optional[int] = None,
@@ -3337,7 +5177,7 @@ class EvaluationResultsOperations:
         tags: Optional[str] = None,
         list_view_type: Optional[Union[str, _models.ListViewType]] = None,
         **kwargs: Any
-    ) -> Iterable["_models.EvaluationResult"]:
+    ) -> Iterable["_models._models.EvaluationResult"]:
         """List the latest version of each EvaluationResult.
 
         :keyword top: Top count of results, top count cannot be greater than the page size. If topCount
@@ -3353,13 +5193,13 @@ class EvaluationResultsOperations:
          "ActiveOnly", "ArchivedOnly", and "All". Default value is None.
         :paramtype list_view_type: str or ~azure.ai.projects.onedp.models.ListViewType
         :return: An iterator like instance of EvaluationResult
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.onedp.models.EvaluationResult]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.onedp.models._models.EvaluationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.EvaluationResult]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models._models.EvaluationResult]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3412,7 +5252,7 @@ class EvaluationResultsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.EvaluationResult], deserialized.get("value", []))
+            list_of_elem = _deserialize(List[_models._models.EvaluationResult], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -3439,7 +5279,7 @@ class EvaluationResultsOperations:
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "name", "version", "accept"]},
     )
-    def get_version(self, name: str, version: str, **kwargs: Any) -> _models.EvaluationResult:
+    def _get_version(self, name: str, version: str, **kwargs: Any) -> _models._models.EvaluationResult:
         """Get the specific version of the EvaluationResult.
 
         :param name: The name of the resource. Required.
@@ -3447,7 +5287,7 @@ class EvaluationResultsOperations:
         :param version: The specific version id of the EvaluationResult to retrieve. Required.
         :type version: str
         :return: EvaluationResult. The EvaluationResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.EvaluationResult
+        :rtype: ~azure.ai.projects.onedp.models._models.EvaluationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3461,7 +5301,7 @@ class EvaluationResultsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.EvaluationResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.EvaluationResult] = kwargs.pop("cls", None)
 
         _request = build_evaluation_results_get_version_request(
             name=name,
@@ -3494,7 +5334,9 @@ class EvaluationResultsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.EvaluationResult, response.json())
+            deserialized = _deserialize(
+                _models._models.EvaluationResult, response.json()  # pylint: disable=protected-access
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3506,7 +5348,7 @@ class EvaluationResultsOperations:
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "name", "version", "accept"]},
     )
-    def delete_version(  # pylint: disable=inconsistent-return-statements
+    def _delete_version(  # pylint: disable=inconsistent-return-statements
         self, name: str, version: str, **kwargs: Any
     ) -> None:
         """Delete the specific version of the EvaluationResult.
@@ -3559,58 +5401,22 @@ class EvaluationResultsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    def create(
-        self, name: str, body: _models.EvaluationResult, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.EvaluationResult:
-        """Create a new EvaluationResult. The version id will be generated by the service.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param body: The definition of the EvaluationResult to create. Required.
-        :type body: ~azure.ai.projects.onedp.models.EvaluationResult
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluationResult. The EvaluationResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.EvaluationResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    def _create(
+        self,
+        name: str,
+        body: _models._models.EvaluationResult,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models._models.EvaluationResult: ...
     @overload
-    def create(
+    def _create(
         self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.EvaluationResult:
-        """Create a new EvaluationResult. The version id will be generated by the service.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param body: The definition of the EvaluationResult to create. Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluationResult. The EvaluationResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.EvaluationResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models._models.EvaluationResult: ...
     @overload
-    def create(
+    def _create(
         self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.EvaluationResult:
-        """Create a new EvaluationResult. The version id will be generated by the service.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param body: The definition of the EvaluationResult to create. Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluationResult. The EvaluationResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.EvaluationResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models._models.EvaluationResult: ...
 
     @distributed_trace
     @api_version_validation(
@@ -3627,18 +5433,18 @@ class EvaluationResultsOperations:
             ]
         },
     )
-    def create(
-        self, name: str, body: Union[_models.EvaluationResult, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.EvaluationResult:
+    def _create(
+        self, name: str, body: Union[_models._models.EvaluationResult, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models._models.EvaluationResult:
         """Create a new EvaluationResult. The version id will be generated by the service.
 
         :param name: The name of the resource. Required.
         :type name: str
         :param body: The definition of the EvaluationResult to create. Is one of the following types:
          EvaluationResult, JSON, IO[bytes] Required.
-        :type body: ~azure.ai.projects.onedp.models.EvaluationResult or JSON or IO[bytes]
+        :type body: ~azure.ai.projects.onedp.models._models.EvaluationResult or JSON or IO[bytes]
         :return: EvaluationResult. The EvaluationResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.EvaluationResult
+        :rtype: ~azure.ai.projects.onedp.models._models.EvaluationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3653,7 +5459,7 @@ class EvaluationResultsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.EvaluationResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.EvaluationResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -3702,7 +5508,9 @@ class EvaluationResultsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.EvaluationResult, response.json())
+            deserialized = _deserialize(
+                _models._models.EvaluationResult, response.json()  # pylint: disable=protected-access
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3710,79 +5518,32 @@ class EvaluationResultsOperations:
         return deserialized  # type: ignore
 
     @overload
-    def create_version(
+    def _create_version(
         self,
         name: str,
         version: str,
-        body: _models.EvaluationResult,
+        body: _models._models.EvaluationResult,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.EvaluationResult:
-        """Create a new or replace an existing EvaluationResult with the given version id.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The specific version id of the EvaluationResult to create or replace. Required.
-        :type version: str
-        :param body: The definition of the EvaluationResult to create. Required.
-        :type body: ~azure.ai.projects.onedp.models.EvaluationResult
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluationResult. The EvaluationResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.EvaluationResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models._models.EvaluationResult: ...
     @overload
-    def create_version(
+    def _create_version(
         self, name: str, version: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.EvaluationResult:
-        """Create a new or replace an existing EvaluationResult with the given version id.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The specific version id of the EvaluationResult to create or replace. Required.
-        :type version: str
-        :param body: The definition of the EvaluationResult to create. Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluationResult. The EvaluationResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.EvaluationResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models._models.EvaluationResult: ...
     @overload
-    def create_version(
+    def _create_version(
         self, name: str, version: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.EvaluationResult:
-        """Create a new or replace an existing EvaluationResult with the given version id.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The specific version id of the EvaluationResult to create or replace. Required.
-        :type version: str
-        :param body: The definition of the EvaluationResult to create. Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluationResult. The EvaluationResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.EvaluationResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models._models.EvaluationResult: ...
 
     @distributed_trace
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "name", "version", "content_type", "accept"]},
     )
-    def create_version(
-        self, name: str, version: str, body: Union[_models.EvaluationResult, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.EvaluationResult:
+    def _create_version(
+        self, name: str, version: str, body: Union[_models._models.EvaluationResult, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models._models.EvaluationResult:
         """Create a new or replace an existing EvaluationResult with the given version id.
 
         :param name: The name of the resource. Required.
@@ -3791,9 +5552,9 @@ class EvaluationResultsOperations:
         :type version: str
         :param body: The definition of the EvaluationResult to create. Is one of the following types:
          EvaluationResult, JSON, IO[bytes] Required.
-        :type body: ~azure.ai.projects.onedp.models.EvaluationResult or JSON or IO[bytes]
+        :type body: ~azure.ai.projects.onedp.models._models.EvaluationResult or JSON or IO[bytes]
         :return: EvaluationResult. The EvaluationResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.EvaluationResult
+        :rtype: ~azure.ai.projects.onedp.models._models.EvaluationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3808,7 +5569,7 @@ class EvaluationResultsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.EvaluationResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.EvaluationResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -3850,7 +5611,9 @@ class EvaluationResultsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.EvaluationResult, response.json())
+            deserialized = _deserialize(
+                _models._models.EvaluationResult, response.json()  # pylint: disable=protected-access
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3858,7 +5621,7 @@ class EvaluationResultsOperations:
         return deserialized  # type: ignore
 
     @overload
-    def start_pending_upload(
+    def _start_pending_upload(
         self,
         name: str,
         version: str,
@@ -3866,69 +5629,22 @@ class EvaluationResultsOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.PendingUploadResponse:
-        """Create or start a pending upload of a evaluation results for a specific version.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The specific version id of the EvaluationResult to operate on. Required.
-        :type version: str
-        :param body: Parameters for the action. Required.
-        :type body: ~azure.ai.projects.onedp.models.PendingUploadRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.PendingUploadResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models.PendingUploadResponse: ...
     @overload
-    def start_pending_upload(
+    def _start_pending_upload(
         self, name: str, version: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.PendingUploadResponse:
-        """Create or start a pending upload of a evaluation results for a specific version.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The specific version id of the EvaluationResult to operate on. Required.
-        :type version: str
-        :param body: Parameters for the action. Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.PendingUploadResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models.PendingUploadResponse: ...
     @overload
-    def start_pending_upload(
+    def _start_pending_upload(
         self, name: str, version: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.PendingUploadResponse:
-        """Create or start a pending upload of a evaluation results for a specific version.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The specific version id of the EvaluationResult to operate on. Required.
-        :type version: str
-        :param body: Parameters for the action. Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.PendingUploadResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models.PendingUploadResponse: ...
 
     @distributed_trace
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "name", "version", "content_type", "accept"]},
     )
-    def start_pending_upload(
+    def _start_pending_upload(
         self, name: str, version: str, body: Union[_models.PendingUploadRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.PendingUploadResponse:
         """Create or start a pending upload of a evaluation results for a specific version.
@@ -4005,250 +5721,61 @@ class EvaluationResultsOperations:
 
         return deserialized  # type: ignore
 
-
-class RedTeamsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.projects.onedp.AIProjectClient`'s
-        :attr:`red_teams` attribute.
-    """
-
-    def __init__(self, *args, **kwargs):
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+    @overload
+    def _fetch_asset_credentials(
+        self,
+        name: str,
+        version: str,
+        asset_credential_request: _models.AssetCredentialRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AssetCredentialResponse: ...
+    @overload
+    def _fetch_asset_credentials(
+        self,
+        name: str,
+        version: str,
+        asset_credential_request: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AssetCredentialResponse: ...
+    @overload
+    def _fetch_asset_credentials(
+        self,
+        name: str,
+        version: str,
+        asset_credential_request: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AssetCredentialResponse: ...
 
     @distributed_trace
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "name", "client_request_id", "accept"]},
+        params_added_on={"2025-05-15-preview": ["api_version", "name", "version", "content_type", "accept"]},
     )
-    def get(self, name: str, **kwargs: Any) -> _models.RedTeam:
-        """Get a redteam by name.
+    def _fetch_asset_credentials(
+        self,
+        name: str,
+        version: str,
+        asset_credential_request: Union[_models.AssetCredentialRequest, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.AssetCredentialResponse:
+        """Enable downloading json.
 
-        :param name: Identifier of the red team. Required.
+        :param name: Name of the resource. Required.
         :type name: str
-        :return: RedTeam. The RedTeam is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.RedTeam
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.RedTeam] = kwargs.pop("cls", None)
-
-        _request = build_red_teams_get_request(
-            name=name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.RedTeam, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-05-15-preview",
-        params_added_on={
-            "2025-05-15-preview": ["api_version", "top", "skip", "maxpagesize", "client_request_id", "accept"]
-        },
-    )
-    def list(
-        self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> Iterable["_models.RedTeam"]:
-        """List a redteam by name.
-
-        :keyword top: The number of result items to return. Default value is None.
-        :paramtype top: int
-        :keyword skip: The number of result items to skip. Default value is None.
-        :paramtype skip: int
-        :return: An iterator like instance of RedTeam
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.onedp.models.RedTeam]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.RedTeam]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_red_teams_list_request(
-                    top=top,
-                    skip=skip,
-                    maxpagesize=maxpagesize,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.RedTeam], deserialized.get("value", []))
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    @overload
-    def create_run(
-        self, red_team: _models.RedTeam, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.RedTeam:
-        """Creates a redteam run.
-
-        :param red_team: Redteam to be run. Required.
-        :type red_team: ~azure.ai.projects.onedp.models.RedTeam
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: RedTeam. The RedTeam is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.RedTeam
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create_run(self, red_team: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.RedTeam:
-        """Creates a redteam run.
-
-        :param red_team: Redteam to be run. Required.
-        :type red_team: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: RedTeam. The RedTeam is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.RedTeam
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create_run(
-        self, red_team: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.RedTeam:
-        """Creates a redteam run.
-
-        :param red_team: Redteam to be run. Required.
-        :type red_team: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: RedTeam. The RedTeam is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.RedTeam
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "content_type", "accept"]},
-    )
-    def create_run(self, red_team: Union[_models.RedTeam, JSON, IO[bytes]], **kwargs: Any) -> _models.RedTeam:
-        """Creates a redteam run.
-
-        :param red_team: Redteam to be run. Is one of the following types: RedTeam, JSON, IO[bytes]
-         Required.
-        :type red_team: ~azure.ai.projects.onedp.models.RedTeam or JSON or IO[bytes]
-        :return: RedTeam. The RedTeam is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.RedTeam
+        :param version: Version of the resource. Required.
+        :type version: str
+        :param asset_credential_request: Input asset to fetch credentials for. Is one of the following
+         types: AssetCredentialRequest, JSON, IO[bytes] Required.
+        :type asset_credential_request: ~azure.ai.projects.onedp.models.AssetCredentialRequest or JSON
+         or IO[bytes]
+        :return: AssetCredentialResponse. The AssetCredentialResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.onedp.models.AssetCredentialResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4263,16 +5790,18 @@ class RedTeamsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.RedTeam] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AssetCredentialResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(red_team, (IOBase, bytes)):
-            _content = red_team
+        if isinstance(asset_credential_request, (IOBase, bytes)):
+            _content = asset_credential_request
         else:
-            _content = json.dumps(red_team, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(asset_credential_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_red_teams_create_run_request(
+        _request = build_evaluation_results_fetch_asset_credentials_request(
+            name=name,
+            version=version,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -4303,7 +5832,7 @@ class RedTeamsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.RedTeam, response.json())
+            deserialized = _deserialize(_models.AssetCredentialResponse, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

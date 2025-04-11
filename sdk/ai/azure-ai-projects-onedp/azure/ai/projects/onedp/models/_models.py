@@ -8,6 +8,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=useless-super-delegation
 
+import datetime
 from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .. import _model_base
@@ -16,6 +17,278 @@ from ._enums import DatasetType, DeploymentType, IndexType, PendingUploadType
 
 if TYPE_CHECKING:
     from .. import models as _models
+
+
+class AnnotationDTO(_model_base.Model):
+    """Represents the data transfer object for an annotation.
+
+    :ivar annotation_task: The task associated with the annotation. Required.
+    :vartype annotation_task: str
+    :ivar content_type: The type of content being annotated. Required.
+    :vartype content_type: str
+    :ivar user_text_list: A list of user-provided text inputs. Required.
+    :vartype user_text_list: list[str]
+    :ivar contents: A collection of content objects related to the annotation. Required.
+    :vartype contents: list[~azure.ai.projects.onedp.models._models.Content]
+    :ivar metric_list: A list of metrics associated with the annotation. Required.
+    :vartype metric_list: list[str]
+    :ivar prompt_version: The version of the prompt used for the annotation. Required.
+    :vartype prompt_version: str
+    :ivar user_agent: The user agent information. Required.
+    :vartype user_agent: str
+    :ivar partner_id: The partner identifier. Required.
+    :vartype partner_id: str
+    :ivar model_id: The model identifier. Required.
+    :vartype model_id: str
+    :ivar inference_type: The type of inference performed. Required.
+    :vartype inference_type: str
+    :ivar client_request_id: The client request identifier. Required.
+    :vartype client_request_id: str
+    """
+
+    annotation_task: str = rest_field(name="AnnotationTask", visibility=["read", "create", "update", "delete", "query"])
+    """The task associated with the annotation. Required."""
+    content_type: str = rest_field(name="ContentType", visibility=["read", "create", "update", "delete", "query"])
+    """The type of content being annotated. Required."""
+    user_text_list: List[str] = rest_field(
+        name="UserTextList", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A list of user-provided text inputs. Required."""
+    contents: List["_models._models.Content"] = rest_field(
+        name="Contents", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A collection of content objects related to the annotation. Required."""
+    metric_list: List[str] = rest_field(name="MetricList", visibility=["read", "create", "update", "delete", "query"])
+    """A list of metrics associated with the annotation. Required."""
+    prompt_version: str = rest_field(name="PromptVersion", visibility=["read", "create", "update", "delete", "query"])
+    """The version of the prompt used for the annotation. Required."""
+    user_agent: str = rest_field(name="UserAgent", visibility=["read", "create", "update", "delete", "query"])
+    """The user agent information. Required."""
+    partner_id: str = rest_field(name="PartnerId", visibility=["read", "create", "update", "delete", "query"])
+    """The partner identifier. Required."""
+    model_id: str = rest_field(name="ModelId", visibility=["read", "create", "update", "delete", "query"])
+    """The model identifier. Required."""
+    inference_type: str = rest_field(name="InferenceType", visibility=["read", "create", "update", "delete", "query"])
+    """The type of inference performed. Required."""
+    client_request_id: str = rest_field(
+        name="ClientRequestId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The client request identifier. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        annotation_task: str,
+        content_type: str,
+        user_text_list: List[str],
+        contents: List["_models._models.Content"],
+        metric_list: List[str],
+        prompt_version: str,
+        user_agent: str,
+        partner_id: str,
+        model_id: str,
+        inference_type: str,
+        client_request_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TargetModelConfig(_model_base.Model):
+    """Abstract class for model configuration.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AOAIModelConfig, MAASModelConfig
+
+    :ivar type: Type of the model configuration. Required. Default value is None.
+    :vartype type: str
+    """
+
+    __mapping__: Dict[str, _model_base.Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """Type of the model configuration. Required. Default value is None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AOAIModelConfig(TargetModelConfig, discriminator="AOAI"):
+    """Azure OpenAI model configuration. The API version would be selected by the service for querying
+    the model.
+
+    :ivar type: Required. Default value is "AOAI".
+    :vartype type: str
+    :ivar azure_endpoint: Endpoint targetURI for AOAI model. Required.
+    :vartype azure_endpoint: str
+    :ivar api_key: API Key for AOAI model. Required.
+    :vartype api_key: str
+    :ivar azure_deployment: Deployment name for AOAI model. Required.
+    :vartype azure_deployment: str
+    """
+
+    type: Literal["AOAI"] = rest_discriminator(name="type", visibility=["read"])  # type: ignore
+    """Required. Default value is \"AOAI\"."""
+    azure_endpoint: str = rest_field(name="azureEndpoint", visibility=["read", "create", "update", "delete", "query"])
+    """Endpoint targetURI for AOAI model. Required."""
+    api_key: str = rest_field(name="apiKey", visibility=["read", "create", "update", "delete", "query"])
+    """API Key for AOAI model. Required."""
+    azure_deployment: str = rest_field(
+        name="azureDeployment", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Deployment name for AOAI model. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        azure_endpoint: str,
+        api_key: str,
+        azure_deployment: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="AOAI", **kwargs)
+
+
+class AssetCredentialRequest(_model_base.Model):
+    """Asset Credential Request.
+
+    :ivar blob_uri: Blob URI. Required.
+    :vartype blob_uri: str
+    """
+
+    blob_uri: str = rest_field(name="BlobUri", visibility=["read", "create", "update", "delete", "query"])
+    """Blob URI. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        blob_uri: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AssetCredentialResponse(_model_base.Model):
+    """Asset Credential Response.
+
+    :ivar blob_reference_for_consumption: Blob Reference for Consumption. Required.
+    :vartype blob_reference_for_consumption:
+     ~azure.ai.projects.onedp.models.BlobReferenceForConsumption
+    """
+
+    blob_reference_for_consumption: "_models.BlobReferenceForConsumption" = rest_field(
+        name="BlobReferenceForConsumption", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Blob Reference for Consumption. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        blob_reference_for_consumption: "_models.BlobReferenceForConsumption",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AttackObjective(_model_base.Model):
+    """Attack Objective.
+
+    :ivar id: The unique identifier. Required.
+    :vartype id: str
+    :ivar metadata: The metadata.
+    :vartype metadata: ~azure.ai.projects.onedp.models._models.Metadata
+    :ivar source: List of sources. Required.
+    :vartype source: list[str]
+    :ivar modality: The modality. Required.
+    :vartype modality: str
+    :ivar messages: The messages. Required.
+    :vartype messages: list[~azure.ai.projects.onedp.models._models.Message]
+    """
+
+    id: str = rest_field(name="Id", visibility=["read", "create", "update", "delete", "query"])
+    """The unique identifier. Required."""
+    metadata: Optional["_models._models.Metadata"] = rest_field(
+        name="Metadata", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The metadata."""
+    source: List[str] = rest_field(name="Source", visibility=["read", "create", "update", "delete", "query"])
+    """List of sources. Required."""
+    modality: str = rest_field(name="Modality", visibility=["read", "create", "update", "delete", "query"])
+    """The modality. Required."""
+    messages: List["_models._models.Message"] = rest_field(
+        name="Messages", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The messages. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        source: List[str],
+        modality: str,
+        messages: List["_models._models.Message"],
+        metadata: Optional["_models._models.Metadata"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class Index(_model_base.Model):
@@ -205,6 +478,34 @@ class Connection(_model_base.Model):
     """Metadata of the connection. Required."""
 
 
+class Content(_model_base.Model):
+    """Message content.
+
+    :ivar messages: The type of content. Required.
+    :vartype messages: list[any]
+    """
+
+    messages: List[Any] = rest_field(name="Messages", visibility=["read", "create", "update", "delete", "query"])
+    """The type of content. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        messages: List[Any],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class CosmosDBIndex(Index, discriminator="CosmosDBNoSqlVectorStore"):
     """CosmosDB Vector Store Index Definition.
 
@@ -267,6 +568,43 @@ class CosmosDBIndex(Index, discriminator="CosmosDBNoSqlVectorStore"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, type=IndexType.COSMOS_DB, **kwargs)
+
+
+class CustomizationParameters(_model_base.Model):
+    """Customization Parameters.
+
+    :ivar application_scenario: Application scenario.
+    :vartype application_scenario: str
+    :ivar harm_categories: List of harm categories. Required.
+    :vartype harm_categories: list[str]
+    """
+
+    application_scenario: Optional[str] = rest_field(
+        name="ApplicationScenario", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Application scenario."""
+    harm_categories: List[str] = rest_field(
+        name="HarmCategories", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of harm categories. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        harm_categories: List[str],
+        application_scenario: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class DatasetVersion(_model_base.Model):
@@ -422,12 +760,16 @@ class Evaluation(_model_base.Model):
     :vartype id: str
     :ivar data: Data for evaluation. Required.
     :vartype data: ~azure.ai.projects.onedp.models.InputData
+    :ivar target: Evaluation target specifying the model config and parameters.
+    :vartype target: ~azure.ai.projects.onedp.models._models.EvaluationTarget
     :ivar display_name: Display Name for evaluation. It helps to find the evaluation easily in AI
      Foundry. It does not need to be unique.
     :vartype display_name: str
     :ivar description: Description of the evaluation. It can be used to store additional
      information about the evaluation and is mutable.
     :vartype description: str
+    :ivar system_data: Metadata containing createdBy and modifiedBy information.
+    :vartype system_data: ~azure.ai.projects.onedp.models.SystemData
     :ivar status: Status of the evaluation. It is set by service and is read-only.
     :vartype status: str
     :ivar tags: Evaluation's tags. Unlike properties, tags are fully mutable.
@@ -438,9 +780,9 @@ class Evaluation(_model_base.Model):
     :ivar evaluators: Evaluators to be used for the evaluation. Required.
     :vartype evaluators: dict[str, ~azure.ai.projects.onedp.models.EvaluatorConfiguration]
     :ivar outputs: Read-only result outputs. Example: { 'evaluationResultId':
-     'azureai://accounts/{AccountName}/projects/{projectName}/evaluationresults/{name}/{version}',
+     'azureai://accounts/{AccountName}/projects/{myproject}/evaluationresults/{name}/versions/{version}',
      'logId':
-     'azureai://accounts/{AccountName}/projects/{projectName}/datasets/{dataset-name}/{dataset-version}'
+     'azureai://accounts/{AccountName}/projects/{myproject}/datasets/{dataset-name}/versions/{dataset-version}'
      }. Required.
     :vartype outputs: dict[str, str]
     """
@@ -449,6 +791,8 @@ class Evaluation(_model_base.Model):
     """Identifier of the evaluation. Required."""
     data: "_models.InputData" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Data for evaluation. Required."""
+    target: Optional["_models._models.EvaluationTarget"] = rest_field(visibility=["read", "create"])
+    """Evaluation target specifying the model config and parameters."""
     display_name: Optional[str] = rest_field(
         name="displayName", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -457,6 +801,8 @@ class Evaluation(_model_base.Model):
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Description of the evaluation. It can be used to store additional information about the
      evaluation and is mutable."""
+    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
+    """Metadata containing createdBy and modifiedBy information."""
     status: Optional[str] = rest_field(visibility=["read"])
     """Status of the evaluation. It is set by service and is read-only."""
     tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -470,9 +816,9 @@ class Evaluation(_model_base.Model):
     """Evaluators to be used for the evaluation. Required."""
     outputs: Dict[str, str] = rest_field(visibility=["read"])
     """Read-only result outputs. Example: { 'evaluationResultId':
-     'azureai://accounts/{AccountName}/projects/{projectName}/evaluationresults/{name}/{version}',
+     'azureai://accounts/{AccountName}/projects/{myproject}/evaluationresults/{name}/versions/{version}',
      'logId':
-     'azureai://accounts/{AccountName}/projects/{projectName}/datasets/{dataset-name}/{dataset-version}'
+     'azureai://accounts/{AccountName}/projects/{myproject}/datasets/{dataset-name}/versions/{dataset-version}'
      }. Required."""
 
     @overload
@@ -481,6 +827,7 @@ class Evaluation(_model_base.Model):
         *,
         data: "_models.InputData",
         evaluators: Dict[str, "_models.EvaluatorConfiguration"],
+        target: Optional["_models._models.EvaluationTarget"] = None,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
@@ -504,18 +851,6 @@ class EvaluationResult(_model_base.Model):
     :ivar result_type: Type of Evaluation result. Known values are: "Benchmark", "Evaluation",
      "Redteam", and "Simulation".
     :vartype result_type: str or ~azure.ai.projects.onedp.models.ResultType
-    :ivar model_name: Model Name.
-    :vartype model_name: str
-    :ivar model_version: Model Version.
-    :vartype model_version: str
-    :ivar model_asset_id: Model Asset ID.
-    :vartype model_asset_id: str
-    :ivar dataset_family: Dataset Family.
-    :vartype dataset_family: str
-    :ivar dataset_name: Dataset Name.
-    :vartype dataset_name: str
-    :ivar metrics: Metrics.
-    :vartype metrics: dict[str, float]
     :ivar blob_uri: Blob URI.
     :vartype blob_uri: str
     :ivar stage: Asset stage.
@@ -532,33 +867,11 @@ class EvaluationResult(_model_base.Model):
     :vartype tags: dict[str, str]
     """
 
-    result_type: Optional[Union[str, "_models.ResultType"]] = rest_field(
+    result_type: Optional[Union[str, "_models._enums.ResultType"]] = rest_field(
         name="ResultType", visibility=["read", "create", "update", "delete", "query"]
     )
     """Type of Evaluation result. Known values are: \"Benchmark\", \"Evaluation\", \"Redteam\", and
      \"Simulation\"."""
-    model_name: Optional[str] = rest_field(name="ModelName", visibility=["read", "create", "update", "delete", "query"])
-    """Model Name."""
-    model_version: Optional[str] = rest_field(
-        name="ModelVersion", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Model Version."""
-    model_asset_id: Optional[str] = rest_field(
-        name="ModelAssetId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Model Asset ID."""
-    dataset_family: Optional[str] = rest_field(
-        name="DatasetFamily", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Dataset Family."""
-    dataset_name: Optional[str] = rest_field(
-        name="DatasetName", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Dataset Name."""
-    metrics: Optional[Dict[str, float]] = rest_field(
-        name="Metrics", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Metrics."""
     blob_uri: Optional[str] = rest_field(name="BlobUri", visibility=["read", "create", "update", "delete", "query"])
     """Blob URI."""
     stage: Optional[str] = rest_field(visibility=["read", "create", "update"])
@@ -578,17 +891,143 @@ class EvaluationResult(_model_base.Model):
     def __init__(
         self,
         *,
-        result_type: Optional[Union[str, "_models.ResultType"]] = None,
-        model_name: Optional[str] = None,
-        model_version: Optional[str] = None,
-        model_asset_id: Optional[str] = None,
-        dataset_family: Optional[str] = None,
-        dataset_name: Optional[str] = None,
-        metrics: Optional[Dict[str, float]] = None,
+        result_type: Optional[Union[str, "_models._enums.ResultType"]] = None,
         blob_uri: Optional[str] = None,
         stage: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EvaluationTarget(_model_base.Model):
+    """Target for the evaluation process.
+
+    :ivar system_message: System message related to the evaluation target. Required.
+    :vartype system_message: str
+    :ivar model_config: Model configuration for the evaluation. Required.
+    :vartype model_config: ~azure.ai.projects.onedp.models._models.TargetModelConfig
+    :ivar model_params: A dictionary of parameters for the model.
+    :vartype model_params: dict[str, any]
+    """
+
+    system_message: str = rest_field(name="systemMessage", visibility=["read", "create", "update", "delete", "query"])
+    """System message related to the evaluation target. Required."""
+    model_config: "_models._models.TargetModelConfig" = rest_field(
+        name="modelConfig", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Model configuration for the evaluation. Required."""
+    model_params: Optional[Dict[str, Any]] = rest_field(
+        name="modelParams", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A dictionary of parameters for the model."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        system_message: str,
+        model_config: "_models._models.TargetModelConfig",
+        model_params: Optional[Dict[str, Any]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EvaluationUpload(_model_base.Model):
+    """Upload a local SDK evaluation run. Currently update supports status, outputs, properties, and
+    tags updates.
+
+    :ivar id: Identifier of the evaluation. Required.
+    :vartype id: str
+    :ivar data: Data for evaluation.
+    :vartype data: ~azure.ai.projects.onedp.models.InputData
+    :ivar target: Evaluation target specifying the model config and parameters.
+    :vartype target: ~azure.ai.projects.onedp.models._models.EvaluationTarget
+    :ivar display_name: Display Name for evaluation. It helps to find the evaluation easily in AI
+     Foundry. It does not need to be unique.
+    :vartype display_name: str
+    :ivar description: Description of the evaluation. It can be used to store additional
+     information about the evaluation and is mutable.
+    :vartype description: str
+    :ivar system_data: Metadata containing createdBy and modifiedBy information.
+    :vartype system_data: ~azure.ai.projects.onedp.models.SystemData
+    :ivar status: Status of the evaluation. For upload: Failed or Completed.
+    :vartype status: str
+    :ivar tags: Evaluation's tags. Unlike properties, tags are fully mutable.
+    :vartype tags: dict[str, str]
+    :ivar properties: Evaluation's properties. Unlike tags, properties are add-only. Once added, a
+     property cannot be removed.
+    :vartype properties: dict[str, str]
+    :ivar evaluators: Evaluators to be used for the evaluation.
+    :vartype evaluators: dict[str, ~azure.ai.projects.onedp.models.EvaluatorConfiguration]
+    :ivar outputs: Outputs of the evaluation as a dictionary of IDs. Example: {
+     'evaluationResultId':
+     'azureai://accounts/{AccountName}/projects/{myproject}/evaluationresults/{name}/versions/{version}'}.
+    :vartype outputs: dict[str, str]
+    """
+
+    id: str = rest_field(visibility=["read"])
+    """Identifier of the evaluation. Required."""
+    data: Optional["_models.InputData"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Data for evaluation."""
+    target: Optional["_models._models.EvaluationTarget"] = rest_field(visibility=["read", "create"])
+    """Evaluation target specifying the model config and parameters."""
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Display Name for evaluation. It helps to find the evaluation easily in AI Foundry. It does not
+     need to be unique."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Description of the evaluation. It can be used to store additional information about the
+     evaluation and is mutable."""
+    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
+    """Metadata containing createdBy and modifiedBy information."""
+    status: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Status of the evaluation. For upload: Failed or Completed."""
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Evaluation's tags. Unlike properties, tags are fully mutable."""
+    properties: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Evaluation's properties. Unlike tags, properties are add-only. Once added, a property cannot be
+     removed."""
+    evaluators: Optional[Dict[str, "_models.EvaluatorConfiguration"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Evaluators to be used for the evaluation."""
+    outputs: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Outputs of the evaluation as a dictionary of IDs. Example: { 'evaluationResultId':
+     'azureai://accounts/{AccountName}/projects/{myproject}/evaluationresults/{name}/versions/{version}'}."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        data: Optional["_models.InputData"] = None,
+        target: Optional["_models._models.EvaluationTarget"] = None,
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+        status: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        properties: Optional[Dict[str, str]] = None,
+        evaluators: Optional[Dict[str, "_models.EvaluatorConfiguration"]] = None,
+        outputs: Optional[Dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -815,6 +1254,79 @@ class InputDataset(InputData, discriminator="dataset"):
         super().__init__(*args, type="dataset", **kwargs)
 
 
+class LongRunningResponse(_model_base.Model):
+    """Long Running Response.
+
+    :ivar location: The location. Required.
+    :vartype location: str
+    :ivar operation_result: The OperationResult. Required.
+    :vartype operation_result: any
+    """
+
+    location: str = rest_field(name="Location", visibility=["read", "create", "update", "delete", "query"])
+    """The location. Required."""
+    operation_result: Any = rest_field(
+        name="OperationResult", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The OperationResult. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        operation_result: Any,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MAASModelConfig(TargetModelConfig, discriminator="MAAS"):
+    """MaaS model configuration. The API version would be selected by the service for querying the
+    model.
+
+    :ivar type: Required. Default value is "MAAS".
+    :vartype type: str
+    :ivar azure_endpoint: Endpoint targetURI for MAAS model. Required.
+    :vartype azure_endpoint: str
+    :ivar api_key: API Key for MAAS model. Required.
+    :vartype api_key: str
+    """
+
+    type: Literal["MAAS"] = rest_discriminator(name="type", visibility=["read"])  # type: ignore
+    """Required. Default value is \"MAAS\"."""
+    azure_endpoint: str = rest_field(name="azureEndpoint", visibility=["read", "create", "update", "delete", "query"])
+    """Endpoint targetURI for MAAS model. Required."""
+    api_key: str = rest_field(name="apiKey", visibility=["read", "create", "update", "delete", "query"])
+    """API Key for MAAS model. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        azure_endpoint: str,
+        api_key: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="MAAS", **kwargs)
+
+
 class ManagedAzureAISearchIndex(Index, discriminator="ManagedAzureSearch"):
     """Managed Azure AI Search Index Definition.
 
@@ -860,6 +1372,74 @@ class ManagedAzureAISearchIndex(Index, discriminator="ManagedAzureSearch"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, type=IndexType.MANAGED_AZURE_SEARCH, **kwargs)
+
+
+class Message(_model_base.Model):
+    """Message.
+
+    :ivar role: The role.
+    :vartype role: str
+    :ivar content: The content.
+    :vartype content: str
+    """
+
+    role: Optional[str] = rest_field(name="Role", visibility=["read", "create", "update", "delete", "query"])
+    """The role."""
+    content: Optional[str] = rest_field(name="Content", visibility=["read", "create", "update", "delete", "query"])
+    """The content."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        role: Optional[str] = None,
+        content: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Metadata(_model_base.Model):
+    """Metadata.
+
+    :ivar target_harms: List of target harms. Required.
+    :vartype target_harms: list[~azure.ai.projects.onedp.models._models.TargetHarm]
+    :ivar language: The language. Required.
+    :vartype language: str
+    """
+
+    target_harms: List["_models._models.TargetHarm"] = rest_field(
+        name="TargetHarms", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of target harms. Required."""
+    language: str = rest_field(name="Language", visibility=["read", "create", "update", "delete", "query"])
+    """The language. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        target_harms: List["_models._models.TargetHarm"],
+        language: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class ModelDeployment(Deployment, discriminator="ModelDeployment"):
@@ -1032,12 +1612,6 @@ class RedTeam(_model_base.Model):
     :ivar simulation_only: Simulation-only or Simulation + Evaluation. Default false, if true the
      scan outputs conversation not evaluation result. Required.
     :vartype simulation_only: bool
-    :ivar outputs: Read-only result outputs. Example: { 'redTeamResultId':
-     'azureai://accounts/{AccountName}/projects/{projectName}/evaluationresults/{name}/{version}',
-     'logId':
-     'azureai://accounts/{AccountName}/projects/{projectName}/datasets/{dataset-name}/{dataset-version}'
-     }. Required.
-    :vartype outputs: dict[str, str]
     :ivar risk_categories: List of risk categories to generate attack objectives for. Required.
     :vartype risk_categories: list[str or ~azure.ai.projects.onedp.models.RiskCategory]
     :ivar application_scenario: Application scenario for the red team operation, to generate
@@ -1050,6 +1624,14 @@ class RedTeam(_model_base.Model):
     :vartype properties: dict[str, str]
     :ivar status: Status of the red-team. It is set by service and is read-only.
     :vartype status: str
+    :ivar outputs: Read-only result outputs. Example: { 'evaluationResultId':
+     'azureai://accounts/{AccountName}/projects/{myproject}/evaluationresults/{name}/versions/{version}',
+     'logId':
+     'azureai://accounts/{AccountName}/projects/{myproject}/datasets/{dataset-name}/versions/{dataset-version}'
+     }. Required.
+    :vartype outputs: dict[str, str]
+    :ivar system_data: Metadata containing createdBy and modifiedBy information.
+    :vartype system_data: ~azure.ai.projects.onedp.models.SystemData
     """
 
     id: str = rest_field(visibility=["read"])
@@ -1058,7 +1640,7 @@ class RedTeam(_model_base.Model):
     """Name of the red-team scan. Required."""
     num_turns: int = rest_field(name="numTurns", visibility=["read", "create", "update", "delete", "query"])
     """Number of simulation rounds. Required."""
-    attack_strategy: List[Union[str, "_models.AttackStrategy"]] = rest_field(
+    attack_strategy: List[Union[str, "_models._enums.AttackStrategy"]] = rest_field(
         name="attackStrategy", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of attack strategies or nested lists of attack strategies. Required."""
@@ -1067,13 +1649,7 @@ class RedTeam(_model_base.Model):
     )
     """Simulation-only or Simulation + Evaluation. Default false, if true the scan outputs
      conversation not evaluation result. Required."""
-    outputs: Dict[str, str] = rest_field(visibility=["read"])
-    """Read-only result outputs. Example: { 'redTeamResultId':
-     'azureai://accounts/{AccountName}/projects/{projectName}/evaluationresults/{name}/{version}',
-     'logId':
-     'azureai://accounts/{AccountName}/projects/{projectName}/datasets/{dataset-name}/{dataset-version}'
-     }. Required."""
-    risk_categories: List[Union[str, "_models.RiskCategory"]] = rest_field(
+    risk_categories: List[Union[str, "_models._enums.RiskCategory"]] = rest_field(
         name="riskCategories", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of risk categories to generate attack objectives for. Required."""
@@ -1088,6 +1664,14 @@ class RedTeam(_model_base.Model):
      removed."""
     status: Optional[str] = rest_field(visibility=["read"])
     """Status of the red-team. It is set by service and is read-only."""
+    outputs: Dict[str, str] = rest_field(visibility=["read"])
+    """Read-only result outputs. Example: { 'evaluationResultId':
+     'azureai://accounts/{AccountName}/projects/{myproject}/evaluationresults/{name}/versions/{version}',
+     'logId':
+     'azureai://accounts/{AccountName}/projects/{myproject}/datasets/{dataset-name}/versions/{dataset-version}'
+     }. Required."""
+    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
+    """Metadata containing createdBy and modifiedBy information."""
 
     @overload
     def __init__(
@@ -1095,9 +1679,105 @@ class RedTeam(_model_base.Model):
         *,
         scan_name: str,
         num_turns: int,
-        attack_strategy: List[Union[str, "_models.AttackStrategy"]],
+        attack_strategy: List[Union[str, "_models._enums.AttackStrategy"]],
         simulation_only: bool,
-        risk_categories: List[Union[str, "_models.RiskCategory"]],
+        risk_categories: List[Union[str, "_models._enums.RiskCategory"]],
+        application_scenario: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        properties: Optional[Dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RedTeamUpload(_model_base.Model):
+    """Red team details.
+
+    :ivar id: Identifier of the red team. Required.
+    :vartype id: str
+    :ivar scan_name: Name of the red-team scan.
+    :vartype scan_name: str
+    :ivar num_turns: Number of simulation rounds.
+    :vartype num_turns: int
+    :ivar attack_strategy: List of attack strategies or nested lists of attack strategies.
+    :vartype attack_strategy: list[str or ~azure.ai.projects.onedp.models.AttackStrategy]
+    :ivar simulation_only: Simulation-only or Simulation + Evaluation. Default false, if true the
+     scan outputs conversation not evaluation result.
+    :vartype simulation_only: bool
+    :ivar risk_categories: List of risk categories to generate attack objectives for.
+    :vartype risk_categories: list[str or ~azure.ai.projects.onedp.models.RiskCategory]
+    :ivar application_scenario: Application scenario for the red team operation, to generate
+     scenario specific attacks.
+    :vartype application_scenario: str
+    :ivar tags: Red team's tags. Unlike properties, tags are fully mutable.
+    :vartype tags: dict[str, str]
+    :ivar properties: Red team's properties. Unlike tags, properties are add-only. Once added, a
+     property cannot be removed.
+    :vartype properties: dict[str, str]
+    :ivar status: Status of the red-team. It is set by service and is read-only.
+    :vartype status: str
+    :ivar outputs: Read-only result outputs. Example: { 'evaluationResultId':
+     'azureai://accounts/{AccountName}/projects/{myproject}/evaluationresults/{name}/versions/{version}'
+     }.
+    :vartype outputs: dict[str, str]
+    :ivar system_data: Metadata containing createdBy and modifiedBy information.
+    :vartype system_data: ~azure.ai.projects.onedp.models.SystemData
+    """
+
+    id: str = rest_field(visibility=["read"])
+    """Identifier of the red team. Required."""
+    scan_name: Optional[str] = rest_field(name="scanName", visibility=["read", "create", "update", "delete", "query"])
+    """Name of the red-team scan."""
+    num_turns: Optional[int] = rest_field(name="numTurns", visibility=["read", "create", "update", "delete", "query"])
+    """Number of simulation rounds."""
+    attack_strategy: Optional[List[Union[str, "_models._enums.AttackStrategy"]]] = rest_field(
+        name="attackStrategy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of attack strategies or nested lists of attack strategies."""
+    simulation_only: Optional[bool] = rest_field(
+        name="simulationOnly", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Simulation-only or Simulation + Evaluation. Default false, if true the scan outputs
+     conversation not evaluation result."""
+    risk_categories: Optional[List[Union[str, "_models._enums.RiskCategory"]]] = rest_field(
+        name="riskCategories", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of risk categories to generate attack objectives for."""
+    application_scenario: Optional[str] = rest_field(
+        name="applicationScenario", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Application scenario for the red team operation, to generate scenario specific attacks."""
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Red team's tags. Unlike properties, tags are fully mutable."""
+    properties: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Red team's properties. Unlike tags, properties are add-only. Once added, a property cannot be
+     removed."""
+    status: Optional[str] = rest_field(visibility=["read"])
+    """Status of the red-team. It is set by service and is read-only."""
+    outputs: Optional[Dict[str, str]] = rest_field(visibility=["read"])
+    """Read-only result outputs. Example: { 'evaluationResultId':
+     'azureai://accounts/{AccountName}/projects/{myproject}/evaluationresults/{name}/versions/{version}'
+     }."""
+    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
+    """Metadata containing createdBy and modifiedBy information."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        scan_name: Optional[str] = None,
+        num_turns: Optional[int] = None,
+        attack_strategy: Optional[List[Union[str, "_models._enums.AttackStrategy"]]] = None,
+        simulation_only: Optional[bool] = None,
+        risk_categories: Optional[List[Union[str, "_models._enums.RiskCategory"]]] = None,
         application_scenario: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         properties: Optional[Dict[str, str]] = None,
@@ -1131,6 +1811,112 @@ class SasCredential(_model_base.Model):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type: Literal["SAS"] = "SAS"
+
+
+class SimulationDTO(_model_base.Model):
+    """Customization Parameters.
+
+    :ivar headers: Additional headers.
+    :vartype headers: dict[str, str]
+    :ivar params: Parameters.
+    :vartype params: dict[str, str]
+    :ivar template_parameters: Template parameters.
+    :vartype template_parameters: dict[str, str]
+    :ivar customization_parameters: Customization parameters.
+    :vartype customization_parameters:
+     ~azure.ai.projects.onedp.models._models.CustomizationParameters
+    :ivar json: Json.
+    :vartype json: str
+    :ivar url: Url.
+    :vartype url: str
+    :ivar template_key: Template key.
+    :vartype template_key: str
+    :ivar simulation_type: Type of Simulation. Known values are: "Default", "CustomPersona", and
+     "HarmTurnGenerator".
+    :vartype simulation_type: str or ~azure.ai.projects.onedp.models.SimulationType
+    :ivar is_microsoft_tenant: 'True' if Microsoft internal tenant and 'False' otherwise.
+    :vartype is_microsoft_tenant: bool
+    :ivar subscription_id: Azure subscription id.
+    :vartype subscription_id: str
+    :ivar resource_group_name: Resource group name.
+    :vartype resource_group_name: str
+    :ivar workspace_name: Workspace name.
+    :vartype workspace_name: str
+    """
+
+    headers: Optional[Dict[str, str]] = rest_field(
+        name="Headers", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Additional headers."""
+    params: Optional[Dict[str, str]] = rest_field(
+        name="Params", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Parameters."""
+    template_parameters: Optional[Dict[str, str]] = rest_field(
+        name="TemplateParameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Template parameters."""
+    customization_parameters: Optional["_models._models.CustomizationParameters"] = rest_field(
+        name="CustomizationParameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Customization parameters."""
+    json: Optional[str] = rest_field(name="Json", visibility=["read", "create", "update", "delete", "query"])
+    """Json."""
+    url: Optional[str] = rest_field(name="Url", visibility=["read", "create", "update", "delete", "query"])
+    """Url."""
+    template_key: Optional[str] = rest_field(
+        name="TemplateKey", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Template key."""
+    simulation_type: Optional[Union[str, "_models._enums.SimulationType"]] = rest_field(
+        name="SimulationType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Type of Simulation. Known values are: \"Default\", \"CustomPersona\", and
+     \"HarmTurnGenerator\"."""
+    is_microsoft_tenant: Optional[bool] = rest_field(
+        name="IsMicrosoftTenant", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """'True' if Microsoft internal tenant and 'False' otherwise."""
+    subscription_id: Optional[str] = rest_field(
+        name="SubscriptionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Azure subscription id."""
+    resource_group_name: Optional[str] = rest_field(
+        name="ResourceGroupName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Resource group name."""
+    workspace_name: Optional[str] = rest_field(
+        name="WorkspaceName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Workspace name."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        headers: Optional[Dict[str, str]] = None,
+        params: Optional[Dict[str, str]] = None,
+        template_parameters: Optional[Dict[str, str]] = None,
+        customization_parameters: Optional["_models._models.CustomizationParameters"] = None,
+        json: Optional[str] = None,
+        url: Optional[str] = None,
+        template_key: Optional[str] = None,
+        simulation_type: Optional[Union[str, "_models._enums.SimulationType"]] = None,
+        is_microsoft_tenant: Optional[bool] = None,
+        subscription_id: Optional[str] = None,
+        resource_group_name: Optional[str] = None,
+        workspace_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class Sku(_model_base.Model):
@@ -1168,6 +1954,66 @@ class Sku(_model_base.Model):
         name: str,
         size: str,
         tier: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SystemData(_model_base.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :ivar created_at: The timestamp the resource was created at.
+    :vartype created_at: ~datetime.datetime
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The identity type that created the resource.
+    :vartype created_by_type: str
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
+    """
+
+    created_at: Optional[datetime.datetime] = rest_field(name="createdAt", visibility=["read"], format="rfc3339")
+    """The timestamp the resource was created at."""
+    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read"])
+    """The identity that created the resource."""
+    created_by_type: Optional[str] = rest_field(name="createdByType", visibility=["read"])
+    """The identity type that created the resource."""
+    last_modified_at: Optional[datetime.datetime] = rest_field(
+        name="lastModifiedAt", visibility=["read"], format="rfc3339"
+    )
+    """The timestamp of resource last modification (UTC)."""
+
+
+class TargetHarm(_model_base.Model):
+    """Target Harm.
+
+    :ivar risk_type: The risk type.
+    :vartype risk_type: str
+    :ivar risk_sub_type: The risk sub type.
+    :vartype risk_sub_type: str
+    """
+
+    risk_type: Optional[str] = rest_field(name="RiskType", visibility=["read", "create", "update", "delete", "query"])
+    """The risk type."""
+    risk_sub_type: Optional[str] = rest_field(
+        name="RiskSubType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The risk sub type."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        risk_type: Optional[str] = None,
+        risk_sub_type: Optional[str] = None,
     ) -> None: ...
 
     @overload

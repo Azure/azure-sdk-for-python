@@ -47,10 +47,10 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
     :vartype indexes: azure.ai.projects.onedp.aio.operations.IndexesOperations
     :ivar deployments: DeploymentsOperations operations
     :vartype deployments: azure.ai.projects.onedp.aio.operations.DeploymentsOperations
-    :ivar evaluation_results: EvaluationResultsOperations operations
-    :vartype evaluation_results: azure.ai.projects.onedp.aio.operations.EvaluationResultsOperations
     :ivar red_teams: RedTeamsOperations operations
     :vartype red_teams: azure.ai.projects.onedp.aio.operations.RedTeamsOperations
+    :ivar evaluation_results: EvaluationResultsOperations operations
+    :vartype evaluation_results: azure.ai.projects.onedp.aio.operations.EvaluationResultsOperations
     :param endpoint: Project endpoint in the form of:
      https://<aiservices-id>.services.ai.azure.com/api/projects/<project-name>. Required.
     :type endpoint: str
@@ -99,10 +99,10 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
         self.datasets = DatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.indexes = IndexesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.deployments = DeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.red_teams = RedTeamsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.evaluation_results = EvaluationResultsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.red_teams = RedTeamsOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
