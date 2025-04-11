@@ -6,15 +6,23 @@ import json
 import math
 import operator
 from itertools import starmap
-from azure.ai.evaluation._evaluators._common import EvaluatorBase
+from azure.ai.evaluation._exceptions import EvaluationException
 from typing import Dict, List, TypedDict, Optional
 
 
-DocumentLabel = TypedDict(
-    'DocumentLabel',
+RetrievalGroundTruthDocument = TypedDict(
+    'RetrievalGroundTruthDocument',
     {
         "document_id": str,
-        "label": float
+        "query_relevance_label": int
+    }
+)
+
+RetrievedDocument = TypedDict(
+    'RetrievedDocument',
+    {
+        "document_id": str,
+        "relevance_score": float
     }
 )
 
@@ -46,16 +54,15 @@ class DocumentRetrievalEvaluator:
     """
     Calculate document retrieval metrics, such as NDCG, XDCG, Fidelity and Top K Relevance.
     """
-    def __init__(self, groundtruth_min: int = 0, groundtruth_max: int = 4, groundtruth_step: int = 1, threshold: Optional[dict] = None):
+    def __init__(self, *, groundtruth_label_min: int = 0, groundtruth_label_max: int = 4, threshold: Optional[dict] = None):
         super().__init__()
         self.k = 3
         self.xdcg_discount_factor = 0.6
-        self.groundtruth_min = groundtruth_min
-        self.groundtruth_max = groundtruth_max
-        self.groundtruth_step = groundtruth_step
+        self.groundtruth_label_min = groundtruth_label_min
+        self.groundtruth_label_max = groundtruth_label_max
         
         # The default threshold for metrics where higher numbers are better.
-        default_threshold = {
+        self._threshold = {
             "ndcg@3": 0.5,
             "xdcg@3": 0.5,
             "fidelity": 0.5,
@@ -71,19 +78,12 @@ class DocumentRetrievalEvaluator:
             "holes_ratio": 0
         }
 
-        if threshold is None:
-            threshold = {}
-
-        elif not isinstance(threshold, dict):
-            raise TypeError(
+        if threshold and not isinstance(threshold, dict):
+            raise EvaluationException(
                 f"Threshold must be a dictionary, got {type(threshold)}"
             )
-        
-        for key in default_threshold.keys():
-            if key not in threshold:
-                threshold[key] = default_threshold[key]
 
-        self._threshold = threshold
+        self._threshold.update(threshold)
 
     def _compute_holes(
         self,
@@ -99,8 +99,8 @@ class DocumentRetrievalEvaluator:
     
     def _compute_ndcg(
         self,
-        result_docs_groundtruth_labels: List[float],
-        ideal_docs_groundtruth_labels: List[float],
+        result_docs_groundtruth_labels: List[int],
+        ideal_docs_groundtruth_labels: List[int],
     ) -> float:
         """
         NDCG (Normalized Discounted Cumulative Gain) calculated for the top 3 documents retrieved from a search query.
@@ -119,7 +119,7 @@ class DocumentRetrievalEvaluator:
     
     def _compute_xdcg(
         self,
-        result_docs_groundtruth_labels: List[float]
+        result_docs_groundtruth_labels: List[int]
     ) -> float:
         """
         XDCG calculated for the top 3 documents retrieved from a search query.
@@ -139,18 +139,18 @@ class DocumentRetrievalEvaluator:
     
     def _compute_fidelity(
         self,
-        result_docs_groundtruth_labels: List[float],
-        ideal_docs_groundtruth_labels: List[float],
+        result_docs_groundtruth_labels: List[int],
+        ideal_docs_groundtruth_labels: List[int],
     ) -> float:
         """
         Fidelity calculated over all documents retrieved from a search query.
         Fidelity measures how objectively good are all of the documents retrieved compared with all known good documents in the underlying data store.
         """
-        def calculate_weighted_sum_by_rating(labels: List[float]) -> float:
-            s = self.groundtruth_min + self.groundtruth_step
+        def calculate_weighted_sum_by_rating(labels: List[int]) -> float:
+            s = self.groundtruth_label_min + 1
 
             # get a count of each label
-            label_counts = {str(i): 0 for i in range(s, self.groundtruth_max + 1, self.groundtruth_step)}
+            label_counts = {str(i): 0 for i in range(s, self.groundtruth_label_max + 1)}
 
             for label in labels:
                 if label >= s:
@@ -159,58 +159,10 @@ class DocumentRetrievalEvaluator:
             sorted_label_counts = [x[1] for x in sorted(label_counts.items(), key=lambda x: x[0])]
 
             # calculate weights
-            weights = [(math.pow(2, i+1) - 1) for i in range(s, self.groundtruth_max + 1, self.groundtruth_step)]
+            weights = [(math.pow(2, i+1) - 1) for i in range(s, self.groundtruth_label_max + 1)]
 
             # return weighted sum
             return sum(starmap(operator.mul, zip(sorted_label_counts, weights)))
-        
-        weighted_sum_by_rating_results = calculate_weighted_sum_by_rating(result_docs_groundtruth_labels)
-        weighted_sum_by_rating_index = calculate_weighted_sum_by_rating(ideal_docs_groundtruth_labels)
-
-        if weighted_sum_by_rating_index == 0:
-            return math.nan
-
-        return weighted_sum_by_rating_results / float(weighted_sum_by_rating_index)
-            
-
-    def _compute_fidelity_old(
-        self,
-        result_docs_groundtruth_labels: List[float],
-        ideal_docs_groundtruth_labels: List[float],
-    ) -> float:
-        """
-        Fidelity calculated over all documents retrieved from a search query.
-        Fidelity measures how objectively good are all of the documents retrieved compared with all known good documents in the underlying data store.
-        """
-        def get_rating(label: float) -> str:
-            if label >= 3:
-                return "perfect"
-            
-            elif label >= 2.5:
-                return "excellent"
-            
-            elif label >= 2:
-                return "good"
-            
-            elif label >= 1.5:
-                return "fair"
-            
-            else:
-                return "poor"
-
-        def calculate_weighted_sum_by_rating(labels: List[float]) -> float:
-            rating_counts = {
-                "perfect": 0,
-                "excellent": 0,
-                "good": 0,
-                "fair": 0, 
-                "poor": 0
-            }
-
-            for label in labels:
-                rating_counts[get_rating(label)] += 1 
-            
-            return (31 * rating_counts["perfect"]) + (15 * rating_counts["excellent"]) + (7 * rating_counts["good"]) + (3 * rating_counts["fair"]) 
         
         weighted_sum_by_rating_results = calculate_weighted_sum_by_rating(result_docs_groundtruth_labels)
         weighted_sum_by_rating_index = calculate_weighted_sum_by_rating(ideal_docs_groundtruth_labels)
@@ -226,19 +178,31 @@ class DocumentRetrievalEvaluator:
         for metric_name, metric_value in metrics.items():
             if metric_name in self._threshold.keys():
                 result[f"{metric_name}_result"] = (metric_value >= self._threshold[metric_name])
+                result[f"{metric_name}_threshold"] = self._threshold[metric_name]
+                result[f"{metric_name}_lower_is_better"] = False
 
             elif metric_name in self._threshold_holes.keys():
                 result[f"{metric_name}_result"] = (metric_value <= self._threshold_holes[metric_name])
+                result[f"{metric_name}_threshold"] = self._threshold_holes[metric_name]
+                result[f"{metric_name}_lower_is_better"] = True
 
             else:
                 raise ValueError(f"No threshold set for metric '{metric_name}'")
             
         return result
 
-    def __call__(self, *, groundtruth_documents_labels: str, retrieved_documents_labels: str) -> DocumentRetrievalMetrics:
+    def __call__(self, *, retrieval_ground_truth: str, retrieved_documents: str) -> DocumentRetrievalMetrics:
+        """
+        Compute document retrieval metrics for documents retrieved from a search algorithm against a known set of ground truth documents.
+
+        Input `retrieval_ground_truth` is a JSON-formatted string representation of `List[azure.ai.evaluation.RetrievalGroundTruthDocument]`, where each item of the list represents a ground-truth judgement for a particular document relative to a query.
+        Input `retrieved_documents` is a JSON-formatted string representation of `List[azure.ai.evaluation.RetrievedDocument]`, where each item of the list represents a document scored by a search algorithm for the same query.
+
+        Evaluation metrics calculated include NDCG@3, XDCG@3, Fidelity, Top K Relevance and Holes.
+        """
         # input validation
-        qrels = [DocumentLabel(x) for x in json.loads(groundtruth_documents_labels)]
-        results = [DocumentLabel(x) for x in json.loads(retrieved_documents_labels)]
+        qrels = [RetrievalGroundTruthDocument(x) for x in json.loads(retrieval_ground_truth)]
+        results = [RetrievedDocument(x) for x in json.loads(retrieved_documents)]
 
         if len(qrels) > 10000 or len(results) > 10000:
             raise ValueError("The results and ground-truth sets should contain no more than 10000 items.")
@@ -267,8 +231,8 @@ class DocumentRetrievalEvaluator:
             return DocumentRetrievalMetrics(**metrics)
 
         # flatten qrels and results to normal dictionaries
-        qrels_lookup = {x["document_id"]: x["label"] for x in qrels}
-        results_lookup = {x["document_id"]: x["label"] for x in results}
+        qrels_lookup = {x["document_id"]: x["query_relevance_label"] for x in qrels}
+        results_lookup = {x["document_id"]: x["relevance_score"] for x in results}
 
         # sort each input set by label to get the ranking
         qrels_sorted_by_rank = sorted(qrels_lookup.items(), key=lambda x: x[1], reverse=True)
