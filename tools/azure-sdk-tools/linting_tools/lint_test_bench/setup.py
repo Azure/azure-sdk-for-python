@@ -12,8 +12,14 @@ setup(
         "openai>=1.12.0",
         "azure-identity>=1.12.0"
     ],
-    author="Your Name",
-    author_email="your.email@example.com",
-    description="Azure SDK Linting Bot using Azure OpenAI",
-    python_requires=">=3.8",
+    author="Microsoft Corporation",
+    author_email="azpysdkhelp@microsoft.com",
+    url="https://github.com/Azure/azure-sdk-for-python",
+    description="Azure SDK Linting Test Bench using OpenAI SDK",
+    python_requires=">=3.9",
+    classifiers=[
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+    ],
 )
