@@ -432,9 +432,12 @@ def gen_typespec(
             f"tsp-client init --tsp-config {tsp_dir} --local-spec-repo {tsp_dir} --commit {head_sha} --repo {repo_url}"
         )
         if run_in_pipeline:
-            if not os.path.exists("node_modules/@azure-tools/typespec-python"):
+            emitter_name = "@azure-tools/typespec-python"
+            if not os.path.exists(f"node_modules{emitter_name}"):
                 _LOGGER.info("install dependencies only for the first run")
                 check_output("tsp-client install-dependencies", stderr=STDOUT, shell=True)
+            else:
+                _LOGGER.info(f"skip install since {emitter_name} is already installed")
             cmd += " --skip-install --debug"
         else:
             cmd += " --debug"
