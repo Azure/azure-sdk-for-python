@@ -8,7 +8,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from copy import deepcopy
 from enum import Enum
-from typing import Any, IO, List, Literal, MutableMapping, Optional, overload, Union
+from typing import Any, IO, List, MutableMapping, overload, Union
 from urllib.parse import urlparse
 
 from azure.core import CaseInsensitiveEnumMeta
@@ -122,7 +122,7 @@ class SecurityDomainClient(KeyVaultClient):
         certificate_info: CertificateInfo,
         *,
         content_type: str = "application/json",
-        skip_activation_polling: Optional[Literal[True]] = None,
+        skip_activation_polling: bool = False,
         **kwargs: Any,
     ) -> LROPoller[SecurityDomain]: ...
 
@@ -132,7 +132,7 @@ class SecurityDomainClient(KeyVaultClient):
         certificate_info: JSON,
         *,
         content_type: str = "application/json",
-        skip_activation_polling: Optional[Literal[True]] = None,
+        skip_activation_polling: bool = False,
         **kwargs: Any,
     ) -> LROPoller[SecurityDomain]: ...
 
@@ -142,7 +142,7 @@ class SecurityDomainClient(KeyVaultClient):
         certificate_info: IO[bytes],
         *,
         content_type: str = "application/json",
-        skip_activation_polling: Optional[Literal[True]] = None,
+        skip_activation_polling: bool = False,
         **kwargs: Any,
     ) -> LROPoller[SecurityDomain]: ...
 
@@ -152,7 +152,7 @@ class SecurityDomainClient(KeyVaultClient):
         certificate_info: Union[CertificateInfo, JSON, IO[bytes]],
         *,
         content_type: str = "application/json",
-        skip_activation_polling: Optional[Literal[True]] = None,
+        skip_activation_polling: bool = False,
         **kwargs: Any,
     ) -> LROPoller[SecurityDomain]:
         """Retrieves the Security Domain from the managed HSM. Calling this endpoint can
@@ -167,7 +167,7 @@ class SecurityDomainClient(KeyVaultClient):
          Default value is "application/json".
         :keyword bool skip_activation_polling: If set to True, the operation will not poll for HSM activation to
          complete and calling `.result()` on the poller will return the security domain object immediately. Default
-         value is None.
+         value is False.
 
         :return: An instance of LROPoller that returns SecurityDomain. The
          SecurityDomain is compatible with MutableMapping
@@ -194,7 +194,7 @@ class SecurityDomainClient(KeyVaultClient):
         security_domain: Union[SecurityDomain, JSON, IO[bytes]],
         *,
         content_type: str = "application/json",
-        skip_activation_polling: Optional[Literal[True]] = None,
+        skip_activation_polling: bool = False,
         **kwargs: Any,
     ) -> LROPoller[SecurityDomainOperationStatus]:
         """Restore the provided Security Domain.
@@ -207,7 +207,7 @@ class SecurityDomainClient(KeyVaultClient):
          Default value is "application/json".
         :keyword bool skip_activation_polling: If set to True, the operation will not poll for HSM activation to
          complete and calling `.result()` on the poller will return the security domain object immediately. Default
-         value is None.
+         value is False.
 
         :return: An instance of LROPoller that returns SecurityDomainOperationStatus. The
          SecurityDomainOperationStatus is compatible with MutableMapping
