@@ -1,0 +1,8 @@
+-e ../../../tools/azure-sdk-tools
+../../core/azure-core
+../../identity/azure-identity
+../../core/azure-core-tracing-opentelemetry
+aiohttp
+opentelemetry-sdk
+opentelemetry-exporter-otlp-proto-grpc
+azure-ai-ml
