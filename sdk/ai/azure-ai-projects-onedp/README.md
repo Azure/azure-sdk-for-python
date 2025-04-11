@@ -25,6 +25,7 @@ For example, get the inference endpoint URL and credentials associated with your
 
 To report an issue with the client library, or request additional features, please open a GitHub issue [here](https://github.com/Azure/azure-sdk-for-python/issues). Mention the package name "azure-ai-projects" in the title or content.
 
+<!-- TODO: Update TOC once this document is table
 ## Table of contents
 
 - [Getting started](#getting-started)
@@ -53,6 +54,8 @@ To report an issue with the client library, or request additional features, plea
   - [Reporting issues](#reporting-issues)
 - [Next steps](#next-steps)
 - [Contributing](#contributing)
+-->
+
 <!-- PIPY LONG DESCRIPTION END -->
 ## Getting started
 
@@ -190,14 +193,14 @@ See the "inference" folder in the [package samples][samples] for additional samp
 ### Getting an authenticated inference client
 
 Below are code examples of the inference operations, allowing you to get authenticated clients from the
-`azure-ai-inference` or `openai` pacakges and perform one chat completions operation. Full samples can be
+`azure-ai-inference` or `openai` packages and perform one chat completions operation. Full samples can be
 found under the `inference` folder in the [package samples][samples].
 
 #### Azure OpenAI client
 
-Here is an example of geting an authenticated `AzureOpenAI` client from the `openai` pacakge. You have the option to specify
+Here is an example of geting an authenticated `AzureOpenAI` client from the `openai` package. You have the option to specify
 the REST API version that the resulting client will use (see [API specs](https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs))
-). You also have the option (not shown) to expliclxyt specify the Azure OpenAI connection name in your AI Foundry Project, which
+). You also have the option (not shown) to explicitly specify the Azure OpenAI connection name in your AI Foundry Project, which
 the `get_azure_openai_client` method will use to get the inference endpoint and authentication credentials.
 If not present the default Azure OpenAI connection will be used.
 
@@ -226,7 +229,7 @@ with project_client.inference.get_azure_openai_client(api_version="2024-06-01") 
 
 <!-- END SNIPPET -->
 
-Example of geting a `ChatCompletionsClient` from the `azure-ai-inference` pacakge:
+Example of geting a `ChatCompletionsClient` from the `azure-ai-inference` package:
 
 <!-- SNIPPET:sample_chat_completions_with_azure_ai_inference_client.sample-->
 
