@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 from typing import Iterator, List
 from unittest.mock import Mock, patch
 import pytest

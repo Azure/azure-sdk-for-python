@@ -24,9 +24,9 @@ class AIProjectClientConfiguration:  # pylint: disable=too-many-instance-attribu
 
     :param endpoint: The Azure AI Foundry project endpoint, in the form
      ``https://<azure-region>.api.azureml.ms`` or
-     ``https://<private-link-guid>.<azure-region>.api.azureml.ms``\\ , where :code:`<azure-region>`
-     is the Azure region where the project is deployed (e.g. westus) and :code:`<private-link-guid>`
-     is the GUID of the Enterprise private link. Required.
+     ``https://<private-link-guid>.<azure-region>.api.azureml.ms``, where <azure-region> is the
+     Azure region where the project is deployed (e.g. westus) and <private-link-guid> is the GUID of
+     the Enterprise private link. Required.
     :type endpoint: str
     :param subscription_id: The Azure subscription ID. Required.
     :type subscription_id: str
