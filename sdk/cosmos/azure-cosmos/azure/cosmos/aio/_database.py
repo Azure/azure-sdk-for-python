@@ -673,7 +673,7 @@ class DatabaseProxy(object):
                 DeprecationWarning)
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
-         if throughput_bucket is not None:
+        if throughput_bucket is not None:
             kwargs['throughput_bucket'] = throughput_bucket
         request_options = _build_options(kwargs)
 

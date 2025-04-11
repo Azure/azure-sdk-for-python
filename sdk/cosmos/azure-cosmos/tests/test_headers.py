@@ -68,7 +68,8 @@ class TestHeaders(unittest.TestCase):
             list(self.container.query_items(query=query, partition_key="pk-1"))
         except StopIteration:
             pass
-        cosmos_client_connection._CosmosClientConnection__Post = original_connection_post
+        finally:
+            cosmos_client_connection._CosmosClientConnection__Post = original_connection_post
 
     def test_max_integrated_cache_staleness(self):
         cosmos_client_connection = self.container.client_connection

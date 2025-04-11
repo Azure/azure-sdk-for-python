@@ -56,7 +56,7 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
             "test_db" + str(uuid.uuid4()),
             throughput_bucket=request_throughput_bucket_number,
             raw_response_hook=request_raw_response_hook)
-        client.delete_database(created_db.id)
+        await client.delete_database(created_db.id)
 
     async def test_create_db_if_not_exists_and_delete_db_throughput_bucket_async(self):
         created_db = await self.client.create_database_if_not_exists(
@@ -128,7 +128,7 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
             PartitionKey(path="/pk"),
             throughput_bucket=request_throughput_bucket_number,
             raw_response_hook=request_raw_response_hook)
-        self.database.delete_container(replaced_collection.id)
+        await self.database.delete_container(replaced_collection.id)
 
     async def test_container_read_throughput_bucket_async(self):
         await self.container.read(
@@ -147,9 +147,9 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
         for i in range(10):
             await self.container.create_item(body={'id': ''.format(i) + str(uuid.uuid4()), 'pk': 'mypk'})
 
-        self.container.read_all_items(
-            throughput_bucket=request_throughput_bucket_number,
-            raw_response_hook=request_raw_response_hook)
+        async for item in self.container.read_all_items(throughput_bucket=request_throughput_bucket_number,
+            raw_response_hook=request_raw_response_hook):
+            pass
 
     async def test_container_query_items_throughput_bucket_async(self):
         doc_id = 'MyId' + str(uuid.uuid4())
@@ -157,11 +157,11 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
         await self.container.create_item(body=document_definition)
 
         query = 'SELECT * from c'
-        self.container.query_items(
+        query_results = [item async for item in self.container.query_items(
             query=query,
             partition_key='pk',
             throughput_bucket=request_throughput_bucket_number,
-            raw_response_hook=request_raw_response_hook)
+            raw_response_hook=request_raw_response_hook)]
 
     async def test_container_replace_item_throughput_bucket_async(self):
         created_document = await self.container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})

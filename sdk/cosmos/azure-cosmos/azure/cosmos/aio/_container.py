@@ -487,7 +487,7 @@ class ContainerProxy:
         if priority is not None:
             kwargs['priority'] = priority
         if throughput_bucket is not None:
-            kwargs["throughputBucket"] = throughput_bucket
+            kwargs["throughput_bucket"] = throughput_bucket
         feed_options = _build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count

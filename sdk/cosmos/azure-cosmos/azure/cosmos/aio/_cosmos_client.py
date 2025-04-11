@@ -355,7 +355,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-       if throughput_bucket is not None:
+        if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         if initial_headers is not None:
             kwargs["initial_headers"] = initial_headers

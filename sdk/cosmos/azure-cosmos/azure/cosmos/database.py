@@ -144,7 +144,7 @@ class DatabaseProxy(object):
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-         if throughput_bucket is not None:
+        if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         if populate_query_metrics is not None:
             warnings.warn(
@@ -668,7 +668,7 @@ class DatabaseProxy(object):
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-         if throughput_bucket is not None:
+        if throughput_bucket is not None:
             kwargs['throughput_bucket'] = throughput_bucket
         if populate_query_metrics is not None:
             warnings.warn(
