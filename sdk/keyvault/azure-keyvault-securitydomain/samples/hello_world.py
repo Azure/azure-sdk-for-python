@@ -17,7 +17,7 @@ from azure.keyvault.securitydomain.models import CertificateInfo, SecurityDomain
 # 3. azure-keyvault-securitydomain and azure-identity libraries (pip install these)
 #
 # 4. Set environment variable VAULT_URL with the URL of your managed HSM
-#    
+#
 # 5. Set up your environment to use azure-identity's DefaultAzureCredential. For more information about how to configure
 #    the DefaultAzureCredential, refer to https://aka.ms/azsdk/python/identity/docs#azure.identity.DefaultAzureCredential
 #
@@ -52,6 +52,6 @@ certs_object = CertificateInfo(certificates=certificates)
 # poller will wait for HSM activation to complete. By passing the argument, the poller will return immediately with
 # the security domain instead (activation status can be checked with `client.get_download_status`).
 print("Beginning security domain download.")
-poller = client.begin_download(certificate_info_object=certs_object, skip_activation_polling=True)
+poller = client.begin_download(certificate_info=certs_object, skip_activation_polling=True)
 security_domain = poller.result()
 print("Security domain downloaded successfully.")

@@ -14,7 +14,6 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from .polling import _finished, _is_empty, SecurityDomainDownloadPolling
 from ..models import SecurityDomain, SecurityDomainOperationStatus
 from .._model_base import _deserialize
-from .._serialization import Deserializer
 
 
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)

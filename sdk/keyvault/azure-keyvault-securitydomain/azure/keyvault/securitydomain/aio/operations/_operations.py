@@ -191,11 +191,7 @@ class HsmSecurityDomainOperations:
 
     @overload
     async def begin_download(
-        self,
-        certificate_info_object: _models.CertificateInfo,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, certificate_info_object: _models.CertificateInfo, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.SecurityDomainOperationStatus]:
         """Retrieves the Security Domain from the managed HSM. Calling this endpoint can
         be used to activate a provisioned managed HSM resource.
