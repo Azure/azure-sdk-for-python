@@ -1,0 +1,254 @@
+# The MIT License (MIT)
+# Copyright (c) Microsoft Corporation. All rights reserved.
+
+import logging
+import unittest
+import uuid
+import test_config
+import pytest
+import pytest_asyncio
+
+from azure.cosmos.aio import CosmosClient
+from azure.cosmos.partition_key import PartitionKey
+from test_excluded_locations import _verify_endpoint
+
+class MockHandler(logging.Handler):
+    def __init__(self):
+        super(MockHandler, self).__init__()
+        self.messages = []
+
+    def reset(self):
+        self.messages = []
+
+    def emit(self, record):
+        self.messages.append(record.msg)
+
+MOCK_HANDLER = MockHandler()
+CONFIG = test_config.TestConfig()
+HOST = CONFIG.host
+KEY = CONFIG.masterKey
+DATABASE_ID = CONFIG.TEST_DATABASE_ID
+CONTAINER_ID = CONFIG.TEST_SINGLE_PARTITION_CONTAINER_ID
+PARTITION_KEY = CONFIG.TEST_CONTAINER_PARTITION_KEY
+ITEM_ID = 'doc1'
+ITEM_PK_VALUE = 'pk'
+TEST_ITEM = {'id': ITEM_ID, PARTITION_KEY: ITEM_PK_VALUE}
+
+L0 = "Default"
+L1 = "West US 3"
+L2 = "West US"
+L3 = "East US 2"
+
+# L0 = "Default"
+# L1 = "East US 2"
+# L2 = "East US"
+# L3 = "West US 2"
+
+CLIENT_ONLY_TEST_DATA = [
+    # preferred_locations, client_excluded_locations, excluded_locations_request
+    # 0. No excluded location
+    [[L1, L2], [], None],
+    # 1. Single excluded location
+    [[L1, L2], [L1], None],
+    # 2. Exclude all locations
+    [[L1, L2], [L1, L2], None],
+    # 3. Exclude a location not in preferred locations
+    [[L1, L2], [L3], None],
+]
+
+CLIENT_AND_REQUEST_TEST_DATA = [
+    # preferred_locations, client_excluded_locations, excluded_locations_request
+    # 0. No client excluded locations + a request excluded location
+    [[L1, L2], [], [L1]],
+    # 1. The same client and request excluded location
+    [[L1, L2], [L1], [L1]],
+    # 2. Less request excluded locations
+    [[L1, L2], [L1, L2], [L1]],
+    # 3. More request excluded locations
+    [[L1, L2], [L1], [L1, L2]],
+    # 4. All locations were excluded
+    [[L1, L2], [L1, L2], [L1, L2]],
+    # 5. No common excluded locations
+    [[L1, L2], [L1], [L2, L3]],
+    # 6. Request excluded location not in preferred locations
+    [[L1, L2], [L1, L2], [L3]],
+    # 7. Empty excluded locations, remove all client excluded locations
+    [[L1, L2], [L1, L2], []],
+]
+
+ALL_INPUT_TEST_DATA = CLIENT_ONLY_TEST_DATA + CLIENT_AND_REQUEST_TEST_DATA
+
+def read_item_test_data():
+    client_only_output_data = [
+        [L1],  # 0
+        [L2],  # 1
+        [L1],  # 2
+        [L1],  # 3
+    ]
+    client_and_request_output_data = [
+        [L2],  # 0
+        [L2],  # 1
+        [L2],  # 2
+        [L1],  # 3
+        [L1],  # 4
+        [L1],  # 5
+        [L1],  # 6
+        [L1],  # 7
+    ]
+    all_output_test_data = client_only_output_data + client_and_request_output_data
+
+    all_test_data = [input_data + [output_data] for input_data, output_data in zip(ALL_INPUT_TEST_DATA, all_output_test_data)]
+    return all_test_data
+
+def read_all_item_test_data():
+    client_only_output_data = [
+        [L1, L1],  # 0
+        [L2, L2],  # 1
+        [L1, L1],  # 2
+        [L1, L1],  # 3
+    ]
+    client_and_request_output_data = [
+        [L2, L2],  # 0
+        [L2, L2],  # 1
+        [L2, L2],  # 2
+        [L1, L1],  # 3
+        [L1, L1],  # 4
+        [L1, L1],  # 5
+        [L1, L1],  # 6
+        [L1, L1],  # 7
+    ]
+    all_output_test_data = client_only_output_data + client_and_request_output_data
+
+    all_test_data = [input_data + [output_data] for input_data, output_data in zip(ALL_INPUT_TEST_DATA, all_output_test_data)]
+    return all_test_data
+
+def query_items_change_feed_test_data():
+    client_only_output_data = [
+        [L1, L1, L1, L1],   #0
+        [L2, L2, L2, L2],   #1
+        [L1, L1, L1, L1],   #2
+        [L1, L1, L1, L1]    #3
+    ]
+    client_and_request_output_data = [
+        [L1, L2, L2, L2],   #0
+        [L2, L2, L2, L2],   #1
+        [L1, L2, L2, L2],   #2
+        [L2, L1, L1, L1],   #3
+        [L1, L1, L1, L1],   #4
+        [L2, L1, L1, L1],   #5
+        [L1, L1, L1, L1],   #6
+        [L1, L1, L1, L1],   #7
+    ]
+    all_output_test_data = client_only_output_data + client_and_request_output_data
+
+    all_test_data = [input_data + [output_data] for input_data, output_data in zip(ALL_INPUT_TEST_DATA, all_output_test_data)]
+    return all_test_data
+
+def replace_item_test_data():
+    client_only_output_data = [
+        [L1],   #0
+        [L2],   #1
+        [L0],   #2
+        [L1]    #3
+    ]
+    client_and_request_output_data = [
+        [L2],   #0
+        [L2],   #1
+        [L2],   #2
+        [L0],   #3
+        [L0],   #4
+        [L1],   #5
+        [L1],   #6
+        [L1],   #7
+    ]
+    all_output_test_data = client_only_output_data + client_and_request_output_data
+
+    all_test_data = [input_data + [output_data] for input_data, output_data in zip(ALL_INPUT_TEST_DATA, all_output_test_data)]
+    return all_test_data
+
+def patch_item_test_data():
+    client_only_output_data = [
+        [L1],   #0
+        [L2],   #1
+        [L0],   #2
+        [L1]    #3
+    ]
+    client_and_request_output_data = [
+        [L2],   #0
+        [L2],   #1
+        [L2],   #2
+        [L0],   #3
+        [L0],   #4
+        [L1],   #5
+        [L1],   #6
+        [L1],   #7
+    ]
+    all_output_test_data = client_only_output_data + client_and_request_output_data
+
+    all_test_data = [input_data + [output_data] for input_data, output_data in zip(ALL_INPUT_TEST_DATA, all_output_test_data)]
+    return all_test_data
+
+async def _create_item_with_excluded_locations(container, body, excluded_locations):
+    if excluded_locations is None:
+        await container.create_item(body=body)
+    else:
+        await container.create_item(body=body, excluded_locations=excluded_locations)
+
+@pytest_asyncio.fixture(scope="class", autouse=True)
+async def setup_and_teardown():
+    print("Setup: This runs before any tests")
+    logger = logging.getLogger("azure")
+    logger.addHandler(MOCK_HANDLER)
+    logger.setLevel(logging.DEBUG)
+
+    test_client = CosmosClient(HOST, KEY)
+    container = test_client.get_database_client(DATABASE_ID).get_container_client(CONTAINER_ID)
+    await container.upsert_item(body=TEST_ITEM)
+
+    yield
+    await test_client.close()
+
+async def _init_container(preferred_locations, client_excluded_locations, multiple_write_locations = True):
+    client = CosmosClient(HOST, KEY,
+                          preferred_locations=preferred_locations,
+                          excluded_locations=client_excluded_locations,
+                          multiple_write_locations=multiple_write_locations)
+    db = await client.create_database_if_not_exists(DATABASE_ID)
+    container = await db.create_container_if_not_exists(CONTAINER_ID, PartitionKey(path='/' + PARTITION_KEY, kind='Hash'))
+    MOCK_HANDLER.reset()
+
+    return client, db, container
+
+@pytest.mark.cosmosMultiRegion
+@pytest.mark.asyncio
+@pytest.mark.usefixtures("setup_and_teardown")
+class TestExcludedLocations:
+    @pytest.mark.parametrize('test_data', patch_item_test_data())
+    async def test_delete_item(self, test_data):
+        # Init test variables
+        preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
+
+        for multiple_write_locations in [True, False]:
+            # Client setup
+            client, db, container = await _init_container(preferred_locations, client_excluded_locations, multiple_write_locations)
+
+            # create before delete
+            item_id = f'doc2-{str(uuid.uuid4())}'
+            body = {PARTITION_KEY: ITEM_PK_VALUE, 'id': item_id}
+            await _create_item_with_excluded_locations(container, body, request_excluded_locations)
+            MOCK_HANDLER.reset()
+
+            # API call: delete_item
+            if request_excluded_locations is None:
+                await container.delete_item(item_id, ITEM_PK_VALUE)
+            else:
+                await container.delete_item(item_id, ITEM_PK_VALUE, excluded_locations=request_excluded_locations)
+
+            # Verify endpoint locations
+            if multiple_write_locations:
+                _verify_endpoint(MOCK_HANDLER.messages, client, expected_locations)
+            else:
+                _verify_endpoint(client, [L1])
+
+if __name__ == "__main__":
+    unittest.main()
