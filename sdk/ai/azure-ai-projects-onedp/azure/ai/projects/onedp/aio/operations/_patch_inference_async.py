@@ -34,7 +34,7 @@ class InferenceOperations:
         :attr:`inference` attribute.
     """
 
-    def __init__(self, outer_instance: "AIProjectClient") -> None:
+    def __init__(self, outer_instance: "azure.ai.projects.onedp.aio.AIProjectClient") -> None:
 
         # TODO: Put the user agent initialization code below in a common place used by both sync and async operations.
 

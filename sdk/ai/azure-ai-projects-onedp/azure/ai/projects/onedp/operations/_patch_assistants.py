@@ -21,7 +21,7 @@ class AssistantsOperations:
     """
 
     # TODO: Merge all code related to handling user-agent, into a single place.
-    def __init__(self, outer_instance: "AIProjectClient") -> None:
+    def __init__(self, outer_instance: "azure.ai.projects.onedp.AIProjectClient") -> None:
 
         # All returned inference clients will have this application id set on their user-agent.
         # For more info on user-agent HTTP header, see:

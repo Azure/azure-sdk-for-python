@@ -30,7 +30,7 @@ class TelemetryOperations:
 
     _connection_string: Optional[str] = None
 
-    def __init__(self, outer_instance: "AIProjectClient") -> None:
+    def __init__(self, outer_instance: "azure.ai.projects.onedp.aio.AIProjectClient") -> None:
         self._outer_instance = outer_instance
 
     @distributed_trace_async
