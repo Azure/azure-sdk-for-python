@@ -3,6 +3,7 @@
         "onedp",
         "aiproject",
         "Prompty",
+        "azureopenai",
     ],
     "ignorePaths": [
     ]
