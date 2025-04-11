@@ -838,11 +838,12 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
     """
 
     def __init__(
-        self, name: str,
+        self,
+        name: str,
         description: str,
         spec: Any,
         auth: OpenApiAuthDetails,
-        default_parameters: Optional[List[str]] = None
+        default_parameters: Optional[List[str]] = None,
     ) -> None:
         """
         Constructor initializes the tool with a primary API definition.
@@ -885,7 +886,7 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
         description: str,
         spec: Any,
         auth: Optional[OpenApiAuthDetails] = None,
-        default_parameters: Optional[List[str]] = None
+        default_parameters: Optional[List[str]] = None,
     ) -> None:
         """
         Adds a new API definition dynamically.
@@ -1054,6 +1055,7 @@ class BingGroundingTool(ConnectionTool[BingGroundingToolDefinition]):
         """
         return [BingGroundingToolDefinition(bing_grounding=ToolConnectionList(connection_list=self.connection_ids))]
 
+
 class BingCustomSearchTool(Tool[BingCustomSearchToolDefinition]):
     """
     A tool that searches for information using Bing Custom Search.
@@ -1064,7 +1066,7 @@ class BingCustomSearchTool(Tool[BingCustomSearchToolDefinition]):
         Initialize Bing Custom Search with a connection_id.
 
         :param connection_id: Connection ID used by tool. Bing Custom Search tools allow only one connection.
-        :param instance_name: Config instance name used by tool. 
+        :param instance_name: Config instance name used by tool.
         """
         self.connection_ids = [SearchConfiguration(connection_id=connection_id, instance_name=instance_name)]
 

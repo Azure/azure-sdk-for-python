@@ -49,6 +49,17 @@ with project_client:
     thread = project_client.agents.create_thread()
     # [END create_thread]
     print(f"Created thread, thread ID: {thread.id}")
+        
+    # List all threads for the agent
+    threads = project_client.agents.list_threads()
+    
+    # Print thread information
+    print(f"Threads for agent {agent.id}:")
+    for current_thread in threads.data:
+        print(f"Thread ID: {current_thread.id}")
+        print(f"Created at: {current_thread.created_at}")
+        print(f"Metadata: {current_thread.metadata}")
+        print("---")
 
     # [START create_message]
     message = project_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
