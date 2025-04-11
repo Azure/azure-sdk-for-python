@@ -3,11 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from __future__ import annotations
-import asyncio
+import asyncio # pylint:disable=do-not-import-asyncio
 import logging
 import queue
 import time
-from asyncio import Lock
+from asyncio import Lock # pylint:disable=do-not-import-asyncio
 from typing import Optional, Callable, Awaitable, TYPE_CHECKING
 
 from .._producer_async import EventHubProducer

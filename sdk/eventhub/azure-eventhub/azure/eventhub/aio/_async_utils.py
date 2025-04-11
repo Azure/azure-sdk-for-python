@@ -3,9 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import asyncio
+import asyncio  # pylint:disable=do-not-import-asyncio
 import sys
-from asyncio import Semaphore
+from asyncio import Semaphore  # pylint:disable=do-not-import-asyncio
 
 
 def get_dict_with_loop_if_needed(loop):
