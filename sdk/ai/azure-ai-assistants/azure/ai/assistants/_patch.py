@@ -87,12 +87,12 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         :keyword instructions: The system instructions for the new assistant to use. Default value is None.
         :paramtype instructions: str
         :keyword tools: The collection of tools to enable for the new assistant. Default value is None.
-        :paramtype tools: list[~azure.ai.projects.models.ToolDefinition]
+        :paramtype tools: list[~azure.ai.assistants.models.ToolDefinition]
         :keyword tool_resources: A set of resources that are used by the assistant's tools. The resources
          are specific to the type of tool. For example, the ``code_interpreter``
          tool requires a list of file IDs, while the ``file_search`` tool requires a list of vector
          store IDs. Default value is None.
-        :paramtype tool_resources: ~azure.ai.projects.models.ToolResources
+        :paramtype tool_resources: ~azure.ai.assistants.models.ToolResources
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output more random,
          while lower values like 0.2 will make it more focused and deterministic. Default value is
@@ -107,15 +107,15 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         :keyword response_format: The response format of the tool calls used by this assistant. Is one of
          the following types: str, Union[str, "_models.AssistantsApiResponseFormatMode"],
          AssistantsApiResponseFormat Default value is None.
-        :paramtype response_format: str or str or ~azure.ai.projects.models.AssistantsApiResponseFormatMode
-         or ~azure.ai.projects.models.AssistantsApiResponseFormat
+        :paramtype response_format: str or str or ~azure.ai.assistants.models.AssistantsApiResponseFormatMode
+         or ~azure.ai.assistants.models.AssistantsApiResponseFormat
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
         :return: Assistant. The Assistant is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Assistant
+        :rtype: ~azure.ai.assistants.models.Assistant
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -151,7 +151,7 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         :paramtype instructions: str
         :keyword toolset: The Collection of tools and resources (alternative to `tools` and `tool_resources`
          and adds automatic execution logic for functions). Default value is None.
-        :paramtype toolset: ~azure.ai.projects.models.ToolSet
+        :paramtype toolset: ~azure.ai.assistants.models.ToolSet
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output more random,
          while lower values like 0.2 will make it more focused and deterministic. Default value is
@@ -166,15 +166,15 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         :keyword response_format: The response format of the tool calls used by this assistant. Is one of
          the following types: str, Union[str, "_models.AssistantsApiResponseFormatMode"],
          AssistantsApiResponseFormat Default value is None.
-        :paramtype response_format: str or str or ~azure.ai.projects.models.AssistantsApiResponseFormatMode
-         or ~azure.ai.projects.models.AssistantsApiResponseFormat
+        :paramtype response_format: str or str or ~azure.ai.assistants.models.AssistantsApiResponseFormatMode
+         or ~azure.ai.assistants.models.AssistantsApiResponseFormat
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
         :return: Assistant. The Assistant is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Assistant
+        :rtype: ~azure.ai.assistants.models.Assistant
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -190,7 +190,7 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
          Default value is "application/json".
         :paramtype content_type: str
         :return: Assistant. The Assistant is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Assistant
+        :rtype: ~azure.ai.assistants.models.Assistant
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -206,7 +206,7 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
          Default value is "application/json".
         :paramtype content_type: str
         :return: Assistant. The Assistant is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Assistant
+        :rtype: ~azure.ai.assistants.models.Assistant
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -330,12 +330,12 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         :paramtype instructions: str
         :keyword tools: The modified collection of tools to enable for the assistant. Default value is
          None.
-        :paramtype tools: list[~azure.ai.projects.models.ToolDefinition]
+        :paramtype tools: list[~azure.ai.assistants.models.ToolDefinition]
         :keyword tool_resources: A set of resources that are used by the assistant's tools. The resources
          are specific to the type of tool. For example,
          the ``code_interpreter`` tool requires a list of file IDs, while the ``file_search`` tool
          requires a list of vector store IDs. Default value is None.
-        :paramtype tool_resources: ~azure.ai.projects.models.ToolResources
+        :paramtype tool_resources: ~azure.ai.assistants.models.ToolResources
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output more random,
          while lower values like 0.2 will make it more focused and deterministic. Default value is
@@ -350,15 +350,15 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         :keyword response_format: The response format of the tool calls used by this assistant. Is one of
          the following types: str, Union[str, "_models.AssistantsApiResponseFormatMode"],
          AssistantsApiResponseFormat Default value is None.
-        :paramtype response_format: str or str or ~azure.ai.projects.models.AssistantsApiResponseFormatMode
-         or ~azure.ai.projects.models.AssistantsApiResponseFormat
+        :paramtype response_format: str or str or ~azure.ai.assistants.models.AssistantsApiResponseFormatMode
+         or ~azure.ai.assistants.models.AssistantsApiResponseFormat
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
         :return: Assistant. The Assistant is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Assistant
+        :rtype: ~azure.ai.assistants.models.Assistant
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -398,7 +398,7 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         :paramtype instructions: str
         :keyword toolset: The Collection of tools and resources (alternative to `tools` and `tool_resources`
          and adds automatic execution logic for functions). Default value is None.
-        :paramtype toolset: ~azure.ai.projects.models.ToolSet
+        :paramtype toolset: ~azure.ai.assistants.models.ToolSet
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output more random,
          while lower values like 0.2 will make it more focused and deterministic. Default value is
@@ -413,15 +413,15 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         :keyword response_format: The response format of the tool calls used by this assistant. Is one of
          the following types: str, Union[str, "_models.AssistantsApiResponseFormatMode"],
          AssistantsApiResponseFormat Default value is None.
-        :paramtype response_format: str or str or ~azure.ai.projects.models.AssistantsApiResponseFormatMode
-         or ~azure.ai.projects.models.AssistantsApiResponseFormat
+        :paramtype response_format: str or str or ~azure.ai.assistants.models.AssistantsApiResponseFormatMode
+         or ~azure.ai.assistants.models.AssistantsApiResponseFormat
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
         :return: Assistant. The Assistant is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Assistant
+        :rtype: ~azure.ai.assistants.models.Assistant
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -439,7 +439,7 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
          Default value is "application/json".
         :paramtype content_type: str
         :return: Assistant. The Assistant is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Assistant
+        :rtype: ~azure.ai.assistants.models.Assistant
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -457,7 +457,7 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
          Default value is "application/json".
         :paramtype content_type: str
         :return: Assistant. The Assistant is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Assistant
+        :rtype: ~azure.ai.assistants.models.Assistant
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -498,15 +498,15 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         :paramtype instructions: str
         :keyword tools: The modified collection of tools to enable for the assistant. Default value is
          None.
-        :paramtype tools: list[~azure.ai.projects.models.ToolDefinition]
+        :paramtype tools: list[~azure.ai.assistants.models.ToolDefinition]
         :keyword tool_resources: A set of resources that are used by the assistant's tools. The resources
          are specific to the type of tool. For example,
          the ``code_interpreter`` tool requires a list of file IDs, while the ``file_search`` tool
          requires a list of vector store IDs. Default value is None.
-        :paramtype tool_resources: ~azure.ai.projects.models.ToolResources
+        :paramtype tool_resources: ~azure.ai.assistants.models.ToolResources
         :keyword toolset: The Collection of tools and resources (alternative to `tools` and `tool_resources`
          and adds automatic execution logic for functions). Default value is None.
-        :paramtype toolset: ~azure.ai.projects.models.ToolSet
+        :paramtype toolset: ~azure.ai.assistants.models.ToolSet
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output more random,
          while lower values like 0.2 will make it more focused and deterministic. Default value is
@@ -521,8 +521,8 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         :keyword response_format: The response format of the tool calls used by this assistant. Is one of
          the following types: str, Union[str, "_models.AssistantsApiResponseFormatMode"],
          AssistantsApiResponseFormat Default value is None.
-        :paramtype response_format: str or str or ~azure.ai.projects.models.AssistantsApiResponseFormatMode
-         or ~azure.ai.projects.models.AssistantsApiResponseFormat
+        :paramtype response_format: str or str or ~azure.ai.assistants.models.AssistantsApiResponseFormatMode
+         or ~azure.ai.assistants.models.AssistantsApiResponseFormat
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -532,7 +532,7 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
          None.
         :paramtype metadata: dict[str, str]
         :return: Assistant. The Assistant is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Assistant
+        :rtype: ~azure.ai.assistants.models.Assistant
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         self._validate_tools_and_tool_resources(tools, tool_resources)
@@ -618,7 +618,7 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
          content. Default value is None.
-        :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
+        :paramtype include: list[str or ~azure.ai.assistants.models.RunAdditionalFieldList]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -634,10 +634,10 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         :paramtype additional_instructions: str
         :keyword additional_messages: Adds additional messages to the thread before creating the run.
          Default value is None.
-        :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessageOptions]
+        :paramtype additional_messages: list[~azure.ai.assistants.models.ThreadMessageOptions]
         :keyword tools: The overridden list of enabled tools that the assistant should use to run the
          thread. Default value is None.
-        :paramtype tools: list[~azure.ai.projects.models.ToolDefinition]
+        :paramtype tools: list[~azure.ai.assistants.models.ToolDefinition]
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output
          more random, while lower values like 0.2 will make it more focused and deterministic. Default
@@ -666,17 +666,17 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         :paramtype max_completion_tokens: int
         :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
          moves forward. Default value is None.
-        :paramtype truncation_strategy: ~azure.ai.projects.models.TruncationObject
+        :paramtype truncation_strategy: ~azure.ai.assistants.models.TruncationObject
         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
          the following types: str, Union[str, "_models.AssistantsApiToolChoiceOptionMode"],
          AssistantsNamedToolChoice Default value is None.
-        :paramtype tool_choice: str or str or ~azure.ai.projects.models.AssistantsApiToolChoiceOptionMode or
-         ~azure.ai.projects.models.AssistantsNamedToolChoice
+        :paramtype tool_choice: str or str or ~azure.ai.assistants.models.AssistantsApiToolChoiceOptionMode or
+         ~azure.ai.assistants.models.AssistantsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
          following types: str, Union[str, "_models.AssistantsApiResponseFormatMode"],
          AssistantsApiResponseFormat Default value is None.
-        :paramtype response_format: str or str or ~azure.ai.projects.models.AssistantsApiResponseFormatMode
-         or ~azure.ai.projects.models.AssistantsApiResponseFormat
+        :paramtype response_format: str or str or ~azure.ai.assistants.models.AssistantsApiResponseFormatMode
+         or ~azure.ai.assistants.models.AssistantsApiResponseFormat
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
         :paramtype parallel_tool_calls: bool
@@ -686,7 +686,7 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
          None.
         :paramtype metadata: dict[str, str]
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ThreadRun
+        :rtype: ~azure.ai.assistants.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -710,12 +710,12 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
          content. Default value is None.
-        :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
+        :paramtype include: list[str or ~azure.ai.assistants.models.RunAdditionalFieldList]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ThreadRun
+        :rtype: ~azure.ai.assistants.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -739,12 +739,12 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
          content. Default value is None.
-        :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
+        :paramtype include: list[str or ~azure.ai.assistants.models.RunAdditionalFieldList]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ThreadRun
+        :rtype: ~azure.ai.assistants.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -782,7 +782,7 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
          content. Default value is None.
-        :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
+        :paramtype include: list[str or ~azure.ai.assistants.models.RunAdditionalFieldList]
         :keyword assistant_id: The ID of the assistant that should run the thread. Required.
         :paramtype assistant_id: str
         :keyword model: The overridden model name that the assistant should use to run the thread. Default
@@ -797,10 +797,10 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         :paramtype additional_instructions: str
         :keyword additional_messages: Adds additional messages to the thread before creating the run.
          Default value is None.
-        :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessageOptions]
+        :paramtype additional_messages: list[~azure.ai.assistants.models.ThreadMessageOptions]
         :keyword tools: The overridden list of enabled tools that the assistant should use to run the
          thread. Default value is None.
-        :paramtype tools: list[~azure.ai.projects.models.ToolDefinition]
+        :paramtype tools: list[~azure.ai.assistants.models.ToolDefinition]
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output
          more random, while lower values like 0.2 will make it more focused and deterministic. Default
@@ -829,17 +829,17 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         :paramtype max_completion_tokens: int
         :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
          moves forward. Default value is None.
-        :paramtype truncation_strategy: ~azure.ai.projects.models.TruncationObject
+        :paramtype truncation_strategy: ~azure.ai.assistants.models.TruncationObject
         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
          the following types: str, Union[str, "_models.AssistantsApiToolChoiceOptionMode"],
          AssistantsNamedToolChoice Default value is None.
-        :paramtype tool_choice: str or str or ~azure.ai.projects.models.AssistantsApiToolChoiceOptionMode or
-         ~azure.ai.projects.models.AssistantsNamedToolChoice
+        :paramtype tool_choice: str or str or ~azure.ai.assistants.models.AssistantsApiToolChoiceOptionMode or
+         ~azure.ai.assistants.models.AssistantsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
          following types: str, Union[str, "_models.AssistantsApiResponseFormatMode"],
          AssistantsApiResponseFormat Default value is None.
-        :paramtype response_format: str or str or ~azure.ai.projects.models.AssistantsApiResponseFormatMode
-         or ~azure.ai.projects.models.AssistantsApiResponseFormat
+        :paramtype response_format: str or str or ~azure.ai.assistants.models.AssistantsApiResponseFormatMode
+         or ~azure.ai.assistants.models.AssistantsApiResponseFormat
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
         :paramtype parallel_tool_calls: bool
@@ -849,7 +849,7 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
          None.
         :paramtype metadata: dict[str, str]
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ThreadRun
+        :rtype: ~azure.ai.assistants.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -924,7 +924,7 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
          content. Default value is None.
-        :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
+        :paramtype include: list[str or ~azure.ai.assistants.models.RunAdditionalFieldList]
         :keyword model: The overridden model name that the assistant should use to run the thread.
          Default value is None.
         :paramtype model: str
@@ -937,10 +937,10 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         :paramtype additional_instructions: str
         :keyword additional_messages: Adds additional messages to the thread before creating the run.
          Default value is None.
-        :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessageOptions]
+        :paramtype additional_messages: list[~azure.ai.assistants.models.ThreadMessageOptions]
         :keyword toolset: The Collection of tools and resources (alternative to `tools` and
          `tool_resources`). Default value is None.
-        :paramtype toolset: ~azure.ai.projects.models.ToolSet
+        :paramtype toolset: ~azure.ai.assistants.models.ToolSet
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output
          more random, while lower values like 0.2 will make it more focused and deterministic. Default
@@ -969,19 +969,19 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         :paramtype max_completion_tokens: int
         :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
          moves forward. Default value is None.
-        :paramtype truncation_strategy: ~azure.ai.projects.models.TruncationObject
+        :paramtype truncation_strategy: ~azure.ai.assistants.models.TruncationObject
         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
          the following types: str, Union[str, "_models.AssistantsApiToolChoiceOptionMode"],
          AssistantsNamedToolChoice Default value is None.
         :paramtype tool_choice: str or str or
-         ~azure.ai.projects.models.AssistantsApiToolChoiceOptionMode or
-         ~azure.ai.projects.models.AssistantsNamedToolChoice
+         ~azure.ai.assistants.models.AssistantsApiToolChoiceOptionMode or
+         ~azure.ai.assistants.models.AssistantsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
          following types: str, Union[str, "_models.AssistantsApiResponseFormatMode"],
          AssistantsApiResponseFormat Default value is None.
         :paramtype response_format: str or str or
-         ~azure.ai.projects.models.AssistantsApiResponseFormatMode or
-         ~azure.ai.projects.models.AssistantsApiResponseFormat
+         ~azure.ai.assistants.models.AssistantsApiResponseFormatMode or
+         ~azure.ai.assistants.models.AssistantsApiResponseFormat
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
         :paramtype parallel_tool_calls: bool
@@ -994,7 +994,7 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
             Default value is 1.
         :paramtype sleep_interval: int
         :return: AssistantRunStream.  AssistantRunStream is compatible with Iterable and supports streaming.
-        :rtype: ~azure.ai.projects.models.AssistantRunStream
+        :rtype: ~azure.ai.assistants.models.AssistantRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         # Create and initiate the run with additional parameters
@@ -1086,7 +1086,7 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
          content. Default value is None.
-        :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
+        :paramtype include: list[str or ~azure.ai.assistants.models.RunAdditionalFieldList]
         :keyword assistant_id: The ID of the assistant that should run the thread. Required.
         :paramtype assistant_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -1104,10 +1104,10 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         :paramtype additional_instructions: str
         :keyword additional_messages: Adds additional messages to the thread before creating the run.
          Default value is None.
-        :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessage]
+        :paramtype additional_messages: list[~azure.ai.assistants.models.ThreadMessage]
         :keyword tools: The overridden list of enabled tools that the assistant should use to run the
          thread. Default value is None.
-        :paramtype tools: list[~azure.ai.projects.models.ToolDefinition]
+        :paramtype tools: list[~azure.ai.assistants.models.ToolDefinition]
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output
          more random, while lower values like 0.2 will make it more focused and deterministic. Default
@@ -1136,17 +1136,17 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         :paramtype max_completion_tokens: int
         :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
          moves forward. Default value is None.
-        :paramtype truncation_strategy: ~azure.ai.projects.models.TruncationObject
+        :paramtype truncation_strategy: ~azure.ai.assistants.models.TruncationObject
         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
          the following types: str, Union[str, "_models.AssistantsApiToolChoiceOptionMode"],
          AssistantsNamedToolChoice Default value is None.
-        :paramtype tool_choice: str or str or ~azure.ai.projects.models.AssistantsApiToolChoiceOptionMode or
-         ~azure.ai.projects.models.AssistantsNamedToolChoice
+        :paramtype tool_choice: str or str or ~azure.ai.assistants.models.AssistantsApiToolChoiceOptionMode or
+         ~azure.ai.assistants.models.AssistantsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
          following types: str, Union[str, "_models.AssistantsApiResponseFormatMode"],
          AssistantsApiResponseFormat Default value is None.
-        :paramtype response_format: str or str or ~azure.ai.projects.models.AssistantsApiResponseFormatMode
-         or ~azure.ai.projects.models.AssistantsApiResponseFormat
+        :paramtype response_format: str or str or ~azure.ai.assistants.models.AssistantsApiResponseFormatMode
+         or ~azure.ai.assistants.models.AssistantsApiResponseFormat
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
         :paramtype parallel_tool_calls: bool
@@ -1158,7 +1158,7 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         :keyword event_handler: None
         :paramtype event_handler: None.  _models.AssistantEventHandler will be applied as default.
         :return: AssistantRunStream.  AssistantRunStream is compatible with Iterable and supports streaming.
-        :rtype: ~azure.ai.projects.models.AssistantRunStream
+        :rtype: ~azure.ai.assistants.models.AssistantRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1197,7 +1197,7 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
          content. Default value is None.
-        :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
+        :paramtype include: list[str or ~azure.ai.assistants.models.RunAdditionalFieldList]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1213,10 +1213,10 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         :paramtype additional_instructions: str
         :keyword additional_messages: Adds additional messages to the thread before creating the run.
          Default value is None.
-        :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessage]
+        :paramtype additional_messages: list[~azure.ai.assistants.models.ThreadMessage]
         :keyword tools: The overridden list of enabled tools that the assistant should use to run the
          thread. Default value is None.
-        :paramtype tools: list[~azure.ai.projects.models.ToolDefinition]
+        :paramtype tools: list[~azure.ai.assistants.models.ToolDefinition]
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output
          more random, while lower values like 0.2 will make it more focused and deterministic. Default
@@ -1245,17 +1245,17 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         :paramtype max_completion_tokens: int
         :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
          moves forward. Default value is None.
-        :paramtype truncation_strategy: ~azure.ai.projects.models.TruncationObject
+        :paramtype truncation_strategy: ~azure.ai.assistants.models.TruncationObject
         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
          the following types: str, Union[str, "_models.AssistantsApiToolChoiceOptionMode"],
          AssistantsNamedToolChoice Default value is None.
-        :paramtype tool_choice: str or str or ~azure.ai.projects.models.AssistantsApiToolChoiceOptionMode or
-         ~azure.ai.projects.models.AssistantsNamedToolChoice
+        :paramtype tool_choice: str or str or ~azure.ai.assistants.models.AssistantsApiToolChoiceOptionMode or
+         ~azure.ai.assistants.models.AssistantsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
          following types: str, Union[str, "_models.AssistantsApiResponseFormatMode"],
          AssistantsApiResponseFormat Default value is None.
-        :paramtype response_format: str or str or ~azure.ai.projects.models.AssistantsApiResponseFormatMode
-         or ~azure.ai.projects.models.AssistantsApiResponseFormat
+        :paramtype response_format: str or str or ~azure.ai.assistants.models.AssistantsApiResponseFormatMode
+         or ~azure.ai.assistants.models.AssistantsApiResponseFormat
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
         :paramtype parallel_tool_calls: bool
@@ -1266,9 +1266,9 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         :paramtype metadata: dict[str, str]
         :keyword event_handler: The event handler to use for processing events during the run. Default
             value is None.
-        :paramtype event_handler: ~azure.ai.projects.models.AssistantEventHandler
+        :paramtype event_handler: ~azure.ai.assistants.models.AssistantEventHandler
         :return: AssistantRunStream.  AssistantRunStream is compatible with Iterable and supports streaming.
-        :rtype: ~azure.ai.projects.models.AssistantRunStream
+        :rtype: ~azure.ai.assistants.models.AssistantRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1295,14 +1295,14 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
          content. Default value is None.
-        :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
+        :paramtype include: list[str or ~azure.ai.assistants.models.RunAdditionalFieldList]
         :keyword event_handler: None
         :paramtype event_handler: None.  _models.AssistantEventHandler will be applied as default.
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: AssistantRunStream.  AssistantRunStream is compatible with Iterable and supports streaming.
-        :rtype: ~azure.ai.projects.models.AssistantRunStream
+        :rtype: ~azure.ai.assistants.models.AssistantRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1329,15 +1329,15 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
          content. Default value is None.
-        :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
+        :paramtype include: list[str or ~azure.ai.assistants.models.RunAdditionalFieldList]
         :keyword event_handler: The event handler to use for processing events during the run. Default
             value is None.
-        :paramtype event_handler: ~azure.ai.projects.models.AssistantEventHandler
+        :paramtype event_handler: ~azure.ai.assistants.models.AssistantEventHandler
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: AssistantRunStream.  AssistantRunStream is compatible with Iterable and supports streaming.
-        :rtype: ~azure.ai.projects.models.AssistantRunStream
+        :rtype: ~azure.ai.assistants.models.AssistantRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1378,7 +1378,7 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
          content. Default value is None.
-        :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
+        :paramtype include: list[str or ~azure.ai.assistants.models.RunAdditionalFieldList]
         :keyword assistant_id: The ID of the assistant that should run the thread. Required.
         :paramtype assistant_id: str
         :keyword model: The overridden model name that the assistant should use to run the thread. Default
@@ -1393,10 +1393,10 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         :paramtype additional_instructions: str
         :keyword additional_messages: Adds additional messages to the thread before creating the run.
          Default value is None.
-        :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessage]
+        :paramtype additional_messages: list[~azure.ai.assistants.models.ThreadMessage]
         :keyword tools: The overridden list of enabled tools that the assistant should use to run the
          thread. Default value is None.
-        :paramtype tools: list[~azure.ai.projects.models.ToolDefinition]
+        :paramtype tools: list[~azure.ai.assistants.models.ToolDefinition]
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output
          more random, while lower values like 0.2 will make it more focused and deterministic. Default
@@ -1425,17 +1425,17 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         :paramtype max_completion_tokens: int
         :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
          moves forward. Default value is None.
-        :paramtype truncation_strategy: ~azure.ai.projects.models.TruncationObject
+        :paramtype truncation_strategy: ~azure.ai.assistants.models.TruncationObject
         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
          the following types: str, Union[str, "_models.AssistantsApiToolChoiceOptionMode"],
          AssistantsNamedToolChoice Default value is None.
-        :paramtype tool_choice: str or str or ~azure.ai.projects.models.AssistantsApiToolChoiceOptionMode or
-         ~azure.ai.projects.models.AssistantsNamedToolChoice
+        :paramtype tool_choice: str or str or ~azure.ai.assistants.models.AssistantsApiToolChoiceOptionMode or
+         ~azure.ai.assistants.models.AssistantsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
          following types: str, Union[str, "_models.AssistantsApiResponseFormatMode"],
          AssistantsApiResponseFormat Default value is None.
-        :paramtype response_format: str or str or ~azure.ai.projects.models.AssistantsApiResponseFormatMode
-         or ~azure.ai.projects.models.AssistantsApiResponseFormat
+        :paramtype response_format: str or str or ~azure.ai.assistants.models.AssistantsApiResponseFormatMode
+         or ~azure.ai.assistants.models.AssistantsApiResponseFormat
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
         :paramtype parallel_tool_calls: bool
@@ -1446,9 +1446,9 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         :paramtype metadata: dict[str, str]
         :keyword event_handler: The event handler to use for processing events during the run. Default
             value is None.
-        :paramtype event_handler: ~azure.ai.projects.models.AssistantEventHandler
+        :paramtype event_handler: ~azure.ai.assistants.models.AssistantEventHandler
         :return: AssistantRunStream.  AssistantRunStream is compatible with Iterable and supports streaming.
-        :rtype: ~azure.ai.projects.models.AssistantRunStream
+        :rtype: ~azure.ai.assistants.models.AssistantRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1518,15 +1518,15 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         :param run_id: Required.
         :type run_id: str
         :keyword tool_outputs: Required.
-        :paramtype tool_outputs: list[~azure.ai.projects.models.ToolOutput]
+        :paramtype tool_outputs: list[~azure.ai.assistants.models.ToolOutput]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword event_handler: The event handler to use for processing events during the run. Default
             value is None.
-        :paramtype event_handler: ~azure.ai.projects.models.AssistantEventHandler
+        :paramtype event_handler: ~azure.ai.assistants.models.AssistantEventHandler
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ThreadRun
+        :rtype: ~azure.ai.assistants.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1548,7 +1548,7 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
          Default value is "application/json".
         :paramtype content_type: str
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ThreadRun
+        :rtype: ~azure.ai.assistants.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1570,7 +1570,7 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
          Default value is "application/json".
         :paramtype content_type: str
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ThreadRun
+        :rtype: ~azure.ai.assistants.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1595,9 +1595,9 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
         :keyword tool_outputs: Required.
-        :paramtype tool_outputs: list[~azure.ai.projects.models.ToolOutput]
+        :paramtype tool_outputs: list[~azure.ai.assistants.models.ToolOutput]
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ThreadRun
+        :rtype: ~azure.ai.assistants.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1646,7 +1646,7 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
         :keyword event_handler: The event handler to use for processing events during the run.
-        :paramtype event_handler: ~azure.ai.projects.models.BaseAssistantEventHandler
+        :paramtype event_handler: ~azure.ai.assistants.models.BaseAssistantEventHandler
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1673,12 +1673,12 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         :param run_id: Required.
         :type run_id: str
         :keyword tool_outputs: Required.
-        :paramtype tool_outputs: list[~azure.ai.projects.models.ToolOutput]
+        :paramtype tool_outputs: list[~azure.ai.assistants.models.ToolOutput]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword event_handler: The event handler to use for processing events during the run.
-        :paramtype event_handler: ~azure.ai.projects.models.BaseAssistantEventHandler
+        :paramtype event_handler: ~azure.ai.assistants.models.BaseAssistantEventHandler
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1704,9 +1704,9 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
         :keyword tool_outputs: Required.
-        :paramtype tool_outputs: list[~azure.ai.projects.models.ToolOutput]
+        :paramtype tool_outputs: list[~azure.ai.assistants.models.ToolOutput]
         :keyword event_handler: The event handler to use for processing events during the run.
-        :paramtype event_handler: ~azure.ai.projects.models.BaseAssistantEventHandler
+        :paramtype event_handler: ~azure.ai.assistants.models.BaseAssistantEventHandler
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1759,39 +1759,14 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
                         event_handler=event_handler,
                     )
 
-    # pylint: disable=arguments-differ
     @overload
-    def upload_file(  # pylint: disable=arguments-differ
-        self, *, file_path: str, purpose: Union[str, _models.FilePurpose], **kwargs: Any
-    ) -> _models.OpenAIFile:
+    def upload_file(self, body: _models.UploadFileRequest, **kwargs: Any) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
-        :keyword file_path: Required.
-        :type file_path: str
-        :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
-         "assistants_output", "batch", "batch_output", and "vision". Required.
-        :paramtype purpose: str or ~azure.ai.projects.models.FilePurpose
+        :param body: Multipart body. Required.
+        :type body: ~azure.ai.assistants.models.UploadFileRequest
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.OpenAIFile
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-    
-    # pylint: disable=arguments-differ
-    @overload
-    def upload_file(  # pylint: disable=arguments-differ
-        self, *, file: FileType, purpose: Union[str, _models.FilePurpose], filename: Optional[str] = None, **kwargs: Any
-    ) -> _models.OpenAIFile:
-        """Uploads a file for use by other operations.
-
-        :keyword file: Required.
-        :paramtype file: ~azure.ai.projects._vendor.FileType
-        :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
-         "assistants_output", "batch", "batch_output", and "vision". Required.
-        :paramtype purpose: str or ~azure.ai.projects.models.FilePurpose
-        :keyword filename: Default value is None.
-        :paramtype filename: str
-        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.OpenAIFile
+        :rtype: ~azure.ai.assistants.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1799,10 +1774,10 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
     def upload_file(self, body: JSON, **kwargs: Any) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
-        :param body: Required.
+        :param body: Multipart body. Required.
         :type body: JSON
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.OpenAIFile
+        :rtype: ~azure.ai.assistants.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1810,11 +1785,6 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
     def upload_file(
         self,
         body: Union[_models.UploadFileRequest, JSON] = _Unset,
-        *,
-        file: Optional[FileType] = None,
-        file_path: Optional[str] = None,
-        purpose: Union[str, _models.FilePurpose, None] = None,
-        filename: Optional[str] = None,
         **kwargs: Any,
     ) -> _models.OpenAIFile:
         """
@@ -1840,6 +1810,10 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         if body is not _Unset:
             return super().upload_file(body=body, **kwargs)
 
+        purpose = kwargs.get('purpose')
+        file = kwargs.get('file')
+        file_path = kwargs.get('file_path')
+        filename = kwargs.get('filename')
         if isinstance(purpose, FilePurpose):
             purpose = purpose.value
 
@@ -1876,7 +1850,7 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
          is 1.
         :paramtype sleep_interval: float
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.OpenAIFile
+        :rtype: ~azure.ai.assistants.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1893,17 +1867,17 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         """Uploads a file for use by other operations.
 
         :keyword file: Required.
-        :paramtype file: ~azure.ai.projects._vendor.FileType
+        :paramtype file: ~azure.ai.assistants._vendor.FileType
         :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
          "assistants_output", "batch", "batch_output", and "vision". Required.
-        :paramtype purpose: str or ~azure.ai.projects.models.FilePurpose
+        :paramtype purpose: str or ~azure.ai.assistants.models.FilePurpose
         :keyword filename: Default value is None.
         :paramtype filename: str
         :keyword sleep_interval: Time to wait before polling for the status of the uploaded file. Default value
          is 1.
         :paramtype sleep_interval: float
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.OpenAIFile
+        :rtype: ~azure.ai.assistants.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1917,12 +1891,12 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         :type file_path: str
         :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
          "assistants_output", "batch", "batch_output", and "vision". Required.
-        :paramtype purpose: str or ~azure.ai.projects.models.FilePurpose
+        :paramtype purpose: str or ~azure.ai.assistants.models.FilePurpose
         :keyword sleep_interval: Time to wait before polling for the status of the uploaded file. Default value
          is 1.
         :paramtype sleep_interval: float
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.OpenAIFile
+        :rtype: ~azure.ai.assistants.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1994,7 +1968,7 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
          is 1.
         :paramtype sleep_interval: float
         :return: VectorStore. The VectorStore is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.VectorStore
+        :rtype: ~azure.ai.assistants.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2023,12 +1997,12 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         :keyword name: The name of the vector store. Default value is None.
         :paramtype name: str
         :keyword data_sources: List of Azure assets. Default value is None.
-        :paramtype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
+        :paramtype data_sources: list[~azure.ai.assistants.models.VectorStoreDataSource]
         :keyword expires_after: Details on when this vector store expires. Default value is None.
-        :paramtype expires_after: ~azure.ai.projects.models.VectorStoreExpirationPolicy
+        :paramtype expires_after: ~azure.ai.assistants.models.VectorStoreExpirationPolicy
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Only applicable if file_ids is non-empty. Default value is None.
-        :paramtype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyRequest
+        :paramtype chunking_strategy: ~azure.ai.assistants.models.VectorStoreChunkingStrategyRequest
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
@@ -2038,7 +2012,7 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
          is 1.
         :paramtype sleep_interval: float
         :return: VectorStore. The VectorStore is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.VectorStore
+        :rtype: ~azure.ai.assistants.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2057,7 +2031,7 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
          is 1.
         :paramtype sleep_interval: float
         :return: VectorStore. The VectorStore is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.VectorStore
+        :rtype: ~azure.ai.assistants.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2089,12 +2063,12 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         :keyword name: The name of the vector store. Default value is None.
         :paramtype name: str
         :keyword data_sources: List of Azure assets. Default value is None.
-        :paramtype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
+        :paramtype data_sources: list[~azure.ai.assistants.models.VectorStoreDataSource]
         :keyword expires_after: Details on when this vector store expires. Default value is None.
-        :paramtype expires_after: ~azure.ai.projects.models.VectorStoreExpirationPolicy
+        :paramtype expires_after: ~azure.ai.assistants.models.VectorStoreExpirationPolicy
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Only applicable if file_ids is non-empty. Default value is None.
-        :paramtype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyRequest
+        :paramtype chunking_strategy: ~azure.ai.assistants.models.VectorStoreChunkingStrategyRequest
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
@@ -2104,7 +2078,7 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
          is 1.
         :paramtype sleep_interval: float
         :return: VectorStore. The VectorStore is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.VectorStore
+        :rtype: ~azure.ai.assistants.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2161,7 +2135,7 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
          is 1.
         :paramtype sleep_interval: float
         :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.VectorStoreFileBatch
+        :rtype: ~azure.ai.assistants.models.VectorStoreFileBatch
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2184,18 +2158,18 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         :keyword file_ids: List of file identifiers. Required.
         :paramtype file_ids: list[str]
         :keyword data_sources: List of Azure assets. Default value is None.
-        :paramtype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
+        :paramtype data_sources: list[~azure.ai.assistants.models.VectorStoreDataSource]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
-        :paramtype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyRequest
+        :paramtype chunking_strategy: ~azure.ai.assistants.models.VectorStoreChunkingStrategyRequest
         :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
         :paramtype sleep_interval: float
         :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.VectorStoreFileBatch
+        :rtype: ~azure.ai.assistants.models.VectorStoreFileBatch
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2222,7 +2196,7 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
          is 1.
         :paramtype sleep_interval: float
         :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.VectorStoreFileBatch
+        :rtype: ~azure.ai.assistants.models.VectorStoreFileBatch
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2251,14 +2225,14 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         :paramtype data_sources: list[~azure.ai.client.models.VectorStoreDataSource]
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
-        :paramtype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyRequest
+        :paramtype chunking_strategy: ~azure.ai.assistants.models.VectorStoreChunkingStrategyRequest
         :keyword content_type: Body parameter content-type. Defaults to "application/json".
         :paramtype content_type: str
         :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
         :paramtype sleep_interval: float
         :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.VectorStoreFileBatch
+        :rtype: ~azure.ai.assistants.models.VectorStoreFileBatch
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2384,7 +2358,7 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
          is 1.
         :paramtype sleep_interval: float
         :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.VectorStoreFile
+        :rtype: ~azure.ai.assistants.models.VectorStoreFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2410,15 +2384,15 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         :keyword file_id: Identifier of the file. Default value is None.
         :paramtype file_id: str
         :keyword data_source: Azure asset ID. Default value is None.
-        :paramtype data_source: ~azure.ai.projects.models.VectorStoreDataSource
+        :paramtype data_source: ~azure.ai.assistants.models.VectorStoreDataSource
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
-        :paramtype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyRequest
+        :paramtype chunking_strategy: ~azure.ai.assistants.models.VectorStoreChunkingStrategyRequest
         :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
         :paramtype sleep_interval: float
         :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.VectorStoreFile
+        :rtype: ~azure.ai.assistants.models.VectorStoreFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2445,7 +2419,7 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
          is 1.
         :paramtype sleep_interval: float
         :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.VectorStoreFile
+        :rtype: ~azure.ai.assistants.models.VectorStoreFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2473,15 +2447,15 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         :keyword file_id: Identifier of the file. Default value is None.
         :paramtype file_id: str
         :keyword data_source: Azure asset ID. Default value is None.
-        :paramtype data_source: ~azure.ai.projects.models.VectorStoreDataSource
+        :paramtype data_source: ~azure.ai.assistants.models.VectorStoreDataSource
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
-        :paramtype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyRequest
+        :paramtype chunking_strategy: ~azure.ai.assistants.models.VectorStoreChunkingStrategyRequest
         :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
         :paramtype sleep_interval: float
         :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.VectorStoreFile
+        :rtype: ~azure.ai.assistants.models.VectorStoreFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2527,7 +2501,7 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         :param assistant_id: Identifier of the assistant. Required.
         :type assistant_id: str
         :return: AssistantDeletionStatus. The AssistantDeletionStatus is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AssistantDeletionStatus
+        :rtype: ~azure.ai.assistants.models.AssistantDeletionStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         if assistant_id in self._toolset:

@@ -93,7 +93,7 @@ def _filter_parameters(model_class: Type, parameters: Dict[str, Any]) -> Dict[st
 
     **Note:** Classes inherited from the model check that the parameters are present
     in the list of attributes and if they are not, the error is being raised. This check may not
-    be relevant for classes, not inherited from azure.ai.projects._model_base.Model.
+    be relevant for classes, not inherited from azure.ai.assistants._model_base.Model.
     :param Type model_class: The class of model to be used.
     :param parameters: The parsed dictionary with parameters.
     :type parameters: Union[str, Dict[str, Any]]
@@ -1045,7 +1045,7 @@ class BaseToolSet:
         Safely converts a dictionary into a ToolResources instance.
 
         :param resources: A dictionary of tool resources. Should be a mapping
-            accepted by ~azure.ai.projects.models.AzureAISearchResource
+            accepted by ~azure.ai.assistants.models.AzureAISearchResource
         :type resources: Dict[str, Any]
         :return: A ToolResources instance.
         :rtype: ToolResources
@@ -1098,7 +1098,7 @@ class ToolSet(BaseToolSet):
         if isinstance(tool, AsyncFunctionTool):
             raise ValueError(
                 "AsyncFunctionTool is not supported in ToolSet.  "
-                + "To use async functions, use AsyncToolSet and assistants operations in azure.ai.projects.aio."
+                + "To use async functions, use AsyncToolSet and assistants operations in azure.ai.assistants.aio."
             )
 
     def execute_tool_calls(self, tool_calls: List[Any]) -> Any:
@@ -1626,7 +1626,7 @@ class OpenAIPageableListOfThreadMessage(OpenAIPageableListOfThreadMessageGenerat
         :type role: MessageRole
 
         :return: The last message from a sender in the specified role.
-        :rtype: ~azure.ai.projects.models.ThreadMessage
+        :rtype: ~azure.ai.assistants.models.ThreadMessage
         """
         for msg in self.data:
             if msg.role == role:
@@ -1640,7 +1640,7 @@ class OpenAIPageableListOfThreadMessage(OpenAIPageableListOfThreadMessageGenerat
         :type role: MessageRole
 
         :return: The last text message from a sender in the specified role.
-        :rtype: ~azure.ai.projects.models.MessageTextContent
+        :rtype: ~azure.ai.assistants.models.MessageTextContent
         """
         for msg in self.data:
             if msg.role == role:
