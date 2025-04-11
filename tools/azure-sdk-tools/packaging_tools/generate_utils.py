@@ -433,7 +433,7 @@ def gen_typespec(
         )
         if run_in_pipeline:
             emitter_name = "@azure-tools/typespec-python"
-            if not os.path.exists(f"node_modules{emitter_name}"):
+            if not os.path.exists(f"node_modules/{emitter_name}"):
                 _LOGGER.info("install dependencies only for the first run")
                 check_output("tsp-client install-dependencies", stderr=STDOUT, shell=True)
             else:
