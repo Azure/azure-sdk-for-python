@@ -47,7 +47,7 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, threshold = _DEFAULT_INTENT_RESOLUTION_THRESHOLD):
+    def __init__(self, model_config, *, threshold = _DEFAULT_INTENT_RESOLUTION_THRESHOLD):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self.threshold = threshold
@@ -125,9 +125,9 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         # llm_output should always be a dictionary because the response_format of prompty is set to json_object, but checking anyway
         if isinstance(llm_output, dict):
             score  = llm_output.get("resolution_score", math.nan)
-            if not check_score_is_valid(score, IntentResolutionEvaluator.MIN_INTENT_RESOLUTION_SCORE, IntentResolutionEvaluator.MAX_INTENT_RESOLUTION_SCORE):
+            if not check_score_is_valid(score, IntentResolutionEvaluator._MIN_INTENT_RESOLUTION_SCORE, IntentResolutionEvaluator._MAX_INTENT_RESOLUTION_SCORE):
                 raise EvaluationException(
-                    message=f"Invalid score value: {score}. Expected a number in range [{IntentResolutionEvaluator.MIN_INTENT_RESOLUTION_SCORE}, {IntentResolutionEvaluator.MAX_INTENT_RESOLUTION_SCORE}].",
+                    message=f"Invalid score value: {score}. Expected a number in range [{IntentResolutionEvaluator._MIN_INTENT_RESOLUTION_SCORE}, {IntentResolutionEvaluator._MAX_INTENT_RESOLUTION_SCORE}].",
                     internal_message="Invalid score value.",
                     category=ErrorCategory.FAILED_EXECUTION,
                     blame=ErrorBlame.SYSTEM_ERROR,

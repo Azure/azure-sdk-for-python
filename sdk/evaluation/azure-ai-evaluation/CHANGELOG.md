@@ -1,6 +1,22 @@
 # Release History
 
-## 1.4.0 (Unreleased)
+## 1.6.0 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.5.0 (2025-04-04)
+
+### Features Added
+
+- New `RedTeam` agent functionality to assess the safety and resilience of AI systems against adversarial prompt attacks
+
+## 1.4.0 (2025-03-27)
 
 ### Features Added
 - Enhanced binary evaluation results with customizable thresholds
@@ -51,14 +67,9 @@
   - TaskAdherenceEvaluator - Evaluates the task adherence of an agent's response to a user query.
   - ToolCallAccuracyEvaluator - Evaluates the accuracy of tool calls made by an agent in response to a user query.
 
-
-### Breaking Changes
-
 ### Bugs Fixed
 - Fixed error in `GroundednessProEvaluator` when handling non-numeric values like "n/a" returned from the service.
 - Uploading local evaluation results from `evaluate` with the same run name will no longer result in each online run sharing (and bashing) result files.
-
-### Other Changes
 
 ## 1.3.0 (2025-02-28)
 

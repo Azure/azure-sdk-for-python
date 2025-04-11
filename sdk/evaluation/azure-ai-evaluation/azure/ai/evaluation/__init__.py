@@ -41,15 +41,17 @@ from ._model_configurations import (
     OpenAIModelConfiguration,
 )
 
+_patch_all = []
+
 # The converter from the AI service to the evaluator schema requires a dependency on
 # ai.projects, but we also don't want to force users installing ai.evaluations to pull
 # in ai.projects. So we only import it if it's available and the user has ai.projects.
 try:
     from ._converters._ai_services import AIAgentConverter
-    _patch_all = ["AIAgentConverter"]
+    _patch_all.append("AIAgentConverter")
 except ImportError:
-    print("Could not import AIAgentConverter. Please install the dependency with `pip install azure-ai-projects`.")
-    _patch_all = []
+    print("[INFO] Could not import AIAgentConverter. Please install the dependency with `pip install azure-ai-projects`.")
+
 
 __all__ = [
     "evaluate",

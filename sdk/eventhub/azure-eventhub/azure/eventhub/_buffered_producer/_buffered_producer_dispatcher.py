@@ -51,7 +51,9 @@ class BufferedProducerDispatcher:
         self._amqp_transport = amqp_transport
 
         if not executor:
-            self._executor = ThreadPoolExecutor()
+            # set max workers to the number of partitions & one for the close operation.
+            max_workers: int = len(self._partition_ids) + 1
+            self._executor = ThreadPoolExecutor(max_workers=max_workers)
         elif isinstance(executor, ThreadPoolExecutor):
             self._existing_executor = True
             self._executor = executor

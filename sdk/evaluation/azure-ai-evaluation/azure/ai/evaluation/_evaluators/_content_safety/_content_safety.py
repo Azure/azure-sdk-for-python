@@ -62,7 +62,8 @@ class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
     def __init__(
         self, 
         credential, 
-        azure_ai_project, 
+        azure_ai_project,
+        *, 
         violence_threshold: int = 3,
         sexual_threshold: int = 3,
         self_harm_threshold: int = 3,

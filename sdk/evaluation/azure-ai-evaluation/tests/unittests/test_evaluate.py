@@ -9,7 +9,7 @@ from unittest.mock import patch
 import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
-from promptflow.client import PFClient
+from azure.ai.evaluation._legacy._adapters.client import PFClient
 
 from azure.ai.evaluation._common.math import list_mean
 from azure.ai.evaluation import (
@@ -72,12 +72,6 @@ def evaluate_test_data_conversion_jsonl_file():
 
 
 @pytest.fixture
-def pf_client() -> PFClient:
-    """The fixture, returning PRClient"""
-    return PFClient()
-
-
-@pytest.fixture
 def questions_file():
     return _get_file("questions.jsonl")
 
@@ -95,6 +89,10 @@ def questions_answers_file():
 @pytest.fixture
 def questions_answers_basic_file():
     return _get_file("questions_answers_basic.jsonl")
+
+@pytest.fixture
+def questions_answers_korean_file():
+    return _get_file("questions_answers_korean.jsonl")
 
 
 def _target_fn(query):
@@ -857,3 +855,22 @@ class TestEvaluate:
             )
 
         assert "Evaluation target failed to produce any results. Please check the logs at " in str(exc_info.value)
+    
+    def test_evaluate_korean_characters_result(self, questions_answers_korean_file):
+        output_path = "eval_test_results_korean.jsonl"
+
+        result = evaluate(
+            data=questions_answers_korean_file,
+            evaluators={"g": F1ScoreEvaluator()},
+            output_path=output_path,
+        )
+
+        assert result is not None
+
+        with open(questions_answers_korean_file, "r", encoding="utf-8") as f:
+            first_line = f.readline()
+            data_from_file = json.loads(first_line)
+
+        assert result["rows"][0]["inputs.query"] == data_from_file["query"]
+
+        os.remove(output_path)
