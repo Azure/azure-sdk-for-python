@@ -71,7 +71,7 @@ class TablesBaseClient:  # pylint: disable=too-many-instance-attributes
         *,
         credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, TokenCredential]] = None,
         api_version: Optional[str] = None,
-        audience: Optional[str] = None,  # Add audience parameter
+        audience: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
         """
@@ -84,11 +84,12 @@ class TablesBaseClient:  # pylint: disable=too-many-instance-attributes
             ~azure.core.credentials.AzureNamedKeyCredential or
             ~azure.core.credentials.AzureSasCredential or
             ~azure.core.credentials.TokenCredential or None
+        :keyword audience: Optional audience to use for Microsoft Entra ID authentication. If not specified,
+            the public cloud audience will be used.
+        :paramtype audience: str or None
         :keyword api_version: Specifies the version of the operation to use for this request. Default value
             is "2019-02-02".
         :paramtype api_version: str or None
-        :keyword audience: The audience to use for credential authentication.
-        :paramtype audience: str or None
         """
         try:
             if not endpoint.lower().startswith("http"):
@@ -132,7 +133,7 @@ class TablesBaseClient:  # pylint: disable=too-many-instance-attributes
             }
         self._hosts = _hosts
 
-        self._policies = self._configure_policies(audience=audience, hosts=self._hosts, **kwargs)  # pass audience
+        self._policies = self._configure_policies(audience=audience, hosts=self._hosts, **kwargs)
         if self._cosmos_endpoint:
             self._policies.insert(0, CosmosPatchTransformPolicy())
 
@@ -225,13 +226,10 @@ class TablesBaseClient:  # pylint: disable=too-many-instance-attributes
         """
         return f"{self.scheme}://{hostname}{self._query_str}"
 
-    def _configure_policies(
-        self,
-        *,
-        audience: Optional[str] = None,
-        **kwargs: Any
-    ) -> List[Any]:
-        credential_policy = _configure_credential(self.credential, cosmos_endpoint=self._cosmos_endpoint, audience=audience)
+    def _configure_policies(self, *, audience: Optional[str] = None, **kwargs: Any) -> List[Any]:
+        credential_policy = _configure_credential(
+            self.credential, cosmos_endpoint=self._cosmos_endpoint, audience=audience
+        )
         return [
             RequestIdPolicy(**kwargs),
             StorageHeadersPolicy(**kwargs),

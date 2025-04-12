@@ -102,10 +102,14 @@ def _configure_credential(
         Union[AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential, SharedKeyCredentialPolicy]
     ],
     cosmos_endpoint: bool = False,
+    audience: Optional[str] = None,
 ) -> Optional[Union[AsyncBearerTokenChallengePolicy, AzureSasCredentialPolicy, SharedKeyCredentialPolicy]]:
     if hasattr(credential, "get_token"):
         credential = cast(AsyncTokenCredential, credential)
-        scope = COSMOS_OAUTH_SCOPE if cosmos_endpoint else STORAGE_OAUTH_SCOPE
+        if audience:
+            scope = audience.rstrip("/") + "/.default"
+        else:
+            scope = COSMOS_OAUTH_SCOPE if cosmos_endpoint else STORAGE_OAUTH_SCOPE
         return AsyncBearerTokenChallengePolicy(credential, scope)
     if isinstance(credential, SharedKeyCredentialPolicy):
         return credential

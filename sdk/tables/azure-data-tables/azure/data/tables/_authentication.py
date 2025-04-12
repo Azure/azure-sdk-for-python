@@ -251,7 +251,7 @@ def _configure_credential(
     if hasattr(credential, "get_token"):
         credential = cast(TokenCredential, credential)
         if audience:
-            scope = audience + "/.default"
+            scope = audience.rstrip("/") + "/.default"
         else:
             scope = COSMOS_OAUTH_SCOPE if cosmos_endpoint else STORAGE_OAUTH_SCOPE
         return BearerTokenChallengePolicy(credential, scope)
