@@ -1790,17 +1790,19 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         """
         Uploads a file for use by other operations, delegating to the generated operations.
 
+        kwargs can include next parameters:
+        param file: File content. Required if `body` and `purpose` are not provided.
+        type file: Optional[FileType]
+        param file_path: Path to the file. Required if `body` and `purpose` are not provided.
+        type file_path: Optional[str]
+        param purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
+        "assistants_output", "batch", "batch_output", and "vision". Required if `body` and `file` are not provided.
+        type purpose: Union[str, _models.FilePurpose, None]
+        param filename: The name of the file.
+        type filename: Optional[str]
+
         :param body: JSON. Required if `file` and `purpose` are not provided.
         :type body: Optional[JSON]
-        :keyword file: File content. Required if `body` and `purpose` are not provided.
-        :paramtype file: Optional[FileType]
-        :keyword file_path: Path to the file. Required if `body` and `purpose` are not provided.
-        :paramtype file_path: Optional[str]
-        :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
-        :paramtype purpose: Union[str, _models.FilePurpose, None]
-            "assistants_output", "batch", "batch_output", and "vision". Required if `body` and `file` are not provided.
-        :keyword filename: The name of the file.
-        :paramtype filename: Optional[str]
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
         :rtype: _models.OpenAIFile
         :raises FileNotFoundError: If the file_path is invalid.
@@ -1810,10 +1812,10 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
         if body is not _Unset:
             return super().upload_file(body=body, **kwargs)
 
-        purpose = kwargs.get('purpose')
-        file = kwargs.get('file')
-        file_path = kwargs.get('file_path')
-        filename = kwargs.get('filename')
+        purpose = kwargs.get("purpose")
+        file = kwargs.get("file")
+        file_path = kwargs.get("file_path")
+        filename = kwargs.get("filename")
         if isinstance(purpose, FilePurpose):
             purpose = purpose.value
 
@@ -2287,7 +2289,8 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
 
     @distributed_trace
     def save_file(  # pylint: disable=client-method-missing-kwargs
-            self, file_id: str, file_name: str, target_dir: Optional[Union[str, Path]] = None) -> None:
+        self, file_id: str, file_name: str, target_dir: Optional[Union[str, Path]] = None
+    ) -> None:
         """
         Synchronously saves file content retrieved using a file identifier to the specified local directory.
 
@@ -2495,7 +2498,8 @@ class AssistantsClient(AssistantsClientGenerated):  # pylint: disable=client-acc
 
     @distributed_trace
     def delete_assistant(  # pylint: disable=delete-operation-wrong-return-type
-            self, assistant_id: str, **kwargs: Any) -> _models.AssistantDeletionStatus:
+        self, assistant_id: str, **kwargs: Any
+    ) -> _models.AssistantDeletionStatus:
         """Deletes an assistant.
 
         :param assistant_id: Identifier of the assistant. Required.
