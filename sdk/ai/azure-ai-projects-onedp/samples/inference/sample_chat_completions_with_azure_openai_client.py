@@ -36,7 +36,7 @@ with AIProjectClient(
     credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
 ) as project_client:
 
-    # [START sample]
+    # [START aoai_sample]
     with project_client.inference.get_azure_openai_client(api_version="2024-06-01") as client:
 
         response = client.chat.completions.create(
@@ -50,4 +50,4 @@ with AIProjectClient(
         )
 
         print(response.choices[0].message.content)
-    # [END sample]
+    # [END aoai_sample]

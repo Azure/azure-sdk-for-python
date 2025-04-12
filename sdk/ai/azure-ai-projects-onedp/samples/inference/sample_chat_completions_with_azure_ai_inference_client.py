@@ -36,7 +36,7 @@ with AIProjectClient(
     credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
 ) as project_client:
 
-    # [START sample]
+    # [START inference_sample]
     with project_client.inference.get_chat_completions_client() as client:
 
         response = client.complete(
@@ -44,4 +44,4 @@ with AIProjectClient(
         )
 
         print(response.choices[0].message.content)
-    # [END sample]
+    # [END inference_sample]
