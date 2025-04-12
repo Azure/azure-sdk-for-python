@@ -35,6 +35,7 @@ with AIProjectClient(
     credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
 ) as project_client:
 
+    # [START deployments_sample]
     print("List all deployments:")
     for deployment in project_client.deployments.list():
         print(deployment)
@@ -46,3 +47,4 @@ with AIProjectClient(
     print(f"Get a single deployment named `{model_deployment_name}`:")
     deployment = project_client.deployments.get(model_deployment_name)
     print(deployment)
+    # [END deployments_sample]

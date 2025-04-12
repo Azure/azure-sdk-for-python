@@ -36,6 +36,7 @@ with AIProjectClient(
     credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
 ) as project_client:
 
+    # [START datasets_sample]
     print(
         "Upload a single file and create a new Dataset to reference the file. Here we explicitly specify the dataset version."
     )
@@ -79,3 +80,4 @@ with AIProjectClient(
     project_client.datasets.delete_version(name=dataset_name, version="2")
     project_client.datasets.delete_version(name=dataset_name, version="3")
     """
+    # [END dataset_sample]

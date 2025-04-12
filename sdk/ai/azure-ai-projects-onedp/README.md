@@ -1,17 +1,15 @@
-<!-- PIPY LONG DESCRIPTION BEGIN -->
 # Azure AI Projects client library for Python
 
 Use the AI Projects client library (in preview) to:
 
 * **Enumerate AI Models** deployed to your Azure AI Foundry project.
-* **Enumerate the connections** in your Azure AI Foundry project to other Azure resources, and get their properties.
-For example, get the inference endpoint URL and credentials associated with your Azure OpenAI connection.
-* **Create and enumerate Datasets** in your Azure AI Foundry project, referencing your documents stored in the cloud.
-* **Create and enumerate Indexes** in your Azure AI Foundry project, referencing your embeddings.
-* **Get an authenticated Inference client** to do chat completions, for the default Azure OpenAI or AI Services connections in your Azure AI Foundry project. Supports the AzureOpenAI client from the `openai` package, or clients from the `azure-ai-inference` package.'
-* **Read a Prompty file or string** and render it as a list of messages to directly pass into a ChatCompletionsClient from the `azure-ai-inference` package.
-* **Develop Agents using the Azure AI Agent Service**, leveraging an extensive ecosystem of models, tools, and capabilities from OpenAI, Microsoft, and other LLM providers. The Azure AI Agent Service enables the building of Agents for a wide range of generative AI use cases. The package is currently in preview.
-* **Run Evaluations** to assess the performance of generative AI applications using various evaluators and metrics. It includes built-in evaluators for quality, risk, and safety, and allows custom evaluators for specific needs.
+* **Enumerate connected Azure resouces** and get their properties.
+* **Upload documents and create Datasets** to reference them.
+* **Create and enumerate search Indexes**.
+* **Get an authenticated Assistant client**.
+* **Get an authenticated Inference client** (Azure OpenAI or Azure AI Inference) for chat completions, text or image embeddings.
+* **Read a Prompty file or string** and render messages for infereence clients.
+* **Run Evaluations** to assess the performance of generative AI applications.
 * **Enable OpenTelemetry tracing**.
 
 [Product documentation](https://aka.ms/azsdk/azure-ai-projects/product-doc)
@@ -25,38 +23,6 @@ For example, get the inference endpoint URL and credentials associated with your
 
 To report an issue with the client library, or request additional features, please open a GitHub issue [here](https://github.com/Azure/azure-sdk-for-python/issues). Mention the package name "azure-ai-projects" in the title or content.
 
-<!-- TODO: Update TOC once this document is table
-## Table of contents
-
-- [Getting started](#getting-started)
-  - [Prerequisite](#prerequisite)
-  - [Install the package](#install-the-package)
-- [Key concepts](#key-concepts)
-  - [Create and authenticate the client with Entra ID](#create-and-authenticate-the-client-with-entra-id)
-- [Examples](#examples)
-  - [Enumerate connections](#enumerate-connections)
-    - [Get properties of all connections](#get-properties-of-all-connections)
-    - [Get properties of all connections of a particular type](#get-properties-of-all-connections-of-a-particular-type)
-    - [Get properties of a default connection](#get-properties-of-a-default-connection)
-    - [Get properties of a connection by its connection name](#get-properties-of-a-connection-by-its-connection-name)
-  - [Get an authenticated ChatCompletionsClient](#get-an-authenticated-chatcompletionsclient)
-  - [Get an authenticated AzureOpenAI client](#get-an-authenticated-azureopenai-client)
-  - [Evaluation](#evaluation)
-    - [Evaluator](#evaluator)
-    - [Run Evaluation in the cloud](#run-evaluation-in-the-cloud)
-      - [Evaluators](#evaluators)
-      - [Data to be evaluated](#data-to-be-evaluated)
-        - [[Optional] Azure OpenAI Model](#optional-azure-openai-model)
-        - [Example Remote Evaluation](#example-remote-evaluation)
-- [Troubleshooting](#troubleshooting)
-  - [Exceptions](#exceptions)
-  - [Logging](#logging)
-  - [Reporting issues](#reporting-issues)
-- [Next steps](#next-steps)
-- [Contributing](#contributing)
--->
-
-<!-- PIPY LONG DESCRIPTION END -->
 ## Getting started
 
 ### Prerequisite
@@ -64,7 +30,7 @@ To report an issue with the client library, or request additional features, plea
 - Python 3.8 or later.
 - An [Azure subscription][azure_sub].
 - A [project in Azure AI Foundry](https://learn.microsoft.com/azure/ai-studio/how-to/create-projects).
-- The project endpoint URL, of the form `https://<ai-services-resource-name>.services.ai.azure.com/api/projects/<project-name>`. It can be found in your Azure AI Foundry project overview page, under "Project details". Below we will assume the environment variable `PROJECT_ENDPOINT` was defined to hold this value.
+- The project endpoint URL, of the form `https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/<your-project-name>`. It can be found in your Azure AI Foundry project overview page, under "Project details". Below we will assume the environment variable `PROJECT_ENDPOINT` was defined to hold this value.
 - An Entra ID token for authentication. Your application needs an object that implements the [TokenCredential](https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential) interface. Code samples here use [DefaultAzureCredential](https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential). To get that working, you will need:
   * An appropriate role assignment. see [Role-based access control in Azure AI Foundry portal](https://learn.microsoft.com/azure/ai-foundry/concepts/rbac-ai-foundry). Role assigned can be done via the "Access Control (IAM)" tab of your Azure AI Project resource in the Azure portal.
   * [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) installed.
@@ -110,7 +76,7 @@ from azure.core.credentials import AzureKeyCredential
 
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(),
-     endpoint=os.environ["PROJECT_ENDPOINT"],
+    endpoint=os.environ["PROJECT_ENDPOINT"],
 )
 ```
 
@@ -121,7 +87,7 @@ project_client = AIProjectClient.from_connection_string(
 Below is a code example of how to get an authenticated `AssistantClient` from the `azure-ai-assistants` package.
 Full samples can be found under the `assistants` folder in the [package samples][samples].
 
-<!-- SNIPPET:sample_get_assistant_client.sample -->
+<!-- SNIPPET:sample_get_assistant_client.assistants_sample -->
 
 ```python
 with project_client.assistants.get_client() as client:
@@ -133,7 +99,7 @@ with project_client.assistants.get_client() as client:
 
 ### Get an authenticated ChatCompletionsClient
 
-Your Azure AI Foundry project may have one or more AI models deployed that support chat completions. These could be OpenAI models, Microsoft models, or models from other providers. Use the code below to get an already authenticated [ChatCompletionsClient](https://learn.microsoft.com/python/api/azure-ai-inference/azure.ai.inference.chatcompletionsclient) from the [azure-ai-inference](https://pypi.org/project/azure-ai-inference/) package, and execute a chat completions call.
+Your Azure AI Foundry project may have one or more AI models deployed that support chat completions. These could be OpenAI models, Microsoft models, or models from other providers. Use the code below to get an authenticated [ChatCompletionsClient](https://learn.microsoft.com/python/api/azure-ai-inference/azure.ai.inference.chatcompletionsclient) from the [azure-ai-inference](https://pypi.org/project/azure-ai-inference/) package, and execute a chat completions call.
 
 First, install the package:
 
@@ -141,9 +107,9 @@ First, install the package:
 pip install azure-ai-inference
 ```
 
-Then run this code, assuming `model_deployment_name` was set:
+Then run the code below. Here we assume `model_deployment_name` holds the model deployment name.
 
-<!-- SNIPPET:sample_chat_completions_with_azure_ai_inference_client.sample-->
+<!-- SNIPPET:sample_chat_completions_with_azure_ai_inference_client.inference_sample-->
 
 ```python
 with project_client.inference.get_chat_completions_client() as client:
@@ -159,9 +125,10 @@ with project_client.inference.get_chat_completions_client() as client:
 
 See the "inference" folder in the [package samples][samples] for additional samples, including getting an authenticated [EmbeddingsClient](https://learn.microsoft.com/python/api/azure-ai-inference/azure.ai.inference.embeddingsclient) and [ImageEmbeddingsClient](https://learn.microsoft.com/python/api/azure-ai-inference/azure.ai.inference.imageembeddingsclient).
 
+
 ### Get an authenticated AzureOpenAI client
 
-Your Azure AI Foundry project may have one or more OpenAI models deployed that support chat completions. Use the code below to get an already authenticated [AzureOpenAI](https://github.com/openai/openai-python?tab=readme-ov-file#microsoft-azure-openai) from the [openai](https://pypi.org/project/openai/) package, and execute a chat completions call.
+Your Azure AI Foundry project may have one or more OpenAI models deployed that support chat completions. Use the code below to get an authenticated [AzureOpenAI](https://github.com/openai/openai-python?tab=readme-ov-file#microsoft-azure-openai) from the [openai](https://pypi.org/project/openai/) package, and execute a chat completions call.
 
 First, install the package:
 
@@ -169,47 +136,13 @@ First, install the package:
 pip install openai
 ```
 
-Then run the code below. Replace `gpt-4o` with your model deployment name, and update the `api_version` value with one found in the "Data plane - inference" row [in this table](https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs).
-
-```python
-aoai_client = project_client.inference.get_azure_openai_client(api_version="2024-06-01")
-
-response = aoai_client.chat.completions.create(
-    model="gpt-4o", # Model deployment name
-    messages=[
-        {
-            "role": "user",
-            "content": "How many feet are in a mile?",
-        },
-    ],
-)
-
-print(response.choices[0].message.content)
-```
-
-See the "inference" folder in the [package samples][samples] for additional samples.
-
-
-### Getting an authenticated inference client
-
-Below are code examples of the inference operations, allowing you to get authenticated clients from the
-`azure-ai-inference` or `openai` packages and perform one chat completions operation. Full samples can be
-found under the `inference` folder in the [package samples][samples].
-
-#### Azure OpenAI client
-
-Here is an example of geting an authenticated `AzureOpenAI` client from the `openai` package. You have the option to specify
-the REST API version that the resulting client will use (see [API specs](https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs))
-). You also have the option (not shown) to explicitly specify the Azure OpenAI connection name in your AI Foundry Project, which
+Then run the code below. Here we assume `model_deployment_name` holds the model deployment name. Update the `api_version`
+value with one found in the "Data plane - inference" row [in this table](https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs).
+You also have the option (not shown) to explicitly specify the Azure OpenAI connection name in your AI Foundry Project, which
 the `get_azure_openai_client` method will use to get the inference endpoint and authentication credentials.
 If not present the default Azure OpenAI connection will be used.
 
-You need to first install the OpenAI package:
-```bash
-pip install openai
-```
-
-<!-- SNIPPET:sample_chat_completions_with_azure_openai_client.sample-->
+<!-- SNIPPET:sample_chat_completions_with_azure_openai_client.aoai_sample-->
 
 ```python
 with project_client.inference.get_azure_openai_client(api_version="2024-06-01") as client:
@@ -229,27 +162,37 @@ with project_client.inference.get_azure_openai_client(api_version="2024-06-01") 
 
 <!-- END SNIPPET -->
 
-Example of geting a `ChatCompletionsClient` from the `azure-ai-inference` package:
+See the "inference" folder in the [package samples][samples] for additional samples.
 
-<!-- SNIPPET:sample_chat_completions_with_azure_ai_inference_client.sample-->
+### Deployemnts operations
+
+The code below shows some Deployments operations. Full samples can be found under the "deployment"
+folder in the [package samples][samples].
+
+<!-- SNIPPET:sample_deployments.deployments_sample-->
 
 ```python
-with project_client.inference.get_chat_completions_client() as client:
+print("List all deployments:")
+for deployment in project_client.deployments.list():
+    print(deployment)
 
-    response = client.complete(
-        model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]
-    )
+print(f"List all deployments by the model publisher `{model_publisher}`:")
+for deployment in project_client.deployments.list(model_publisher=model_publisher):
+    print(deployment)
 
-    print(response.choices[0].message.content)
+print(f"Get a single deployment named `{model_deployment_name}`:")
+deployment = project_client.deployments.get(model_deployment_name)
+print(deployment)
 ```
 
 <!-- END SNIPPET -->
 
-### Getting connections
+### Connections operations
 
-Below are code examples of the connection operations. Full samples can be found under the "connetions" folder in the [package samples][samples].
+The code below shows some Connection operations. Full samples can be found under the "connetions"
+folder in the [package samples][samples].
 
-<!-- SNIPPET:sample_connections.sample-->
+<!-- SNIPPET:sample_connections.connections_sample-->
 
 ```python
 print("List the properties of all connections:")
@@ -265,6 +208,89 @@ for connection in project_client.connections.list(
 print(f"Get the properties of a connection named `{connection_name}`:")
 connection = project_client.connections.get(connection_name)
 print(connection)
+```
+
+<!-- END SNIPPET -->
+
+### Dataset operations
+
+The code below shows some Dataset operations. Full samples can be found under the "datasets"
+folder in the [package samples][samples].
+
+<!-- SNIPPET:sample_datasets.datasets_sample-->
+
+```python
+print(
+    "Upload a single file and create a new Dataset to reference the file. Here we explicitly specify the dataset version."
+)
+dataset: DatasetVersion = project_client.datasets.upload_file_and_create(
+    name=dataset_name,
+    version="1",
+    file="sample_folder/sample_file1.txt",
+)
+print(dataset)
+
+"""
+print("Upload all files in a folder (including subfolders) to the existing Dataset to reference the folder. Here again we explicitly specify the a new dataset version")
+dataset = project_client.datasets.upload_folder_and_create(
+    name=dataset_name,
+    version="2",
+    folder="sample_folder",
+)
+print(dataset)
+
+print("Upload a single file to the existing dataset, while letting the service increment the version")
+dataset: DatasetVersion = project_client.datasets.upload_file_and_create(
+    name=dataset_name,
+    file="sample_folder/file2.txt",
+)
+print(dataset)
+
+print("Get an existing Dataset version `1`:")
+dataset = project_client.datasets.get_version(name=dataset_name, version="1")
+print(dataset)
+
+print(f"Listing all versions of the Dataset named `{dataset_name}`:")
+for dataset in project_client.datasets.list_versions(name=dataset_name):
+    print(dataset)
+
+print("List latest versions of all Datasets:")
+for dataset in project_client.datasets.list_latest():
+    print(dataset)
+
+print("Delete all Dataset versions created above:")
+project_client.datasets.delete_version(name=dataset_name, version="1")
+project_client.datasets.delete_version(name=dataset_name, version="2")
+project_client.datasets.delete_version(name=dataset_name, version="3")
+"""
+```
+
+<!-- END SNIPPET -->
+
+### Indexes operations
+
+The code below shows some Indexes operations. Full samples can be found under the "indexes"
+folder in the [package samples][samples].
+
+<!-- SNIPPET:sample_indexes.indexes_sample-->
+
+```python
+print(f"Listing all versions of the Index named `{index_name}`:")
+for index in project_client.indexes.list_versions(name=index_name):
+    print(index)
+exit()
+
+print("Get an existing Index version `1`:")
+index = project_client.indexes.get_version(name=index_name, version="1")
+print(index)
+
+print("List latest versions of all Indexes:")
+for index in project_client.indexes.list_latest():
+    print(index)
+
+print("Delete the Index versions created above:")
+project_client.indexes.delete_version(name=index_name, version="1")
+project_client.indexes.delete_version(name=index_name, version="2")
 ```
 
 <!-- END SNIPPET -->

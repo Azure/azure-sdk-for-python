@@ -44,6 +44,7 @@ with AIProjectClient(
     credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
 ) as project_client:
 
+    # [START indexes_sample]
     print(f"Listing all versions of the Index named `{index_name}`:")
     for index in project_client.indexes.list_versions(name=index_name):
         print(index)
@@ -60,3 +61,4 @@ with AIProjectClient(
     print("Delete the Index versions created above:")
     project_client.indexes.delete_version(name=index_name, version="1")
     project_client.indexes.delete_version(name=index_name, version="2")
+    # [END indexes_sample]
