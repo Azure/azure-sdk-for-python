@@ -1043,7 +1043,8 @@
       "filename": "sdk/keyvault/**",
       "words": [
         "eddsa",
-        "Thawte"
+        "Thawte",
+        "tobytes"
       ]
     },
     {

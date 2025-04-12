@@ -63,7 +63,7 @@ class TestSecurityDomain(KeyVaultTestCase):
                 )
             )
         certs_object = CertificateInfo(certificates=certificates)
-        poller = await client.begin_download(certificate_info_object=certs_object, polling=False)
+        poller = await client.begin_download(certificate_info=certs_object, polling=False)
         result = await poller.result()
         assert result.value
 

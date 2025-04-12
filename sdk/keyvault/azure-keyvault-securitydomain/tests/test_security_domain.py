@@ -33,11 +33,11 @@ def _int_to_bytes(i):
 
 
 def _public_rsa_key_to_jwk(rsa_key, encoding=None):
-    pubv = rsa_key.public_numbers()
-    n = _int_to_bytes(pubv.n)
+    public_numbers = rsa_key.public_numbers()
+    n = _int_to_bytes(public_numbers.n)
     if encoding:
         n = encoding(n)
-    e = _int_to_bytes(pubv.e)
+    e = _int_to_bytes(public_numbers.e)
     if encoding:
         e = encoding(e)
     return (n, e)
@@ -84,7 +84,7 @@ class TestSecurityDomain(KeyVaultTestCase):
                 )
             )
         certs_object = CertificateInfo(certificates=certificates)
-        poller = client.begin_download(certificate_info_object=certs_object, skip_activation_polling=True)
+        poller = client.begin_download(certificate_info=certs_object, skip_activation_polling=True)
         result = poller.result()
         assert result.value
 
