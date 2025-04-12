@@ -3,12 +3,12 @@
 Use the AI Projects client library (in preview) to:
 
 * **Enumerate AI Models** deployed to your Azure AI Foundry project.
-* **Enumerate connected Azure resouces** and get their properties.
+* **Enumerate connected Azure resources** and get their properties.
 * **Upload documents and create Datasets** to reference them.
 * **Create and enumerate search Indexes**.
 * **Get an authenticated Assistant client**.
 * **Get an authenticated Inference client** (Azure OpenAI or Azure AI Inference) for chat completions, text or image embeddings.
-* **Read a Prompty file or string** and render messages for infereence clients.
+* **Read a Prompty file or string** and render messages for inference clients.
 * **Run Evaluations** to assess the performance of generative AI applications.
 * **Enable OpenTelemetry tracing**.
 
@@ -164,7 +164,7 @@ with project_client.inference.get_azure_openai_client(api_version="2024-06-01") 
 
 See the "inference" folder in the [package samples][samples] for additional samples.
 
-### Deployemnts operations
+### Deployments operations
 
 The code below shows some Deployments operations. Full samples can be found under the "deployment"
 folder in the [package samples][samples].
