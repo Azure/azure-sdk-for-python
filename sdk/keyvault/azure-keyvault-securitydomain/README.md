@@ -70,6 +70,96 @@ client = SecurityDomainClient(vault_url=VAULT_URL, credential=credential)
 
 > **NOTE:** For an asynchronous client, import `azure.keyvault.securitydomain.aio`'s `SecurityDomainClient` instead.
 
+## Key concepts
+
+### Security domain
+
+To operate, a managed HSM must have a security domain. The security domain is an encrypted blob file that contains
+artifacts like the HSM backup, user credentials, the signing key, and the data encryption key that's unique to the
+managed HSM. For more information, please see [service documentation][securitydomain_docs].
+
+### SecurityDomainClient
+
+A `SecurityDomainClient` can download and upload managed HSM security domains and get transfer keys.
+
+### Download operation
+
+A download operation retrieves the security domain of a managed HSM. This can be used to activate a provisioned
+managed HSM.
+
+### Upload operation
+
+An upload operation restores a managed HSM using a provided security domain.
+
+### Transfer key
+
+A transfer key, or exchange key, is used to encrypt a security domain before uploading it to a managed HSM. For more
+information, please see the [disaster recovery guide][disaster_recovery].
+
+## Examples
+
+This section contains code snippets covering common tasks:
+
+- [Download a security domain](#download-a-security-domain)
+- [Get a transfer key](#get-a-transfer-key)
+- [Upload a security domain](#upload-a-security-domain)
+
+### Download a security domain
+
+`begin_download` can be used by a `SecurityDomainClient` to fetch a managed HSM's security domain, and this will also
+activate a provisioned managed HSM. By default, the poller returned by this operation will poll on the managed HSM's
+activation status, finishing when it's activated. To return immediately with the security domain object without waiting
+for activation, you can pass the keyword argument `skip_activation_polling=True`.
+
+```python
+from azure.keyvault.securitydomain.models import SecurityDomain
+
+security_domain: SecurityDomain = client.begin_download(certificate_info=certs_object).result()
+assert security_domain.value
+print("The managed HSM is now active.")
+```
+
+### Get a transfer key
+
+Using a different managed HSM than the one the security domain was downloaded from, `get_transfer_key` can be used by
+a `SecurityDomainClient` to fetch a transfer key (also known as an exchange key).
+
+```python
+from azure.keyvault.securitydomain.models import TransferKey
+
+NEW_VAULT_URL = os.environ["NEW_VAULT_URL"]
+upload_client = SecurityDomainClient(vault_url=NEW_VAULT_URL, credential=credential)
+
+transfer_key: TransferKey = upload_client.get_transfer_key()
+assert transfer_key.transfer_key_jwk
+```
+
+### Upload a security domain
+
+`begin_upload` can be used by a `SecurityDomainClient` to restore a different managed HSM with a security domain, for
+example for disaster recovery. Like the download operation this will activate a provisioned managed HSM, but the poller
+will return the activation status instead of the security domain object.
+
+```python
+from azure.keyvault.securitydomain.models import SecurityDomainOperationStatus
+
+result: SecurityDomainOperationStatus = upload_client.begin_upload(security_domain=result).result()
+assert result.status.lower() == "success"
+print("The managed HSM has been successfully restored with the security domain.")
+```
+
+## Troubleshooting
+
+See the Azure Key Vault SDK's
+[troubleshooting guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/TROUBLESHOOTING.md) for
+details on how to diagnose various failure scenarios.
+
+## Next steps
+Samples are available in the Azure SDK for Python GitHub repository. These samples provide example code for the
+following scenarios:
+
+- [Download a security domain][hello_world_sample] ([async version][hello_world_async_sample])
+
 ## Contributing
 
 This project welcomes contributions and suggestions. Most contributions require
@@ -97,6 +187,10 @@ additional questions or comments.
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 
 [default_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.DefaultAzureCredential
+[disaster_recovery]: https://learn.microsoft.com/azure/key-vault/managed-hsm/disaster-recovery-guide
+
+[hello_world_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-securitydomain/samples/hello_world.py
+[hello_world_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-securitydomain/samples/hello_world_async.py
 
 [library_src]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-securitydomain/azure/keyvault/securitydomain
 
@@ -110,3 +204,4 @@ additional questions or comments.
 
 [samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-securitydomain/samples
 [securitydomain_client_docs]: https://aka.ms/azsdk/python/keyvault-securitydomain/docs#azure.keyvault.securitydomain.SecurityDomainClient
+[securitydomain_docs]: https://learn.microsoft.com/azure/key-vault/managed-hsm/security-domain

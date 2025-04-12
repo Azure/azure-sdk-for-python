@@ -73,6 +73,7 @@ class SecurityDomainClientOperationsMixin(SecurityDomainClientMixinABC):
         cls: ClsType[_models.SecurityDomainOperationStatus] = kwargs.pop("cls", None)
 
         _request = build_security_domain_get_download_status_request(
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -277,6 +278,7 @@ class SecurityDomainClientOperationsMixin(SecurityDomainClientMixinABC):
         cls: ClsType[_models.SecurityDomainOperationStatus] = kwargs.pop("cls", None)
 
         _request = build_security_domain_get_upload_status_request(
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -340,6 +342,7 @@ class SecurityDomainClientOperationsMixin(SecurityDomainClientMixinABC):
 
         _request = build_security_domain_upload_request(
             content_type=content_type,
+            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,

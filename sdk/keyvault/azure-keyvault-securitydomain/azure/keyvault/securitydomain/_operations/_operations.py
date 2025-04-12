@@ -46,16 +46,21 @@ _SERIALIZER.client_side_validation = False
 
 def build_security_domain_get_download_status_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/securitydomain/download/pending"
 
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_security_domain_download_request(**kwargs: Any) -> HttpRequest:
@@ -82,33 +87,43 @@ def build_security_domain_download_request(**kwargs: Any) -> HttpRequest:
 
 def build_security_domain_get_upload_status_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/securitydomain/upload/pending"
 
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_security_domain_upload_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/securitydomain/upload"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_security_domain_get_transfer_key_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
@@ -155,6 +170,7 @@ class SecurityDomainClientOperationsMixin(SecurityDomainClientMixinABC):
         cls: ClsType[_models.SecurityDomainOperationStatus] = kwargs.pop("cls", None)
 
         _request = build_security_domain_get_download_status_request(
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -358,6 +374,7 @@ class SecurityDomainClientOperationsMixin(SecurityDomainClientMixinABC):
         cls: ClsType[_models.SecurityDomainOperationStatus] = kwargs.pop("cls", None)
 
         _request = build_security_domain_get_upload_status_request(
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -421,6 +438,7 @@ class SecurityDomainClientOperationsMixin(SecurityDomainClientMixinABC):
 
         _request = build_security_domain_upload_request(
             content_type=content_type,
+            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,

@@ -199,13 +199,3 @@ class SecurityDomainUploadPollingMethod(PollingTerminationMixin, LROBasePolling)
         :return: The built resource.
         """
         return cast(SecurityDomainOperationStatus, self.parse_resource(self._pipeline_response))
-
-
-class SecurityDomainUploadNoPolling(SecurityDomainUploadPollingMethod, NoPollingMixin):
-    def resource(self) -> SecurityDomainOperationStatus:
-        """Return the built resource.
-
-        :rtype: any
-        :return: The built resource.
-        """
-        return cast(SecurityDomainOperationStatus, self.parse_resource(self._initial_response))

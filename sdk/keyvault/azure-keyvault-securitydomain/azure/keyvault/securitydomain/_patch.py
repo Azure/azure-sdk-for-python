@@ -24,7 +24,6 @@ from ._internal import (
     SecurityDomainDownloadNoPolling,
     SecurityDomainDownloadPolling,
     SecurityDomainDownloadPollingMethod,
-    SecurityDomainUploadNoPolling,
     SecurityDomainUploadPolling,
     SecurityDomainUploadPollingMethod,
 )
@@ -194,7 +193,6 @@ class SecurityDomainClient(KeyVaultClient):
         security_domain: Union[SecurityDomain, JSON, IO[bytes]],
         *,
         content_type: str = "application/json",
-        skip_activation_polling: bool = False,
         **kwargs: Any,
     ) -> LROPoller[SecurityDomainOperationStatus]:
         """Restore the provided Security Domain.
@@ -205,9 +203,6 @@ class SecurityDomainClient(KeyVaultClient):
          IO[bytes]
         :keyword str content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
-        :keyword bool skip_activation_polling: If set to True, the operation will not poll for HSM activation to
-         complete and calling `.result()` on the poller will return the security domain object immediately. Default
-         value is False.
 
         :return: An instance of LROPoller that returns SecurityDomainOperationStatus. The
          SecurityDomainOperationStatus is compatible with MutableMapping
@@ -217,9 +212,7 @@ class SecurityDomainClient(KeyVaultClient):
         """
         delay = kwargs.pop("polling_interval", self._config.polling_interval)
         polling_method = (
-            SecurityDomainUploadNoPolling()
-            if skip_activation_polling is True
-            else SecurityDomainUploadPollingMethod(lro_algorithms=[SecurityDomainUploadPolling()], timeout=delay)
+            SecurityDomainUploadPollingMethod(lro_algorithms=[SecurityDomainUploadPolling()], timeout=delay)
         )
         return super()._begin_upload(
             security_domain,
