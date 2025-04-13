@@ -33,7 +33,7 @@ from .. import _model_base, models as _models
 from .._configuration import AIProjectClientConfiguration
 from .._model_base import SdkJSONEncoder, _deserialize
 from .._serialization import Deserializer, Serializer
-from .._vendor import FileType, prepare_multipart_form_data
+from .._vendor import prepare_multipart_form_data
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -4849,59 +4849,16 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    def upload_file(
-        self, *, file: FileType, purpose: Union[str, _models.FilePurpose], filename: Optional[str] = None, **kwargs: Any
-    ) -> _models.OpenAIFile:
-        """Uploads a file for use by other operations.
-
-        :keyword file: The file data, in bytes. Required.
-        :paramtype file: ~azure.ai.projects._vendor.FileType
-        :keyword purpose: The intended purpose of the uploaded file. Use ``assistants`` for Agents and
-         Message files, ``vision`` for Agents image file inputs, ``batch`` for Batch API, and
-         ``fine-tune`` for Fine-tuning. Known values are: "fine-tune", "fine-tune-results",
-         "assistants", "assistants_output", "batch", "batch_output", and "vision". Required.
-        :paramtype purpose: str or ~azure.ai.projects.models.FilePurpose
-        :keyword filename: The name of the file. Default value is None.
-        :paramtype filename: str
-        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.OpenAIFile
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    def _upload_file(self, body: _models._models.UploadFileRequest, **kwargs: Any) -> _models.OpenAIFile: ...
     @overload
-    def upload_file(self, body: JSON, **kwargs: Any) -> _models.OpenAIFile:
-        """Uploads a file for use by other operations.
-
-        :param body: Required.
-        :type body: JSON
-        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.OpenAIFile
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    def _upload_file(self, body: JSON, **kwargs: Any) -> _models.OpenAIFile: ...
 
     @distributed_trace
-    def upload_file(
-        self,
-        body: JSON = _Unset,
-        *,
-        file: FileType = _Unset,
-        purpose: Union[str, _models.FilePurpose] = _Unset,
-        filename: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.OpenAIFile:
+    def _upload_file(self, body: Union[_models._models.UploadFileRequest, JSON], **kwargs: Any) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
-        :param body: Is one of the following types: JSON Required.
-        :type body: JSON
-        :keyword file: The file data, in bytes. Required.
-        :paramtype file: ~azure.ai.projects._vendor.FileType
-        :keyword purpose: The intended purpose of the uploaded file. Use ``assistants`` for Agents and
-         Message files, ``vision`` for Agents image file inputs, ``batch`` for Batch API, and
-         ``fine-tune`` for Fine-tuning. Known values are: "fine-tune", "fine-tune-results",
-         "assistants", "assistants_output", "batch", "batch_output", and "vision". Required.
-        :paramtype purpose: str or ~azure.ai.projects.models.FilePurpose
-        :keyword filename: The name of the file. Default value is None.
-        :paramtype filename: str
+        :param body: Multipart body. Is either a UploadFileRequest type or a JSON type. Required.
+        :type body: ~azure.ai.projects.models._models.UploadFileRequest or JSON
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4919,13 +4876,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.OpenAIFile] = kwargs.pop("cls", None)
 
-        if body is _Unset:
-            if file is _Unset:
-                raise TypeError("missing required argument: file")
-            if purpose is _Unset:
-                raise TypeError("missing required argument: purpose")
-            body = {"file": file, "filename": filename, "purpose": purpose}
-            body = {k: v for k, v in body.items() if v is not None}
         _body = body.as_dict() if isinstance(body, _model_base.Model) else body
         _file_fields: List[str] = ["file"]
         _data_fields: List[str] = ["purpose", "filename"]

@@ -243,7 +243,6 @@
         "azure.ai.projects.AIProjectClient.agents.get_run_step": "Azure.AI.Projects.Agents.getRunStep",
         "azure.ai.projects.AIProjectClient.agents.list_run_steps": "Azure.AI.Projects.Agents.listRunSteps",
         "azure.ai.projects.AIProjectClient.agents.list_files": "Azure.AI.Projects.Agents.listFiles",
-        "azure.ai.projects.AIProjectClient.agents.upload_file": "Azure.AI.Projects.Agents.uploadFile",
         "azure.ai.projects.AIProjectClient.agents.delete_file": "Azure.AI.Projects.Agents.deleteFile",
         "azure.ai.projects.AIProjectClient.agents.get_file": "Azure.AI.Projects.Agents.getFile",
         "azure.ai.projects.AIProjectClient.agents.list_vector_stores": "Azure.AI.Projects.Agents.listVectorStores",

@@ -13,6 +13,7 @@ from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, U
 
 from .. import _model_base
 from .._model_base import rest_discriminator, rest_field
+from .._vendor import FileType
 from ._enums import (
     AuthenticationType,
     MessageBlockType,
@@ -7158,6 +7159,52 @@ class UpdateToolResourcesOptions(_model_base.Model):
         code_interpreter: Optional["_models.UpdateCodeInterpreterToolResourceOptions"] = None,
         file_search: Optional["_models.UpdateFileSearchToolResourceOptions"] = None,
         azure_ai_search: Optional["_models.AzureAISearchResource"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class UploadFileRequest(_model_base.Model):
+    """UploadFileRequest.
+
+    :ivar file: The file data, in bytes. Required.
+    :vartype file: ~azure.ai.projects._vendor.FileType
+    :ivar purpose: The intended purpose of the uploaded file. Use ``assistants`` for Agents and
+     Message files, ``vision`` for Agents image file inputs, ``batch`` for Batch API, and
+     ``fine-tune`` for Fine-tuning. Required. Known values are: "fine-tune", "fine-tune-results",
+     "assistants", "assistants_output", "batch", "batch_output", and "vision".
+    :vartype purpose: str or ~azure.ai.projects.models.FilePurpose
+    :ivar filename: The name of the file.
+    :vartype filename: str
+    """
+
+    file: FileType = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], is_multipart_file_input=True
+    )
+    """The file data, in bytes. Required."""
+    purpose: Union[str, "_models.FilePurpose"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The intended purpose of the uploaded file. Use ``assistants`` for Agents and Message files,
+     ``vision`` for Agents image file inputs, ``batch`` for Batch API, and ``fine-tune`` for
+     Fine-tuning. Required. Known values are: \"fine-tune\", \"fine-tune-results\", \"assistants\",
+     \"assistants_output\", \"batch\", \"batch_output\", and \"vision\"."""
+    filename: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the file."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        file: FileType,
+        purpose: Union[str, "_models.FilePurpose"],
+        filename: Optional[str] = None,
     ) -> None: ...
 
     @overload
