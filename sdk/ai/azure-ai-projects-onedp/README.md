@@ -84,14 +84,14 @@ project_client = AIProjectClient.from_connection_string(
 
 ### Getting an authenticated Assistant client
 
-Below is a code example of how to get an authenticated `AssistantClient` from the `azure-ai-assistants` package.
+Below is a code example of how to get an authenticated `AssistantsClient` from the `azure-ai-assistants` package.
 Full samples can be found under the `assistants` folder in the [package samples][samples].
 
-<!-- SNIPPET:sample_get_assistant_client.assistants_sample -->
+<!-- SNIPPET:sample_get_assistants_client.assistants_sample -->
 
 ```python
 with project_client.assistants.get_client() as client:
-    # TODO: Do something with the assistant client...
+    # TODO: Do something with the assistants client...
     pass
 ```
 

@@ -284,7 +284,7 @@ class InferenceOperations:
             client = AsyncAzureOpenAI(
                 # See https://learn.microsoft.com/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider # pylint: disable=line-too-long
                 azure_ad_token_provider=get_bearer_token_provider(
-                    self._outer_instance._config.credential, # pylint: disable=protected-access
+                    self._outer_instance._config.credential,  # pylint: disable=protected-access
                     "https://cognitiveservices.azure.com/.default",  # pylint: disable=protected-access
                 ),
                 azure_endpoint=azure_endpoint,

@@ -6,11 +6,11 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to get an authenticated 
-    AssistantClient from the azure.ai.assistants package. For more information on 
+    AssistantsClient from the azure.ai.assistants package. For more information on 
     the azure.ai.assistants package see https://pypi.org/project/azure-ai-assistants/.
 
 USAGE:
-    python sample_get_assistant_client.py
+    python sample_get_assistants_client.py
 
     Before running the sample:
 
@@ -34,6 +34,6 @@ with AIProjectClient(
 
     # [START assistants_sample]
     with project_client.assistants.get_client() as client:
-        # TODO: Do something with the assistant client...
+        # TODO: Do something with the assistants client...
         pass
     # [END sample]

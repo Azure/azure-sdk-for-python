@@ -38,15 +38,15 @@ class AssistantsOperations:
         self._outer_instance = outer_instance
 
     @distributed_trace
-    def get_client(self, **kwargs) -> "AssistantClient":  # type: ignore[name-defined]
-        """Get an authenticated AssistantClient (from the package azure-ai-assistants) to use with
+    def get_client(self, **kwargs) -> "AssistantsClient":  # type: ignore[name-defined]
+        """Get an authenticated AssistantsClient (from the package azure-ai-assistants) to use with
         your AI Foundry Project. Keyword arguments are passed to the constructor of
         ChatCompletionsClient.
 
         .. note:: The package `azure-ai-assistants` must be installed prior to calling this method.
 
         :return: An authenticated Assistant Client.
-        :rtype: ~azure.ai.assistants.AssistantClient
+        :rtype: ~azure.ai.assistants.AssistantsClient
 
         :raises ~azure.core.exceptions.ModuleNotFoundError: if the `azure-ai-assistants` package
          is not installed.
@@ -54,13 +54,13 @@ class AssistantsOperations:
         """
 
         try:
-            from azure.ai.assistants import AssistantClient
+            from azure.ai.assistants import AssistantsClient
         except ModuleNotFoundError as e:
             raise ModuleNotFoundError(
                 "Azure AI Assistant SDK is not installed. Please install it using 'pip install azure-ai-assistants'"
             ) from e
 
-        client = AssistantClient(
+        client = AssistantsClient(
             endpoint=self._outer_instance._config.endpoint,  # pylint: disable=protected-access
             credential=self._outer_instance._config.credential,  # pylint: disable=protected-access
             user_agent=kwargs.pop("user_agent", self._user_agent),
