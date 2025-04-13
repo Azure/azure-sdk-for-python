@@ -44,6 +44,11 @@ async def retry_hook(settings, **kwargs):
 
 async def is_checksum_retry(response):
     # retry if invalid content md5
+    if hasattr(response.http_response, "load_body"):
+        try:
+            await response.http_response.load_body()
+        except (StreamClosedError, StreamConsumedError):
+            pass
     if response.context.get('validate_content', False) and response.http_response.headers.get('content-md5'):
         computed_md5 = response.http_request.headers.get('content-md5', None) or \
                             encode_base64(StorageContentValidation.get_content_md5(response.http_response.body()))
