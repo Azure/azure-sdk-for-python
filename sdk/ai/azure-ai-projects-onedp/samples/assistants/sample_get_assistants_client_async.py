@@ -6,11 +6,11 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to get an authenticated 
-    asynchronous AssistantClient from the azure.ai.assistants package. For more information on 
+    asynchronous AssistantsClient from the azure.ai.assistants package. For more information on 
     the azure.ai.assistants package see https://pypi.org/project/azure-ai-assistants/.
 
 USAGE:
-    python sample_get_assistant_client_async.py
+    python sample_get_assistants_client_async.py
 
     Before running the sample:
 
@@ -27,7 +27,7 @@ from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.onedp.aio import AIProjectClient
 
 
-async def sample_get_assistant_client_async():
+async def sample_get_assistants_client_async():
 
     endpoint = os.environ["PROJECT_ENDPOINT"]
 
@@ -36,13 +36,13 @@ async def sample_get_assistant_client_async():
         credential=DefaultAzureCredential(),
     ) as project_client:
 
-        with project_client.assistants.get_client() as client:
+        async with project_client.assistants.get_client() as client:
             # TODO: Do something with the assistant client...
             pass
 
 
 async def main():
-    await sample_get_assistant_client_async()
+    await sample_get_assistants_client_async()
 
 
 if __name__ == "__main__":
