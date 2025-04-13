@@ -6,9 +6,16 @@
 from io import IOBase, UnsupportedOperation
 from typing import Any, Dict, Optional
 
-from azure.core.pipeline.transport import AioHttpTransportResponse, AsyncHttpTransport
+from azure.core.pipeline.transport import (
+    AioHttpTransportResponse,
+    AsyncHttpTransport,
+    AsyncioRequestsTransport,
+    AsyncioRequestsTransportResponse
+)
 from azure.core.rest import HttpRequest
 from aiohttp import ClientResponse
+from urllib3 import HTTPResponse
+from requests import Response
 
 
 class ProgressTracker:
@@ -66,7 +73,7 @@ class AsyncStream:
         return data
 
 
-class MockAioHttpClientResponse(ClientResponse):
+class MockAsyncClientResponse(ClientResponse):
     def __init__(
         self, url: str,
         body_bytes: bytes,
@@ -74,7 +81,7 @@ class MockAioHttpClientResponse(ClientResponse):
         status: int = 200,
         reason: str = "OK"
     ) -> None:
-        super(MockAioHttpClientResponse).__init__()
+        super(MockAsyncClientResponse).__init__()
         self._url = url
         self._body = body_bytes
         self._headers = headers
@@ -103,7 +110,7 @@ class MockLegacyTransport(AsyncHttpTransport):
 
             rest_response = AioHttpTransportResponse(
                 request=request,
-                aiohttp_response=MockAioHttpClientResponse(
+                aiohttp_response=MockAsyncClientResponse(
                     request.url,
                     b"Hello Async World!",
                     headers,
@@ -114,7 +121,7 @@ class MockLegacyTransport(AsyncHttpTransport):
             # get_blob_properties
             rest_response = AioHttpTransportResponse(
                 request=request,
-                aiohttp_response=MockAioHttpClientResponse(
+                aiohttp_response=MockAsyncClientResponse(
                     request.url,
                     b"",
                     {
@@ -128,7 +135,7 @@ class MockLegacyTransport(AsyncHttpTransport):
             # upload_blob
             rest_response = AioHttpTransportResponse(
                 request=request,
-                aiohttp_response=MockAioHttpClientResponse(
+                aiohttp_response=MockAsyncClientResponse(
                     request.url,
                     b"",
                     {
@@ -143,7 +150,7 @@ class MockLegacyTransport(AsyncHttpTransport):
             # delete_blob
             rest_response = AioHttpTransportResponse(
                 request=request,
-                aiohttp_response=MockAioHttpClientResponse(
+                aiohttp_response=MockAsyncClientResponse(
                     request.url,
                     b"",
                     {
@@ -158,6 +165,108 @@ class MockLegacyTransport(AsyncHttpTransport):
             raise ValueError("The request is not accepted as part of MockLegacyTransport.")
 
         await rest_response.load_body()
+        return rest_response
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, *args):
+        pass
+
+    async def open(self):
+        pass
+
+    async def close(self):
+        pass
+
+
+class MockAsyncResponse(Response):
+    def __init__(
+        self, url: str,
+        body_bytes: bytes,
+        headers: Dict[str, Any],
+        status: int = 200,
+        reason: str = "OK"
+    ) -> None:
+        super(MockAsyncResponse).__init__()
+        self._content = body_bytes
+        self._content_consumed = False
+        self.url = url
+        self.headers = headers
+        self.status_code = status
+        self.reason = reason
+        self.raw = HTTPResponse(body_bytes)
+
+
+class MockCoreTransport(AsyncioRequestsTransport):
+    """
+    This transport returns legacy http response objects from azure core and is
+    intended only to test our backwards compatibility support.
+    """
+    async def send(self, request: HttpRequest, **kwargs: Any) -> AsyncioRequestsTransportResponse:
+        if request.method == 'GET':
+            # download_blob
+            headers = {
+                "Content-Type": "application/octet-stream",
+                "Content-Range": "bytes 0-17/18",
+                "Content-Length": "18",
+            }
+
+            if "x-ms-range-get-content-md5" in request.headers:
+                headers["Content-MD5"] = "I3pVbaOCUTom+G9F9uKFoA=="
+
+            rest_response = AsyncioRequestsTransportResponse(
+                request=request,
+                requests_response=MockAsyncResponse(
+                    request.url,
+                    b"Hello Async World!",
+                    headers,
+                )
+            )
+        elif request.method == 'HEAD':
+            # get_blob_properties
+            rest_response = AsyncioRequestsTransportResponse(
+                request=request,
+                requests_response=MockAsyncResponse(
+                    request.url,
+                    b"",
+                    {
+                        "Content-Type": "application/octet-stream",
+                        "Content-Length": "1024",
+                    },
+                )
+            )
+        elif request.method == 'PUT':
+            # upload_blob
+            rest_response = AsyncioRequestsTransportResponse(
+                request=request,
+                requests_response=MockAsyncResponse(
+                    request.url,
+                    b"",
+                    {
+                        "Content-Length": "0",
+                    },
+                    201,
+                    "Created"
+                )
+            )
+        elif request.method == 'DELETE':
+            # delete_blob
+            rest_response = AsyncioRequestsTransportResponse(
+                request=request,
+                requests_response=MockAsyncResponse(
+                    request.url,
+                    b"",
+                    {
+                        "Content-Length": "0",
+                    },
+                    202,
+                    "Accepted"
+                )
+            )
+        else:
+            raise ValueError("The request is not accepted as part of MockCoreTransport.")
+
         return rest_response
 
     async def __aenter__(self):

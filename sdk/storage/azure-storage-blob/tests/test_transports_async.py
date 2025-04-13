@@ -4,8 +4,11 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import pytest
+
 from azure.storage.blob.aio import BlobClient, BlobServiceClient
 from azure.core.exceptions import ResourceExistsError
+from azure.core.pipeline.transport import AsyncioRequestsTransport
 
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
@@ -36,23 +39,20 @@ class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
         transport = MockLegacyTransport()
         blob_client = BlobClient(
             self.account_url(storage_account_name, "blob"),
-            container_name='test_cont',
+            container_name='container',
             blob_name='test_blob',
             credential=storage_account_key,
             transport=transport,
             retry_total=0
         )
 
-        content = await blob_client.download_blob()
-        assert content is not None
-
-        props = await blob_client.get_blob_properties()
-        assert props is not None
-
         data = b"Hello Async World!"
         stream = AsyncStream(data)
         resp = await blob_client.upload_blob(stream, overwrite=True)
         assert resp is not None
+
+        props = await blob_client.get_blob_properties()
+        assert props is not None
 
         blob_data = await (await blob_client.download_blob()).read()
         assert blob_data == b"Hello Async World!"  # data is fixed by mock transport
@@ -68,7 +68,7 @@ class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
         transport = MockLegacyTransport()
         blob_client = BlobClient(
             self.account_url(storage_account_name, "blob"),
-            container_name='test_cont',
+            container_name='container',
             blob_name='test_blob',
             credential=storage_account_key,
             transport=transport,
@@ -82,3 +82,54 @@ class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
 
         blob_data = await (await blob_client.download_blob(validate_content=True)).read()
         assert blob_data == b"Hello Async World!"  # data is fixed by mock transport
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_core_transport(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        transport = AsyncioRequestsTransport()
+        blob_client = BlobClient(
+            self.account_url(storage_account_name, "blob"),
+            container_name='container',
+            blob_name='test_blob',
+            credential=storage_account_key,
+            transport=transport,
+            retry_total=0
+        )
+
+        data = b"Hello Async World!"
+        stream = AsyncStream(data)
+        resp = await blob_client.upload_blob(stream, overwrite=True)
+        assert resp is not None
+
+        props = await blob_client.get_blob_properties()
+        assert props is not None
+
+        blob_data = await (await blob_client.download_blob()).read()
+        assert blob_data == b"Hello Async World!"
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_core_transport_content_validation(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        transport = AsyncioRequestsTransport()
+        blob_client = BlobClient(
+            self.account_url(storage_account_name, "blob"),
+            container_name='container',
+            blob_name='test_blob',
+            credential=storage_account_key,
+            transport=transport,
+            retry_total=0
+        )
+
+        data = b"Hello Async World!"
+        stream = AsyncStream(data)
+        resp = await blob_client.upload_blob(stream, overwrite=True, validate_content=True)
+        assert resp is not None
+
+        blob_data = await (await blob_client.download_blob(validate_content=True)).read()
+        assert blob_data == b"Hello Async World!"

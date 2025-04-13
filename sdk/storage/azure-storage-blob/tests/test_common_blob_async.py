@@ -53,6 +53,7 @@ from devtools_testutils.fake_credentials_async import AsyncFakeCredential
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
+from test_helpers_async import AsyncStream
 
 # ------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'

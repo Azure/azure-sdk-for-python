@@ -36,7 +36,7 @@ class TestStorageTransports(StorageRecordedTestCase):
         transport = MockLegacyTransport()
         blob_client = BlobClient(
             self.account_url(storage_account_name, "blob"),
-            container_name='test_cont',
+            container_name='container',
             blob_name='test_blob',
             credential=storage_account_key,
             transport=transport,
@@ -67,7 +67,7 @@ class TestStorageTransports(StorageRecordedTestCase):
         transport = MockLegacyTransport()
         blob_client = BlobClient(
             self.account_url(storage_account_name, "blob"),
-            container_name='test_cont',
+            container_name='container',
             blob_name='test_blob',
             credential=storage_account_key,
             transport=transport,
@@ -89,7 +89,7 @@ class TestStorageTransports(StorageRecordedTestCase):
         transport = MockCoreTransport()
         blob_client = BlobClient(
             self.account_url(storage_account_name, "blob"),
-            container_name='test_cont',
+            container_name='container',
             blob_name='test_blob',
             credential=storage_account_key,
             transport=transport,
@@ -120,7 +120,7 @@ class TestStorageTransports(StorageRecordedTestCase):
         transport = MockCoreTransport()
         blob_client = BlobClient(
             self.account_url(storage_account_name, "blob"),
-            container_name='test_cont',
+            container_name='container',
             blob_name='test_blob',
             credential=storage_account_key,
             transport=transport,

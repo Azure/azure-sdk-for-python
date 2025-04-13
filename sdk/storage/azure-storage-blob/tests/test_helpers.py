@@ -53,7 +53,7 @@ class NonSeekableStream(IOBase):
         return self.wrapped_stream.tell()
 
 
-class MockHttpClientResponse(Response):
+class MockClientResponse(Response):
     def __init__(
         self, url: str,
         body_bytes: bytes,
@@ -61,7 +61,7 @@ class MockHttpClientResponse(Response):
         status: int = 200,
         reason: str = "OK"
     ) -> None:
-        super(MockHttpClientResponse).__init__()
+        super(MockClientResponse).__init__()
         self._url = url
         self._body = body_bytes
         self._content = body_bytes
@@ -93,7 +93,7 @@ class MockLegacyTransport(HttpTransport):
 
             rest_response = RequestsTransportResponse(
                 request=request,
-                requests_response=MockHttpClientResponse(
+                requests_response=MockClientResponse(
                     request.url,
                     b"Hello World!",
                     headers,
@@ -103,7 +103,7 @@ class MockLegacyTransport(HttpTransport):
             # get_blob_properties
             rest_response = RequestsTransportResponse(
                 request=request,
-                requests_response=MockHttpClientResponse(
+                requests_response=MockClientResponse(
                     request.url,
                     b"",
                     {
@@ -116,7 +116,7 @@ class MockLegacyTransport(HttpTransport):
             # upload_blob
             rest_response = RequestsTransportResponse(
                 request=request,
-                requests_response=MockHttpClientResponse(
+                requests_response=MockClientResponse(
                     request.url,
                     b"",
                     {
@@ -130,7 +130,7 @@ class MockLegacyTransport(HttpTransport):
             # delete_blob
             rest_response = RequestsTransportResponse(
                 request=request,
-                requests_response=MockHttpClientResponse(
+                requests_response=MockClientResponse(
                     request.url,
                     b"",
                     {
@@ -158,6 +158,10 @@ class MockLegacyTransport(HttpTransport):
 
 
 class MockCoreTransport(RequestsTransport):
+    """
+    This transport returns http response objects from azure core pipelines and is
+    intended only to test our backwards compatibility support.
+    """
     def send(self, request: HttpRequest, **kwargs: Any) -> RequestsTransportResponse:
         if request.method == 'GET':
             # download_blob
@@ -172,7 +176,7 @@ class MockCoreTransport(RequestsTransport):
 
             rest_response = RequestsTransportResponse(
                 request=request,
-                requests_response=MockHttpClientResponse(
+                requests_response=MockClientResponse(
                     request.url,
                     b"Hello World!",
                     headers,
@@ -182,7 +186,7 @@ class MockCoreTransport(RequestsTransport):
             # get_blob_properties
             rest_response = RequestsTransportResponse(
                 request=request,
-                requests_response=MockHttpClientResponse(
+                requests_response=MockClientResponse(
                     request.url,
                     b"",
                     {
@@ -195,7 +199,7 @@ class MockCoreTransport(RequestsTransport):
             # upload_blob
             rest_response = RequestsTransportResponse(
                 request=request,
-                requests_response=MockHttpClientResponse(
+                requests_response=MockClientResponse(
                     request.url,
                     b"",
                     {
@@ -209,7 +213,7 @@ class MockCoreTransport(RequestsTransport):
             # delete_blob
             rest_response = RequestsTransportResponse(
                 request=request,
-                requests_response=MockHttpClientResponse(
+                requests_response=MockClientResponse(
                     request.url,
                     b"",
                     {
