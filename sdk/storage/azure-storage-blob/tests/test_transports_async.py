@@ -3,7 +3,7 @@ from azure.core.exceptions import ResourceExistsError
 
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
-from test_helpers_async import AsyncStream, MockStorageTransport
+from test_helpers_async import AsyncStream, MockLegacyTransport
 
 
 class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
@@ -27,7 +27,7 @@ class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        transport = MockStorageTransport()
+        transport = MockLegacyTransport()
         blob_client = BlobClient(
             self.account_url(storage_account_name, "blob"),
             container_name='test_cont',
@@ -59,7 +59,7 @@ class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        transport = MockStorageTransport()
+        transport = MockLegacyTransport()
         blob_client = BlobClient(
             self.account_url(storage_account_name, "blob"),
             container_name='test_cont',

@@ -70,7 +70,7 @@ class MockHttpClientResponse(Response):
         self.raw = HTTPResponse()
 
 
-class MockStorageTransport(HttpTransport):
+class MockLegacyTransport(HttpTransport):
     """
     This transport returns legacy http response objects from azure core and is
     intended only to test our backwards compatibility support.
@@ -137,7 +137,7 @@ class MockStorageTransport(HttpTransport):
                 )
             )
         else:
-            raise ValueError("The request is not accepted as part of MockStorageTransport.")
+            raise ValueError("The request is not accepted as part of MockLegacyTransport.")
         return rest_response
 
     def __enter__(self) -> Self:

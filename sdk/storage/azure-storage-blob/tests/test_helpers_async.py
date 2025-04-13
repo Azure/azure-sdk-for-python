@@ -84,7 +84,7 @@ class MockAioHttpClientResponse(ClientResponse):
         self.reason = reason
 
 
-class MockStorageTransport(AsyncHttpTransport):
+class MockLegacyTransport(AsyncHttpTransport):
     """
     This transport returns legacy http response objects from azure core and is 
     intended only to test our backwards compatibility support.
@@ -155,7 +155,7 @@ class MockStorageTransport(AsyncHttpTransport):
                 decompress=False
             )
         else:
-            raise ValueError("The request is not accepted as part of MockStorageTransport.")
+            raise ValueError("The request is not accepted as part of MockLegacyTransport.")
 
         await rest_response.load_body()
         return rest_response
