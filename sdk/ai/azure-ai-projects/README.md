@@ -606,7 +606,6 @@ agent = project_client.agents.create_agent(
 
 Currently, the Azure Function integration for the AI Agent has the following limitations:
 
-- Azure Functions integration is available **only for non-streaming scenarios**.
 - Supported trigger for Azure Function is currently limited to **Queue triggers** only.
   HTTP or other trigger types and streaming responses are not supported at this time.
 
