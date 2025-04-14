@@ -63,14 +63,14 @@ def get_location(
 
 @pytest.mark.unittest
 @pytest.mark.cosmosEmulator
-class TestExcludedLocations:
+class TestExcludedLocationsEmulator:
     @pytest.mark.parametrize('test_data', delete_all_items_by_partition_key_test_data())
-    def test_delete_all_items_by_partition_key(self: "TestExcludedLocations", test_data: List[List[str]]):
+    def test_delete_all_items_by_partition_key(self: "TestExcludedLocationsEmulator", test_data: List[List[str]]):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_location = test_data
 
         # Inject topology transformation that would make Emulator look like a multiple write region account
-        # account with two read regions
+        # with two read regions
         custom_transport = FaultInjectionTransport()
         is_get_account_predicate: Callable[[HttpRequest], bool] = lambda \
             r: FaultInjectionTransport.predicate_is_database_account_call(r)

@@ -42,14 +42,14 @@ def delete_all_items_by_partition_key_test_data() -> List[str]:
 
 @pytest.mark.cosmosEmulator
 @pytest.mark.asyncio
-class TestExcludedLocationsAsync:
+class TestExcludedLocationsEmulatorAsync:
     @pytest.mark.parametrize('test_data', delete_all_items_by_partition_key_test_data())
-    async def test_delete_all_items_by_partition_key(self: "TestExcludedLocationsAsync", test_data: List[List[str]]):
+    async def test_delete_all_items_by_partition_key(self: "TestExcludedLocationsEmulatorAsync", test_data: List[List[str]]):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_location = test_data
 
         # Inject topology transformation that would make Emulator look like a multiple write region account
-        # account with two read regions
+        # with two read regions
         custom_transport = FaultInjectionTransportAsync()
         is_get_account_predicate: Callable[[AioHttpTransport], bool] = lambda \
             r: FaultInjectionTransportAsync.predicate_is_database_account_call(r)
