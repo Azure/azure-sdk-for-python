@@ -95,6 +95,15 @@ def questions_answers_korean_file():
     return _get_file("questions_answers_korean.jsonl")
 
 
+@pytest.fixture
+def restore_env_vars():
+    """Fixture to restore environment variables after the test."""
+    original_vars = os.environ.copy()
+    yield
+    os.environ.clear()
+    os.environ.update(original_vars)
+
+
 def _target_fn(query):
     """An example target function."""
     if "LV-426" in query:
@@ -790,6 +799,7 @@ class TestEvaluate:
         assert eval1._get_conversation_aggregator_type() == _AggregationType.CUSTOM
 
     @pytest.mark.parametrize("use_async", ["true", "false"])  # Strings intended
+    @pytest.mark.usefixtures("restore_env_vars")
     def test_aggregation_serialization(self, evaluate_test_data_conversion_jsonl_file, use_async):
         # This test exists to ensure that PF doesn't crash when trying to serialize a
         # complex aggregation function.
