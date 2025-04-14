@@ -402,7 +402,7 @@ class PhoneNumbersClient:
         """
         reservation = self._phone_number_client.phone_numbers.get_reservation(reservation_id, **kwargs)
 
-        return PhoneNumbersReservation(reservation.id, expires_at=reservation.expires_at, status=reservation.status, phone_numbers=list(reservation.phone_numbers.values()))
+        return PhoneNumbersReservation(reservation.id, expires_at=reservation.expires_at, status=reservation.status, phone_numbers=reservation.phone_numbers)
     
     @distributed_trace
     def list_phone_numbers_reservations(
@@ -467,7 +467,7 @@ class PhoneNumbersClient:
         result = self._phone_number_client.phone_numbers.create_or_update_reservation(
             reservation.id, res_request, **kwargs)
         
-        return PhoneNumbersReservation(result.id, expires_at=result.expires_at, status=result.status, phone_numbers=list(result.phone_numbers.values()))
+        return PhoneNumbersReservation(result.id, expires_at=result.expires_at, status=result.status, phone_numbers=result.phone_numbers)
     
     @distributed_trace
     def delete_reservation(

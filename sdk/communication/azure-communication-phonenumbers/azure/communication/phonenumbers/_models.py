@@ -33,13 +33,11 @@ class PhoneNumbersReservation:
     :vartype status: str or ~azure.communication.phonenumbers.ReservationStatus
     """
     
-    def __init__(self, id: str, *, phone_numbers: Iterable[AvailablePhoneNumber] = None, **kwargs):
+    def __init__(self, id: str, **kwargs):
         """Initialize a PhoneNumbersReservation object.
 
         :param id: The id of the reservation in GUID format.
         :type id: str
-        :keyword phone_numbers: An iterable of phone numbers to add to the reservation.
-        :paramtype phone_numbers: Iterable[~azure.communication.phonenumbers.AvailablePhoneNumber]
         :raises ValueError: If the id is not in valid GUID format or if any required parameter is missing.
         """
         if id is None:
@@ -51,16 +49,12 @@ class PhoneNumbersReservation:
             raise ValueError("The reservation id must be in valid GUID format")
         
         self.id = id
-        self.phone_numbers = dict()
 
         # These properties are not intended to be set by the user, but they are used when mapping from the generated model.
         self.expires_at = kwargs.get("expires_at", None)
         self.status = kwargs.get("status", None)
-
-        if phone_numbers is not None:
-            for phone_number in phone_numbers:
-                self.add_phone_number(phone_number)
-
+        self.phone_numbers = kwargs.get("phone_numbers", dict())
+        
     def add_phone_number(self, available_phone_number: AvailablePhoneNumber):
         """Adds a phone number to the reservation. 
 
