@@ -33,6 +33,7 @@ from azure.ai.evaluation._legacy.prompty._utils import (
     resolve_references,
     update_dict_recursively,
 )
+from azure.ai.evaluation._constants import DEFAULT_MAX_COMPLETION_TOKENS_REASONING_MODELS
 from azure.ai.evaluation._legacy._common._logging import get_logger
 
 
@@ -135,6 +136,18 @@ class AsyncPrompty:
     ):
         path = Path(path)
         configs, self._template = self._parse_prompty(path)
+
+        is_reasoning_model = kwargs.get("is_reasoning_model", False)
+
+        if is_reasoning_model:
+            parameters = configs.get("model", {}).get("parameters", {})
+            if "max_tokens" in parameters:
+                parameters.pop("max_tokens", None)
+                parameters["max_completion_tokens"] = DEFAULT_MAX_COMPLETION_TOKENS_REASONING_MODELS
+            # Remove unsupported parameters for reasoning models
+            for key in ["temperature", "top_p", "presence_penalty", "frequency_penalty"]:
+                parameters.pop(key, None)
+
         configs = resolve_references(configs, base_path=path.parent)
         configs = update_dict_recursively(configs, resolve_references(kwargs, base_path=path.parent))
 
