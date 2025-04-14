@@ -65,9 +65,12 @@ resource storageaccount_teststorage 'Microsoft.Storage/storageAccounts@2023-05-0
   }
 }
 
-output AZURE_STORAGE_ID string = storageaccount_teststorage.id
-output AZURE_STORAGE_NAME string = storageaccount_teststorage.name
-output AZURE_STORAGE_RESOURCE_GROUP string = resourceGroup().name
+output AZURE_STORAGE_ID_STORAGE string = storageaccount_teststorage.id
+output AZURE_STORAGE_ID_R string = storageaccount_teststorage.id
+output AZURE_STORAGE_NAME_R string = storageaccount_teststorage.name
+output AZURE_STORAGE_NAME_STORAGE string = storageaccount_teststorage.name
+output AZURE_STORAGE_RESOURCE_GROUP_R string = resourceGroup().name
+output AZURE_STORAGE_RESOURCE_GROUP_STORAGE string = resourceGroup().name
 
 
 resource blobservice_teststorage 'Microsoft.Storage/storageAccounts/blobServices@2024-01-01' = {
@@ -76,19 +79,20 @@ resource blobservice_teststorage 'Microsoft.Storage/storageAccounts/blobServices
   name: 'default'
 }
 
-output AZURE_BLOBS_ENDPOINT string = storageaccount_teststorage.properties.primaryEndpoints.blob
+output AZURE_BLOBS_ENDPOINT_STORAGE string = storageaccount_teststorage.properties.primaryEndpoints.blob
+output AZURE_BLOBS_ENDPOINT_R string = storageaccount_teststorage.properties.primaryEndpoints.blob
 
 
-resource container 'Microsoft.Storage/storageAccounts/blobServices/containers@2022-09-01' = {
+resource container_teststorage 'Microsoft.Storage/storageAccounts/blobServices/containers@2022-09-01' = {
   parent: blobservice_teststorage
   properties: {}
   name: defaultName
 }
 
-output AZURE_BLOB_CONTAINER_ID string = container.id
-output AZURE_BLOB_CONTAINER_NAME string = container.name
-output AZURE_BLOB_CONTAINER_RESOURCE_GROUP string = resourceGroup().name
-output AZURE_BLOB_CONTAINER_ENDPOINT string = '${storageaccount_teststorage.properties.primaryEndpoints.blob}${container.name}'
+output AZURE_BLOB_CONTAINER_ID_R string = container_teststorage.id
+output AZURE_BLOB_CONTAINER_NAME_R string = container_teststorage.name
+output AZURE_BLOB_CONTAINER_RESOURCE_GROUP_R string = resourceGroup().name
+output AZURE_BLOB_CONTAINER_ENDPOINT_R string = '${storageaccount_teststorage.properties.primaryEndpoints.blob}${container_teststorage.name}'
 
 
 resource keyvalue_azureappconfigid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
@@ -131,9 +135,9 @@ resource keyvalue_azureappconfigendpoint 'Microsoft.AppConfiguration/configurati
 
 
 
-resource keyvalue_azurestorageid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azurestorageidstorage 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_STORAGE_ID'
+  name: 'AZURE_STORAGE_ID_STORAGE'
   properties: {
     value: storageaccount_teststorage.id
   }
@@ -141,9 +145,19 @@ resource keyvalue_azurestorageid 'Microsoft.AppConfiguration/configurationStores
 
 
 
-resource keyvalue_azurestoragename 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azurestorageidr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_STORAGE_NAME'
+  name: 'AZURE_STORAGE_ID_R'
+  properties: {
+    value: storageaccount_teststorage.id
+  }
+}
+
+
+
+resource keyvalue_azurestoragenamer 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_STORAGE_NAME_R'
   properties: {
     value: storageaccount_teststorage.name
   }
@@ -151,9 +165,19 @@ resource keyvalue_azurestoragename 'Microsoft.AppConfiguration/configurationStor
 
 
 
-resource keyvalue_azurestorageresourcegroup 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azurestoragenamestorage 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_STORAGE_RESOURCE_GROUP'
+  name: 'AZURE_STORAGE_NAME_STORAGE'
+  properties: {
+    value: storageaccount_teststorage.name
+  }
+}
+
+
+
+resource keyvalue_azurestorageresourcegroupr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_STORAGE_RESOURCE_GROUP_R'
   properties: {
     value: resourceGroup().name
   }
@@ -161,9 +185,19 @@ resource keyvalue_azurestorageresourcegroup 'Microsoft.AppConfiguration/configur
 
 
 
-resource keyvalue_azureblobsendpoint 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azurestorageresourcegroupstorage 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_BLOBS_ENDPOINT'
+  name: 'AZURE_STORAGE_RESOURCE_GROUP_STORAGE'
+  properties: {
+    value: resourceGroup().name
+  }
+}
+
+
+
+resource keyvalue_azureblobsendpointstorage 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_BLOBS_ENDPOINT_STORAGE'
   properties: {
     value: storageaccount_teststorage.properties.primaryEndpoints.blob
   }
@@ -171,29 +205,39 @@ resource keyvalue_azureblobsendpoint 'Microsoft.AppConfiguration/configurationSt
 
 
 
-resource keyvalue_azureblobcontainerid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureblobsendpointr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_BLOB_CONTAINER_ID'
+  name: 'AZURE_BLOBS_ENDPOINT_R'
   properties: {
-    value: container.id
+    value: storageaccount_teststorage.properties.primaryEndpoints.blob
   }
 }
 
 
 
-resource keyvalue_azureblobcontainername 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureblobcontaineridr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_BLOB_CONTAINER_NAME'
+  name: 'AZURE_BLOB_CONTAINER_ID_R'
   properties: {
-    value: container.name
+    value: container_teststorage.id
   }
 }
 
 
 
-resource keyvalue_azureblobcontainerresourcegroup 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureblobcontainernamer 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_BLOB_CONTAINER_RESOURCE_GROUP'
+  name: 'AZURE_BLOB_CONTAINER_NAME_R'
+  properties: {
+    value: container_teststorage.name
+  }
+}
+
+
+
+resource keyvalue_azureblobcontainerresourcegroupr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_BLOB_CONTAINER_RESOURCE_GROUP_R'
   properties: {
     value: resourceGroup().name
   }
@@ -201,11 +245,11 @@ resource keyvalue_azureblobcontainerresourcegroup 'Microsoft.AppConfiguration/co
 
 
 
-resource keyvalue_azureblobcontainerendpoint 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azureblobcontainerendpointr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_BLOB_CONTAINER_ENDPOINT'
+  name: 'AZURE_BLOB_CONTAINER_ENDPOINT_R'
   properties: {
-    value: '${storageaccount_teststorage.properties.primaryEndpoints.blob}${container.name}'
+    value: '${storageaccount_teststorage.properties.primaryEndpoints.blob}${container_teststorage.name}'
   }
 }
 
@@ -286,7 +330,7 @@ resource roleassignment_babwvypdcuwfscunoiga 'Microsoft.Authorization/roleAssign
     )
 
   }
-  scope: container
+  scope: container_teststorage
 }
 
 
@@ -302,7 +346,7 @@ resource roleassignment_xlzuvogwvgstrhiltzxm 'Microsoft.Authorization/roleAssign
     )
 
   }
-  scope: container
+  scope: container_teststorage
 }
 
 

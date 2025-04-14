@@ -22,12 +22,6 @@ resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024
   }
   location: location
   tags: azdTags
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${managedIdentityId}': {}
-    }
-  }
 }
 
 output AZURE_APPCONFIG_ID string = configurationstore.id
@@ -40,10 +34,10 @@ resource vault_kvtest 'Microsoft.KeyVault/vaults@2024-12-01-preview' existing = 
   name: 'kvtest'
 }
 
-output AZURE_KEYVAULT_ID_KVTEST string = vault_kvtest.id
-output AZURE_KEYVAULT_NAME_KVTEST string = vault_kvtest.name
-output AZURE_KEYVAULT_RESOURCE_GROUP_KVTEST string = resourceGroup().name
-output AZURE_KEYVAULT_ENDPOINT_KVTEST string = vault_kvtest.properties.vaultUri
+output AZURE_KEYVAULT_ID_R string = vault_kvtest.id
+output AZURE_KEYVAULT_NAME_R string = vault_kvtest.name
+output AZURE_KEYVAULT_RESOURCE_GROUP_R string = resourceGroup().name
+output AZURE_KEYVAULT_ENDPOINT_R string = vault_kvtest.properties.vaultUri
 
 
 resource keyvalue_azureappconfigid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
@@ -86,9 +80,9 @@ resource keyvalue_azureappconfigendpoint 'Microsoft.AppConfiguration/configurati
 
 
 
-resource keyvalue_azurekeyvaultidkvtest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azurekeyvaultidr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_KEYVAULT_ID_KVTEST'
+  name: 'AZURE_KEYVAULT_ID_R'
   properties: {
     value: vault_kvtest.id
   }
@@ -96,9 +90,9 @@ resource keyvalue_azurekeyvaultidkvtest 'Microsoft.AppConfiguration/configuratio
 
 
 
-resource keyvalue_azurekeyvaultnamekvtest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azurekeyvaultnamer 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_KEYVAULT_NAME_KVTEST'
+  name: 'AZURE_KEYVAULT_NAME_R'
   properties: {
     value: vault_kvtest.name
   }
@@ -106,9 +100,9 @@ resource keyvalue_azurekeyvaultnamekvtest 'Microsoft.AppConfiguration/configurat
 
 
 
-resource keyvalue_azurekeyvaultresourcegroupkvtest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azurekeyvaultresourcegroupr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_KEYVAULT_RESOURCE_GROUP_KVTEST'
+  name: 'AZURE_KEYVAULT_RESOURCE_GROUP_R'
   properties: {
     value: resourceGroup().name
   }
@@ -116,9 +110,9 @@ resource keyvalue_azurekeyvaultresourcegroupkvtest 'Microsoft.AppConfiguration/c
 
 
 
-resource keyvalue_azurekeyvaultendpointkvtest 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azurekeyvaultendpointr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_KEYVAULT_ENDPOINT_KVTEST'
+  name: 'AZURE_KEYVAULT_ENDPOINT_R'
   properties: {
     value: vault_kvtest.properties.vaultUri
   }
@@ -153,7 +147,7 @@ resource roleassignment_kvjoxlocbytxyhtrwdln 'Microsoft.Authorization/roleAssign
     )
 
   }
-  scope: resourceGroup('kvtest')
+  scope: resourceGroup()
 }
 
 

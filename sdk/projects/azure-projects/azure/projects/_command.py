@@ -161,7 +161,10 @@ async def build_mcp_server(app_class):  # pylint: disable=too-many-statements
                             client = getattr(ctx.request_context.lifespan_context, attr_name)
                             client_method = getattr(client, method_name)
                             download = client_method(*args, **kwargs)
-                            return b"".join(list(download))
+                            try:
+                                return download.readall()
+                            except AttributeError:
+                                return b"".join(list(download))
 
                         func_name = f"{app_class.__name__.lower()}_{attr}_{name}"
                         wrapped = create_function(

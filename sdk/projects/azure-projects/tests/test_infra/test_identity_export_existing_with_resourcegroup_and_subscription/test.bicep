@@ -125,7 +125,7 @@ resource roleassignment_kvjoxlocbytxyhtrwdln 'Microsoft.Authorization/roleAssign
     )
 
   }
-  scope: resourceGroup('rgexists')
+  scope: resourceGroup()
 }
 
 

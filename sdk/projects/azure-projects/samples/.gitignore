@@ -1,3 +1,4 @@
-infra*
+infra/
+demo/
 .azure*
 azure.yaml

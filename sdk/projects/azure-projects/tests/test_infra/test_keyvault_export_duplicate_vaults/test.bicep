@@ -60,10 +60,14 @@ resource vault 'Microsoft.KeyVault/vaults@2024-12-01-preview' = {
   tags: azdTags
 }
 
-output AZURE_KEYVAULT_ID string = vault.id
-output AZURE_KEYVAULT_NAME string = vault.name
-output AZURE_KEYVAULT_RESOURCE_GROUP string = resourceGroup().name
-output AZURE_KEYVAULT_ENDPOINT string = vault.properties.vaultUri
+output AZURE_KEYVAULT_ID_R1 string = vault.id
+output AZURE_KEYVAULT_ID_R2 string = vault.id
+output AZURE_KEYVAULT_NAME_R2 string = vault.name
+output AZURE_KEYVAULT_NAME_R1 string = vault.name
+output AZURE_KEYVAULT_RESOURCE_GROUP_R2 string = resourceGroup().name
+output AZURE_KEYVAULT_RESOURCE_GROUP_R1 string = resourceGroup().name
+output AZURE_KEYVAULT_ENDPOINT_R2 string = vault.properties.vaultUri
+output AZURE_KEYVAULT_ENDPOINT_R1 string = vault.properties.vaultUri
 
 
 resource keyvalue_azureappconfigid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
@@ -106,9 +110,9 @@ resource keyvalue_azureappconfigendpoint 'Microsoft.AppConfiguration/configurati
 
 
 
-resource keyvalue_azurekeyvaultid 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azurekeyvaultidr1 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_KEYVAULT_ID'
+  name: 'AZURE_KEYVAULT_ID_R1'
   properties: {
     value: vault.id
   }
@@ -116,9 +120,19 @@ resource keyvalue_azurekeyvaultid 'Microsoft.AppConfiguration/configurationStore
 
 
 
-resource keyvalue_azurekeyvaultname 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azurekeyvaultidr2 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_KEYVAULT_NAME'
+  name: 'AZURE_KEYVAULT_ID_R2'
+  properties: {
+    value: vault.id
+  }
+}
+
+
+
+resource keyvalue_azurekeyvaultnamer2 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_KEYVAULT_NAME_R2'
   properties: {
     value: vault.name
   }
@@ -126,9 +140,19 @@ resource keyvalue_azurekeyvaultname 'Microsoft.AppConfiguration/configurationSto
 
 
 
-resource keyvalue_azurekeyvaultresourcegroup 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azurekeyvaultnamer1 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_KEYVAULT_RESOURCE_GROUP'
+  name: 'AZURE_KEYVAULT_NAME_R1'
+  properties: {
+    value: vault.name
+  }
+}
+
+
+
+resource keyvalue_azurekeyvaultresourcegroupr2 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_KEYVAULT_RESOURCE_GROUP_R2'
   properties: {
     value: resourceGroup().name
   }
@@ -136,9 +160,29 @@ resource keyvalue_azurekeyvaultresourcegroup 'Microsoft.AppConfiguration/configu
 
 
 
-resource keyvalue_azurekeyvaultendpoint 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_azurekeyvaultresourcegroupr1 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore
-  name: 'AZURE_KEYVAULT_ENDPOINT'
+  name: 'AZURE_KEYVAULT_RESOURCE_GROUP_R1'
+  properties: {
+    value: resourceGroup().name
+  }
+}
+
+
+
+resource keyvalue_azurekeyvaultendpointr2 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_KEYVAULT_ENDPOINT_R2'
+  properties: {
+    value: vault.properties.vaultUri
+  }
+}
+
+
+
+resource keyvalue_azurekeyvaultendpointr1 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore
+  name: 'AZURE_KEYVAULT_ENDPOINT_R1'
   properties: {
     value: vault.properties.vaultUri
   }

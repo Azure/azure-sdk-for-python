@@ -123,7 +123,7 @@ class ComponentField(Parameter):
 
     @property
     def value(self) -> str:
-        return ""
+        return self.name
 
     def __repr__(self) -> str:
         if self.default is not MISSING:

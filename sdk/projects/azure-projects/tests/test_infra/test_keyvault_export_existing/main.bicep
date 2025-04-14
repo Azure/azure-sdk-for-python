@@ -46,9 +46,9 @@ output AZURE_APPCONFIG_ID string = test_module.outputs.AZURE_APPCONFIG_ID
 output AZURE_APPCONFIG_NAME string = test_module.outputs.AZURE_APPCONFIG_NAME
 output AZURE_APPCONFIG_RESOURCE_GROUP string = test_module.outputs.AZURE_APPCONFIG_RESOURCE_GROUP
 output AZURE_APPCONFIG_ENDPOINT string = test_module.outputs.AZURE_APPCONFIG_ENDPOINT
-output AZURE_KEYVAULT_ID_KVTEST string = test_module.outputs.AZURE_KEYVAULT_ID_KVTEST
-output AZURE_KEYVAULT_NAME_KVTEST string = test_module.outputs.AZURE_KEYVAULT_NAME_KVTEST
-output AZURE_KEYVAULT_RESOURCE_GROUP_KVTEST string = test_module.outputs.AZURE_KEYVAULT_RESOURCE_GROUP_KVTEST
-output AZURE_KEYVAULT_ENDPOINT_KVTEST string = test_module.outputs.AZURE_KEYVAULT_ENDPOINT_KVTEST
+output AZURE_KEYVAULT_ID_R string = test_module.outputs.AZURE_KEYVAULT_ID_R
+output AZURE_KEYVAULT_NAME_R string = test_module.outputs.AZURE_KEYVAULT_NAME_R
+output AZURE_KEYVAULT_RESOURCE_GROUP_R string = test_module.outputs.AZURE_KEYVAULT_RESOURCE_GROUP_R
+output AZURE_KEYVAULT_ENDPOINT_R string = test_module.outputs.AZURE_KEYVAULT_ENDPOINT_R
 
 

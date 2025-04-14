@@ -38,13 +38,17 @@ resource configurationstore_testconfig 'Microsoft.AppConfiguration/configuration
   }
 }
 
-output AZURE_APPCONFIG_ID_TESTCONFIG string = configurationstore_testconfig.id
-output AZURE_APPCONFIG_NAME_TESTCONFIG string = configurationstore_testconfig.name
-output AZURE_APPCONFIG_RESOURCE_GROUP_TESTCONFIG string = resourceGroup().name
-output AZURE_APPCONFIG_ENDPOINT_TESTCONFIG string = configurationstore_testconfig.properties.endpoint
+output AZURE_APPCONFIG_ID string = configurationstore_testconfig.id
+output AZURE_APPCONFIG_ID_R string = configurationstore_testconfig.id
+output AZURE_APPCONFIG_NAME string = configurationstore_testconfig.name
+output AZURE_APPCONFIG_NAME_R string = configurationstore_testconfig.name
+output AZURE_APPCONFIG_RESOURCE_GROUP string = resourceGroup().name
+output AZURE_APPCONFIG_RESOURCE_GROUP_R string = resourceGroup().name
+output AZURE_APPCONFIG_ENDPOINT string = configurationstore_testconfig.properties.endpoint
+output AZURE_APPCONFIG_ENDPOINT_R string = configurationstore_testconfig.properties.endpoint
 
 
-resource keyvalue_foo 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+resource keyvalue_testconfigstore_foo 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore_testconfig
   name: 'foo'
   properties: {
@@ -64,9 +68,29 @@ resource keyvalue_testconfig_azureappconfigid 'Microsoft.AppConfiguration/config
 
 
 
+resource keyvalue_testconfig_azureappconfigidr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore_testconfig
+  name: 'AZURE_APPCONFIG_ID_R'
+  properties: {
+    value: configurationstore_testconfig.id
+  }
+}
+
+
+
 resource keyvalue_testconfig_azureappconfigname 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore_testconfig
   name: 'AZURE_APPCONFIG_NAME'
+  properties: {
+    value: configurationstore_testconfig.name
+  }
+}
+
+
+
+resource keyvalue_testconfig_azureappconfignamer 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore_testconfig
+  name: 'AZURE_APPCONFIG_NAME_R'
   properties: {
     value: configurationstore_testconfig.name
   }
@@ -84,9 +108,29 @@ resource keyvalue_testconfig_azureappconfigresourcegroup 'Microsoft.AppConfigura
 
 
 
+resource keyvalue_testconfig_azureappconfigresourcegroupr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore_testconfig
+  name: 'AZURE_APPCONFIG_RESOURCE_GROUP_R'
+  properties: {
+    value: resourceGroup().name
+  }
+}
+
+
+
 resource keyvalue_testconfig_azureappconfigendpoint 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
   parent: configurationstore_testconfig
   name: 'AZURE_APPCONFIG_ENDPOINT'
+  properties: {
+    value: configurationstore_testconfig.properties.endpoint
+  }
+}
+
+
+
+resource keyvalue_testconfig_azureappconfigendpointr 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-05-01' = {
+  parent: configurationstore_testconfig
+  name: 'AZURE_APPCONFIG_ENDPOINT_R'
   properties: {
     value: configurationstore_testconfig.properties.endpoint
   }

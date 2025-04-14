@@ -327,7 +327,7 @@ class AppSite(Resource, Generic[AppSiteResourceType]):
             }
             app_config = self._find_last_resource_match(fields, resource=ResourceIdentifiers.config_store)
             if app_config:
-                app_settings["AZURE_APPCONFIG_ENDPOINT"] = app_config.outputs["endpoint"]
+                app_settings["AZURE_APPCONFIG_ENDPOINT"] = app_config.outputs["endpoint"][0]
             app_settings.update(self._app_settings)
             site_settings = SiteConfig({"parent": symbol}, name="appsettings", settings=app_settings, parent=self)
             site_settings.__bicep__(fields, parameters=parameters)
