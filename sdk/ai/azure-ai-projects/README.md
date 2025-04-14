@@ -887,6 +887,19 @@ thread = project_client.agents.create_thread(tool_resources=file_search.resource
 ```
 
 <!-- END SNIPPET -->
+
+#### List Threads
+
+To list all threads attached to a given agent, use the list_threads API:
+
+<!-- SNIPPET:sample_agents_basics.list_threads -->
+
+```python
+threads = project_client.agents.list_threads()
+```
+
+<!-- END SNIPPET -->
+
 #### Create Message
 
 To create a message for assistant to process, you pass `user` as `role` and a question as `content`:

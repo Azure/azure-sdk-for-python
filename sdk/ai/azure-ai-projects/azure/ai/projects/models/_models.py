@@ -3676,6 +3676,56 @@ class OpenAIPageableListOfAgent(_model_base.Model):
         self.object: Literal["list"] = "list"
 
 
+class OpenAIPageableListOfAgentThread(_model_base.Model):
+    """The response data for a requested list of items.
+
+    :ivar object: The object type, which is always list. Required. Default value is "list".
+    :vartype object: str
+    :ivar data: The requested list of items. Required.
+    :vartype data: list[~azure.ai.projects.models.AgentThread]
+    :ivar first_id: The first ID represented in this list. Required.
+    :vartype first_id: str
+    :ivar last_id: The last ID represented in this list. Required.
+    :vartype last_id: str
+    :ivar has_more: A value indicating whether there are additional values available not captured
+     in this list. Required.
+    :vartype has_more: bool
+    """
+
+    object: Literal["list"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The object type, which is always list. Required. Default value is \"list\"."""
+    data: List["_models.AgentThread"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The requested list of items. Required."""
+    first_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The first ID represented in this list. Required."""
+    last_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The last ID represented in this list. Required."""
+    has_more: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A value indicating whether there are additional values available not captured in this list.
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        data: List["_models.AgentThread"],
+        first_id: str,
+        last_id: str,
+        has_more: bool,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.object: Literal["list"] = "list"
+
+
 class OpenAIPageableListOfRunStep(_model_base.Model):
     """The response data for a requested list of items.
 
