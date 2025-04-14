@@ -51,7 +51,9 @@ with project_client:
     print(f"Created thread, thread ID: {thread.id}")
         
     # List all threads for the agent
+    # [START list_threads]
     threads = project_client.agents.list_threads()
+    # [END list_threads]
     
     # Print thread information
     print(f"Threads for agent {agent.id}:")
