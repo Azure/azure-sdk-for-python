@@ -13,12 +13,12 @@ DESCRIPTION:
     This example contains sample code for the KeyWrapper and KeyResolver classes
     needed to use Storage client side encryption, as well as code that illustrates
     key usage patterns for client side encryption features. This sample expects that
-    the `AZURE_STORAGE_CONNECTION_STRING` environment variable is set. It SHOULD NOT
+    the `STORAGE_CONNECTION_STRING` environment variable is set. It SHOULD NOT
     be hardcoded in any code derived from this sample.
 
 USAGE: python blob_samples_client_side_encryption.py
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
 import os
@@ -275,9 +275,9 @@ class BlobEncryptionSamples():
             self.container_client.delete_container()
 
 try:
-    CONNECTION_STRING = os.environ['AZURE_STORAGE_CONNECTION_STRING']
+    CONNECTION_STRING = os.environ['STORAGE_CONNECTION_STRING']
 except KeyError:
-    print("AZURE_STORAGE_CONNECTION_STRING must be set.")
+    print("STORAGE_CONNECTION_STRING must be set.")
     sys.exit(1)
 
 # Configure max_single_put_size to make blobs in this sample smaller

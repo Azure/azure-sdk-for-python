@@ -12,12 +12,12 @@ DESCRIPTION:
 USAGE:
     python datalake_samples_instantiate_client.py
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) DATALAKE_STORAGE_CONNECTION_STRING - the connection string to your storage account
     connection str could be obtained from portal.azure.com your storage account.
 """
 
 import os
-connection_string = os.environ['AZURE_STORAGE_CONNECTION_STRING']
+connection_string = os.environ['DATALAKE_STORAGE_CONNECTION_STRING']
 
 
 def instantiate_directory_client_from_conn_str():
