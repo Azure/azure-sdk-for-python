@@ -173,8 +173,11 @@ class TestHeaders(unittest.TestCase):
             raw_response_hook=request_raw_response_hook)
 
     def test_replace_container_throughput_bucket(self):
+        created_collection = self.database.create_container(
+            str(uuid.uuid4()),
+            PartitionKey(path="/pk"))
         replaced_collection = self.database.replace_container(
-            self.container,
+            created_collection.id,
             PartitionKey(path="/pk"),
             throughput_bucket=request_throughput_bucket_number,
             raw_response_hook=request_raw_response_hook)

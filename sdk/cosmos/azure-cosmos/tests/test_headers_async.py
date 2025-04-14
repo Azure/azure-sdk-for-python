@@ -123,8 +123,11 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
             raw_response_hook=request_raw_response_hook)
 
     async def test_replace_container_throughput_bucket_async(self):
+        created_collection = await self.database.create_container(
+            str(uuid.uuid4()),
+            PartitionKey(path="/pk"))
         replaced_collection = await self.database.replace_container(
-            self.container,
+            created_collection.id,
             PartitionKey(path="/pk"),
             throughput_bucket=request_throughput_bucket_number,
             raw_response_hook=request_raw_response_hook)
