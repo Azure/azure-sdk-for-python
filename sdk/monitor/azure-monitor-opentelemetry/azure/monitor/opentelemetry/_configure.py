@@ -208,8 +208,6 @@ def _setup_live_metrics(configurations):
 
 
 def _setup_instrumentations(configurations: Dict[str, ConfigurationValue]):
-    # entry_point_finder = _EntryPointDistFinder()
-    # use pkg_resources for now until https://github.com/open-telemetry/opentelemetry-python/pull/3168 is merged
     for entry_point in entry_points(group="opentelemetry_instrumentor"):
         lib_name = entry_point.name
         if lib_name not in _ALL_SUPPORTED_INSTRUMENTED_LIBRARIES:

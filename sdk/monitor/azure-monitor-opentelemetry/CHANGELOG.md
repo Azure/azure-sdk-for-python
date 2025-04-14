@@ -10,6 +10,9 @@
 
 ### Other Changes
 
+- Removed some irrelevent comments
+    ([#40503](https://github.com/Azure/azure-sdk-for-python/pull/40503))
+
 ## 1.6.7 (2025-04-10)
 
 ### Bugs Fixed
