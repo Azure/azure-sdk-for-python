@@ -40,31 +40,35 @@ dataset_name = os.environ["DATASET_NAME"]
 
 with AIProjectClient(
     endpoint=endpoint,
-    # credential=DefaultAzureCredential(),
-    credential=AzureKeyCredential(os.environ["PROJECT_API_KEY"]),
+    credential=DefaultAzureCredential(),
+    # credential=AzureKeyCredential(os.environ["PROJECT_API_KEY"]),
 ) as project_client:
 
     print("Create evaluation")
     print("Create dataset for evaluation")
     dataset: DatasetVersion = project_client.datasets.upload_file_and_create(
         name=dataset_name,
-        file="sample_folder/sample_eval.jsonl",
+        version=1,
+        file="sample_data/sample_eval.jsonl",
     )
     print(dataset)
 
     print("Create evaluation object")
     evaluation: Evaluation = Evaluation(
-        name="My Sample Evaluation",
-        dataset=InputDataset(id=dataset.id),
+        display_name="My Sample Evaluation",
+        data=InputDataset(id="azureml://locations/centraluseuap/workspaces/abc/data/abc/versions/11"),
+        # data=InputDataset(id=dataset.id),
         evaluators={
             "relevance": EvaluatorConfiguration(
-                id=f"aiservices:{EvaluationMetrics.Relevance.value}",
+                id="azureml://registries/azureml/models/Violent-Content-Evaluator/versions/4",
+                # id=f"aiservices:{EvaluationMetrics.Relevance.value}",
                 init_params={
                     "deployment_name": "gpt-4o",
                 },
             ),
             "hate_unfairness": EvaluatorConfiguration(
-                id=f"aiservices:{EvaluationMetrics.HateUnfairness.value}",
+                id="azureml://registries/azureml/models/Violent-Content-Evaluator/versions/4",
+                # id=f"aiservices:{EvaluationMetrics.HateUnfairness.value}",
                 init_params={
                     "azure_ai_project": endpoint,
                 },
@@ -74,7 +78,7 @@ with AIProjectClient(
 
     print("Submitting Evaluation")
     # Create evaluation
-    evaluation_response: Evaluation = project_client.evaluations.create(
+    evaluation_response: Evaluation = project_client.evaluations.create_run(
         evaluation=evaluation,
     )
     print(evaluation_response)
