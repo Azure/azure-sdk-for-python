@@ -192,6 +192,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
                         blob_name,
                     )
                     with file_path.open("rb") as data:  # Open the file for reading in binary mode
+                        # TODO: Is there an upload_folder?
                         # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.containerclient?view=azure-python#azure-storage-blob-containerclient-upload-blob
                         container_client.upload_blob(name=str(blob_name), data=data, **kwargs)
                     logger.debug("[upload_folder_and_create] Done uploaded.")
