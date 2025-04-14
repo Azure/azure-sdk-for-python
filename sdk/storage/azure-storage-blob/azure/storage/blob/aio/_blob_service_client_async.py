@@ -128,6 +128,9 @@ class BlobServiceClient(  # type: ignore [misc]
     def __init__(
         self, account_url: str,
         credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+        *,
+        api_version: Optional[str] = None,
+        # TODO
         **kwargs: Any
     ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
@@ -136,7 +139,7 @@ class BlobServiceClient(  # type: ignore [misc]
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(BlobServiceClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
-        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
+        self._client._config.version = get_api_version(api_version)  # type: ignore [assignment]
         self._configure_encryption(kwargs)
 
     def _format_url(self, hostname):
@@ -248,7 +251,7 @@ class BlobServiceClient(  # type: ignore [misc]
                 :caption: Getting account information for the blob service.
         """
         try:
-            return await self._client.service.get_account_info(cls=return_response_headers, **kwargs) # type: ignore
+            return await self._client.service.get_account_info(cls=return_response_headers, **kwargs)  # type: ignore
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -292,7 +295,7 @@ class BlobServiceClient(  # type: ignore [misc]
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            stats = await self._client.service.get_statistics( # type: ignore
+            stats = await self._client.service.get_statistics(  # type: ignore
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
             return service_stats_deserialize(stats)
         except HttpResponseError as error:
@@ -399,7 +402,7 @@ class BlobServiceClient(  # type: ignore [misc]
             logging=analytics_logging,
             hour_metrics=hour_metrics,
             minute_metrics=minute_metrics,
-            cors=CorsRule._to_generated(cors), # pylint: disable=protected-access
+            cors=CorsRule._to_generated(cors),  # pylint: disable=protected-access
             default_service_version=target_version,
             delete_retention_policy=delete_retention_policy,
             static_website=static_website
@@ -656,7 +659,7 @@ class BlobServiceClient(  # type: ignore [misc]
         except AttributeError:
             kwargs['source_lease_id'] = lease
         try:
-            await renamed_container._client.container.rename(name, **kwargs)   # pylint: disable = protected-access
+            await renamed_container._client.container.rename(name, **kwargs)  # pylint: disable=protected-access
             return renamed_container
         except HttpResponseError as error:
             process_storage_error(error)
@@ -693,7 +696,7 @@ class BlobServiceClient(  # type: ignore [misc]
             warnings.warn("`new_name` is no longer supported.", DeprecationWarning)
         container = self.get_container_client(new_name or deleted_container_name)
         try:
-            await container._client.container.restore(deleted_container_name=deleted_container_name, # pylint: disable = protected-access
+            await container._client.container.restore(deleted_container_name=deleted_container_name,  # pylint: disable=protected-access
                                                       deleted_container_version=deleted_container_version,
                                                       timeout=kwargs.pop('timeout', None), **kwargs)
             return container
@@ -726,8 +729,8 @@ class BlobServiceClient(  # type: ignore [misc]
         else:
             container_name = container
         _pipeline = AsyncPipeline(
-            transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies #type: ignore [arg-type] # pylint: disable = protected-access
+            transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies #type: ignore [arg-type]  # pylint: disable=protected-access
         )
         return ContainerClient(
             self.url, container_name=container_name,
@@ -786,9 +789,9 @@ class BlobServiceClient(  # type: ignore [misc]
         else:
             container_name = container
         _pipeline = AsyncPipeline(
-            transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
             policies=cast(Iterable["AsyncHTTPPolicy"],
-                          self._pipeline._impl_policies) # pylint: disable = protected-access
+                          self._pipeline._impl_policies)  # pylint: disable=protected-access
         )
         return BlobClient(
             self.url, container_name=container_name, blob_name=blob_name, snapshot=snapshot,
