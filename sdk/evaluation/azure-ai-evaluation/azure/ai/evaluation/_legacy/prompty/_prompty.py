@@ -255,7 +255,6 @@ class AsyncPrompty:
 
         return resolved_inputs
 
-
     # @trace
     async def __call__(  # pylint: disable=docstring-keyword-should-match-keyword-only
         self,
