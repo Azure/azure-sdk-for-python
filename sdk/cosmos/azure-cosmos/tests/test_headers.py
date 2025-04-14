@@ -20,7 +20,6 @@ def client_raw_response_hook(response):
             == str(client_throughput_bucket_number))
 
 def request_raw_response_hook(response):
-    # if http_constants.HttpHeaders.ThroughputBucket in response.http_request.headers:
         assert (response.http_request.headers[http_constants.HttpHeaders.ThroughputBucket]
                 == str(request_throughput_bucket_number))
 
@@ -73,6 +72,7 @@ class TestHeaders(unittest.TestCase):
 
     def test_max_integrated_cache_staleness(self):
         cosmos_client_connection = self.container.client_connection
+        original_connection_get = cosmos_client_connection._CosmosClientConnection__Get
         cosmos_client_connection._CosmosClientConnection__Get = MagicMock(
             side_effect=self.side_effect_dedicated_gateway_max_age_thousand)
         try:
@@ -88,6 +88,8 @@ class TestHeaders(unittest.TestCase):
                                      max_integrated_cache_staleness_in_ms=self.dedicated_gateway_max_age_million)
         except StopIteration:
             pass
+        finally:
+            cosmos_client_connection._CosmosClientConnection__Get = original_connection_get
 
     def test_negative_max_integrated_cache_staleness(self):
         try:
