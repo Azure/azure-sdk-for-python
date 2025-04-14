@@ -22,12 +22,12 @@ jobs:
   strategy:
     maxParallel: 1
   pool:
-    name: azsdk-pool-mms-ubuntu-2004-general
-    vmImage: 'ubuntu-20.04'
+    name: azsdk-pool
+    vmImage: 'ubuntu-22.04'
   steps:
     - task: UsePythonVersion@0
       inputs:
-        versionSpec: '3.8'
+        versionSpec: '3.9'
         addToPath: true
         architecture: 'x64'
     - bash: |
