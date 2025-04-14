@@ -131,8 +131,9 @@ def get_cpk_scope_info(kwargs: Dict[str, Any]) -> Optional[CpkScopeInfo]:
     return None
 
 
-def get_container_cpk_scope_info(kwargs: Dict[str, Any]) -> Optional[ContainerCpkScopeInfo]:
-    encryption_scope = kwargs.pop('container_encryption_scope', None)
+def get_container_cpk_scope_info(
+    encryption_scope: Optional[Union[Dict[str, Any], ContainerEncryptionScope]]
+) -> Optional[ContainerCpkScopeInfo]:
     if encryption_scope:
         if isinstance(encryption_scope, ContainerEncryptionScope):
             return ContainerCpkScopeInfo(

@@ -12,12 +12,18 @@ from azure.core.pipeline.transport import HttpRequest
 from ._blob_client_helpers import _generic_delete_blob_options
 from ._generated import AzureBlobStorage
 from ._models import BlobProperties
+from ._serialize import get_access_conditions, get_modify_conditions
 from ._shared.base_client import parse_query
+from ._shared.request_handlers import add_metadata_headers
+from ._shared.response_handlers import return_response_headers
 
 if TYPE_CHECKING:
-    from azure.storage.blob import RehydratePriority
     from urllib.parse import ParseResult
-    from ._generated.models import LeaseAccessConditions, ModifiedAccessConditions
+    from ._generated.models import (
+        LeaseAccessConditions,
+        ModifiedAccessConditions,
+        RehydratePriority
+    )
     from ._models import PremiumPageBlobTier, StandardBlobTier
 
 
@@ -227,12 +233,13 @@ def _generate_set_tiers_options(
     rehydrate_priority = kwargs.pop('rehydrate_priority', None)
     if_tags = kwargs.pop('if_tags_match_condition', None)
     url_prepend = kwargs.pop('url_prepend', None)
-    kwargs.update({'raise_on_any_failure': raise_on_any_failure,
-                    'sas': query_str.replace('?', '&'),
-                    'timeout': '&timeout=' + str(timeout) if timeout else "",
-                    'path': container_name,
-                    'restype': 'restype=container&'
-                    })
+    kwargs.update({
+        'raise_on_any_failure': raise_on_any_failure,
+        'sas': query_str.replace('?', '&'),
+        'timeout': '&timeout=' + str(timeout) if timeout else "",
+        'path': container_name,
+        'restype': 'restype=container&'
+    })
 
     reqs = []
     for blob in blobs:
@@ -264,3 +271,33 @@ def _generate_set_tiers_options(
         reqs.append(req)
 
     return reqs, kwargs
+
+
+def _delete_container_options(**kwargs: Any) -> Dict[str, Any]:
+    access_conditions = get_access_conditions(kwargs.pop('lease', None))
+    mod_conditions = get_modify_conditions(kwargs)
+
+    options = {
+        'timeout': kwargs.pop('timeout', None),
+        'lease_access_conditions': access_conditions,
+        'modified_access_conditions': mod_conditions,
+    }
+    options.update({k: v for k, v in kwargs.items() if v is not None})
+    return options
+
+
+def _set_container_metadata_options(metadata: Optional[Dict[str, str]], **kwargs: Any) -> Dict[str, Any]:
+    headers = kwargs.pop('headers', {})
+    headers.update(add_metadata_headers(metadata))
+    access_conditions = get_access_conditions(kwargs.pop('lease', None))
+    mod_conditions = get_modify_conditions(kwargs)
+
+    options = {
+        'timeout': kwargs.pop('timeout', None),
+        'lease_access_conditions': access_conditions,
+        'modified_access_conditions': mod_conditions,
+        'cls': return_response_headers,
+        'headers': headers
+    }
+    options.update({k: v for k, v in kwargs.items() if v is not None})
+    return options
