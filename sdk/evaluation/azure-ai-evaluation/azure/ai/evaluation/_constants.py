@@ -94,3 +94,10 @@ OTEL_EXPORTER_OTLP_TRACES_TIMEOUT_DEFAULT = 60
 AZURE_OPENAI_TYPE: Literal["azure_openai"] = "azure_openai"
 
 OPENAI_TYPE: Literal["openai"] = "openai"
+
+EVALUATION_PASS_FAIL_MAPPING = {
+    True: "pass",
+    False: "fail",
+}
+
+DEFAULT_MAX_COMPLETION_TOKENS_REASONING_MODELS = 60000

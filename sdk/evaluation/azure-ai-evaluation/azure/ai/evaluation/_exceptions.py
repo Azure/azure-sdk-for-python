@@ -62,15 +62,18 @@ class ErrorTarget(Enum):
     CODE_CLIENT = "CodeClient"
     RAI_CLIENT = "RAIClient"
     COHERENCE_EVALUATOR = "CoherenceEvaluator"
+    COMPLETENESS_EVALUATOR = "CompletenessEvaluator"
     CONTENT_SAFETY_CHAT_EVALUATOR = "ContentSafetyEvaluator"
     ECI_EVALUATOR = "ECIEvaluator"
     F1_EVALUATOR = "F1Evaluator"
     GROUNDEDNESS_EVALUATOR = "GroundednessEvaluator"
     PROTECTED_MATERIAL_EVALUATOR = "ProtectedMaterialEvaluator"
+    INTENT_RESOLUTION_EVALUATOR = "IntentResolutionEvaluator"
     RELEVANCE_EVALUATOR = "RelevanceEvaluator"
     SIMILARITY_EVALUATOR = "SimilarityEvaluator"
     FLUENCY_EVALUATOR = "FluencyEvaluator"
     RETRIEVAL_EVALUATOR = "RetrievalEvaluator"
+    TASK_ADHERENCE_EVALUATOR = "TaskAdherenceEvaluator"
     INDIRECT_ATTACK_EVALUATOR = "IndirectAttackEvaluator"
     INDIRECT_ATTACK_SIMULATOR = "IndirectAttackSimulator"
     ADVERSARIAL_SIMULATOR = "AdversarialSimulator"
@@ -80,6 +83,8 @@ class ErrorTarget(Enum):
     MODELS = "Models"
     UNKNOWN = "Unknown"
     CONVERSATION = "Conversation"
+    TOOL_CALL_ACCURACY_EVALUATOR = "ToolCallAccuracyEvaluator"
+    RED_TEAM = "RedTeam"
 
 
 class EvaluationException(AzureError):
