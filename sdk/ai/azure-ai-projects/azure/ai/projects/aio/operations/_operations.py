@@ -78,6 +78,7 @@ from ...operations._operations import (
     build_agents_list_messages_request,
     build_agents_list_run_steps_request,
     build_agents_list_runs_request,
+    build_agents_list_threads_request,
     build_agents_list_vector_store_file_batch_files_request,
     build_agents_list_vector_store_files_request,
     build_agents_list_vector_stores_request,
@@ -1335,6 +1336,101 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(_models.ThreadDeletionStatus, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def list_threads(
+        self,
+        *,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.ListSortOrder]] = None,
+        after: Optional[str] = None,
+        before: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.OpenAIPageableListOfAgentThread:
+        """Gets a list of threads that were previously created.
+
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the created_at timestamp of the objects. asc for ascending order
+         and desc for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.ListSortOrder
+        :keyword after: A cursor for use in pagination. after is an object ID that defines your place
+         in the list. For instance, if you make a list request and receive 100 objects, ending with
+         obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the
+         list. Default value is None.
+        :paramtype after: str
+        :keyword before: A cursor for use in pagination. before is an object ID that defines your place
+         in the list. For instance, if you make a list request and receive 100 objects, ending with
+         obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of
+         the list. Default value is None.
+        :paramtype before: str
+        :return: OpenAIPageableListOfAgentThread. The OpenAIPageableListOfAgentThread is compatible
+         with MutableMapping
+        :rtype: ~azure.ai.projects.models.OpenAIPageableListOfAgentThread
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.OpenAIPageableListOfAgentThread] = kwargs.pop("cls", None)
+
+        _request = build_agents_list_threads_request(
+            limit=limit,
+            order=order,
+            after=after,
+            before=before,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", skip_quote=True
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str", skip_quote=True
+            ),
+            "projectName": self._serialize.url(
+                "self._config.project_name", self._config.project_name, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.OpenAIPageableListOfAgentThread, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

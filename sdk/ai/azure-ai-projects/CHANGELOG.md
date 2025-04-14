@@ -4,8 +4,12 @@
 
 ### Features added
 * Utilities to load prompt template strings and Prompty file content
+* Add BingCustomSearchTool class with sample
+* Add list_threads API to agents namespace
 
 ### Sample updates
+* New BingCustomSearchTool sample
+* Add list_threads usage to agent basics sample
 
 ### Bugs Fixed
 
