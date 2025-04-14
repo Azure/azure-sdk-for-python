@@ -6,7 +6,6 @@ from __future__ import annotations
 import asyncio  # pylint:disable=do-not-import-asyncio
 import logging
 from typing import Dict, List, Callable, Optional, Awaitable, TYPE_CHECKING
-from asyncio import Lock  # pylint:disable=do-not-import-asyncio
 
 from ._partition_resolver_async import PartitionResolver
 from ...aio._producer_async import EventHubProducer
@@ -37,7 +36,7 @@ class BufferedProducerDispatcher:
     ):
         self._buffered_producers: Dict[str, BufferedProducer] = {}
         self._partition_ids: List[str] = partitions
-        self._lock = Lock()
+        self._lock = asyncio.Lock()
         self._on_success = on_success
         self._on_error = on_error
         self._create_producer = create_producer
