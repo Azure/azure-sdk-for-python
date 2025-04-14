@@ -10,12 +10,12 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 
 import traceback
+import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 from typing_extensions import Self
 from prompty import headless, load, prepare
 from prompty.core import Prompty
-from ._utils import remove_leading_empty_space
 
 
 class PromptTemplate:
@@ -59,7 +59,7 @@ class PromptTemplate:
         :return: The PromptTemplate object.
         :rtype: PromptTemplate
         """
-        prompt_template = remove_leading_empty_space(prompt_template)
+        prompt_template = _remove_leading_empty_space(prompt_template)
         prompty = headless(api=api, content=prompt_template)
         prompty.template.type = "mustache"  # For Azure, default to mustache instead of Jinja2
         prompty.template.parser = "prompty"
@@ -68,6 +68,40 @@ class PromptTemplate:
             model_name=model_name,
             prompty=prompty,
         )
+
+    @classmethod
+    def _remove_leading_empty_space(cls, multiline_str: str) -> str:
+        """
+        Processes a multiline string by:
+        1. Removing empty lines
+        2. Finding the minimum leading spaces
+        3. Indenting all lines to the minimum level
+
+        :param multiline_str: The input multiline string.
+        :type multiline_str: str
+        :return: The processed multiline string.
+        :rtype: str
+        """
+        lines = multiline_str.splitlines()
+        start_index = 0
+        while start_index < len(lines) and lines[start_index].strip() == "":
+            start_index += 1
+
+        # Find the minimum number of leading spaces
+        min_spaces = sys.maxsize
+        for line in lines[start_index:]:
+            if len(line.strip()) == 0:
+                continue
+            spaces = len(line) - len(line.lstrip())
+            spaces += line.lstrip().count("\t") * 2  # Count tabs as 2 spaces
+            min_spaces = min(min_spaces, spaces)
+
+        # Remove leading spaces and indent to the minimum level
+        processed_lines = []
+        for line in lines[start_index:]:
+            processed_lines.append(line[min_spaces:])
+
+        return "\n".join(processed_lines)
 
     def __init__(
         self,
