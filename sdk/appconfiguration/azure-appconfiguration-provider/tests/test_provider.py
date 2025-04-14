@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from azure.appconfiguration.provider import SettingSelector, AzureAppConfigurationKeyVaultOptions
+from azure.appconfiguration.provider import SettingSelector, AzureAppConfigurationKeyVaultOptions, AzureAppConfigurationProvider
 from devtools_testutils import recorded_by_proxy
 from preparers import app_config_decorator
 from testcase import AppConfigTestCase, has_feature_flag
@@ -129,6 +129,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         delay_failure(start_time)
         mock_sleep.assert_not_called()
 
+    def test_process_key_value_content_type(self):
+        provider = AzureAppConfigurationProvider()
 
 def secret_resolver(secret_id):
     return "Reslover Value"
