@@ -61,16 +61,8 @@
   - Added model `SpringBootAdminComponent`
   - Added model `SpringCloudConfigComponent`
   - Added model `SpringCloudEurekaComponent`
-  - Added model `ContainerAppsSessionPoolsOperations`
-  - Added model `JavaComponentsOperations`
-  - Method `ContainerAppsSessionPoolsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, session_pool_name: str, session_pool_envelope: SessionPool, content_type: str)`
-  - Method `ContainerAppsSessionPoolsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, session_pool_name: str, session_pool_envelope: IO[bytes], content_type: str)`
-  - Method `ContainerAppsSessionPoolsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, session_pool_name: str, session_pool_envelope: SessionPoolUpdatableProperties, content_type: str)`
-  - Method `ContainerAppsSessionPoolsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, session_pool_name: str, session_pool_envelope: IO[bytes], content_type: str)`
-  - Method `JavaComponentsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, environment_name: str, name: str, java_component_envelope: JavaComponent, content_type: str)`
-  - Method `JavaComponentsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, environment_name: str, name: str, java_component_envelope: IO[bytes], content_type: str)`
-  - Method `JavaComponentsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, environment_name: str, name: str, java_component_envelope: JavaComponent, content_type: str)`
-  - Method `JavaComponentsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, environment_name: str, name: str, java_component_envelope: IO[bytes], content_type: str)`
+  - Added operation group `ContainerAppsSessionPoolsOperations`
+  - Added operation group `JavaComponentsOperations`
 
 ## 3.2.0b1 (2024-10-28)
 
