@@ -5,8 +5,6 @@
 # --------------------------------------------------------------------------
 import asyncio  # pylint:disable=do-not-import-asyncio
 import sys
-from asyncio import Semaphore  # pylint:disable=do-not-import-asyncio
-
 
 def get_dict_with_loop_if_needed(loop):
     if sys.version_info >= (3, 10):
@@ -17,7 +15,7 @@ def get_dict_with_loop_if_needed(loop):
     return {}
 
 
-async def semaphore_acquire_with_timeout(semaphore: Semaphore, timeout=None):
+async def semaphore_acquire_with_timeout(semaphore: asyncio.Semaphore, timeout=None):
     try:
         return await asyncio.wait_for(semaphore.acquire(), timeout=timeout)
     except asyncio.TimeoutError:

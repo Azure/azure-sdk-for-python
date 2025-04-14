@@ -237,6 +237,7 @@ class EventGridPublisherClient(object):
             raise HttpResponseError(response=response)
 
     def close(self) -> None:
+        """Closes the EventGridPublisherClient session."""
         self._client.close()
 
     def __enter__(self) -> "EventGridPublisherClient":

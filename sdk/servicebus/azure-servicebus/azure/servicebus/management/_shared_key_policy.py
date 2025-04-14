@@ -17,7 +17,7 @@ class ServiceBusSharedKeyCredentialPolicy(SansIOHTTPPolicy):
     :param str name:
     """
 
-    def __init__(self, endpoint: str, credential: ServiceBusSharedKeyCredential, name: str):
+    def __init__(self, endpoint: str, credential: ServiceBusSharedKeyCredential, name: str) -> None:
         super(ServiceBusSharedKeyCredentialPolicy, self).__init__()
         self._credential = credential
         self._endpoint = endpoint
