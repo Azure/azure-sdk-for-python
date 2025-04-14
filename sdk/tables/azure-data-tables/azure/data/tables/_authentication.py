@@ -222,23 +222,31 @@ class BearerTokenChallengePolicy(BearerTokenCredentialPolicy):
 
 
 @overload
-def _configure_credential(credential: AzureNamedKeyCredential) -> SharedKeyCredentialPolicy: ...
+def _configure_credential(
+    credential: AzureNamedKeyCredential, cosmos_endpoint: bool = False, audience: Optional[str] = None
+) -> SharedKeyCredentialPolicy: ...
 
 
 @overload
-def _configure_credential(credential: SharedKeyCredentialPolicy) -> SharedKeyCredentialPolicy: ...
+def _configure_credential(
+    credential: SharedKeyCredentialPolicy, cosmos_endpoint: bool = False, audience: Optional[str] = None
+) -> SharedKeyCredentialPolicy: ...
 
 
 @overload
-def _configure_credential(credential: AzureSasCredential) -> AzureSasCredentialPolicy: ...
+def _configure_credential(
+    credential: AzureSasCredential, cosmos_endpoint: bool = False, audience: Optional[str] = None
+) -> AzureSasCredentialPolicy: ...
 
 
 @overload
-def _configure_credential(credential: TokenCredential) -> BearerTokenChallengePolicy: ...
+def _configure_credential(
+    credential: TokenCredential, cosmos_endpoint: bool = False, audience: Optional[str] = None
+) -> BearerTokenChallengePolicy: ...
 
 
 @overload
-def _configure_credential(credential: None) -> None: ...
+def _configure_credential(credential: None, cosmos_endpoint: bool = False, audience: Optional[str] = None) -> None: ...
 
 
 def _configure_credential(
