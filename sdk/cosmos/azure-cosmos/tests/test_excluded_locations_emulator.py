@@ -70,6 +70,7 @@ def _get_location(initialized_objects: Mapping[str, Any]) -> str:
             break
     return location
 
+
 @pytest.mark.unittest
 @pytest.mark.cosmosEmulator
 class TestExcludedLocations:
