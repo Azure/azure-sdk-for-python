@@ -59,7 +59,7 @@ auth = OpenApiConnectionAuthDetails(security_scheme=OpenApiConnectionSecuritySch
 
 # Initialize an Agent OpenApi tool using the read in OpenAPI spec
 openapi = OpenApiTool(
-    name="get_weather", spec=openapi_spec, description="Retrieve weather information for a location", auth=auth
+    name="get_location_reviews", spec=openapi_spec, description="Retrieve reviews for a given location", auth=auth
 )
 
 # Create an Agent with OpenApi tool and process Agent run
