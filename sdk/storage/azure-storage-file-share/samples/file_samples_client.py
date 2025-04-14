@@ -17,25 +17,26 @@ USAGE:
     python file_samples_client.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) STORAGE_CONNECTION_STRING - the connection string to your storage account
     2) AZURE_STORAGE_ACCOUNT_NAME - the name of the storage account
 """
 
 import os
 import sys
 
-SOURCE_FILE = './SampleSource.txt'
-DEST_FILE = './SampleDestination.txt'
+current_dir = os.path.dirname(os.path.abspath(__file__))
+DEST_FILE = os.path.join(current_dir, "SampleDestination.txt")
+SOURCE_FILE = os.path.join(current_dir, "SampleSource.txt")
 
 
 class FileSamples(object):
 
-    connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
-    account_name = os.getenv("AZURE_STORAGE_ACCOUNT_NAME")
+    connection_string = os.getenv("STORAGE_CONNECTION_STRING")
+    account_name = os.getenv("STORAGE_ACCOUNT_NAME")
 
     def simple_file_operations(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: simple_file_operations")
             sys.exit(1)
 
@@ -81,7 +82,7 @@ class FileSamples(object):
 
     def copy_file_from_url(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: copy_file_from_url")
             sys.exit(1)
 
@@ -118,7 +119,7 @@ class FileSamples(object):
 
     def acquire_file_lease(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: acquire_file_lease")
             sys.exit(1)
 

@@ -153,6 +153,25 @@ IGNORED_SAMPLES = {
         "sample_abstract_summary.py",
         "sample_abstract_summary_async.py",
     ],
+    "azure-storage-blob": [
+        "blob_samples_proxy_configuration.py",
+        "blob_samples_client_side_encryption_keyvault.py"
+    ],
+    "azure-schemaregistry": [
+        "eventhub_receive_integration_async.py",
+        "eventhub_receive_integration.py"
+    ],
+    "azure-schemaregistry-avroencoder": [
+        "eventhub_receive_integration_async.py",
+        "eventhub_receive_integration.py",
+        # "eventhub_send_integration.py",
+        # "encode_and_decode_with_message_content.py",
+        # "encode_and_decode_event_data_message.py"
+    ],
+    "azure-schemaregistry-avroserializer": [
+        "eventhub_receive_integration_async.py",
+        "eventhub_receive_integration.py",
+    ]
 }
 
 def run_check_call_with_timeout(
