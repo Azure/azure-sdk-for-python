@@ -1,11 +1,9 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
-import logging
 import unittest
 import uuid
 import test_config
-import sys
 import pytest
 from typing import Callable, List, Mapping, Any
 
@@ -15,15 +13,7 @@ from azure.cosmos.container import ContainerProxy
 from test_excluded_locations import L1, L2, CLIENT_ONLY_TEST_DATA, CLIENT_AND_REQUEST_TEST_DATA
 from test_fault_injection_transport import TestFaultInjectionTransport
 
-logger = logging.getLogger('azure.cosmos')
-logger.setLevel(logging.DEBUG)
-logger.addHandler(logging.StreamHandler(sys.stdout))
-
 CONFIG = test_config.TestConfig()
-HOST = CONFIG.host
-KEY = CONFIG.masterKey
-DATABASE_ID = CONFIG.TEST_DATABASE_ID
-CONTAINER_ID = CONFIG.TEST_SINGLE_PARTITION_CONTAINER_ID
 
 L1_URL = test_config.TestConfig.local_host
 L2_URL = L1_URL.replace("localhost", "127.0.0.1")
@@ -52,21 +42,22 @@ def delete_all_items_by_partition_key_test_data() -> List[str]:
         L1,   #7
     ]
     all_output_test_data = client_only_output_data + client_and_request_output_data
-    # all_output_test_data = client_and_request_output_data
 
     all_test_data = [input_data + [output_data] for input_data, output_data in zip(ALL_INPUT_TEST_DATA, all_output_test_data)]
     return all_test_data
 
-def _get_location(initialized_objects: Mapping[str, Any]) -> str:
+def _get_location(
+        initialized_objects: Mapping[str, Any],
+        url_to_locations: Mapping[str, str] = URL_TO_LOCATIONS) -> str:
     # get Request URL
     header = initialized_objects['client'].client_connection.last_response_headers
     request_url = header["_request"].url
 
     # verify
     location = ""
-    for url in URL_TO_LOCATIONS:
+    for url in url_to_locations:
         if request_url.startswith(url):
-            location = URL_TO_LOCATIONS[url]
+            location = url_to_locations[url]
             break
     return location
 
@@ -84,12 +75,13 @@ class TestExcludedLocations:
         is_get_account_predicate: Callable[[HttpRequest], bool] = lambda \
             r: FaultInjectionTransport.predicate_is_database_account_call(r)
         emulator_as_multi_write_region_account_transformation = \
-            lambda r, inner: FaultInjectionTransport.transform_topology_mwr_with_url(
+            lambda r, inner: FaultInjectionTransport.transform_topology_mwr(
                 first_region_name=L1,
-                first_region_url=L1_URL,
                 second_region_name=L2,
+                inner=inner,
+                first_region_url=L1_URL,
                 second_region_url=L2_URL,
-                inner=inner)
+            )
         custom_transport.add_response_transformation(
             is_get_account_predicate,
             emulator_as_multi_write_region_account_transformation)
@@ -98,7 +90,10 @@ class TestExcludedLocations:
             # Create client
             initialized_objects = TestFaultInjectionTransport.setup_method_with_custom_transport(
                 custom_transport,
-                HOST,
+                default_endpoint=CONFIG.host,
+                key=CONFIG.masterKey,
+                database_id=CONFIG.TEST_DATABASE_ID,
+                container_id=CONFIG.TEST_SINGLE_PARTITION_CONTAINER_ID,
                 preferred_locations=preferred_locations,
                 excluded_locations=client_excluded_locations,
                 multiple_write_locations=multiple_write_locations,

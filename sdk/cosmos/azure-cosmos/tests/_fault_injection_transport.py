@@ -203,7 +203,10 @@ class FaultInjectionTransport(RequestsTransport):
     def transform_topology_mwr(
             first_region_name: str,
             second_region_name: str,
-            inner: Callable[[], RequestsTransportResponse]) -> RequestsTransportResponse:
+            inner: Callable[[], RequestsTransportResponse],
+            first_region_url: str = None,
+            second_region_url: str = test_config.TestConfig.local_host
+    ) -> RequestsTransportResponse:
 
         response = inner()
         if not FaultInjectionTransport.predicate_is_database_account_call(response.request):
@@ -215,46 +218,17 @@ class FaultInjectionTransport(RequestsTransport):
             result = json.loads(data)
             readable_locations = result["readableLocations"]
             writable_locations = result["writableLocations"]
-            readable_locations[0]["name"] = first_region_name
-            writable_locations[0]["name"] = first_region_name
+
+            if first_region_url is None:
+                first_region_url = readable_locations[0]["databaseAccountEndpoint"]
+            readable_locations[0] = \
+                {"name": first_region_name, "databaseAccountEndpoint": first_region_url}
+            writable_locations[0] = \
+                {"name": first_region_name, "databaseAccountEndpoint": first_region_url}
             readable_locations.append(
-                {"name": second_region_name, "databaseAccountEndpoint": test_config.TestConfig.local_host})
+                {"name": second_region_name, "databaseAccountEndpoint": second_region_url})
             writable_locations.append(
-                {"name": second_region_name, "databaseAccountEndpoint": test_config.TestConfig.local_host})
-            result["enableMultipleWriteLocations"] = True
-            FaultInjectionTransport.logger.info("Transformed Account Topology: {}".format(result))
-            request: HttpRequest = response.request
-            return FaultInjectionTransport.MockHttpResponse(request, 200, result)
-
-        return response
-
-    @staticmethod
-    def transform_topology_mwr_with_url(
-            first_region_name: str,
-            first_region_url: str,
-            second_region_name: str,
-            second_region_url: str,
-            inner: Callable[[], RequestsTransportResponse]) -> RequestsTransportResponse:
-
-        response = inner()
-        if not FaultInjectionTransport.predicate_is_database_account_call(response.request):
-            return response
-
-        data = response.body()
-        if response.status_code == 200 and data:
-            readable_locations = [
-                {"name": first_region_name, "databaseAccountEndpoint": first_region_url},
-                {"name": second_region_name, "databaseAccountEndpoint": second_region_url}
-            ]
-            writeable_locations = [
-                {"name": first_region_name, "databaseAccountEndpoint": first_region_url},
-                {"name": second_region_name, "databaseAccountEndpoint": second_region_url}
-            ]
-
-            data = data.decode("utf-8")
-            result = json.loads(data)
-            result["readableLocations"] = readable_locations
-            result["writableLocations"] = writeable_locations
+                {"name": second_region_name, "databaseAccountEndpoint": second_region_url})
             result["enableMultipleWriteLocations"] = True
             FaultInjectionTransport.logger.info("Transformed Account Topology: {}".format(result))
             request: HttpRequest = response.request
