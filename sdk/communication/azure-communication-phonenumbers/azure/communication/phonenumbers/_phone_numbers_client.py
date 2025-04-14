@@ -8,7 +8,7 @@
 from typing import Iterator, List, Optional, Union, Any
 
 from azure.core.credentials import TokenCredential, AzureKeyCredential
-from azure.core.paging import ItemPaged, PageIterator
+from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
@@ -68,7 +68,8 @@ class PhoneNumbersClient:
             raise ValueError("Account URL must be a string.") from e
 
         if not credential:
-            raise ValueError("You need to provide account shared key to authenticate.")
+            raise ValueError(
+                "You need to provide account shared key to authenticate.")
 
         self._endpoint = endpoint
         self._accepted_language = kwargs.pop("accepted_language", None)
@@ -76,7 +77,8 @@ class PhoneNumbersClient:
         self._phone_number_client = PhoneNumbersClientGen(
             self._endpoint,
             api_version=self._api_version,
-            authentication_policy=get_authentication_policy(endpoint, credential),
+            authentication_policy=get_authentication_policy(
+                endpoint, credential),
             sdk_moniker=SDK_MONIKER,
             **kwargs
         )
@@ -95,7 +97,12 @@ class PhoneNumbersClient:
         return cls(endpoint, access_key, **kwargs)
 
     @distributed_trace
-    def begin_purchase_phone_numbers(self, search_id: str, *, agree_to_not_resell: bool = False, **kwargs: Any) -> LROPoller[None]:
+    def begin_purchase_phone_numbers(
+            self,
+            search_id: str,
+            *,
+            agree_to_not_resell: bool = False,
+            **kwargs: Any) -> LROPoller[None]:
         """Purchases phone numbers.
 
         :param search_id: The search id.
@@ -112,9 +119,11 @@ class PhoneNumbersClient:
         :returns: A poller to wait on the completion of the purchase.
         :rtype: ~azure.core.polling.LROPoller[None]
         """
-        purchase_request = PhoneNumberPurchaseRequest(search_id=search_id, agree_to_not_resell=agree_to_not_resell)
+        purchase_request = PhoneNumberPurchaseRequest(
+            search_id=search_id, agree_to_not_resell=agree_to_not_resell)
 
-        polling_interval = kwargs.pop("polling_interval", _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
+        polling_interval = kwargs.pop(
+            "polling_interval", _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
         return self._phone_number_client.phone_numbers.begin_purchase_phone_numbers(
             body=purchase_request, polling_interval=polling_interval, **kwargs
         )
@@ -134,7 +143,8 @@ class PhoneNumbersClient:
         :returns: A poller to wait on the status of the release operation.
         :rtype: ~azure.core.polling.LROPoller[None]
         """
-        polling_interval = kwargs.pop("polling_interval", _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
+        polling_interval = kwargs.pop(
+            "polling_interval", _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
         return self._phone_number_client.phone_numbers.begin_release_phone_number(
             phone_number, polling_interval=polling_interval, **kwargs
         )
@@ -181,7 +191,8 @@ class PhoneNumbersClient:
             quantity=kwargs.pop("quantity", None),
             area_code=kwargs.pop("area_code", None),
         )
-        polling_interval = kwargs.pop("polling_interval", _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
+        polling_interval = kwargs.pop(
+            "polling_interval", _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
         return self._phone_number_client.phone_numbers.begin_search_available_phone_numbers(
             country_code, search_request, polling_interval=polling_interval, **kwargs
         )
@@ -213,9 +224,11 @@ class PhoneNumbersClient:
         :rtype: ~azure.core.polling.LROPoller[~azure.communication.phonenumbers.PurchasedPhoneNumber]
         """
 
-        capabilities_request = PhoneNumberCapabilitiesRequest(calling=calling, sms=sms)
+        capabilities_request = PhoneNumberCapabilitiesRequest(
+            calling=calling, sms=sms)
 
-        polling_interval = kwargs.pop("polling_interval", _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
+        polling_interval = kwargs.pop(
+            "polling_interval", _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
 
         if not phone_number:
             raise ValueError("phone_number can't be empty")
@@ -226,7 +239,8 @@ class PhoneNumbersClient:
 
         result_properties = poller.result().additional_properties
         if "status" in result_properties and result_properties["status"].lower() == "failed":
-            raise HttpResponseError(message=result_properties["error"]["message"])
+            raise HttpResponseError(
+                message=result_properties["error"]["message"])
 
         return poller
 
@@ -296,7 +310,8 @@ class PhoneNumbersClient:
         """
         return self._phone_number_client.phone_numbers.list_available_localities(
             country_code,
-            administrative_division=kwargs.pop("administrative_division", None),
+            administrative_division=kwargs.pop(
+                "administrative_division", None),
             accept_language=self._accepted_language,
             **kwargs
         )
@@ -362,13 +377,14 @@ class PhoneNumbersClient:
             phone_number_type=phone_number_type,
             assignment_type=kwargs.pop("assignment_type", None),
             locality=kwargs.pop("locality", None),
-            administrative_division=kwargs.pop("administrative_division", None),
+            administrative_division=kwargs.pop(
+                "administrative_division", None),
             **kwargs
         )
 
     @distributed_trace
     def search_operator_information(
-        self, phone_numbers: Union[str, List[str]], *, options: Optional[OperatorInformationOptions] = None, **kwargs: Any # pylint: disable=line-too-long
+        self, phone_numbers: Union[str, List[str]], *, options: Optional[OperatorInformationOptions] = None, **kwargs: Any  # pylint: disable=line-too-long
     ) -> OperatorInformationResult:
         """Searches for operator information for a given list of phone numbers.
 
@@ -382,10 +398,12 @@ class PhoneNumbersClient:
         if not isinstance(phone_numbers, list):
             phone_numbers = [phone_numbers]
         if options is None:
-            options = OperatorInformationOptions(include_additional_operator_details=False)
-        request = OperatorInformationRequest(phone_numbers=phone_numbers, options=options)
+            options = OperatorInformationOptions(
+                include_additional_operator_details=False)
+        request = OperatorInformationRequest(
+            phone_numbers=phone_numbers, options=options)
         return self._phone_number_client.phone_numbers.operator_information_search(request, **kwargs)
-    
+
     @distributed_trace
     def get_phone_numbers_reservation(
         self, reservation_id: str, **kwargs: Any
@@ -400,10 +418,15 @@ class PhoneNumbersClient:
         :return: PhoneNumbersReservation
         :rtype: ~azure.communication.phonenumbers.PhoneNumbersReservation
         """
-        reservation = self._phone_number_client.phone_numbers.get_reservation(reservation_id, **kwargs)
+        reservation = self._phone_number_client.phone_numbers.get_reservation(
+            reservation_id, **kwargs)
 
-        return PhoneNumbersReservation(reservation.id, expires_at=reservation.expires_at, status=reservation.status, phone_numbers=reservation.phone_numbers)
-    
+        return PhoneNumbersReservation(
+            reservation.id,
+            expires_at=reservation.expires_at,
+            status=reservation.status,
+            phone_numbers=reservation.phone_numbers)
+
     @distributed_trace
     def list_phone_numbers_reservations(
         self, *, max_page_size: int = 100,  **kwargs: Any
@@ -423,13 +446,13 @@ class PhoneNumbersClient:
 
         # This allows mapping the generated model to the public model.
         # Internally, the generated client will create an instance of this iterator with each fetched page.
-        class ReservationsIterator(Iterator[PhoneNumbersReservationItem]): # pylint: disable=too-many-ancestors
+        class ReservationsIterator(Iterator[PhoneNumbersReservationItem]):  # pylint: disable=too-many-ancestors
             def __init__(self, inner: List[InternalPhoneNumbersReservation]) -> None:
                 self._inner = iter(inner)
 
             def __iter__(self):
                 return self
-            
+
             def __next__(self) -> PhoneNumbersReservation:
                 reservation = next(self._inner)
                 return PhoneNumbersReservationItem(reservation.id, reservation.expires_at, reservation.status)
@@ -438,7 +461,7 @@ class PhoneNumbersClient:
             max_page_size=max_page_size,
             cls=ReservationsIterator,
             **kwargs)
-    
+
     @distributed_trace
     def create_or_update_reservation(
         self, reservation: PhoneNumbersReservation, **kwargs: Any
@@ -466,9 +489,13 @@ class PhoneNumbersClient:
 
         result = self._phone_number_client.phone_numbers.create_or_update_reservation(
             reservation.id, res_request, **kwargs)
-        
-        return PhoneNumbersReservation(result.id, expires_at=result.expires_at, status=result.status, phone_numbers=result.phone_numbers)
-    
+
+        return PhoneNumbersReservation(
+            result.id,
+            expires_at=result.expires_at,
+            status=result.status,
+            phone_numbers=result.phone_numbers)
+
     @distributed_trace
     def delete_reservation(
         self, reservation_id: str, **kwargs: Any
@@ -485,7 +512,7 @@ class PhoneNumbersClient:
         :rtype: None
         """
         return self._phone_number_client.phone_numbers.delete_reservation(reservation_id, **kwargs)
-    
+
     @distributed_trace
     def begin_purchase_reservation(
         self,
@@ -510,8 +537,10 @@ class PhoneNumbersClient:
         :rtype: ~azure.core.polling.LROPoller[None]
         """
 
-        reservation_purchase_request = PhoneNumbersReservationPurchaseRequest(agree_to_not_resell=agree_to_not_resell)
-        polling_interval = kwargs.pop("polling_interval", _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
+        reservation_purchase_request = PhoneNumbersReservationPurchaseRequest(
+            agree_to_not_resell=agree_to_not_resell)
+        polling_interval = kwargs.pop(
+            "polling_interval", _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
 
         return self._phone_number_client.phone_numbers.begin_purchase_reservation(
             reservation_id,
@@ -519,13 +548,13 @@ class PhoneNumbersClient:
             polling_interval=polling_interval,
             **kwargs
         )
-    
+
     @distributed_trace
     def browse_available_phone_numbers(
-        self,
-        country_code: str,
-        phone_numbers_browse_request: PhoneNumbersBrowseRequest,
-        **kwargs) -> PhoneNumbersBrowseResult:
+            self,
+            country_code: str,
+            phone_numbers_browse_request: PhoneNumbersBrowseRequest,
+            **kwargs) -> PhoneNumbersBrowseResult:
         """Browses for available phone numbers to purchase.
 
         Browses for available phone numbers to purchase. The response will be a randomized list of
@@ -543,7 +572,7 @@ class PhoneNumbersClient:
         :rtype: ~azure.communication.phonenumbers.models.PhoneNumbersBrowseResult
         """
         return self._phone_number_client.phone_numbers.browse_available_numbers(
-            country_code, 
-            phone_numbers_browse_request, 
+            country_code,
+            phone_numbers_browse_request,
             **kwargs
         )
